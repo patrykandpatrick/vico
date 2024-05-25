@@ -39,39 +39,45 @@ import com.patrykandpatrick.vico.core.common.shape.Shape
 /** Creates and remembers a [ColumnCartesianLayer]. */
 @Composable
 public fun rememberColumnCartesianLayer(
-    columnProvider: ColumnCartesianLayer.ColumnProvider =
-        ColumnCartesianLayer.ColumnProvider.series(
-            vicoTheme.columnCartesianLayerColors.map { color ->
-                rememberLineComponent(
-                    color,
-                    Defaults.COLUMN_WIDTH.dp,
-                    Shape.rounded(Defaults.COLUMN_ROUNDNESS_PERCENT),
-                )
-            },
-        ),
-    spacing: Dp = Defaults.COLUMN_OUTSIDE_SPACING.dp,
-    innerSpacing: Dp = Defaults.COLUMN_INSIDE_SPACING.dp,
-    mergeMode: (ExtraStore) -> MergeMode = { MergeMode.Grouped },
-    verticalAxisPosition: AxisPosition.Vertical? = null,
-    dataLabel: TextComponent? = null,
-    dataLabelVerticalPosition: VerticalPosition = VerticalPosition.Top,
-    dataLabelValueFormatter: CartesianValueFormatter = remember { CartesianValueFormatter.decimal() },
-    dataLabelRotationDegrees: Float = 0f,
-    axisValueOverrider: AxisValueOverrider = remember { AxisValueOverrider.auto() },
-    drawingModelInterpolator:
-        DrawingModelInterpolator<ColumnCartesianLayerDrawingModel.ColumnInfo, ColumnCartesianLayerDrawingModel> =
-        remember { DefaultDrawingModelInterpolator() },
+  columnProvider: ColumnCartesianLayer.ColumnProvider =
+    ColumnCartesianLayer.ColumnProvider.series(
+      vicoTheme.columnCartesianLayerColors.map { color ->
+        rememberLineComponent(
+          color,
+          Defaults.COLUMN_WIDTH.dp,
+          Shape.rounded(Defaults.COLUMN_ROUNDNESS_PERCENT),
+        )
+      }
+    ),
+  spacing: Dp = Defaults.COLUMN_OUTSIDE_SPACING.dp,
+  innerSpacing: Dp = Defaults.COLUMN_INSIDE_SPACING.dp,
+  mergeMode: (ExtraStore) -> MergeMode = { MergeMode.Grouped },
+  verticalAxisPosition: AxisPosition.Vertical? = null,
+  dataLabel: TextComponent? = null,
+  dataLabelVerticalPosition: VerticalPosition = VerticalPosition.Top,
+  dataLabelValueFormatter: CartesianValueFormatter = remember { CartesianValueFormatter.decimal() },
+  dataLabelRotationDegrees: Float = 0f,
+  axisValueOverrider: AxisValueOverrider = remember { AxisValueOverrider.auto() },
+  drawingModelInterpolator:
+    DrawingModelInterpolator<
+      ColumnCartesianLayerDrawingModel.ColumnInfo,
+      ColumnCartesianLayerDrawingModel,
+    > =
+    remember {
+      DefaultDrawingModelInterpolator()
+    },
 ): ColumnCartesianLayer =
-    remember { ColumnCartesianLayer(columnProvider) }.apply {
-        this.columnProvider = columnProvider
-        this.spacingDp = spacing.value
-        this.innerSpacingDp = innerSpacing.value
-        this.mergeMode = mergeMode
-        this.dataLabel = dataLabel
-        this.dataLabelVerticalPosition = dataLabelVerticalPosition
-        this.dataLabelValueFormatter = dataLabelValueFormatter
-        this.dataLabelRotationDegrees = dataLabelRotationDegrees
-        this.axisValueOverrider = axisValueOverrider
-        this.verticalAxisPosition = verticalAxisPosition
-        this.drawingModelInterpolator = drawingModelInterpolator
+  remember { ColumnCartesianLayer(columnProvider) }
+    .apply {
+      this.columnProvider = columnProvider
+      this.spacingDp = spacing.value
+      this.innerSpacingDp = innerSpacing.value
+      this.mergeMode = mergeMode
+      this.dataLabel = dataLabel
+      this.dataLabelVerticalPosition = dataLabelVerticalPosition
+      this.dataLabelValueFormatter = dataLabelValueFormatter
+      this.dataLabelRotationDegrees = dataLabelRotationDegrees
+      this.axisValueOverrider = axisValueOverrider
+      this.verticalAxisPosition = verticalAxisPosition
+      this.drawingModelInterpolator = drawingModelInterpolator
     }

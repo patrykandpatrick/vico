@@ -23,116 +23,99 @@ import com.patrykandpatrick.vico.core.common.component.ShapeComponent
 import com.patrykandpatrick.vico.core.common.data.MutableExtraStore
 
 /**
- * [DrawContext] is an extension of [MeasureContext] that stores a [Canvas] and other properties.
- * It also defines helpful drawing functions.
+ * [DrawContext] is an extension of [MeasureContext] that stores a [Canvas] and other properties. It
+ * also defines helpful drawing functions.
  */
 public interface DrawContext : MeasureContext {
-    /**
-     * The elevation overlay color, applied to [ShapeComponent]s that cast shadows.
-     */
-    public val elevationOverlayColor: Long
+  /** The elevation overlay color, applied to [ShapeComponent]s that cast shadows. */
+  public val elevationOverlayColor: Long
 
-    /**
-     * The canvas to draw the chart on.
-     */
-    public val canvas: Canvas
+  /** The canvas to draw the chart on. */
+  public val canvas: Canvas
 
-    /**
-     * Saves the [Canvas] state.
-     *
-     * @see Canvas.save
-     */
-    public fun saveCanvas(): Int = canvas.save()
+  /**
+   * Saves the [Canvas] state.
+   *
+   * @see Canvas.save
+   */
+  public fun saveCanvas(): Int = canvas.save()
 
-    /**
-     * Temporarily swaps the [Canvas] and yields [DrawContext] as the [block]’s receiver.
-     */
-    public fun withOtherCanvas(
-        canvas: Canvas,
-        block: (DrawContext) -> Unit,
-    )
+  /** Temporarily swaps the [Canvas] and yields [DrawContext] as the [block]’s receiver. */
+  public fun withOtherCanvas(canvas: Canvas, block: (DrawContext) -> Unit)
 
-    /**
-     * Clips the [Canvas] to the specified rectangle.
-     *
-     * @see Canvas.clipRect
-     */
-    public fun clipRect(
-        left: Float,
-        top: Float,
-        right: Float,
-        bottom: Float,
-    ) {
-        canvas.clipRect(left, top, right, bottom)
-    }
+  /**
+   * Clips the [Canvas] to the specified rectangle.
+   *
+   * @see Canvas.clipRect
+   */
+  public fun clipRect(left: Float, top: Float, right: Float, bottom: Float) {
+    canvas.clipRect(left, top, right, bottom)
+  }
 
-    /**
-     * Clips the [Canvas] to the specified [rectF].
-     *
-     * @see Canvas.clipRect
-     */
-    public fun clipRect(rectF: RectF) {
-        canvas.clipRect(rectF)
-    }
+  /**
+   * Clips the [Canvas] to the specified [rectF].
+   *
+   * @see Canvas.clipRect
+   */
+  public fun clipRect(rectF: RectF) {
+    canvas.clipRect(rectF)
+  }
 
-    /**
-     * Restores the [Canvas] state.
-     *
-     * @see Canvas.restore
-     */
-    public fun restoreCanvas() {
-        canvas.restore()
-    }
+  /**
+   * Restores the [Canvas] state.
+   *
+   * @see Canvas.restore
+   */
+  public fun restoreCanvas() {
+    canvas.restore()
+  }
 
-    /**
-     * Restores the [Canvas] state to the given save level.
-     *
-     * @see Canvas.restoreToCount
-     */
-    public fun restoreCanvasToCount(count: Int) {
-        canvas.restoreToCount(count)
-    }
+  /**
+   * Restores the [Canvas] state to the given save level.
+   *
+   * @see Canvas.restoreToCount
+   */
+  public fun restoreCanvasToCount(count: Int) {
+    canvas.restoreToCount(count)
+  }
 
-    /**
-     * A convenience function for [Canvas.saveLayer].
-     *
-     * @see Canvas.saveLayer
-     */
-    public fun saveLayer(
-        left: Float = 0f,
-        top: Float = 0f,
-        right: Float = canvas.width.toFloat(),
-        bottom: Float = canvas.height.toFloat(),
-    ): Int = canvas.saveLayer(left, top, right, bottom)
+  /**
+   * A convenience function for [Canvas.saveLayer].
+   *
+   * @see Canvas.saveLayer
+   */
+  public fun saveLayer(
+    left: Float = 0f,
+    top: Float = 0f,
+    right: Float = canvas.width.toFloat(),
+    bottom: Float = canvas.height.toFloat(),
+  ): Int = canvas.saveLayer(left, top, right, bottom)
 }
 
 /** @suppress */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public fun drawContext(
-    canvas: Canvas,
-    density: Float = 1f,
-    isLtr: Boolean = true,
-    elevationOverlayColor: Long = DefaultColors.Light.elevationOverlayColor,
-    canvasBounds: RectF = RectF(0f, 0f, canvas.width.toFloat(), canvas.height.toFloat()),
-    spToPx: (Float) -> Float = { it },
+  canvas: Canvas,
+  density: Float = 1f,
+  isLtr: Boolean = true,
+  elevationOverlayColor: Long = DefaultColors.Light.elevationOverlayColor,
+  canvasBounds: RectF = RectF(0f, 0f, canvas.width.toFloat(), canvas.height.toFloat()),
+  spToPx: (Float) -> Float = { it },
 ): DrawContext =
-    object : DrawContext {
-        override val canvasBounds: RectF = canvasBounds
-        override val elevationOverlayColor: Long = elevationOverlayColor
-        override var canvas: Canvas = canvas
-        override val density: Float = density
-        override val isLtr: Boolean = isLtr
-        override val extraStore: MutableExtraStore = MutableExtraStore()
+  object : DrawContext {
+    override val canvasBounds: RectF = canvasBounds
+    override val elevationOverlayColor: Long = elevationOverlayColor
+    override var canvas: Canvas = canvas
+    override val density: Float = density
+    override val isLtr: Boolean = isLtr
+    override val extraStore: MutableExtraStore = MutableExtraStore()
 
-        override fun withOtherCanvas(
-            canvas: Canvas,
-            block: (DrawContext) -> Unit,
-        ) {
-            val originalCanvas = this.canvas
-            this.canvas = canvas
-            block(this)
-            this.canvas = originalCanvas
-        }
-
-        override fun spToPx(sp: Float): Float = spToPx(sp)
+    override fun withOtherCanvas(canvas: Canvas, block: (DrawContext) -> Unit) {
+      val originalCanvas = this.canvas
+      this.canvas = canvas
+      block(this)
+      this.canvas = originalCanvas
     }
+
+    override fun spToPx(sp: Float): Float = spToPx(sp)
+  }

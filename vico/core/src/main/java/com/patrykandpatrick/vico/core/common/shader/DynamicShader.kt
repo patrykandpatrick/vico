@@ -34,145 +34,130 @@ import com.patrykandpatrick.vico.core.common.Point
  * @see Shader
  */
 public interface DynamicShader {
-    /**
-     * Creates a [Shader] by using the provided [bounds].
-     */
-    public fun provideShader(
-        context: DrawContext,
-        bounds: RectF,
-    ): Shader =
-        provideShader(
-            context = context,
-            left = bounds.left,
-            top = bounds.top,
-            right = bounds.right,
-            bottom = bounds.bottom,
-        )
+  /** Creates a [Shader] by using the provided [bounds]. */
+  public fun provideShader(context: DrawContext, bounds: RectF): Shader =
+    provideShader(
+      context = context,
+      left = bounds.left,
+      top = bounds.top,
+      right = bounds.right,
+      bottom = bounds.bottom,
+    )
+
+  /** Creates a [Shader] by using the provided [left], [top], [right], and [bottom] bounds. */
+  public fun provideShader(
+    context: DrawContext,
+    left: Float,
+    top: Float,
+    right: Float,
+    bottom: Float,
+  ): Shader
+
+  /** Gets the color of the pixel at the given point. [bounds] specifies the shaded area. */
+  public fun getColorAt(point: Point, context: DrawContext, bounds: RectF): Int
+
+  public companion object {
+    /** Creates a [DynamicShader] out of the given [bitmap]. */
+    public fun bitmap(
+      bitmap: Bitmap,
+      tileXMode: Shader.TileMode = Shader.TileMode.REPEAT,
+      tileYMode: Shader.TileMode = tileXMode,
+    ): DynamicShader =
+      object : CacheableDynamicShader() {
+        override fun createShader(
+          context: DrawContext,
+          left: Float,
+          top: Float,
+          right: Float,
+          bottom: Float,
+        ): Shader = BitmapShader(bitmap, tileXMode, tileYMode)
+      }
 
     /**
-     * Creates a [Shader] by using the provided [left], [top], [right], and [bottom] bounds.
+     * Creates a [ComposeShader] out of two [DynamicShader]s, combining [first] and [second] via
+     * [mode].
      */
-    public fun provideShader(
-        context: DrawContext,
-        left: Float,
-        top: Float,
-        right: Float,
-        bottom: Float,
-    ): Shader
+    @RequiresApi(Build.VERSION_CODES.Q)
+    public fun compose(
+      first: DynamicShader,
+      second: DynamicShader,
+      mode: BlendMode,
+    ): DynamicShader =
+      object : BaseDynamicShader() {
+        override fun provideShader(
+          context: DrawContext,
+          left: Float,
+          top: Float,
+          right: Float,
+          bottom: Float,
+        ) =
+          ComposeShader(
+            first.provideShader(context, left, top, right, bottom),
+            second.provideShader(context, left, top, right, bottom),
+            mode,
+          )
+      }
 
     /**
-     * Gets the color of the pixel at the given point. [bounds] specifies the shaded area.
+     * Creates a [ComposeShader] out of two [DynamicShader]s, combining [first] and [second] via
+     * [mode].
      */
-    public fun getColorAt(
-        point: Point,
-        context: DrawContext,
-        bounds: RectF,
-    ): Int
+    public fun compose(
+      first: DynamicShader,
+      second: DynamicShader,
+      mode: PorterDuff.Mode,
+    ): DynamicShader =
+      object : BaseDynamicShader() {
+        override fun provideShader(
+          context: DrawContext,
+          left: Float,
+          top: Float,
+          right: Float,
+          bottom: Float,
+        ) =
+          ComposeShader(
+            first.provideShader(context, left, top, right, bottom),
+            second.provideShader(context, left, top, right, bottom),
+            mode,
+          )
+      }
 
-    public companion object {
-        /**
-         * Creates a [DynamicShader] out of the given [bitmap].
-         */
-        public fun bitmap(
-            bitmap: Bitmap,
-            tileXMode: Shader.TileMode = Shader.TileMode.REPEAT,
-            tileYMode: Shader.TileMode = tileXMode,
-        ): DynamicShader =
-            object : CacheableDynamicShader() {
-                override fun createShader(
-                    context: DrawContext,
-                    left: Float,
-                    top: Float,
-                    right: Float,
-                    bottom: Float,
-                ): Shader = BitmapShader(bitmap, tileXMode, tileYMode)
-            }
+    /**
+     * Creates a [DynamicShader] in the form of a horizontal gradient.
+     *
+     * @param colors the sRGB colors to be distributed along the gradient line.
+     */
+    public fun horizontalGradient(vararg colors: Int): DynamicShader = horizontalGradient(colors)
 
-        /**
-         * Creates a [ComposeShader] out of two [DynamicShader]s, combining [first] and [second] via [mode].
-         */
-        @RequiresApi(Build.VERSION_CODES.Q)
-        public fun compose(
-            first: DynamicShader,
-            second: DynamicShader,
-            mode: BlendMode,
-        ): DynamicShader =
-            object : BaseDynamicShader() {
-                override fun provideShader(
-                    context: DrawContext,
-                    left: Float,
-                    top: Float,
-                    right: Float,
-                    bottom: Float,
-                ) = ComposeShader(
-                    first.provideShader(context, left, top, right, bottom),
-                    second.provideShader(context, left, top, right, bottom),
-                    mode,
-                )
-            }
+    /**
+     * Creates a [DynamicShader] in the form of a horizontal gradient.
+     *
+     * @param colors the sRGB colors to be distributed along the gradient line.
+     * @param positions controls the position of each color on the gradient line. Each element of
+     *   the array should belong to the interval [[0, 1]], where 0 corresponds to the start of the
+     *   gradient line, and 1 corresponds to the end of the gradient line. If `null` (the default
+     *   value) is passed, the colors will be distributed evenly along the gradient line.
+     */
+    public fun horizontalGradient(colors: IntArray, positions: FloatArray? = null): DynamicShader =
+      LinearGradientShader(colors, positions, true)
 
-        /**
-         * Creates a [ComposeShader] out of two [DynamicShader]s, combining [first] and [second] via [mode].
-         */
-        public fun compose(
-            first: DynamicShader,
-            second: DynamicShader,
-            mode: PorterDuff.Mode,
-        ): DynamicShader =
-            object : BaseDynamicShader() {
-                override fun provideShader(
-                    context: DrawContext,
-                    left: Float,
-                    top: Float,
-                    right: Float,
-                    bottom: Float,
-                ) = ComposeShader(
-                    first.provideShader(context, left, top, right, bottom),
-                    second.provideShader(context, left, top, right, bottom),
-                    mode,
-                )
-            }
+    /**
+     * Creates a [DynamicShader] in the form of a vertical gradient.
+     *
+     * @param colors the sRGB colors to be distributed along the gradient line.
+     */
+    public fun verticalGradient(vararg colors: Int): DynamicShader = verticalGradient(colors)
 
-        /**
-         * Creates a [DynamicShader] in the form of a horizontal gradient.
-         *
-         * @param colors the sRGB colors to be distributed along the gradient line.
-         */
-        public fun horizontalGradient(vararg colors: Int): DynamicShader = horizontalGradient(colors)
-
-        /**
-         * Creates a [DynamicShader] in the form of a horizontal gradient.
-         *
-         * @param colors the sRGB colors to be distributed along the gradient line.
-         * @param positions controls the position of each color on the gradient line. Each element of the array should belong to
-         * the interval [[0, 1]], where 0 corresponds to the start of the gradient line, and 1 corresponds to the end of the
-         * gradient line. If `null` (the default value) is passed, the colors will be distributed evenly along the gradient
-         * line.
-         */
-        public fun horizontalGradient(
-            colors: IntArray,
-            positions: FloatArray? = null,
-        ): DynamicShader = LinearGradientShader(colors, positions, true)
-
-        /**
-         * Creates a [DynamicShader] in the form of a vertical gradient.
-         *
-         * @param colors the sRGB colors to be distributed along the gradient line.
-         */
-        public fun verticalGradient(vararg colors: Int): DynamicShader = verticalGradient(colors)
-
-        /**
-         * Creates a [DynamicShader] in the form of a vertical gradient.
-         *
-         * @param colors the sRGB colors to be distributed along the gradient line.
-         * @param positions controls the position of each color on the gradient line. Each element of the array should belong to
-         * the interval [[0, 1]], where 0 corresponds to the start of the gradient line, and 1 corresponds to the end of the
-         * gradient line. If `null` (the default value) is passed, the colors will be distributed evenly along the gradient
-         * line.
-         */
-        public fun verticalGradient(
-            colors: IntArray,
-            positions: FloatArray? = null,
-        ): DynamicShader = LinearGradientShader(colors, positions, false)
-    }
+    /**
+     * Creates a [DynamicShader] in the form of a vertical gradient.
+     *
+     * @param colors the sRGB colors to be distributed along the gradient line.
+     * @param positions controls the position of each color on the gradient line. Each element of
+     *   the array should belong to the interval [[0, 1]], where 0 corresponds to the start of the
+     *   gradient line, and 1 corresponds to the end of the gradient line. If `null` (the default
+     *   value) is passed, the colors will be distributed evenly along the gradient line.
+     */
+    public fun verticalGradient(colors: IntArray, positions: FloatArray? = null): DynamicShader =
+      LinearGradientShader(colors, positions, false)
+  }
 }

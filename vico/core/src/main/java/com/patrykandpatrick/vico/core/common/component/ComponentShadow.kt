@@ -29,76 +29,71 @@ import com.patrykandpatrick.vico.core.common.copyColor
  * @property dx the horizontal offset.
  * @property dy the vertical offset.
  * @property color the shadow color.
- * @property applyElevationOverlay whether to apply an elevation overlay to the component casting the shadow.
+ * @property applyElevationOverlay whether to apply an elevation overlay to the component casting
+ *   the shadow.
  */
 public data class ComponentShadow(
-    var radius: Float = 0f,
-    var dx: Float = 0f,
-    var dy: Float = 0f,
-    var color: Int = 0,
-    var applyElevationOverlay: Boolean = false,
+  var radius: Float = 0f,
+  var dx: Float = 0f,
+  var dy: Float = 0f,
+  var color: Int = 0,
+  var applyElevationOverlay: Boolean = false,
 ) {
-    private var laRadius: Float = 0f
-    private var laDx: Float = 0f
-    private var laDy: Float = 0f
-    private var laColor: Int = 0
-    private var laDensity: Float = 0f
+  private var laRadius: Float = 0f
+  private var laDx: Float = 0f
+  private var laDy: Float = 0f
+  private var laColor: Int = 0
+  private var laDensity: Float = 0f
 
-    /**
-     * Checks whether the applied shadow layer needs to be updated.
-     */
-    public fun maybeUpdateShadowLayer(
-        context: DrawContext,
-        paint: Paint,
-        backgroundColor: Int,
-        opacity: Float = 1f,
-    ): Unit =
-        with(context) {
-            if (shouldUpdateShadowLayer(opacity)) {
-                updateShadowLayer(paint, backgroundColor, opacity)
-            }
+  /** Checks whether the applied shadow layer needs to be updated. */
+  public fun maybeUpdateShadowLayer(
+    context: DrawContext,
+    paint: Paint,
+    backgroundColor: Int,
+    opacity: Float = 1f,
+  ): Unit =
+    with(context) {
+      if (shouldUpdateShadowLayer(opacity)) {
+        updateShadowLayer(paint, backgroundColor, opacity)
+      }
+    }
+
+  private fun DrawContext.updateShadowLayer(paint: Paint, backgroundColor: Int, opacity: Float) {
+    if (color == 0 || radius == 0f && dx == 0f && dy == 0f) {
+      paint.clearShadowLayer()
+    } else {
+      paint.color =
+        if (applyElevationOverlay) {
+          applyElevationOverlayToColor(color = backgroundColor, elevationDp = radius * opacity)
+        } else {
+          backgroundColor
         }
+      paint.setShadowLayer(
+        radius.pixels,
+        dx.pixels,
+        dy.pixels,
+        color.copyColor(color.alphaFloat * opacity),
+      )
+    }
+  }
 
-    private fun DrawContext.updateShadowLayer(
-        paint: Paint,
-        backgroundColor: Int,
-        opacity: Float,
+  private fun DrawContext.shouldUpdateShadowLayer(opacity: Float): Boolean {
+    val adjustedColor = color.copyColor(color.alphaFloat * opacity)
+    return if (
+      radius != laRadius ||
+        dx != laDx ||
+        dy != laDy ||
+        adjustedColor != laColor ||
+        density != laDensity
     ) {
-        if (color == 0 || radius == 0f && dx == 0f && dy == 0f) {
-            paint.clearShadowLayer()
-        } else {
-            paint.color =
-                if (applyElevationOverlay) {
-                    applyElevationOverlayToColor(color = backgroundColor, elevationDp = radius * opacity)
-                } else {
-                    backgroundColor
-                }
-            paint.setShadowLayer(
-                radius.pixels,
-                dx.pixels,
-                dy.pixels,
-                color.copyColor(color.alphaFloat * opacity),
-            )
-        }
+      laRadius = radius
+      laDx = dx
+      laDy = dy
+      laColor = adjustedColor
+      laDensity = density
+      true
+    } else {
+      false
     }
-
-    private fun DrawContext.shouldUpdateShadowLayer(opacity: Float): Boolean {
-        val adjustedColor = color.copyColor(color.alphaFloat * opacity)
-        return if (
-            radius != laRadius ||
-            dx != laDx ||
-            dy != laDy ||
-            adjustedColor != laColor ||
-            density != laDensity
-        ) {
-            laRadius = radius
-            laDx = dx
-            laDy = dy
-            laColor = adjustedColor
-            laDensity = density
-            true
-        } else {
-            false
-        }
-    }
+  }
 }

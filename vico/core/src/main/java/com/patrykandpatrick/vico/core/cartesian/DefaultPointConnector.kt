@@ -24,45 +24,53 @@ import com.patrykandpatrick.vico.core.common.half
 import kotlin.math.abs
 
 /**
- * The default implementation of [LineCartesianLayer.LineSpec.PointConnector]. This uses cubic bezier curves.
+ * The default implementation of [LineCartesianLayer.LineSpec.PointConnector]. This uses cubic
+ * bezier curves.
  *
  * @property cubicStrength the strength of the cubic bezier curve between each point on the line.
  */
-public class DefaultPointConnector(
-    private val cubicStrength: Float = Defaults.CUBIC_STRENGTH,
-) : LineCartesianLayer.LineSpec.PointConnector {
-    public override fun connect(
-        path: Path,
-        prevX: Float,
-        prevY: Float,
-        x: Float,
-        y: Float,
-        horizontalDimensions: HorizontalDimensions,
-        bounds: RectF,
-    ) {
-        path.horizontalCubicTo(
-            prevX = prevX,
-            prevY = prevY,
-            x = x,
-            y = y,
-            curvature =
-                abs(x - prevX).half * cubicStrength *
-                    (abs(x = y - prevY) / bounds.bottom * CUBIC_Y_MULTIPLIER).coerceAtMost(maximumValue = 1f),
-        )
-    }
-
-    private companion object {
-        const val CUBIC_Y_MULTIPLIER = 4
-    }
-}
-
-private fun Path.horizontalCubicTo(
+public class DefaultPointConnector(private val cubicStrength: Float = Defaults.CUBIC_STRENGTH) :
+  LineCartesianLayer.LineSpec.PointConnector {
+  public override fun connect(
+    path: Path,
     prevX: Float,
     prevY: Float,
     x: Float,
     y: Float,
-    curvature: Float,
+    horizontalDimensions: HorizontalDimensions,
+    bounds: RectF,
+  ) {
+    path.horizontalCubicTo(
+      prevX = prevX,
+      prevY = prevY,
+      x = x,
+      y = y,
+      curvature =
+        abs(x - prevX).half *
+          cubicStrength *
+          (abs(x = y - prevY) / bounds.bottom * CUBIC_Y_MULTIPLIER).coerceAtMost(maximumValue = 1f),
+    )
+  }
+
+  private companion object {
+    const val CUBIC_Y_MULTIPLIER = 4
+  }
+}
+
+private fun Path.horizontalCubicTo(
+  prevX: Float,
+  prevY: Float,
+  x: Float,
+  y: Float,
+  curvature: Float,
 ) {
-    val directionMultiplier = if (x >= prevX) 1f else -1f
-    cubicTo(prevX + directionMultiplier * curvature, prevY, x - directionMultiplier * curvature, y, x, y)
+  val directionMultiplier = if (x >= prevX) 1f else -1f
+  cubicTo(
+    prevX + directionMultiplier * curvature,
+    prevY,
+    x - directionMultiplier * curvature,
+    y,
+    x,
+    y,
+  )
 }

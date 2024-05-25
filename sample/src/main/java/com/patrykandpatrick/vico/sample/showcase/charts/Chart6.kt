@@ -47,107 +47,100 @@ import com.patrykandpatrick.vico.databinding.Chart6Binding
 import com.patrykandpatrick.vico.sample.showcase.Defaults
 import com.patrykandpatrick.vico.sample.showcase.UISystem
 import com.patrykandpatrick.vico.sample.showcase.rememberMarker
+import kotlin.random.Random
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
-import kotlin.random.Random
 
 @Composable
-internal fun Chart6(
-    uiSystem: UISystem,
-    modifier: Modifier,
-) {
-    val modelProducer = remember { CartesianChartModelProducer.build() }
-    LaunchedEffect(Unit) {
-        withContext(Dispatchers.Default) {
-            while (isActive) {
-                modelProducer.tryRunTransaction {
-                    columnSeries {
-                        repeat(Defaults.MULTI_SERIES_COUNT) {
-                            series(
-                                List(Defaults.ENTRY_COUNT) {
-                                    Defaults.COLUMN_LAYER_MIN_Y +
-                                        Random.nextFloat() * Defaults.COLUMN_LAYER_RELATIVE_MAX_Y
-                                },
-                            )
-                        }
-                    }
+internal fun Chart6(uiSystem: UISystem, modifier: Modifier) {
+  val modelProducer = remember { CartesianChartModelProducer.build() }
+  LaunchedEffect(Unit) {
+    withContext(Dispatchers.Default) {
+      while (isActive) {
+        modelProducer.tryRunTransaction {
+          columnSeries {
+            repeat(Defaults.MULTI_SERIES_COUNT) {
+              series(
+                List(Defaults.ENTRY_COUNT) {
+                  Defaults.COLUMN_LAYER_MIN_Y +
+                    Random.nextFloat() * Defaults.COLUMN_LAYER_RELATIVE_MAX_Y
                 }
-                delay(Defaults.TRANSACTION_INTERVAL_MS)
+              )
             }
+          }
         }
+        delay(Defaults.TRANSACTION_INTERVAL_MS)
+      }
     }
+  }
 
-    when (uiSystem) {
-        UISystem.Compose -> ComposeChart6(modelProducer, modifier)
-        UISystem.Views -> ViewChart6(modelProducer, modifier)
-    }
+  when (uiSystem) {
+    UISystem.Compose -> ComposeChart6(modelProducer, modifier)
+    UISystem.Views -> ViewChart6(modelProducer, modifier)
+  }
 }
 
 @Composable
-private fun ComposeChart6(
-    modelProducer: CartesianChartModelProducer,
-    modifier: Modifier,
-) {
-    val horizontalBox = rememberHorizontalBox()
-    val shape = remember { Shape.cut(topLeftPercent = 50) }
-    CartesianChartHost(
-        chart =
-            rememberCartesianChart(
-                rememberColumnCartesianLayer(
-                    ColumnCartesianLayer.ColumnProvider.series(
-                        columnColors.map { rememberLineComponent(color = it, thickness = 8.dp, shape = shape) },
-                    ),
-                ),
-                startAxis = rememberStartAxis(),
-                bottomAxis = rememberBottomAxis(valueFormatter = bottomAxisValueFormatter),
-                decorations = remember(horizontalBox) { listOf(horizontalBox) },
-            ),
-        modelProducer = modelProducer,
-        modifier = modifier,
-        marker = rememberMarker(),
-        runInitialAnimation = false,
-        zoomState = rememberVicoZoomState(zoomEnabled = false),
-    )
+private fun ComposeChart6(modelProducer: CartesianChartModelProducer, modifier: Modifier) {
+  val horizontalBox = rememberHorizontalBox()
+  val shape = remember { Shape.cut(topLeftPercent = 50) }
+  CartesianChartHost(
+    chart =
+      rememberCartesianChart(
+        rememberColumnCartesianLayer(
+          ColumnCartesianLayer.ColumnProvider.series(
+            columnColors.map { rememberLineComponent(color = it, thickness = 8.dp, shape = shape) }
+          )
+        ),
+        startAxis = rememberStartAxis(),
+        bottomAxis = rememberBottomAxis(valueFormatter = bottomAxisValueFormatter),
+        decorations = remember(horizontalBox) { listOf(horizontalBox) },
+      ),
+    modelProducer = modelProducer,
+    modifier = modifier,
+    marker = rememberMarker(),
+    runInitialAnimation = false,
+    zoomState = rememberVicoZoomState(zoomEnabled = false),
+  )
 }
 
 @Composable
-private fun ViewChart6(
-    modelProducer: CartesianChartModelProducer,
-    modifier: Modifier,
-) {
-    val horizontalBox = rememberHorizontalBox()
-    val decorations = remember(horizontalBox) { listOf(horizontalBox) }
-    val marker = rememberMarker()
-    AndroidViewBinding(Chart6Binding::inflate, modifier) {
-        with(chartView) {
-            chart?.setDecorations(decorations)
-            runInitialAnimation = false
-            this.modelProducer = modelProducer
-            (chart?.bottomAxis as HorizontalAxis<AxisPosition.Horizontal.Bottom>).valueFormatter =
-                bottomAxisValueFormatter
-            this.marker = marker
-        }
+private fun ViewChart6(modelProducer: CartesianChartModelProducer, modifier: Modifier) {
+  val horizontalBox = rememberHorizontalBox()
+  val decorations = remember(horizontalBox) { listOf(horizontalBox) }
+  val marker = rememberMarker()
+  AndroidViewBinding(Chart6Binding::inflate, modifier) {
+    with(chartView) {
+      chart?.setDecorations(decorations)
+      runInitialAnimation = false
+      this.modelProducer = modelProducer
+      (chart?.bottomAxis as HorizontalAxis<AxisPosition.Horizontal.Bottom>).valueFormatter =
+        bottomAxisValueFormatter
+      this.marker = marker
     }
+  }
 }
 
 @Composable
 private fun rememberHorizontalBox() =
-    rememberHorizontalBox(
-        y = { 7f..14f },
-        box = rememberShapeComponent(color = horizontalBoxColor.copy(.36f)),
-        labelComponent =
-            rememberTextComponent(
-                color = Color.Black,
-                background = rememberShapeComponent(Shape.Rectangle, horizontalBoxColor),
-                padding = Dimensions.of(8.dp, 2.dp),
-                margins = Dimensions.of(4.dp),
-                typeface = Typeface.MONOSPACE,
-            ),
-    )
+  rememberHorizontalBox(
+    y = { 7f..14f },
+    box = rememberShapeComponent(color = horizontalBoxColor.copy(.36f)),
+    labelComponent =
+      rememberTextComponent(
+        color = Color.Black,
+        background = rememberShapeComponent(Shape.Rectangle, horizontalBoxColor),
+        padding = Dimensions.of(8.dp, 2.dp),
+        margins = Dimensions.of(4.dp),
+        typeface = Typeface.MONOSPACE,
+      ),
+  )
 
 private val columnColors = listOf(Color(0xff3e6558), Color(0xff5e836a), Color(0xffa5ba8e))
 private val horizontalBoxColor = Color(0xffe9e5af)
 private val daysOfWeek = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
-private val bottomAxisValueFormatter = CartesianValueFormatter { x, _, _ -> daysOfWeek[x.toInt() % daysOfWeek.size] }
+private val bottomAxisValueFormatter = CartesianValueFormatter { x, _, _ ->
+  daysOfWeek[x.toInt() % daysOfWeek.size]
+}

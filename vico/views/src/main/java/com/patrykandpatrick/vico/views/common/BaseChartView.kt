@@ -45,214 +45,191 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
 
-/**
- * Displays a [CartesianChart].
- */
+/** Displays a [CartesianChart]. */
 public abstract class BaseChartView<Model>
-    @JvmOverloads
-    constructor(
-        context: Context,
-        attrs: AttributeSet? = null,
-        defStyleAttr: Int = 0,
-    ) : FrameLayout(context, attrs, defStyleAttr) {
-        protected val contentBounds: RectF = RectF()
+@JvmOverloads
+constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) :
+  FrameLayout(context, attrs, defStyleAttr) {
+  protected val contentBounds: RectF = RectF()
 
-        protected open val measureContext: MutableMeasureContext =
-            MutableMeasureContext(
-                canvasBounds = contentBounds,
-                density = context.density,
-                isLtr = context.isLtr,
-                spToPx = context::spToPx,
-            )
+  protected open val measureContext: MutableMeasureContext =
+    MutableMeasureContext(
+      canvasBounds = contentBounds,
+      density = context.density,
+      isLtr = context.isLtr,
+      spToPx = context::spToPx,
+    )
 
-        /** Houses the chart data. */
-        public var model: Model? = null
-            protected set
+  /** Houses the chart data. */
+  public var model: Model? = null
+    protected set
 
-        protected val animator: ValueAnimator =
-            ValueAnimator.ofFloat(Animation.range.start, Animation.range.endInclusive).apply {
-                duration = Animation.DIFF_DURATION.toLong()
-                interpolator = FastOutSlowInInterpolator()
-            }
-
-        protected val extraStore: MutableExtraStore = MutableExtraStore()
-
-        protected var coroutineScope: CoroutineScope? = null
-
-        protected var animationFrameJob: Job? = null
-
-        protected var finalAnimationFrameJob: Job? = null
-
-        protected var isAnimationRunning: Boolean = false
-
-        protected var isAnimationFrameGenerationRunning: Boolean = false
-
-        protected var placeholder: View? = null
-
-        /**
-         * Whether to display an animation when the chart is created. In this animation, the value of each chart entry
-         * is animated from zero to the actual value.
-         */
-        public var runInitialAnimation: Boolean = true
-
-        /** Used for handling [model] updates. */
-        public var dispatcher: CoroutineDispatcher = Dispatchers.Default
-
-        override fun onAttachedToWindow() {
-            super.onAttachedToWindow()
-            coroutineScope = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob())
-        }
-
-        override fun onDetachedFromWindow() {
-            super.onDetachedFromWindow()
-            coroutineScope?.cancel()
-            coroutineScope = null
-            animator.cancel()
-            isAnimationRunning = false
-        }
-
-        /**
-         * The color of elevation overlays, which are applied to [ShapeComponent]s that cast shadows.
-         */
-        public var elevationOverlayColor: Int = context.defaultColors.elevationOverlayColor.toInt()
-
-        override fun addView(
-            child: View,
-            index: Int,
-            params: ViewGroup.LayoutParams?,
-        ) {
-            check(childCount == 0) { "Only one placeholder can be added." }
-            super.addView(child, index, params)
-            placeholder = child
-            updatePlaceholderVisibility()
-        }
-
-        override fun onViewRemoved(child: View?) {
-            super.onViewRemoved(child)
-            placeholder = null
-        }
-
-        /** Updates the placeholder, which is shown when no chart data is available. */
-        public fun setPlaceholder(
-            view: View?,
-            params: LayoutParams? = null,
-        ) {
-            if (view === placeholder) return
-            removeAllViews()
-            if (view != null) addView(view, params)
-            placeholder = view
-            updatePlaceholderVisibility()
-        }
-
-        protected fun updatePlaceholderVisibility() {
-            placeholder?.isVisible = shouldShowPlaceholder()
-        }
-
-        protected abstract fun shouldShowPlaceholder(): Boolean
-
-        override fun onMeasure(
-            widthMeasureSpec: Int,
-            heightMeasureSpec: Int,
-        ) {
-            val width = widthMeasureSpec.specSize.coerceAtLeast(suggestedMinimumWidth)
-            val defaultHeight = getChartDesiredHeight(widthMeasureSpec, heightMeasureSpec) + verticalPadding
-
-            val height =
-                when (MeasureSpec.getMode(heightMeasureSpec)) {
-                    MeasureSpec.EXACTLY -> heightMeasureSpec.specSize
-                    MeasureSpec.AT_MOST -> defaultHeight.coerceAtMost(heightMeasureSpec.specSize)
-                    else -> defaultHeight
-                }
-
-            super.onMeasure(
-                MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
-                MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY),
-            )
-            contentBounds.set(
-                left = paddingLeft,
-                top = paddingTop,
-                right = width - paddingRight,
-                bottom = height - paddingBottom,
-            )
-        }
-
-        protected fun startAnimation(transformModel: suspend (key: Any, fraction: Float) -> Unit) {
-            if (model != null || runInitialAnimation) {
-                handler?.post {
-                    isAnimationRunning = true
-                    animator.start { fraction ->
-                        when {
-                            !isAnimationRunning -> return@start
-                            !isAnimationFrameGenerationRunning -> {
-                                isAnimationFrameGenerationRunning = true
-                                animationFrameJob =
-                                    coroutineScope?.launch(dispatcher) {
-                                        transformModel(this@BaseChartView, fraction)
-                                        isAnimationFrameGenerationRunning = false
-                                    }
-                            }
-
-                            fraction == 1f -> {
-                                finalAnimationFrameJob =
-                                    coroutineScope?.launch(dispatcher) {
-                                        animationFrameJob?.cancelAndJoin()
-                                        transformModel(this@BaseChartView, fraction)
-                                        isAnimationFrameGenerationRunning = false
-                                    }
-                            }
-                        }
-                    }
-                }
-            } else {
-                finalAnimationFrameJob =
-                    coroutineScope?.launch(dispatcher) {
-                        transformModel(this@BaseChartView, Animation.range.endInclusive)
-                    }
-            }
-        }
-
-        protected abstract fun getChartDesiredHeight(
-            widthMeasureSpec: Int,
-            heightMeasureSpec: Int,
-        ): Int
-
-        /**
-         * Sets the duration (in milliseconds) of difference animations.
-         */
-        public fun setDiffAnimationDuration(durationMillis: Long) {
-            animator.duration = durationMillis
-        }
-
-        /**
-         * Sets the [Interpolator] for difference animations.
-         */
-        public fun setDiffAnimationInterpolator(interpolator: Interpolator) {
-            animator.interpolator = interpolator
-        }
-
-        @Suppress("UNNECESSARY_SAFE_CALL")
-        override fun onRtlPropertiesChanged(layoutDirection: Int) {
-            // This function may be invoked inside of the View’s constructor, before the measureContext is initialized.
-            // In this case, we can ignore this callback, as the layout direction will be determined when the
-            // MeasureContext instance is created.
-            measureContext?.isLtr = layoutDirection == ViewCompat.LAYOUT_DIRECTION_LTR
-        }
+  protected val animator: ValueAnimator =
+    ValueAnimator.ofFloat(Animation.range.start, Animation.range.endInclusive).apply {
+      duration = Animation.DIFF_DURATION.toLong()
+      interpolator = FastOutSlowInInterpolator()
     }
 
-private fun ValueAnimator.start(block: (Float) -> Unit) {
-    val updateListener = ValueAnimator.AnimatorUpdateListener { block(it.animatedFraction) }
-    addUpdateListener(updateListener)
-    addListener(
-        object : AnimatorListenerAdapter() {
-            override fun onAnimationCancel(animation: Animator) {
-                removeUpdateListener(updateListener)
-                removeListener(this)
-            }
+  protected val extraStore: MutableExtraStore = MutableExtraStore()
 
-            override fun onAnimationEnd(animation: Animator) {
-                onAnimationCancel(animation)
-            }
-        },
+  protected var coroutineScope: CoroutineScope? = null
+
+  protected var animationFrameJob: Job? = null
+
+  protected var finalAnimationFrameJob: Job? = null
+
+  protected var isAnimationRunning: Boolean = false
+
+  protected var isAnimationFrameGenerationRunning: Boolean = false
+
+  protected var placeholder: View? = null
+
+  /**
+   * Whether to display an animation when the chart is created. In this animation, the value of each
+   * chart entry is animated from zero to the actual value.
+   */
+  public var runInitialAnimation: Boolean = true
+
+  /** Used for handling [model] updates. */
+  public var dispatcher: CoroutineDispatcher = Dispatchers.Default
+
+  override fun onAttachedToWindow() {
+    super.onAttachedToWindow()
+    coroutineScope = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob())
+  }
+
+  override fun onDetachedFromWindow() {
+    super.onDetachedFromWindow()
+    coroutineScope?.cancel()
+    coroutineScope = null
+    animator.cancel()
+    isAnimationRunning = false
+  }
+
+  /** The color of elevation overlays, which are applied to [ShapeComponent]s that cast shadows. */
+  public var elevationOverlayColor: Int = context.defaultColors.elevationOverlayColor.toInt()
+
+  override fun addView(child: View, index: Int, params: ViewGroup.LayoutParams?) {
+    check(childCount == 0) { "Only one placeholder can be added." }
+    super.addView(child, index, params)
+    placeholder = child
+    updatePlaceholderVisibility()
+  }
+
+  override fun onViewRemoved(child: View?) {
+    super.onViewRemoved(child)
+    placeholder = null
+  }
+
+  /** Updates the placeholder, which is shown when no chart data is available. */
+  public fun setPlaceholder(view: View?, params: LayoutParams? = null) {
+    if (view === placeholder) return
+    removeAllViews()
+    if (view != null) addView(view, params)
+    placeholder = view
+    updatePlaceholderVisibility()
+  }
+
+  protected fun updatePlaceholderVisibility() {
+    placeholder?.isVisible = shouldShowPlaceholder()
+  }
+
+  protected abstract fun shouldShowPlaceholder(): Boolean
+
+  override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+    val width = widthMeasureSpec.specSize.coerceAtLeast(suggestedMinimumWidth)
+    val defaultHeight = getChartDesiredHeight(widthMeasureSpec, heightMeasureSpec) + verticalPadding
+
+    val height =
+      when (MeasureSpec.getMode(heightMeasureSpec)) {
+        MeasureSpec.EXACTLY -> heightMeasureSpec.specSize
+        MeasureSpec.AT_MOST -> defaultHeight.coerceAtMost(heightMeasureSpec.specSize)
+        else -> defaultHeight
+      }
+
+    super.onMeasure(
+      MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
+      MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY),
     )
-    start()
+    contentBounds.set(
+      left = paddingLeft,
+      top = paddingTop,
+      right = width - paddingRight,
+      bottom = height - paddingBottom,
+    )
+  }
+
+  protected fun startAnimation(transformModel: suspend (key: Any, fraction: Float) -> Unit) {
+    if (model != null || runInitialAnimation) {
+      handler?.post {
+        isAnimationRunning = true
+        animator.start { fraction ->
+          when {
+            !isAnimationRunning -> return@start
+            !isAnimationFrameGenerationRunning -> {
+              isAnimationFrameGenerationRunning = true
+              animationFrameJob =
+                coroutineScope?.launch(dispatcher) {
+                  transformModel(this@BaseChartView, fraction)
+                  isAnimationFrameGenerationRunning = false
+                }
+            }
+            fraction == 1f -> {
+              finalAnimationFrameJob =
+                coroutineScope?.launch(dispatcher) {
+                  animationFrameJob?.cancelAndJoin()
+                  transformModel(this@BaseChartView, fraction)
+                  isAnimationFrameGenerationRunning = false
+                }
+            }
+          }
+        }
+      }
+    } else {
+      finalAnimationFrameJob =
+        coroutineScope?.launch(dispatcher) {
+          transformModel(this@BaseChartView, Animation.range.endInclusive)
+        }
+    }
+  }
+
+  protected abstract fun getChartDesiredHeight(widthMeasureSpec: Int, heightMeasureSpec: Int): Int
+
+  /** Sets the duration (in milliseconds) of difference animations. */
+  public fun setDiffAnimationDuration(durationMillis: Long) {
+    animator.duration = durationMillis
+  }
+
+  /** Sets the [Interpolator] for difference animations. */
+  public fun setDiffAnimationInterpolator(interpolator: Interpolator) {
+    animator.interpolator = interpolator
+  }
+
+  @Suppress("UNNECESSARY_SAFE_CALL")
+  override fun onRtlPropertiesChanged(layoutDirection: Int) {
+    // This function may be invoked inside of the View’s constructor, before the measureContext is
+    // initialized.
+    // In this case, we can ignore this callback, as the layout direction will be determined when
+    // the
+    // MeasureContext instance is created.
+    measureContext?.isLtr = layoutDirection == ViewCompat.LAYOUT_DIRECTION_LTR
+  }
+}
+
+private fun ValueAnimator.start(block: (Float) -> Unit) {
+  val updateListener = ValueAnimator.AnimatorUpdateListener { block(it.animatedFraction) }
+  addUpdateListener(updateListener)
+  addListener(
+    object : AnimatorListenerAdapter() {
+      override fun onAnimationCancel(animation: Animator) {
+        removeUpdateListener(updateListener)
+        removeListener(this)
+      }
+
+      override fun onAnimationEnd(animation: Animator) {
+        onAnimationCancel(animation)
+      }
+    }
+  )
+  start()
 }

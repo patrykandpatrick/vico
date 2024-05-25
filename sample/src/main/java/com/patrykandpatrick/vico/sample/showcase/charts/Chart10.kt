@@ -41,60 +41,53 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 
 @Composable
-internal fun Chart10(
-    uiSystem: UISystem,
-    modifier: Modifier,
-) {
-    val modelProducer = remember { CartesianChartModelProducer.build() }
-    LaunchedEffect(key1 = Unit) {
-        withContext(Dispatchers.Default) {
-            while (isActive) {
-                modelProducer.tryRunTransaction {
-                    add(RandomCartesianModelGenerator.getRandomCandlestickLayerModelPartial())
-                }
-                delay(Defaults.TRANSACTION_INTERVAL_MS)
-            }
+internal fun Chart10(uiSystem: UISystem, modifier: Modifier) {
+  val modelProducer = remember { CartesianChartModelProducer.build() }
+  LaunchedEffect(key1 = Unit) {
+    withContext(Dispatchers.Default) {
+      while (isActive) {
+        modelProducer.tryRunTransaction {
+          add(RandomCartesianModelGenerator.getRandomCandlestickLayerModelPartial())
         }
+        delay(Defaults.TRANSACTION_INTERVAL_MS)
+      }
     }
-    when (uiSystem) {
-        UISystem.Compose -> ComposeChart10(modelProducer, modifier)
-        UISystem.Views -> ViewChart10(modelProducer, modifier)
-    }
+  }
+  when (uiSystem) {
+    UISystem.Compose -> ComposeChart10(modelProducer, modifier)
+    UISystem.Views -> ViewChart10(modelProducer, modifier)
+  }
 }
 
 @Composable
-private fun ComposeChart10(
-    modelProducer: CartesianChartModelProducer,
-    modifier: Modifier,
-) {
-    val marker = rememberMarker(showIndicator = false)
-    CartesianChartHost(
-        chart =
-            rememberCartesianChart(
-                rememberCandlestickCartesianLayer(),
-                startAxis = rememberStartAxis(),
-                bottomAxis =
-                    rememberBottomAxis(
-                        guideline = null,
-                        itemPlacer =
-                            remember { AxisItemPlacer.Horizontal.default(spacing = 3, addExtremeLabelPadding = true) },
-                    ),
-            ),
-        modelProducer = modelProducer,
-        marker = marker,
-        modifier = modifier,
-        horizontalLayout = HorizontalLayout.fullWidth(),
-    )
+private fun ComposeChart10(modelProducer: CartesianChartModelProducer, modifier: Modifier) {
+  val marker = rememberMarker(showIndicator = false)
+  CartesianChartHost(
+    chart =
+      rememberCartesianChart(
+        rememberCandlestickCartesianLayer(),
+        startAxis = rememberStartAxis(),
+        bottomAxis =
+          rememberBottomAxis(
+            guideline = null,
+            itemPlacer =
+              remember {
+                AxisItemPlacer.Horizontal.default(spacing = 3, addExtremeLabelPadding = true)
+              },
+          ),
+      ),
+    modelProducer = modelProducer,
+    marker = marker,
+    modifier = modifier,
+    horizontalLayout = HorizontalLayout.fullWidth(),
+  )
 }
 
 @Composable
-private fun ViewChart10(
-    modelProducer: CartesianChartModelProducer,
-    modifier: Modifier,
-) {
-    val marker = rememberMarker(showIndicator = false)
-    AndroidViewBinding(Chart10Binding::inflate, modifier = modifier) {
-        chartView.modelProducer = modelProducer
-        chartView.marker = marker
-    }
+private fun ViewChart10(modelProducer: CartesianChartModelProducer, modifier: Modifier) {
+  val marker = rememberMarker(showIndicator = false)
+  AndroidViewBinding(Chart10Binding::inflate, modifier = modifier) {
+    chartView.modelProducer = modelProducer
+    chartView.marker = marker
+  }
 }

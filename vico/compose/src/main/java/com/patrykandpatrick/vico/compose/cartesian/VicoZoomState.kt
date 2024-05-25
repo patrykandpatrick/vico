@@ -32,144 +32,127 @@ import com.patrykandpatrick.vico.core.cartesian.Zoom
 import com.patrykandpatrick.vico.core.cartesian.scale
 import com.patrykandpatrick.vico.core.common.Defaults
 
-/**
- * Houses information on a [CartesianChart]’s zoom factor. Allows for zoom customization.
- */
+/** Houses information on a [CartesianChart]’s zoom factor. Allows for zoom customization. */
 public class VicoZoomState {
-    private val initialZoom: Zoom
-    private val minZoom: Zoom
-    private val maxZoom: Zoom
-    private var overridden = false
-    private val _value: MutableFloatState
-    private val _valueRange = mutableStateOf(0f..0f)
-    internal val zoomEnabled: Boolean
+  private val initialZoom: Zoom
+  private val minZoom: Zoom
+  private val maxZoom: Zoom
+  private var overridden = false
+  private val _value: MutableFloatState
+  private val _valueRange = mutableStateOf(0f..0f)
+  internal val zoomEnabled: Boolean
 
-    /** The current zoom factor. */
-    public var value: Float
-        get() = _value.floatValue
-        private set(newValue) {
-            _value.floatValue = newValue.coerceIn(valueRange)
-        }
-
-    /** The range of zoom factors. */
-    public var valueRange: ClosedFloatingPointRange<Float>
-        get() = _valueRange.value
-        private set(newValueRange) {
-            if (newValueRange == valueRange) return
-            _valueRange.value = newValueRange
-            value = value
-        }
-
-    internal constructor(
-        zoomEnabled: Boolean,
-        initialZoom: Zoom,
-        minZoom: Zoom,
-        maxZoom: Zoom,
-        value: Float,
-        overridden: Boolean,
-    ) {
-        this.zoomEnabled = zoomEnabled
-        this.initialZoom = initialZoom
-        this.minZoom = minZoom
-        this.maxZoom = maxZoom
-        _value = mutableFloatStateOf(value)
-        this.overridden = overridden
+  /** The current zoom factor. */
+  public var value: Float
+    get() = _value.floatValue
+    private set(newValue) {
+      _value.floatValue = newValue.coerceIn(valueRange)
     }
 
-    /**
-     * Houses information on a [CartesianChart]’s zoom factor. Allows for zoom customization.
-     *
-     * @param zoomEnabled whether zooming is enabled.
-     * @param initialZoom represents the initial zoom factor.
-     * @param minZoom represents the minimum zoom factor.
-     * @param maxZoom represents the maximum zoom factor.
-     */
-    public constructor(
-        zoomEnabled: Boolean,
-        initialZoom: Zoom,
-        minZoom: Zoom,
-        maxZoom: Zoom,
-    ) : this(
-        zoomEnabled = zoomEnabled,
-        initialZoom = initialZoom,
-        minZoom = minZoom,
-        maxZoom = maxZoom,
-        value = 0f,
-        overridden = false,
-    )
-
-    internal fun update(
-        context: CartesianMeasureContext,
-        horizontalDimensions: MutableHorizontalDimensions,
-        bounds: RectF,
-    ) {
-        val minValue = minZoom.getValue(context, horizontalDimensions, bounds)
-        val maxValue = maxZoom.getValue(context, horizontalDimensions, bounds)
-        valueRange = minValue..maxValue
-        if (!overridden) value = initialZoom.getValue(context, horizontalDimensions, bounds)
-        horizontalDimensions.scale(value)
+  /** The range of zoom factors. */
+  public var valueRange: ClosedFloatingPointRange<Float>
+    get() = _valueRange.value
+    private set(newValueRange) {
+      if (newValueRange == valueRange) return
+      _valueRange.value = newValueRange
+      value = value
     }
 
-    internal fun zoom(
-        factor: Float,
-        centroidX: Float,
-        scroll: Float,
-        bounds: RectF,
-    ): Scroll {
-        overridden = true
-        val oldValue = value
-        value *= factor
-        if (value == oldValue) return Scroll.Relative.pixels(0f)
-        val transformationAxisX = scroll + centroidX - bounds.left
-        val zoomedTransformationAxisX = transformationAxisX * (value / oldValue)
-        return Scroll.Relative.pixels(zoomedTransformationAxisX - transformationAxisX)
-    }
+  internal constructor(
+    zoomEnabled: Boolean,
+    initialZoom: Zoom,
+    minZoom: Zoom,
+    maxZoom: Zoom,
+    value: Float,
+    overridden: Boolean,
+  ) {
+    this.zoomEnabled = zoomEnabled
+    this.initialZoom = initialZoom
+    this.minZoom = minZoom
+    this.maxZoom = maxZoom
+    _value = mutableFloatStateOf(value)
+    this.overridden = overridden
+  }
 
-    internal companion object {
-        fun Saver(
-            zoomEnabled: Boolean,
-            initialZoom: Zoom,
-            minZoom: Zoom,
-            maxZoom: Zoom,
-        ) = Saver<VicoZoomState, Pair<Float, Boolean>>(
-            save = { it.value to it.overridden },
-            restore = { (value, overridden) ->
-                VicoZoomState(
-                    zoomEnabled,
-                    initialZoom,
-                    minZoom,
-                    maxZoom,
-                    value,
-                    overridden,
-                )
-            },
-        )
-    }
+  /**
+   * Houses information on a [CartesianChart]’s zoom factor. Allows for zoom customization.
+   *
+   * @param zoomEnabled whether zooming is enabled.
+   * @param initialZoom represents the initial zoom factor.
+   * @param minZoom represents the minimum zoom factor.
+   * @param maxZoom represents the maximum zoom factor.
+   */
+  public constructor(
+    zoomEnabled: Boolean,
+    initialZoom: Zoom,
+    minZoom: Zoom,
+    maxZoom: Zoom,
+  ) : this(
+    zoomEnabled = zoomEnabled,
+    initialZoom = initialZoom,
+    minZoom = minZoom,
+    maxZoom = maxZoom,
+    value = 0f,
+    overridden = false,
+  )
+
+  internal fun update(
+    context: CartesianMeasureContext,
+    horizontalDimensions: MutableHorizontalDimensions,
+    bounds: RectF,
+  ) {
+    val minValue = minZoom.getValue(context, horizontalDimensions, bounds)
+    val maxValue = maxZoom.getValue(context, horizontalDimensions, bounds)
+    valueRange = minValue..maxValue
+    if (!overridden) value = initialZoom.getValue(context, horizontalDimensions, bounds)
+    horizontalDimensions.scale(value)
+  }
+
+  internal fun zoom(factor: Float, centroidX: Float, scroll: Float, bounds: RectF): Scroll {
+    overridden = true
+    val oldValue = value
+    value *= factor
+    if (value == oldValue) return Scroll.Relative.pixels(0f)
+    val transformationAxisX = scroll + centroidX - bounds.left
+    val zoomedTransformationAxisX = transformationAxisX * (value / oldValue)
+    return Scroll.Relative.pixels(zoomedTransformationAxisX - transformationAxisX)
+  }
+
+  internal companion object {
+    fun Saver(zoomEnabled: Boolean, initialZoom: Zoom, minZoom: Zoom, maxZoom: Zoom) =
+      Saver<VicoZoomState, Pair<Float, Boolean>>(
+        save = { it.value to it.overridden },
+        restore = { (value, overridden) ->
+          VicoZoomState(zoomEnabled, initialZoom, minZoom, maxZoom, value, overridden)
+        },
+      )
+  }
 }
 
 /** Creates and remembers a [VicoZoomState] instance. */
 @Composable
 public fun rememberVicoZoomState(
-    zoomEnabled: Boolean = true,
-    initialZoom: Zoom = remember { Zoom.max(Zoom.static(), Zoom.Content) },
-    minZoom: Zoom = Zoom.Content,
-    maxZoom: Zoom = remember { Zoom.max(Zoom.static(Defaults.MAX_ZOOM), Zoom.Content) },
+  zoomEnabled: Boolean = true,
+  initialZoom: Zoom = remember { Zoom.max(Zoom.static(), Zoom.Content) },
+  minZoom: Zoom = Zoom.Content,
+  maxZoom: Zoom = remember { Zoom.max(Zoom.static(Defaults.MAX_ZOOM), Zoom.Content) },
 ): VicoZoomState =
-    rememberSaveable(
-        zoomEnabled,
-        initialZoom,
-        minZoom,
-        maxZoom,
-        saver =
-            remember(zoomEnabled, initialZoom, minZoom, maxZoom) {
-                VicoZoomState.Saver(zoomEnabled, initialZoom, minZoom, maxZoom)
-            },
-    ) {
-        VicoZoomState(zoomEnabled, initialZoom, minZoom, maxZoom)
-    }
+  rememberSaveable(
+    zoomEnabled,
+    initialZoom,
+    minZoom,
+    maxZoom,
+    saver =
+      remember(zoomEnabled, initialZoom, minZoom, maxZoom) {
+        VicoZoomState.Saver(zoomEnabled, initialZoom, minZoom, maxZoom)
+      },
+  ) {
+    VicoZoomState(zoomEnabled, initialZoom, minZoom, maxZoom)
+  }
 
 @Composable
 internal fun rememberDefaultVicoZoomState(scrollEnabled: Boolean) =
-    rememberVicoZoomState(
-        initialZoom = if (scrollEnabled) remember { Zoom.max(Zoom.static(), Zoom.Content) } else Zoom.Content,
-    )
+  rememberVicoZoomState(
+    initialZoom =
+      if (scrollEnabled) remember { Zoom.max(Zoom.static(), Zoom.Content) } else Zoom.Content
+  )

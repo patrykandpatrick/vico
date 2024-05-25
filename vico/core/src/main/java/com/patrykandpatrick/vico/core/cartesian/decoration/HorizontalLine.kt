@@ -43,71 +43,68 @@ import java.text.DecimalFormat
  * @property horizontalLabelPosition defines the horizontal position of the label.
  * @property verticalLabelPosition defines the vertical position of the label.
  * @property labelRotationDegrees the rotation of the label (in degrees).
- * @property verticalAxisPosition the position of the [VerticalAxis] whose scale the [HorizontalLine] should use when
- * interpreting [y].
+ * @property verticalAxisPosition the position of the [VerticalAxis] whose scale the
+ *   [HorizontalLine] should use when interpreting [y].
  */
 public class HorizontalLine(
-    private val y: (ExtraStore) -> Float,
-    private val line: LineComponent,
-    private val labelComponent: TextComponent? = null,
-    private val label: (ExtraStore) -> CharSequence = { getLabel(y(it)) },
-    private val horizontalLabelPosition: HorizontalPosition = HorizontalPosition.Start,
-    private val verticalLabelPosition: VerticalPosition = VerticalPosition.Top,
-    private val labelRotationDegrees: Float = 0f,
-    private val verticalAxisPosition: AxisPosition.Vertical? = null,
+  private val y: (ExtraStore) -> Float,
+  private val line: LineComponent,
+  private val labelComponent: TextComponent? = null,
+  private val label: (ExtraStore) -> CharSequence = { getLabel(y(it)) },
+  private val horizontalLabelPosition: HorizontalPosition = HorizontalPosition.Start,
+  private val verticalLabelPosition: VerticalPosition = VerticalPosition.Top,
+  private val labelRotationDegrees: Float = 0f,
+  private val verticalAxisPosition: AxisPosition.Vertical? = null,
 ) : Decoration {
-    override fun onDrawAboveChart(
-        context: CartesianDrawContext,
-        bounds: RectF,
-    ) {
-        with(context) {
-            val yRange = chartValues.getYRange(verticalAxisPosition)
-            val extraStore = chartValues.model.extraStore
-            val y = y(extraStore)
-            val label = label(extraStore)
-            val canvasY = bounds.bottom - (y - yRange.minY) / yRange.length * bounds.height()
-            line.drawHorizontal(context, bounds.left, bounds.right, canvasY)
-            if (labelComponent == null) return
-            val clippingFreeVerticalLabelPosition =
-                verticalLabelPosition.inBounds(
-                    bounds = bounds,
-                    distanceFromPoint = line.thicknessDp.half.pixels,
-                    componentHeight =
-                        labelComponent.getHeight(
-                            context = context,
-                            text = label,
-                            rotationDegrees = labelRotationDegrees,
-                        ),
-                    y = canvasY,
-                )
-            labelComponent.drawText(
-                context = context,
-                text = label,
-                textX =
-                    when (horizontalLabelPosition) {
-                        HorizontalPosition.Start -> bounds.getStart(isLtr)
-                        HorizontalPosition.Center -> bounds.centerX()
-                        HorizontalPosition.End -> bounds.getEnd(isLtr)
-                    },
-                textY =
-                    when (clippingFreeVerticalLabelPosition) {
-                        VerticalPosition.Top -> canvasY - line.thicknessDp.half.pixels
-                        VerticalPosition.Center -> canvasY
-                        VerticalPosition.Bottom -> canvasY + line.thicknessDp.half.pixels
-                    },
-                horizontalPosition = -horizontalLabelPosition,
-                verticalPosition = clippingFreeVerticalLabelPosition,
-                maxTextWidth = bounds.width().toInt(),
-                rotationDegrees = labelRotationDegrees,
-            )
-        }
+  override fun onDrawAboveChart(context: CartesianDrawContext, bounds: RectF) {
+    with(context) {
+      val yRange = chartValues.getYRange(verticalAxisPosition)
+      val extraStore = chartValues.model.extraStore
+      val y = y(extraStore)
+      val label = label(extraStore)
+      val canvasY = bounds.bottom - (y - yRange.minY) / yRange.length * bounds.height()
+      line.drawHorizontal(context, bounds.left, bounds.right, canvasY)
+      if (labelComponent == null) return
+      val clippingFreeVerticalLabelPosition =
+        verticalLabelPosition.inBounds(
+          bounds = bounds,
+          distanceFromPoint = line.thicknessDp.half.pixels,
+          componentHeight =
+            labelComponent.getHeight(
+              context = context,
+              text = label,
+              rotationDegrees = labelRotationDegrees,
+            ),
+          y = canvasY,
+        )
+      labelComponent.drawText(
+        context = context,
+        text = label,
+        textX =
+          when (horizontalLabelPosition) {
+            HorizontalPosition.Start -> bounds.getStart(isLtr)
+            HorizontalPosition.Center -> bounds.centerX()
+            HorizontalPosition.End -> bounds.getEnd(isLtr)
+          },
+        textY =
+          when (clippingFreeVerticalLabelPosition) {
+            VerticalPosition.Top -> canvasY - line.thicknessDp.half.pixels
+            VerticalPosition.Center -> canvasY
+            VerticalPosition.Bottom -> canvasY + line.thicknessDp.half.pixels
+          },
+        horizontalPosition = -horizontalLabelPosition,
+        verticalPosition = clippingFreeVerticalLabelPosition,
+        maxTextWidth = bounds.width().toInt(),
+        rotationDegrees = labelRotationDegrees,
+      )
     }
+  }
 
-    /** @suppress */
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    public companion object {
-        private val decimalFormat: DecimalFormat = DecimalFormat("#.##;−#.##")
+  /** @suppress */
+  @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+  public companion object {
+    private val decimalFormat: DecimalFormat = DecimalFormat("#.##;−#.##")
 
-        public fun getLabel(y: Float): String = decimalFormat.format(y)
-    }
+    public fun getLabel(y: Float): String = decimalFormat.format(y)
+  }
 }

@@ -35,80 +35,100 @@ import com.patrykandpatrick.vico.core.common.component.LineComponent
 
 @Composable
 private fun Candle.Companion.sharpFilledCandle(
-    color: Color,
-    thickness: Dp = Defaults.CANDLE_BODY_WIDTH_DP.dp,
+  color: Color,
+  thickness: Dp = Defaults.CANDLE_BODY_WIDTH_DP.dp,
 ) = rememberCandle(rememberLineComponent(color, thickness))
 
 @Composable
 private fun Candle.Companion.sharpHollowCandle(
-    color: Color,
-    thickness: Dp = Defaults.CANDLE_BODY_WIDTH_DP.dp,
-    strokeWidth: Dp = Defaults.HOLLOW_CANDLE_STROKE_WIDTH_DP.dp,
-) = rememberCandle(
+  color: Color,
+  thickness: Dp = Defaults.CANDLE_BODY_WIDTH_DP.dp,
+  strokeWidth: Dp = Defaults.HOLLOW_CANDLE_STROKE_WIDTH_DP.dp,
+) =
+  rememberCandle(
     rememberLineComponent(
-        color = Color.Transparent,
-        thickness = thickness,
-        strokeWidth = strokeWidth,
-        strokeColor = color,
-    ),
-)
+      color = Color.Transparent,
+      thickness = thickness,
+      strokeWidth = strokeWidth,
+      strokeColor = color,
+    )
+  )
 
 @Composable
 private fun Candle.copyWithColor(color: Color) =
-    rememberCandle(body.copyWithColor(color), topWick.copyWithColor(color), bottomWick.copyWithColor(color))
+  rememberCandle(
+    body.copyWithColor(color),
+    topWick.copyWithColor(color),
+    bottomWick.copyWithColor(color),
+  )
 
 private fun LineComponent.copyWithColor(color: Color) =
-    copy(
-        color = if (this.color == android.graphics.Color.TRANSPARENT) this.color else color.toArgb(),
-        strokeColor = if (this.strokeColor == android.graphics.Color.TRANSPARENT) this.color else color.toArgb(),
-    )
+  copy(
+    color = if (this.color == android.graphics.Color.TRANSPARENT) this.color else color.toArgb(),
+    strokeColor =
+      if (this.strokeColor == android.graphics.Color.TRANSPARENT) this.color else color.toArgb(),
+  )
 
 /** Creates and remembers a [CandlestickCartesianLayer.Candle]. */
 @Composable
 public fun rememberCandle(
-    body: LineComponent,
-    topWick: LineComponent = remember(body) { body.asWick() },
-    bottomWick: LineComponent = topWick,
+  body: LineComponent,
+  topWick: LineComponent = remember(body) { body.asWick() },
+  bottomWick: LineComponent = topWick,
 ): Candle = remember(body, topWick, bottomWick) { Candle(body, topWick, bottomWick) }
 
-/** An alias for [CandlestickCartesianLayer.CandleProvider.Companion.absolute] with default arguments. */
+/**
+ * An alias for [CandlestickCartesianLayer.CandleProvider.Companion.absolute] with default
+ * arguments.
+ */
 @Composable
 @Stable
 public fun CandlestickCartesianLayer.CandleProvider.Companion.absolute(
-    bullish: Candle = Candle.sharpFilledCandle(vicoTheme.candlestickCartesianLayerColors.bullish),
-    neutral: Candle = bullish.copyWithColor(vicoTheme.candlestickCartesianLayerColors.neutral),
-    bearish: Candle = bullish.copyWithColor(vicoTheme.candlestickCartesianLayerColors.bearish),
+  bullish: Candle = Candle.sharpFilledCandle(vicoTheme.candlestickCartesianLayerColors.bullish),
+  neutral: Candle = bullish.copyWithColor(vicoTheme.candlestickCartesianLayerColors.neutral),
+  bearish: Candle = bullish.copyWithColor(vicoTheme.candlestickCartesianLayerColors.bearish),
 ): CandlestickCartesianLayer.CandleProvider =
-    CandlestickCartesianLayer.CandleProvider.absolute(bullish, neutral, bearish)
+  CandlestickCartesianLayer.CandleProvider.absolute(bullish, neutral, bearish)
 
-/** An alias for [CandlestickCartesianLayer.CandleProvider.Companion.absoluteRelative] with default arguments. */
+/**
+ * An alias for [CandlestickCartesianLayer.CandleProvider.Companion.absoluteRelative] with default
+ * arguments.
+ */
 @Composable
 @Stable
 public fun CandlestickCartesianLayer.CandleProvider.Companion.absoluteRelative(
-    absolutelyBullishRelativelyBullish: Candle =
-        Candle.sharpHollowCandle(vicoTheme.candlestickCartesianLayerColors.bullish),
-    absolutelyBullishRelativelyNeutral: Candle =
-        absolutelyBullishRelativelyBullish.copyWithColor(vicoTheme.candlestickCartesianLayerColors.neutral),
-    absolutelyBullishRelativelyBearish: Candle =
-        absolutelyBullishRelativelyBullish.copyWithColor(vicoTheme.candlestickCartesianLayerColors.bearish),
-    absolutelyNeutralRelativelyBullish: Candle = absolutelyBullishRelativelyBullish,
-    absolutelyNeutralRelativelyNeutral: Candle = absolutelyBullishRelativelyNeutral,
-    absolutelyNeutralRelativelyBearish: Candle = absolutelyBullishRelativelyBearish,
-    absolutelyBearishRelativelyBullish: Candle =
-        Candle.sharpFilledCandle(vicoTheme.candlestickCartesianLayerColors.bullish),
-    absolutelyBearishRelativelyNeutral: Candle =
-        absolutelyBearishRelativelyBullish.copyWithColor(vicoTheme.candlestickCartesianLayerColors.neutral),
-    absolutelyBearishRelativelyBearish: Candle =
-        absolutelyBearishRelativelyBullish.copyWithColor(vicoTheme.candlestickCartesianLayerColors.bearish),
+  absolutelyBullishRelativelyBullish: Candle =
+    Candle.sharpHollowCandle(vicoTheme.candlestickCartesianLayerColors.bullish),
+  absolutelyBullishRelativelyNeutral: Candle =
+    absolutelyBullishRelativelyBullish.copyWithColor(
+      vicoTheme.candlestickCartesianLayerColors.neutral
+    ),
+  absolutelyBullishRelativelyBearish: Candle =
+    absolutelyBullishRelativelyBullish.copyWithColor(
+      vicoTheme.candlestickCartesianLayerColors.bearish
+    ),
+  absolutelyNeutralRelativelyBullish: Candle = absolutelyBullishRelativelyBullish,
+  absolutelyNeutralRelativelyNeutral: Candle = absolutelyBullishRelativelyNeutral,
+  absolutelyNeutralRelativelyBearish: Candle = absolutelyBullishRelativelyBearish,
+  absolutelyBearishRelativelyBullish: Candle =
+    Candle.sharpFilledCandle(vicoTheme.candlestickCartesianLayerColors.bullish),
+  absolutelyBearishRelativelyNeutral: Candle =
+    absolutelyBearishRelativelyBullish.copyWithColor(
+      vicoTheme.candlestickCartesianLayerColors.neutral
+    ),
+  absolutelyBearishRelativelyBearish: Candle =
+    absolutelyBearishRelativelyBullish.copyWithColor(
+      vicoTheme.candlestickCartesianLayerColors.bearish
+    ),
 ): CandlestickCartesianLayer.CandleProvider =
-    CandlestickCartesianLayer.CandleProvider.absoluteRelative(
-        absolutelyBullishRelativelyBullish,
-        absolutelyBullishRelativelyNeutral,
-        absolutelyBullishRelativelyBearish,
-        absolutelyNeutralRelativelyBullish,
-        absolutelyNeutralRelativelyNeutral,
-        absolutelyNeutralRelativelyBearish,
-        absolutelyBearishRelativelyBullish,
-        absolutelyBearishRelativelyNeutral,
-        absolutelyBearishRelativelyBearish,
-    )
+  CandlestickCartesianLayer.CandleProvider.absoluteRelative(
+    absolutelyBullishRelativelyBullish,
+    absolutelyBullishRelativelyNeutral,
+    absolutelyBullishRelativelyBearish,
+    absolutelyNeutralRelativelyBullish,
+    absolutelyNeutralRelativelyNeutral,
+    absolutelyNeutralRelativelyBearish,
+    absolutelyBearishRelativelyBullish,
+    absolutelyBearishRelativelyNeutral,
+    absolutelyBearishRelativelyBearish,
+  )

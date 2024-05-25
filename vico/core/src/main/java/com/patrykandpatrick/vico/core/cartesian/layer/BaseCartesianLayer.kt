@@ -27,48 +27,41 @@ import com.patrykandpatrick.vico.core.common.BoundsAware
 import com.patrykandpatrick.vico.core.common.half
 import com.patrykandpatrick.vico.core.common.inClip
 
-/**
- * A base [CartesianLayer] implementation.
- */
+/** A base [CartesianLayer] implementation. */
 public abstract class BaseCartesianLayer<T : CartesianLayerModel> : CartesianLayer<T>, BoundsAware {
-    private val insets: Insets = Insets()
+  private val insets: Insets = Insets()
 
-    override val bounds: RectF = RectF()
+  override val bounds: RectF = RectF()
 
-    /** Overrides the _x_ and _y_ ranges. */
-    public var axisValueOverrider: AxisValueOverrider = AxisValueOverrider.auto()
+  /** Overrides the _x_ and _y_ ranges. */
+  public var axisValueOverrider: AxisValueOverrider = AxisValueOverrider.auto()
 
-    protected abstract fun drawInternal(
-        context: CartesianDrawContext,
-        model: T,
+  protected abstract fun drawInternal(context: CartesianDrawContext, model: T)
+
+  protected fun MutableHorizontalDimensions.ensureSegmentedValues(
+    xSpacing: Float,
+    chartValues: ChartValues,
+  ) {
+    ensureValuesAtLeast(
+      xSpacing = xSpacing,
+      scalableStartPadding = xSpacing.half,
+      scalableEndPadding =
+        ((-chartValues.xLength / chartValues.xStep - 0.5f) % 1f + 1f) % 1f * xSpacing,
     )
+  }
 
-    protected fun MutableHorizontalDimensions.ensureSegmentedValues(
-        xSpacing: Float,
-        chartValues: ChartValues,
-    ) {
-        ensureValuesAtLeast(
-            xSpacing = xSpacing,
-            scalableStartPadding = xSpacing.half,
-            scalableEndPadding = ((-chartValues.xLength / chartValues.xStep - 0.5f) % 1f + 1f) % 1f * xSpacing,
-        )
+  override fun draw(context: CartesianDrawContext, model: T) {
+    with(context) {
+      insets.clear()
+      getInsets(this, insets, horizontalDimensions)
+      canvas.inClip(
+        left = bounds.left - insets.getLeft(isLtr),
+        top = bounds.top - insets.top,
+        right = bounds.right + insets.getRight(isLtr),
+        bottom = bounds.bottom + insets.bottom,
+      ) {
+        drawInternal(context, model)
+      }
     }
-
-    override fun draw(
-        context: CartesianDrawContext,
-        model: T,
-    ) {
-        with(context) {
-            insets.clear()
-            getInsets(this, insets, horizontalDimensions)
-            canvas.inClip(
-                left = bounds.left - insets.getLeft(isLtr),
-                top = bounds.top - insets.top,
-                right = bounds.right + insets.getRight(isLtr),
-                bottom = bounds.bottom + insets.bottom,
-            ) {
-                drawInternal(context, model)
-            }
-        }
-    }
+  }
 }

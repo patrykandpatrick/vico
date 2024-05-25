@@ -16,57 +16,34 @@
 
 package com.patrykandpatrick.vico.core.common
 
-/**
- * Creates a new [Point] with the provided coordinates.
- */
-public fun Point(
-    x: Float,
-    y: Float,
-): Point = Point(packFloats(x, y))
+/** Creates a new [Point] with the provided coordinates. */
+public fun Point(x: Float, y: Float): Point = Point(packFloats(x, y))
 
-/**
- * Creates a new [Point] with the provided coordinates.
- */
-public fun Point(
-    x: Int,
-    y: Int,
-): Point = Point(packInts(x, y))
+/** Creates a new [Point] with the provided coordinates. */
+public fun Point(x: Int, y: Int): Point = Point(packInts(x, y))
 
-/**
- * Represents a point in a coordinate system.
- */
+/** Represents a point in a coordinate system. */
 @JvmInline
 public value class Point internal constructor(private val packedValue: Long) {
-    /**
-     * The _x_ coordinate.
-     */
-    public val x: Float
-        get() = unpackFloat1(packedValue)
+  /** The _x_ coordinate. */
+  public val x: Float
+    get() = unpackFloat1(packedValue)
 
-    /**
-     * The _y_ coordinate.
-     */
-    public val y: Float
-        get() = unpackFloat2(packedValue)
+  /** The _y_ coordinate. */
+  public val y: Float
+    get() = unpackFloat2(packedValue)
 
-    /**
-     * @see x
-     */
-    public operator fun component1(): Float = x
+  /** @see x */
+  public operator fun component1(): Float = x
 
-    /**
-     * @see y
-     */
-    public operator fun component2(): Float = y
+  /** @see y */
+  public operator fun component2(): Float = y
 
-    /**
-     * Copies this [Point], updating one or both of the coordinates. If providing new values for both [x] and [y],
-     * consider creating a new [Point] using one of the helper functions instead.
-     */
-    public fun copy(
-        x: Float = this.x,
-        y: Float = this.y,
-    ): Point = Point(x, y)
+  /**
+   * Copies this [Point], updating one or both of the coordinates. If providing new values for both
+   * [x] and [y], consider creating a new [Point] using one of the helper functions instead.
+   */
+  public fun copy(x: Float = this.x, y: Float = this.y): Point = Point(x, y)
 
-    override fun toString(): String = "Point(x=$x, y=$y)"
+  override fun toString(): String = "Point(x=$x, y=$y)"
 }

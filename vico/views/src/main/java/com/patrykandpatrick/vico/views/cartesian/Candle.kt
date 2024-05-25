@@ -22,38 +22,38 @@ import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.component.LineComponent
 
 private fun LineComponent.copyWithColor(color: Int) =
-    copy(
-        color = if (this.color == Color.TRANSPARENT) this.color else color,
-        strokeColor = if (this.strokeColor == Color.TRANSPARENT) this.color else color,
-    )
+  copy(
+    color = if (this.color == Color.TRANSPARENT) this.color else color,
+    strokeColor = if (this.strokeColor == Color.TRANSPARENT) this.color else color,
+  )
 
 internal fun Candle.Companion.sharpFilledCandle(
-    color: Int,
-    thicknessDp: Float = Defaults.CANDLE_BODY_WIDTH_DP,
+  color: Int,
+  thicknessDp: Float = Defaults.CANDLE_BODY_WIDTH_DP,
 ): Candle {
-    val filledBody = LineComponent(color, thicknessDp)
-    return Candle(body = filledBody)
+  val filledBody = LineComponent(color, thicknessDp)
+  return Candle(body = filledBody)
 }
 
 internal fun Candle.Companion.sharpHollowCandle(
-    color: Int,
-    thicknessDp: Float = Defaults.CANDLE_BODY_WIDTH_DP,
-    strokeWidthDp: Float = Defaults.HOLLOW_CANDLE_STROKE_WIDTH_DP,
+  color: Int,
+  thicknessDp: Float = Defaults.CANDLE_BODY_WIDTH_DP,
+  strokeWidthDp: Float = Defaults.HOLLOW_CANDLE_STROKE_WIDTH_DP,
 ): Candle {
-    val hollowBody =
-        LineComponent(
-            color = Color.TRANSPARENT,
-            thicknessDp = thicknessDp,
-            strokeWidthDp = strokeWidthDp,
-            strokeColor = color,
-        )
+  val hollowBody =
+    LineComponent(
+      color = Color.TRANSPARENT,
+      thicknessDp = thicknessDp,
+      strokeWidthDp = strokeWidthDp,
+      strokeColor = color,
+    )
 
-    return Candle(body = hollowBody)
+  return Candle(body = hollowBody)
 }
 
 internal fun Candle.copyWithColor(color: Int) =
-    Candle(
-        body = body.copyWithColor(color),
-        topWick = topWick.copyWithColor(color),
-        bottomWick = bottomWick.copyWithColor(color),
-    )
+  Candle(
+    body = body.copyWithColor(color),
+    topWick = topWick.copyWithColor(color),
+    bottomWick = bottomWick.copyWithColor(color),
+  )

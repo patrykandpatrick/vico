@@ -22,20 +22,19 @@ import com.patrykandpatrick.vico.core.common.DrawContext
 /**
  * Creates a [DynamicShader], which always provides the same [Shader] instance.
  *
- * @property shader the [Shader] that will always be provided, regardless of the [provideShader] function’s arguments.
+ * @property shader the [Shader] that will always be provided, regardless of the [provideShader]
+ *   function’s arguments.
  */
 public class StaticShader(private val shader: Shader) : BaseDynamicShader() {
-    override fun provideShader(
-        context: DrawContext,
-        left: Float,
-        top: Float,
-        right: Float,
-        bottom: Float,
-    ): Shader = shader
+  override fun provideShader(
+    context: DrawContext,
+    left: Float,
+    top: Float,
+    right: Float,
+    bottom: Float,
+  ): Shader = shader
 }
 
-/**
- * Converts this [Shader] to a [StaticShader] and returns it as a [DynamicShader].
- */
+/** Converts this [Shader] to a [StaticShader] and returns it as a [DynamicShader]. */
 public val Shader.dynamic: DynamicShader
-    get() = StaticShader(this)
+  get() = StaticShader(this)

@@ -28,6 +28,7 @@ import com.patrykandpatrick.vico.core.common.shape.Shape.Companion.Rectangle
 
 /**
  * Draws a line.
+ *
  * @property color the background color.
  * @property thicknessDp the thickness of the line.
  * @property shape the [Shape] to use for the line.
@@ -37,140 +38,138 @@ import com.patrykandpatrick.vico.core.common.shape.Shape.Companion.Rectangle
  * @property strokeColor the stroke color.
  */
 public open class LineComponent(
-    color: Int,
-    public var thicknessDp: Float = Defaults.LINE_COMPONENT_THICKNESS_DP,
-    shape: Shape = Rectangle,
-    dynamicShader: DynamicShader? = null,
-    margins: Dimensions = Dimensions.Empty,
-    strokeWidthDp: Float = 0f,
-    strokeColor: Int = Color.TRANSPARENT,
+  color: Int,
+  public var thicknessDp: Float = Defaults.LINE_COMPONENT_THICKNESS_DP,
+  shape: Shape = Rectangle,
+  dynamicShader: DynamicShader? = null,
+  margins: Dimensions = Dimensions.Empty,
+  strokeWidthDp: Float = 0f,
+  strokeColor: Int = Color.TRANSPARENT,
 ) : ShapeComponent(shape, color, dynamicShader, margins, strokeWidthDp, strokeColor) {
-    private val MeasureContext.thickness: Float
-        get() = thicknessDp.pixels
+  private val MeasureContext.thickness: Float
+    get() = thicknessDp.pixels
 
-    /** [color] if it’s not [Color.TRANSPARENT], and [strokeColor] otherwise. */
-    public val solidOrStrokeColor: Int
-        get() = if (color == Color.TRANSPARENT) strokeColor else color
+  /** [color] if it’s not [Color.TRANSPARENT], and [strokeColor] otherwise. */
+  public val solidOrStrokeColor: Int
+    get() = if (color == Color.TRANSPARENT) strokeColor else color
 
-    /**
-     * A convenience function for [draw] that draws the [LineComponent] horizontally.
-     */
-    public open fun drawHorizontal(
-        context: DrawContext,
-        left: Float,
-        right: Float,
-        centerY: Float,
-        thicknessScale: Float = 1f,
-        opacity: Float = 1f,
-    ): Unit =
-        with(context) {
-            draw(
-                context,
-                left = left,
-                top = centerY - thickness * thicknessScale / 2,
-                right = right,
-                bottom = centerY + thickness * thicknessScale / 2,
-                opacity = opacity,
-            )
-        }
+  /** A convenience function for [draw] that draws the [LineComponent] horizontally. */
+  public open fun drawHorizontal(
+    context: DrawContext,
+    left: Float,
+    right: Float,
+    centerY: Float,
+    thicknessScale: Float = 1f,
+    opacity: Float = 1f,
+  ): Unit =
+    with(context) {
+      draw(
+        context,
+        left = left,
+        top = centerY - thickness * thicknessScale / 2,
+        right = right,
+        bottom = centerY + thickness * thicknessScale / 2,
+        opacity = opacity,
+      )
+    }
 
-    /**
-     * Checks whether the [LineComponent] fits horizontally within the given [boundingBox] with its current
-     * [thicknessDp].
-     */
-    public open fun fitsInHorizontal(
-        context: DrawContext,
-        left: Float,
-        right: Float,
-        centerY: Float,
-        boundingBox: RectF,
-        thicknessScale: Float = 1f,
-    ): Boolean =
-        with(context) {
-            boundingBox.contains(
-                left,
-                centerY - thickness * thicknessScale / 2,
-                right,
-                centerY + thickness * thicknessScale / 2,
-            )
-        }
+  /**
+   * Checks whether the [LineComponent] fits horizontally within the given [boundingBox] with its
+   * current [thicknessDp].
+   */
+  public open fun fitsInHorizontal(
+    context: DrawContext,
+    left: Float,
+    right: Float,
+    centerY: Float,
+    boundingBox: RectF,
+    thicknessScale: Float = 1f,
+  ): Boolean =
+    with(context) {
+      boundingBox.contains(
+        left,
+        centerY - thickness * thicknessScale / 2,
+        right,
+        centerY + thickness * thicknessScale / 2,
+      )
+    }
 
-    /**
-     * A convenience function for [draw] that draws the [LineComponent] vertically.
-     */
-    public open fun drawVertical(
-        context: DrawContext,
-        top: Float,
-        bottom: Float,
-        centerX: Float,
-        thicknessScale: Float = 1f,
-        opacity: Float = 1f,
-    ): Unit =
-        with(context) {
-            draw(
-                context,
-                left = centerX - thickness * thicknessScale / 2,
-                top = top,
-                right = centerX + thickness * thicknessScale / 2,
-                bottom = bottom,
-                opacity = opacity,
-            )
-        }
+  /** A convenience function for [draw] that draws the [LineComponent] vertically. */
+  public open fun drawVertical(
+    context: DrawContext,
+    top: Float,
+    bottom: Float,
+    centerX: Float,
+    thicknessScale: Float = 1f,
+    opacity: Float = 1f,
+  ): Unit =
+    with(context) {
+      draw(
+        context,
+        left = centerX - thickness * thicknessScale / 2,
+        top = top,
+        right = centerX + thickness * thicknessScale / 2,
+        bottom = bottom,
+        opacity = opacity,
+      )
+    }
 
-    /**
-     * Checks whether the [LineComponent] fits vertically within the given [boundingBox] with its current [thicknessDp].
-     */
-    public open fun fitsInVertical(
-        context: DrawContext,
-        top: Float,
-        bottom: Float,
-        centerX: Float,
-        boundingBox: RectF,
-        thicknessScale: Float = 1f,
-    ): Boolean =
-        with(context) {
-            boundingBox.contains(
-                centerX - thickness * thicknessScale / 2,
-                top,
-                centerX + thickness * thicknessScale / 2,
-                bottom,
-            )
-        }
+  /**
+   * Checks whether the [LineComponent] fits vertically within the given [boundingBox] with its
+   * current [thicknessDp].
+   */
+  public open fun fitsInVertical(
+    context: DrawContext,
+    top: Float,
+    bottom: Float,
+    centerX: Float,
+    boundingBox: RectF,
+    thicknessScale: Float = 1f,
+  ): Boolean =
+    with(context) {
+      boundingBox.contains(
+        centerX - thickness * thicknessScale / 2,
+        top,
+        centerX + thickness * thicknessScale / 2,
+        bottom,
+      )
+    }
 
-    /**
-     * Checks whether the [LineComponent] vertically intersects the given [boundingBox] with its current [thicknessDp].
-     */
-    public open fun intersectsVertical(
-        context: DrawContext,
-        top: Float,
-        bottom: Float,
-        centerX: Float,
-        boundingBox: RectF,
-        thicknessScale: Float = 1f,
-    ): Boolean =
-        with(context) {
-            val left = centerX - thickness * thicknessScale / 2
-            val right = centerX + thickness * thicknessScale / 2
-            boundingBox.left < right && left < boundingBox.right
-        }
+  /**
+   * Checks whether the [LineComponent] vertically intersects the given [boundingBox] with its
+   * current [thicknessDp].
+   */
+  public open fun intersectsVertical(
+    context: DrawContext,
+    top: Float,
+    bottom: Float,
+    centerX: Float,
+    boundingBox: RectF,
+    thicknessScale: Float = 1f,
+  ): Boolean =
+    with(context) {
+      val left = centerX - thickness * thicknessScale / 2
+      val right = centerX + thickness * thicknessScale / 2
+      boundingBox.left < right && left < boundingBox.right
+    }
 
-    /** Creates a new [LineComponent] based on this one. */
-    public open fun copy(
-        color: Int = this.color,
-        thicknessDp: Float = this.thicknessDp,
-        shape: Shape = this.shape,
-        dynamicShader: DynamicShader? = this.dynamicShader,
-        margins: Dimensions = this.margins,
-        strokeWidthDp: Float = this.strokeWidthDp,
-        strokeColor: Int = this.strokeColor,
-    ): LineComponent =
-        LineComponent(
-            color = color,
-            thicknessDp = thicknessDp,
-            shape = shape,
-            dynamicShader = dynamicShader,
-            margins = margins,
-            strokeWidthDp = strokeWidthDp,
-            strokeColor = strokeColor,
-        )
+  /** Creates a new [LineComponent] based on this one. */
+  public open fun copy(
+    color: Int = this.color,
+    thicknessDp: Float = this.thicknessDp,
+    shape: Shape = this.shape,
+    dynamicShader: DynamicShader? = this.dynamicShader,
+    margins: Dimensions = this.margins,
+    strokeWidthDp: Float = this.strokeWidthDp,
+    strokeColor: Int = this.strokeColor,
+  ): LineComponent =
+    LineComponent(
+      color = color,
+      thicknessDp = thicknessDp,
+      shape = shape,
+      dynamicShader = dynamicShader,
+      margins = margins,
+      strokeWidthDp = strokeWidthDp,
+      strokeColor = strokeColor,
+    )
 }

@@ -31,22 +31,32 @@ import com.patrykandpatrick.vico.core.common.component.TextComponent
 /** Creates and remembers a [DefaultCartesianMarker]. */
 @Composable
 public fun rememberDefaultCartesianMarker(
-    label: TextComponent,
-    valueFormatter: CartesianMarkerValueFormatter = remember { DefaultCartesianMarkerValueFormatter() },
-    labelPosition: DefaultCartesianMarker.LabelPosition = DefaultCartesianMarker.LabelPosition.Top,
-    indicator: Component? = null,
-    indicatorSize: Dp = Defaults.MARKER_INDICATOR_SIZE.dp,
-    setIndicatorColor: ((Int) -> Unit)? = null,
-    guideline: LineComponent? = null,
+  label: TextComponent,
+  valueFormatter: CartesianMarkerValueFormatter = remember {
+    DefaultCartesianMarkerValueFormatter()
+  },
+  labelPosition: DefaultCartesianMarker.LabelPosition = DefaultCartesianMarker.LabelPosition.Top,
+  indicator: Component? = null,
+  indicatorSize: Dp = Defaults.MARKER_INDICATOR_SIZE.dp,
+  setIndicatorColor: ((Int) -> Unit)? = null,
+  guideline: LineComponent? = null,
 ): DefaultCartesianMarker =
-    remember(label, valueFormatter, labelPosition, indicator, indicatorSize, setIndicatorColor, guideline) {
-        DefaultCartesianMarker(
-            label,
-            valueFormatter,
-            labelPosition,
-            indicator,
-            indicatorSize.value,
-            setIndicatorColor,
-            guideline,
-        )
-    }
+  remember(
+    label,
+    valueFormatter,
+    labelPosition,
+    indicator,
+    indicatorSize,
+    setIndicatorColor,
+    guideline,
+  ) {
+    DefaultCartesianMarker(
+      label,
+      valueFormatter,
+      labelPosition,
+      indicator,
+      indicatorSize.value,
+      setIndicatorColor,
+      guideline,
+    )
+  }

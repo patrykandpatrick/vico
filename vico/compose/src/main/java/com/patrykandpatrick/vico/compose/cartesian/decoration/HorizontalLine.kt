@@ -29,33 +29,33 @@ import com.patrykandpatrick.vico.core.common.data.ExtraStore
 /** Creates and remembers a [HorizontalLine] */
 @Composable
 public fun rememberHorizontalLine(
-    y: (ExtraStore) -> Float,
-    line: LineComponent,
-    labelComponent: TextComponent? = null,
-    label: (ExtraStore) -> CharSequence = { HorizontalLine.getLabel(y(it)) },
-    horizontalLabelPosition: HorizontalPosition = HorizontalPosition.Start,
-    verticalLabelPosition: VerticalPosition = VerticalPosition.Top,
-    labelRotationDegrees: Float = 0f,
-    verticalAxisPosition: AxisPosition.Vertical? = null,
+  y: (ExtraStore) -> Float,
+  line: LineComponent,
+  labelComponent: TextComponent? = null,
+  label: (ExtraStore) -> CharSequence = { HorizontalLine.getLabel(y(it)) },
+  horizontalLabelPosition: HorizontalPosition = HorizontalPosition.Start,
+  verticalLabelPosition: VerticalPosition = VerticalPosition.Top,
+  labelRotationDegrees: Float = 0f,
+  verticalAxisPosition: AxisPosition.Vertical? = null,
 ): HorizontalLine =
-    remember(
-        y,
-        line,
-        labelComponent,
-        label,
-        horizontalLabelPosition,
-        verticalLabelPosition,
-        labelRotationDegrees,
-        verticalAxisPosition,
-    ) {
-        HorizontalLine(
-            y,
-            line,
-            labelComponent,
-            label,
-            horizontalLabelPosition,
-            verticalLabelPosition,
-            labelRotationDegrees,
-            verticalAxisPosition,
-        )
-    }
+  remember(
+    y,
+    line,
+    labelComponent,
+    label,
+    horizontalLabelPosition,
+    verticalLabelPosition,
+    labelRotationDegrees,
+    verticalAxisPosition,
+  ) {
+    HorizontalLine(
+      y,
+      line,
+      labelComponent,
+      label,
+      horizontalLabelPosition,
+      verticalLabelPosition,
+      labelRotationDegrees,
+      verticalAxisPosition,
+    )
+  }

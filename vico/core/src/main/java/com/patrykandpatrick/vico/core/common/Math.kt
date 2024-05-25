@@ -30,83 +30,76 @@ internal const val PI_RAD: Float = 180f
 internal const val FLOAT_GCD_DECIMALS = 2
 
 private fun Float.round(decimals: Int): Float {
-    val multiplier = 10f.pow(n = decimals)
-    return (this * multiplier).round / multiplier
+  val multiplier = 10f.pow(n = decimals)
+  return (this * multiplier).round / multiplier
 }
 
-private fun Float.gcdWithImpl(
-    other: Float,
-    threshold: Float,
-): Float =
-    when {
-        this < other -> other.gcdWithImpl(other = this, threshold = threshold)
-        abs(x = other) < threshold -> this
-        else -> other.gcdWithImpl(other = this - (this / other).floor * other, threshold = threshold)
-    }
+private fun Float.gcdWithImpl(other: Float, threshold: Float): Float =
+  when {
+    this < other -> other.gcdWithImpl(other = this, threshold = threshold)
+    abs(x = other) < threshold -> this
+    else -> other.gcdWithImpl(other = this - (this / other).floor * other, threshold = threshold)
+  }
 
 internal fun Float.gcdWith(other: Float): Float =
-    gcdWithImpl(
-        other = other,
-        threshold = 10f.pow(n = -FLOAT_GCD_DECIMALS - 1),
-    ).round(decimals = FLOAT_GCD_DECIMALS)
+  gcdWithImpl(other = other, threshold = 10f.pow(n = -FLOAT_GCD_DECIMALS - 1))
+    .round(decimals = FLOAT_GCD_DECIMALS)
 
 internal fun <T : Comparable<T>> T.isBoundOf(range: ClosedFloatingPointRange<T>) =
-    this == range.start || this == range.endInclusive
+  this == range.start || this == range.endInclusive
 
-internal val ClosedFloatingPointRange<Float>.length get() = endInclusive - start
+internal val ClosedFloatingPointRange<Float>.length
+  get() = endInclusive - start
 
 internal fun ClosedFloatingPointRange<Float>.random() = start + Random.nextFloat() * length
 
-internal fun Int.getDivisors(includeDividend: Boolean = true) =
-    buildList {
-        add(1)
-        for (i in 2..sqrt(toFloat()).toInt()) {
-            if (this@getDivisors % i == 0) {
-                add(i)
-                val derived = this@getDivisors / i
-                if (derived != i) add(derived)
-            }
-        }
-        if (includeDividend) add(this@getDivisors)
-        sort()
+internal fun Int.getDivisors(includeDividend: Boolean = true) = buildList {
+  add(1)
+  for (i in 2..sqrt(toFloat()).toInt()) {
+    if (this@getDivisors % i == 0) {
+      add(i)
+      val derived = this@getDivisors / i
+      if (derived != i) add(derived)
     }
+  }
+  if (includeDividend) add(this@getDivisors)
+  sort()
+}
 
 internal inline val Int.half: Int
-    get() = this / 2
+  get() = this / 2
 
 /** @suppress */
 public inline val Float.half: Float
-    @RestrictTo(RestrictTo.Scope.LIBRARY)
-    get() = this / 2
+  @RestrictTo(RestrictTo.Scope.LIBRARY) get() = this / 2
 
 internal inline val Double.half: Double
-    get() = this / 2
+  get() = this / 2
 
 internal inline val Float.doubled: Float
-    get() = this * 2
+  get() = this * 2
 
 /** @suppress */
 public inline val Float?.orZero: Float
-    @RestrictTo(RestrictTo.Scope.LIBRARY)
-    get() = this ?: 0f
+  @RestrictTo(RestrictTo.Scope.LIBRARY) get() = this ?: 0f
 
 internal inline val Int?.orZero: Int
-    get() = this ?: 0
+  get() = this ?: 0
 
 internal inline val Float.round: Float
-    get() = roundToInt().toFloat()
+  get() = roundToInt().toFloat()
 
 internal inline val Float.piRad: Float
-    get() = this * PI_RAD
+  get() = this * PI_RAD
 
 internal inline val Float.floor: Float
-    get() = floor(this)
+  get() = floor(this)
 
 internal inline val Float.ceil: Float
-    get() = ceil(this)
+  get() = ceil(this)
 
 internal inline val ClosedFloatingPointRange<Float>.median: Float
-    get() = (endInclusive + start) / 2
+  get() = (endInclusive + start) / 2
 
 /** @suppress */
 @RestrictTo(RestrictTo.Scope.LIBRARY)
@@ -119,9 +112,6 @@ public fun firstNonNegativeOf(vararg floats: Float): Float? = floats.firstOrNull
 /** @suppress */
 @RestrictTo(RestrictTo.Scope.LIBRARY)
 public fun Float.rangeWith(other: Float): ClosedFloatingPointRange<Float> =
-    if (other > this) this..other else other..this
+  if (other > this) this..other else other..this
 
-internal fun Float.lerp(
-    to: Float,
-    fraction: Float,
-): Float = this + (to - this) * fraction
+internal fun Float.lerp(to: Float, fraction: Float): Float = this + (to - this) * fraction

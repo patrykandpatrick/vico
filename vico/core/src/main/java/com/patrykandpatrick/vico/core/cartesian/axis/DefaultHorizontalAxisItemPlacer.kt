@@ -27,142 +27,146 @@ import com.patrykandpatrick.vico.core.common.half
 import com.patrykandpatrick.vico.core.common.round
 
 internal class DefaultHorizontalAxisItemPlacer(
-    private val spacing: Int,
-    private val offset: Int,
-    private val shiftExtremeTicks: Boolean,
-    private val addExtremeLabelPadding: Boolean,
+  private val spacing: Int,
+  private val offset: Int,
+  private val shiftExtremeTicks: Boolean,
+  private val addExtremeLabelPadding: Boolean,
 ) : AxisItemPlacer.Horizontal {
-    private val CartesianMeasureContext.addExtremeLabelPadding
-        get() =
-            this@DefaultHorizontalAxisItemPlacer.addExtremeLabelPadding &&
-                horizontalLayout is HorizontalLayout.FullWidth
+  private val CartesianMeasureContext.addExtremeLabelPadding
+    get() =
+      this@DefaultHorizontalAxisItemPlacer.addExtremeLabelPadding &&
+        horizontalLayout is HorizontalLayout.FullWidth
 
-    private val ChartValues.measuredLabelValues
-        get() =
-            buildList {
-                add(minX)
-                if (xLength < xStep) return@buildList
-                add(minX + xStep * (xLength / xStep).floor)
-                if (xLength >= 2 * xStep) add(minX + xStep * (xLength.half / xStep).round)
-            }
+  private val ChartValues.measuredLabelValues
+    get() = buildList {
+      add(minX)
+      if (xLength < xStep) return@buildList
+      add(minX + xStep * (xLength / xStep).floor)
+      if (xLength >= 2 * xStep) add(minX + xStep * (xLength.half / xStep).round)
+    }
 
-    override fun getShiftExtremeTicks(context: CartesianDrawContext): Boolean = shiftExtremeTicks
+  override fun getShiftExtremeTicks(context: CartesianDrawContext): Boolean = shiftExtremeTicks
 
-    override fun getFirstLabelValue(
-        context: CartesianMeasureContext,
-        maxLabelWidth: Float,
-    ) = if (context.addExtremeLabelPadding) context.chartValues.minX + offset * context.chartValues.xStep else null
+  override fun getFirstLabelValue(context: CartesianMeasureContext, maxLabelWidth: Float) =
+    if (context.addExtremeLabelPadding)
+      context.chartValues.minX + offset * context.chartValues.xStep
+    else null
 
-    override fun getLastLabelValue(
-        context: CartesianMeasureContext,
-        maxLabelWidth: Float,
-    ) = if (context.addExtremeLabelPadding) {
-        with(context.chartValues) { maxX - (xLength - xStep * offset) % (xStep * spacing) }
+  override fun getLastLabelValue(context: CartesianMeasureContext, maxLabelWidth: Float) =
+    if (context.addExtremeLabelPadding) {
+      with(context.chartValues) { maxX - (xLength - xStep * offset) % (xStep * spacing) }
     } else {
-        null
+      null
     }
 
-    override fun getLabelValues(
-        context: CartesianDrawContext,
-        visibleXRange: ClosedFloatingPointRange<Float>,
-        fullXRange: ClosedFloatingPointRange<Float>,
-        maxLabelWidth: Float,
-    ): List<Float> {
-        with(context) {
-            val dynamicSpacing =
-                spacing *
-                    if (this.addExtremeLabelPadding) {
-                        (maxLabelWidth / (horizontalDimensions.xSpacing * spacing)).ceil.toInt()
-                    } else {
-                        1
-                    }
-            val remainder = ((visibleXRange.start - chartValues.minX) / chartValues.xStep - offset) % dynamicSpacing
-            val firstValue = visibleXRange.start + (dynamicSpacing - remainder) % dynamicSpacing * chartValues.xStep
-            val minXOffset = chartValues.minX % chartValues.xStep
-            val values = mutableListOf<Float>()
-            var multiplier = -LABEL_OVERFLOW_SIZE
-            var hasEndOverflow = false
-            while (true) {
-                var potentialValue = firstValue + multiplier++ * dynamicSpacing * chartValues.xStep
-                potentialValue = chartValues.xStep * ((potentialValue - minXOffset) / chartValues.xStep).round +
-                    minXOffset
-                if (potentialValue < chartValues.minX || potentialValue == fullXRange.start) continue
-                if (potentialValue > chartValues.maxX || potentialValue == fullXRange.endInclusive) break
-                values += potentialValue
-                if (potentialValue > visibleXRange.endInclusive && hasEndOverflow.also { hasEndOverflow = true }) break
-            }
-            return values
+  override fun getLabelValues(
+    context: CartesianDrawContext,
+    visibleXRange: ClosedFloatingPointRange<Float>,
+    fullXRange: ClosedFloatingPointRange<Float>,
+    maxLabelWidth: Float,
+  ): List<Float> {
+    with(context) {
+      val dynamicSpacing =
+        spacing *
+          if (this.addExtremeLabelPadding) {
+            (maxLabelWidth / (horizontalDimensions.xSpacing * spacing)).ceil.toInt()
+          } else {
+            1
+          }
+      val remainder =
+        ((visibleXRange.start - chartValues.minX) / chartValues.xStep - offset) % dynamicSpacing
+      val firstValue =
+        visibleXRange.start + (dynamicSpacing - remainder) % dynamicSpacing * chartValues.xStep
+      val minXOffset = chartValues.minX % chartValues.xStep
+      val values = mutableListOf<Float>()
+      var multiplier = -LABEL_OVERFLOW_SIZE
+      var hasEndOverflow = false
+      while (true) {
+        var potentialValue = firstValue + multiplier++ * dynamicSpacing * chartValues.xStep
+        potentialValue =
+          chartValues.xStep * ((potentialValue - minXOffset) / chartValues.xStep).round + minXOffset
+        if (potentialValue < chartValues.minX || potentialValue == fullXRange.start) continue
+        if (potentialValue > chartValues.maxX || potentialValue == fullXRange.endInclusive) break
+        values += potentialValue
+        if (
+          potentialValue > visibleXRange.endInclusive &&
+            hasEndOverflow.also { hasEndOverflow = true }
+        )
+          break
+      }
+      return values
+    }
+  }
+
+  override fun getWidthMeasurementLabelValues(
+    context: CartesianMeasureContext,
+    horizontalDimensions: HorizontalDimensions,
+    fullXRange: ClosedFloatingPointRange<Float>,
+  ) = if (context.addExtremeLabelPadding) context.chartValues.measuredLabelValues else emptyList()
+
+  override fun getHeightMeasurementLabelValues(
+    context: CartesianMeasureContext,
+    horizontalDimensions: HorizontalDimensions,
+    fullXRange: ClosedFloatingPointRange<Float>,
+    maxLabelWidth: Float,
+  ) = context.chartValues.measuredLabelValues
+
+  override fun getLineValues(
+    context: CartesianDrawContext,
+    visibleXRange: ClosedFloatingPointRange<Float>,
+    fullXRange: ClosedFloatingPointRange<Float>,
+    maxLabelWidth: Float,
+  ): List<Float>? =
+    with(context) {
+      when (horizontalLayout) {
+        is HorizontalLayout.Segmented -> {
+          val remainder = (visibleXRange.start - fullXRange.start) % chartValues.xStep
+          val firstValue = visibleXRange.start + (chartValues.xStep - remainder) % chartValues.xStep
+          var multiplier = -TICK_OVERFLOW_SIZE
+          val values = mutableListOf<Float>()
+          while (true) {
+            val potentialValue = firstValue + multiplier++ * chartValues.xStep
+            if (potentialValue < fullXRange.start) continue
+            if (potentialValue > fullXRange.endInclusive) break
+            values += potentialValue
+            if (potentialValue > visibleXRange.endInclusive) break
+          }
+          values
         }
+        is HorizontalLayout.FullWidth -> null
+      }
     }
 
-    override fun getWidthMeasurementLabelValues(
-        context: CartesianMeasureContext,
-        horizontalDimensions: HorizontalDimensions,
-        fullXRange: ClosedFloatingPointRange<Float>,
-    ) = if (context.addExtremeLabelPadding) context.chartValues.measuredLabelValues else emptyList()
-
-    override fun getHeightMeasurementLabelValues(
-        context: CartesianMeasureContext,
-        horizontalDimensions: HorizontalDimensions,
-        fullXRange: ClosedFloatingPointRange<Float>,
-        maxLabelWidth: Float,
-    ) = context.chartValues.measuredLabelValues
-
-    override fun getLineValues(
-        context: CartesianDrawContext,
-        visibleXRange: ClosedFloatingPointRange<Float>,
-        fullXRange: ClosedFloatingPointRange<Float>,
-        maxLabelWidth: Float,
-    ): List<Float>? =
-        with(context) {
-            when (horizontalLayout) {
-                is HorizontalLayout.Segmented -> {
-                    val remainder = (visibleXRange.start - fullXRange.start) % chartValues.xStep
-                    val firstValue = visibleXRange.start + (chartValues.xStep - remainder) % chartValues.xStep
-                    var multiplier = -TICK_OVERFLOW_SIZE
-                    val values = mutableListOf<Float>()
-                    while (true) {
-                        val potentialValue = firstValue + multiplier++ * chartValues.xStep
-                        if (potentialValue < fullXRange.start) continue
-                        if (potentialValue > fullXRange.endInclusive) break
-                        values += potentialValue
-                        if (potentialValue > visibleXRange.endInclusive) break
-                    }
-                    values
-                }
-
-                is HorizontalLayout.FullWidth -> null
-            }
-        }
-
-    override fun getStartHorizontalAxisInset(
-        context: CartesianMeasureContext,
-        horizontalDimensions: HorizontalDimensions,
-        tickThickness: Float,
-        maxLabelWidth: Float,
-    ): Float {
-        val tickSpace = if (shiftExtremeTicks) tickThickness else tickThickness.half
-        return when (context.horizontalLayout) {
-            is HorizontalLayout.Segmented -> tickSpace
-            is HorizontalLayout.FullWidth -> (tickSpace - horizontalDimensions.unscalableStartPadding).coerceAtLeast(0f)
-        }
+  override fun getStartHorizontalAxisInset(
+    context: CartesianMeasureContext,
+    horizontalDimensions: HorizontalDimensions,
+    tickThickness: Float,
+    maxLabelWidth: Float,
+  ): Float {
+    val tickSpace = if (shiftExtremeTicks) tickThickness else tickThickness.half
+    return when (context.horizontalLayout) {
+      is HorizontalLayout.Segmented -> tickSpace
+      is HorizontalLayout.FullWidth ->
+        (tickSpace - horizontalDimensions.unscalableStartPadding).coerceAtLeast(0f)
     }
+  }
 
-    override fun getEndHorizontalAxisInset(
-        context: CartesianMeasureContext,
-        horizontalDimensions: HorizontalDimensions,
-        tickThickness: Float,
-        maxLabelWidth: Float,
-    ): Float {
-        val tickSpace = if (shiftExtremeTicks) tickThickness else tickThickness.half
-        return when (context.horizontalLayout) {
-            is HorizontalLayout.Segmented -> tickSpace
-            is HorizontalLayout.FullWidth -> (tickSpace - horizontalDimensions.unscalableEndPadding).coerceAtLeast(0f)
-        }
+  override fun getEndHorizontalAxisInset(
+    context: CartesianMeasureContext,
+    horizontalDimensions: HorizontalDimensions,
+    tickThickness: Float,
+    maxLabelWidth: Float,
+  ): Float {
+    val tickSpace = if (shiftExtremeTicks) tickThickness else tickThickness.half
+    return when (context.horizontalLayout) {
+      is HorizontalLayout.Segmented -> tickSpace
+      is HorizontalLayout.FullWidth ->
+        (tickSpace - horizontalDimensions.unscalableEndPadding).coerceAtLeast(0f)
     }
+  }
 
-    private companion object {
-        const val LABEL_OVERFLOW_SIZE = 2
-        const val TICK_OVERFLOW_SIZE = 1
-    }
+  private companion object {
+    const val LABEL_OVERFLOW_SIZE = 2
+    const val TICK_OVERFLOW_SIZE = 1
+  }
 }

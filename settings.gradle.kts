@@ -15,21 +15,29 @@
  */
 
 pluginManagement.repositories {
-    google()
-    gradlePluginPortal()
-    mavenCentral()
+  google()
+  gradlePluginPortal()
+  mavenCentral()
 }
 
 @Suppress("UnstableApiUsage")
 dependencyResolutionManagement {
-    repositoriesMode = RepositoriesMode.FAIL_ON_PROJECT_REPOS
-    repositories {
-        google()
-        mavenCentral()
-        mavenLocal()
-    }
+  repositoriesMode = RepositoriesMode.FAIL_ON_PROJECT_REPOS
+  repositories {
+    google()
+    mavenCentral()
+    mavenLocal()
+  }
 }
 
 rootProject.name = "Vico"
 
-include("sample", "vico", "vico:compose", "vico:compose-m2", "vico:compose-m3", "vico:core", "vico:views")
+include(
+  "sample",
+  "vico",
+  "vico:compose",
+  "vico:compose-m2",
+  "vico:compose-m3",
+  "vico:core",
+  "vico:views",
+)

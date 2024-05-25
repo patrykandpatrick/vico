@@ -42,343 +42,343 @@ private const val TITLE_ABS_ROTATION_DEGREES = 90f
  * @see Axis
  * @see BaseAxis
  */
-public open class VerticalAxis<Position : AxisPosition.Vertical>(
-    override val position: Position,
-) : BaseAxis<Position>() {
-    protected val areLabelsOutsideAtStartOrInsideAtEnd: Boolean
-        get() =
-            horizontalLabelPosition == Outside && position is AxisPosition.Vertical.Start ||
-                horizontalLabelPosition == Inside && position is AxisPosition.Vertical.End
+public open class VerticalAxis<Position : AxisPosition.Vertical>(override val position: Position) :
+  BaseAxis<Position>() {
+  protected val areLabelsOutsideAtStartOrInsideAtEnd: Boolean
+    get() =
+      horizontalLabelPosition == Outside && position is AxisPosition.Vertical.Start ||
+        horizontalLabelPosition == Inside && position is AxisPosition.Vertical.End
 
-    protected val textHorizontalPosition: HorizontalPosition
-        get() = if (areLabelsOutsideAtStartOrInsideAtEnd) HorizontalPosition.Start else HorizontalPosition.End
+  protected val textHorizontalPosition: HorizontalPosition
+    get() =
+      if (areLabelsOutsideAtStartOrInsideAtEnd) HorizontalPosition.Start else HorizontalPosition.End
 
+  /**
+   * Determines for what _y_ values this [VerticalAxis] is to display labels, ticks, and guidelines.
+   */
+  public var itemPlacer: AxisItemPlacer.Vertical = AxisItemPlacer.Vertical.step()
+
+  /** Defines the horizontal position of each axis label relative to the axis line. */
+  public var horizontalLabelPosition: HorizontalLabelPosition = Outside
+
+  /** Defines the vertical position of each axis label relative to its corresponding tick. */
+  public var verticalLabelPosition: VerticalLabelPosition = Center
+
+  override fun drawBehindChart(context: CartesianDrawContext): Unit =
+    with(context) {
+      var centerY: Float
+      val yRange = chartValues.getYRange(position)
+      val maxLabelHeight = getMaxLabelHeight()
+      val lineValues =
+        itemPlacer.getLineValues(this, bounds.height(), maxLabelHeight, position)
+          ?: itemPlacer.getLabelValues(this, bounds.height(), maxLabelHeight, position)
+
+      lineValues.forEach { lineValue ->
+        centerY =
+          bounds.bottom - bounds.height() * (lineValue - yRange.minY) / yRange.length +
+            getLineCanvasYCorrection(guidelineThickness, lineValue)
+
+        guideline
+          ?.takeIf {
+            isNotInRestrictedBounds(
+              left = chartBounds.left,
+              top = centerY - guidelineThickness.half,
+              right = chartBounds.right,
+              bottom = centerY + guidelineThickness.half,
+            )
+          }
+          ?.drawHorizontal(
+            context = context,
+            left = chartBounds.left,
+            right = chartBounds.right,
+            centerY = centerY,
+          )
+      }
+      val axisLineExtensionLength = if (itemPlacer.getShiftTopLines(this)) tickThickness else 0f
+      axisLine?.drawVertical(
+        context = context,
+        top = bounds.top - axisLineExtensionLength,
+        bottom = bounds.bottom + axisLineExtensionLength,
+        centerX =
+          if (position.isLeft(isLtr = isLtr)) {
+            bounds.right - axisThickness.half
+          } else {
+            bounds.left + axisThickness.half
+          },
+      )
+    }
+
+  override fun drawAboveChart(context: CartesianDrawContext): Unit =
+    with(context) {
+      val label = label
+      val labelValues =
+        itemPlacer.getLabelValues(this, bounds.height(), getMaxLabelHeight(), position)
+      val tickLeftX = getTickLeftX()
+      val tickRightX = tickLeftX + axisThickness + tickLength
+      val labelX = if (areLabelsOutsideAtStartOrInsideAtEnd == isLtr) tickLeftX else tickRightX
+      var tickCenterY: Float
+      val yRange = chartValues.getYRange(position)
+
+      labelValues.forEach { labelValue ->
+        tickCenterY =
+          bounds.bottom - bounds.height() * (labelValue - yRange.minY) / yRange.length +
+            getLineCanvasYCorrection(tickThickness, labelValue)
+
+        tick?.drawHorizontal(
+          context = context,
+          left = tickLeftX,
+          right = tickRightX,
+          centerY = tickCenterY,
+        )
+
+        label ?: return@forEach
+        drawLabel(
+          context = this,
+          label = label,
+          labelText = valueFormatter.format(labelValue, chartValues, position),
+          labelX = labelX,
+          tickCenterY = tickCenterY,
+        )
+      }
+
+      title?.let { title ->
+        titleComponent?.drawText(
+          context = this,
+          text = title,
+          textX =
+            if (position.isStart) bounds.getStart(isLtr = isLtr) else bounds.getEnd(isLtr = isLtr),
+          textY = bounds.centerY(),
+          horizontalPosition =
+            if (position.isStart) HorizontalPosition.End else HorizontalPosition.Start,
+          verticalPosition = VerticalPosition.Center,
+          rotationDegrees = TITLE_ABS_ROTATION_DEGREES * if (position.isStart) -1f else 1f,
+          maxTextHeight = bounds.height().toInt(),
+        )
+      }
+    }
+
+  override fun updateHorizontalDimensions(
+    context: CartesianMeasureContext,
+    horizontalDimensions: MutableHorizontalDimensions,
+  ): Unit = Unit
+
+  protected open fun drawLabel(
+    context: CartesianDrawContext,
+    label: TextComponent,
+    labelText: CharSequence,
+    labelX: Float,
+    tickCenterY: Float,
+  ): Unit =
+    with(context) {
+      val textBounds =
+        label.getTextBounds(this, labelText, rotationDegrees = labelRotationDegrees).apply {
+          translate(x = labelX, y = tickCenterY - centerY())
+        }
+
+      if (
+        horizontalLabelPosition == Outside ||
+          isNotInRestrictedBounds(
+            left = textBounds.left,
+            top = textBounds.top,
+            right = textBounds.right,
+            bottom = textBounds.bottom,
+          )
+      ) {
+        label.drawText(
+          context = this,
+          text = labelText,
+          textX = labelX,
+          textY = tickCenterY,
+          horizontalPosition = textHorizontalPosition,
+          verticalPosition = verticalLabelPosition.textPosition,
+          rotationDegrees = labelRotationDegrees,
+          maxTextWidth = (bounds.width() - tickLength - axisThickness).toInt(),
+        )
+      }
+    }
+
+  protected fun CartesianMeasureContext.getTickLeftX(): Float {
+    val onLeft = position.isLeft(isLtr = isLtr)
+    val base = if (onLeft) bounds.right else bounds.left
+    return when {
+      onLeft && horizontalLabelPosition == Outside -> base - axisThickness - tickLength
+      onLeft && horizontalLabelPosition == Inside -> base - axisThickness
+      horizontalLabelPosition == Outside -> base
+      horizontalLabelPosition == Inside -> base - tickLength
+      else -> error("Unexpected combination of axis position and label position")
+    }
+  }
+
+  override fun getHorizontalInsets(
+    context: CartesianMeasureContext,
+    availableHeight: Float,
+    outInsets: HorizontalInsets,
+  ): Unit =
+    with(context) {
+      val desiredWidth = getDesiredWidth(this, availableHeight)
+
+      outInsets.set(
+        start = if (position.isStart) desiredWidth else 0f,
+        end = if (position.isEnd) desiredWidth else 0f,
+      )
+    }
+
+  override fun getInsets(
+    context: CartesianMeasureContext,
+    outInsets: Insets,
+    horizontalDimensions: HorizontalDimensions,
+  ): Unit =
+    with(context) {
+      val maxLabelHeight = getMaxLabelHeight()
+      val maxLineThickness = maxOf(axisThickness, tickThickness)
+      outInsets.set(
+        top =
+          itemPlacer.getTopVerticalAxisInset(
+            context,
+            verticalLabelPosition,
+            maxLabelHeight,
+            maxLineThickness,
+          ),
+        bottom =
+          itemPlacer.getBottomVerticalAxisInset(
+            context,
+            verticalLabelPosition,
+            maxLabelHeight,
+            maxLineThickness,
+          ),
+      )
+    }
+
+  /**
+   * Calculates the optimal width for this [VerticalAxis], accounting for the value of
+   * [sizeConstraint].
+   */
+  protected open fun getDesiredWidth(context: CartesianMeasureContext, height: Float): Float =
+    with(context) {
+      when (val constraint = sizeConstraint) {
+        is SizeConstraint.Auto -> {
+          val titleComponentWidth =
+            title
+              ?.let { title ->
+                titleComponent?.getWidth(
+                  context = this,
+                  text = title,
+                  rotationDegrees = TITLE_ABS_ROTATION_DEGREES,
+                  height = bounds.height().toInt(),
+                )
+              }
+              .orZero
+          val labelSpace =
+            when (horizontalLabelPosition) {
+              Outside -> getMaxLabelWidth(height) + tickLength
+              Inside -> 0f
+            }
+          (labelSpace + titleComponentWidth + axisThickness).coerceIn(
+            minimumValue = constraint.minSizeDp.pixels,
+            maximumValue = constraint.maxSizeDp.pixels,
+          )
+        }
+        is SizeConstraint.Exact -> constraint.sizeDp.pixels
+        is SizeConstraint.Fraction -> canvasBounds.width() * constraint.fraction
+        is SizeConstraint.TextWidth ->
+          label
+            ?.getWidth(
+              context = this,
+              text = constraint.text,
+              rotationDegrees = labelRotationDegrees,
+            )
+            .orZero + tickLength + axisThickness.half
+      }
+    }
+
+  protected fun CartesianMeasureContext.getMaxLabelHeight(): Float =
+    label
+      ?.let { label ->
+        itemPlacer.getHeightMeasurementLabelValues(this, position).maxOfOrNull { value ->
+          label.getHeight(this, valueFormatter.format(value, chartValues, position))
+        }
+      }
+      .orZero
+
+  protected fun CartesianMeasureContext.getMaxLabelWidth(axisHeight: Float): Float =
+    label
+      ?.let { label ->
+        itemPlacer
+          .getWidthMeasurementLabelValues(this, axisHeight, getMaxLabelHeight(), position)
+          .maxOfOrNull { value ->
+            label.getWidth(this, valueFormatter.format(value, chartValues, position))
+          }
+      }
+      .orZero
+
+  protected fun CartesianDrawContext.getLineCanvasYCorrection(thickness: Float, y: Float): Float =
+    if (y == chartValues.getYRange(position).maxY && itemPlacer.getShiftTopLines(this)) {
+      -thickness.half
+    } else {
+      thickness.half
+    }
+
+  /**
+   * Defines the horizontal position of each of a vertical axis’s labels relative to the axis line.
+   */
+  public enum class HorizontalLabelPosition {
+    Outside,
+    Inside,
+  }
+
+  /**
+   * Defines the vertical position of each of a horizontal axis’s labels relative to the label’s
+   * corresponding tick.
+   *
+   * @param textPosition the label position.
+   * @see VerticalPosition
+   */
+  public enum class VerticalLabelPosition(public val textPosition: VerticalPosition) {
+    Center(VerticalPosition.Center),
+    Top(VerticalPosition.Top),
+    Bottom(VerticalPosition.Bottom),
+  }
+
+  /** Creates [VerticalAxis] instances. It’s recommended to use this via [VerticalAxis.build]. */
+  public class Builder<Position : AxisPosition.Vertical>(
+    builder: BaseAxis.Builder<Position>? = null
+  ) : BaseAxis.Builder<Position>(builder) {
     /**
-     * Determines for what _y_ values this [VerticalAxis] is to display labels, ticks, and guidelines.
+     * Determines for what _y_ values this [VerticalAxis] is to display labels, ticks, and
+     * guidelines.
      */
     public var itemPlacer: AxisItemPlacer.Vertical = AxisItemPlacer.Vertical.step()
 
-    /**
-     * Defines the horizontal position of each axis label relative to the axis line.
-     */
+    /** Defines the horizontal position of each axis label relative to the axis line. */
     public var horizontalLabelPosition: HorizontalLabelPosition = Outside
 
-    /**
-     * Defines the vertical position of each axis label relative to its corresponding tick.
-     */
+    /** Defines the vertical position of each axis label relative to its corresponding tick. */
     public var verticalLabelPosition: VerticalLabelPosition = Center
 
-    override fun drawBehindChart(context: CartesianDrawContext): Unit =
-        with(context) {
-            var centerY: Float
-            val yRange = chartValues.getYRange(position)
-            val maxLabelHeight = getMaxLabelHeight()
-            val lineValues =
-                itemPlacer.getLineValues(this, bounds.height(), maxLabelHeight, position)
-                    ?: itemPlacer.getLabelValues(this, bounds.height(), maxLabelHeight, position)
-
-            lineValues.forEach { lineValue ->
-                centerY = bounds.bottom - bounds.height() * (lineValue - yRange.minY) / yRange.length +
-                    getLineCanvasYCorrection(guidelineThickness, lineValue)
-
-                guideline?.takeIf {
-                    isNotInRestrictedBounds(
-                        left = chartBounds.left,
-                        top = centerY - guidelineThickness.half,
-                        right = chartBounds.right,
-                        bottom = centerY + guidelineThickness.half,
-                    )
-                }?.drawHorizontal(
-                    context = context,
-                    left = chartBounds.left,
-                    right = chartBounds.right,
-                    centerY = centerY,
-                )
-            }
-            val axisLineExtensionLength = if (itemPlacer.getShiftTopLines(this)) tickThickness else 0f
-            axisLine?.drawVertical(
-                context = context,
-                top = bounds.top - axisLineExtensionLength,
-                bottom = bounds.bottom + axisLineExtensionLength,
-                centerX =
-                    if (position.isLeft(isLtr = isLtr)) {
-                        bounds.right - axisThickness.half
-                    } else {
-                        bounds.left + axisThickness.half
-                    },
-            )
+    /** Creates a [VerticalAxis] instance with the properties from this [Builder]. */
+    @Suppress("UNCHECKED_CAST")
+    public inline fun <reified T : Position> build(): VerticalAxis<T> {
+      val position =
+        when (T::class.java) {
+          AxisPosition.Vertical.Start::class.java -> AxisPosition.Vertical.Start
+          AxisPosition.Vertical.End::class.java -> AxisPosition.Vertical.End
+          else ->
+            throw IllegalStateException("Got unknown AxisPosition class ${T::class.java.name}")
         }
-
-    override fun drawAboveChart(context: CartesianDrawContext): Unit =
-        with(context) {
-            val label = label
-            val labelValues = itemPlacer.getLabelValues(this, bounds.height(), getMaxLabelHeight(), position)
-            val tickLeftX = getTickLeftX()
-            val tickRightX = tickLeftX + axisThickness + tickLength
-            val labelX = if (areLabelsOutsideAtStartOrInsideAtEnd == isLtr) tickLeftX else tickRightX
-            var tickCenterY: Float
-            val yRange = chartValues.getYRange(position)
-
-            labelValues.forEach { labelValue ->
-                tickCenterY = bounds.bottom - bounds.height() * (labelValue - yRange.minY) / yRange.length +
-                    getLineCanvasYCorrection(tickThickness, labelValue)
-
-                tick?.drawHorizontal(
-                    context = context,
-                    left = tickLeftX,
-                    right = tickRightX,
-                    centerY = tickCenterY,
-                )
-
-                label ?: return@forEach
-                drawLabel(
-                    context = this,
-                    label = label,
-                    labelText = valueFormatter.format(labelValue, chartValues, position),
-                    labelX = labelX,
-                    tickCenterY = tickCenterY,
-                )
-            }
-
-            title?.let { title ->
-                titleComponent?.drawText(
-                    context = this,
-                    text = title,
-                    textX = if (position.isStart) bounds.getStart(isLtr = isLtr) else bounds.getEnd(isLtr = isLtr),
-                    textY = bounds.centerY(),
-                    horizontalPosition = if (position.isStart) HorizontalPosition.End else HorizontalPosition.Start,
-                    verticalPosition = VerticalPosition.Center,
-                    rotationDegrees = TITLE_ABS_ROTATION_DEGREES * if (position.isStart) -1f else 1f,
-                    maxTextHeight = bounds.height().toInt(),
-                )
-            }
-        }
-
-    override fun updateHorizontalDimensions(
-        context: CartesianMeasureContext,
-        horizontalDimensions: MutableHorizontalDimensions,
-    ): Unit = Unit
-
-    protected open fun drawLabel(
-        context: CartesianDrawContext,
-        label: TextComponent,
-        labelText: CharSequence,
-        labelX: Float,
-        tickCenterY: Float,
-    ): Unit =
-        with(context) {
-            val textBounds =
-                label.getTextBounds(this, labelText, rotationDegrees = labelRotationDegrees).apply {
-                    translate(
-                        x = labelX,
-                        y = tickCenterY - centerY(),
-                    )
-                }
-
-            if (
-                horizontalLabelPosition == Outside ||
-                isNotInRestrictedBounds(
-                    left = textBounds.left,
-                    top = textBounds.top,
-                    right = textBounds.right,
-                    bottom = textBounds.bottom,
-                )
-            ) {
-                label.drawText(
-                    context = this,
-                    text = labelText,
-                    textX = labelX,
-                    textY = tickCenterY,
-                    horizontalPosition = textHorizontalPosition,
-                    verticalPosition = verticalLabelPosition.textPosition,
-                    rotationDegrees = labelRotationDegrees,
-                    maxTextWidth = (bounds.width() - tickLength - axisThickness).toInt(),
-                )
-            }
-        }
-
-    protected fun CartesianMeasureContext.getTickLeftX(): Float {
-        val onLeft = position.isLeft(isLtr = isLtr)
-        val base = if (onLeft) bounds.right else bounds.left
-        return when {
-            onLeft && horizontalLabelPosition == Outside -> base - axisThickness - tickLength
-            onLeft && horizontalLabelPosition == Inside -> base - axisThickness
-            horizontalLabelPosition == Outside -> base
-            horizontalLabelPosition == Inside -> base - tickLength
-            else -> error("Unexpected combination of axis position and label position")
-        }
+          as Position
+      return setTo(VerticalAxis(position)).also { axis ->
+        axis.itemPlacer = itemPlacer
+        axis.horizontalLabelPosition = horizontalLabelPosition
+        axis.verticalLabelPosition = verticalLabelPosition
+      } as VerticalAxis<T>
     }
+  }
 
-    override fun getHorizontalInsets(
-        context: CartesianMeasureContext,
-        availableHeight: Float,
-        outInsets: HorizontalInsets,
-    ): Unit =
-        with(context) {
-            val desiredWidth = getDesiredWidth(this, availableHeight)
-
-            outInsets.set(
-                start = if (position.isStart) desiredWidth else 0f,
-                end = if (position.isEnd) desiredWidth else 0f,
-            )
-        }
-
-    override fun getInsets(
-        context: CartesianMeasureContext,
-        outInsets: Insets,
-        horizontalDimensions: HorizontalDimensions,
-    ): Unit =
-        with(context) {
-            val maxLabelHeight = getMaxLabelHeight()
-            val maxLineThickness = maxOf(axisThickness, tickThickness)
-            outInsets.set(
-                top =
-                    itemPlacer.getTopVerticalAxisInset(
-                        context,
-                        verticalLabelPosition,
-                        maxLabelHeight,
-                        maxLineThickness,
-                    ),
-                bottom =
-                    itemPlacer.getBottomVerticalAxisInset(
-                        context,
-                        verticalLabelPosition,
-                        maxLabelHeight,
-                        maxLineThickness,
-                    ),
-            )
-        }
-
-    /**
-     * Calculates the optimal width for this [VerticalAxis], accounting for the value of [sizeConstraint].
-     */
-    protected open fun getDesiredWidth(
-        context: CartesianMeasureContext,
-        height: Float,
-    ): Float =
-        with(context) {
-            when (val constraint = sizeConstraint) {
-                is SizeConstraint.Auto -> {
-                    val titleComponentWidth =
-                        title?.let { title ->
-                            titleComponent?.getWidth(
-                                context = this,
-                                text = title,
-                                rotationDegrees = TITLE_ABS_ROTATION_DEGREES,
-                                height = bounds.height().toInt(),
-                            )
-                        }.orZero
-                    val labelSpace =
-                        when (horizontalLabelPosition) {
-                            Outside -> getMaxLabelWidth(height) + tickLength
-                            Inside -> 0f
-                        }
-                    (labelSpace + titleComponentWidth + axisThickness)
-                        .coerceIn(
-                            minimumValue = constraint.minSizeDp.pixels,
-                            maximumValue = constraint.maxSizeDp.pixels,
-                        )
-                }
-
-                is SizeConstraint.Exact -> constraint.sizeDp.pixels
-                is SizeConstraint.Fraction -> canvasBounds.width() * constraint.fraction
-                is SizeConstraint.TextWidth ->
-                    label?.getWidth(
-                        context = this,
-                        text = constraint.text,
-                        rotationDegrees = labelRotationDegrees,
-                    ).orZero + tickLength + axisThickness.half
-            }
-        }
-
-    protected fun CartesianMeasureContext.getMaxLabelHeight(): Float =
-        label?.let { label ->
-            itemPlacer
-                .getHeightMeasurementLabelValues(this, position)
-                .maxOfOrNull { value -> label.getHeight(this, valueFormatter.format(value, chartValues, position)) }
-        }.orZero
-
-    protected fun CartesianMeasureContext.getMaxLabelWidth(axisHeight: Float): Float =
-        label?.let { label ->
-            itemPlacer
-                .getWidthMeasurementLabelValues(this, axisHeight, getMaxLabelHeight(), position)
-                .maxOfOrNull { value -> label.getWidth(this, valueFormatter.format(value, chartValues, position)) }
-        }.orZero
-
-    protected fun CartesianDrawContext.getLineCanvasYCorrection(
-        thickness: Float,
-        y: Float,
-    ): Float =
-        if (y == chartValues.getYRange(position).maxY && itemPlacer.getShiftTopLines(this)) {
-            -thickness.half
-        } else {
-            thickness.half
-        }
-
-    /**
-     * Defines the horizontal position of each of a vertical axis’s labels relative to the axis line.
-     */
-    public enum class HorizontalLabelPosition {
-        Outside,
-        Inside,
-    }
-
-    /**
-     * Defines the vertical position of each of a horizontal axis’s labels relative to the label’s corresponding tick.
-     *
-     * @param textPosition the label position.
-     *
-     * @see VerticalPosition
-     */
-    public enum class VerticalLabelPosition(public val textPosition: VerticalPosition) {
-        Center(VerticalPosition.Center),
-        Top(VerticalPosition.Top),
-        Bottom(VerticalPosition.Bottom),
-    }
-
-    /** Creates [VerticalAxis] instances. It’s recommended to use this via [VerticalAxis.build]. */
-    public class Builder<Position : AxisPosition.Vertical>(
-        builder: BaseAxis.Builder<Position>? = null,
-    ) : BaseAxis.Builder<Position>(builder) {
-        /**
-         * Determines for what _y_ values this [VerticalAxis] is to display labels, ticks, and guidelines.
-         */
-        public var itemPlacer: AxisItemPlacer.Vertical = AxisItemPlacer.Vertical.step()
-
-        /**
-         * Defines the horizontal position of each axis label relative to the axis line.
-         */
-        public var horizontalLabelPosition: HorizontalLabelPosition = Outside
-
-        /**
-         * Defines the vertical position of each axis label relative to its corresponding tick.
-         */
-        public var verticalLabelPosition: VerticalLabelPosition = Center
-
-        /**
-         * Creates a [VerticalAxis] instance with the properties from this [Builder].
-         */
-        @Suppress("UNCHECKED_CAST")
-        public inline fun <reified T : Position> build(): VerticalAxis<T> {
-            val position =
-                when (T::class.java) {
-                    AxisPosition.Vertical.Start::class.java -> AxisPosition.Vertical.Start
-                    AxisPosition.Vertical.End::class.java -> AxisPosition.Vertical.End
-                    else -> throw IllegalStateException("Got unknown AxisPosition class ${T::class.java.name}")
-                } as Position
-            return setTo(VerticalAxis(position)).also { axis ->
-                axis.itemPlacer = itemPlacer
-                axis.horizontalLabelPosition = horizontalLabelPosition
-                axis.verticalLabelPosition = verticalLabelPosition
-            } as VerticalAxis<T>
-        }
-    }
-
-    /** Houses a [VerticalAxis] factory function. */
-    public companion object {
-        /** Creates a [VerticalAxis] via [Builder]. */
-        public inline fun <reified P : AxisPosition.Vertical> build(
-            block: Builder<P>.() -> Unit = {},
-        ): VerticalAxis<P> = Builder<P>().apply(block).build()
-    }
+  /** Houses a [VerticalAxis] factory function. */
+  public companion object {
+    /** Creates a [VerticalAxis] via [Builder]. */
+    public inline fun <reified P : AxisPosition.Vertical> build(
+      block: Builder<P>.() -> Unit = {}
+    ): VerticalAxis<P> = Builder<P>().apply(block).build()
+  }
 }

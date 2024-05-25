@@ -26,28 +26,29 @@ import com.patrykandpatrick.vico.compose.common.getDefaultColors
 /** Creates and remembers a [VicoTheme] based on [MaterialTheme.colorScheme]. */
 @Composable
 public fun rememberM3VicoTheme(
-    candlestickCartesianLayerColors: VicoTheme.CandlestickCartesianLayerColors =
-        VicoTheme.CandlestickCartesianLayerColors.fromDefaultColors(getDefaultColors()),
-    columnCartesianLayerColors: List<Color> = MaterialTheme.colorScheme.run { listOf(primary, secondary, tertiary) },
-    lineCartesianLayerColors: List<Color> = columnCartesianLayerColors,
-    elevationOverlayColor: Color = MaterialTheme.colorScheme.primary,
-    lineColor: Color = MaterialTheme.colorScheme.outline,
-    textColor: Color = MaterialTheme.colorScheme.onBackground,
+  candlestickCartesianLayerColors: VicoTheme.CandlestickCartesianLayerColors =
+    VicoTheme.CandlestickCartesianLayerColors.fromDefaultColors(getDefaultColors()),
+  columnCartesianLayerColors: List<Color> =
+    MaterialTheme.colorScheme.run { listOf(primary, secondary, tertiary) },
+  lineCartesianLayerColors: List<Color> = columnCartesianLayerColors,
+  elevationOverlayColor: Color = MaterialTheme.colorScheme.primary,
+  lineColor: Color = MaterialTheme.colorScheme.outline,
+  textColor: Color = MaterialTheme.colorScheme.onBackground,
 ): VicoTheme =
-    remember(
-        candlestickCartesianLayerColors,
-        columnCartesianLayerColors,
-        lineCartesianLayerColors,
-        elevationOverlayColor,
-        lineColor,
-        textColor,
-    ) {
-        VicoTheme(
-            candlestickCartesianLayerColors,
-            columnCartesianLayerColors,
-            lineCartesianLayerColors,
-            elevationOverlayColor,
-            lineColor,
-            textColor,
-        )
-    }
+  remember(
+    candlestickCartesianLayerColors,
+    columnCartesianLayerColors,
+    lineCartesianLayerColors,
+    elevationOverlayColor,
+    lineColor,
+    textColor,
+  ) {
+    VicoTheme(
+      candlestickCartesianLayerColors,
+      columnCartesianLayerColors,
+      lineCartesianLayerColors,
+      elevationOverlayColor,
+      lineColor,
+      textColor,
+    )
+  }

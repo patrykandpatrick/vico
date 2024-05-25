@@ -24,113 +24,100 @@ import kotlin.math.sin
 
 /** @suppress */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public fun RectF.set(
-    left: Number,
-    top: Number,
-    right: Number,
-    bottom: Number,
-) {
-    set(left.toFloat(), top.toFloat(), right.toFloat(), bottom.toFloat())
+public fun RectF.set(left: Number, top: Number, right: Number, bottom: Number) {
+  set(left.toFloat(), top.toFloat(), right.toFloat(), bottom.toFloat())
 }
 
 internal fun RectF.clear() {
-    set(0, 0, 0, 0)
+  set(0, 0, 0, 0)
 }
 
 internal fun RectF.copy(): RectF = RectF(this)
 
 internal fun RectF.rotate(degrees: Float): RectF {
-    when {
-        degrees % PI_RAD == 0f -> Unit
-        degrees % 0.5f.piRad == 0f -> {
-            if (width() != height()) {
-                set(
-                    left = centerX() - height().half,
-                    top = centerY() - width().half,
-                    right = centerX() + height().half,
-                    bottom = centerY() + width().half,
-                )
-            }
-        }
-
-        else -> {
-            val alpha = Math.toRadians(degrees.toDouble())
-            val sinAlpha = sin(alpha)
-            val cosAlpha = cos(alpha)
-
-            val newWidth = abs(width() * cosAlpha) + abs(height() * sinAlpha)
-            val newHeight = abs(width() * sinAlpha) + abs(height() * cosAlpha)
-
-            set(
-                left = centerX() - newWidth.half,
-                top = centerY() - newHeight.half,
-                right = centerX() + newWidth.half,
-                bottom = centerY() + newHeight.half,
-            )
-        }
+  when {
+    degrees % PI_RAD == 0f -> Unit
+    degrees % 0.5f.piRad == 0f -> {
+      if (width() != height()) {
+        set(
+          left = centerX() - height().half,
+          top = centerY() - width().half,
+          right = centerX() + height().half,
+          bottom = centerY() + width().half,
+        )
+      }
     }
+    else -> {
+      val alpha = Math.toRadians(degrees.toDouble())
+      val sinAlpha = sin(alpha)
+      val cosAlpha = cos(alpha)
 
-    return this
+      val newWidth = abs(width() * cosAlpha) + abs(height() * sinAlpha)
+      val newHeight = abs(width() * sinAlpha) + abs(height() * cosAlpha)
+
+      set(
+        left = centerX() - newWidth.half,
+        top = centerY() - newHeight.half,
+        right = centerX() + newWidth.half,
+        bottom = centerY() + newHeight.half,
+      )
+    }
+  }
+
+  return this
 }
 
-internal fun RectF.translate(
-    x: Float,
-    y: Float,
-): RectF =
-    apply {
-        left += x
-        top += y
-        right += x
-        bottom += y
-    }
+internal fun RectF.translate(x: Float, y: Float): RectF = apply {
+  left += x
+  top += y
+  right += x
+  bottom += y
+}
 
 internal fun RectF.getStart(isLtr: Boolean): Float = if (isLtr) left else right
 
 internal fun RectF.getEnd(isLtr: Boolean): Float = if (isLtr) right else left
 
 internal fun RectF.updateBounds(
-    left: Float = this.left,
-    top: Float = this.top,
-    right: Float = this.right,
-    bottom: Float = this.bottom,
+  left: Float = this.left,
+  top: Float = this.top,
+  right: Float = this.right,
+  bottom: Float = this.bottom,
 ) {
-    set(left, top, right, bottom)
+  set(left, top, right, bottom)
 }
 
 internal fun RectF.updateBy(
-    left: Float = 0f,
-    top: Float = 0f,
-    right: Float = 0f,
-    bottom: Float = 0f,
+  left: Float = 0f,
+  top: Float = 0f,
+  right: Float = 0f,
+  bottom: Float = 0f,
 ) {
-    set(
-        left = this.left + left,
-        top = this.top + top,
-        right = this.right + right,
-        bottom = this.bottom + bottom,
-    )
+  set(
+    left = this.left + left,
+    top = this.top + top,
+    right = this.right + right,
+    bottom = this.bottom + bottom,
+  )
 }
 
-internal fun RectF.updateIfExceeds(
-    x: Float,
-    y: Float,
-) {
-    updateBounds(
-        left = left.coerceAtMost(x),
-        top = top.coerceAtMost(y),
-        right = right.coerceAtLeast(x),
-        bottom = bottom.coerceAtLeast(y),
-    )
+internal fun RectF.updateIfExceeds(x: Float, y: Float) {
+  updateBounds(
+    left = left.coerceAtMost(x),
+    top = top.coerceAtMost(y),
+    right = right.coerceAtLeast(x),
+    bottom = bottom.coerceAtLeast(y),
+  )
 }
 
 internal val RectF.radius: Float
-    get() {
-        require(width() == height()) { "RectF must be a square." }
-        return width().half
-    }
+  get() {
+    require(width() == height()) { "RectF must be a square." }
+    return width().half
+  }
 
 internal val RectF.centerPoint: Point
-    get() = Point(centerX(), centerY())
+  get() = Point(centerX(), centerY())
 
 internal operator fun RectF.component1(): Float = left
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,37 +32,38 @@ import org.junit.Rule
 import org.junit.Test
 
 public class PaparazziTest {
-    private val defaultCharts =
-        listOf<Pair<String, @Composable () -> Unit>>(
-            "LineChart" to { DefaultLineChart() },
-            "LineChart Long Scrollable" to { DefaultLineChartLongScrollable() },
-            "LineChart Long Scrollable with initial scroll end" to { DefaultLineChartLongScrollableEnd() },
-            "LineChart Long Not Scrollable" to { DefaultLineChartLongNonScrollable() },
-            "ColumnChart" to { DefaultColumnChart() },
-            "ColumnChart Long Scrollable" to { DefaultColumnChartLongScrollable() },
-            "ColumnChart Long Scrollable with initial scroll end" to { DefaultColumnChartLongScrollableEnd() },
-            "ColumnChart Long Not Scrollable" to { DefaultColumnChartLongNonScrollable() },
-        )
+  private val defaultCharts =
+    listOf<Pair<String, @Composable () -> Unit>>(
+      "LineChart" to { DefaultLineChart() },
+      "LineChart Long Scrollable" to { DefaultLineChartLongScrollable() },
+      "LineChart Long Scrollable with initial scroll end" to
+        {
+          DefaultLineChartLongScrollableEnd()
+        },
+      "LineChart Long Not Scrollable" to { DefaultLineChartLongNonScrollable() },
+      "ColumnChart" to { DefaultColumnChart() },
+      "ColumnChart Long Scrollable" to { DefaultColumnChartLongScrollable() },
+      "ColumnChart Long Scrollable with initial scroll end" to
+        {
+          DefaultColumnChartLongScrollableEnd()
+        },
+      "ColumnChart Long Not Scrollable" to { DefaultColumnChartLongNonScrollable() },
+    )
 
-    @get:Rule
-    public val paparazzi: Paparazzi = Paparazzi(deviceConfig = lightConfig)
+  @get:Rule public val paparazzi: Paparazzi = Paparazzi(deviceConfig = lightConfig)
 
-    private fun List<Pair<String, @Composable () -> Unit>>.snapshotAll() {
-        forEach { (name, composable) ->
-            paparazzi.snapshot(name) {
-                composable()
-            }
-        }
-    }
+  private fun List<Pair<String, @Composable () -> Unit>>.snapshotAll() {
+    forEach { (name, composable) -> paparazzi.snapshot(name) { composable() } }
+  }
 
-    @Test
-    public fun `Test default charts in NOT NIGHT`() {
-        defaultCharts.snapshotAll()
-    }
+  @Test
+  public fun `Test default charts in NOT NIGHT`() {
+    defaultCharts.snapshotAll()
+  }
 
-    @Test
-    public fun `Test default charts in NIGHT`() {
-        paparazzi.unsafeUpdateConfig(nightConfig)
-        defaultCharts.snapshotAll()
-    }
+  @Test
+  public fun `Test default charts in NIGHT`() {
+    paparazzi.unsafeUpdateConfig(nightConfig)
+    defaultCharts.snapshotAll()
+  }
 }

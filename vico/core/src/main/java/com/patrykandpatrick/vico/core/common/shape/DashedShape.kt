@@ -23,7 +23,8 @@ import com.patrykandpatrick.vico.core.common.DrawContext
 import com.patrykandpatrick.vico.core.common.ceil
 
 /**
- * [DashedShape] draws a dashed line by interchangeably drawing the provided [shape] and leaving a gap.
+ * [DashedShape] draws a dashed line by interchangeably drawing the provided [shape] and leaving a
+ * gap.
  *
  * @property shape the base [Shape] from which to create the [DashedShape].
  * @property dashLengthDp the dash length in dp.
@@ -31,152 +32,139 @@ import com.patrykandpatrick.vico.core.common.ceil
  * @property fitStrategy the [DashedShape.FitStrategy] to use for the dashes.
  */
 public class DashedShape(
-    public val shape: Shape = Shape.Rectangle,
-    public val dashLengthDp: Float = Defaults.DASH_LENGTH,
-    public val gapLengthDp: Float = Defaults.DASH_GAP,
-    public val fitStrategy: FitStrategy = FitStrategy.Resize,
+  public val shape: Shape = Shape.Rectangle,
+  public val dashLengthDp: Float = Defaults.DASH_LENGTH,
+  public val gapLengthDp: Float = Defaults.DASH_GAP,
+  public val fitStrategy: FitStrategy = FitStrategy.Resize,
 ) : Shape {
-    private var drawDashLength = dashLengthDp
-    private var drawGapLength = gapLengthDp
+  private var drawDashLength = dashLengthDp
+  private var drawGapLength = gapLengthDp
 
-    override fun drawShape(
-        context: DrawContext,
-        paint: Paint,
-        path: Path,
-        left: Float,
-        top: Float,
-        right: Float,
-        bottom: Float,
-    ) {
-        if (right - left > bottom - top) {
-            drawHorizontalDashes(context, paint, path, left, top, right, bottom)
+  override fun drawShape(
+    context: DrawContext,
+    paint: Paint,
+    path: Path,
+    left: Float,
+    top: Float,
+    right: Float,
+    bottom: Float,
+  ) {
+    if (right - left > bottom - top) {
+      drawHorizontalDashes(context, paint, path, left, top, right, bottom)
+    } else {
+      drawVerticalDashes(context, paint, path, left, top, right, bottom)
+    }
+  }
+
+  private fun drawHorizontalDashes(
+    context: DrawContext,
+    paint: Paint,
+    path: Path,
+    left: Float,
+    top: Float,
+    right: Float,
+    bottom: Float,
+  ) {
+    calculateDrawLengths(context, right - left)
+
+    var index = 0
+    var drawnLength = 0f
+    while (right - left - drawnLength > 0) {
+      drawnLength +=
+        if (index % 2 == 0) {
+          path.reset()
+          shape.drawShape(
+            context = context,
+            paint = paint,
+            path = path,
+            left = left + drawnLength,
+            top = top,
+            right = left + drawnLength + drawDashLength,
+            bottom = bottom,
+          )
+          drawDashLength
         } else {
-            drawVerticalDashes(context, paint, path, left, top, right, bottom)
+          drawGapLength
         }
+      index++
     }
+  }
 
-    private fun drawHorizontalDashes(
-        context: DrawContext,
-        paint: Paint,
-        path: Path,
-        left: Float,
-        top: Float,
-        right: Float,
-        bottom: Float,
-    ) {
-        calculateDrawLengths(context, right - left)
+  private fun drawVerticalDashes(
+    context: DrawContext,
+    paint: Paint,
+    path: Path,
+    left: Float,
+    top: Float,
+    right: Float,
+    bottom: Float,
+  ) {
+    calculateDrawLengths(context, bottom - top)
 
-        var index = 0
-        var drawnLength = 0f
-        while (right - left - drawnLength > 0) {
-            drawnLength +=
-                if (index % 2 == 0) {
-                    path.reset()
-                    shape.drawShape(
-                        context = context,
-                        paint = paint,
-                        path = path,
-                        left = left + drawnLength,
-                        top = top,
-                        right = left + drawnLength + drawDashLength,
-                        bottom = bottom,
-                    )
-                    drawDashLength
-                } else {
-                    drawGapLength
-                }
-            index++
+    var index = 0
+    var drawnLength = 0f
+    while (bottom - top - drawnLength > 0) {
+      drawnLength +=
+        if (index % 2 == 0) {
+          path.reset()
+          shape.drawShape(
+            context = context,
+            paint = paint,
+            path = path,
+            left = left,
+            top = top + drawnLength,
+            right = right,
+            bottom = top + drawnLength + drawDashLength,
+          )
+          drawDashLength
+        } else {
+          drawGapLength
         }
+      index++
     }
+  }
 
-    private fun drawVerticalDashes(
-        context: DrawContext,
-        paint: Paint,
-        path: Path,
-        left: Float,
-        top: Float,
-        right: Float,
-        bottom: Float,
-    ) {
-        calculateDrawLengths(context, bottom - top)
+  private fun calculateDrawLengths(context: DrawContext, length: Float): Unit =
+    with(context) { calculateDrawLengths(dashLengthDp.pixels, gapLengthDp.pixels, length) }
 
-        var index = 0
-        var drawnLength = 0f
-        while (bottom - top - drawnLength > 0) {
-            drawnLength +=
-                if (index % 2 == 0) {
-                    path.reset()
-                    shape.drawShape(
-                        context = context,
-                        paint = paint,
-                        path = path,
-                        left = left,
-                        top = top + drawnLength,
-                        right = right,
-                        bottom = top + drawnLength + drawDashLength,
-                    )
-                    drawDashLength
-                } else {
-                    drawGapLength
-                }
-            index++
-        }
+  private fun calculateDrawLengths(dashLength: Float, gapLength: Float, length: Float) {
+    if (dashLength == 0f && gapLength == 0f) {
+      drawDashLength = length
+      return
     }
-
-    private fun calculateDrawLengths(
-        context: DrawContext,
-        length: Float,
-    ): Unit =
-        with(context) {
-            calculateDrawLengths(dashLengthDp.pixels, gapLengthDp.pixels, length)
-        }
-
-    private fun calculateDrawLengths(
-        dashLength: Float,
-        gapLength: Float,
-        length: Float,
-    ) {
-        if (dashLength == 0f && gapLength == 0f) {
+    when (fitStrategy) {
+      FitStrategy.Resize ->
+        when {
+          length < dashLength + gapLength -> {
             drawDashLength = length
-            return
+            drawGapLength = 0f
+          }
+          else -> {
+            val gapAndDashLength = gapLength + dashLength
+            val ratio = length / (dashLength + (length / gapAndDashLength).ceil * gapAndDashLength)
+            drawDashLength = dashLength * ratio
+            drawGapLength = gapLength * ratio
+          }
         }
-        when (fitStrategy) {
-            FitStrategy.Resize ->
-                when {
-                    length < dashLength + gapLength -> {
-                        drawDashLength = length
-                        drawGapLength = 0f
-                    }
-
-                    else -> {
-                        val gapAndDashLength = gapLength + dashLength
-                        val ratio = length / (dashLength + (length / gapAndDashLength).ceil * gapAndDashLength)
-                        drawDashLength = dashLength * ratio
-                        drawGapLength = gapLength * ratio
-                    }
-                }
-
-            FitStrategy.Fixed -> {
-                drawDashLength = dashLength
-                drawGapLength = gapLength
-            }
-        }
+      FitStrategy.Fixed -> {
+        drawDashLength = dashLength
+        drawGapLength = gapLength
+      }
     }
+  }
+
+  /** Defines how a [DashedShape] is to be rendered. */
+  public enum class FitStrategy {
+    /**
+     * The [DashedShape] will slightly increase or decrease the [DashedShape.dashLengthDp] and
+     * [DashedShape.gapLengthDp] values so that the dashes fit perfectly without being cut off.
+     */
+    Resize,
 
     /**
-     * Defines how a [DashedShape] is to be rendered.
+     * The [DashedShape] will use the exact [DashedShape.dashLengthDp] and [DashedShape.gapLengthDp]
+     * values provided. As a result, the [DashedShape] may not fit within its bounds or be cut off.
      */
-    public enum class FitStrategy {
-        /**
-         * The [DashedShape] will slightly increase or decrease the [DashedShape.dashLengthDp] and
-         * [DashedShape.gapLengthDp] values so that the dashes fit perfectly without being cut off.
-         */
-        Resize,
-
-        /**
-         * The [DashedShape] will use the exact [DashedShape.dashLengthDp] and [DashedShape.gapLengthDp] values
-         * provided. As a result, the [DashedShape] may not fit within its bounds or be cut off.
-         */
-        Fixed,
-    }
+    Fixed,
+  }
 }

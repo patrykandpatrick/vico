@@ -20,22 +20,16 @@ import com.patrykandpatrick.vico.core.cartesian.data.ChartValues
 import com.patrykandpatrick.vico.core.common.MeasureContext
 
 /**
- * [CartesianMeasureContext] holds data used by various cartesian chart components during the measuring and drawing
- * phases.
+ * [CartesianMeasureContext] holds data used by various cartesian chart components during the
+ * measuring and drawing phases.
  */
 public interface CartesianMeasureContext : MeasureContext {
-    /**
-     * The chart’s [ChartValues].
-     */
-    public val chartValues: ChartValues
+  /** The chart’s [ChartValues]. */
+  public val chartValues: ChartValues
 
-    /**
-     * Whether horizontal scrolling is enabled.
-     */
-    public val scrollEnabled: Boolean
+  /** Whether horizontal scrolling is enabled. */
+  public val scrollEnabled: Boolean
 
-    /**
-     * Defines how the chart’s content is positioned horizontally.
-     */
-    public val horizontalLayout: HorizontalLayout
+  /** Defines how the chart’s content is positioned horizontally. */
+  public val horizontalLayout: HorizontalLayout
 }

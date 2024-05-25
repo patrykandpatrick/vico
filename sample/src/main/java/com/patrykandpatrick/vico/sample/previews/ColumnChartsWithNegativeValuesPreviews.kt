@@ -35,80 +35,85 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.core.cartesian.data.LineCartesianLayerModel
 import com.patrykandpatrick.vico.sample.showcase.rememberMarker
 
-private val model = CartesianChartModel(LineCartesianLayerModel.build { series(2, -1, 4, -2, 1, 5, -3) })
+private val model =
+  CartesianChartModel(LineCartesianLayerModel.build { series(2, -1, 4, -2, 1, 5, -3) })
 
 @Preview
 @Composable
 public fun SingleColumnChartWithNegativeValues() {
-    val marker = rememberMarker()
-    Surface {
-        CartesianChartHost(
-            modifier = Modifier.height(250.dp),
-            chart =
-                rememberCartesianChart(
-                    rememberColumnCartesianLayer(),
-                    startAxis =
-                        rememberStartAxis(
-                            itemPlacer = remember { AxisItemPlacer.Vertical.count(count = { 9 }) },
-                        ),
-                    bottomAxis = rememberBottomAxis(),
-                    persistentMarkers = mapOf(2f to marker, 3f to marker),
-                ),
-            model = model,
-        )
-    }
+  val marker = rememberMarker()
+  Surface {
+    CartesianChartHost(
+      modifier = Modifier.height(250.dp),
+      chart =
+        rememberCartesianChart(
+          rememberColumnCartesianLayer(),
+          startAxis =
+            rememberStartAxis(
+              itemPlacer = remember { AxisItemPlacer.Vertical.count(count = { 9 }) }
+            ),
+          bottomAxis = rememberBottomAxis(),
+          persistentMarkers = mapOf(2f to marker, 3f to marker),
+        ),
+      model = model,
+    )
+  }
 }
 
 @Preview
 @Composable
 public fun SingleColumnChartWithNegativeValuesAndDataLabels() {
-    Surface {
-        CartesianChartHost(
-            chart =
-                rememberCartesianChart(
-                    rememberColumnCartesianLayer(dataLabel = rememberTextComponent()),
-                    startAxis = rememberStartAxis(),
-                    bottomAxis = rememberBottomAxis(),
-                ),
-            model = model,
-        )
-    }
+  Surface {
+    CartesianChartHost(
+      chart =
+        rememberCartesianChart(
+          rememberColumnCartesianLayer(dataLabel = rememberTextComponent()),
+          startAxis = rememberStartAxis(),
+          bottomAxis = rememberBottomAxis(),
+        ),
+      model = model,
+    )
+  }
 }
 
 @Preview
 @Composable
 public fun SingleColumnChartWithNegativeValuesAndAxisValuesOverridden() {
-    Surface {
-        CartesianChartHost(
-            chart =
-                rememberCartesianChart(
-                    rememberColumnCartesianLayer(axisValueOverrider = AxisValueOverrider.fixed(minY = 1f, maxY = 4f)),
-                    startAxis =
-                        rememberStartAxis(
-                            itemPlacer = remember { AxisItemPlacer.Vertical.count(count = { 4 }) },
-                        ),
-                    bottomAxis = rememberBottomAxis(),
-                ),
-            model = model,
-        )
-    }
+  Surface {
+    CartesianChartHost(
+      chart =
+        rememberCartesianChart(
+          rememberColumnCartesianLayer(
+            axisValueOverrider = AxisValueOverrider.fixed(minY = 1f, maxY = 4f)
+          ),
+          startAxis =
+            rememberStartAxis(
+              itemPlacer = remember { AxisItemPlacer.Vertical.count(count = { 4 }) }
+            ),
+          bottomAxis = rememberBottomAxis(),
+        ),
+      model = model,
+    )
+  }
 }
 
 @Preview
 @Composable
 public fun SingleColumnChartWithNegativeValuesAndAxisValuesOverridden2() {
-    Surface {
-        CartesianChartHost(
-            chart =
-                rememberCartesianChart(
-                    rememberColumnCartesianLayer(axisValueOverrider = AxisValueOverrider.fixed(minY = -2f, maxY = 0f)),
-                    startAxis =
-                        rememberStartAxis(
-                            itemPlacer = remember { AxisItemPlacer.Vertical.count(count = { 3 }) },
-                        ),
-                    bottomAxis = rememberBottomAxis(),
-                ),
-            model = model,
-        )
-    }
+  Surface {
+    CartesianChartHost(
+      chart =
+        rememberCartesianChart(
+          rememberColumnCartesianLayer(
+            axisValueOverrider = AxisValueOverrider.fixed(minY = -2f, maxY = 0f)
+          ),
+          startAxis =
+            rememberStartAxis(
+              itemPlacer = remember { AxisItemPlacer.Vertical.count(count = { 3 }) }
+            ),
+          bottomAxis = rememberBottomAxis(),
+        ),
+      model = model,
+    )
+  }
 }

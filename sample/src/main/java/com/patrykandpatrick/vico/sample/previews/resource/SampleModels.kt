@@ -20,12 +20,16 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.core.cartesian.data.ColumnCartesianLayerModel
 import com.patrykandpatrick.vico.core.cartesian.data.LineCartesianLayerModel
 
-public val shortColumnModel = CartesianChartModel(ColumnCartesianLayerModel.build { series(1, 2, 4, 8, 3) })
+public val shortColumnModel =
+  CartesianChartModel(ColumnCartesianLayerModel.build { series(1, 2, 4, 8, 3) })
 
 public val mediumColumnModel =
-    CartesianChartModel(ColumnCartesianLayerModel.build { series(1, 2, 4, 8, 3, 10, 4, 7, 2, 6, 4, 8) })
+  CartesianChartModel(
+    ColumnCartesianLayerModel.build { series(1, 2, 4, 8, 3, 10, 4, 7, 2, 6, 4, 8) }
+  )
 
-public val shortLineModel = CartesianChartModel(LineCartesianLayerModel.build { series(1, 2, 4, 8, 3) })
+public val shortLineModel =
+  CartesianChartModel(LineCartesianLayerModel.build { series(1, 2, 4, 8, 3) })
 
 public val mediumLineModel =
-    CartesianChartModel(LineCartesianLayerModel.build { series(1, 2, 4, 8, 3, 10, 4, 7, 2, 6, 4, 8) })
+  CartesianChartModel(LineCartesianLayerModel.build { series(1, 2, 4, 8, 3, 10, 4, 7, 2, 6, 4, 8) })

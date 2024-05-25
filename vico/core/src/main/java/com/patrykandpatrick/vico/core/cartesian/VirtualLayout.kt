@@ -21,87 +21,84 @@ import com.patrykandpatrick.vico.core.cartesian.axis.AxisManager
 import com.patrykandpatrick.vico.core.common.Legend
 import com.patrykandpatrick.vico.core.common.orZero
 
-internal class VirtualLayout(
-    private val axisManager: AxisManager,
-) {
-    private val tempInsetters = ArrayList<ChartInsetter>(TEMP_INSETTERS_INITIAL_SIZE)
+internal class VirtualLayout(private val axisManager: AxisManager) {
+  private val tempInsetters = ArrayList<ChartInsetter>(TEMP_INSETTERS_INITIAL_SIZE)
 
-    private val finalInsets: Insets = Insets()
+  private val finalInsets: Insets = Insets()
 
-    private val tempInsets: Insets = Insets()
+  private val tempInsets: Insets = Insets()
 
-    /**
-     * Measures and sets the bounds for the components of the chart.
-     *
-     * @param context holds data used for the measuring of components.
-     * @param contentBounds the bounds in which the chart should be drawn.
-     * @param chart the chart itself.
-     * @param legend the legend for the chart.
-     * @param horizontalDimensions the [HorizontalDimensions] of the chart.
-     * @param chartInsetter additional components that influence the chart layout, such as markers.
-     *
-     * @return the bounds applied to the chart.
-     */
-    fun setBounds(
-        context: CartesianMeasureContext,
-        contentBounds: RectF,
-        chart: CartesianChart,
-        legend: Legend<CartesianMeasureContext, *>?,
-        horizontalDimensions: HorizontalDimensions,
-        vararg chartInsetter: ChartInsetter?,
-    ): RectF =
-        with(context) {
-            tempInsetters.clear()
-            finalInsets.clear()
-            tempInsets.clear()
+  /**
+   * Measures and sets the bounds for the components of the chart.
+   *
+   * @param context holds data used for the measuring of components.
+   * @param contentBounds the bounds in which the chart should be drawn.
+   * @param chart the chart itself.
+   * @param legend the legend for the chart.
+   * @param horizontalDimensions the [HorizontalDimensions] of the chart.
+   * @param chartInsetter additional components that influence the chart layout, such as markers.
+   * @return the bounds applied to the chart.
+   */
+  fun setBounds(
+    context: CartesianMeasureContext,
+    contentBounds: RectF,
+    chart: CartesianChart,
+    legend: Legend<CartesianMeasureContext, *>?,
+    horizontalDimensions: HorizontalDimensions,
+    vararg chartInsetter: ChartInsetter?,
+  ): RectF =
+    with(context) {
+      tempInsetters.clear()
+      finalInsets.clear()
+      tempInsets.clear()
 
-            val legendHeight = legend?.getHeight(context, contentBounds.width()).orZero
+      val legendHeight = legend?.getHeight(context, contentBounds.width()).orZero
 
-            axisManager.addInsetters(tempInsetters)
-            chartInsetter.filterNotNull().forEach(tempInsetters::add)
-            tempInsetters.addAll(chart.chartInsetters)
-            tempInsetters.add(chart)
+      axisManager.addInsetters(tempInsetters)
+      chartInsetter.filterNotNull().forEach(tempInsetters::add)
+      tempInsetters.addAll(chart.chartInsetters)
+      tempInsetters.add(chart)
 
-            tempInsetters.forEach { insetter ->
-                insetter.getInsets(context, tempInsets, horizontalDimensions)
-                finalInsets.setValuesIfGreater(tempInsets)
-            }
+      tempInsetters.forEach { insetter ->
+        insetter.getInsets(context, tempInsets, horizontalDimensions)
+        finalInsets.setValuesIfGreater(tempInsets)
+      }
 
-            val availableHeight = contentBounds.height() - finalInsets.vertical - legendHeight
+      val availableHeight = contentBounds.height() - finalInsets.vertical - legendHeight
 
-            tempInsetters.forEach { insetter ->
-                insetter.getHorizontalInsets(context, availableHeight, tempInsets)
-                finalInsets.setValuesIfGreater(tempInsets)
-            }
+      tempInsetters.forEach { insetter ->
+        insetter.getHorizontalInsets(context, availableHeight, tempInsets)
+        finalInsets.setValuesIfGreater(tempInsets)
+      }
 
-            val chartBounds =
-                RectF().apply {
-                    left = contentBounds.left + finalInsets.getLeft(isLtr)
-                    top = contentBounds.top + finalInsets.top
-                    right = contentBounds.right - finalInsets.getRight(isLtr)
-                    bottom = contentBounds.bottom - finalInsets.bottom - legendHeight
-                }
-
-            chart.setBounds(
-                left = chartBounds.left,
-                top = chartBounds.top,
-                right = chartBounds.right,
-                bottom = chartBounds.bottom,
-            )
-
-            axisManager.setAxesBounds(context, contentBounds, chartBounds, finalInsets)
-
-            legend?.setBounds(
-                left = contentBounds.left,
-                top = chart.bounds.bottom + finalInsets.bottom,
-                right = contentBounds.right,
-                bottom = chart.bounds.bottom + finalInsets.bottom + legendHeight,
-            )
-
-            chartBounds
+      val chartBounds =
+        RectF().apply {
+          left = contentBounds.left + finalInsets.getLeft(isLtr)
+          top = contentBounds.top + finalInsets.top
+          right = contentBounds.right - finalInsets.getRight(isLtr)
+          bottom = contentBounds.bottom - finalInsets.bottom - legendHeight
         }
 
-    private companion object {
-        const val TEMP_INSETTERS_INITIAL_SIZE = 5
+      chart.setBounds(
+        left = chartBounds.left,
+        top = chartBounds.top,
+        right = chartBounds.right,
+        bottom = chartBounds.bottom,
+      )
+
+      axisManager.setAxesBounds(context, contentBounds, chartBounds, finalInsets)
+
+      legend?.setBounds(
+        left = contentBounds.left,
+        top = chart.bounds.bottom + finalInsets.bottom,
+        right = contentBounds.right,
+        bottom = chart.bounds.bottom + finalInsets.bottom + legendHeight,
+      )
+
+      chartBounds
     }
+
+  private companion object {
+    const val TEMP_INSETTERS_INITIAL_SIZE = 5
+  }
 }

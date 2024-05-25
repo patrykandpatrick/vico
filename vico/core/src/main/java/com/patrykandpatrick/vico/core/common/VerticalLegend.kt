@@ -23,83 +23,78 @@ import android.graphics.RectF
  *
  * @param items a [Collection] of [LegendItem]s to be displayed by this [VerticalLegend].
  * @param iconSizeDp defines the size of all [LegendItem.icon]s.
- * @param iconPaddingDp defines the padding between each [LegendItem.icon] and its corresponding [LegendItem.label].
+ * @param iconPaddingDp defines the padding between each [LegendItem.icon] and its corresponding
+ *   [LegendItem.label].
  * @param spacingDp defines the vertical spacing between each [LegendItem].
  * @param padding defines the padding of the content.
  */
 public open class VerticalLegend<M : MeasureContext, D : DrawContext>(
-    public var items: Collection<LegendItem>,
-    public var iconSizeDp: Float,
-    public var iconPaddingDp: Float,
-    public var spacingDp: Float = 0f,
-    public val padding: Dimensions = Dimensions.Empty,
+  public var items: Collection<LegendItem>,
+  public var iconSizeDp: Float,
+  public var iconPaddingDp: Float,
+  public var spacingDp: Float = 0f,
+  public val padding: Dimensions = Dimensions.Empty,
 ) : Legend<M, D> {
-    private val heights: HashMap<LegendItem, Float> = HashMap()
+  private val heights: HashMap<LegendItem, Float> = HashMap()
 
-    override val bounds: RectF = RectF()
+  override val bounds: RectF = RectF()
 
-    override fun getHeight(
-        context: M,
-        availableWidth: Float,
-    ): Float =
-        with(context) {
-            items.fold(0f) { sum, item ->
-                sum +
-                    maxOf(
-                        iconSizeDp.pixels,
-                        item.getLabelHeight(context, availableWidth, iconPaddingDp, iconSizeDp),
-                    ).also { height -> heights[item] = height }
-            } + (padding.verticalDp + spacingDp * (items.size - 1)).pixels
-        }
+  override fun getHeight(context: M, availableWidth: Float): Float =
+    with(context) {
+      items.fold(0f) { sum, item ->
+        sum +
+          maxOf(
+              iconSizeDp.pixels,
+              item.getLabelHeight(context, availableWidth, iconPaddingDp, iconSizeDp),
+            )
+            .also { height -> heights[item] = height }
+      } + (padding.verticalDp + spacingDp * (items.size - 1)).pixels
+    }
 
-    override fun draw(
-        context: D,
-        chartBounds: RectF,
-    ): Unit =
-        with(context) {
-            var currentTop = bounds.top + padding.topDp.pixels
+  override fun draw(context: D, chartBounds: RectF): Unit =
+    with(context) {
+      var currentTop = bounds.top + padding.topDp.pixels
 
-            items.forEach { item ->
+      items.forEach { item ->
+        val height =
+          heights.getOrPut(item) {
+            item.getLabelHeight(this, chartBounds.width(), iconPaddingDp, iconSizeDp)
+          }
+        val centerY = currentTop + height.half
+        var startX =
+          if (isLtr) {
+            chartBounds.left + padding.startDp.pixels
+          } else {
+            chartBounds.right - padding.startDp.pixels - iconSizeDp.pixels
+          }
 
-                val height =
-                    heights.getOrPut(item) {
-                        item.getLabelHeight(this, chartBounds.width(), iconPaddingDp, iconSizeDp)
-                    }
-                val centerY = currentTop + height.half
-                var startX =
-                    if (isLtr) {
-                        chartBounds.left + padding.startDp.pixels
-                    } else {
-                        chartBounds.right - padding.startDp.pixels - iconSizeDp.pixels
-                    }
+        item.icon.draw(
+          context = context,
+          left = startX,
+          top = centerY - iconSizeDp.half.pixels,
+          right = startX + iconSizeDp.pixels,
+          bottom = centerY + iconSizeDp.half.pixels,
+        )
 
-                item.icon.draw(
-                    context = context,
-                    left = startX,
-                    top = centerY - iconSizeDp.half.pixels,
-                    right = startX + iconSizeDp.pixels,
-                    bottom = centerY + iconSizeDp.half.pixels,
-                )
+        startX +=
+          if (isLtr) {
+            (iconSizeDp + iconPaddingDp).pixels
+          } else {
+            -iconPaddingDp.pixels
+          }
 
-                startX +=
-                    if (isLtr) {
-                        (iconSizeDp + iconPaddingDp).pixels
-                    } else {
-                        -iconPaddingDp.pixels
-                    }
+        item.label.drawText(
+          context = context,
+          text = item.labelText,
+          textX = startX,
+          textY = centerY,
+          horizontalPosition = HorizontalPosition.End,
+          maxTextWidth =
+            (chartBounds.width() - (iconSizeDp + iconPaddingDp + padding.horizontalDp).pixels)
+              .toInt(),
+        )
 
-                item.label.drawText(
-                    context = context,
-                    text = item.labelText,
-                    textX = startX,
-                    textY = centerY,
-                    horizontalPosition = HorizontalPosition.End,
-                    maxTextWidth =
-                        (chartBounds.width() - (iconSizeDp + iconPaddingDp + padding.horizontalDp).pixels)
-                            .toInt(),
-                )
-
-                currentTop += height + spacingDp.pixels
-            }
-        }
+        currentTop += height + spacingDp.pixels
+      }
+    }
 }

@@ -26,9 +26,9 @@ import com.patrykandpatrick.vico.core.cartesian.data.ChartValues
 
 @Immutable
 internal class CartesianChartModelWrapper(
-    val model: CartesianChartModel? = null,
-    val previousModel: CartesianChartModel? = null,
-    val chartValues: ChartValues = ChartValues.Empty,
+  val model: CartesianChartModel? = null,
+  val previousModel: CartesianChartModel? = null,
+  val chartValues: ChartValues = ChartValues.Empty,
 )
 
 internal operator fun CartesianChartModelWrapper.component1(): CartesianChartModel? = model
@@ -38,17 +38,14 @@ internal operator fun CartesianChartModelWrapper.component2(): CartesianChartMod
 internal operator fun CartesianChartModelWrapper.component3(): ChartValues = chartValues
 
 internal class CartesianChartModelWrapperState : State<CartesianChartModelWrapper> {
-    private var previousModel: CartesianChartModel? = null
+  private var previousModel: CartesianChartModel? = null
 
-    override var value by mutableStateOf(CartesianChartModelWrapper())
-        private set
+  override var value by mutableStateOf(CartesianChartModelWrapper())
+    private set
 
-    fun set(
-        model: CartesianChartModel?,
-        chartValues: ChartValues,
-    ) {
-        val currentModel = value.model
-        if (model?.id != currentModel?.id) previousModel = currentModel
-        value = CartesianChartModelWrapper(model, previousModel, chartValues)
-    }
+  fun set(model: CartesianChartModel?, chartValues: ChartValues) {
+    val currentModel = value.model
+    if (model?.id != currentModel?.id) previousModel = currentModel
+    value = CartesianChartModelWrapper(model, previousModel, chartValues)
+  }
 }

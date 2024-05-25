@@ -32,34 +32,24 @@ import kotlin.math.abs
  * @property brush the [Brush] to be converted to a [Shader].
  */
 public class BrushShader(private val brush: Brush) : CacheableDynamicShader() {
-    private val matrix = Matrix()
+  private val matrix = Matrix()
 
-    override fun createShader(
-        context: DrawContext,
-        left: Float,
-        top: Float,
-        right: Float,
-        bottom: Float,
-    ): Shader {
-        val tempPaint = Paint()
-        brush.applyTo(
-            size =
-                Size(
-                    abs(left - right),
-                    abs(top - bottom),
-                ),
-            p = tempPaint,
-            alpha = 1f,
-        )
-        return requireNotNull(tempPaint.shader).apply {
-            matrix.postTranslate(left, top)
-            setLocalMatrix(matrix)
-            matrix.reset()
-        }
+  override fun createShader(
+    context: DrawContext,
+    left: Float,
+    top: Float,
+    right: Float,
+    bottom: Float,
+  ): Shader {
+    val tempPaint = Paint()
+    brush.applyTo(size = Size(abs(left - right), abs(top - bottom)), p = tempPaint, alpha = 1f)
+    return requireNotNull(tempPaint.shader).apply {
+      matrix.postTranslate(left, top)
+      setLocalMatrix(matrix)
+      matrix.reset()
     }
+  }
 }
 
-/**
- * Converts this [Brush] to a [DynamicShader] using [BrushShader].
- */
+/** Converts this [Brush] to a [DynamicShader] using [BrushShader]. */
 public fun Brush.toDynamicShader(): DynamicShader = BrushShader(this)

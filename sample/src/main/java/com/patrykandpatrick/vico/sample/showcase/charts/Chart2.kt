@@ -52,126 +52,119 @@ import com.patrykandpatrick.vico.databinding.Chart2Binding
 import com.patrykandpatrick.vico.sample.showcase.Defaults
 import com.patrykandpatrick.vico.sample.showcase.UISystem
 import com.patrykandpatrick.vico.sample.showcase.rememberMarker
+import java.text.DateFormatSymbols
+import java.util.Locale
+import kotlin.random.Random
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
-import java.text.DateFormatSymbols
-import java.util.Locale
-import kotlin.random.Random
 
 @Composable
-internal fun Chart2(
-    uiSystem: UISystem,
-    modifier: Modifier,
-) {
-    val modelProducer = remember { CartesianChartModelProducer.build() }
-    LaunchedEffect(Unit) {
-        withContext(Dispatchers.Default) {
-            while (isActive) {
-                modelProducer.tryRunTransaction { columnSeries { series(List(47) { 2 + Random.nextFloat() * 18 }) } }
-                delay(Defaults.TRANSACTION_INTERVAL_MS)
-            }
+internal fun Chart2(uiSystem: UISystem, modifier: Modifier) {
+  val modelProducer = remember { CartesianChartModelProducer.build() }
+  LaunchedEffect(Unit) {
+    withContext(Dispatchers.Default) {
+      while (isActive) {
+        modelProducer.tryRunTransaction {
+          columnSeries { series(List(47) { 2 + Random.nextFloat() * 18 }) }
         }
+        delay(Defaults.TRANSACTION_INTERVAL_MS)
+      }
     }
-    when (uiSystem) {
-        UISystem.Compose -> ComposeChart2(modelProducer, modifier)
-        UISystem.Views -> ViewChart2(modelProducer, modifier)
-    }
+  }
+  when (uiSystem) {
+    UISystem.Compose -> ComposeChart2(modelProducer, modifier)
+    UISystem.Views -> ViewChart2(modelProducer, modifier)
+  }
 }
 
 @Composable
-private fun ComposeChart2(
-    modelProducer: CartesianChartModelProducer,
-    modifier: Modifier,
-) {
-    CartesianChartHost(
-        chart =
-            rememberCartesianChart(
-                rememberColumnCartesianLayer(
-                    ColumnCartesianLayer.ColumnProvider.series(
-                        rememberLineComponent(
-                            color = Color(0xffff5500),
-                            thickness = 16.dp,
-                            shape = remember { Shape.rounded(allPercent = 40) },
-                        ),
-                    ),
-                ),
-                startAxis = rememberStartAxis(),
-                bottomAxis =
-                    rememberBottomAxis(
-                        valueFormatter = bottomAxisValueFormatter,
-                        itemPlacer =
-                            remember { AxisItemPlacer.Horizontal.default(spacing = 3, addExtremeLabelPadding = true) },
-                    ),
-                decorations = listOf(rememberComposeHorizontalLine()),
-            ),
-        modelProducer = modelProducer,
-        modifier = modifier,
-        marker = rememberMarker(),
-        horizontalLayout = HorizontalLayout.fullWidth(),
-    )
+private fun ComposeChart2(modelProducer: CartesianChartModelProducer, modifier: Modifier) {
+  CartesianChartHost(
+    chart =
+      rememberCartesianChart(
+        rememberColumnCartesianLayer(
+          ColumnCartesianLayer.ColumnProvider.series(
+            rememberLineComponent(
+              color = Color(0xffff5500),
+              thickness = 16.dp,
+              shape = remember { Shape.rounded(allPercent = 40) },
+            )
+          )
+        ),
+        startAxis = rememberStartAxis(),
+        bottomAxis =
+          rememberBottomAxis(
+            valueFormatter = bottomAxisValueFormatter,
+            itemPlacer =
+              remember {
+                AxisItemPlacer.Horizontal.default(spacing = 3, addExtremeLabelPadding = true)
+              },
+          ),
+        decorations = listOf(rememberComposeHorizontalLine()),
+      ),
+    modelProducer = modelProducer,
+    modifier = modifier,
+    marker = rememberMarker(),
+    horizontalLayout = HorizontalLayout.fullWidth(),
+  )
 }
 
 @Composable
-private fun ViewChart2(
-    modelProducer: CartesianChartModelProducer,
-    modifier: Modifier,
-) {
-    val marker = rememberMarker()
-    AndroidViewBinding(
-        { inflater, parent, attachToParent ->
-            Chart2Binding
-                .inflate(inflater, parent, attachToParent)
-                .apply {
-                    with(chartView) {
-                        chart?.addDecoration(getViewHorizontalLine())
-                        this.modelProducer = modelProducer
-                        (chart?.bottomAxis as BaseAxis).valueFormatter = bottomAxisValueFormatter
-                        this.marker = marker
-                    }
-                }
-        },
-        modifier,
-    )
+private fun ViewChart2(modelProducer: CartesianChartModelProducer, modifier: Modifier) {
+  val marker = rememberMarker()
+  AndroidViewBinding(
+    { inflater, parent, attachToParent ->
+      Chart2Binding.inflate(inflater, parent, attachToParent).apply {
+        with(chartView) {
+          chart?.addDecoration(getViewHorizontalLine())
+          this.modelProducer = modelProducer
+          (chart?.bottomAxis as BaseAxis).valueFormatter = bottomAxisValueFormatter
+          this.marker = marker
+        }
+      }
+    },
+    modifier,
+  )
 }
 
 @Composable
 private fun rememberComposeHorizontalLine(): HorizontalLine {
-    val color = Color(HORIZONTAL_LINE_COLOR)
-    return rememberHorizontalLine(
-        y = { HORIZONTAL_LINE_Y },
-        line = rememberLineComponent(color, HORIZONTAL_LINE_THICKNESS_DP.dp),
-        labelComponent =
-            rememberTextComponent(
-                background = rememberShapeComponent(Shape.Pill, color),
-                padding =
-                    Dimensions.of(
-                        HORIZONTAL_LINE_LABEL_HORIZONTAL_PADDING_DP.dp,
-                        HORIZONTAL_LINE_LABEL_VERTICAL_PADDING_DP.dp,
-                    ),
-                margins = Dimensions.of(HORIZONTAL_LINE_LABEL_MARGIN_DP.dp),
-                typeface = Typeface.MONOSPACE,
-            ),
-    )
+  val color = Color(HORIZONTAL_LINE_COLOR)
+  return rememberHorizontalLine(
+    y = { HORIZONTAL_LINE_Y },
+    line = rememberLineComponent(color, HORIZONTAL_LINE_THICKNESS_DP.dp),
+    labelComponent =
+      rememberTextComponent(
+        background = rememberShapeComponent(Shape.Pill, color),
+        padding =
+          Dimensions.of(
+            HORIZONTAL_LINE_LABEL_HORIZONTAL_PADDING_DP.dp,
+            HORIZONTAL_LINE_LABEL_VERTICAL_PADDING_DP.dp,
+          ),
+        margins = Dimensions.of(HORIZONTAL_LINE_LABEL_MARGIN_DP.dp),
+        typeface = Typeface.MONOSPACE,
+      ),
+  )
 }
 
 private fun getViewHorizontalLine() =
-    HorizontalLine(
-        y = { HORIZONTAL_LINE_Y },
-        line = LineComponent(HORIZONTAL_LINE_COLOR, HORIZONTAL_LINE_THICKNESS_DP),
-        labelComponent =
-            TextComponent.build {
-                background = ShapeComponent(Shape.Pill, HORIZONTAL_LINE_COLOR)
-                padding =
-                    Dimensions(
-                        HORIZONTAL_LINE_LABEL_VERTICAL_PADDING_DP,
-                        HORIZONTAL_LINE_LABEL_HORIZONTAL_PADDING_DP,
-                    )
-                margins = Dimensions(HORIZONTAL_LINE_LABEL_MARGIN_DP)
-                typeface = Typeface.MONOSPACE
-            },
-    )
+  HorizontalLine(
+    y = { HORIZONTAL_LINE_Y },
+    line = LineComponent(HORIZONTAL_LINE_COLOR, HORIZONTAL_LINE_THICKNESS_DP),
+    labelComponent =
+      TextComponent.build {
+        background = ShapeComponent(Shape.Pill, HORIZONTAL_LINE_COLOR)
+        padding =
+          Dimensions(
+            HORIZONTAL_LINE_LABEL_VERTICAL_PADDING_DP,
+            HORIZONTAL_LINE_LABEL_HORIZONTAL_PADDING_DP,
+          )
+        margins = Dimensions(HORIZONTAL_LINE_LABEL_MARGIN_DP)
+        typeface = Typeface.MONOSPACE
+      },
+  )
 
 private const val HORIZONTAL_LINE_Y = 14f
 private const val HORIZONTAL_LINE_COLOR = -2893786
@@ -181,5 +174,6 @@ private const val HORIZONTAL_LINE_LABEL_VERTICAL_PADDING_DP = 2f
 private const val HORIZONTAL_LINE_LABEL_MARGIN_DP = 4f
 
 private val monthNames = DateFormatSymbols.getInstance(Locale.US).shortMonths
-private val bottomAxisValueFormatter =
-    CartesianValueFormatter { x, _, _ -> "${monthNames[x.toInt() % 12]} ’${20 + x.toInt() / 12}" }
+private val bottomAxisValueFormatter = CartesianValueFormatter { x, _, _ ->
+  "${monthNames[x.toInt() % 12]} ’${20 + x.toInt() / 12}"
+}

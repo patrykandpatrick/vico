@@ -20,65 +20,61 @@ import android.graphics.Paint
 import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.DrawContext
 
-/**
- * A base class for components that use [android.graphics.Paint] to draw themselves.
- */
+/** A base class for components that use [android.graphics.Paint] to draw themselves. */
 @Suppress("UNCHECKED_CAST")
 public open class PaintComponent<C> protected constructor() {
-    protected val componentShadow: ComponentShadow = ComponentShadow()
+  protected val componentShadow: ComponentShadow = ComponentShadow()
 
-    /**
-     * Checks whether the applied shadow layer needs to be updated.
-     */
-    protected fun maybeUpdateShadowLayer(
-        context: DrawContext,
-        paint: Paint,
-        backgroundColor: Int,
-        opacity: Float = 1f,
-    ): Unit =
-        componentShadow.maybeUpdateShadowLayer(
-            context = context,
-            paint = paint,
-            backgroundColor = backgroundColor,
-            opacity = opacity,
-        )
+  /** Checks whether the applied shadow layer needs to be updated. */
+  protected fun maybeUpdateShadowLayer(
+    context: DrawContext,
+    paint: Paint,
+    backgroundColor: Int,
+    opacity: Float = 1f,
+  ): Unit =
+    componentShadow.maybeUpdateShadowLayer(
+      context = context,
+      paint = paint,
+      backgroundColor = backgroundColor,
+      opacity = opacity,
+    )
 
-    /**
-     * Applies a drop shadow.
-     *
-     * @param radius the blur radius.
-     * @param dx the horizontal offset.
-     * @param dy the vertical offset.
-     * @param color the shadow color.
-     * @param applyElevationOverlay whether to apply an elevation overlay to the shape.
-     */
-    public fun setShadow(
-        radius: Float,
-        dx: Float = 0f,
-        dy: Float = 0f,
-        color: Int = Defaults.SHADOW_COLOR,
-        applyElevationOverlay: Boolean = false,
-    ): C =
-        apply {
-            componentShadow.apply {
-                this.radius = radius
-                this.dx = dx
-                this.dy = dy
-                this.color = color
-                this.applyElevationOverlay = applyElevationOverlay
-            }
-        } as C
+  /**
+   * Applies a drop shadow.
+   *
+   * @param radius the blur radius.
+   * @param dx the horizontal offset.
+   * @param dy the vertical offset.
+   * @param color the shadow color.
+   * @param applyElevationOverlay whether to apply an elevation overlay to the shape.
+   */
+  public fun setShadow(
+    radius: Float,
+    dx: Float = 0f,
+    dy: Float = 0f,
+    color: Int = Defaults.SHADOW_COLOR,
+    applyElevationOverlay: Boolean = false,
+  ): C =
+    apply {
+      componentShadow.apply {
+        this.radius = radius
+        this.dx = dx
+        this.dy = dy
+        this.color = color
+        this.applyElevationOverlay = applyElevationOverlay
+      }
+    }
+      as C
 
-    /**
-     * Removes this [ShapeComponent]’s drop shadow.
-     */
-    public fun clearShadow(): C =
-        apply {
-            componentShadow.apply {
-                this.radius = 0f
-                this.dx = 0f
-                this.dy = 0f
-                this.color = 0
-            }
-        } as C
+  /** Removes this [ShapeComponent]’s drop shadow. */
+  public fun clearShadow(): C =
+    apply {
+      componentShadow.apply {
+        this.radius = 0f
+        this.dx = 0f
+        this.dy = 0f
+        this.color = 0
+      }
+    }
+      as C
 }

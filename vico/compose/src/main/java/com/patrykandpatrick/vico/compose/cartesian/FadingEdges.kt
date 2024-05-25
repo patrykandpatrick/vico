@@ -33,51 +33,52 @@ import com.patrykandpatrick.vico.core.common.Defaults.FADING_EDGE_WIDTH_DP
  * @param startEdgeWidth the width of the fade overlay for the start edge (in dp).
  * @param endEdgeWidth the width of the fade overlay for the end edge (in dp).
  * @param visibilityThreshold the scroll distance over which the overlays fade in and out (in dp).
- * @param visibilityEasing used for the fading edges’ fade-in and fade-out animations. This is a mapping of the degree
- * to which [visibilityThreshold] has been satisfied to the opacity of the fading edges.
- *
+ * @param visibilityEasing used for the fading edges’ fade-in and fade-out animations. This is a
+ *   mapping of the degree to which [visibilityThreshold] has been satisfied to the opacity of the
+ *   fading edges.
  * @see FadingEdges
  */
 @Composable
 public fun rememberFadingEdges(
-    startEdgeWidth: Dp = FadingEdgesDefaults.edgeWidth,
-    endEdgeWidth: Dp = startEdgeWidth,
-    visibilityThreshold: Dp = FadingEdgesDefaults.visibilityThreshold,
-    visibilityEasing: Easing = FadingEdgesDefaults.visibilityEasing,
+  startEdgeWidth: Dp = FadingEdgesDefaults.edgeWidth,
+  endEdgeWidth: Dp = startEdgeWidth,
+  visibilityThreshold: Dp = FadingEdgesDefaults.visibilityThreshold,
+  visibilityEasing: Easing = FadingEdgesDefaults.visibilityEasing,
 ): FadingEdges =
-    remember { FadingEdges() }
-        .apply {
-            startEdgeWidthDp = startEdgeWidth.value
-            endEdgeWidthDp = endEdgeWidth.value
-            visibilityThresholdDp = visibilityThreshold.value
-            this.visibilityInterpolator = remember(visibilityEasing) { TimeInterpolator(visibilityEasing::transform) }
-        }
+  remember { FadingEdges() }
+    .apply {
+      startEdgeWidthDp = startEdgeWidth.value
+      endEdgeWidthDp = endEdgeWidth.value
+      visibilityThresholdDp = visibilityThreshold.value
+      this.visibilityInterpolator =
+        remember(visibilityEasing) { TimeInterpolator(visibilityEasing::transform) }
+    }
 
 /**
  * Creates and remembers a [FadingEdges] instance.
  *
  * @param edgeWidth the width of the fade overlay.
  * @param visibilityThreshold the scroll distance over which the overlays fade in and out (in dp).
- * @param visibilityEasing used for the fading edges’ fade-in and fade-out animations. This is a mapping of the degree
- * to which [visibilityThreshold] has been satisfied to the opacity of the fading edges.
- *
+ * @param visibilityEasing used for the fading edges’ fade-in and fade-out animations. This is a
+ *   mapping of the degree to which [visibilityThreshold] has been satisfied to the opacity of the
+ *   fading edges.
  * @see FadingEdges
  */
 @Composable
 public fun rememberFadingEdges(
-    edgeWidth: Dp = FadingEdgesDefaults.edgeWidth,
-    visibilityThreshold: Dp = FadingEdgesDefaults.visibilityThreshold,
-    visibilityEasing: Easing = FadingEdgesDefaults.visibilityEasing,
+  edgeWidth: Dp = FadingEdgesDefaults.edgeWidth,
+  visibilityThreshold: Dp = FadingEdgesDefaults.visibilityThreshold,
+  visibilityEasing: Easing = FadingEdgesDefaults.visibilityEasing,
 ): FadingEdges =
-    rememberFadingEdges(
-        startEdgeWidth = edgeWidth,
-        endEdgeWidth = edgeWidth,
-        visibilityThreshold = visibilityThreshold,
-        visibilityEasing = visibilityEasing,
-    )
+  rememberFadingEdges(
+    startEdgeWidth = edgeWidth,
+    endEdgeWidth = edgeWidth,
+    visibilityThreshold = visibilityThreshold,
+    visibilityEasing = visibilityEasing,
+  )
 
 private object FadingEdgesDefaults {
-    val edgeWidth = FADING_EDGE_WIDTH_DP.dp
-    val visibilityThreshold = FADING_EDGE_VISIBILITY_THRESHOLD_DP.dp
-    val visibilityEasing = FastOutSlowInEasing
+  val edgeWidth = FADING_EDGE_WIDTH_DP.dp
+  val visibilityThreshold = FADING_EDGE_VISIBILITY_THRESHOLD_DP.dp
+  val visibilityEasing = FastOutSlowInEasing
 }

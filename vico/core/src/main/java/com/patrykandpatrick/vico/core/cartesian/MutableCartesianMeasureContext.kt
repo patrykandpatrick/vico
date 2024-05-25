@@ -21,22 +21,24 @@ import com.patrykandpatrick.vico.core.cartesian.data.ChartValues
 import com.patrykandpatrick.vico.core.common.MutableMeasureContext
 
 /**
- * A [CartesianMeasureContext] implementation that facilitates the mutation of some of its properties.
+ * A [CartesianMeasureContext] implementation that facilitates the mutation of some of its
+ * properties.
  */
 public class MutableCartesianMeasureContext(
-    override val canvasBounds: RectF,
-    override var density: Float,
-    override var isLtr: Boolean,
-    override var scrollEnabled: Boolean = false,
-    override var horizontalLayout: HorizontalLayout = HorizontalLayout.Segmented,
-    override var chartValues: ChartValues,
-    spToPx: (Float) -> Float,
-) : MutableMeasureContext(
-        canvasBounds = canvasBounds,
-        density = density,
-        isLtr = isLtr,
-        spToPx = spToPx,
-    ),
-    CartesianMeasureContext {
-    override fun spToPx(sp: Float): Float = spToPx.invoke(sp)
+  override val canvasBounds: RectF,
+  override var density: Float,
+  override var isLtr: Boolean,
+  override var scrollEnabled: Boolean = false,
+  override var horizontalLayout: HorizontalLayout = HorizontalLayout.Segmented,
+  override var chartValues: ChartValues,
+  spToPx: (Float) -> Float,
+) :
+  MutableMeasureContext(
+    canvasBounds = canvasBounds,
+    density = density,
+    isLtr = isLtr,
+    spToPx = spToPx,
+  ),
+  CartesianMeasureContext {
+  override fun spToPx(sp: Float): Float = spToPx.invoke(sp)
 }

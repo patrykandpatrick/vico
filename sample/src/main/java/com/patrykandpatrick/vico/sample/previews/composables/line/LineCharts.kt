@@ -33,38 +33,38 @@ import com.patrykandpatrick.vico.sample.previews.resource.shortLineModel
 @ChartPreview
 @Composable
 fun DefaultLineChart(
-    model: CartesianChartModel = shortLineModel,
-    scrollable: Boolean = true,
-    initialScroll: Scroll.Absolute = Scroll.Absolute.Start,
+  model: CartesianChartModel = shortLineModel,
+  scrollable: Boolean = true,
+  initialScroll: Scroll.Absolute = Scroll.Absolute.Start,
 ) {
-    PreviewSurface {
-        CartesianChartHost(
-            chart =
-                rememberCartesianChart(
-                    rememberLineCartesianLayer(),
-                    startAxis = rememberStartAxis(),
-                    bottomAxis = rememberBottomAxis(),
-                ),
-            model = model,
-            scrollState = rememberVicoScrollState(scrollable, initialScroll),
-        )
-    }
+  PreviewSurface {
+    CartesianChartHost(
+      chart =
+        rememberCartesianChart(
+          rememberLineCartesianLayer(),
+          startAxis = rememberStartAxis(),
+          bottomAxis = rememberBottomAxis(),
+        ),
+      model = model,
+      scrollState = rememberVicoScrollState(scrollable, initialScroll),
+    )
+  }
 }
 
 @ChartPreview
 @Composable
 fun DefaultLineChartLongScrollable() {
-    DefaultLineChart(model = mediumLineModel)
+  DefaultLineChart(model = mediumLineModel)
 }
 
 @ChartPreview
 @Composable
 fun DefaultLineChartLongScrollableEnd() {
-    DefaultLineChart(model = mediumLineModel, initialScroll = Scroll.Absolute.End)
+  DefaultLineChart(model = mediumLineModel, initialScroll = Scroll.Absolute.End)
 }
 
 @ChartPreview
 @Composable
 fun DefaultLineChartLongNonScrollable() {
-    DefaultLineChart(model = mediumLineModel, scrollable = false)
+  DefaultLineChart(model = mediumLineModel, scrollable = false)
 }

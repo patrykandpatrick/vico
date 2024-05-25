@@ -35,105 +35,95 @@ import com.patrykandpatrick.vico.core.common.Defaults
  * @param maxZoom represents the maximum zoom factor.
  */
 public class ZoomHandler(
-    internal val zoomEnabled: Boolean = true,
-    private val initialZoom: Zoom = Zoom.max(Zoom.static(), Zoom.Content),
-    private val minZoom: Zoom = Zoom.Content,
-    private val maxZoom: Zoom = Zoom.max(Zoom.static(Defaults.MAX_ZOOM), Zoom.Content),
+  internal val zoomEnabled: Boolean = true,
+  private val initialZoom: Zoom = Zoom.max(Zoom.static(), Zoom.Content),
+  private val minZoom: Zoom = Zoom.Content,
+  private val maxZoom: Zoom = Zoom.max(Zoom.static(Defaults.MAX_ZOOM), Zoom.Content),
 ) {
-    private var overridden = false
-    private val listeners = mutableSetOf<Listener>()
+  private var overridden = false
+  private val listeners = mutableSetOf<Listener>()
 
-    /** The current zoom factor. */
-    public var value: Float = 0f
-        private set(newValue) {
-            val oldValue = field
-            field = newValue.coerceIn(valueRange)
-            if (field != oldValue) listeners.forEach { it.onValueChanged(oldValue, field) }
-        }
-
-    /** The range of zoom factors. */
-    public var valueRange: ClosedFloatingPointRange<Float> = 0f..0f
-        private set(newValueRange) {
-            val oldValueRange = field
-            if (newValueRange == oldValueRange) return
-            field = newValueRange
-            listeners.forEach { it.onValueRangeChanged(oldValueRange, field) }
-            value = value
-        }
-
-    internal fun update(
-        context: CartesianMeasureContext,
-        horizontalDimensions: MutableHorizontalDimensions,
-        bounds: RectF,
-    ) {
-        val minValue = minZoom.getValue(context, horizontalDimensions, bounds)
-        val maxValue = maxZoom.getValue(context, horizontalDimensions, bounds)
-        valueRange = minValue..maxValue
-        if (!overridden) value = initialZoom.getValue(context, horizontalDimensions, bounds)
-        horizontalDimensions.scale(value)
+  /** The current zoom factor. */
+  public var value: Float = 0f
+    private set(newValue) {
+      val oldValue = field
+      field = newValue.coerceIn(valueRange)
+      if (field != oldValue) listeners.forEach { it.onValueChanged(oldValue, field) }
     }
 
-    internal fun zoom(
-        factor: Float,
-        centroidX: Float,
-        scroll: Float,
-        bounds: RectF,
-    ): Scroll {
-        overridden = true
-        val oldValue = value
-        value *= factor
-        if (value == oldValue) Scroll.Relative.pixels(0f)
-        val transformationAxisX = scroll + centroidX - bounds.left
-        val zoomedTransformationAxisX = transformationAxisX * (value / oldValue)
-        return Scroll.Relative.pixels(zoomedTransformationAxisX - transformationAxisX)
+  /** The range of zoom factors. */
+  public var valueRange: ClosedFloatingPointRange<Float> = 0f..0f
+    private set(newValueRange) {
+      val oldValueRange = field
+      if (newValueRange == oldValueRange) return
+      field = newValueRange
+      listeners.forEach { it.onValueRangeChanged(oldValueRange, field) }
+      value = value
     }
 
-    internal fun saveInstanceState(bundle: Bundle) {
-        bundle.putFloat(VALUE_KEY, value)
-        bundle.putBoolean(OVERRIDDEN_KEY, overridden)
-    }
+  internal fun update(
+    context: CartesianMeasureContext,
+    horizontalDimensions: MutableHorizontalDimensions,
+    bounds: RectF,
+  ) {
+    val minValue = minZoom.getValue(context, horizontalDimensions, bounds)
+    val maxValue = maxZoom.getValue(context, horizontalDimensions, bounds)
+    valueRange = minValue..maxValue
+    if (!overridden) value = initialZoom.getValue(context, horizontalDimensions, bounds)
+    horizontalDimensions.scale(value)
+  }
 
-    internal fun restoreInstanceState(bundle: Bundle) {
-        value = bundle.getFloat(VALUE_KEY)
-        overridden = bundle.getBoolean(OVERRIDDEN_KEY)
-    }
+  internal fun zoom(factor: Float, centroidX: Float, scroll: Float, bounds: RectF): Scroll {
+    overridden = true
+    val oldValue = value
+    value *= factor
+    if (value == oldValue) Scroll.Relative.pixels(0f)
+    val transformationAxisX = scroll + centroidX - bounds.left
+    val zoomedTransformationAxisX = transformationAxisX * (value / oldValue)
+    return Scroll.Relative.pixels(zoomedTransformationAxisX - transformationAxisX)
+  }
 
-    /** Adds the provided [Listener]. */
-    public fun addListener(listener: Listener): Boolean {
-        if (!listeners.add(listener)) return false
-        listener.onValueChanged(value, value)
-        listener.onValueRangeChanged(valueRange, valueRange)
-        return true
-    }
+  internal fun saveInstanceState(bundle: Bundle) {
+    bundle.putFloat(VALUE_KEY, value)
+    bundle.putBoolean(OVERRIDDEN_KEY, overridden)
+  }
 
-    /** Removes the provided [Listener]. */
-    public fun removeListener(listener: Listener): Boolean = listeners.remove(listener)
+  internal fun restoreInstanceState(bundle: Bundle) {
+    value = bundle.getFloat(VALUE_KEY)
+    overridden = bundle.getBoolean(OVERRIDDEN_KEY)
+  }
 
-    /** Facilitates listening for zoom events. */
-    public interface Listener {
-        /** Called when the zoom factor changes. */
-        public fun onValueChanged(
-            oldValue: Float,
-            newValue: Float,
-        ) {}
+  /** Adds the provided [Listener]. */
+  public fun addListener(listener: Listener): Boolean {
+    if (!listeners.add(listener)) return false
+    listener.onValueChanged(value, value)
+    listener.onValueRangeChanged(valueRange, valueRange)
+    return true
+  }
 
-        /** Called when the range of zoom factors changes. */
-        public fun onValueRangeChanged(
-            oldValueRange: ClosedFloatingPointRange<Float>,
-            newValueRange: ClosedFloatingPointRange<Float>,
-        ) {}
-    }
+  /** Removes the provided [Listener]. */
+  public fun removeListener(listener: Listener): Boolean = listeners.remove(listener)
 
-    internal companion object {
-        private const val VALUE_KEY = "value"
-        private const val OVERRIDDEN_KEY = "overridden"
+  /** Facilitates listening for zoom events. */
+  public interface Listener {
+    /** Called when the zoom factor changes. */
+    public fun onValueChanged(oldValue: Float, newValue: Float) {}
 
-        fun default(
-            zoomEnabled: Boolean,
-            scrollEnabled: Boolean,
-        ) = ZoomHandler(
-            zoomEnabled = zoomEnabled,
-            initialZoom = if (scrollEnabled) Zoom.max(Zoom.static(), Zoom.Content) else Zoom.Content,
-        )
-    }
+    /** Called when the range of zoom factors changes. */
+    public fun onValueRangeChanged(
+      oldValueRange: ClosedFloatingPointRange<Float>,
+      newValueRange: ClosedFloatingPointRange<Float>,
+    ) {}
+  }
+
+  internal companion object {
+    private const val VALUE_KEY = "value"
+    private const val OVERRIDDEN_KEY = "overridden"
+
+    fun default(zoomEnabled: Boolean, scrollEnabled: Boolean) =
+      ZoomHandler(
+        zoomEnabled = zoomEnabled,
+        initialZoom = if (scrollEnabled) Zoom.max(Zoom.static(), Zoom.Content) else Zoom.Content,
+      )
+  }
 }

@@ -35,27 +35,28 @@ import com.patrykandpatrick.vico.core.common.component.TextComponent
  *
  * @param items a [Collection] of [LegendItem]s to be displayed by this [VerticalLegend].
  * @param iconSize defines the size of all [LegendItem.icon]s.
- * @param iconPadding defines the padding between each [LegendItem.icon] and its corresponding [LegendItem.label].
+ * @param iconPadding defines the padding between each [LegendItem.icon] and its corresponding
+ *   [LegendItem.label].
  * @param spacing defines the vertical spacing between each [LegendItem].
  * @param padding defines the padding of the content.
  */
 @Composable
 public fun <M : MeasureContext, D : DrawContext> rememberVerticalLegend(
-    items: Collection<LegendItem>,
-    iconSize: Dp,
-    iconPadding: Dp,
-    spacing: Dp = 0.dp,
-    padding: Dimensions = Dimensions.Empty,
+  items: Collection<LegendItem>,
+  iconSize: Dp,
+  iconPadding: Dp,
+  spacing: Dp = 0.dp,
+  padding: Dimensions = Dimensions.Empty,
 ): VerticalLegend<M, D> =
-    remember(items, iconSize, iconPadding, spacing, padding) {
-        VerticalLegend(
-            items = items,
-            iconSizeDp = iconSize.value,
-            iconPaddingDp = iconPadding.value,
-            spacingDp = spacing.value,
-            padding = padding,
-        )
-    }
+  remember(items, iconSize, iconPadding, spacing, padding) {
+    VerticalLegend(
+      items = items,
+      iconSizeDp = iconSize.value,
+      iconPaddingDp = iconPadding.value,
+      spacingDp = spacing.value,
+      padding = padding,
+    )
+  }
 
 /**
  * Defines the appearance of an item of a [Legend].
@@ -66,44 +67,39 @@ public fun <M : MeasureContext, D : DrawContext> rememberVerticalLegend(
  */
 @Composable
 public fun rememberLegendItem(
-    icon: Component,
-    label: TextComponent,
-    labelText: CharSequence,
+  icon: Component,
+  label: TextComponent,
+  labelText: CharSequence,
 ): LegendItem =
-    remember(icon, label, labelText) {
-        LegendItem(
-            icon = icon,
-            label = label,
-            labelText = labelText,
-        )
-    }
+  remember(icon, label, labelText) { LegendItem(icon = icon, label = label, labelText = labelText) }
 
 /**
  * Creates a [HorizontalLegend].
  *
  * @param items a [Collection] of [LegendItem]s to be displayed by this [HorizontalLegend].
  * @param iconSize defines the size of all [LegendItem.icon]s.
- * @param iconPadding defines the padding between each [LegendItem.icon] and its corresponding [LegendItem.label].
+ * @param iconPadding defines the padding between each [LegendItem.icon] and its corresponding
+ *   [LegendItem.label].
  * @param lineSpacing defines the spacing between adjacent lines.
  * @param spacing defines the horizontal spacing between adjacent [LegendItem]s.
  * @param padding defines the padding of the content.
  */
 @Composable
 public fun <M : MeasureContext, D : DrawContext> rememberHorizontalLegend(
-    items: Collection<LegendItem>,
-    iconSize: Dp,
-    iconPadding: Dp,
-    lineSpacing: Dp = 0.dp,
-    spacing: Dp = 0.dp,
-    padding: Dimensions = Dimensions.Empty,
+  items: Collection<LegendItem>,
+  iconSize: Dp,
+  iconPadding: Dp,
+  lineSpacing: Dp = 0.dp,
+  spacing: Dp = 0.dp,
+  padding: Dimensions = Dimensions.Empty,
 ): HorizontalLegend<M, D> =
-    remember(items, iconSize, iconPadding, lineSpacing, spacing, padding) {
-        HorizontalLegend(
-            items = items,
-            iconSizeDp = iconSize.value,
-            iconPaddingDp = iconPadding.value,
-            lineSpacingDp = lineSpacing.value,
-            spacingDp = spacing.value,
-            padding = padding,
-        )
-    }
+  remember(items, iconSize, iconPadding, lineSpacing, spacing, padding) {
+    HorizontalLegend(
+      items = items,
+      iconSizeDp = iconSize.value,
+      iconPaddingDp = iconPadding.value,
+      lineSpacingDp = lineSpacing.value,
+      spacingDp = spacing.value,
+      padding = padding,
+    )
+  }

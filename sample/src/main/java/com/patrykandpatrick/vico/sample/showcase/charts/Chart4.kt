@@ -45,97 +45,84 @@ import com.patrykandpatrick.vico.databinding.Chart4Binding
 import com.patrykandpatrick.vico.sample.showcase.Defaults
 import com.patrykandpatrick.vico.sample.showcase.UISystem
 import com.patrykandpatrick.vico.sample.showcase.rememberMarker
+import kotlin.random.Random
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
-import kotlin.random.Random
 
 @Composable
-internal fun Chart4(
-    uiSystem: UISystem,
-    modifier: Modifier,
-) {
-    val modelProducer = remember { CartesianChartModelProducer.build() }
-    LaunchedEffect(Unit) {
-        withContext(Dispatchers.Default) {
-            while (isActive) {
-                modelProducer.tryRunTransaction {
-                    columnSeries {
-                        repeat(3) {
-                            series(
-                                List(Defaults.ENTRY_COUNT) {
-                                    Defaults.COLUMN_LAYER_MIN_Y +
-                                        Random.nextFloat() * Defaults.COLUMN_LAYER_RELATIVE_MAX_Y
-                                },
-                            )
-                        }
-                    }
-                    lineSeries { series(List(Defaults.ENTRY_COUNT) { Random.nextFloat() * Defaults.MAX_Y }) }
+internal fun Chart4(uiSystem: UISystem, modifier: Modifier) {
+  val modelProducer = remember { CartesianChartModelProducer.build() }
+  LaunchedEffect(Unit) {
+    withContext(Dispatchers.Default) {
+      while (isActive) {
+        modelProducer.tryRunTransaction {
+          columnSeries {
+            repeat(3) {
+              series(
+                List(Defaults.ENTRY_COUNT) {
+                  Defaults.COLUMN_LAYER_MIN_Y +
+                    Random.nextFloat() * Defaults.COLUMN_LAYER_RELATIVE_MAX_Y
                 }
-                delay(Defaults.TRANSACTION_INTERVAL_MS)
+              )
             }
+          }
+          lineSeries { series(List(Defaults.ENTRY_COUNT) { Random.nextFloat() * Defaults.MAX_Y }) }
         }
+        delay(Defaults.TRANSACTION_INTERVAL_MS)
+      }
     }
-    when (uiSystem) {
-        UISystem.Compose -> ComposeChart4(modelProducer, modifier)
-        UISystem.Views -> ViewChart4(modelProducer, modifier)
-    }
+  }
+  when (uiSystem) {
+    UISystem.Compose -> ComposeChart4(modelProducer, modifier)
+    UISystem.Views -> ViewChart4(modelProducer, modifier)
+  }
 }
 
 @Composable
-private fun ComposeChart4(
-    modelProducer: CartesianChartModelProducer,
-    modifier: Modifier,
-) {
-    CartesianChartHost(
-        chart =
-            rememberCartesianChart(
-                rememberColumnCartesianLayer(
-                    columnProvider =
-                        ColumnCartesianLayer.ColumnProvider.series(
-                            columnColors.map { color ->
-                                rememberLineComponent(
-                                    color = color,
-                                    thickness = 8.dp,
-                                    shape = Shape.rounded(2.dp),
-                                )
-                            },
-                        ),
-                ),
-                rememberLineCartesianLayer(
-                    lines =
-                        listOf(
-                            rememberLineSpec(
-                                shader = DynamicShader.color(lineColor),
-                                pointConnector = DefaultPointConnector(cubicStrength = 0f),
-                            ),
-                        ),
-                ),
-                topAxis = rememberTopAxis(),
-                endAxis = rememberEndAxis(),
-            ),
-        modelProducer = modelProducer,
-        modifier = modifier,
-        marker = rememberMarker(),
-        runInitialAnimation = false,
-        zoomState = rememberVicoZoomState(zoomEnabled = false),
-    )
+private fun ComposeChart4(modelProducer: CartesianChartModelProducer, modifier: Modifier) {
+  CartesianChartHost(
+    chart =
+      rememberCartesianChart(
+        rememberColumnCartesianLayer(
+          columnProvider =
+            ColumnCartesianLayer.ColumnProvider.series(
+              columnColors.map { color ->
+                rememberLineComponent(color = color, thickness = 8.dp, shape = Shape.rounded(2.dp))
+              }
+            )
+        ),
+        rememberLineCartesianLayer(
+          lines =
+            listOf(
+              rememberLineSpec(
+                shader = DynamicShader.color(lineColor),
+                pointConnector = DefaultPointConnector(cubicStrength = 0f),
+              )
+            )
+        ),
+        topAxis = rememberTopAxis(),
+        endAxis = rememberEndAxis(),
+      ),
+    modelProducer = modelProducer,
+    modifier = modifier,
+    marker = rememberMarker(),
+    runInitialAnimation = false,
+    zoomState = rememberVicoZoomState(zoomEnabled = false),
+  )
 }
 
 @Composable
-private fun ViewChart4(
-    modelProducer: CartesianChartModelProducer,
-    modifier: Modifier,
-) {
-    val marker = rememberMarker()
-    AndroidViewBinding(Chart4Binding::inflate, modifier) {
-        with(chartView) {
-            runInitialAnimation = false
-            this.modelProducer = modelProducer
-            this.marker = marker
-        }
+private fun ViewChart4(modelProducer: CartesianChartModelProducer, modifier: Modifier) {
+  val marker = rememberMarker()
+  AndroidViewBinding(Chart4Binding::inflate, modifier) {
+    with(chartView) {
+      runInitialAnimation = false
+      this.modelProducer = modelProducer
+      this.marker = marker
     }
+  }
 }
 
 private val columnColors = listOf(Color(0xff916cda), Color(0xffd877d8), Color(0xfff094bb))

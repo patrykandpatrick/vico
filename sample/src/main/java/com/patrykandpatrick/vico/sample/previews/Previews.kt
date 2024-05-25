@@ -66,144 +66,136 @@ private val chartModifier = Modifier.height(100.dp)
 
 @Preview("Sample Card With Column Chart", widthDp = 200)
 @Composable
-fun ColumnChartCard(): Unit =
-    VicoTheme {
-        val colors = MaterialTheme.colorScheme
+fun ColumnChartCard(): Unit = VicoTheme {
+  val colors = MaterialTheme.colorScheme
 
-        SampleCard {
-            CartesianChartHost(
-                modifier = chartModifier,
-                chart =
-                    rememberCartesianChart(
-                        rememberColumnCartesianLayer(
-                            ColumnCartesianLayer.ColumnProvider.series(
-                                rememberLineComponent(
-                                    color = colors.primary,
-                                    thickness = 8.dp,
-                                    shape = RoundedCornerShape(4.dp).toVicoShape(),
-                                    dynamicShader =
-                                        DynamicShader.verticalGradient(arrayOf(colors.primary, colors.secondary)),
-                                ),
-                            ),
-                        ),
-                        startAxis =
-                            rememberStartAxis(
-                                label =
-                                    rememberTextComponent(
-                                        color = colors.primary,
-                                        textSize = 10.sp,
-                                        background =
-                                            rememberShapeComponent(
-                                                shape =
-                                                    CutCornerShape(
-                                                        CornerSize(percent = 25),
-                                                        CornerSize(percent = 50),
-                                                        CornerSize(percent = 50),
-                                                        CornerSize(percent = 25),
-                                                    ).toVicoShape(),
-                                                color = colors.primary.copy(alpha = 0.1f),
-                                            ),
-                                        padding = Dimensions.of(end = 8.dp, start = 4.dp),
-                                    ),
-                                axis = null,
-                                tick = null,
-                                guideline = rememberLineComponent(colors.primary.copy(alpha = .1f)),
-                            ),
-                    ),
-                model = CartesianChartModel(ColumnCartesianLayerModel.build { series(1, 2, 3, 2) }),
+  SampleCard {
+    CartesianChartHost(
+      modifier = chartModifier,
+      chart =
+        rememberCartesianChart(
+          rememberColumnCartesianLayer(
+            ColumnCartesianLayer.ColumnProvider.series(
+              rememberLineComponent(
+                color = colors.primary,
+                thickness = 8.dp,
+                shape = RoundedCornerShape(4.dp).toVicoShape(),
+                dynamicShader =
+                  DynamicShader.verticalGradient(arrayOf(colors.primary, colors.secondary)),
+              )
             )
-        }
-    }
+          ),
+          startAxis =
+            rememberStartAxis(
+              label =
+                rememberTextComponent(
+                  color = colors.primary,
+                  textSize = 10.sp,
+                  background =
+                    rememberShapeComponent(
+                      shape =
+                        CutCornerShape(
+                            CornerSize(percent = 25),
+                            CornerSize(percent = 50),
+                            CornerSize(percent = 50),
+                            CornerSize(percent = 25),
+                          )
+                          .toVicoShape(),
+                      color = colors.primary.copy(alpha = 0.1f),
+                    ),
+                  padding = Dimensions.of(end = 8.dp, start = 4.dp),
+                ),
+              axis = null,
+              tick = null,
+              guideline = rememberLineComponent(colors.primary.copy(alpha = .1f)),
+            ),
+        ),
+      model = CartesianChartModel(ColumnCartesianLayerModel.build { series(1, 2, 3, 2) }),
+    )
+  }
+}
 
 @Preview("Sample Card With Line Chart", widthDp = 200)
 @Composable
-fun LineChartCard(): Unit =
-    VicoTheme {
-        val colors = MaterialTheme.colorScheme
+fun LineChartCard(): Unit = VicoTheme {
+  val colors = MaterialTheme.colorScheme
 
-        SampleCard {
-            CartesianChartHost(
-                modifier = Modifier.height(100.dp),
-                chart =
-                    rememberCartesianChart(
-                        rememberLineCartesianLayer(
-                            listOf(
-                                rememberLineSpec(
-                                    point = null,
-                                    shader = DynamicShader.color(colors.primary),
-                                    backgroundShader =
-                                        DynamicShader.component(
-                                            componentSize = 4.dp,
-                                            component =
-                                                rememberShapeComponent(
-                                                    shape = Pill,
-                                                    color = colors.primary,
-                                                    margins = Dimensions.of(0.5.dp),
-                                                ),
-                                        ),
-                                ),
-                            ),
-                            axisValueOverrider = AxisValueOverrider.fixed(minX = 0f, maxY = 3f),
-                        ),
-                        startAxis =
-                            rememberStartAxis(
-                                label =
-                                    rememberTextComponent(
-                                        color = colors.onSurface,
-                                        textSize = 10.sp,
-                                        background = rememberShapeComponent(shape = Rectangle, color = Color.LightGray),
-                                        padding = Dimensions.of(horizontal = 4.dp, vertical = 2.dp),
-                                    ),
-                                axis = null,
-                                tick = null,
-                                guideline =
-                                    rememberLineComponent(
-                                        color = Color.LightGray,
-                                        shape =
-                                            DashedShape(
-                                                shape = Pill,
-                                                dashLengthDp = 2.dp.value,
-                                                gapLengthDp = 4.dp.value,
-                                            ),
-                                    ),
-                                horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
-                            ),
-                        bottomAxis =
-                            rememberBottomAxis(
-                                label = null,
-                                axis = rememberLineComponent(Color.LightGray),
-                                tick = null,
-                                guideline = null,
-                            ),
-                    ),
-                model =
-                    CartesianChartModel(
-                        LineCartesianLayerModel.build {
-                            series(x = listOf(-1, 0, 1, 2, 3, 4, 5), y = listOf(0, 0, 1, 2, 0, 2, 1))
-                        },
-                    ),
-            )
-        }
-    }
+  SampleCard {
+    CartesianChartHost(
+      modifier = Modifier.height(100.dp),
+      chart =
+        rememberCartesianChart(
+          rememberLineCartesianLayer(
+            listOf(
+              rememberLineSpec(
+                point = null,
+                shader = DynamicShader.color(colors.primary),
+                backgroundShader =
+                  DynamicShader.component(
+                    componentSize = 4.dp,
+                    component =
+                      rememberShapeComponent(
+                        shape = Pill,
+                        color = colors.primary,
+                        margins = Dimensions.of(0.5.dp),
+                      ),
+                  ),
+              )
+            ),
+            axisValueOverrider = AxisValueOverrider.fixed(minX = 0f, maxY = 3f),
+          ),
+          startAxis =
+            rememberStartAxis(
+              label =
+                rememberTextComponent(
+                  color = colors.onSurface,
+                  textSize = 10.sp,
+                  background = rememberShapeComponent(shape = Rectangle, color = Color.LightGray),
+                  padding = Dimensions.of(horizontal = 4.dp, vertical = 2.dp),
+                ),
+              axis = null,
+              tick = null,
+              guideline =
+                rememberLineComponent(
+                  color = Color.LightGray,
+                  shape =
+                    DashedShape(shape = Pill, dashLengthDp = 2.dp.value, gapLengthDp = 4.dp.value),
+                ),
+              horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
+            ),
+          bottomAxis =
+            rememberBottomAxis(
+              label = null,
+              axis = rememberLineComponent(Color.LightGray),
+              tick = null,
+              guideline = null,
+            ),
+        ),
+      model =
+        CartesianChartModel(
+          LineCartesianLayerModel.build {
+            series(x = listOf(-1, 0, 1, 2, 3, 4, 5), y = listOf(0, 0, 1, 2, 0, 2, 1))
+          }
+        ),
+    )
+  }
+}
 
 @Composable
 private fun SampleCard(chart: @Composable ColumnScope.() -> Unit) {
-    Card(
-        modifier = Modifier.padding(8.dp),
-        shape = RoundedCornerShape(8.dp),
-        elevation = CardDefaults.elevatedCardElevation(4.dp),
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            chart()
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = "Title",
-                style = MaterialTheme.typography.titleMedium,
-            )
-            Text(
-                text = "This is a subtitle. It may be long.",
-                style = MaterialTheme.typography.bodyMedium,
-            )
-        }
+  Card(
+    modifier = Modifier.padding(8.dp),
+    shape = RoundedCornerShape(8.dp),
+    elevation = CardDefaults.elevatedCardElevation(4.dp),
+  ) {
+    Column(modifier = Modifier.padding(16.dp)) {
+      chart()
+      Spacer(modifier = Modifier.height(8.dp))
+      Text(text = "Title", style = MaterialTheme.typography.titleMedium)
+      Text(
+        text = "This is a subtitle. It may be long.",
+        style = MaterialTheme.typography.bodyMedium,
+      )
     }
+  }
 }

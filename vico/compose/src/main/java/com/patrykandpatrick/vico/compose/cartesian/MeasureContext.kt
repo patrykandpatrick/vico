@@ -28,25 +28,26 @@ import com.patrykandpatrick.vico.core.cartesian.data.ChartValues
 
 @Composable
 internal fun rememberCartesianMeasureContext(
-    scrollEnabled: Boolean,
-    canvasBounds: RectF,
-    horizontalLayout: HorizontalLayout,
-    spToPx: (Float) -> Float,
-    chartValues: ChartValues,
+  scrollEnabled: Boolean,
+  canvasBounds: RectF,
+  horizontalLayout: HorizontalLayout,
+  spToPx: (Float) -> Float,
+  chartValues: ChartValues,
 ): MutableCartesianMeasureContext =
-    remember {
-        MutableCartesianMeasureContext(
-            canvasBounds = canvasBounds,
-            density = 0f,
-            isLtr = true,
-            spToPx = spToPx,
-            chartValues = chartValues,
-        )
-    }.apply {
-        this.density = LocalDensity.current.density
-        this.isLtr = LocalLayoutDirection.current == LayoutDirection.Ltr
-        this.scrollEnabled = scrollEnabled
-        this.horizontalLayout = horizontalLayout
-        this.spToPx = spToPx
-        this.chartValues = chartValues
+  remember {
+      MutableCartesianMeasureContext(
+        canvasBounds = canvasBounds,
+        density = 0f,
+        isLtr = true,
+        spToPx = spToPx,
+        chartValues = chartValues,
+      )
+    }
+    .apply {
+      this.density = LocalDensity.current.density
+      this.isLtr = LocalLayoutDirection.current == LayoutDirection.Ltr
+      this.scrollEnabled = scrollEnabled
+      this.horizontalLayout = horizontalLayout
+      this.spToPx = spToPx
+      this.chartValues = chartValues
     }

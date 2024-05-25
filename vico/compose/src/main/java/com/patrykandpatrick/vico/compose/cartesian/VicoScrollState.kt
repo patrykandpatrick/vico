@@ -42,201 +42,207 @@ import com.patrykandpatrick.vico.core.common.rangeWith
 import kotlinx.coroutines.flow.MutableSharedFlow
 
 /**
- * Houses information on a [CartesianChart]’s scroll value. Allows for scroll customization and programmatic scrolling.
+ * Houses information on a [CartesianChart]’s scroll value. Allows for scroll customization and
+ * programmatic scrolling.
  */
 public class VicoScrollState {
-    private val initialScroll: Scroll.Absolute
-    private val autoScroll: Scroll
-    private val autoScrollCondition: AutoScrollCondition
-    private val autoScrollAnimationSpec: AnimationSpec<Float>
-    private val _value: MutableFloatState
-    private val _maxValue = mutableFloatStateOf(0f)
-    private var initialScrollHandled: Boolean
-    private var context: CartesianMeasureContext? = null
-    private var horizontalDimensions: HorizontalDimensions? = null
-    private var bounds: RectF? = null
-    internal val scrollEnabled: Boolean
-    internal val pointerXDeltas = MutableSharedFlow<Float>(extraBufferCapacity = 1)
+  private val initialScroll: Scroll.Absolute
+  private val autoScroll: Scroll
+  private val autoScrollCondition: AutoScrollCondition
+  private val autoScrollAnimationSpec: AnimationSpec<Float>
+  private val _value: MutableFloatState
+  private val _maxValue = mutableFloatStateOf(0f)
+  private var initialScrollHandled: Boolean
+  private var context: CartesianMeasureContext? = null
+  private var horizontalDimensions: HorizontalDimensions? = null
+  private var bounds: RectF? = null
+  internal val scrollEnabled: Boolean
+  internal val pointerXDeltas = MutableSharedFlow<Float>(extraBufferCapacity = 1)
 
-    internal val scrollableState =
-        ScrollableState { delta ->
-            val oldValue = value
-            value += delta
-            val consumedValue = value - oldValue
-            if (consumedValue != delta) pointerXDeltas.tryEmit(consumedValue - delta)
-            delta
-        }
+  internal val scrollableState = ScrollableState { delta ->
+    val oldValue = value
+    value += delta
+    val consumedValue = value - oldValue
+    if (consumedValue != delta) pointerXDeltas.tryEmit(consumedValue - delta)
+    delta
+  }
 
-    /** The current scroll value (in pixels). */
-    public var value: Float
-        get() = _value.floatValue
-        private set(newValue) {
-            val oldValue = value
-            _value.floatValue = newValue.coerceIn(0f.rangeWith(maxValue))
-            if (value != oldValue) pointerXDeltas.tryEmit(oldValue - value)
-        }
-
-    /** The maximum scroll value (in pixels). */
-    public var maxValue: Float
-        get() = _maxValue.floatValue
-        internal set(newMaxValue) {
-            if (newMaxValue == maxValue) return
-            _maxValue.floatValue = newMaxValue
-            value = value
-        }
-
-    internal constructor(
-        scrollEnabled: Boolean,
-        initialScroll: Scroll.Absolute,
-        autoScroll: Scroll,
-        autoScrollCondition: AutoScrollCondition,
-        autoScrollAnimationSpec: AnimationSpec<Float>,
-        value: Float,
-        initialScrollHandled: Boolean,
-    ) {
-        this.scrollEnabled = scrollEnabled
-        this.initialScroll = initialScroll
-        this.autoScroll = autoScroll
-        this.autoScrollCondition = autoScrollCondition
-        this.autoScrollAnimationSpec = autoScrollAnimationSpec
-        _value = mutableFloatStateOf(value)
-        this.initialScrollHandled = initialScrollHandled
+  /** The current scroll value (in pixels). */
+  public var value: Float
+    get() = _value.floatValue
+    private set(newValue) {
+      val oldValue = value
+      _value.floatValue = newValue.coerceIn(0f.rangeWith(maxValue))
+      if (value != oldValue) pointerXDeltas.tryEmit(oldValue - value)
     }
 
-    /**
-     * Houses information on a [CartesianChart]’s scroll value. Allows for scroll customization and programmatic
-     * scrolling.
-     *
-     * @param scrollEnabled whether scrolling is enabled.
-     * @param initialScroll represents the initial scroll value.
-     * @param autoScroll represents the scroll value or delta for automatic scrolling.
-     * @param autoScrollCondition defines when an automatic scroll should occur.
-     * @param autoScrollAnimationSpec the [AnimationSpec] for automatic scrolling.
-     */
-    public constructor(
-        scrollEnabled: Boolean,
-        initialScroll: Scroll.Absolute,
-        autoScroll: Scroll,
-        autoScrollCondition: AutoScrollCondition,
-        autoScrollAnimationSpec: AnimationSpec<Float>,
-    ) : this(
-        scrollEnabled = scrollEnabled,
-        initialScroll = initialScroll,
-        autoScroll = autoScroll,
-        autoScrollCondition = autoScrollCondition,
-        autoScrollAnimationSpec = autoScrollAnimationSpec,
-        value = 0f,
-        initialScrollHandled = false,
-    )
-
-    private inline fun withUpdated(block: (CartesianMeasureContext, HorizontalDimensions, RectF) -> Unit) {
-        val context = this.context
-        val horizontalDimensions = this.horizontalDimensions
-        val bounds = this.bounds
-        if (context != null && horizontalDimensions != null && bounds != null) {
-            block(context, horizontalDimensions, bounds)
-        }
+  /** The maximum scroll value (in pixels). */
+  public var maxValue: Float
+    get() = _maxValue.floatValue
+    internal set(newMaxValue) {
+      if (newMaxValue == maxValue) return
+      _maxValue.floatValue = newMaxValue
+      value = value
     }
 
-    internal fun update(
-        context: CartesianMeasureContext,
-        bounds: RectF,
-        horizontalDimensions: HorizontalDimensions,
-    ) {
-        this.context = context
-        this.horizontalDimensions = horizontalDimensions
-        this.bounds = bounds
-        maxValue = context.getMaxScrollDistance(bounds.width(), horizontalDimensions)
-        if (!initialScrollHandled) {
-            value = initialScroll.getValue(context, horizontalDimensions, bounds, maxValue)
-            initialScrollHandled = true
-        }
-    }
+  internal constructor(
+    scrollEnabled: Boolean,
+    initialScroll: Scroll.Absolute,
+    autoScroll: Scroll,
+    autoScrollCondition: AutoScrollCondition,
+    autoScrollAnimationSpec: AnimationSpec<Float>,
+    value: Float,
+    initialScrollHandled: Boolean,
+  ) {
+    this.scrollEnabled = scrollEnabled
+    this.initialScroll = initialScroll
+    this.autoScroll = autoScroll
+    this.autoScrollCondition = autoScrollCondition
+    this.autoScrollAnimationSpec = autoScrollAnimationSpec
+    _value = mutableFloatStateOf(value)
+    this.initialScrollHandled = initialScrollHandled
+  }
 
-    internal suspend fun autoScroll(
-        model: CartesianChartModel,
-        oldModel: CartesianChartModel?,
-    ) {
-        if (!autoScrollCondition.shouldPerformAutoScroll(model, oldModel)) return
-        if (scrollableState.isScrollInProgress) scrollableState.stopScroll(MutatePriority.PreventUserInput)
-        animateScroll(autoScroll, autoScrollAnimationSpec)
-    }
+  /**
+   * Houses information on a [CartesianChart]’s scroll value. Allows for scroll customization and
+   * programmatic scrolling.
+   *
+   * @param scrollEnabled whether scrolling is enabled.
+   * @param initialScroll represents the initial scroll value.
+   * @param autoScroll represents the scroll value or delta for automatic scrolling.
+   * @param autoScrollCondition defines when an automatic scroll should occur.
+   * @param autoScrollAnimationSpec the [AnimationSpec] for automatic scrolling.
+   */
+  public constructor(
+    scrollEnabled: Boolean,
+    initialScroll: Scroll.Absolute,
+    autoScroll: Scroll,
+    autoScrollCondition: AutoScrollCondition,
+    autoScrollAnimationSpec: AnimationSpec<Float>,
+  ) : this(
+    scrollEnabled = scrollEnabled,
+    initialScroll = initialScroll,
+    autoScroll = autoScroll,
+    autoScrollCondition = autoScrollCondition,
+    autoScrollAnimationSpec = autoScrollAnimationSpec,
+    value = 0f,
+    initialScrollHandled = false,
+  )
 
-    internal fun clearUpdated() {
-        context = null
-        horizontalDimensions = null
-        bounds = null
+  private inline fun withUpdated(
+    block: (CartesianMeasureContext, HorizontalDimensions, RectF) -> Unit
+  ) {
+    val context = this.context
+    val horizontalDimensions = this.horizontalDimensions
+    val bounds = this.bounds
+    if (context != null && horizontalDimensions != null && bounds != null) {
+      block(context, horizontalDimensions, bounds)
     }
+  }
 
-    /** Triggers a scroll. */
-    public suspend fun scroll(scroll: Scroll) {
-        withUpdated { context, horizontalDimensions, bounds ->
-            scrollableState.scrollBy(scroll.getDelta(context, horizontalDimensions, bounds, maxValue, value))
-        }
+  internal fun update(
+    context: CartesianMeasureContext,
+    bounds: RectF,
+    horizontalDimensions: HorizontalDimensions,
+  ) {
+    this.context = context
+    this.horizontalDimensions = horizontalDimensions
+    this.bounds = bounds
+    maxValue = context.getMaxScrollDistance(bounds.width(), horizontalDimensions)
+    if (!initialScrollHandled) {
+      value = initialScroll.getValue(context, horizontalDimensions, bounds, maxValue)
+      initialScrollHandled = true
     }
+  }
 
-    /** Triggers an animated scroll. */
-    public suspend fun animateScroll(
-        scroll: Scroll,
-        animationSpec: AnimationSpec<Float> = spring(),
-    ) {
-        withUpdated { context, horizontalDimensions, bounds ->
-            scrollableState.animateScrollBy(
-                scroll.getDelta(context, horizontalDimensions, bounds, maxValue, value),
-                animationSpec,
-            )
-        }
-    }
+  internal suspend fun autoScroll(model: CartesianChartModel, oldModel: CartesianChartModel?) {
+    if (!autoScrollCondition.shouldPerformAutoScroll(model, oldModel)) return
+    if (scrollableState.isScrollInProgress)
+      scrollableState.stopScroll(MutatePriority.PreventUserInput)
+    animateScroll(autoScroll, autoScrollAnimationSpec)
+  }
 
-    internal companion object {
-        fun Saver(
-            scrollEnabled: Boolean,
-            initialScroll: Scroll.Absolute,
-            autoScroll: Scroll,
-            autoScrollCondition: AutoScrollCondition,
-            autoScrollAnimationSpec: AnimationSpec<Float>,
-        ) = Saver<VicoScrollState, Pair<Float, Boolean>>(
-            save = { it.value to it.initialScrollHandled },
-            restore = { (value, initialScrollHandled) ->
-                VicoScrollState(
-                    scrollEnabled,
-                    initialScroll,
-                    autoScroll,
-                    autoScrollCondition,
-                    autoScrollAnimationSpec,
-                    value,
-                    initialScrollHandled,
-                )
-            },
-        )
+  internal fun clearUpdated() {
+    context = null
+    horizontalDimensions = null
+    bounds = null
+  }
+
+  /** Triggers a scroll. */
+  public suspend fun scroll(scroll: Scroll) {
+    withUpdated { context, horizontalDimensions, bounds ->
+      scrollableState.scrollBy(
+        scroll.getDelta(context, horizontalDimensions, bounds, maxValue, value)
+      )
     }
+  }
+
+  /** Triggers an animated scroll. */
+  public suspend fun animateScroll(scroll: Scroll, animationSpec: AnimationSpec<Float> = spring()) {
+    withUpdated { context, horizontalDimensions, bounds ->
+      scrollableState.animateScrollBy(
+        scroll.getDelta(context, horizontalDimensions, bounds, maxValue, value),
+        animationSpec,
+      )
+    }
+  }
+
+  internal companion object {
+    fun Saver(
+      scrollEnabled: Boolean,
+      initialScroll: Scroll.Absolute,
+      autoScroll: Scroll,
+      autoScrollCondition: AutoScrollCondition,
+      autoScrollAnimationSpec: AnimationSpec<Float>,
+    ) =
+      Saver<VicoScrollState, Pair<Float, Boolean>>(
+        save = { it.value to it.initialScrollHandled },
+        restore = { (value, initialScrollHandled) ->
+          VicoScrollState(
+            scrollEnabled,
+            initialScroll,
+            autoScroll,
+            autoScrollCondition,
+            autoScrollAnimationSpec,
+            value,
+            initialScrollHandled,
+          )
+        },
+      )
+  }
 }
 
 /** Creates and remembers a [VicoScrollState] instance. */
 @Composable
 public fun rememberVicoScrollState(
-    scrollEnabled: Boolean = true,
-    initialScroll: Scroll.Absolute = Scroll.Absolute.Start,
-    autoScroll: Scroll = initialScroll,
-    autoScrollCondition: AutoScrollCondition = AutoScrollCondition.Never,
-    autoScrollAnimationSpec: AnimationSpec<Float> = spring(),
+  scrollEnabled: Boolean = true,
+  initialScroll: Scroll.Absolute = Scroll.Absolute.Start,
+  autoScroll: Scroll = initialScroll,
+  autoScrollCondition: AutoScrollCondition = AutoScrollCondition.Never,
+  autoScrollAnimationSpec: AnimationSpec<Float> = spring(),
 ): VicoScrollState =
-    rememberSaveable(
-        scrollEnabled,
-        initialScroll,
-        autoScroll,
-        autoScrollCondition,
-        autoScrollAnimationSpec,
-        saver =
-            remember(scrollEnabled, initialScroll, autoScrollCondition, autoScrollAnimationSpec) {
-                VicoScrollState.Saver(
-                    scrollEnabled,
-                    initialScroll,
-                    autoScroll,
-                    autoScrollCondition,
-                    autoScrollAnimationSpec,
-                )
-            },
-    ) {
-        VicoScrollState(scrollEnabled, initialScroll, autoScroll, autoScrollCondition, autoScrollAnimationSpec)
-    }
+  rememberSaveable(
+    scrollEnabled,
+    initialScroll,
+    autoScroll,
+    autoScrollCondition,
+    autoScrollAnimationSpec,
+    saver =
+      remember(scrollEnabled, initialScroll, autoScrollCondition, autoScrollAnimationSpec) {
+        VicoScrollState.Saver(
+          scrollEnabled,
+          initialScroll,
+          autoScroll,
+          autoScrollCondition,
+          autoScrollAnimationSpec,
+        )
+      },
+  ) {
+    VicoScrollState(
+      scrollEnabled,
+      initialScroll,
+      autoScroll,
+      autoScrollCondition,
+      autoScrollAnimationSpec,
+    )
+  }

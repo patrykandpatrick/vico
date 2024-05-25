@@ -24,241 +24,234 @@ import android.graphics.drawable.Drawable
 import android.os.Build
 import com.patrykandpatrick.vico.core.common.DrawContext
 
-/**
- * Defines a shape that can be drawn on a canvas.
- */
+/** Defines a shape that can be drawn on a canvas. */
 public interface Shape {
+  /**
+   * Draws the [Shape] on the canvas.
+   *
+   * @param context holds environment data.
+   * @param paint the [Paint] used to draw the shape.
+   * @param path the [Path] defining the shape.
+   * @param left the _x_ coordinate of the left edge of the bounds in which the shape should be
+   *   drawn.
+   * @param top the _y_ coordinate of the top edge of the bounds in which the shape should be drawn.
+   * @param right the _x_ coordinate of the right edge of the bounds in which the shape should be
+   *   drawn.
+   * @param bottom the _y_ coordinate of the bottom edge of the bounds in which the shape should be
+   *   drawn.
+   */
+  public fun drawShape(
+    context: DrawContext,
+    paint: Paint,
+    path: Path,
+    left: Float,
+    top: Float,
+    right: Float,
+    bottom: Float,
+  )
+
+  public companion object {
+    /** A rectangle with sharp corners. */
+    public val Rectangle: Shape =
+      object : Shape {
+        override fun drawShape(
+          context: DrawContext,
+          paint: Paint,
+          path: Path,
+          left: Float,
+          top: Float,
+          right: Float,
+          bottom: Float,
+        ) {
+          path.moveTo(left, top)
+          path.lineTo(right, top)
+          path.lineTo(right, bottom)
+          path.lineTo(left, bottom)
+          path.close()
+          context.canvas.drawPath(path, paint)
+        }
+      }
+
+    /** A shape whose each corner is fully rounded. */
+    public val Pill: CorneredShape = rounded(allPercent = 50)
+
     /**
-     * Draws the [Shape] on the canvas.
+     * Creates a [Shape] with all corners rounded.
      *
-     * @param context holds environment data.
-     * @param paint the [Paint] used to draw the shape.
-     * @param path the [Path] defining the shape.
-     * @param left the _x_ coordinate of the left edge of the bounds in which the shape should be drawn.
-     * @param top the _y_ coordinate of the top edge of the bounds in which the shape should be drawn.
-     * @param right the _x_ coordinate of the right edge of the bounds in which the shape should be drawn.
-     * @param bottom the _y_ coordinate of the bottom edge of the bounds in which the shape should be drawn.
+     * @param allPercent the radius of each corner (in percent).
      */
-    public fun drawShape(
-        context: DrawContext,
-        paint: Paint,
-        path: Path,
-        left: Float,
-        top: Float,
-        right: Float,
-        bottom: Float,
-    )
+    public fun rounded(allPercent: Int): CorneredShape =
+      rounded(allPercent, allPercent, allPercent, allPercent)
 
-    public companion object {
-        /**
-         * A rectangle with sharp corners.
-         */
-        public val Rectangle: Shape =
-            object : Shape {
-                override fun drawShape(
-                    context: DrawContext,
-                    paint: Paint,
-                    path: Path,
-                    left: Float,
-                    top: Float,
-                    right: Float,
-                    bottom: Float,
-                ) {
-                    path.moveTo(left, top)
-                    path.lineTo(right, top)
-                    path.lineTo(right, bottom)
-                    path.lineTo(left, bottom)
-                    path.close()
-                    context.canvas.drawPath(path, paint)
-                }
-            }
+    /**
+     * Creates a [Shape] with all corners rounded.
+     *
+     * @param topLeftPercent the top-left corner radius (in percent).
+     * @param topRightPercent the top-right corner radius (in percent).
+     * @param bottomRightPercent the bottom-right corner radius (in percent).
+     * @param bottomLeftPercent the bottom-left corner radius (in percent).
+     */
+    public fun rounded(
+      topLeftPercent: Int = 0,
+      topRightPercent: Int = 0,
+      bottomRightPercent: Int = 0,
+      bottomLeftPercent: Int = 0,
+    ): CorneredShape =
+      CorneredShape(
+        Corner.Relative(topLeftPercent, RoundedCornerTreatment),
+        Corner.Relative(topRightPercent, RoundedCornerTreatment),
+        Corner.Relative(bottomRightPercent, RoundedCornerTreatment),
+        Corner.Relative(bottomLeftPercent, RoundedCornerTreatment),
+      )
 
-        /**
-         * A shape whose each corner is fully rounded.
-         */
-        public val Pill: CorneredShape = rounded(allPercent = 50)
+    /** Creates a [CorneredShape] with rounded corners of the provided size. */
+    public fun rounded(allDp: Float): Shape = rounded(allDp, allDp, allDp, allDp)
 
-        /**
-         * Creates a [Shape] with all corners rounded.
-         *
-         * @param allPercent the radius of each corner (in percent).
-         */
-        public fun rounded(allPercent: Int): CorneredShape = rounded(allPercent, allPercent, allPercent, allPercent)
+    /** Creates a [CorneredShape] with rounded corners of the provided sizes. */
+    public fun rounded(
+      topLeftDp: Float = 0f,
+      topRightDp: Float = 0f,
+      bottomRightDp: Float = 0f,
+      bottomLeftDp: Float = 0f,
+    ): CorneredShape =
+      CorneredShape(
+        Corner.Absolute(topLeftDp, RoundedCornerTreatment),
+        Corner.Absolute(topRightDp, RoundedCornerTreatment),
+        Corner.Absolute(bottomRightDp, RoundedCornerTreatment),
+        Corner.Absolute(bottomLeftDp, RoundedCornerTreatment),
+      )
 
-        /**
-         * Creates a [Shape] with all corners rounded.
-         *
-         * @param topLeftPercent the top-left corner radius (in percent).
-         * @param topRightPercent the top-right corner radius (in percent).
-         * @param bottomRightPercent the bottom-right corner radius (in percent).
-         * @param bottomLeftPercent the bottom-left corner radius (in percent).
-         */
-        public fun rounded(
-            topLeftPercent: Int = 0,
-            topRightPercent: Int = 0,
-            bottomRightPercent: Int = 0,
-            bottomLeftPercent: Int = 0,
-        ): CorneredShape =
-            CorneredShape(
-                Corner.Relative(topLeftPercent, RoundedCornerTreatment),
-                Corner.Relative(topRightPercent, RoundedCornerTreatment),
-                Corner.Relative(bottomRightPercent, RoundedCornerTreatment),
-                Corner.Relative(bottomLeftPercent, RoundedCornerTreatment),
+    /**
+     * Creates a [Shape] with all corners cut.
+     *
+     * @param allPercent the radius of each corner (in percent).
+     */
+    public fun cut(allPercent: Int): CorneredShape =
+      cut(allPercent, allPercent, allPercent, allPercent)
+
+    /**
+     * Creates a [Shape] with all corners cut.
+     *
+     * @param topLeftPercent the top-left corner radius (in percent).
+     * @param topRightPercent the top-right corner radius (in percent).
+     * @param bottomRightPercent the bottom-right corner radius (in percent).
+     * @param bottomLeftPercent the bottom-left corner radius (in percent).
+     */
+    public fun cut(
+      topLeftPercent: Int = 0,
+      topRightPercent: Int = 0,
+      bottomRightPercent: Int = 0,
+      bottomLeftPercent: Int = 0,
+    ): CorneredShape =
+      CorneredShape(
+        Corner.Relative(topLeftPercent, CutCornerTreatment),
+        Corner.Relative(topRightPercent, CutCornerTreatment),
+        Corner.Relative(bottomRightPercent, CutCornerTreatment),
+        Corner.Relative(bottomLeftPercent, CutCornerTreatment),
+      )
+
+    /** Creates a [CorneredShape] with cut corners of the provided size. */
+    public fun cut(allDp: Float): Shape = cut(allDp, allDp, allDp, allDp)
+
+    /** Creates a [CorneredShape] with cut corners of the provided sizes. */
+    public fun cut(
+      topLeftDp: Float = 0f,
+      topRightDp: Float = 0f,
+      bottomRightDp: Float = 0f,
+      bottomLeftDp: Float = 0f,
+    ): CorneredShape =
+      CorneredShape(
+        Corner.Absolute(topLeftDp, CutCornerTreatment),
+        Corner.Absolute(topRightDp, CutCornerTreatment),
+        Corner.Absolute(bottomRightDp, CutCornerTreatment),
+        Corner.Absolute(bottomLeftDp, CutCornerTreatment),
+      )
+
+    /**
+     * Creates a [Shape] out of a [Drawable].
+     *
+     * @param drawable the [Drawable] that will be used as a shape.
+     * @param keepAspectRatio whether to keep the drawable’s aspect ratio, based on its intrinsic
+     *   size.
+     * @param otherShape used to fill the remaining space if the [drawable] doesn’t fill the entire
+     *   bounds.
+     */
+    public fun drawable(
+      drawable: Drawable,
+      tintDrawable: Boolean = true,
+      keepAspectRatio: Boolean = false,
+      otherShape: Shape? = Rectangle,
+    ): Shape =
+      object : Shape {
+        private val ratio: Float =
+          drawable.intrinsicWidth.coerceAtLeast(1) /
+            drawable.intrinsicHeight.coerceAtLeast(1).toFloat()
+
+        override fun drawShape(
+          context: DrawContext,
+          paint: Paint,
+          path: Path,
+          left: Float,
+          top: Float,
+          right: Float,
+          bottom: Float,
+        ) {
+          if (bottom - top == 0f || left - right == 0f) return
+          val width = right - left
+          val height = bottom - top
+
+          var otherComponentLeft = left
+          var otherComponentTop = top
+
+          if (tintDrawable) drawable.setTintCompat(paint.color)
+
+          if (height > width) {
+            val drawableHeight = if (keepAspectRatio) width / ratio else height
+            val topWithoutClipping = minOf(top, bottom - drawableHeight)
+            drawable.setBounds(
+              left = left,
+              top = topWithoutClipping,
+              right = right,
+              bottom = topWithoutClipping + drawableHeight,
             )
 
-        /**
-         * Creates a [CorneredShape] with rounded corners of the provided size.
-         */
-        public fun rounded(allDp: Float): Shape = rounded(allDp, allDp, allDp, allDp)
-
-        /**
-         * Creates a [CorneredShape] with rounded corners of the provided sizes.
-         */
-        public fun rounded(
-            topLeftDp: Float = 0f,
-            topRightDp: Float = 0f,
-            bottomRightDp: Float = 0f,
-            bottomLeftDp: Float = 0f,
-        ): CorneredShape =
-            CorneredShape(
-                Corner.Absolute(topLeftDp, RoundedCornerTreatment),
-                Corner.Absolute(topRightDp, RoundedCornerTreatment),
-                Corner.Absolute(bottomRightDp, RoundedCornerTreatment),
-                Corner.Absolute(bottomLeftDp, RoundedCornerTreatment),
+            otherComponentTop = topWithoutClipping + drawableHeight
+          } else {
+            val drawableWidth = if (keepAspectRatio) height * ratio else width
+            val leftWithoutClipping = minOf(left, right - drawableWidth)
+            drawable.setBounds(
+              left = leftWithoutClipping,
+              top = top,
+              right = leftWithoutClipping + drawableWidth,
+              bottom = bottom,
             )
 
-        /**
-         * Creates a [Shape] with all corners cut.
-         *
-         * @param allPercent the radius of each corner (in percent).
-         */
-        public fun cut(allPercent: Int): CorneredShape = cut(allPercent, allPercent, allPercent, allPercent)
+            otherComponentLeft = leftWithoutClipping + drawableWidth
+          }
 
-        /**
-         * Creates a [Shape] with all corners cut.
-         *
-         * @param topLeftPercent the top-left corner radius (in percent).
-         * @param topRightPercent the top-right corner radius (in percent).
-         * @param bottomRightPercent the bottom-right corner radius (in percent).
-         * @param bottomLeftPercent the bottom-left corner radius (in percent).
-         */
-        public fun cut(
-            topLeftPercent: Int = 0,
-            topRightPercent: Int = 0,
-            bottomRightPercent: Int = 0,
-            bottomLeftPercent: Int = 0,
-        ): CorneredShape =
-            CorneredShape(
-                Corner.Relative(topLeftPercent, CutCornerTreatment),
-                Corner.Relative(topRightPercent, CutCornerTreatment),
-                Corner.Relative(bottomRightPercent, CutCornerTreatment),
-                Corner.Relative(bottomLeftPercent, CutCornerTreatment),
+          drawable.draw(context.canvas)
+          otherShape ?: return
+
+          if (bottom - otherComponentTop > 0 && right - otherComponentLeft > 0) {
+            otherShape.drawShape(
+              context = context,
+              paint = paint,
+              path = path,
+              left = otherComponentLeft,
+              top = otherComponentTop,
+              right = right,
+              bottom = bottom,
             )
-
-        /**
-         * Creates a [CorneredShape] with cut corners of the provided size.
-         */
-        public fun cut(allDp: Float): Shape = cut(allDp, allDp, allDp, allDp)
-
-        /**
-         * Creates a [CorneredShape] with cut corners of the provided sizes.
-         */
-        public fun cut(
-            topLeftDp: Float = 0f,
-            topRightDp: Float = 0f,
-            bottomRightDp: Float = 0f,
-            bottomLeftDp: Float = 0f,
-        ): CorneredShape =
-            CorneredShape(
-                Corner.Absolute(topLeftDp, CutCornerTreatment),
-                Corner.Absolute(topRightDp, CutCornerTreatment),
-                Corner.Absolute(bottomRightDp, CutCornerTreatment),
-                Corner.Absolute(bottomLeftDp, CutCornerTreatment),
-            )
-
-        /**
-         * Creates a [Shape] out of a [Drawable].
-         *
-         * @param drawable the [Drawable] that will be used as a shape.
-         * @param keepAspectRatio whether to keep the drawable’s aspect ratio, based on its intrinsic size.
-         * @param otherShape used to fill the remaining space if the [drawable] doesn’t fill the entire bounds.
-         */
-        public fun drawable(
-            drawable: Drawable,
-            tintDrawable: Boolean = true,
-            keepAspectRatio: Boolean = false,
-            otherShape: Shape? = Rectangle,
-        ): Shape =
-            object : Shape {
-                private val ratio: Float =
-                    drawable.intrinsicWidth.coerceAtLeast(1) /
-                        drawable.intrinsicHeight.coerceAtLeast(1).toFloat()
-
-                override fun drawShape(
-                    context: DrawContext,
-                    paint: Paint,
-                    path: Path,
-                    left: Float,
-                    top: Float,
-                    right: Float,
-                    bottom: Float,
-                ) {
-                    if (bottom - top == 0f || left - right == 0f) return
-                    val width = right - left
-                    val height = bottom - top
-
-                    var otherComponentLeft = left
-                    var otherComponentTop = top
-
-                    if (tintDrawable) drawable.setTintCompat(paint.color)
-
-                    if (height > width) {
-                        val drawableHeight = if (keepAspectRatio) width / ratio else height
-                        val topWithoutClipping = minOf(top, bottom - drawableHeight)
-                        drawable.setBounds(
-                            left = left,
-                            top = topWithoutClipping,
-                            right = right,
-                            bottom = topWithoutClipping + drawableHeight,
-                        )
-
-                        otherComponentTop = topWithoutClipping + drawableHeight
-                    } else {
-                        val drawableWidth = if (keepAspectRatio) height * ratio else width
-                        val leftWithoutClipping = minOf(left, right - drawableWidth)
-                        drawable.setBounds(
-                            left = leftWithoutClipping,
-                            top = top,
-                            right = leftWithoutClipping + drawableWidth,
-                            bottom = bottom,
-                        )
-
-                        otherComponentLeft = leftWithoutClipping + drawableWidth
-                    }
-
-                    drawable.draw(context.canvas)
-                    otherShape ?: return
-
-                    if (bottom - otherComponentTop > 0 && right - otherComponentLeft > 0) {
-                        otherShape.drawShape(
-                            context = context,
-                            paint = paint,
-                            path = path,
-                            left = otherComponentLeft,
-                            top = otherComponentTop,
-                            right = right,
-                            bottom = bottom,
-                        )
-                    }
-                }
-            }
-    }
+          }
+        }
+      }
+  }
 }
 
 private fun Drawable.setTintCompat(tint: Int) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-        setTint(tint)
-    } else {
-        colorFilter = PorterDuffColorFilter(tint, PorterDuff.Mode.SRC_IN)
-    }
+  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+    setTint(tint)
+  } else {
+    colorFilter = PorterDuffColorFilter(tint, PorterDuff.Mode.SRC_IN)
+  }
 }

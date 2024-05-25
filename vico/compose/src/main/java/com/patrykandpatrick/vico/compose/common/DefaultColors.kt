@@ -24,4 +24,5 @@ import com.patrykandpatrick.vico.core.common.DefaultColors
 /** @suppress */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 @Composable
-public fun getDefaultColors(): DefaultColors = if (isSystemInDarkTheme()) DefaultColors.Dark else DefaultColors.Light
+public fun getDefaultColors(): DefaultColors =
+  if (isSystemInDarkTheme()) DefaultColors.Dark else DefaultColors.Light

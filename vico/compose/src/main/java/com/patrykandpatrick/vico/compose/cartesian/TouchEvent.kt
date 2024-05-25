@@ -27,59 +27,61 @@ import com.patrykandpatrick.vico.compose.common.detectZoomGestures
 import com.patrykandpatrick.vico.core.common.Point
 
 internal fun Modifier.chartTouchEvent(
-    setTouchPoint: ((Point?) -> Unit)?,
-    isScrollEnabled: Boolean,
-    scrollState: VicoScrollState,
-    onZoom: ((Float, Offset) -> Unit)?,
+  setTouchPoint: ((Point?) -> Unit)?,
+  isScrollEnabled: Boolean,
+  scrollState: VicoScrollState,
+  onZoom: ((Float, Offset) -> Unit)?,
 ): Modifier =
-    scrollable(
-        state = scrollState.scrollableState,
-        orientation = Orientation.Horizontal,
-        reverseDirection = true,
-        enabled = isScrollEnabled,
+  scrollable(
+      state = scrollState.scrollableState,
+      orientation = Orientation.Horizontal,
+      reverseDirection = true,
+      enabled = isScrollEnabled,
     )
-        .then(
-            if (setTouchPoint != null) {
-                pointerInput(setTouchPoint) {
-                    awaitPointerEventScope {
-                        while (true) {
-                            val event = awaitPointerEvent()
-                            when (event.type) {
-                                PointerEventType.Press -> setTouchPoint(event.changes.first().position.point)
-                                PointerEventType.Release -> setTouchPoint(null)
-                            }
-                        }
-                    }
-                }
-            } else {
-                Modifier
-            },
-        )
-        .then(
-            if (!isScrollEnabled && setTouchPoint != null) {
-                pointerInput(setTouchPoint) {
-                    detectHorizontalDragGestures(
-                        onDragStart = { setTouchPoint(it.point) },
-                        onDragEnd = { setTouchPoint(null) },
-                        onDragCancel = { setTouchPoint(null) },
-                    ) { change, _ -> setTouchPoint(change.position.point) }
-                }
-            } else {
-                Modifier
-            },
-        )
-        .then(
-            if (isScrollEnabled && onZoom != null) {
-                pointerInput(setTouchPoint, onZoom) {
-                    detectZoomGestures { centroid, zoom ->
-                        setTouchPoint?.invoke(null)
-                        onZoom(zoom, centroid)
-                    }
-                }
-            } else {
-                Modifier
-            },
-        )
+    .then(
+      if (setTouchPoint != null) {
+        pointerInput(setTouchPoint) {
+          awaitPointerEventScope {
+            while (true) {
+              val event = awaitPointerEvent()
+              when (event.type) {
+                PointerEventType.Press -> setTouchPoint(event.changes.first().position.point)
+                PointerEventType.Release -> setTouchPoint(null)
+              }
+            }
+          }
+        }
+      } else {
+        Modifier
+      }
+    )
+    .then(
+      if (!isScrollEnabled && setTouchPoint != null) {
+        pointerInput(setTouchPoint) {
+          detectHorizontalDragGestures(
+            onDragStart = { setTouchPoint(it.point) },
+            onDragEnd = { setTouchPoint(null) },
+            onDragCancel = { setTouchPoint(null) },
+          ) { change, _ ->
+            setTouchPoint(change.position.point)
+          }
+        }
+      } else {
+        Modifier
+      }
+    )
+    .then(
+      if (isScrollEnabled && onZoom != null) {
+        pointerInput(setTouchPoint, onZoom) {
+          detectZoomGestures { centroid, zoom ->
+            setTouchPoint?.invoke(null)
+            onZoom(zoom, centroid)
+          }
+        }
+      } else {
+        Modifier
+      }
+    )
 
 private val Offset.point: Point
-    get() = Point(x, y)
+  get() = Point(x, y)

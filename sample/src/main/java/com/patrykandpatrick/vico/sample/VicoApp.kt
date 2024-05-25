@@ -27,24 +27,24 @@ import com.patrykandpatrick.vico.sample.showcase.ChartScreen
 
 @Composable
 internal fun VicoApp() {
-    val navController = rememberNavController()
-    VicoTheme {
-        NavHost(navController = navController, startDestination = "chartList") {
-            composable("chartList") { ChartListScreen(navController) }
-            composable(
-                "chart/{initialChartID}/{uiSystemID}",
-                listOf(
-                    navArgument("initialChartID") { type = NavType.IntType },
-                    navArgument("uiSystemID") { type = NavType.IntType },
-                ),
-            ) { backStackEntry ->
-                val arguments = requireNotNull(backStackEntry.arguments)
-                ChartScreen(
-                    navController,
-                    arguments.getInt("initialChartID"),
-                    arguments.getInt("uiSystemID"),
-                )
-            }
-        }
+  val navController = rememberNavController()
+  VicoTheme {
+    NavHost(navController = navController, startDestination = "chartList") {
+      composable("chartList") { ChartListScreen(navController) }
+      composable(
+        "chart/{initialChartID}/{uiSystemID}",
+        listOf(
+          navArgument("initialChartID") { type = NavType.IntType },
+          navArgument("uiSystemID") { type = NavType.IntType },
+        ),
+      ) { backStackEntry ->
+        val arguments = requireNotNull(backStackEntry.arguments)
+        ChartScreen(
+          navController,
+          arguments.getInt("initialChartID"),
+          arguments.getInt("uiSystemID"),
+        )
+      }
     }
+  }
 }

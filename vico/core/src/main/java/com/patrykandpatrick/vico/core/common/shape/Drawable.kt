@@ -18,11 +18,6 @@ package com.patrykandpatrick.vico.core.common.shape
 
 import android.graphics.drawable.Drawable
 
-internal fun Drawable.setBounds(
-    left: Float,
-    top: Float,
-    right: Float,
-    bottom: Float,
-) {
-    setBounds(left.toInt(), top.toInt(), right.toInt(), bottom.toInt())
+internal fun Drawable.setBounds(left: Float, top: Float, right: Float, bottom: Float) {
+  setBounds(left.toInt(), top.toInt(), right.toInt(), bottom.toInt())
 }

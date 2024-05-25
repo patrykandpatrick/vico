@@ -31,45 +31,41 @@ private val lock = Any()
 internal inline fun <R> TypedArray.use(block: (TypedArray) -> R): R = block(this).also { recycle() }
 
 internal fun TypedArray.getColorExtended(
-    @StyleableRes index: Int,
-    @ColorInt defaultColor: Int = Color.TRANSPARENT,
+  @StyleableRes index: Int,
+  @ColorInt defaultColor: Int = Color.TRANSPARENT,
 ): Int = getColor(index, defaultColor)
 
 internal fun TypedArray.getRawDimension(
-    context: Context,
-    @StyleableRes index: Int,
-    defaultValue: Float,
+  context: Context,
+  @StyleableRes index: Int,
+  defaultValue: Float,
 ): Float =
-    synchronized(lock) {
-        if (getValue(index, rawValueTypedValue)) {
-            rawValueTypedValue.getDimension(context.resources.displayMetrics) / context.density
-            TypedValue.complexToFloat(rawValueTypedValue.data)
-        } else {
-            defaultValue
-        }
+  synchronized(lock) {
+    if (getValue(index, rawValueTypedValue)) {
+      rawValueTypedValue.getDimension(context.resources.displayMetrics) / context.density
+      TypedValue.complexToFloat(rawValueTypedValue.data)
+    } else {
+      defaultValue
     }
+  }
 
 internal fun TypedArray.getNestedTypedArray(
-    context: Context,
-    @StyleableRes resourceId: Int,
-    @StyleableRes styleableResourceId: IntArray,
+  context: Context,
+  @StyleableRes resourceId: Int,
+  @StyleableRes styleableResourceId: IntArray,
 ): TypedArray =
-    getResourceId(resourceId, 0)
-        .let { resId -> context.obtainStyledAttributes(resId, styleableResourceId) }
+  getResourceId(resourceId, 0).let { resId ->
+    context.obtainStyledAttributes(resId, styleableResourceId)
+  }
 
-internal fun TypedArray.getFraction(
-    @StyleableRes index: Int,
-    defaultValue: Float = -1f,
-): Float = getFraction(index, 1, 1, defaultValue)
+internal fun TypedArray.getFraction(@StyleableRes index: Int, defaultValue: Float = -1f): Float =
+  getFraction(index, 1, 1, defaultValue)
 
-internal fun TypedArray.isFraction(
-    @StyleableRes index: Int,
-): Boolean = getTypeCompat(index) == TypedValue.TYPE_FRACTION
+internal fun TypedArray.isFraction(@StyleableRes index: Int): Boolean =
+  getTypeCompat(index) == TypedValue.TYPE_FRACTION
 
-private fun TypedArray.getTypeCompat(
-    @StyleableRes index: Int,
-): Int =
-    synchronized(lock) {
-        getValue(index, typeCompatTypedValue)
-        typeCompatTypedValue.type
-    }
+private fun TypedArray.getTypeCompat(@StyleableRes index: Int): Int =
+  synchronized(lock) {
+    getValue(index, typeCompatTypedValue)
+    typeCompatTypedValue.type
+  }

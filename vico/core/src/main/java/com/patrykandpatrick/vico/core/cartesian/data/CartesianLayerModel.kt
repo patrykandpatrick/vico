@@ -22,110 +22,89 @@ import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.core.common.gcdWith
 import kotlin.math.abs
 
-/**
- * Stores a [CartesianLayer]’s data.
- */
+/** Stores a [CartesianLayer]’s data. */
 public interface CartesianLayerModel {
-    /**
-     * Identifies this [CartesianLayerModel].
-     */
-    public val id: Int
+  /** Identifies this [CartesianLayerModel]. */
+  public val id: Int
 
-    /**
-     * The minimum _x_ value.
-     */
-    public val minX: Float
+  /** The minimum _x_ value. */
+  public val minX: Float
 
-    /**
-     * The maximum _x_ value.
-     */
-    public val maxX: Float
+  /** The maximum _x_ value. */
+  public val maxX: Float
 
-    /**
-     * The minimum _y_ value.
-     */
-    public val minY: Float
+  /** The minimum _y_ value. */
+  public val minY: Float
 
-    /**
-     * The maximum _y_ value.
-     */
-    public val maxY: Float
+  /** The maximum _y_ value. */
+  public val maxY: Float
 
-    /**
-     * Stores auxiliary data, including [DrawingModel]s.
-     */
-    public val extraStore: ExtraStore
+  /** Stores auxiliary data, including [DrawingModel]s. */
+  public val extraStore: ExtraStore
 
-    /**
-     * Returns the greatest common divisor of the _x_ values’ differences.
-     */
-    public fun getXDeltaGcd(): Float
+  /** Returns the greatest common divisor of the _x_ values’ differences. */
+  public fun getXDeltaGcd(): Float
 
-    /**
-     * Creates a copy of this [CartesianLayerModel] with the given [ExtraStore].
-     */
-    public fun copy(extraStore: ExtraStore): CartesianLayerModel
+  /** Creates a copy of this [CartesianLayerModel] with the given [ExtraStore]. */
+  public fun copy(extraStore: ExtraStore): CartesianLayerModel
+
+  override fun equals(other: Any?): Boolean
+
+  override fun hashCode(): Int
+
+  /** Represents a single entity in a [CartesianLayerModel]. */
+  public interface Entry {
+    /** The _x_ coordinate. */
+    public val x: Float
 
     override fun equals(other: Any?): Boolean
 
     override fun hashCode(): Int
+  }
 
-    /**
-     * Represents a single entity in a [CartesianLayerModel].
-     */
-    public interface Entry {
-        /**
-         * The _x_ coordinate.
-         */
-        public val x: Float
-
-        override fun equals(other: Any?): Boolean
-
-        override fun hashCode(): Int
-    }
-
-    /**
-     * Stores the minimum amount of data required to create a [CartesianLayerModel] and facilitates this creation.
-     */
-    public interface Partial {
-        /**
-         * Creates a full [CartesianLayerModel] with the given [ExtraStore] from this [Partial].
-         */
-        public fun complete(extraStore: ExtraStore = ExtraStore.empty): CartesianLayerModel
-    }
+  /**
+   * Stores the minimum amount of data required to create a [CartesianLayerModel] and facilitates
+   * this creation.
+   */
+  public interface Partial {
+    /** Creates a full [CartesianLayerModel] with the given [ExtraStore] from this [Partial]. */
+    public fun complete(extraStore: ExtraStore = ExtraStore.empty): CartesianLayerModel
+  }
 }
 
 internal fun List<CartesianLayerModel.Entry>.getXDeltaGcd(): Float {
-    if (isEmpty()) return 1f
-    val iterator = iterator()
-    var prevX = iterator.next().x
-    var gcd: Float? = null
-    while (iterator.hasNext()) {
-        val x = iterator.next().x
-        val delta = abs(x - prevX)
-        prevX = x
-        if (delta != 0f) gcd = gcd?.gcdWith(delta) ?: delta
+  if (isEmpty()) return 1f
+  val iterator = iterator()
+  var prevX = iterator.next().x
+  var gcd: Float? = null
+  while (iterator.hasNext()) {
+    val x = iterator.next().x
+    val delta = abs(x - prevX)
+    prevX = x
+    if (delta != 0f) gcd = gcd?.gcdWith(delta) ?: delta
+  }
+  return gcd?.also {
+    require(it != 0f) {
+      "The x values are too precise. The maximum precision is two decimal places."
     }
-    return gcd
-        ?.also { require(it != 0f) { "The x values are too precise. The maximum precision is two decimal places." } }
-        ?: 1f
+  } ?: 1f
 }
 
 internal inline fun <T : CartesianLayerModel.Entry> List<T>.forEachIn(
-    range: ClosedFloatingPointRange<Float>,
-    padding: Int = 0,
-    action: (T, T?) -> Unit,
+  range: ClosedFloatingPointRange<Float>,
+  padding: Int = 0,
+  action: (T, T?) -> Unit,
 ) {
-    var start = 0
-    var end = 0
-    for (entry in this) {
-        when {
-            entry.x < range.start -> start++
-            entry.x > range.endInclusive -> break
-        }
-        end++
+  var start = 0
+  var end = 0
+  for (entry in this) {
+    when {
+      entry.x < range.start -> start++
+      entry.x > range.endInclusive -> break
     }
-    start = (start - padding).coerceAtLeast(0)
-    end = (end + padding).coerceAtMost(lastIndex)
-    (start..end).forEach { action(this[it], getOrNull(it + 1)) }
+    end++
+  }
+  start = (start - padding).coerceAtLeast(0)
+  end = (end + padding).coerceAtMost(lastIndex)
+  (start..end).forEach { action(this[it], getOrNull(it + 1)) }
 }

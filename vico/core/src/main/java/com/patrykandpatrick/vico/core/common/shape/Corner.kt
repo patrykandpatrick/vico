@@ -21,69 +21,51 @@ package com.patrykandpatrick.vico.core.common.shape
  *
  * @param cornerTreatment affects the final appearance of the corner.
  */
-public sealed class Corner(
-    public val cornerTreatment: CornerTreatment,
-) {
-    /**
-     * Calculates the size of the corner.
-     *
-     * @param availableCornerSize the available space that this corner can take.
-     * @param density the density of the screen (used in pixel size calculation).
-     *
-     * @return the size of the corner (in pixels).
-     */
-    public abstract fun getCornerSize(
-        availableCornerSize: Float,
-        density: Float,
-    ): Float
+public sealed class Corner(public val cornerTreatment: CornerTreatment) {
+  /**
+   * Calculates the size of the corner.
+   *
+   * @param availableCornerSize the available space that this corner can take.
+   * @param density the density of the screen (used in pixel size calculation).
+   * @return the size of the corner (in pixels).
+   */
+  public abstract fun getCornerSize(availableCornerSize: Float, density: Float): Float
 
-    /**
-     * Defines an absolute size for a corner (in dp).
-     *
-     * @param sizeDp the size of the corner (in dp).
-     */
-    public class Absolute(
-        public val sizeDp: Float,
-        cornerTreatment: CornerTreatment,
-    ) : Corner(cornerTreatment) {
-        override fun getCornerSize(
-            availableCornerSize: Float,
-            density: Float,
-        ): Float = sizeDp * density
+  /**
+   * Defines an absolute size for a corner (in dp).
+   *
+   * @param sizeDp the size of the corner (in dp).
+   */
+  public class Absolute(public val sizeDp: Float, cornerTreatment: CornerTreatment) :
+    Corner(cornerTreatment) {
+    override fun getCornerSize(availableCornerSize: Float, density: Float): Float = sizeDp * density
+  }
+
+  /**
+   * Defines a relative size for a corner (in percent).
+   *
+   * @param percentage the percentage of the space available for the corner that will be used as its
+   *   size.
+   */
+  public class Relative(public val percentage: Int, cornerTreatment: CornerTreatment) :
+    Corner(cornerTreatment) {
+    init {
+      if (percentage !in 0..MAX_PERCENTAGE) {
+        throw IllegalArgumentException("Expected a percentage (0-100), got $percentage.")
+      }
     }
 
-    /**
-     * Defines a relative size for a corner (in percent).
-     *
-     * @param percentage the percentage of the space available for the corner that will be used as its size.
-     */
-    public class Relative(
-        public val percentage: Int,
-        cornerTreatment: CornerTreatment,
-    ) : Corner(cornerTreatment) {
-        init {
-            if (percentage !in 0..MAX_PERCENTAGE) {
-                throw IllegalArgumentException("Expected a percentage (0-100), got $percentage.")
-            }
-        }
+    override fun getCornerSize(availableCornerSize: Float, density: Float): Float =
+      availableCornerSize / MAX_PERCENTAGE * percentage
+  }
 
-        override fun getCornerSize(
-            availableCornerSize: Float,
-            density: Float,
-        ): Float = availableCornerSize / MAX_PERCENTAGE * percentage
-    }
+  public companion object {
+    private const val MAX_PERCENTAGE = 100
 
-    public companion object {
-        private const val MAX_PERCENTAGE = 100
+    /** A [Corner] that is completely rounded. */
+    public val FullyRounded: Corner = Relative(MAX_PERCENTAGE, RoundedCornerTreatment)
 
-        /**
-         * A [Corner] that is completely rounded.
-         */
-        public val FullyRounded: Corner = Relative(MAX_PERCENTAGE, RoundedCornerTreatment)
-
-        /**
-         * A sharp [Corner].
-         */
-        public val Sharp: Corner = Relative(0, SharpCornerTreatment)
-    }
+    /** A sharp [Corner]. */
+    public val Sharp: Corner = Relative(0, SharpCornerTreatment)
+  }
 }

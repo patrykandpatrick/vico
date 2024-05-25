@@ -33,25 +33,27 @@ import com.patrykandpatrick.vico.core.cartesian.layer.CandlestickCartesianLayer
 @Preview(widthDp = 350)
 @Composable
 fun CandlestickLinePreview() {
-    Surface {
-        CartesianChartHost(
-            chart =
-                rememberCartesianChart(
-                    rememberCandlestickCartesianLayer(CandlestickCartesianLayer.CandleProvider.absoluteRelative()),
-                    startAxis = rememberStartAxis(),
-                    bottomAxis = rememberBottomAxis(),
-                ),
-            model =
-                remember {
-                    CartesianChartModel(
-                        CandlestickCartesianLayerModel.build(
-                            opening = listOf(4, 8, 12, 14, 10, 18),
-                            closing = listOf(8, 12, 14, 10, 18, 14),
-                            low = listOf(2, 6, 10, 4, 6, 10),
-                            high = listOf(12, 14, 16, 16, 20, 18),
-                        ),
-                    )
-                },
-        )
-    }
+  Surface {
+    CartesianChartHost(
+      chart =
+        rememberCartesianChart(
+          rememberCandlestickCartesianLayer(
+            CandlestickCartesianLayer.CandleProvider.absoluteRelative()
+          ),
+          startAxis = rememberStartAxis(),
+          bottomAxis = rememberBottomAxis(),
+        ),
+      model =
+        remember {
+          CartesianChartModel(
+            CandlestickCartesianLayerModel.build(
+              opening = listOf(4, 8, 12, 14, 10, 18),
+              closing = listOf(8, 12, 14, 10, 18, 14),
+              low = listOf(2, 6, 10, 4, 6, 10),
+              high = listOf(12, 14, 16, 16, 20, 18),
+            )
+          )
+        },
+    )
+  }
 }

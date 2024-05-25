@@ -18,31 +18,28 @@ package com.patrykandpatrick.vico.core.cartesian
 
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
 
-/**
- * Defines when an automatic scroll should be performed.
- */
+/** Defines when an automatic scroll should be performed. */
 public fun interface AutoScrollCondition {
+  /**
+   * Given a chart’s new and old models, defines whether an automatic scroll should be performed.
+   */
+  public fun shouldPerformAutoScroll(
+    newModel: CartesianChartModel,
+    oldModel: CartesianChartModel?,
+  ): Boolean
+
+  public companion object {
+    /** Prevents any automatic scrolling from occurring. */
+    public val Never: AutoScrollCondition = AutoScrollCondition { _, _ -> false }
+
     /**
-     * Given a chart’s new and old models, defines whether an automatic scroll should be performed.
+     * Triggers an automatic scroll when the size of the model increases (that is, the contents of
+     * the chart become wider).
      */
-    public fun shouldPerformAutoScroll(
-        newModel: CartesianChartModel,
-        oldModel: CartesianChartModel?,
-    ): Boolean
-
-    public companion object {
-        /**
-         * Prevents any automatic scrolling from occurring.
-         */
-        public val Never: AutoScrollCondition = AutoScrollCondition { _, _ -> false }
-
-        /**
-         * Triggers an automatic scroll when the size of the model increases (that is, the contents of the chart become
-         * wider).
-         */
-        public val OnModelSizeIncreased: AutoScrollCondition =
-            AutoScrollCondition { newModel, oldModel ->
-                oldModel != null && (newModel.models.size > oldModel.models.size || newModel.width > oldModel.width)
-            }
-    }
+    public val OnModelSizeIncreased: AutoScrollCondition =
+      AutoScrollCondition { newModel, oldModel ->
+        oldModel != null &&
+          (newModel.models.size > oldModel.models.size || newModel.width > oldModel.width)
+      }
+  }
 }

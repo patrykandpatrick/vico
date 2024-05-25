@@ -21,43 +21,41 @@ import com.patrykandpatrick.vico.core.common.data.DrawingModel
 import com.patrykandpatrick.vico.core.common.lerp
 import com.patrykandpatrick.vico.core.common.orZero
 
-/**
- * Houses drawing information for a [ColumnCartesianLayer]. [opacity] is the columns’ opacity.
- */
+/** Houses drawing information for a [ColumnCartesianLayer]. [opacity] is the columns’ opacity. */
 public class ColumnCartesianLayerDrawingModel(
-    private val entries: List<Map<Float, ColumnInfo>>,
-    public val opacity: Float = 1f,
+  private val entries: List<Map<Float, ColumnInfo>>,
+  public val opacity: Float = 1f,
 ) : DrawingModel<ColumnCartesianLayerDrawingModel.ColumnInfo>(entries) {
-    override fun transform(
-        drawingInfo: List<Map<Float, ColumnInfo>>,
-        from: DrawingModel<ColumnInfo>?,
-        fraction: Float,
-    ): DrawingModel<ColumnInfo> {
-        val oldOpacity = (from as ColumnCartesianLayerDrawingModel?)?.opacity.orZero
-        return ColumnCartesianLayerDrawingModel(drawingInfo, oldOpacity.lerp(opacity, fraction))
+  override fun transform(
+    drawingInfo: List<Map<Float, ColumnInfo>>,
+    from: DrawingModel<ColumnInfo>?,
+    fraction: Float,
+  ): DrawingModel<ColumnInfo> {
+    val oldOpacity = (from as ColumnCartesianLayerDrawingModel?)?.opacity.orZero
+    return ColumnCartesianLayerDrawingModel(drawingInfo, oldOpacity.lerp(opacity, fraction))
+  }
+
+  override fun equals(other: Any?): Boolean =
+    this === other ||
+      other is ColumnCartesianLayerDrawingModel &&
+        entries == other.entries &&
+        opacity == other.opacity
+
+  override fun hashCode(): Int = 31 * entries.hashCode() + opacity.hashCode()
+
+  /**
+   * Houses positional information for a [ColumnCartesianLayer]’s column. [height] expresses the
+   * column’s height as a fraction of the [ColumnCartesianLayer]’s height.
+   */
+  public class ColumnInfo(public val height: Float) : DrawingInfo {
+    override fun transform(from: DrawingInfo?, fraction: Float): DrawingInfo {
+      val oldHeight = (from as? ColumnInfo)?.height.orZero
+      return ColumnInfo(oldHeight.lerp(height, fraction))
     }
 
     override fun equals(other: Any?): Boolean =
-        this === other ||
-            other is ColumnCartesianLayerDrawingModel && entries == other.entries && opacity == other.opacity
+      this === other || other is ColumnInfo && height == other.height
 
-    override fun hashCode(): Int = 31 * entries.hashCode() + opacity.hashCode()
-
-    /**
-     * Houses positional information for a [ColumnCartesianLayer]’s column. [height] expresses the column’s height as a
-     * fraction of the [ColumnCartesianLayer]’s height.
-     */
-    public class ColumnInfo(public val height: Float) : DrawingInfo {
-        override fun transform(
-            from: DrawingInfo?,
-            fraction: Float,
-        ): DrawingInfo {
-            val oldHeight = (from as? ColumnInfo)?.height.orZero
-            return ColumnInfo(oldHeight.lerp(height, fraction))
-        }
-
-        override fun equals(other: Any?): Boolean = this === other || other is ColumnInfo && height == other.height
-
-        override fun hashCode(): Int = height.hashCode()
-    }
+    override fun hashCode(): Int = height.hashCode()
+  }
 }

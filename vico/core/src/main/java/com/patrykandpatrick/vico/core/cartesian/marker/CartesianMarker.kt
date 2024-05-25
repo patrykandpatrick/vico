@@ -22,18 +22,15 @@ import com.patrykandpatrick.vico.core.cartesian.ChartInsetter
 
 /** Marks [CartesianChart] objects. */
 public interface CartesianMarker : ChartInsetter {
-    /** Draws the [CartesianMarker] for the specified [Target]s. */
-    public fun draw(
-        context: CartesianDrawContext,
-        targets: List<Target>,
-    )
+  /** Draws the [CartesianMarker] for the specified [Target]s. */
+  public fun draw(context: CartesianDrawContext, targets: List<Target>)
 
-    /** Houses information on an object to be marked. */
-    public interface Target {
-        /** The _x_ value. */
-        public val x: Float
+  /** Houses information on an object to be marked. */
+  public interface Target {
+    /** The _x_ value. */
+    public val x: Float
 
-        /** The pixel _x_ coordinate. */
-        public val canvasX: Float
-    }
+    /** The pixel _x_ coordinate. */
+    public val canvasX: Float
+  }
 }

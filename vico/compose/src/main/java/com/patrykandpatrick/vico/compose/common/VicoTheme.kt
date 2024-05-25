@@ -41,57 +41,61 @@ import com.patrykandpatrick.vico.core.common.component.LineComponent
  * @param textColor used for [HorizontalAxis] and [VerticalAxis] labels.
  */
 public data class VicoTheme(
-    val candlestickCartesianLayerColors: CandlestickCartesianLayerColors,
-    val columnCartesianLayerColors: List<Color>,
-    val lineCartesianLayerColors: List<Color> = columnCartesianLayerColors,
-    val elevationOverlayColor: Color,
-    val lineColor: Color,
-    val textColor: Color,
+  val candlestickCartesianLayerColors: CandlestickCartesianLayerColors,
+  val columnCartesianLayerColors: List<Color>,
+  val lineCartesianLayerColors: List<Color> = columnCartesianLayerColors,
+  val elevationOverlayColor: Color,
+  val lineColor: Color,
+  val textColor: Color,
 ) {
-    /**
-     * Houses default [CandlestickCartesianLayer.Candle] colors.
-     *
-     * @property bullish used for bullish [CandlestickCartesianLayer.Candle]s.
-     * @property neutral used for neutral [CandlestickCartesianLayer.Candle]s.
-     * @property bearish used for bearish [CandlestickCartesianLayer.Candle]s.
-     */
-    public data class CandlestickCartesianLayerColors(val bullish: Color, val neutral: Color, val bearish: Color) {
-        /** @suppress */
-        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-        public companion object {
-            public fun fromDefaultColors(defaultColors: DefaultColors): CandlestickCartesianLayerColors =
-                CandlestickCartesianLayerColors(
-                    Color(defaultColors.bullishCandleColor),
-                    Color(defaultColors.neutralCandleColor),
-                    Color(defaultColors.bearishCandleColor),
-                )
-        }
+  /**
+   * Houses default [CandlestickCartesianLayer.Candle] colors.
+   *
+   * @property bullish used for bullish [CandlestickCartesianLayer.Candle]s.
+   * @property neutral used for neutral [CandlestickCartesianLayer.Candle]s.
+   * @property bearish used for bearish [CandlestickCartesianLayer.Candle]s.
+   */
+  public data class CandlestickCartesianLayerColors(
+    val bullish: Color,
+    val neutral: Color,
+    val bearish: Color,
+  ) {
+    /** @suppress */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public companion object {
+      public fun fromDefaultColors(defaultColors: DefaultColors): CandlestickCartesianLayerColors =
+        CandlestickCartesianLayerColors(
+          Color(defaultColors.bullishCandleColor),
+          Color(defaultColors.neutralCandleColor),
+          Color(defaultColors.bearishCandleColor),
+        )
     }
+  }
 
-    internal companion object {
-        fun fromDefaultColors(defaultColors: DefaultColors) =
-            VicoTheme(
-                candlestickCartesianLayerColors = CandlestickCartesianLayerColors.fromDefaultColors(defaultColors),
-                columnCartesianLayerColors = defaultColors.cartesianLayerColors.map(::Color),
-                elevationOverlayColor = Color(defaultColors.elevationOverlayColor),
-                lineColor = Color(defaultColors.lineColor),
-                textColor = Color(defaultColors.textColor),
-            )
-    }
+  internal companion object {
+    fun fromDefaultColors(defaultColors: DefaultColors) =
+      VicoTheme(
+        candlestickCartesianLayerColors =
+          CandlestickCartesianLayerColors.fromDefaultColors(defaultColors),
+        columnCartesianLayerColors = defaultColors.cartesianLayerColors.map(::Color),
+        elevationOverlayColor = Color(defaultColors.elevationOverlayColor),
+        lineColor = Color(defaultColors.lineColor),
+        textColor = Color(defaultColors.textColor),
+      )
+  }
 }
 
 private val LocalVicoTheme = staticCompositionLocalOf<VicoTheme?> { null }
 
 /** The current [VicoTheme]. */
 public val vicoTheme: VicoTheme
-    @Composable
-    get() = LocalVicoTheme.current ?: getDefaultColors().let { remember(it) { VicoTheme.fromDefaultColors(it) } }
+  @Composable
+  get() =
+    LocalVicoTheme.current
+      ?: getDefaultColors().let { remember(it) { VicoTheme.fromDefaultColors(it) } }
 
 /** Provides a [VicoTheme]. */
 @Composable
-public fun ProvideVicoTheme(
-    theme: VicoTheme,
-    content: @Composable () -> Unit,
-) {
-    CompositionLocalProvider(LocalVicoTheme provides theme, content)
+public fun ProvideVicoTheme(theme: VicoTheme, content: @Composable () -> Unit) {
+  CompositionLocalProvider(LocalVicoTheme provides theme, content)
 }

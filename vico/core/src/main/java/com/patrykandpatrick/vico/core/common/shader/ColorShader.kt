@@ -23,35 +23,30 @@ import android.graphics.Shader
 import com.patrykandpatrick.vico.core.common.DrawContext
 import com.patrykandpatrick.vico.core.common.Point
 
-/**
- * Applies the given color ([color]) to the shaded area.
- */
+/** Applies the given color ([color]) to the shaded area. */
 public class ColorShader(public val color: Int) : DynamicShader {
-    private val shader =
-        BitmapShader(
-            Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888).apply { setPixel(0, 0, color) },
-            Shader.TileMode.CLAMP,
-            Shader.TileMode.CLAMP,
-        )
+  private val shader =
+    BitmapShader(
+      Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888).apply { setPixel(0, 0, color) },
+      Shader.TileMode.CLAMP,
+      Shader.TileMode.CLAMP,
+    )
 
-    override fun provideShader(
-        context: DrawContext,
-        left: Float,
-        top: Float,
-        right: Float,
-        bottom: Float,
-    ): Shader = shader
+  override fun provideShader(
+    context: DrawContext,
+    left: Float,
+    top: Float,
+    right: Float,
+    bottom: Float,
+  ): Shader = shader
 
-    override fun getColorAt(
-        point: Point,
-        context: DrawContext,
-        bounds: RectF,
-    ): Int = color
+  override fun getColorAt(point: Point, context: DrawContext, bounds: RectF): Int = color
 
-    override fun equals(other: Any?): Boolean = this === other || (other is ColorShader && color == other.color)
+  override fun equals(other: Any?): Boolean =
+    this === other || (other is ColorShader && color == other.color)
 
-    override fun hashCode(): Int = color.hashCode()
+  override fun hashCode(): Int = color.hashCode()
 
-    @OptIn(ExperimentalStdlibApi::class)
-    override fun toString(): String = "ColorShader(color=${color.toHexString(HexFormat.UpperCase)})"
+  @OptIn(ExperimentalStdlibApi::class)
+  override fun toString(): String = "ColorShader(color=${color.toHexString(HexFormat.UpperCase)})"
 }

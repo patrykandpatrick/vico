@@ -16,12 +16,10 @@
 
 package com.patrykandpatrick.vico.core.common.shape
 
-/**
- * Defines the location of a shape corner.
- */
+/** Defines the location of a shape corner. */
 public enum class CornerLocation {
-    TopLeft,
-    TopRight,
-    BottomRight,
-    BottomLeft,
+  TopLeft,
+  TopRight,
+  BottomRight,
+  BottomLeft,
 }

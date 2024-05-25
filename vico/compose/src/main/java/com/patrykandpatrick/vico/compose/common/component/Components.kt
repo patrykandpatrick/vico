@@ -42,103 +42,78 @@ import com.patrykandpatrick.vico.core.common.component.TextComponent
 import com.patrykandpatrick.vico.core.common.shader.DynamicShader
 import com.patrykandpatrick.vico.core.common.shape.Shape
 
-/**
- * Creates and remembers a [LineComponent] with the specified properties.
- */
+/** Creates and remembers a [LineComponent] with the specified properties. */
 @Composable
 public fun rememberLineComponent(
-    color: Color = Color.Black,
-    thickness: Dp = Defaults.LINE_COMPONENT_THICKNESS_DP.dp,
-    shape: Shape = Shape.Rectangle,
-    dynamicShader: DynamicShader? = null,
-    margins: Dimensions = Dimensions.Empty,
-    strokeWidth: Dp = 0.dp,
-    strokeColor: Color = Color.Transparent,
+  color: Color = Color.Black,
+  thickness: Dp = Defaults.LINE_COMPONENT_THICKNESS_DP.dp,
+  shape: Shape = Shape.Rectangle,
+  dynamicShader: DynamicShader? = null,
+  margins: Dimensions = Dimensions.Empty,
+  strokeWidth: Dp = 0.dp,
+  strokeColor: Color = Color.Transparent,
 ): LineComponent =
-    remember(
-        color,
-        thickness,
-        shape,
-        dynamicShader,
-        margins,
-        strokeWidth,
-        strokeColor,
-    ) {
-        LineComponent(
-            color = color.toArgb(),
-            thicknessDp = thickness.value,
-            shape = shape,
-            dynamicShader = dynamicShader,
-            margins = margins,
-            strokeWidthDp = strokeWidth.value,
-            strokeColor = strokeColor.toArgb(),
-        )
-    }
-
-/**
- * Creates and remembers a [ShapeComponent] with the specified properties.
- */
-@Composable
-public fun rememberShapeComponent(
-    shape: Shape = Shape.Rectangle,
-    color: Color = Color.Black,
-    dynamicShader: DynamicShader? = null,
-    margins: Dimensions = Dimensions.Empty,
-    strokeWidth: Dp = 0.dp,
-    strokeColor: Color = Color.Transparent,
-): ShapeComponent =
-    remember(
-        shape,
-        color,
-        dynamicShader,
-        margins,
-        strokeWidth,
-        strokeColor,
-    ) {
-        ShapeComponent(
-            shape = shape,
-            color = color.toArgb(),
-            dynamicShader = dynamicShader,
-            margins = margins,
-            strokeWidthDp = strokeWidth.value,
-            strokeColor = strokeColor.toArgb(),
-        )
-    }
-
-/**
- * Creates and remembers a [ShapeComponent] with the specified properties.
- */
-@Composable
-public fun rememberShapeComponent(
-    shape: Shape = Shape.Rectangle,
-    color: Color = Color.Black,
-    brush: Brush,
-    margins: Dimensions = Dimensions.Empty,
-    strokeWidth: Dp = 0.dp,
-    strokeColor: Color = Color.Transparent,
-): ShapeComponent =
-    rememberShapeComponent(
-        shape = shape,
-        color = color,
-        dynamicShader = brush.toDynamicShader(),
-        margins = margins,
-        strokeWidth = strokeWidth,
-        strokeColor = strokeColor,
+  remember(color, thickness, shape, dynamicShader, margins, strokeWidth, strokeColor) {
+    LineComponent(
+      color = color.toArgb(),
+      thicknessDp = thickness.value,
+      shape = shape,
+      dynamicShader = dynamicShader,
+      margins = margins,
+      strokeWidthDp = strokeWidth.value,
+      strokeColor = strokeColor.toArgb(),
     )
+  }
 
-/**
- * Creates and remembers a [LayeredComponent].
- */
+/** Creates and remembers a [ShapeComponent] with the specified properties. */
+@Composable
+public fun rememberShapeComponent(
+  shape: Shape = Shape.Rectangle,
+  color: Color = Color.Black,
+  dynamicShader: DynamicShader? = null,
+  margins: Dimensions = Dimensions.Empty,
+  strokeWidth: Dp = 0.dp,
+  strokeColor: Color = Color.Transparent,
+): ShapeComponent =
+  remember(shape, color, dynamicShader, margins, strokeWidth, strokeColor) {
+    ShapeComponent(
+      shape = shape,
+      color = color.toArgb(),
+      dynamicShader = dynamicShader,
+      margins = margins,
+      strokeWidthDp = strokeWidth.value,
+      strokeColor = strokeColor.toArgb(),
+    )
+  }
+
+/** Creates and remembers a [ShapeComponent] with the specified properties. */
+@Composable
+public fun rememberShapeComponent(
+  shape: Shape = Shape.Rectangle,
+  color: Color = Color.Black,
+  brush: Brush,
+  margins: Dimensions = Dimensions.Empty,
+  strokeWidth: Dp = 0.dp,
+  strokeColor: Color = Color.Transparent,
+): ShapeComponent =
+  rememberShapeComponent(
+    shape = shape,
+    color = color,
+    dynamicShader = brush.toDynamicShader(),
+    margins = margins,
+    strokeWidth = strokeWidth,
+    strokeColor = strokeColor,
+  )
+
+/** Creates and remembers a [LayeredComponent]. */
 @Composable
 public fun rememberLayeredComponent(
-    rear: Component,
-    front: Component,
-    padding: Dimensions = Dimensions.Empty,
-    margins: Dimensions = Dimensions.Empty,
+  rear: Component,
+  front: Component,
+  padding: Dimensions = Dimensions.Empty,
+  margins: Dimensions = Dimensions.Empty,
 ): LayeredComponent =
-    remember(rear, front, padding, margins) {
-        LayeredComponent(rear, front, padding, margins)
-    }
+  remember(rear, front, padding, margins) { LayeredComponent(rear, front, padding, margins) }
 
 /**
  * Creates and remembers a [TextComponent].
@@ -156,35 +131,47 @@ public fun rememberLayeredComponent(
  */
 @Composable
 public fun rememberTextComponent(
-    color: Color = Color.Black,
-    textSize: TextUnit = Defaults.TEXT_COMPONENT_TEXT_SIZE.sp,
-    background: ShapeComponent? = null,
-    ellipsize: TextUtils.TruncateAt = TextUtils.TruncateAt.END,
-    lineCount: Int = Defaults.LABEL_LINE_COUNT,
-    padding: Dimensions = Dimensions.Empty,
-    margins: Dimensions = Dimensions.Empty,
-    typeface: Typeface? = null,
-    textAlignment: Layout.Alignment = Layout.Alignment.ALIGN_NORMAL,
-    minWidth: TextComponent.MinWidth = TextComponent.MinWidth.fixed(),
+  color: Color = Color.Black,
+  textSize: TextUnit = Defaults.TEXT_COMPONENT_TEXT_SIZE.sp,
+  background: ShapeComponent? = null,
+  ellipsize: TextUtils.TruncateAt = TextUtils.TruncateAt.END,
+  lineCount: Int = Defaults.LABEL_LINE_COUNT,
+  padding: Dimensions = Dimensions.Empty,
+  margins: Dimensions = Dimensions.Empty,
+  typeface: Typeface? = null,
+  textAlignment: Layout.Alignment = Layout.Alignment.ALIGN_NORMAL,
+  minWidth: TextComponent.MinWidth = TextComponent.MinWidth.fixed(),
 ): TextComponent =
-    remember(color, textSize, background, ellipsize, lineCount, padding, margins, typeface, textAlignment, minWidth) {
-        TextComponent.build {
-            this.color = color.toArgb()
-            textSizeSp = textSize.pixelSize()
-            this.ellipsize = ellipsize
-            this.lineCount = lineCount
-            this.background = background
-            this.padding = padding
-            this.margins = margins
-            this.typeface = typeface
-            this.textAlignment = textAlignment
-            this.minWidth = minWidth
-        }
+  remember(
+    color,
+    textSize,
+    background,
+    ellipsize,
+    lineCount,
+    padding,
+    margins,
+    typeface,
+    textAlignment,
+    minWidth,
+  ) {
+    TextComponent.build {
+      this.color = color.toArgb()
+      textSizeSp = textSize.pixelSize()
+      this.ellipsize = ellipsize
+      this.lineCount = lineCount
+      this.background = background
+      this.padding = padding
+      this.margins = margins
+      this.typeface = typeface
+      this.textAlignment = textAlignment
+      this.minWidth = minWidth
     }
+  }
 
 /** A [Dp] version of [TextComponent.MinWidth.fixed]. */
 @Stable
-public fun TextComponent.MinWidth.Companion.fixed(value: Dp = 0.dp): TextComponent.MinWidth = fixed(value.value)
+public fun TextComponent.MinWidth.Companion.fixed(value: Dp = 0.dp): TextComponent.MinWidth =
+  fixed(value.value)
 
 /**
  * Applies a drop shadow to this [ShapeComponent].
@@ -197,16 +184,17 @@ public fun TextComponent.MinWidth.Companion.fixed(value: Dp = 0.dp): TextCompone
  */
 @Suppress("UNCHECKED_CAST")
 public fun <T : ShapeComponent> T.setShadow(
-    radius: Dp,
-    dx: Dp = 0.dp,
-    dy: Dp = 0.dp,
-    color: Color = Color(Defaults.SHADOW_COLOR),
-    applyElevationOverlay: Boolean = false,
+  radius: Dp,
+  dx: Dp = 0.dp,
+  dy: Dp = 0.dp,
+  color: Color = Color(Defaults.SHADOW_COLOR),
+  applyElevationOverlay: Boolean = false,
 ): T =
-    setShadow(
-        radius = radius.value,
-        dx = dx.value,
-        dy = dy.value,
-        color = color.toArgb(),
-        applyElevationOverlay = applyElevationOverlay,
-    ) as T
+  setShadow(
+    radius = radius.value,
+    dx = dx.value,
+    dy = dy.value,
+    color = color.toArgb(),
+    applyElevationOverlay = applyElevationOverlay,
+  )
+    as T

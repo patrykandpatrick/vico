@@ -20,24 +20,16 @@ import androidx.annotation.RestrictTo
 import kotlin.reflect.KProperty
 
 /** @suppress */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public class ValueWrapper<T>(public var value: T)
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) public class ValueWrapper<T>(public var value: T)
 
 /** @suppress */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public operator fun <T> ValueWrapper<T>.getValue(
-    thisObj: Any?,
-    property: KProperty<*>,
-): T = value
+public operator fun <T> ValueWrapper<T>.getValue(thisObj: Any?, property: KProperty<*>): T = value
 
 /** @suppress */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public operator fun <T> ValueWrapper<T>.setValue(
-    thisObj: Any?,
-    property: KProperty<*>,
-    value: T,
-) {
-    this.value = value
+public operator fun <T> ValueWrapper<T>.setValue(thisObj: Any?, property: KProperty<*>, value: T) {
+  this.value = value
 }
 
 /** @suppress */

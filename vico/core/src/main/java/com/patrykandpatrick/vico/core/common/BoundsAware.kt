@@ -18,31 +18,18 @@ package com.patrykandpatrick.vico.core.common
 
 import android.graphics.RectF
 
-/**
- * Defines an abstract component that has some physical bounds.
- */
+/** Defines an abstract component that has some physical bounds. */
 public interface BoundsAware {
-    /**
-     * The bounds of the abstract component.
-     */
-    public val bounds: RectF
+  /** The bounds of the abstract component. */
+  public val bounds: RectF
 
-    /**
-     * Sets the coordinates of the bounds to the provided values.
-     */
-    public fun setBounds(
-        left: Number,
-        top: Number,
-        right: Number,
-        bottom: Number,
-    ) {
-        bounds.set(left, top, right, bottom)
-    }
+  /** Sets the coordinates of the bounds to the provided values. */
+  public fun setBounds(left: Number, top: Number, right: Number, bottom: Number) {
+    bounds.set(left, top, right, bottom)
+  }
 
-    /**
-     * Sets the coordinates of the bounds to the provided bounds.
-     */
-    public fun setBounds(bounds: RectF) {
-        this.bounds.set(bounds)
-    }
+  /** Sets the coordinates of the bounds to the provided bounds. */
+  public fun setBounds(bounds: RectF) {
+    this.bounds.set(bounds)
+  }
 }

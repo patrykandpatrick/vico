@@ -29,52 +29,48 @@ import com.patrykandpatrick.vico.core.common.half
  *
  * @property component used as a pattern in the [Shader].
  * @property componentSizeDp the size of the [component] (in dp).
- * @property checkeredArrangement whether the [component] should be arranged in a checkered pattern in the [Shader].
+ * @property checkeredArrangement whether the [component] should be arranged in a checkered pattern
+ *   in the [Shader].
  * @property tileXMode the horizontal tiling mode for the [component].
  * @property tileYMode the vertical tiling mode for the [component].
  */
 public class ComponentShader(
-    private val component: Component,
-    private val componentSizeDp: Float,
-    private val checkeredArrangement: Boolean = true,
-    private val tileXMode: Shader.TileMode = Shader.TileMode.REPEAT,
-    private val tileYMode: Shader.TileMode = tileXMode,
+  private val component: Component,
+  private val componentSizeDp: Float,
+  private val checkeredArrangement: Boolean = true,
+  private val tileXMode: Shader.TileMode = Shader.TileMode.REPEAT,
+  private val tileYMode: Shader.TileMode = tileXMode,
 ) : CacheableDynamicShader() {
-    override fun createShader(
-        context: DrawContext,
-        left: Float,
-        top: Float,
-        right: Float,
-        bottom: Float,
-    ): Shader =
-        with(context) {
-            val size = componentSizeDp.pixels.toInt() * if (checkeredArrangement) 2 else 1
-            val bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
+  override fun createShader(
+    context: DrawContext,
+    left: Float,
+    top: Float,
+    right: Float,
+    bottom: Float,
+  ): Shader =
+    with(context) {
+      val size = componentSizeDp.pixels.toInt() * if (checkeredArrangement) 2 else 1
+      val bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
 
-            val canvas = Canvas(bitmap)
-            context.withOtherCanvas(canvas) {
-                if (checkeredArrangement) {
-                    val halfSize = componentSizeDp.pixels.half
-                    with(component) {
-                        draw(context, -halfSize, -halfSize, componentSizeDp.pixels)
-                        draw(context, -halfSize, size - halfSize, componentSizeDp.pixels)
-                        draw(context, size - halfSize, -halfSize, componentSizeDp.pixels)
-                        draw(context, size - halfSize, size - halfSize, componentSizeDp.pixels)
-                        draw(context, halfSize, halfSize, componentSizeDp.pixels)
-                    }
-                } else {
-                    component.draw(context, 0f, 0f, componentSizeDp.pixels, componentSizeDp.pixels)
-                }
-            }
-            return BitmapShader(bitmap, tileXMode, tileYMode)
+      val canvas = Canvas(bitmap)
+      context.withOtherCanvas(canvas) {
+        if (checkeredArrangement) {
+          val halfSize = componentSizeDp.pixels.half
+          with(component) {
+            draw(context, -halfSize, -halfSize, componentSizeDp.pixels)
+            draw(context, -halfSize, size - halfSize, componentSizeDp.pixels)
+            draw(context, size - halfSize, -halfSize, componentSizeDp.pixels)
+            draw(context, size - halfSize, size - halfSize, componentSizeDp.pixels)
+            draw(context, halfSize, halfSize, componentSizeDp.pixels)
+          }
+        } else {
+          component.draw(context, 0f, 0f, componentSizeDp.pixels, componentSizeDp.pixels)
         }
-
-    private fun Component.draw(
-        context: DrawContext,
-        x: Float,
-        y: Float,
-        size: Float,
-    ) {
-        draw(context, x, y, x + size, y + size)
+      }
+      return BitmapShader(bitmap, tileXMode, tileYMode)
     }
+
+  private fun Component.draw(context: DrawContext, x: Float, y: Float, size: Float) {
+    draw(context, x, y, x + size, y + size)
+  }
 }

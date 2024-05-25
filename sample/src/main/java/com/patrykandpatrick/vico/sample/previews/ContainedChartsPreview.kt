@@ -49,121 +49,117 @@ import com.patrykandpatrick.vico.core.common.shape.Shape
 import com.patrykandpatrick.vico.sample.showcase.rememberMarker
 
 private val model =
-    CartesianChartModel(
-        ColumnCartesianLayerModel.build { series(1, 2, 4, 1, 4) },
-        LineCartesianLayerModel.build { series(4, 1, 8, 12, 5) },
-    )
+  CartesianChartModel(
+    ColumnCartesianLayerModel.build { series(1, 2, 4, 1, 4) },
+    LineCartesianLayerModel.build { series(4, 1, 8, 12, 5) },
+  )
 
 private val markerMap: Map<Float, CartesianMarker>
-    @Composable get() = mapOf(4f to rememberMarker())
+  @Composable get() = mapOf(4f to rememberMarker())
 
 @Composable
 private fun getColumnLayer(verticalAxisPosition: Vertical? = null) =
-    rememberColumnCartesianLayer(
-        columnProvider =
-            ColumnCartesianLayer.ColumnProvider.series(
-                rememberLineComponent(
-                    color = Color.Black,
-                    thickness = 8.dp,
-                    shape = Shape.Pill,
-                ),
-            ),
-        verticalAxisPosition = verticalAxisPosition,
-    )
+  rememberColumnCartesianLayer(
+    columnProvider =
+      ColumnCartesianLayer.ColumnProvider.series(
+        rememberLineComponent(color = Color.Black, thickness = 8.dp, shape = Shape.Pill)
+      ),
+    verticalAxisPosition = verticalAxisPosition,
+  )
 
 @Composable
 private fun getLineLayer(verticalAxisPosition: Vertical? = null) =
-    rememberLineCartesianLayer(
-        lines =
-            listOf(
-                rememberLineSpec(
-                    shader = DynamicShader.color(Color.DarkGray),
-                    backgroundShader =
-                        DynamicShader.verticalGradient(
-                            arrayOf(Color.DarkGray, Color.DarkGray.copy(alpha = 0f)),
-                        ),
-                ),
-            ),
-        verticalAxisPosition = verticalAxisPosition,
-    )
+  rememberLineCartesianLayer(
+    lines =
+      listOf(
+        rememberLineSpec(
+          shader = DynamicShader.color(Color.DarkGray),
+          backgroundShader =
+            DynamicShader.verticalGradient(arrayOf(Color.DarkGray, Color.DarkGray.copy(alpha = 0f))),
+        )
+      ),
+    verticalAxisPosition = verticalAxisPosition,
+  )
 
 private val startAxis: Axis<Start>
-    @Composable get() =
-        rememberStartAxis(
-            label = rememberTextComponent(color = Color.Black),
-            itemPlacer = remember { AxisItemPlacer.Vertical.count(count = { 5 }) },
-        )
+  @Composable
+  get() =
+    rememberStartAxis(
+      label = rememberTextComponent(color = Color.Black),
+      itemPlacer = remember { AxisItemPlacer.Vertical.count(count = { 5 }) },
+    )
 
 private val endAxis: Axis<End>
-    @Composable get() =
-        rememberEndAxis(
-            label = rememberTextComponent(color = Color.DarkGray),
-            itemPlacer = remember { AxisItemPlacer.Vertical.count(count = { 7 }) },
-        )
+  @Composable
+  get() =
+    rememberEndAxis(
+      label = rememberTextComponent(color = Color.DarkGray),
+      itemPlacer = remember { AxisItemPlacer.Vertical.count(count = { 7 }) },
+    )
 
 @Composable
 @Preview("Chart with independent axes", widthDp = 350)
 public fun ChartWithIndependentAxes(modifier: Modifier = Modifier) {
-    CartesianChartHost(
-        chart =
-            rememberCartesianChart(
-                getColumnLayer(Start),
-                getLineLayer(End),
-                startAxis = startAxis,
-                bottomAxis = rememberBottomAxis(),
-                endAxis = endAxis,
-            ),
-        model = model,
-        modifier = modifier,
-    )
+  CartesianChartHost(
+    chart =
+      rememberCartesianChart(
+        getColumnLayer(Start),
+        getLineLayer(End),
+        startAxis = startAxis,
+        bottomAxis = rememberBottomAxis(),
+        endAxis = endAxis,
+      ),
+    model = model,
+    modifier = modifier,
+  )
 }
 
 @Composable
 @Preview("Chart with dependent axes", widthDp = 350)
 public fun ChartWithDependentAxes(modifier: Modifier = Modifier) {
-    CartesianChartHost(
-        chart =
-            rememberCartesianChart(
-                getColumnLayer(),
-                getLineLayer(),
-                startAxis = startAxis,
-                bottomAxis = rememberBottomAxis(),
-                endAxis = endAxis,
-                persistentMarkers = markerMap,
-            ),
-        model = model,
-        modifier = modifier,
-    )
+  CartesianChartHost(
+    chart =
+      rememberCartesianChart(
+        getColumnLayer(),
+        getLineLayer(),
+        startAxis = startAxis,
+        bottomAxis = rememberBottomAxis(),
+        endAxis = endAxis,
+        persistentMarkers = markerMap,
+      ),
+    model = model,
+    modifier = modifier,
+  )
 }
 
 @Composable
 @Preview("Column chart", widthDp = 350)
 public fun ColumnChart(modifier: Modifier = Modifier) {
-    CartesianChartHost(
-        chart =
-            rememberCartesianChart(
-                getColumnLayer(),
-                startAxis = startAxis,
-                bottomAxis = rememberBottomAxis(),
-                persistentMarkers = markerMap,
-            ),
-        model = model,
-        modifier = modifier,
-    )
+  CartesianChartHost(
+    chart =
+      rememberCartesianChart(
+        getColumnLayer(),
+        startAxis = startAxis,
+        bottomAxis = rememberBottomAxis(),
+        persistentMarkers = markerMap,
+      ),
+    model = model,
+    modifier = modifier,
+  )
 }
 
 @Composable
 @Preview("Line chart", widthDp = 350)
 public fun LineChart(modifier: Modifier = Modifier) {
-    CartesianChartHost(
-        chart =
-            rememberCartesianChart(
-                getLineLayer(),
-                startAxis = startAxis,
-                bottomAxis = rememberBottomAxis(),
-                persistentMarkers = markerMap,
-            ),
-        model = model,
-        modifier = modifier,
-    )
+  CartesianChartHost(
+    chart =
+      rememberCartesianChart(
+        getLineLayer(),
+        startAxis = startAxis,
+        bottomAxis = rememberBottomAxis(),
+        persistentMarkers = markerMap,
+      ),
+    model = model,
+    modifier = modifier,
+  )
 }

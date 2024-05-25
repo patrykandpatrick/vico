@@ -22,9 +22,5 @@ import com.patrykandpatrick.vico.sample.VicoTheme
 
 @Composable
 fun PreviewSurface(content: @Composable () -> Unit) {
-    VicoTheme(useDynamicColor = false) {
-        Surface {
-            content()
-        }
-    }
+  VicoTheme(useDynamicColor = false) { Surface { content() } }
 }

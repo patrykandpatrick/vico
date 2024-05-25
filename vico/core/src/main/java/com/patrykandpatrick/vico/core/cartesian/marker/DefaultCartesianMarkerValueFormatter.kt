@@ -26,80 +26,83 @@ import com.patrykandpatrick.vico.core.common.sumOf
 import java.text.DecimalFormat
 
 /**
- * The default [CartesianMarkerValueFormatter]. The labels produced include the [CartesianLayerModel.Entry]
- * instances’ _y_ values, which are formatted via [decimalFormat] and, if [colorCode] is `true`, color-coded.
+ * The default [CartesianMarkerValueFormatter]. The labels produced include the
+ * [CartesianLayerModel.Entry] instances’ _y_ values, which are formatted via [decimalFormat] and,
+ * if [colorCode] is `true`, color-coded.
  */
 public open class DefaultCartesianMarkerValueFormatter(
-    private val decimalFormat: DecimalFormat = DecimalFormat("#.##;−#.##"),
-    private val colorCode: Boolean = true,
+  private val decimalFormat: DecimalFormat = DecimalFormat("#.##;−#.##"),
+  private val colorCode: Boolean = true,
 ) : CartesianMarkerValueFormatter {
-    protected open fun SpannableStringBuilder.append(
-        y: Float,
-        color: Int? = null,
-    ) {
-        if (colorCode && color != null) {
-            appendCompat(decimalFormat.format(y), ForegroundColorSpan(color), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+  protected open fun SpannableStringBuilder.append(y: Float, color: Int? = null) {
+    if (colorCode && color != null) {
+      appendCompat(
+        decimalFormat.format(y),
+        ForegroundColorSpan(color),
+        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
+      )
+    } else {
+      append(decimalFormat.format(y))
+    }
+  }
+
+  protected open fun SpannableStringBuilder.append(
+    target: CartesianMarker.Target,
+    shorten: Boolean,
+  ) {
+    when (target) {
+      is CandlestickCartesianLayerMarkerTarget -> {
+        if (shorten) {
+          append(target.entry.closing, target.closingColor)
         } else {
-            append(decimalFormat.format(y))
+          append("O ")
+          append(target.entry.opening, target.openingColor)
+          append(", C ")
+          append(target.entry.closing, target.closingColor)
+          append(", L ")
+          append(target.entry.low, target.lowColor)
+          append(", H ")
+          append(target.entry.high, target.highColor)
         }
+      }
+      is ColumnCartesianLayerMarkerTarget -> {
+        val includeSum = target.columns.size > 1
+        if (includeSum) {
+          append(target.columns.sumOf { it.entry.y })
+          append(" (")
+        }
+        target.columns.forEachIndexed { index, column ->
+          append(column.entry.y, column.color)
+          if (index != target.columns.lastIndex) append(", ")
+        }
+        if (includeSum) append(")")
+      }
+      is LineCartesianLayerMarkerTarget -> {
+        target.points.forEachIndexed { index, point ->
+          append(point.entry.y, point.color)
+          if (index != target.points.lastIndex) append(", ")
+        }
+      }
+      else -> throw IllegalArgumentException("Unexpected `CartesianMarker.Target` implementation.")
+    }
+  }
+
+  override fun format(
+    context: CartesianDrawContext,
+    targets: List<CartesianMarker.Target>,
+  ): CharSequence =
+    SpannableStringBuilder().apply {
+      targets.forEachIndexed { index, target ->
+        append(target = target, shorten = targets.size > 1)
+        if (index != targets.lastIndex) append(", ")
+      }
     }
 
-    protected open fun SpannableStringBuilder.append(
-        target: CartesianMarker.Target,
-        shorten: Boolean,
-    ) {
-        when (target) {
-            is CandlestickCartesianLayerMarkerTarget -> {
-                if (shorten) {
-                    append(target.entry.closing, target.closingColor)
-                } else {
-                    append("O ")
-                    append(target.entry.opening, target.openingColor)
-                    append(", C ")
-                    append(target.entry.closing, target.closingColor)
-                    append(", L ")
-                    append(target.entry.low, target.lowColor)
-                    append(", H ")
-                    append(target.entry.high, target.highColor)
-                }
-            }
-            is ColumnCartesianLayerMarkerTarget -> {
-                val includeSum = target.columns.size > 1
-                if (includeSum) {
-                    append(target.columns.sumOf { it.entry.y })
-                    append(" (")
-                }
-                target.columns.forEachIndexed { index, column ->
-                    append(column.entry.y, column.color)
-                    if (index != target.columns.lastIndex) append(", ")
-                }
-                if (includeSum) append(")")
-            }
-            is LineCartesianLayerMarkerTarget -> {
-                target.points.forEachIndexed { index, point ->
-                    append(point.entry.y, point.color)
-                    if (index != target.points.lastIndex) append(", ")
-                }
-            }
-            else -> throw IllegalArgumentException("Unexpected `CartesianMarker.Target` implementation.")
-        }
-    }
+  override fun equals(other: Any?): Boolean =
+    this === other ||
+      other is DefaultCartesianMarkerValueFormatter &&
+        decimalFormat == other.decimalFormat &&
+        colorCode == other.colorCode
 
-    override fun format(
-        context: CartesianDrawContext,
-        targets: List<CartesianMarker.Target>,
-    ): CharSequence =
-        SpannableStringBuilder().apply {
-            targets.forEachIndexed { index, target ->
-                append(target = target, shorten = targets.size > 1)
-                if (index != targets.lastIndex) append(", ")
-            }
-        }
-
-    override fun equals(other: Any?): Boolean =
-        this === other ||
-            other is DefaultCartesianMarkerValueFormatter && decimalFormat == other.decimalFormat &&
-            colorCode == other.colorCode
-
-    override fun hashCode(): Int = 31 * decimalFormat.hashCode() + colorCode.hashCode()
+  override fun hashCode(): Int = 31 * decimalFormat.hashCode() + colorCode.hashCode()
 }

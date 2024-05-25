@@ -41,110 +41,93 @@ import kotlin.properties.Delegates
  * @param strokeColor the color of the stroke.
  */
 public open class ShapeComponent(
-    public val shape: Shape = Shape.Rectangle,
-    color: Int = Color.BLACK,
-    public val dynamicShader: DynamicShader? = null,
-    override val margins: Dimensions = Dimensions.Empty,
-    public val strokeWidthDp: Float = 0f,
-    strokeColor: Int = Color.TRANSPARENT,
-) : PaintComponent<ShapeComponent>(),
-    Component {
-    private val paint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
-    private val strokePaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
+  public val shape: Shape = Shape.Rectangle,
+  color: Int = Color.BLACK,
+  public val dynamicShader: DynamicShader? = null,
+  override val margins: Dimensions = Dimensions.Empty,
+  public val strokeWidthDp: Float = 0f,
+  strokeColor: Int = Color.TRANSPARENT,
+) : PaintComponent<ShapeComponent>(), Component {
+  private val paint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
+  private val strokePaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
 
-    protected val path: Path = Path()
+  protected val path: Path = Path()
 
-    /**
-     * The color of the shape.
-     */
-    public var color: Int by Delegates.observable(color) { _, _, value -> paint.color = value }
+  /** The color of the shape. */
+  public var color: Int by Delegates.observable(color) { _, _, value -> paint.color = value }
 
-    /**
-     * The color of the stroke.
-     */
-    public var strokeColor: Int by Delegates.observable(strokeColor) { _, _, value -> strokePaint.color = value }
+  /** The color of the stroke. */
+  public var strokeColor: Int by
+    Delegates.observable(strokeColor) { _, _, value -> strokePaint.color = value }
 
-    init {
-        paint.color = color
+  init {
+    paint.color = color
 
-        with(strokePaint) {
-            this.color = strokeColor
-            style = Paint.Style.STROKE
-        }
+    with(strokePaint) {
+      this.color = strokeColor
+      style = Paint.Style.STROKE
+    }
+  }
+
+  override fun draw(
+    context: DrawContext,
+    left: Float,
+    top: Float,
+    right: Float,
+    bottom: Float,
+    opacity: Float,
+  ): Unit =
+    with(context) {
+      if (left == right || top == bottom) return // Skip drawing shape that will be invisible.
+      path.rewind()
+      applyShader(context, left, top, right, bottom)
+      val centerX = (left + right).half
+      val centerY = (top + bottom).half
+      componentShadow.maybeUpdateShadowLayer(
+        context = this,
+        paint = paint,
+        backgroundColor = color,
+        opacity = opacity,
+      )
+
+      val strokeWidth = strokeWidthDp.pixels
+      strokePaint.strokeWidth = strokeWidth
+
+      fun drawShape(paint: Paint, isStroke: Boolean) {
+        val strokeCompensation = if (isStroke) strokeWidth.half else 0f
+
+        shape.drawShape(
+          context = context,
+          paint = paint,
+          path = path,
+          left =
+            minOf(left + margins.startDp.pixels + strokeWidth.half, centerX - strokeCompensation)
+              .round,
+          top =
+            minOf(top + margins.topDp.pixels + strokeWidth.half, centerY - strokeCompensation)
+              .round,
+          right =
+            maxOf(right - margins.endDp.pixels - strokeWidth.half, centerX + strokeCompensation)
+              .round,
+          bottom =
+            maxOf(bottom - margins.bottomDp.pixels - strokeWidth.half, centerY + strokeCompensation)
+              .round,
+        )
+      }
+
+      paint.withOpacity(opacity) { paint -> drawShape(paint = paint, isStroke = false) }
+      if (strokeWidth > 0f && strokeColor.alpha > 0) drawShape(paint = strokePaint, isStroke = true)
     }
 
-    override fun draw(
-        context: DrawContext,
-        left: Float,
-        top: Float,
-        right: Float,
-        bottom: Float,
-        opacity: Float,
-    ): Unit =
-        with(context) {
-            if (left == right || top == bottom) return // Skip drawing shape that will be invisible.
-            path.rewind()
-            applyShader(context, left, top, right, bottom)
-            val centerX = (left + right).half
-            val centerY = (top + bottom).half
-            componentShadow.maybeUpdateShadowLayer(
-                context = this,
-                paint = paint,
-                backgroundColor = color,
-                opacity = opacity,
-            )
-
-            val strokeWidth = strokeWidthDp.pixels
-            strokePaint.strokeWidth = strokeWidth
-
-            fun drawShape(
-                paint: Paint,
-                isStroke: Boolean,
-            ) {
-                val strokeCompensation = if (isStroke) strokeWidth.half else 0f
-
-                shape.drawShape(
-                    context = context,
-                    paint = paint,
-                    path = path,
-                    left =
-                        minOf(
-                            left + margins.startDp.pixels + strokeWidth.half,
-                            centerX - strokeCompensation,
-                        ).round,
-                    top =
-                        minOf(
-                            top + margins.topDp.pixels + strokeWidth.half,
-                            centerY - strokeCompensation,
-                        ).round,
-                    right =
-                        maxOf(
-                            right - margins.endDp.pixels - strokeWidth.half,
-                            centerX + strokeCompensation,
-                        ).round,
-                    bottom =
-                        maxOf(
-                            bottom - margins.bottomDp.pixels - strokeWidth.half,
-                            centerY + strokeCompensation,
-                        ).round,
-                )
-            }
-
-            paint.withOpacity(opacity) { paint ->
-                drawShape(paint = paint, isStroke = false)
-            }
-            if (strokeWidth > 0f && strokeColor.alpha > 0) drawShape(paint = strokePaint, isStroke = true)
-        }
-
-    protected fun applyShader(
-        context: DrawContext,
-        left: Float,
-        top: Float,
-        right: Float,
-        bottom: Float,
-    ) {
-        dynamicShader
-            ?.provideShader(context, left, top, right, bottom)
-            ?.let { shader -> paint.shader = shader }
+  protected fun applyShader(
+    context: DrawContext,
+    left: Float,
+    top: Float,
+    right: Float,
+    bottom: Float,
+  ) {
+    dynamicShader?.provideShader(context, left, top, right, bottom)?.let { shader ->
+      paint.shader = shader
     }
+  }
 }

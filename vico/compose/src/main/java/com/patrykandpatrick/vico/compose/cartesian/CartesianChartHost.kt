@@ -70,225 +70,231 @@ import kotlinx.coroutines.launch
  * @param chart the [CartesianChart].
  * @param modelProducer creates and updates the [CartesianChartModel].
  * @param modifier the modifier to be applied to the chart.
- * @param marker appears when the chart is touched, highlighting the entry or entries nearest to the touch point.
+ * @param marker appears when the chart is touched, highlighting the entry or entries nearest to the
+ *   touch point.
  * @param markerVisibilityListener allows for listening to [marker] visibility changes.
- * @param scrollState houses information on the [CartesianChart]’s scroll value. Allows for scroll customization and
- * programmatic scrolling.
- * @param zoomState houses information on the [CartesianChart]’s zoom factor. Allows for zoom customization.
+ * @param scrollState houses information on the [CartesianChart]’s scroll value. Allows for scroll
+ *   customization and programmatic scrolling.
+ * @param zoomState houses information on the [CartesianChart]’s zoom factor. Allows for zoom
+ *   customization.
  * @param diffAnimationSpec the animation spec used for difference animations.
- * @param runInitialAnimation whether to display an animation when the chart is created. In this animation, the value
- * of each chart entry is animated from zero to the actual value. This animation isn’t run in previews.
+ * @param runInitialAnimation whether to display an animation when the chart is created. In this
+ *   animation, the value of each chart entry is animated from zero to the actual value. This
+ *   animation isn’t run in previews.
  * @param horizontalLayout defines how the chart’s content is positioned horizontally.
- * @param getXStep overrides the _x_ step (the difference between the _x_ values of neighboring major entries). If this
- * is null, the output of [CartesianChartModel.getXDeltaGcd] is used.
+ * @param getXStep overrides the _x_ step (the difference between the _x_ values of neighboring
+ *   major entries). If this is null, the output of [CartesianChartModel.getXDeltaGcd] is used.
  * @param dispatcher used for handling [CartesianChartModel] updates.
  * @param placeholder shown when no [CartesianChartModel] is available.
  */
 @Composable
 public fun CartesianChartHost(
-    chart: CartesianChart,
-    modelProducer: CartesianChartModelProducer,
-    modifier: Modifier = Modifier,
-    marker: CartesianMarker? = null,
-    markerVisibilityListener: CartesianMarkerVisibilityListener? = null,
-    scrollState: VicoScrollState = rememberVicoScrollState(),
-    zoomState: VicoZoomState = rememberDefaultVicoZoomState(scrollState.scrollEnabled),
-    diffAnimationSpec: AnimationSpec<Float>? = defaultCartesianDiffAnimationSpec,
-    runInitialAnimation: Boolean = true,
-    horizontalLayout: HorizontalLayout = HorizontalLayout.segmented(),
-    getXStep: ((CartesianChartModel) -> Float)? = null,
-    dispatcher: CoroutineDispatcher = Dispatchers.Default,
-    placeholder: @Composable BoxScope.() -> Unit = {},
+  chart: CartesianChart,
+  modelProducer: CartesianChartModelProducer,
+  modifier: Modifier = Modifier,
+  marker: CartesianMarker? = null,
+  markerVisibilityListener: CartesianMarkerVisibilityListener? = null,
+  scrollState: VicoScrollState = rememberVicoScrollState(),
+  zoomState: VicoZoomState = rememberDefaultVicoZoomState(scrollState.scrollEnabled),
+  diffAnimationSpec: AnimationSpec<Float>? = defaultCartesianDiffAnimationSpec,
+  runInitialAnimation: Boolean = true,
+  horizontalLayout: HorizontalLayout = HorizontalLayout.segmented(),
+  getXStep: ((CartesianChartModel) -> Float)? = null,
+  dispatcher: CoroutineDispatcher = Dispatchers.Default,
+  placeholder: @Composable BoxScope.() -> Unit = {},
 ) {
-    val mutableChartValues = remember(chart) { MutableChartValues() }
-    val modelWrapper by modelProducer
-        .collectAsState(chart, diffAnimationSpec, runInitialAnimation, mutableChartValues, getXStep, dispatcher)
-    val (model, previousModel, chartValues) = modelWrapper
+  val mutableChartValues = remember(chart) { MutableChartValues() }
+  val modelWrapper by
+    modelProducer.collectAsState(
+      chart,
+      diffAnimationSpec,
+      runInitialAnimation,
+      mutableChartValues,
+      getXStep,
+      dispatcher,
+    )
+  val (model, previousModel, chartValues) = modelWrapper
 
-    CartesianChartHostBox(modifier) {
-        if (model != null) {
-            CartesianChartHostImpl(
-                chart = chart,
-                model = model,
-                oldModel = previousModel,
-                marker = marker,
-                markerVisibilityListener = markerVisibilityListener,
-                scrollState = scrollState,
-                zoomState = zoomState,
-                horizontalLayout = horizontalLayout,
-                chartValues = chartValues,
-            )
-        } else {
-            placeholder()
-        }
+  CartesianChartHostBox(modifier) {
+    if (model != null) {
+      CartesianChartHostImpl(
+        chart = chart,
+        model = model,
+        oldModel = previousModel,
+        marker = marker,
+        markerVisibilityListener = markerVisibilityListener,
+        scrollState = scrollState,
+        zoomState = zoomState,
+        horizontalLayout = horizontalLayout,
+        chartValues = chartValues,
+      )
+    } else {
+      placeholder()
     }
+  }
 }
 
 /**
- * Displays a [CartesianChart]. This function accepts a [CartesianChartModel]. For dynamic data, use the function
- * overload that accepts a [CartesianChartModelProducer] instance.
+ * Displays a [CartesianChart]. This function accepts a [CartesianChartModel]. For dynamic data, use
+ * the function overload that accepts a [CartesianChartModelProducer] instance.
  *
  * @param chart the [CartesianChart].
  * @param model the [CartesianChartModel].
  * @param modifier the modifier to be applied to the chart.
- * @param marker appears when the chart is touched, highlighting the entry or entries nearest to the touch point.
+ * @param marker appears when the chart is touched, highlighting the entry or entries nearest to the
+ *   touch point.
  * @param markerVisibilityListener allows for listening to [marker] visibility changes.
- * @param scrollState houses information on the [CartesianChart]’s scroll value. Allows for scroll customization and
- * programmatic scrolling.
- * @param zoomState houses information on the [CartesianChart]’s zoom factor. Allows for zoom customization.
- * @param oldModel the chart’s previous [CartesianChartModel]. This is used to determine whether to perform an automatic
- * scroll.
+ * @param scrollState houses information on the [CartesianChart]’s scroll value. Allows for scroll
+ *   customization and programmatic scrolling.
+ * @param zoomState houses information on the [CartesianChart]’s zoom factor. Allows for zoom
+ *   customization.
+ * @param oldModel the chart’s previous [CartesianChartModel]. This is used to determine whether to
+ *   perform an automatic scroll.
  * @param horizontalLayout defines how the chart’s content is positioned horizontally.
- * @param getXStep overrides the _x_ step (the difference between the _x_ values of neighboring major entries). If this
- * is null, the output of [CartesianChartModel.getXDeltaGcd] is used.
+ * @param getXStep overrides the _x_ step (the difference between the _x_ values of neighboring
+ *   major entries). If this is null, the output of [CartesianChartModel.getXDeltaGcd] is used.
  */
 @Composable
 @SuppressLint("RememberReturnType")
 public fun CartesianChartHost(
-    chart: CartesianChart,
-    model: CartesianChartModel,
-    modifier: Modifier = Modifier,
-    marker: CartesianMarker? = null,
-    markerVisibilityListener: CartesianMarkerVisibilityListener? = null,
-    scrollState: VicoScrollState = rememberVicoScrollState(),
-    zoomState: VicoZoomState = rememberDefaultVicoZoomState(scrollState.scrollEnabled),
-    oldModel: CartesianChartModel? = null,
-    horizontalLayout: HorizontalLayout = HorizontalLayout.segmented(),
-    getXStep: ((CartesianChartModel) -> Float)? = null,
+  chart: CartesianChart,
+  model: CartesianChartModel,
+  modifier: Modifier = Modifier,
+  marker: CartesianMarker? = null,
+  markerVisibilityListener: CartesianMarkerVisibilityListener? = null,
+  scrollState: VicoScrollState = rememberVicoScrollState(),
+  zoomState: VicoZoomState = rememberDefaultVicoZoomState(scrollState.scrollEnabled),
+  oldModel: CartesianChartModel? = null,
+  horizontalLayout: HorizontalLayout = HorizontalLayout.segmented(),
+  getXStep: ((CartesianChartModel) -> Float)? = null,
 ) {
-    val chartValues = remember(chart) { MutableChartValues() }
-    remember(chartValues, model, getXStep) {
-        chartValues.reset()
-        chart.updateChartValues(chartValues, model, getXStep?.invoke(model))
-    }
-    CartesianChartHostBox(modifier) {
-        CartesianChartHostImpl(
-            chart = chart,
-            model = model,
-            marker = marker,
-            markerVisibilityListener = markerVisibilityListener,
-            scrollState = scrollState,
-            zoomState = zoomState,
-            oldModel = oldModel,
-            horizontalLayout = horizontalLayout,
-            chartValues = chartValues.toImmutable(),
-        )
-    }
+  val chartValues = remember(chart) { MutableChartValues() }
+  remember(chartValues, model, getXStep) {
+    chartValues.reset()
+    chart.updateChartValues(chartValues, model, getXStep?.invoke(model))
+  }
+  CartesianChartHostBox(modifier) {
+    CartesianChartHostImpl(
+      chart = chart,
+      model = model,
+      marker = marker,
+      markerVisibilityListener = markerVisibilityListener,
+      scrollState = scrollState,
+      zoomState = zoomState,
+      oldModel = oldModel,
+      horizontalLayout = horizontalLayout,
+      chartValues = chartValues.toImmutable(),
+    )
+  }
 }
 
 @Composable
 internal fun CartesianChartHostImpl(
-    chart: CartesianChart,
-    model: CartesianChartModel,
-    marker: CartesianMarker?,
-    markerVisibilityListener: CartesianMarkerVisibilityListener?,
-    scrollState: VicoScrollState,
-    zoomState: VicoZoomState,
-    oldModel: CartesianChartModel?,
-    horizontalLayout: HorizontalLayout,
-    chartValues: ChartValues,
+  chart: CartesianChart,
+  model: CartesianChartModel,
+  marker: CartesianMarker?,
+  markerVisibilityListener: CartesianMarkerVisibilityListener?,
+  scrollState: VicoScrollState,
+  zoomState: VicoZoomState,
+  oldModel: CartesianChartModel?,
+  horizontalLayout: HorizontalLayout,
+  chartValues: ChartValues,
 ) {
-    val bounds = remember { RectF() }
-    val markerTouchPoint = remember { mutableStateOf<Point?>(null) }
-    val measureContext =
-        rememberCartesianMeasureContext(
-            scrollState.scrollEnabled,
-            bounds,
-            horizontalLayout,
-            with(LocalContext.current) { ::spToPx },
-            chartValues,
+  val bounds = remember { RectF() }
+  val markerTouchPoint = remember { mutableStateOf<Point?>(null) }
+  val measureContext =
+    rememberCartesianMeasureContext(
+      scrollState.scrollEnabled,
+      bounds,
+      horizontalLayout,
+      with(LocalContext.current) { ::spToPx },
+      chartValues,
+    )
+  val previousMarkerX = remember { ValueWrapper<Float?>(null) }
+
+  val elevationOverlayColor = vicoTheme.elevationOverlayColor.toArgb()
+  val coroutineScope = rememberCoroutineScope()
+  var previousModelID by remember { ValueWrapper(model.id) }
+  val horizontalDimensions = remember { MutableHorizontalDimensions() }
+
+  LaunchedEffect(scrollState.pointerXDeltas) {
+    scrollState.pointerXDeltas.collect { delta ->
+      markerTouchPoint.value?.let { point -> markerTouchPoint.value = point.copy(point.x + delta) }
+    }
+  }
+
+  DisposableEffect(scrollState) { onDispose { scrollState.clearUpdated() } }
+
+  Canvas(
+    modifier =
+      Modifier.fillMaxSize()
+        .chartTouchEvent(
+          setTouchPoint =
+            remember(marker == null) {
+              if (marker != null) markerTouchPoint.component2() else null
+            },
+          isScrollEnabled = scrollState.scrollEnabled,
+          scrollState = scrollState,
+          onZoom =
+            remember(zoomState, scrollState, chart, coroutineScope) {
+              if (zoomState.zoomEnabled) {
+                { factor, centroid ->
+                  zoomState.zoom(factor, centroid.x, scrollState.value, chart.bounds).let { scroll
+                    ->
+                    coroutineScope.launch { scrollState.scroll(scroll) }
+                  }
+                }
+              } else {
+                null
+              }
+            },
         )
-    val previousMarkerX = remember { ValueWrapper<Float?>(null) }
+  ) {
+    bounds.set(left = 0, top = 0, right = size.width, bottom = size.height)
 
-    val elevationOverlayColor = vicoTheme.elevationOverlayColor.toArgb()
-    val coroutineScope = rememberCoroutineScope()
-    var previousModelID by remember { ValueWrapper(model.id) }
-    val horizontalDimensions = remember { MutableHorizontalDimensions() }
+    horizontalDimensions.clear()
+    chart.prepare(measureContext, model, horizontalDimensions, bounds, marker)
 
-    LaunchedEffect(scrollState.pointerXDeltas) {
-        scrollState
-            .pointerXDeltas
-            .collect { delta ->
-                markerTouchPoint.value?.let { point -> markerTouchPoint.value = point.copy(point.x + delta) }
-            }
+    if (chart.bounds.isEmpty) return@Canvas
+
+    zoomState.update(measureContext, horizontalDimensions, chart.bounds)
+    scrollState.update(measureContext, chart.bounds, horizontalDimensions)
+
+    if (model.id != previousModelID) {
+      coroutineScope.launch { scrollState.autoScroll(model, oldModel) }
+      previousModelID = model.id
     }
 
-    DisposableEffect(scrollState) { onDispose { scrollState.clearUpdated() } }
+    val cartesianDrawContext =
+      CartesianDrawContext(
+        canvas = drawContext.canvas.nativeCanvas,
+        elevationOverlayColor = elevationOverlayColor,
+        measureContext = measureContext,
+        markerTouchPoint = markerTouchPoint.value,
+        horizontalDimensions = horizontalDimensions,
+        chartBounds = chart.bounds,
+        horizontalScroll = scrollState.value,
+        zoom = zoomState.value,
+      )
 
-    Canvas(
-        modifier =
-            Modifier
-                .fillMaxSize()
-                .chartTouchEvent(
-                    setTouchPoint =
-                        remember(marker == null) { if (marker != null) markerTouchPoint.component2() else null },
-                    isScrollEnabled = scrollState.scrollEnabled,
-                    scrollState = scrollState,
-                    onZoom =
-                        remember(zoomState, scrollState, chart, coroutineScope) {
-                            if (zoomState.zoomEnabled) {
-                                { factor, centroid ->
-                                    zoomState
-                                        .zoom(factor, centroid.x, scrollState.value, chart.bounds)
-                                        .let { scroll -> coroutineScope.launch { scrollState.scroll(scroll) } }
-                                }
-                            } else {
-                                null
-                            }
-                        },
-                ),
-    ) {
-        bounds.set(left = 0, top = 0, right = size.width, bottom = size.height)
+    chart.draw(cartesianDrawContext, model)
 
-        horizontalDimensions.clear()
-        chart.prepare(measureContext, model, horizontalDimensions, bounds, marker)
-
-        if (chart.bounds.isEmpty) return@Canvas
-
-        zoomState.update(measureContext, horizontalDimensions, chart.bounds)
-        scrollState.update(measureContext, chart.bounds, horizontalDimensions)
-
-        if (model.id != previousModelID) {
-            coroutineScope.launch { scrollState.autoScroll(model, oldModel) }
-            previousModelID = model.id
-        }
-
-        val cartesianDrawContext =
-            CartesianDrawContext(
-                canvas = drawContext.canvas.nativeCanvas,
-                elevationOverlayColor = elevationOverlayColor,
-                measureContext = measureContext,
-                markerTouchPoint = markerTouchPoint.value,
-                horizontalDimensions = horizontalDimensions,
-                chartBounds = chart.bounds,
-                horizontalScroll = scrollState.value,
-                zoom = zoomState.value,
-            )
-
-        chart.draw(cartesianDrawContext, model)
-
-        if (marker != null) {
-            previousMarkerX.value =
-                cartesianDrawContext.drawMarker(
-                    marker,
-                    markerTouchPoint.value,
-                    chart,
-                    markerVisibilityListener,
-                    previousMarkerX.value,
-                )
-        }
-
-        measureContext.reset()
+    if (marker != null) {
+      previousMarkerX.value =
+        cartesianDrawContext.drawMarker(
+          marker,
+          markerTouchPoint.value,
+          chart,
+          markerVisibilityListener,
+          previousMarkerX.value,
+        )
     }
+
+    measureContext.reset()
+  }
 }
 
 @Composable
-private fun CartesianChartHostBox(
-    modifier: Modifier,
-    content: @Composable BoxScope.() -> Unit,
-) {
-    Box(
-        modifier = modifier.height(CHART_HEIGHT.dp).fillMaxWidth(),
-        content = content,
-    )
+private fun CartesianChartHostBox(modifier: Modifier, content: @Composable BoxScope.() -> Unit) {
+  Box(modifier = modifier.height(CHART_HEIGHT.dp).fillMaxWidth(), content = content)
 }

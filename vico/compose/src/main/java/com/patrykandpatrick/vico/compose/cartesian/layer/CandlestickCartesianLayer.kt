@@ -31,23 +31,27 @@ import com.patrykandpatrick.vico.core.common.data.DrawingModelInterpolator
 /** Creates and remembers a [CandlestickCartesianLayer]. */
 @Composable
 public fun rememberCandlestickCartesianLayer(
-    candles: CandlestickCartesianLayer.CandleProvider = CandlestickCartesianLayer.CandleProvider.absolute(),
-    minCandleBodyHeight: Dp = Defaults.MIN_CANDLE_BODY_HEIGHT_DP.dp,
-    candleSpacing: Dp = Defaults.CANDLE_SPACING_DP.dp,
-    scaleCandleWicks: Boolean = false,
-    verticalAxisPosition: AxisPosition.Vertical? = null,
-    axisValueOverrider: AxisValueOverrider = remember { AxisValueOverrider.auto() },
-    drawingModelInterpolator: DrawingModelInterpolator<
-        CandlestickCartesianLayerDrawingModel.CandleInfo,
-        CandlestickCartesianLayerDrawingModel,
-    > = DefaultDrawingModelInterpolator(),
+  candles: CandlestickCartesianLayer.CandleProvider =
+    CandlestickCartesianLayer.CandleProvider.absolute(),
+  minCandleBodyHeight: Dp = Defaults.MIN_CANDLE_BODY_HEIGHT_DP.dp,
+  candleSpacing: Dp = Defaults.CANDLE_SPACING_DP.dp,
+  scaleCandleWicks: Boolean = false,
+  verticalAxisPosition: AxisPosition.Vertical? = null,
+  axisValueOverrider: AxisValueOverrider = remember { AxisValueOverrider.auto() },
+  drawingModelInterpolator:
+    DrawingModelInterpolator<
+      CandlestickCartesianLayerDrawingModel.CandleInfo,
+      CandlestickCartesianLayerDrawingModel,
+    > =
+    DefaultDrawingModelInterpolator(),
 ): CandlestickCartesianLayer =
-    remember { CandlestickCartesianLayer(candles) }.apply {
-        this.candles = candles
-        minCandleBodyHeightDp = minCandleBodyHeight.value
-        candleSpacingDp = candleSpacing.value
-        this.scaleCandleWicks = scaleCandleWicks
-        this.verticalAxisPosition = verticalAxisPosition
-        this.axisValueOverrider = axisValueOverrider
-        this.drawingModelInterpolator = drawingModelInterpolator
+  remember { CandlestickCartesianLayer(candles) }
+    .apply {
+      this.candles = candles
+      minCandleBodyHeightDp = minCandleBodyHeight.value
+      candleSpacingDp = candleSpacing.value
+      this.scaleCandleWicks = scaleCandleWicks
+      this.verticalAxisPosition = verticalAxisPosition
+      this.axisValueOverrider = axisValueOverrider
+      this.drawingModelInterpolator = drawingModelInterpolator
     }

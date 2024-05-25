@@ -32,32 +32,32 @@ import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.core.common.Legend
 
 /**
- * Creates and remembers a [CartesianChart] with the given [CartesianLayer]s, axes, [Legend], and [FadingEdges]
- * instance. Adds the given [Decoration]s and persistent [CartesianMarker]s.
+ * Creates and remembers a [CartesianChart] with the given [CartesianLayer]s, axes, [Legend], and
+ * [FadingEdges] instance. Adds the given [Decoration]s and persistent [CartesianMarker]s.
  *
  * @see rememberColumnCartesianLayer
  * @see rememberLineCartesianLayer
  */
 @Composable
 public fun rememberCartesianChart(
-    vararg layers: CartesianLayer<*>,
-    startAxis: Axis<AxisPosition.Vertical.Start>? = null,
-    topAxis: Axis<AxisPosition.Horizontal.Top>? = null,
-    endAxis: Axis<AxisPosition.Vertical.End>? = null,
-    bottomAxis: Axis<AxisPosition.Horizontal.Bottom>? = null,
-    legend: Legend<CartesianMeasureContext, CartesianDrawContext>? = null,
-    fadingEdges: FadingEdges? = null,
-    decorations: List<Decoration>? = null,
-    persistentMarkers: Map<Float, CartesianMarker>? = null,
+  vararg layers: CartesianLayer<*>,
+  startAxis: Axis<AxisPosition.Vertical.Start>? = null,
+  topAxis: Axis<AxisPosition.Horizontal.Top>? = null,
+  endAxis: Axis<AxisPosition.Vertical.End>? = null,
+  bottomAxis: Axis<AxisPosition.Horizontal.Bottom>? = null,
+  legend: Legend<CartesianMeasureContext, CartesianDrawContext>? = null,
+  fadingEdges: FadingEdges? = null,
+  decorations: List<Decoration>? = null,
+  persistentMarkers: Map<Float, CartesianMarker>? = null,
 ): CartesianChart =
-    remember(*layers) { CartesianChart(*layers) }
-        .apply {
-            this.startAxis = startAxis
-            this.topAxis = topAxis
-            this.endAxis = endAxis
-            this.bottomAxis = bottomAxis
-            this.legend = legend
-            this.fadingEdges = fadingEdges
-            decorations?.let(::setDecorations)
-            persistentMarkers?.let(::setPersistentMarkers)
-        }
+  remember(*layers) { CartesianChart(*layers) }
+    .apply {
+      this.startAxis = startAxis
+      this.topAxis = topAxis
+      this.endAxis = endAxis
+      this.bottomAxis = bottomAxis
+      this.legend = legend
+      this.fadingEdges = fadingEdges
+      decorations?.let(::setDecorations)
+      persistentMarkers?.let(::setPersistentMarkers)
+    }

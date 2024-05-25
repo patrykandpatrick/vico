@@ -50,31 +50,40 @@ import com.patrykandpatrick.vico.core.common.shader.TopBottomShader
 /**
  * Creates a [LineCartesianLayer].
  *
- * @param lines the [LineCartesianLayer.LineSpec]s to use for the lines. This list is iterated through as many times as
- * there are lines.
+ * @param lines the [LineCartesianLayer.LineSpec]s to use for the lines. This list is iterated
+ *   through as many times as there are lines.
  * @param spacing the distance between neighboring major entries’ points.
  * @param axisValueOverrider overrides the _x_ and _y_ ranges.
- * @param verticalAxisPosition the position of the [VerticalAxis] with which the [LineCartesianLayer] should be
- * associated. Use this for independent [CartesianLayer] scaling.
- * @param drawingModelInterpolator interpolates the [LineCartesianLayer]’s [LineCartesianLayerDrawingModel]s.
+ * @param verticalAxisPosition the position of the [VerticalAxis] with which the
+ *   [LineCartesianLayer] should be associated. Use this for independent [CartesianLayer] scaling.
+ * @param drawingModelInterpolator interpolates the [LineCartesianLayer]’s
+ *   [LineCartesianLayerDrawingModel]s.
  */
 @Composable
 public fun rememberLineCartesianLayer(
-    lines: List<LineSpec> =
-        vicoTheme.lineCartesianLayerColors.map { rememberLineSpec(remember { DynamicShader.color(it) }) },
-    spacing: Dp = Defaults.POINT_SPACING.dp,
-    axisValueOverrider: AxisValueOverrider = remember { AxisValueOverrider.auto() },
-    verticalAxisPosition: AxisPosition.Vertical? = null,
-    drawingModelInterpolator:
-        DrawingModelInterpolator<LineCartesianLayerDrawingModel.PointInfo, LineCartesianLayerDrawingModel> =
-        remember { DefaultDrawingModelInterpolator() },
+  lines: List<LineSpec> =
+    vicoTheme.lineCartesianLayerColors.map {
+      rememberLineSpec(remember { DynamicShader.color(it) })
+    },
+  spacing: Dp = Defaults.POINT_SPACING.dp,
+  axisValueOverrider: AxisValueOverrider = remember { AxisValueOverrider.auto() },
+  verticalAxisPosition: AxisPosition.Vertical? = null,
+  drawingModelInterpolator:
+    DrawingModelInterpolator<
+      LineCartesianLayerDrawingModel.PointInfo,
+      LineCartesianLayerDrawingModel,
+    > =
+    remember {
+      DefaultDrawingModelInterpolator()
+    },
 ): LineCartesianLayer =
-    remember { LineCartesianLayer(lines) }.apply {
-        this.lines = lines
-        this.spacingDp = spacing.value
-        this.axisValueOverrider = axisValueOverrider
-        this.verticalAxisPosition = verticalAxisPosition
-        this.drawingModelInterpolator = drawingModelInterpolator
+  remember { LineCartesianLayer(lines) }
+    .apply {
+      this.lines = lines
+      this.spacingDp = spacing.value
+      this.axisValueOverrider = axisValueOverrider
+      this.verticalAxisPosition = verticalAxisPosition
+      this.drawingModelInterpolator = drawingModelInterpolator
     }
 
 /**
@@ -82,8 +91,8 @@ public fun rememberLineCartesianLayer(
  *
  * @param shader the [DynamicShader] for the line.
  * @param thickness the thickness of the line.
- * @param backgroundShader an optional [DynamicShader] to use for the areas bounded by the [LineCartesianLayer] line and
- * the zero line (_y_ = 0).
+ * @param backgroundShader an optional [DynamicShader] to use for the areas bounded by the
+ *   [LineCartesianLayer] line and the zero line (_y_ = 0).
  * @param cap the stroke cap for the line.
  * @param point an optional [Component] that can be drawn at a given point on the line.
  * @param pointSize the size of the [point].
@@ -95,113 +104,113 @@ public fun rememberLineCartesianLayer(
  */
 @Composable
 public fun rememberLineSpec(
-    shader: DynamicShader = DynamicShader.color(Color.Black),
-    thickness: Dp = Defaults.LINE_SPEC_THICKNESS_DP.dp,
-    backgroundShader: DynamicShader? = shader.getDefaultBackgroundShader(),
-    cap: StrokeCap = StrokeCap.Round,
-    point: Component? = null,
-    pointSize: Dp = Defaults.POINT_SIZE.dp,
-    dataLabel: TextComponent? = null,
-    dataLabelVerticalPosition: VerticalPosition = VerticalPosition.Top,
-    dataLabelValueFormatter: CartesianValueFormatter = remember { CartesianValueFormatter.decimal() },
-    dataLabelRotationDegrees: Float = 0f,
-    pointConnector: LineSpec.PointConnector = DefaultPointConnector(),
+  shader: DynamicShader = DynamicShader.color(Color.Black),
+  thickness: Dp = Defaults.LINE_SPEC_THICKNESS_DP.dp,
+  backgroundShader: DynamicShader? = shader.getDefaultBackgroundShader(),
+  cap: StrokeCap = StrokeCap.Round,
+  point: Component? = null,
+  pointSize: Dp = Defaults.POINT_SIZE.dp,
+  dataLabel: TextComponent? = null,
+  dataLabelVerticalPosition: VerticalPosition = VerticalPosition.Top,
+  dataLabelValueFormatter: CartesianValueFormatter = remember { CartesianValueFormatter.decimal() },
+  dataLabelRotationDegrees: Float = 0f,
+  pointConnector: LineSpec.PointConnector = DefaultPointConnector(),
 ): LineSpec =
-    remember(
-        shader,
-        thickness,
-        backgroundShader,
-        cap,
-        point,
-        pointSize,
-        dataLabel,
-        dataLabelVerticalPosition,
-        dataLabelRotationDegrees,
-        dataLabelRotationDegrees,
-        pointConnector,
-    ) {
-        LineSpec(
-            shader = shader,
-            thicknessDp = thickness.value,
-            backgroundShader = backgroundShader,
-            cap = cap.paintCap,
-            point = point,
-            pointSizeDp = pointSize.value,
-            dataLabel = dataLabel,
-            dataLabelVerticalPosition = dataLabelVerticalPosition,
-            dataLabelValueFormatter = dataLabelValueFormatter,
-            dataLabelRotationDegrees = dataLabelRotationDegrees,
-            pointConnector = pointConnector,
-        )
-    }
+  remember(
+    shader,
+    thickness,
+    backgroundShader,
+    cap,
+    point,
+    pointSize,
+    dataLabel,
+    dataLabelVerticalPosition,
+    dataLabelRotationDegrees,
+    dataLabelRotationDegrees,
+    pointConnector,
+  ) {
+    LineSpec(
+      shader = shader,
+      thicknessDp = thickness.value,
+      backgroundShader = backgroundShader,
+      cap = cap.paintCap,
+      point = point,
+      pointSizeDp = pointSize.value,
+      dataLabel = dataLabel,
+      dataLabelVerticalPosition = dataLabelVerticalPosition,
+      dataLabelValueFormatter = dataLabelValueFormatter,
+      dataLabelRotationDegrees = dataLabelRotationDegrees,
+      pointConnector = pointConnector,
+    )
+  }
 
 private fun DynamicShader.getDefaultBackgroundShader(): DynamicShader? =
-    when (this) {
-        is ColorShader ->
-            TopBottomShader(
-                topShader =
-                    BrushShader(
-                        brush =
-                            Brush.verticalGradient(
-                                listOf(
-                                    Color(color).copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_START),
-                                    Color(color).copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_END),
-                                ),
-                            ),
-                    ),
-                bottomShader =
-                    BrushShader(
-                        brush =
-                            Brush.verticalGradient(
-                                listOf(
-                                    Color(color).copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_END),
-                                    Color(color).copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_START),
-                                ),
-                            ),
-                    ),
-            )
-
-        is TopBottomShader -> {
-            val topShader = topShader
-            val bottomShader = bottomShader
-            if (topShader is ColorShader && bottomShader is ColorShader) {
-                TopBottomShader(
-                    topShader =
-                        BrushShader(
-                            brush =
-                                Brush.verticalGradient(
-                                    listOf(
-                                        Color(topShader.color).copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_START),
-                                        Color(topShader.color).copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_END),
-                                    ),
-                                ),
-                        ),
-                    bottomShader =
-                        BrushShader(
-                            brush =
-                                Brush.verticalGradient(
-                                    listOf(
-                                        Color(bottomShader.color).copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_END),
-                                        Color(
-                                            bottomShader.color,
-                                        ).copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_START),
-                                    ),
-                                ),
-                        ),
+  when (this) {
+    is ColorShader ->
+      TopBottomShader(
+        topShader =
+          BrushShader(
+            brush =
+              Brush.verticalGradient(
+                listOf(
+                  Color(color).copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_START),
+                  Color(color).copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_END),
                 )
-            } else {
-                null
-            }
-        }
-
-        else -> null
+              )
+          ),
+        bottomShader =
+          BrushShader(
+            brush =
+              Brush.verticalGradient(
+                listOf(
+                  Color(color).copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_END),
+                  Color(color).copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_START),
+                )
+              )
+          ),
+      )
+    is TopBottomShader -> {
+      val topShader = topShader
+      val bottomShader = bottomShader
+      if (topShader is ColorShader && bottomShader is ColorShader) {
+        TopBottomShader(
+          topShader =
+            BrushShader(
+              brush =
+                Brush.verticalGradient(
+                  listOf(
+                    Color(topShader.color).copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_START),
+                    Color(topShader.color).copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_END),
+                  )
+                )
+            ),
+          bottomShader =
+            BrushShader(
+              brush =
+                Brush.verticalGradient(
+                  listOf(
+                    Color(bottomShader.color).copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_END),
+                    Color(bottomShader.color)
+                      .copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_START),
+                  )
+                )
+            ),
+        )
+      } else {
+        null
+      }
     }
+    else -> null
+  }
 
 private val StrokeCap.paintCap: Paint.Cap
-    get() =
-        when (this) {
-            StrokeCap.Butt -> Paint.Cap.BUTT
-            StrokeCap.Round -> Paint.Cap.ROUND
-            StrokeCap.Square -> Paint.Cap.SQUARE
-            else -> throw IllegalArgumentException("Not `StrokeCap.Butt`, `StrokeCap.Round`, or `StrokeCap.Square`.")
-        }
+  get() =
+    when (this) {
+      StrokeCap.Butt -> Paint.Cap.BUTT
+      StrokeCap.Round -> Paint.Cap.ROUND
+      StrokeCap.Square -> Paint.Cap.SQUARE
+      else ->
+        throw IllegalArgumentException(
+          "Not `StrokeCap.Butt`, `StrokeCap.Round`, or `StrokeCap.Square`."
+        )
+    }

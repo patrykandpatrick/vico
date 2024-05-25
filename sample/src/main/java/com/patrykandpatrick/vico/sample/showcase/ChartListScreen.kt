@@ -44,34 +44,39 @@ import com.patrykandpatrick.vico.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun ChartListScreen(navController: NavController) {
-    var uiSystem by rememberSaveable { mutableStateOf(UISystem.Compose) }
-    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-    Scaffold(
-        Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        { TopAppBar(title = { Text(stringResource(R.string.app_name)) }, scrollBehavior = scrollBehavior) },
-    ) { paddingValues ->
-        LazyColumn(contentPadding = paddingValues) {
-            item {
-                SingleChoiceSegmentedButtonRow(
-                    Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
-                ) {
-                    UISystem.entries.forEachIndexed { index, segmentUISystem ->
-                        SegmentedButton(
-                            selected = uiSystem == segmentUISystem,
-                            onClick = { uiSystem = segmentUISystem },
-                            shape = SegmentedButtonDefaults.itemShape(index, UISystem.entries.size),
-                        ) {
-                            Text(stringResource(segmentUISystem.labelResourceID))
-                        }
-                    }
-                }
+  var uiSystem by rememberSaveable { mutableStateOf(UISystem.Compose) }
+  val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+  Scaffold(
+    Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+    {
+      TopAppBar(
+        title = { Text(stringResource(R.string.app_name)) },
+        scrollBehavior = scrollBehavior,
+      )
+    },
+  ) { paddingValues ->
+    LazyColumn(contentPadding = paddingValues) {
+      item {
+        SingleChoiceSegmentedButtonRow(
+          Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, bottom = 8.dp)
+        ) {
+          UISystem.entries.forEachIndexed { index, segmentUISystem ->
+            SegmentedButton(
+              selected = uiSystem == segmentUISystem,
+              onClick = { uiSystem = segmentUISystem },
+              shape = SegmentedButtonDefaults.itemShape(index, UISystem.entries.size),
+            ) {
+              Text(stringResource(segmentUISystem.labelResourceID))
             }
-            items(charts.size) { chartID ->
-                ListItem(
-                    { Text(stringResource(R.string.chart_x, chartID + 1)) },
-                    Modifier.clickable { navController.navigate("chart/$chartID/${uiSystem.ordinal}") },
-                )
-            }
+          }
         }
+      }
+      items(charts.size) { chartID ->
+        ListItem(
+          { Text(stringResource(R.string.chart_x, chartID + 1)) },
+          Modifier.clickable { navController.navigate("chart/$chartID/${uiSystem.ordinal}") },
+        )
+      }
     }
+  }
 }

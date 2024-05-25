@@ -18,44 +18,41 @@ package com.patrykandpatrick.vico.core.common.data
 
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayer
 
-/**
- * Houses drawing information for a [CartesianLayer].
- */
-public abstract class DrawingModel<T : DrawingModel.DrawingInfo>(private val drawingInfo: List<Map<Float, T>>) :
-    List<Map<Float, T>> by drawingInfo {
+/** Houses drawing information for a [CartesianLayer]. */
+public abstract class DrawingModel<T : DrawingModel.DrawingInfo>(
+  private val drawingInfo: List<Map<Float, T>>
+) : List<Map<Float, T>> by drawingInfo {
+  /**
+   * Returns an intermediate [DrawingModel] between this one and [from]. The returned drawing model
+   * includes the provided [DrawingInfo] list. [fraction] is the balance between [from] and this
+   * [DrawingModel], with 0 corresponding to [from], and 1 corresponding to this [DrawingModel]. The
+   * returned object should be an instance of the [DrawingModel] subclass to which this function
+   * belongs.
+   */
+  public abstract fun transform(
+    drawingInfo: List<Map<Float, T>>,
+    from: DrawingModel<T>?,
+    fraction: Float,
+  ): DrawingModel<T>
+
+  abstract override fun equals(other: Any?): Boolean
+
+  abstract override fun hashCode(): Int
+
+  /**
+   * Houses positional information for a single [CartesianLayer] entity (e.g., a column or a point).
+   */
+  public interface DrawingInfo {
     /**
-     * Returns an intermediate [DrawingModel] between this one and [from]. The returned drawing model includes the
-     * provided [DrawingInfo] list. [fraction] is the balance between [from] and this [DrawingModel], with 0
-     * corresponding to [from], and 1 corresponding to this [DrawingModel]. The returned object should be an instance
-     * of the [DrawingModel] subclass to which this function belongs.
+     * Returns an intermediate [DrawingInfo] implementation between this one and [from]. [fraction]
+     * is the balance between [from] and this [DrawingInfo] implementation, with 0 corresponding to
+     * [from], and 1 corresponding to this [DrawingInfo] implementation. The returned object should
+     * be an instance of the [DrawingInfo] implementation to which this function belongs.
      */
-    public abstract fun transform(
-        drawingInfo: List<Map<Float, T>>,
-        from: DrawingModel<T>?,
-        fraction: Float,
-    ): DrawingModel<T>
+    public fun transform(from: DrawingInfo?, fraction: Float): DrawingInfo
 
-    abstract override fun equals(other: Any?): Boolean
+    override fun equals(other: Any?): Boolean
 
-    abstract override fun hashCode(): Int
-
-    /**
-     * Houses positional information for a single [CartesianLayer] entity (e.g., a column or a point).
-     */
-    public interface DrawingInfo {
-        /**
-         * Returns an intermediate [DrawingInfo] implementation between this one and [from]. [fraction] is the balance
-         * between [from] and this [DrawingInfo] implementation, with 0 corresponding to [from], and 1 corresponding to
-         * this [DrawingInfo] implementation. The returned object should be an instance of the [DrawingInfo]
-         * implementation to which this function belongs.
-         */
-        public fun transform(
-            from: DrawingInfo?,
-            fraction: Float,
-        ): DrawingInfo
-
-        override fun equals(other: Any?): Boolean
-
-        override fun hashCode(): Int
-    }
+    override fun hashCode(): Int
+  }
 }

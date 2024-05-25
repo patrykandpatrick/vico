@@ -34,113 +34,116 @@ private const val NO_FADE: Int = 0x00000000
 
 /**
  * [FadingEdges] applies a horizontal fade to the edges of the chart area for scrollable charts.
- * This effect indicates that there’s more content beyond a given edge, and the user can scroll to reveal it.
+ * This effect indicates that there’s more content beyond a given edge, and the user can scroll to
+ * reveal it.
  *
  * @param startEdgeWidthDp the width of the fade overlay for the start edge (in dp).
  * @param endEdgeWidthDp the width of the fade overlay for the end edge (in dp).
  * @param visibilityThresholdDp the scroll distance over which the overlays fade in and out (in dp).
- * @param visibilityInterpolator used for the fading edges’ fade-in and fade-out animations. This is a mapping of the
- * degree to which [visibilityThresholdDp] has been satisfied to the opacity of the fading edges.
+ * @param visibilityInterpolator used for the fading edges’ fade-in and fade-out animations. This is
+ *   a mapping of the degree to which [visibilityThresholdDp] has been satisfied to the opacity of
+ *   the fading edges.
  */
 public open class FadingEdges(
-    public var startEdgeWidthDp: Float = FADING_EDGE_WIDTH_DP,
-    public var endEdgeWidthDp: Float = startEdgeWidthDp,
-    public var visibilityThresholdDp: Float = FADING_EDGE_VISIBILITY_THRESHOLD_DP,
-    public var visibilityInterpolator: TimeInterpolator = AccelerateDecelerateInterpolator(),
+  public var startEdgeWidthDp: Float = FADING_EDGE_WIDTH_DP,
+  public var endEdgeWidthDp: Float = startEdgeWidthDp,
+  public var visibilityThresholdDp: Float = FADING_EDGE_VISIBILITY_THRESHOLD_DP,
+  public var visibilityInterpolator: TimeInterpolator = AccelerateDecelerateInterpolator(),
 ) {
-    private val paint: Paint = Paint()
+  private val paint: Paint = Paint()
 
-    private val rect: RectF = RectF()
+  private val rect: RectF = RectF()
 
-    /**
-     * Creates a [FadingEdges] instance with fading edges of equal width.
-     *
-     * @param edgeWidthDp the width of the fade overlay (in dp).
-     * @param visibilityThresholdDp the scroll distance over which the overlays fade in and out (in dp).
-     * @param visibilityInterpolator used for the fading edges’ fade-in and fade-out animations. This is a mapping of
-     * the degree to which [visibilityThresholdDp] has been satisfied to the opacity of the fading edges.
-     */
-    public constructor(
-        edgeWidthDp: Float = FADING_EDGE_WIDTH_DP,
-        visibilityThresholdDp: Float = FADING_EDGE_VISIBILITY_THRESHOLD_DP,
-        visibilityInterpolator: TimeInterpolator = AccelerateDecelerateInterpolator(),
-    ) : this(
-        startEdgeWidthDp = edgeWidthDp,
-        endEdgeWidthDp = edgeWidthDp,
-        visibilityThresholdDp = visibilityThresholdDp,
-        visibilityInterpolator = visibilityInterpolator,
-    )
+  /**
+   * Creates a [FadingEdges] instance with fading edges of equal width.
+   *
+   * @param edgeWidthDp the width of the fade overlay (in dp).
+   * @param visibilityThresholdDp the scroll distance over which the overlays fade in and out (in
+   *   dp).
+   * @param visibilityInterpolator used for the fading edges’ fade-in and fade-out animations. This
+   *   is a mapping of the degree to which [visibilityThresholdDp] has been satisfied to the opacity
+   *   of the fading edges.
+   */
+  public constructor(
+    edgeWidthDp: Float = FADING_EDGE_WIDTH_DP,
+    visibilityThresholdDp: Float = FADING_EDGE_VISIBILITY_THRESHOLD_DP,
+    visibilityInterpolator: TimeInterpolator = AccelerateDecelerateInterpolator(),
+  ) : this(
+    startEdgeWidthDp = edgeWidthDp,
+    endEdgeWidthDp = edgeWidthDp,
+    visibilityThresholdDp = visibilityThresholdDp,
+    visibilityInterpolator = visibilityInterpolator,
+  )
 
-    init {
-        require(value = startEdgeWidthDp >= 0) { "`startEdgeWidthDp` must be greater than 0." }
-        require(value = endEdgeWidthDp >= 0) { "`endEdgeWidthDp` must be greater than 0." }
+  init {
+    require(value = startEdgeWidthDp >= 0) { "`startEdgeWidthDp` must be greater than 0." }
+    require(value = endEdgeWidthDp >= 0) { "`endEdgeWidthDp` must be greater than 0." }
 
-        paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.DST_OUT)
+    paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.DST_OUT)
+  }
+
+  /**
+   * Applies fading edges inside of the given [bounds] accordingly to the scroll state.
+   *
+   * @param context the drawing context that holds the information necessary to draw the fading
+   *   edges.
+   * @param bounds the bounds within which the fading edges will be drawn.
+   */
+  public fun applyFadingEdges(context: CartesianDrawContext, bounds: RectF): Unit =
+    with(context) {
+      val maxScroll = getMaxScrollDistance()
+      var fadeAlphaFraction: Float
+
+      if (scrollEnabled && startEdgeWidthDp > 0f && horizontalScroll > 0f) {
+        fadeAlphaFraction = (horizontalScroll / visibilityThresholdDp.pixels).coerceAtMost(1f)
+
+        drawFadingEdge(
+          left = bounds.left,
+          top = bounds.top,
+          right = bounds.left + startEdgeWidthDp.pixels,
+          bottom = bounds.bottom,
+          direction = -1,
+          alpha = (visibilityInterpolator.getInterpolation(fadeAlphaFraction) * FULL_ALPHA).toInt(),
+        )
+      }
+
+      if (scrollEnabled && endEdgeWidthDp > 0f && horizontalScroll < maxScroll) {
+        fadeAlphaFraction =
+          ((maxScroll - horizontalScroll) / visibilityThresholdDp.pixels).coerceAtMost(1f)
+
+        drawFadingEdge(
+          left = bounds.right - endEdgeWidthDp.pixels,
+          top = bounds.top,
+          right = bounds.right,
+          bottom = bounds.bottom,
+          direction = 1,
+          alpha = (visibilityInterpolator.getInterpolation(fadeAlphaFraction) * FULL_ALPHA).toInt(),
+        )
+      }
     }
 
-    /**
-     * Applies fading edges inside of the given [bounds] accordingly to the scroll state.
-     *
-     * @param context the drawing context that holds the information necessary to draw the fading edges.
-     * @param bounds the bounds within which the fading edges will be drawn.
-     */
-    public fun applyFadingEdges(
-        context: CartesianDrawContext,
-        bounds: RectF,
-    ): Unit =
-        with(context) {
-            val maxScroll = getMaxScrollDistance()
-            var fadeAlphaFraction: Float
+  private fun CartesianDrawContext.drawFadingEdge(
+    left: Float,
+    top: Float,
+    right: Float,
+    bottom: Float,
+    direction: Int,
+    alpha: Int,
+  ) {
+    rect.set(left, top, right, bottom)
 
-            if (scrollEnabled && startEdgeWidthDp > 0f && horizontalScroll > 0f) {
-                fadeAlphaFraction = (horizontalScroll / visibilityThresholdDp.pixels).coerceAtMost(1f)
+    val faded = FULL_FADE.copyColor(alpha = alpha)
 
-                drawFadingEdge(
-                    left = bounds.left,
-                    top = bounds.top,
-                    right = bounds.left + startEdgeWidthDp.pixels,
-                    bottom = bounds.bottom,
-                    direction = -1,
-                    alpha = (visibilityInterpolator.getInterpolation(fadeAlphaFraction) * FULL_ALPHA).toInt(),
-                )
-            }
-
-            if (scrollEnabled && endEdgeWidthDp > 0f && horizontalScroll < maxScroll) {
-                fadeAlphaFraction = ((maxScroll - horizontalScroll) / visibilityThresholdDp.pixels).coerceAtMost(1f)
-
-                drawFadingEdge(
-                    left = bounds.right - endEdgeWidthDp.pixels,
-                    top = bounds.top,
-                    right = bounds.right,
-                    bottom = bounds.bottom,
-                    direction = 1,
-                    alpha = (visibilityInterpolator.getInterpolation(fadeAlphaFraction) * FULL_ALPHA).toInt(),
-                )
-            }
-        }
-
-    private fun CartesianDrawContext.drawFadingEdge(
-        left: Float,
-        top: Float,
-        right: Float,
-        bottom: Float,
-        direction: Int,
-        alpha: Int,
-    ) {
-        rect.set(left, top, right, bottom)
-
-        val faded = FULL_FADE.copyColor(alpha = alpha)
-
-        paint.shader =
-            LinearGradient(
-                rect.left,
-                0f,
-                rect.right,
-                0f,
-                if (direction < 0) faded else NO_FADE,
-                if (direction < 0) NO_FADE else faded,
-                Shader.TileMode.CLAMP,
-            )
-        canvas.drawRect(rect, paint)
-    }
+    paint.shader =
+      LinearGradient(
+        rect.left,
+        0f,
+        rect.right,
+        0f,
+        if (direction < 0) faded else NO_FADE,
+        if (direction < 0) NO_FADE else faded,
+        Shader.TileMode.CLAMP,
+      )
+    canvas.drawRect(rect, paint)
+  }
 }

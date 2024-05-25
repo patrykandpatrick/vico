@@ -28,110 +28,98 @@ import kotlin.math.abs
 
 /** A [DrawContext] extension with [CartesianChart]-specific data. */
 public interface CartesianDrawContext : DrawContext, CartesianMeasureContext {
-    /**
-     * The bounds in which the [CartesianChart] will be drawn.
-     */
-    public val chartBounds: RectF
+  /** The bounds in which the [CartesianChart] will be drawn. */
+  public val chartBounds: RectF
 
-    /**
-     * Holds information on the [CartesianChart]’s horizontal dimensions.
-     */
-    public val horizontalDimensions: HorizontalDimensions
+  /** Holds information on the [CartesianChart]’s horizontal dimensions. */
+  public val horizontalDimensions: HorizontalDimensions
 
-    /**
-     * The point inside the chart’s coordinates where physical touch is occurring.
-     */
-    public val markerTouchPoint: Point?
+  /** The point inside the chart’s coordinates where physical touch is occurring. */
+  public val markerTouchPoint: Point?
 
-    /**
-     * The current amount of horizontal scroll.
-     */
-    public val horizontalScroll: Float
+  /** The current amount of horizontal scroll. */
+  public val horizontalScroll: Float
 
-    /**
-     * The zoom factor.
-     */
-    public val zoom: Float
+  /** The zoom factor. */
+  public val zoom: Float
 }
 
 /** @suppress */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public fun CartesianMeasureContext.getMaxScrollDistance(
-    chartWidth: Float,
-    horizontalDimensions: HorizontalDimensions,
+  chartWidth: Float,
+  horizontalDimensions: HorizontalDimensions,
 ): Float =
-    (layoutDirectionMultiplier * (horizontalDimensions.getContentWidth(this) - chartWidth))
-        .run { if (isLtr) coerceAtLeast(minimumValue = 0f) else coerceAtMost(maximumValue = 0f) }
-        .ceil
+  (layoutDirectionMultiplier * (horizontalDimensions.getContentWidth(this) - chartWidth))
+    .run { if (isLtr) coerceAtLeast(minimumValue = 0f) else coerceAtMost(maximumValue = 0f) }
+    .ceil
 
 internal fun CartesianDrawContext.getMaxScrollDistance() =
-    getMaxScrollDistance(chartBounds.width(), horizontalDimensions)
+  getMaxScrollDistance(chartBounds.width(), horizontalDimensions)
 
 /** @suppress */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public fun CartesianDrawContext(
-    canvas: Canvas,
-    elevationOverlayColor: Int,
-    measureContext: CartesianMeasureContext,
-    markerTouchPoint: Point?,
-    horizontalDimensions: HorizontalDimensions,
-    chartBounds: RectF,
-    horizontalScroll: Float,
-    zoom: Float,
+  canvas: Canvas,
+  elevationOverlayColor: Int,
+  measureContext: CartesianMeasureContext,
+  markerTouchPoint: Point?,
+  horizontalDimensions: HorizontalDimensions,
+  chartBounds: RectF,
+  horizontalScroll: Float,
+  zoom: Float,
 ): CartesianDrawContext =
-    object : CartesianDrawContext, CartesianMeasureContext by measureContext {
-        override val chartBounds: RectF = chartBounds
+  object : CartesianDrawContext, CartesianMeasureContext by measureContext {
+    override val chartBounds: RectF = chartBounds
 
-        override var canvas: Canvas = canvas
+    override var canvas: Canvas = canvas
 
-        override val elevationOverlayColor: Long = elevationOverlayColor.toLong()
+    override val elevationOverlayColor: Long = elevationOverlayColor.toLong()
 
-        override val markerTouchPoint: Point? = markerTouchPoint
+    override val markerTouchPoint: Point? = markerTouchPoint
 
-        override val zoom: Float = zoom
+    override val zoom: Float = zoom
 
-        override val horizontalDimensions: HorizontalDimensions = horizontalDimensions
+    override val horizontalDimensions: HorizontalDimensions = horizontalDimensions
 
-        override val horizontalScroll: Float = horizontalScroll
+    override val horizontalScroll: Float = horizontalScroll
 
-        override fun withOtherCanvas(
-            canvas: Canvas,
-            block: (DrawContext) -> Unit,
-        ) {
-            val originalCanvas = this.canvas
-            this.canvas = canvas
-            block(this)
-            this.canvas = originalCanvas
-        }
+    override fun withOtherCanvas(canvas: Canvas, block: (DrawContext) -> Unit) {
+      val originalCanvas = this.canvas
+      this.canvas = canvas
+      block(this)
+      this.canvas = originalCanvas
     }
+  }
 
 /** @suppress */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public fun CartesianDrawContext.drawMarker(
-    marker: CartesianMarker,
-    markerTouchPoint: Point?,
-    chart: CartesianChart,
-    visibilityListener: CartesianMarkerVisibilityListener?,
-    previousX: Float?,
+  marker: CartesianMarker,
+  markerTouchPoint: Point?,
+  chart: CartesianChart,
+  visibilityListener: CartesianMarkerVisibilityListener?,
+  previousX: Float?,
 ): Float? {
-    if (markerTouchPoint == null || chart.markerTargets.isEmpty()) {
-        if (previousX != null) visibilityListener?.onHidden(marker)
-        return null
-    }
-    var targets = emptyList<CartesianMarker.Target>()
-    var previousDistance = Float.POSITIVE_INFINITY
-    for (xTargets in chart.markerTargets.values) {
-        val (distance, canvasXTargets) = xTargets.groupBy { abs(markerTouchPoint.x - it.canvasX) }.minBy { it.key }
-        if (distance > previousDistance) break
-        targets = canvasXTargets
-        previousDistance = distance
-    }
-    marker.draw(this, targets)
-    val x = targets.first().x
-    if (previousX == null) {
-        visibilityListener?.onShown(marker, targets)
-    } else if (x != previousX) {
-        visibilityListener?.onMoved(marker, targets)
-    }
-    return x
+  if (markerTouchPoint == null || chart.markerTargets.isEmpty()) {
+    if (previousX != null) visibilityListener?.onHidden(marker)
+    return null
+  }
+  var targets = emptyList<CartesianMarker.Target>()
+  var previousDistance = Float.POSITIVE_INFINITY
+  for (xTargets in chart.markerTargets.values) {
+    val (distance, canvasXTargets) =
+      xTargets.groupBy { abs(markerTouchPoint.x - it.canvasX) }.minBy { it.key }
+    if (distance > previousDistance) break
+    targets = canvasXTargets
+    previousDistance = distance
+  }
+  marker.draw(this, targets)
+  val x = targets.first().x
+  if (previousX == null) {
+    visibilityListener?.onShown(marker, targets)
+  } else if (x != previousX) {
+    visibilityListener?.onMoved(marker, targets)
+  }
+  return x
 }

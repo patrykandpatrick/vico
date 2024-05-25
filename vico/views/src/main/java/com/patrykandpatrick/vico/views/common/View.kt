@@ -24,36 +24,36 @@ import androidx.core.view.updatePadding
 import com.patrykandpatrick.vico.core.common.Point
 
 internal val Int.specSize: Int
-    get() = View.MeasureSpec.getSize(this)
+  get() = View.MeasureSpec.getSize(this)
 
 internal val Int.specMode: Int
-    get() = View.MeasureSpec.getMode(this)
+  get() = View.MeasureSpec.getMode(this)
 
 internal var View.verticalPadding: Int
-    get() = paddingTop + paddingBottom
-    set(value) {
-        updatePadding(top = value / 2, bottom = value / 2)
-    }
+  get() = paddingTop + paddingBottom
+  set(value) {
+    updatePadding(top = value / 2, bottom = value / 2)
+  }
 
 internal var View.horizontalPadding: Int
-    get() = paddingLeft + paddingRight
-    set(value) {
-        updatePadding(left = value / 2, right = value / 2)
-    }
+  get() = paddingLeft + paddingRight
+  set(value) {
+    updatePadding(left = value / 2, right = value / 2)
+  }
 
 internal fun OverScroller.fling(
-    startX: Int = 0,
-    startY: Int = 0,
-    velocityX: Int = 0,
-    velocityY: Int = 0,
-    minScrollX: Int = 0,
-    maxScrollX: Int = Int.MAX_VALUE,
+  startX: Int = 0,
+  startY: Int = 0,
+  velocityX: Int = 0,
+  velocityY: Int = 0,
+  minScrollX: Int = 0,
+  maxScrollX: Int = Int.MAX_VALUE,
 ) {
-    fling(startX, startY, velocityX, velocityY, minScrollX, maxScrollX, Int.MIN_VALUE, Int.MAX_VALUE)
+  fling(startX, startY, velocityX, velocityY, minScrollX, maxScrollX, Int.MIN_VALUE, Int.MAX_VALUE)
 }
 
 internal val MotionEvent.point: Point
-    get() = Point(x, y)
+  get() = Point(x, y)
 
 internal val View.isAttachedToWindowCompat: Boolean
-    get() = ViewCompat.isAttachedToWindow(this)
+  get() = ViewCompat.isAttachedToWindow(this)

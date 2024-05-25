@@ -25,42 +25,36 @@ import com.patrykandpatrick.vico.core.cartesian.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.common.BoundsAware
 
 /**
- * Defines the minimal set of properties and functions required by other parts of the library to draw an axis.
+ * Defines the minimal set of properties and functions required by other parts of the library to
+ * draw an axis.
  */
 public interface Axis<Position : AxisPosition> : BoundsAware, ChartInsetter {
-    /**
-     * Defines the position of the axis relative to the [CartesianChart].
-     */
-    public val position: Position
+  /** Defines the position of the axis relative to the [CartesianChart]. */
+  public val position: Position
 
-    /**
-     * Called before the [CartesianChart] is drawn. Implementations should rely on this function to draw themselves,
-     * unless they need to draw something above the [CartesianChart].
-     *
-     * @param context holds the information needed to draw the axis.
-     *
-     * @see drawAboveChart
-     */
-    public fun drawBehindChart(context: CartesianDrawContext)
+  /**
+   * Called before the [CartesianChart] is drawn. Implementations should rely on this function to
+   * draw themselves, unless they need to draw something above the [CartesianChart].
+   *
+   * @param context holds the information needed to draw the axis.
+   * @see drawAboveChart
+   */
+  public fun drawBehindChart(context: CartesianDrawContext)
 
-    /**
-     * Called after the [CartesianChart] is drawn. Implementations can use this function to draw content above the
-     * [CartesianChart].
-     *
-     * @param context holds the information needed to draw the axis.
-     */
-    public fun drawAboveChart(context: CartesianDrawContext)
+  /**
+   * Called after the [CartesianChart] is drawn. Implementations can use this function to draw
+   * content above the [CartesianChart].
+   *
+   * @param context holds the information needed to draw the axis.
+   */
+  public fun drawAboveChart(context: CartesianDrawContext)
 
-    /**
-     * The bounds ([RectF]) passed here define the area where the [Axis] shouldn’t draw anything.
-     */
-    public fun setRestrictedBounds(vararg bounds: RectF?)
+  /** The bounds ([RectF]) passed here define the area where the [Axis] shouldn’t draw anything. */
+  public fun setRestrictedBounds(vararg bounds: RectF?)
 
-    /**
-     * Updates the chart’s [MutableHorizontalDimensions] instance.
-     */
-    public fun updateHorizontalDimensions(
-        context: CartesianMeasureContext,
-        horizontalDimensions: MutableHorizontalDimensions,
-    )
+  /** Updates the chart’s [MutableHorizontalDimensions] instance. */
+  public fun updateHorizontalDimensions(
+    context: CartesianMeasureContext,
+    horizontalDimensions: MutableHorizontalDimensions,
+  )
 }

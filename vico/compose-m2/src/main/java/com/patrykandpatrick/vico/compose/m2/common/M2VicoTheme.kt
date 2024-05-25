@@ -27,28 +27,30 @@ import com.patrykandpatrick.vico.compose.common.getDefaultColors
 /** Creates and remembers a [VicoTheme] based on [MaterialTheme.colors]. */
 @Composable
 public fun rememberM2VicoTheme(
-    candlestickCartesianLayerColors: VicoTheme.CandlestickCartesianLayerColors =
-        VicoTheme.CandlestickCartesianLayerColors.fromDefaultColors(getDefaultColors()),
-    columnCartesianLayerColors: List<Color> = listOf(MaterialTheme.colors.primary, MaterialTheme.colors.secondary),
-    lineCartesianLayerColors: List<Color> = columnCartesianLayerColors,
-    elevationOverlayColor: Color = if (isSystemInDarkTheme()) MaterialTheme.colors.onBackground else Color.Transparent,
-    lineColor: Color = MaterialTheme.colors.onBackground.copy(alpha = .2f),
-    textColor: Color = MaterialTheme.colors.onBackground,
+  candlestickCartesianLayerColors: VicoTheme.CandlestickCartesianLayerColors =
+    VicoTheme.CandlestickCartesianLayerColors.fromDefaultColors(getDefaultColors()),
+  columnCartesianLayerColors: List<Color> =
+    listOf(MaterialTheme.colors.primary, MaterialTheme.colors.secondary),
+  lineCartesianLayerColors: List<Color> = columnCartesianLayerColors,
+  elevationOverlayColor: Color =
+    if (isSystemInDarkTheme()) MaterialTheme.colors.onBackground else Color.Transparent,
+  lineColor: Color = MaterialTheme.colors.onBackground.copy(alpha = .2f),
+  textColor: Color = MaterialTheme.colors.onBackground,
 ): VicoTheme =
-    remember(
-        candlestickCartesianLayerColors,
-        columnCartesianLayerColors,
-        lineCartesianLayerColors,
-        elevationOverlayColor,
-        lineColor,
-        textColor,
-    ) {
-        VicoTheme(
-            candlestickCartesianLayerColors,
-            columnCartesianLayerColors,
-            lineCartesianLayerColors,
-            elevationOverlayColor,
-            lineColor,
-            textColor,
-        )
-    }
+  remember(
+    candlestickCartesianLayerColors,
+    columnCartesianLayerColors,
+    lineCartesianLayerColors,
+    elevationOverlayColor,
+    lineColor,
+    textColor,
+  ) {
+    VicoTheme(
+      candlestickCartesianLayerColors,
+      columnCartesianLayerColors,
+      lineCartesianLayerColors,
+      elevationOverlayColor,
+      lineColor,
+      textColor,
+    )
+  }

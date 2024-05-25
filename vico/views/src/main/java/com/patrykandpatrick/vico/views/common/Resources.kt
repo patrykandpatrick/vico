@@ -19,10 +19,10 @@ package com.patrykandpatrick.vico.views.common
 import android.content.res.Resources
 
 internal inline val Float.dp: Float
-    get() = this * Resources.getSystem().displayMetrics.density
+  get() = this * Resources.getSystem().displayMetrics.density
 
 internal inline val Int.dp: Float
-    get() = this * Resources.getSystem().displayMetrics.density
+  get() = this * Resources.getSystem().displayMetrics.density
 
 internal inline val Float.dpInt: Int
-    get() = dp.toInt()
+  get() = dp.toInt()

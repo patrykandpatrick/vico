@@ -40,109 +40,97 @@ import com.patrykandpatrick.vico.databinding.Chart5Binding
 import com.patrykandpatrick.vico.sample.showcase.Defaults
 import com.patrykandpatrick.vico.sample.showcase.UISystem
 import com.patrykandpatrick.vico.sample.showcase.rememberMarker
+import kotlin.random.Random
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
-import kotlin.random.Random
 
 @Composable
-internal fun Chart5(
-    uiSystem: UISystem,
-    modifier: Modifier,
-) {
-    val modelProducer = remember { CartesianChartModelProducer.build() }
-    LaunchedEffect(Unit) {
-        withContext(Dispatchers.Default) {
-            while (isActive) {
-                modelProducer.tryRunTransaction {
-                    columnSeries {
-                        repeat(3) {
-                            series(
-                                List(Defaults.ENTRY_COUNT) {
-                                    Defaults.COLUMN_LAYER_MIN_Y +
-                                        Random.nextFloat() * Defaults.COLUMN_LAYER_RELATIVE_MAX_Y
-                                },
-                            )
-                        }
-                    }
+internal fun Chart5(uiSystem: UISystem, modifier: Modifier) {
+  val modelProducer = remember { CartesianChartModelProducer.build() }
+  LaunchedEffect(Unit) {
+    withContext(Dispatchers.Default) {
+      while (isActive) {
+        modelProducer.tryRunTransaction {
+          columnSeries {
+            repeat(3) {
+              series(
+                List(Defaults.ENTRY_COUNT) {
+                  Defaults.COLUMN_LAYER_MIN_Y +
+                    Random.nextFloat() * Defaults.COLUMN_LAYER_RELATIVE_MAX_Y
                 }
-                delay(Defaults.TRANSACTION_INTERVAL_MS)
+              )
             }
+          }
         }
+        delay(Defaults.TRANSACTION_INTERVAL_MS)
+      }
     }
+  }
 
-    when (uiSystem) {
-        UISystem.Compose -> ComposeChart5(modelProducer, modifier)
-        UISystem.Views -> ViewChart5(modelProducer, modifier)
-    }
+  when (uiSystem) {
+    UISystem.Compose -> ComposeChart5(modelProducer, modifier)
+    UISystem.Views -> ViewChart5(modelProducer, modifier)
+  }
 }
 
 @Composable
-private fun ComposeChart5(
-    modelProducer: CartesianChartModelProducer,
-    modifier: Modifier,
-) {
-    CartesianChartHost(
-        chart =
-            rememberCartesianChart(
-                rememberColumnCartesianLayer(
-                    columnProvider =
-                        ColumnCartesianLayer.ColumnProvider.series(
-                            rememberLineComponent(
-                                color = color1,
-                                thickness = COLUMN_THICKNESS_DP.dp,
-                                shape =
-                                    Shape.rounded(
-                                        bottomLeftPercent = COLUMN_ROUNDNESS_PERCENT,
-                                        bottomRightPercent = COLUMN_ROUNDNESS_PERCENT,
-                                    ),
-                            ),
-                            rememberLineComponent(
-                                color = color2,
-                                thickness = COLUMN_THICKNESS_DP.dp,
-                            ),
-                            rememberLineComponent(
-                                color = color3,
-                                thickness = COLUMN_THICKNESS_DP.dp,
-                                shape =
-                                    Shape.rounded(
-                                        topLeftPercent = COLUMN_ROUNDNESS_PERCENT,
-                                        topRightPercent = COLUMN_ROUNDNESS_PERCENT,
-                                    ),
-                            ),
-                        ),
-                    mergeMode = { ColumnCartesianLayer.MergeMode.Stacked },
-                ),
-                startAxis =
-                    rememberStartAxis(
-                        itemPlacer = startAxisItemPlacer,
-                        labelRotationDegrees = AXIS_LABEL_ROTATION_DEGREES,
-                    ),
-                bottomAxis = rememberBottomAxis(labelRotationDegrees = AXIS_LABEL_ROTATION_DEGREES),
+private fun ComposeChart5(modelProducer: CartesianChartModelProducer, modifier: Modifier) {
+  CartesianChartHost(
+    chart =
+      rememberCartesianChart(
+        rememberColumnCartesianLayer(
+          columnProvider =
+            ColumnCartesianLayer.ColumnProvider.series(
+              rememberLineComponent(
+                color = color1,
+                thickness = COLUMN_THICKNESS_DP.dp,
+                shape =
+                  Shape.rounded(
+                    bottomLeftPercent = COLUMN_ROUNDNESS_PERCENT,
+                    bottomRightPercent = COLUMN_ROUNDNESS_PERCENT,
+                  ),
+              ),
+              rememberLineComponent(color = color2, thickness = COLUMN_THICKNESS_DP.dp),
+              rememberLineComponent(
+                color = color3,
+                thickness = COLUMN_THICKNESS_DP.dp,
+                shape =
+                  Shape.rounded(
+                    topLeftPercent = COLUMN_ROUNDNESS_PERCENT,
+                    topRightPercent = COLUMN_ROUNDNESS_PERCENT,
+                  ),
+              ),
             ),
-        modelProducer = modelProducer,
-        modifier = modifier,
-        marker = rememberMarker(),
-        runInitialAnimation = false,
-        zoomState = rememberVicoZoomState(zoomEnabled = false),
-    )
+          mergeMode = { ColumnCartesianLayer.MergeMode.Stacked },
+        ),
+        startAxis =
+          rememberStartAxis(
+            itemPlacer = startAxisItemPlacer,
+            labelRotationDegrees = AXIS_LABEL_ROTATION_DEGREES,
+          ),
+        bottomAxis = rememberBottomAxis(labelRotationDegrees = AXIS_LABEL_ROTATION_DEGREES),
+      ),
+    modelProducer = modelProducer,
+    modifier = modifier,
+    marker = rememberMarker(),
+    runInitialAnimation = false,
+    zoomState = rememberVicoZoomState(zoomEnabled = false),
+  )
 }
 
 @Composable
-private fun ViewChart5(
-    modelProducer: CartesianChartModelProducer,
-    modifier: Modifier,
-) {
-    val marker = rememberMarker()
-    AndroidViewBinding(Chart5Binding::inflate, modifier) {
-        with(chartView) {
-            runInitialAnimation = false
-            this.modelProducer = modelProducer
-            (chart?.startAxis as VerticalAxis).itemPlacer = startAxisItemPlacer
-            this.marker = marker
-        }
+private fun ViewChart5(modelProducer: CartesianChartModelProducer, modifier: Modifier) {
+  val marker = rememberMarker()
+  AndroidViewBinding(Chart5Binding::inflate, modifier) {
+    with(chartView) {
+      runInitialAnimation = false
+      this.modelProducer = modelProducer
+      (chart?.startAxis as VerticalAxis).itemPlacer = startAxisItemPlacer
+      this.marker = marker
     }
+  }
 }
 
 private const val COLUMN_ROUNDNESS_PERCENT: Int = 40

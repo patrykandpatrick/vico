@@ -20,27 +20,22 @@ import android.graphics.Canvas
 import android.os.Build
 
 internal inline fun Canvas.inClip(
-    left: Float,
-    top: Float,
-    right: Float,
-    bottom: Float,
-    block: () -> Unit,
+  left: Float,
+  top: Float,
+  right: Float,
+  bottom: Float,
+  block: () -> Unit,
 ) {
-    val clipRestoreCount = save()
-    clipRect(left, top, right, bottom)
-    block()
-    restoreToCount(clipRestoreCount)
+  val clipRestoreCount = save()
+  clipRect(left, top, right, bottom)
+  block()
+  restoreToCount(clipRestoreCount)
 }
 
 @Suppress("DEPRECATION")
-internal fun Canvas.saveLayer(
-    left: Float,
-    top: Float,
-    right: Float,
-    bottom: Float,
-): Int =
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-        saveLayer(left, top, right, bottom, null)
-    } else {
-        saveLayer(left, top, right, bottom, null, Canvas.ALL_SAVE_FLAG)
-    }
+internal fun Canvas.saveLayer(left: Float, top: Float, right: Float, bottom: Float): Int =
+  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+    saveLayer(left, top, right, bottom, null)
+  } else {
+    saveLayer(left, top, right, bottom, null, Canvas.ALL_SAVE_FLAG)
+  }

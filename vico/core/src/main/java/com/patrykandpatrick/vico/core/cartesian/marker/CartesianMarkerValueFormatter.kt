@@ -20,9 +20,9 @@ import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
 
 /** Formats [CartesianMarker] values for display. */
 public fun interface CartesianMarkerValueFormatter {
-    /** Returns a label for the given [CartesianMarker.Target]s. */
-    public fun format(
-        context: CartesianDrawContext,
-        targets: List<CartesianMarker.Target>,
-    ): CharSequence
+  /** Returns a label for the given [CartesianMarker.Target]s. */
+  public fun format(
+    context: CartesianDrawContext,
+    targets: List<CartesianMarker.Target>,
+  ): CharSequence
 }

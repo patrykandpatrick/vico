@@ -52,69 +52,71 @@ import com.patrykandpatrick.vico.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun ChartScreen(
-    navController: NavController,
-    initialChartID: Int,
-    uiSystemID: Int,
-) {
-    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-    val nestedNavController = rememberNavController()
-    val chartID =
-        nestedNavController.currentBackStackEntryAsState().value?.arguments?.getInt("chartID") ?: initialChartID
-    val lifecycle = LocalLifecycleOwner.current.lifecycle
-    val navigateBack = { if (lifecycle.currentState == Lifecycle.State.RESUMED) navController.popBackStack() }
-    Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.chart_x, chartID + 1)) },
-                navigationIcon = {
-                    IconButton(navigateBack) {
-                        Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
-                    }
-                },
-                scrollBehavior = scrollBehavior,
-            )
+internal fun ChartScreen(navController: NavController, initialChartID: Int, uiSystemID: Int) {
+  val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+  val nestedNavController = rememberNavController()
+  val chartID =
+    nestedNavController.currentBackStackEntryAsState().value?.arguments?.getInt("chartID")
+      ?: initialChartID
+  val lifecycle = LocalLifecycleOwner.current.lifecycle
+  val navigateBack = {
+    if (lifecycle.currentState == Lifecycle.State.RESUMED) navController.popBackStack()
+  }
+  Scaffold(
+    modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+    topBar = {
+      TopAppBar(
+        title = { Text(stringResource(R.string.chart_x, chartID + 1)) },
+        navigationIcon = {
+          IconButton(navigateBack) {
+            Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
+          }
         },
-        bottomBar = {
-            Row(
-                Modifier.fillMaxWidth().navigationBarsPadding().height(64.dp),
-                Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally),
-                Alignment.CenterVertically,
-            ) {
-                IconButton(onClick = { nestedNavController.navigate("${chartID - 1}") }, enabled = chartID > 0) {
-                    Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
-                }
-                IconButton(
-                    onClick = { nestedNavController.navigate("${chartID + 1}") },
-                    enabled = chartID < charts.lastIndex,
-                ) {
-                    Icon(imageVector = Icons.AutoMirrored.Filled.ArrowForward, contentDescription = null)
-                }
-            }
-        },
-    ) { paddingValues ->
-        NavHost(
-            navController = nestedNavController,
-            startDestination = "{chartID}",
-            modifier = Modifier.padding(paddingValues),
+        scrollBehavior = scrollBehavior,
+      )
+    },
+    bottomBar = {
+      Row(
+        Modifier.fillMaxWidth().navigationBarsPadding().height(64.dp),
+        Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally),
+        Alignment.CenterVertically,
+      ) {
+        IconButton(
+          onClick = { nestedNavController.navigate("${chartID - 1}") },
+          enabled = chartID > 0,
         ) {
-            composable(
-                "{chartID}",
-                listOf(
-                    navArgument("chartID") {
-                        type = NavType.IntType
-                        defaultValue = initialChartID
-                    },
-                ),
-            ) { backStackEntry ->
-                BackHandler(onBack = navigateBack)
-                val arguments = requireNotNull(backStackEntry.arguments)
-                charts[arguments.getInt("chartID")](
-                    UISystem.entries[uiSystemID],
-                    Modifier.padding(horizontal = 16.dp),
-                )
-            }
+          Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
         }
+        IconButton(
+          onClick = { nestedNavController.navigate("${chartID + 1}") },
+          enabled = chartID < charts.lastIndex,
+        ) {
+          Icon(imageVector = Icons.AutoMirrored.Filled.ArrowForward, contentDescription = null)
+        }
+      }
+    },
+  ) { paddingValues ->
+    NavHost(
+      navController = nestedNavController,
+      startDestination = "{chartID}",
+      modifier = Modifier.padding(paddingValues),
+    ) {
+      composable(
+        "{chartID}",
+        listOf(
+          navArgument("chartID") {
+            type = NavType.IntType
+            defaultValue = initialChartID
+          }
+        ),
+      ) { backStackEntry ->
+        BackHandler(onBack = navigateBack)
+        val arguments = requireNotNull(backStackEntry.arguments)
+        charts[arguments.getInt("chartID")](
+          UISystem.entries[uiSystemID],
+          Modifier.padding(horizontal = 16.dp),
+        )
+      }
     }
+  }
 }

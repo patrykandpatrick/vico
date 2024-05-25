@@ -20,44 +20,40 @@ import android.graphics.Shader
 import com.patrykandpatrick.vico.core.common.DrawContext
 
 /**
- * [CacheableDynamicShader] can cache created [Shader] instances for reuse between identical sets of bounds.
+ * [CacheableDynamicShader] can cache created [Shader] instances for reuse between identical sets of
+ * bounds.
  */
 public abstract class CacheableDynamicShader : BaseDynamicShader() {
-    private val cache = HashMap<String, Shader>(1)
+  private val cache = HashMap<String, Shader>(1)
 
-    override fun provideShader(
-        context: DrawContext,
-        left: Float,
-        top: Float,
-        right: Float,
-        bottom: Float,
-    ): Shader {
-        val cacheKey = createKey(left, top, right, bottom)
-        return cache[cacheKey] ?: createShader(context, left, top, right, bottom).also { gradient ->
-            cache.clear()
-            cache[cacheKey] = gradient
-        }
-    }
+  override fun provideShader(
+    context: DrawContext,
+    left: Float,
+    top: Float,
+    right: Float,
+    bottom: Float,
+  ): Shader {
+    val cacheKey = createKey(left, top, right, bottom)
+    return cache[cacheKey]
+      ?: createShader(context, left, top, right, bottom).also { gradient ->
+        cache.clear()
+        cache[cacheKey] = gradient
+      }
+  }
 
-    /**
-     * Called when new instance of [Shader] must be created, as the [left], [top], [right], and [bottom] bounds
-     * have changed or there is no cached [Shader].
-     */
-    public abstract fun createShader(
-        context: DrawContext,
-        left: Float,
-        top: Float,
-        right: Float,
-        bottom: Float,
-    ): Shader
+  /**
+   * Called when new instance of [Shader] must be created, as the [left], [top], [right], and
+   * [bottom] bounds have changed or there is no cached [Shader].
+   */
+  public abstract fun createShader(
+    context: DrawContext,
+    left: Float,
+    top: Float,
+    right: Float,
+    bottom: Float,
+  ): Shader
 
-    /**
-     * Creates a cache key using the provided [left], [top], [right], and [bottom] bounds.
-     */
-    protected open fun createKey(
-        left: Float,
-        top: Float,
-        right: Float,
-        bottom: Float,
-    ): String = "$left,$top,$right,$bottom"
+  /** Creates a cache key using the provided [left], [top], [right], and [bottom] bounds. */
+  protected open fun createKey(left: Float, top: Float, right: Float, bottom: Float): String =
+    "$left,$top,$right,$bottom"
 }

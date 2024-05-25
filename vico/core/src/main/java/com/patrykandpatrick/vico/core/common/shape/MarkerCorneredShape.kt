@@ -25,7 +25,8 @@ import com.patrykandpatrick.vico.core.common.doubled
 import com.patrykandpatrick.vico.core.common.half
 
 /**
- * [MarkerCorneredShape] is an extension of [CorneredShape] that supports drawing a triangular tick at a given point.
+ * [MarkerCorneredShape] is an extension of [CorneredShape] that supports drawing a triangular tick
+ * at a given point.
  *
  * @param topLeft specifies a [Corner] for the top left of the [Shape].
  * @param topRight specifies a [Corner] for the top right of the [Shape].
@@ -34,108 +35,99 @@ import com.patrykandpatrick.vico.core.common.half
  * @param tickSizeDp the size of the tick (in dp).
  */
 public open class MarkerCorneredShape(
-    topLeft: Corner,
-    topRight: Corner,
-    bottomRight: Corner,
-    bottomLeft: Corner,
-    public val tickSizeDp: Float = MARKER_TICK_SIZE,
+  topLeft: Corner,
+  topRight: Corner,
+  bottomRight: Corner,
+  bottomLeft: Corner,
+  public val tickSizeDp: Float = MARKER_TICK_SIZE,
 ) : CorneredShape(topLeft, topRight, bottomRight, bottomLeft) {
-    public constructor(
-        all: Corner,
-        tickSizeDp: Float = MARKER_TICK_SIZE,
-    ) : this(all, all, all, all, tickSizeDp)
+  public constructor(
+    all: Corner,
+    tickSizeDp: Float = MARKER_TICK_SIZE,
+  ) : this(all, all, all, all, tickSizeDp)
 
-    public constructor(
-        corneredShape: CorneredShape,
-        tickSizeDp: Float = MARKER_TICK_SIZE,
-    ) : this(
-        topLeft = corneredShape.topLeft,
-        topRight = corneredShape.topRight,
-        bottomRight = corneredShape.bottomRight,
-        bottomLeft = corneredShape.bottomLeft,
-        tickSizeDp = tickSizeDp,
-    )
+  public constructor(
+    corneredShape: CorneredShape,
+    tickSizeDp: Float = MARKER_TICK_SIZE,
+  ) : this(
+    topLeft = corneredShape.topLeft,
+    topRight = corneredShape.topRight,
+    bottomRight = corneredShape.bottomRight,
+    bottomLeft = corneredShape.bottomLeft,
+    tickSizeDp = tickSizeDp,
+  )
 
-    override fun drawShape(
-        context: DrawContext,
-        paint: Paint,
-        path: Path,
-        left: Float,
-        top: Float,
-        right: Float,
-        bottom: Float,
-    ): Unit =
-        with(context) {
-            val tickX: Float? = context.extraStore.getOrNull(tickXKey)
-            if (tickX != null) {
-                val tickPosition: TickPosition = context.extraStore.getOrNull(tickPositionKey) ?: TickPosition.Bottom
-                createPath(
-                    context = context,
-                    path = path,
-                    left = left,
-                    top = top,
-                    right = right,
-                    bottom = bottom,
-                )
-                val tickSize = context.dpToPx(tickSizeDp)
-                val availableCornerSize = minOf(right - left, bottom - top)
-                val cornerScale = getCornerScale(right - left, bottom - top, density)
+  override fun drawShape(
+    context: DrawContext,
+    paint: Paint,
+    path: Path,
+    left: Float,
+    top: Float,
+    right: Float,
+    bottom: Float,
+  ): Unit =
+    with(context) {
+      val tickX: Float? = context.extraStore.getOrNull(tickXKey)
+      if (tickX != null) {
+        val tickPosition: TickPosition =
+          context.extraStore.getOrNull(tickPositionKey) ?: TickPosition.Bottom
+        createPath(
+          context = context,
+          path = path,
+          left = left,
+          top = top,
+          right = right,
+          bottom = bottom,
+        )
+        val tickSize = context.dpToPx(tickSizeDp)
+        val availableCornerSize = minOf(right - left, bottom - top)
+        val cornerScale = getCornerScale(right - left, bottom - top, density)
 
-                val minLeft = left + bottomLeft.getCornerSize(availableCornerSize, density) * cornerScale
-                val maxLeft = right - bottomRight.getCornerSize(availableCornerSize, density) * cornerScale
+        val minLeft = left + bottomLeft.getCornerSize(availableCornerSize, density) * cornerScale
+        val maxLeft = right - bottomRight.getCornerSize(availableCornerSize, density) * cornerScale
 
-                val coercedTickSize = tickSize.coerceAtMost((maxLeft - minLeft).half.coerceAtLeast(0f))
+        val coercedTickSize = tickSize.coerceAtMost((maxLeft - minLeft).half.coerceAtLeast(0f))
 
-                (tickX - coercedTickSize)
-                    .takeIf { minLeft < maxLeft }
-                    ?.coerceIn(minLeft, maxLeft - coercedTickSize.doubled)
-                    ?.also { tickBaseLeft ->
-                        val tickBaseY =
-                            when (tickPosition) {
-                                TickPosition.Top -> top
-                                TickPosition.Bottom -> bottom
-                            }
-                        val tickDirection =
-                            when (tickPosition) {
-                                TickPosition.Top -> -1
-                                TickPosition.Bottom -> 1
-                            }
-                        path.moveTo(tickBaseLeft, tickBaseY)
-                        path.lineTo(tickX, tickBaseY + tickDirection * tickSize)
-                        path.lineTo(tickBaseLeft + coercedTickSize.doubled, tickBaseY)
-                    }
+        (tickX - coercedTickSize)
+          .takeIf { minLeft < maxLeft }
+          ?.coerceIn(minLeft, maxLeft - coercedTickSize.doubled)
+          ?.also { tickBaseLeft ->
+            val tickBaseY =
+              when (tickPosition) {
+                TickPosition.Top -> top
+                TickPosition.Bottom -> bottom
+              }
+            val tickDirection =
+              when (tickPosition) {
+                TickPosition.Top -> -1
+                TickPosition.Bottom -> 1
+              }
+            path.moveTo(tickBaseLeft, tickBaseY)
+            path.lineTo(tickX, tickBaseY + tickDirection * tickSize)
+            path.lineTo(tickBaseLeft + coercedTickSize.doubled, tickBaseY)
+          }
 
-                path.close()
-                context.canvas.drawPath(path, paint)
-            } else {
-                super.drawShape(context, paint, path, left, top, right, bottom)
-            }
-        }
-
-    /**
-     * Specifies the position of a [MarkerCorneredShape]’s tick.
-     */
-    public enum class TickPosition {
-        /**
-         * Positions the tick at the top of the [MarkerCorneredShape].
-         */
-        Top,
-
-        /**
-         * Positions the tick at the bottom of the [MarkerCorneredShape].
-         */
-        Bottom,
+        path.close()
+        context.canvas.drawPath(path, paint)
+      } else {
+        super.drawShape(context, paint, path, left, top, right, bottom)
+      }
     }
 
-    public companion object {
-        /**
-         * Used to store and retrieve the _x_ coordinate of a [MarkerCorneredShape]’s tick.
-         */
-        public val tickXKey: ExtraStore.Key<Float> = ExtraStore.Key()
+  /** Specifies the position of a [MarkerCorneredShape]’s tick. */
+  public enum class TickPosition {
+    /** Positions the tick at the top of the [MarkerCorneredShape]. */
+    Top,
 
-        /**
-         * Used to store and retrieve a [MarkerCorneredShape]’s [TickPosition].
-         */
-        public val tickPositionKey: ExtraStore.Key<TickPosition> = ExtraStore.Key()
-    }
+    /** Positions the tick at the bottom of the [MarkerCorneredShape]. */
+    Bottom,
+  }
+
+  public companion object {
+    /** Used to store and retrieve the _x_ coordinate of a [MarkerCorneredShape]’s tick. */
+    public val tickXKey: ExtraStore.Key<Float> = ExtraStore.Key()
+
+    /** Used to store and retrieve a [MarkerCorneredShape]’s [TickPosition]. */
+    public val tickPositionKey: ExtraStore.Key<TickPosition> = ExtraStore.Key()
+  }
 }

@@ -25,58 +25,38 @@ import java.util.Objects
 /** @suppress */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public class LinearGradientShader(
-    private val colors: IntArray,
-    private val positions: FloatArray?,
-    private val isHorizontal: Boolean,
+  private val colors: IntArray,
+  private val positions: FloatArray?,
+  private val isHorizontal: Boolean,
 ) : CacheableDynamicShader() {
-    override fun createShader(
-        context: DrawContext,
-        left: Float,
-        top: Float,
-        right: Float,
-        bottom: Float,
-    ): Shader =
-        if (isHorizontal) {
-            LinearGradient(
-                left,
-                top,
-                right,
-                top,
-                colors,
-                positions,
-                Shader.TileMode.CLAMP,
-            )
-        } else {
-            LinearGradient(
-                left,
-                top,
-                left,
-                bottom,
-                colors,
-                positions,
-                Shader.TileMode.CLAMP,
-            )
-        }
+  override fun createShader(
+    context: DrawContext,
+    left: Float,
+    top: Float,
+    right: Float,
+    bottom: Float,
+  ): Shader =
+    if (isHorizontal) {
+      LinearGradient(left, top, right, top, colors, positions, Shader.TileMode.CLAMP)
+    } else {
+      LinearGradient(left, top, left, bottom, colors, positions, Shader.TileMode.CLAMP)
+    }
 
-    override fun createKey(
-        left: Float,
-        top: Float,
-        right: Float,
-        bottom: Float,
-    ): String = "$this$left,$top,$right,$bottom"
+  override fun createKey(left: Float, top: Float, right: Float, bottom: Float): String =
+    "$this$left,$top,$right,$bottom"
 
-    override fun equals(other: Any?): Boolean =
-        this === other ||
-            other is LinearGradientShader &&
-            colors.contentEquals(other.colors) &&
-            positions.contentEquals(other.positions)
+  override fun equals(other: Any?): Boolean =
+    this === other ||
+      other is LinearGradientShader &&
+        colors.contentEquals(other.colors) &&
+        positions.contentEquals(other.positions)
 
-    override fun hashCode(): Int = Objects.hash(colors, positions)
+  override fun hashCode(): Int = Objects.hash(colors, positions)
 
-    @OptIn(ExperimentalStdlibApi::class)
-    override fun toString(): String =
-        "LinearGradientShader(colors=" +
-            "${colors.joinToString(prefix = "[", postfix = "]") { it.toHexString(HexFormat.UpperCase) } }, " +
-            "positions=${positions?.joinToString(prefix = "[", postfix = "]") { it.toString() }}, " +
-            "isHorizontal=$isHorizontal)"
+  @OptIn(ExperimentalStdlibApi::class)
+  override fun toString(): String =
+    "LinearGradientShader(colors=" +
+      "${colors.joinToString(prefix = "[", postfix = "]") { it.toHexString(HexFormat.UpperCase) } }, " +
+      "positions=${positions?.joinToString(prefix = "[", postfix = "]") { it.toString() }}, " +
+      "isHorizontal=$isHorizontal)"
 }

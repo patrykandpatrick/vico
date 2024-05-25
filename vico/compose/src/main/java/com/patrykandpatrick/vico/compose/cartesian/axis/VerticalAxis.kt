@@ -41,41 +41,45 @@ import com.patrykandpatrick.vico.core.common.component.TextComponent
  * @param sizeConstraint defines how the [VerticalAxis] is to size itself.
  * @param horizontalLabelPosition the horizontal position of the labels.
  * @param verticalLabelPosition the vertical position of the labels.
- * @param itemPlacer determines for what _y_ values the [VerticalAxis] is to display labels, ticks, and guidelines.
+ * @param itemPlacer determines for what _y_ values the [VerticalAxis] is to display labels, ticks,
+ *   and guidelines.
  * @param labelRotationDegrees the rotation of the axis labels (in degrees).
  * @param titleComponent an optional [TextComponent] to use as the axis title.
  * @param title the axis title.
  */
 @Composable
 public fun rememberStartAxis(
-    label: TextComponent? = rememberAxisLabelComponent(),
-    axis: LineComponent? = rememberAxisLineComponent(),
-    tick: LineComponent? = rememberAxisTickComponent(),
-    tickLength: Dp = Defaults.AXIS_TICK_LENGTH.dp,
-    guideline: LineComponent? = rememberAxisGuidelineComponent(),
-    valueFormatter: CartesianValueFormatter = remember { CartesianValueFormatter.decimal() },
-    sizeConstraint: BaseAxis.SizeConstraint = BaseAxis.SizeConstraint.Auto(),
-    horizontalLabelPosition: VerticalAxis.HorizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Outside,
-    verticalLabelPosition: VerticalAxis.VerticalLabelPosition = VerticalAxis.VerticalLabelPosition.Center,
-    itemPlacer: AxisItemPlacer.Vertical = remember { AxisItemPlacer.Vertical.step() },
-    labelRotationDegrees: Float = Defaults.AXIS_LABEL_ROTATION_DEGREES,
-    titleComponent: TextComponent? = null,
-    title: CharSequence? = null,
+  label: TextComponent? = rememberAxisLabelComponent(),
+  axis: LineComponent? = rememberAxisLineComponent(),
+  tick: LineComponent? = rememberAxisTickComponent(),
+  tickLength: Dp = Defaults.AXIS_TICK_LENGTH.dp,
+  guideline: LineComponent? = rememberAxisGuidelineComponent(),
+  valueFormatter: CartesianValueFormatter = remember { CartesianValueFormatter.decimal() },
+  sizeConstraint: BaseAxis.SizeConstraint = BaseAxis.SizeConstraint.Auto(),
+  horizontalLabelPosition: VerticalAxis.HorizontalLabelPosition =
+    VerticalAxis.HorizontalLabelPosition.Outside,
+  verticalLabelPosition: VerticalAxis.VerticalLabelPosition =
+    VerticalAxis.VerticalLabelPosition.Center,
+  itemPlacer: AxisItemPlacer.Vertical = remember { AxisItemPlacer.Vertical.step() },
+  labelRotationDegrees: Float = Defaults.AXIS_LABEL_ROTATION_DEGREES,
+  titleComponent: TextComponent? = null,
+  title: CharSequence? = null,
 ): VerticalAxis<AxisPosition.Vertical.Start> =
-    remember { VerticalAxis.build<AxisPosition.Vertical.Start>() }.apply {
-        this.label = label
-        axisLine = axis
-        this.tick = tick
-        this.guideline = guideline
-        this.valueFormatter = valueFormatter
-        tickLengthDp = tickLength.value
-        this.sizeConstraint = sizeConstraint
-        this.horizontalLabelPosition = horizontalLabelPosition
-        this.verticalLabelPosition = verticalLabelPosition
-        this.itemPlacer = itemPlacer
-        this.labelRotationDegrees = labelRotationDegrees
-        this.titleComponent = titleComponent
-        this.title = title
+  remember { VerticalAxis.build<AxisPosition.Vertical.Start>() }
+    .apply {
+      this.label = label
+      axisLine = axis
+      this.tick = tick
+      this.guideline = guideline
+      this.valueFormatter = valueFormatter
+      tickLengthDp = tickLength.value
+      this.sizeConstraint = sizeConstraint
+      this.horizontalLabelPosition = horizontalLabelPosition
+      this.verticalLabelPosition = verticalLabelPosition
+      this.itemPlacer = itemPlacer
+      this.labelRotationDegrees = labelRotationDegrees
+      this.titleComponent = titleComponent
+      this.title = title
     }
 
 /**
@@ -90,39 +94,43 @@ public fun rememberStartAxis(
  * @param sizeConstraint defines how the [VerticalAxis] is to size itself.
  * @param horizontalLabelPosition the horizontal position of the labels.
  * @param verticalLabelPosition the vertical position of the labels.
- * @param itemPlacer determines for what _y_ values the [VerticalAxis] is to display labels, ticks, and guidelines.
+ * @param itemPlacer determines for what _y_ values the [VerticalAxis] is to display labels, ticks,
+ *   and guidelines.
  * @param labelRotationDegrees the rotation of the axis labels (in degrees).
  * @param titleComponent an optional [TextComponent] to use as the axis title.
  * @param title the axis title.
  */
 @Composable
 public fun rememberEndAxis(
-    label: TextComponent? = rememberAxisLabelComponent(),
-    axis: LineComponent? = rememberAxisLineComponent(),
-    tick: LineComponent? = rememberAxisTickComponent(),
-    tickLength: Dp = Defaults.AXIS_TICK_LENGTH.dp,
-    guideline: LineComponent? = rememberAxisGuidelineComponent(),
-    valueFormatter: CartesianValueFormatter = remember { CartesianValueFormatter.decimal() },
-    sizeConstraint: BaseAxis.SizeConstraint = BaseAxis.SizeConstraint.Auto(),
-    horizontalLabelPosition: VerticalAxis.HorizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Outside,
-    verticalLabelPosition: VerticalAxis.VerticalLabelPosition = VerticalAxis.VerticalLabelPosition.Center,
-    itemPlacer: AxisItemPlacer.Vertical = remember { AxisItemPlacer.Vertical.step() },
-    labelRotationDegrees: Float = Defaults.AXIS_LABEL_ROTATION_DEGREES,
-    titleComponent: TextComponent? = null,
-    title: CharSequence? = null,
+  label: TextComponent? = rememberAxisLabelComponent(),
+  axis: LineComponent? = rememberAxisLineComponent(),
+  tick: LineComponent? = rememberAxisTickComponent(),
+  tickLength: Dp = Defaults.AXIS_TICK_LENGTH.dp,
+  guideline: LineComponent? = rememberAxisGuidelineComponent(),
+  valueFormatter: CartesianValueFormatter = remember { CartesianValueFormatter.decimal() },
+  sizeConstraint: BaseAxis.SizeConstraint = BaseAxis.SizeConstraint.Auto(),
+  horizontalLabelPosition: VerticalAxis.HorizontalLabelPosition =
+    VerticalAxis.HorizontalLabelPosition.Outside,
+  verticalLabelPosition: VerticalAxis.VerticalLabelPosition =
+    VerticalAxis.VerticalLabelPosition.Center,
+  itemPlacer: AxisItemPlacer.Vertical = remember { AxisItemPlacer.Vertical.step() },
+  labelRotationDegrees: Float = Defaults.AXIS_LABEL_ROTATION_DEGREES,
+  titleComponent: TextComponent? = null,
+  title: CharSequence? = null,
 ): VerticalAxis<AxisPosition.Vertical.End> =
-    remember { VerticalAxis.build<AxisPosition.Vertical.End>() }.apply {
-        this.label = label
-        axisLine = axis
-        this.tick = tick
-        this.guideline = guideline
-        this.valueFormatter = valueFormatter
-        tickLengthDp = tickLength.value
-        this.sizeConstraint = sizeConstraint
-        this.horizontalLabelPosition = horizontalLabelPosition
-        this.verticalLabelPosition = verticalLabelPosition
-        this.itemPlacer = itemPlacer
-        this.labelRotationDegrees = labelRotationDegrees
-        this.titleComponent = titleComponent
-        this.title = title
+  remember { VerticalAxis.build<AxisPosition.Vertical.End>() }
+    .apply {
+      this.label = label
+      axisLine = axis
+      this.tick = tick
+      this.guideline = guideline
+      this.valueFormatter = valueFormatter
+      tickLengthDp = tickLength.value
+      this.sizeConstraint = sizeConstraint
+      this.horizontalLabelPosition = horizontalLabelPosition
+      this.verticalLabelPosition = verticalLabelPosition
+      this.itemPlacer = itemPlacer
+      this.labelRotationDegrees = labelRotationDegrees
+      this.titleComponent = titleComponent
+      this.title = title
     }

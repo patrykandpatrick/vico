@@ -29,33 +29,33 @@ import com.patrykandpatrick.vico.core.common.data.ExtraStore
 /** Creates and remembers a [HorizontalBox] */
 @Composable
 public fun rememberHorizontalBox(
-    y: (ExtraStore) -> ClosedFloatingPointRange<Float>,
-    box: ShapeComponent,
-    labelComponent: TextComponent? = null,
-    label: (ExtraStore) -> CharSequence = { HorizontalBox.getLabel(y(it)) },
-    horizontalLabelPosition: HorizontalPosition = HorizontalPosition.Start,
-    verticalLabelPosition: VerticalPosition = VerticalPosition.Top,
-    labelRotationDegrees: Float = 0f,
-    verticalAxisPosition: AxisPosition.Vertical? = null,
+  y: (ExtraStore) -> ClosedFloatingPointRange<Float>,
+  box: ShapeComponent,
+  labelComponent: TextComponent? = null,
+  label: (ExtraStore) -> CharSequence = { HorizontalBox.getLabel(y(it)) },
+  horizontalLabelPosition: HorizontalPosition = HorizontalPosition.Start,
+  verticalLabelPosition: VerticalPosition = VerticalPosition.Top,
+  labelRotationDegrees: Float = 0f,
+  verticalAxisPosition: AxisPosition.Vertical? = null,
 ): HorizontalBox =
-    remember(
-        y,
-        box,
-        labelComponent,
-        label,
-        horizontalLabelPosition,
-        verticalLabelPosition,
-        labelRotationDegrees,
-        verticalAxisPosition,
-    ) {
-        HorizontalBox(
-            y,
-            box,
-            labelComponent,
-            label,
-            horizontalLabelPosition,
-            verticalLabelPosition,
-            labelRotationDegrees,
-            verticalAxisPosition,
-        )
-    }
+  remember(
+    y,
+    box,
+    labelComponent,
+    label,
+    horizontalLabelPosition,
+    verticalLabelPosition,
+    labelRotationDegrees,
+    verticalAxisPosition,
+  ) {
+    HorizontalBox(
+      y,
+      box,
+      labelComponent,
+      label,
+      horizontalLabelPosition,
+      verticalLabelPosition,
+      labelRotationDegrees,
+      verticalAxisPosition,
+    )
+  }

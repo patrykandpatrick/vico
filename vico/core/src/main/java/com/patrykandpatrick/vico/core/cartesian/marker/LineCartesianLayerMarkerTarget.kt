@@ -21,21 +21,25 @@ import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
 
 /** Houses information on a set of [LineCartesianLayer] points to be marked. */
 public interface LineCartesianLayerMarkerTarget : CartesianMarker.Target {
-    /** Holds [Point] instances, each of which houses information on a marked point. */
-    public val points: List<Point>
+  /** Holds [Point] instances, each of which houses information on a marked point. */
+  public val points: List<Point>
 
-    /**
-     * Houses information on a [LineCartesianLayer] point to be marked.
-     *
-     * @param entry the [LineCartesianLayerModel.Entry].
-     * @param canvasY the point’s pixel _y_ coordinate.
-     * @param color the [LineCartesianLayer.LineSpec]’s color for the point.
-     */
-    public data class Point(val entry: LineCartesianLayerModel.Entry, val canvasY: Float, val color: Int)
+  /**
+   * Houses information on a [LineCartesianLayer] point to be marked.
+   *
+   * @param entry the [LineCartesianLayerModel.Entry].
+   * @param canvasY the point’s pixel _y_ coordinate.
+   * @param color the [LineCartesianLayer.LineSpec]’s color for the point.
+   */
+  public data class Point(
+    val entry: LineCartesianLayerModel.Entry,
+    val canvasY: Float,
+    val color: Int,
+  )
 }
 
 internal data class MutableLineCartesianLayerMarkerTarget(
-    override val x: Float,
-    override val canvasX: Float,
-    override val points: MutableList<LineCartesianLayerMarkerTarget.Point> = mutableListOf(),
+  override val x: Float,
+  override val canvasX: Float,
+  override val points: MutableList<LineCartesianLayerMarkerTarget.Point> = mutableListOf(),
 ) : LineCartesianLayerMarkerTarget

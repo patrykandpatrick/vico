@@ -22,22 +22,29 @@ import com.patrykandpatrick.vico.core.common.component.LineComponent
 
 /** Houses information on a set of [ColumnCartesianLayer] columns to be marked. */
 public interface ColumnCartesianLayerMarkerTarget : CartesianMarker.Target {
-    /** Holds [Column] instances, each of which houses information on a [ColumnCartesianLayer] column to be marked. */
-    public val columns: List<Column>
+  /**
+   * Holds [Column] instances, each of which houses information on a [ColumnCartesianLayer] column
+   * to be marked.
+   */
+  public val columns: List<Column>
 
-    /**
-     * Houses information on a [ColumnCartesianLayer] column to be marked.
-     *
-     * @param entry the [ColumnCartesianLayerModel.Entry].
-     * @param canvasY the pixel _y_ coordinate of the column’s top or bottom edge (depending on the sign of
-     * [ColumnCartesianLayerModel.Entry.y]).
-     * @param color the column [LineComponent]’s color.
-     */
-    public data class Column(val entry: ColumnCartesianLayerModel.Entry, val canvasY: Float, val color: Int)
+  /**
+   * Houses information on a [ColumnCartesianLayer] column to be marked.
+   *
+   * @param entry the [ColumnCartesianLayerModel.Entry].
+   * @param canvasY the pixel _y_ coordinate of the column’s top or bottom edge (depending on the
+   *   sign of [ColumnCartesianLayerModel.Entry.y]).
+   * @param color the column [LineComponent]’s color.
+   */
+  public data class Column(
+    val entry: ColumnCartesianLayerModel.Entry,
+    val canvasY: Float,
+    val color: Int,
+  )
 }
 
 internal data class MutableColumnCartesianLayerMarkerTarget(
-    override val x: Float,
-    override val canvasX: Float,
-    override val columns: MutableList<ColumnCartesianLayerMarkerTarget.Column> = mutableListOf(),
+  override val x: Float,
+  override val canvasX: Float,
+  override val columns: MutableList<ColumnCartesianLayerMarkerTarget.Column> = mutableListOf(),
 ) : ColumnCartesianLayerMarkerTarget

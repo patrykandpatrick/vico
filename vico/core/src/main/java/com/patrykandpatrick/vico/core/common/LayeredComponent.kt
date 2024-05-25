@@ -19,36 +19,37 @@ package com.patrykandpatrick.vico.core.common
 import com.patrykandpatrick.vico.core.common.component.Component
 
 /**
- * Draws two [Component]s, [rear] and [front], on top of each other. [padding] defines the padding between them.
+ * Draws two [Component]s, [rear] and [front], on top of each other. [padding] defines the padding
+ * between them.
  */
 public open class LayeredComponent(
-    public val rear: Component,
-    public val front: Component,
-    public val padding: Dimensions = Dimensions.Empty,
-    override val margins: Dimensions = Dimensions.Empty,
+  public val rear: Component,
+  public val front: Component,
+  public val padding: Dimensions = Dimensions.Empty,
+  override val margins: Dimensions = Dimensions.Empty,
 ) : Component {
-    override fun draw(
-        context: DrawContext,
-        left: Float,
-        top: Float,
-        right: Float,
-        bottom: Float,
-        opacity: Float,
-    ): Unit =
-        with(context) {
-            val leftWithMargin = left + margins.getLeftDp(isLtr).pixels
-            val topWithMargin = top + margins.topDp.pixels
-            val rightWithMargin = right - margins.getRightDp(isLtr).pixels
-            val bottomWithMargin = bottom - margins.bottomDp.pixels
+  override fun draw(
+    context: DrawContext,
+    left: Float,
+    top: Float,
+    right: Float,
+    bottom: Float,
+    opacity: Float,
+  ): Unit =
+    with(context) {
+      val leftWithMargin = left + margins.getLeftDp(isLtr).pixels
+      val topWithMargin = top + margins.topDp.pixels
+      val rightWithMargin = right - margins.getRightDp(isLtr).pixels
+      val bottomWithMargin = bottom - margins.bottomDp.pixels
 
-            rear.draw(context, leftWithMargin, topWithMargin, rightWithMargin, bottomWithMargin, opacity)
-            front.draw(
-                context,
-                leftWithMargin + padding.getLeftDp(isLtr).pixels,
-                topWithMargin + padding.topDp.pixels,
-                rightWithMargin - padding.getRightDp(isLtr).pixels,
-                bottomWithMargin - padding.bottomDp.pixels,
-                opacity,
-            )
-        }
+      rear.draw(context, leftWithMargin, topWithMargin, rightWithMargin, bottomWithMargin, opacity)
+      front.draw(
+        context,
+        leftWithMargin + padding.getLeftDp(isLtr).pixels,
+        topWithMargin + padding.topDp.pixels,
+        rightWithMargin - padding.getRightDp(isLtr).pixels,
+        bottomWithMargin - padding.bottomDp.pixels,
+        opacity,
+      )
+    }
 }

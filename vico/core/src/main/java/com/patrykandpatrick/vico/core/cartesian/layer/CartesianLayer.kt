@@ -29,51 +29,33 @@ import com.patrykandpatrick.vico.core.common.BoundsAware
 import com.patrykandpatrick.vico.core.common.data.MutableExtraStore
 
 /**
- * Visualizes data on a Cartesian plane. [CartesianLayer]s are combined and drawn by [CartesianChart]s.
+ * Visualizes data on a Cartesian plane. [CartesianLayer]s are combined and drawn by
+ * [CartesianChart]s.
  */
 public interface CartesianLayer<T : CartesianLayerModel> : BoundsAware, ChartInsetter {
-    /** Links _x_ values to [CartesianMarker.Target]s. */
-    public val markerTargets: Map<Float, List<CartesianMarker.Target>>
+  /** Links _x_ values to [CartesianMarker.Target]s. */
+  public val markerTargets: Map<Float, List<CartesianMarker.Target>>
 
-    /**
-     * Draws the [CartesianLayer].
-     */
-    public fun draw(
-        context: CartesianDrawContext,
-        model: T,
-    )
+  /** Draws the [CartesianLayer]. */
+  public fun draw(context: CartesianDrawContext, model: T)
 
-    /**
-     * Updates [horizontalDimensions] to match this [CartesianLayer]’s dimensions.
-     */
-    public fun updateHorizontalDimensions(
-        context: CartesianMeasureContext,
-        horizontalDimensions: MutableHorizontalDimensions,
-        model: T,
-    )
+  /** Updates [horizontalDimensions] to match this [CartesianLayer]’s dimensions. */
+  public fun updateHorizontalDimensions(
+    context: CartesianMeasureContext,
+    horizontalDimensions: MutableHorizontalDimensions,
+    model: T,
+  )
 
-    /**
-     * Updates [chartValues] in accordance with [model].
-     */
-    public fun updateChartValues(
-        chartValues: MutableChartValues,
-        model: T,
-    )
+  /** Updates [chartValues] in accordance with [model]. */
+  public fun updateChartValues(chartValues: MutableChartValues, model: T)
 
-    /**
-     * Prepares the [CartesianLayer] for a difference animation.
-     */
-    public fun prepareForTransformation(
-        model: T?,
-        extraStore: MutableExtraStore,
-        chartValues: ChartValues,
-    )
+  /** Prepares the [CartesianLayer] for a difference animation. */
+  public fun prepareForTransformation(
+    model: T?,
+    extraStore: MutableExtraStore,
+    chartValues: ChartValues,
+  )
 
-    /**
-     * Carries out the pending difference animation.
-     */
-    public suspend fun transform(
-        extraStore: MutableExtraStore,
-        fraction: Float,
-    )
+  /** Carries out the pending difference animation. */
+  public suspend fun transform(extraStore: MutableExtraStore, fraction: Float)
 }

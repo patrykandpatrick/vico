@@ -23,20 +23,12 @@ package com.patrykandpatrick.vico.core.cartesian
  * @see Insets
  */
 public interface HorizontalInsets {
-    /**
-     * Sets the start and end insets.
-     */
-    public fun set(
-        start: Float,
-        end: Float,
-    )
+  /** Sets the start and end insets. */
+  public fun set(start: Float, end: Float)
 
-    /**
-     * For the start and end insets, updates the value of the inset to the corresponding
-     * provided value if the provided value is greater than the current value.
-     */
-    public fun setValuesIfGreater(
-        start: Float,
-        end: Float,
-    )
+  /**
+   * For the start and end insets, updates the value of the inset to the corresponding provided
+   * value if the provided value is greater than the current value.
+   */
+  public fun setValuesIfGreater(start: Float, end: Float)
 }

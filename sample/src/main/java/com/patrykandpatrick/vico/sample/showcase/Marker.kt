@@ -42,81 +42,82 @@ import com.patrykandpatrick.vico.core.common.shape.Shape
 
 @Composable
 internal fun rememberMarker(
-    labelPosition: DefaultCartesianMarker.LabelPosition = DefaultCartesianMarker.LabelPosition.Top,
-    showIndicator: Boolean = true,
+  labelPosition: DefaultCartesianMarker.LabelPosition = DefaultCartesianMarker.LabelPosition.Top,
+  showIndicator: Boolean = true,
 ): CartesianMarker {
-    val labelBackgroundShape = Shape.markerCornered(Corner.FullyRounded)
-    val labelBackground =
-        rememberShapeComponent(labelBackgroundShape, MaterialTheme.colorScheme.surface)
-            .setShadow(
-                radius = LABEL_BACKGROUND_SHADOW_RADIUS_DP,
-                dy = LABEL_BACKGROUND_SHADOW_DY_DP,
-                applyElevationOverlay = true,
-            )
-    val label =
-        rememberTextComponent(
-            color = MaterialTheme.colorScheme.onSurface,
-            background = labelBackground,
-            padding = Dimensions.of(8.dp, 4.dp),
-            typeface = Typeface.MONOSPACE,
-            textAlignment = Layout.Alignment.ALIGN_CENTER,
-            minWidth = TextComponent.MinWidth.fixed(40.dp),
-        )
-    val indicatorFrontComponent = rememberShapeComponent(Shape.Pill, MaterialTheme.colorScheme.surface)
-    val indicatorCenterComponent = rememberShapeComponent(Shape.Pill)
-    val indicatorRearComponent = rememberShapeComponent(Shape.Pill)
-    val indicator =
+  val labelBackgroundShape = Shape.markerCornered(Corner.FullyRounded)
+  val labelBackground =
+    rememberShapeComponent(labelBackgroundShape, MaterialTheme.colorScheme.surface)
+      .setShadow(
+        radius = LABEL_BACKGROUND_SHADOW_RADIUS_DP,
+        dy = LABEL_BACKGROUND_SHADOW_DY_DP,
+        applyElevationOverlay = true,
+      )
+  val label =
+    rememberTextComponent(
+      color = MaterialTheme.colorScheme.onSurface,
+      background = labelBackground,
+      padding = Dimensions.of(8.dp, 4.dp),
+      typeface = Typeface.MONOSPACE,
+      textAlignment = Layout.Alignment.ALIGN_CENTER,
+      minWidth = TextComponent.MinWidth.fixed(40.dp),
+    )
+  val indicatorFrontComponent =
+    rememberShapeComponent(Shape.Pill, MaterialTheme.colorScheme.surface)
+  val indicatorCenterComponent = rememberShapeComponent(Shape.Pill)
+  val indicatorRearComponent = rememberShapeComponent(Shape.Pill)
+  val indicator =
+    rememberLayeredComponent(
+      rear = indicatorRearComponent,
+      front =
         rememberLayeredComponent(
-            rear = indicatorRearComponent,
-            front =
-                rememberLayeredComponent(
-                    rear = indicatorCenterComponent,
-                    front = indicatorFrontComponent,
-                    padding = Dimensions.of(5.dp),
-                ),
-            padding = Dimensions.of(10.dp),
-        )
-    val guideline = rememberAxisGuidelineComponent()
-    return remember(label, labelPosition, indicator, showIndicator, guideline) {
-        object : DefaultCartesianMarker(
-            label = label,
-            labelPosition = labelPosition,
-            indicator = if (showIndicator) indicator else null,
-            indicatorSizeDp = 36f,
-            setIndicatorColor =
-                if (showIndicator) {
-                    { color ->
-                        indicatorRearComponent.color = color.copyColor(alpha = .15f)
-                        indicatorCenterComponent.color = color
-                        indicatorCenterComponent.setShadow(radius = 12f, color = color)
-                    }
-                } else {
-                    null
-                },
-            guideline = guideline,
-        ) {
-            override fun getInsets(
-                context: CartesianMeasureContext,
-                outInsets: Insets,
-                horizontalDimensions: HorizontalDimensions,
-            ) {
-                with(context) {
-                    super.getInsets(context, outInsets, horizontalDimensions)
-                    val shadowInset =
-                        (
-                            CLIPPING_FREE_SHADOW_RADIUS_MULTIPLIER * LABEL_BACKGROUND_SHADOW_RADIUS_DP -
-                                LABEL_BACKGROUND_SHADOW_DY_DP
-                        )
-                            .pixels
-                    when (labelPosition) {
-                        LabelPosition.Top, LabelPosition.AroundPoint, LabelPosition.AbovePoint ->
-                            outInsets.top += shadowInset
-                        LabelPosition.Bottom -> outInsets.bottom += shadowInset
-                    }
-                }
+          rear = indicatorCenterComponent,
+          front = indicatorFrontComponent,
+          padding = Dimensions.of(5.dp),
+        ),
+      padding = Dimensions.of(10.dp),
+    )
+  val guideline = rememberAxisGuidelineComponent()
+  return remember(label, labelPosition, indicator, showIndicator, guideline) {
+    object :
+      DefaultCartesianMarker(
+        label = label,
+        labelPosition = labelPosition,
+        indicator = if (showIndicator) indicator else null,
+        indicatorSizeDp = 36f,
+        setIndicatorColor =
+          if (showIndicator) {
+            { color ->
+              indicatorRearComponent.color = color.copyColor(alpha = .15f)
+              indicatorCenterComponent.color = color
+              indicatorCenterComponent.setShadow(radius = 12f, color = color)
             }
+          } else {
+            null
+          },
+        guideline = guideline,
+      ) {
+      override fun getInsets(
+        context: CartesianMeasureContext,
+        outInsets: Insets,
+        horizontalDimensions: HorizontalDimensions,
+      ) {
+        with(context) {
+          super.getInsets(context, outInsets, horizontalDimensions)
+          val shadowInset =
+            (CLIPPING_FREE_SHADOW_RADIUS_MULTIPLIER * LABEL_BACKGROUND_SHADOW_RADIUS_DP -
+                LABEL_BACKGROUND_SHADOW_DY_DP)
+              .pixels
+          when (labelPosition) {
+            LabelPosition.Top,
+            LabelPosition.AroundPoint,
+            LabelPosition.AbovePoint -> outInsets.top += shadowInset
+            LabelPosition.Bottom -> outInsets.bottom += shadowInset
+          }
         }
+      }
     }
+  }
 }
 
 private const val LABEL_BACKGROUND_SHADOW_RADIUS_DP = 4f

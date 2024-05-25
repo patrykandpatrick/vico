@@ -20,37 +20,38 @@ import com.patrykandpatrick.vico.core.cartesian.axis.Axis
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
 
 /**
- * Enables a component to add insets to [CartesianChart]s to make room for itself. This is used by [Axis], [CartesianMarker], and
- * the like.
+ * Enables a component to add insets to [CartesianChart]s to make room for itself. This is used by
+ * [Axis], [CartesianMarker], and the like.
  */
 public interface ChartInsetter {
-    /**
-     * Called during the measurement phase, before [getHorizontalInsets]. Both horizontal and vertical insets can be
-     * requested from this function. The final inset for a given edge of the associated [CartesianChart] is the largest
-     * of the insets requested for the edge.
-     *
-     * @param context holds data used for the measuring of components.
-     * @param outInsets used to store the requested insets.
-     * @param horizontalDimensions the [CartesianChart]’s [HorizontalDimensions].
-     */
-    public fun getInsets(
-        context: CartesianMeasureContext,
-        outInsets: Insets,
-        horizontalDimensions: HorizontalDimensions,
-    ): Unit = Unit
+  /**
+   * Called during the measurement phase, before [getHorizontalInsets]. Both horizontal and vertical
+   * insets can be requested from this function. The final inset for a given edge of the associated
+   * [CartesianChart] is the largest of the insets requested for the edge.
+   *
+   * @param context holds data used for the measuring of components.
+   * @param outInsets used to store the requested insets.
+   * @param horizontalDimensions the [CartesianChart]’s [HorizontalDimensions].
+   */
+  public fun getInsets(
+    context: CartesianMeasureContext,
+    outInsets: Insets,
+    horizontalDimensions: HorizontalDimensions,
+  ): Unit = Unit
 
-    /**
-     * Called during the measurement phase, after [getInsets]. Only horizontal insets can be requested from this
-     * function. Unless the available height is of interest, [getInsets] can be used to set all insets. The final inset
-     * for a given edge of the associated [CartesianChart] is the largest of the insets requested for the edge.
-     *
-     * @param context holds data used for the measuring of components.
-     * @param availableHeight the available height. The vertical insets are considered here.
-     * @param outInsets used to store the requested insets.
-     */
-    public fun getHorizontalInsets(
-        context: CartesianMeasureContext,
-        availableHeight: Float,
-        outInsets: HorizontalInsets,
-    ): Unit = Unit
+  /**
+   * Called during the measurement phase, after [getInsets]. Only horizontal insets can be requested
+   * from this function. Unless the available height is of interest, [getInsets] can be used to set
+   * all insets. The final inset for a given edge of the associated [CartesianChart] is the largest
+   * of the insets requested for the edge.
+   *
+   * @param context holds data used for the measuring of components.
+   * @param availableHeight the available height. The vertical insets are considered here.
+   * @param outInsets used to store the requested insets.
+   */
+  public fun getHorizontalInsets(
+    context: CartesianMeasureContext,
+    availableHeight: Float,
+    outInsets: HorizontalInsets,
+  ): Unit = Unit
 }

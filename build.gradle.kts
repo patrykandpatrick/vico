@@ -15,16 +15,16 @@
  */
 
 buildscript {
-    dependencies {
-        classpath(libs.buildTools)
-        classpath(libs.kotlinGradlePlugin)
-        classpath(libs.paparazziGradlePlugin)
-    }
+  dependencies {
+    classpath(libs.buildTools)
+    classpath(libs.kotlinGradlePlugin)
+    classpath(libs.paparazziGradlePlugin)
+  }
 }
 
 plugins {
-    alias(libs.plugins.composeCompiler) apply false
-    alias(libs.plugins.dokka) apply false
+  alias(libs.plugins.composeCompiler) apply false
+  alias(libs.plugins.dokka) apply false
 }
 
 apply("versions.gradle")

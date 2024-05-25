@@ -23,18 +23,20 @@ import androidx.core.view.ViewCompat
 import com.patrykandpatrick.vico.core.common.DefaultColors
 
 internal val Context.density: Float
-    get() = resources.displayMetrics.density
+  get() = resources.displayMetrics.density
 
 internal val Context.isLtr: Boolean
-    get() =
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            resources.configuration.layoutDirection == ViewCompat.LAYOUT_DIRECTION_LTR
-        } else {
-            true
-        }
+  get() =
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+      resources.configuration.layoutDirection == ViewCompat.LAYOUT_DIRECTION_LTR
+    } else {
+      true
+    }
 
 internal val Context.isDarkMode: Boolean
-    get() = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
+  get() =
+    resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK ==
+      Configuration.UI_MODE_NIGHT_YES
 
 internal val Context.defaultColors: DefaultColors
-    get() = if (isDarkMode) DefaultColors.Dark else DefaultColors.Light
+  get() = if (isDarkMode) DefaultColors.Dark else DefaultColors.Light

@@ -16,18 +16,16 @@
 
 package com.patrykandpatrick.vico.core.common
 
-/**
- * Defines the horizontal position of a drawn object relative to a given point.
- */
+/** Defines the horizontal position of a drawn object relative to a given point. */
 public enum class HorizontalPosition {
-    Start,
-    Center,
-    End,
+  Start,
+  Center,
+  End,
 }
 
 internal operator fun HorizontalPosition.unaryMinus() =
-    when (this) {
-        HorizontalPosition.Start -> HorizontalPosition.End
-        HorizontalPosition.Center -> HorizontalPosition.Center
-        HorizontalPosition.End -> HorizontalPosition.Start
-    }
+  when (this) {
+    HorizontalPosition.Start -> HorizontalPosition.End
+    HorizontalPosition.Center -> HorizontalPosition.Center
+    HorizontalPosition.End -> HorizontalPosition.Start
+  }

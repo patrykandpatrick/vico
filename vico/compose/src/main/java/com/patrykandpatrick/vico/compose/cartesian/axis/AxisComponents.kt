@@ -57,29 +57,32 @@ import com.patrykandpatrick.vico.core.common.shape.Shape
  */
 @Composable
 public fun rememberAxisLabelComponent(
-    color: Color = vicoTheme.textColor,
-    textSize: TextUnit = Defaults.AXIS_LABEL_SIZE.sp,
-    background: ShapeComponent? = null,
-    ellipsize: TextUtils.TruncateAt = TextUtils.TruncateAt.END,
-    lineCount: Int = Defaults.AXIS_LABEL_MAX_LINES,
-    padding: Dimensions =
-        Dimensions.of(Defaults.AXIS_LABEL_HORIZONTAL_PADDING.dp, Defaults.AXIS_LABEL_VERTICAL_PADDING.dp),
-    margins: Dimensions =
-        Dimensions.of(Defaults.AXIS_LABEL_HORIZONTAL_MARGIN.dp, Defaults.AXIS_LABEL_VERTICAL_MARGIN.dp),
-    typeface: Typeface = Typeface.MONOSPACE,
-    textAlignment: Layout.Alignment = Layout.Alignment.ALIGN_NORMAL,
+  color: Color = vicoTheme.textColor,
+  textSize: TextUnit = Defaults.AXIS_LABEL_SIZE.sp,
+  background: ShapeComponent? = null,
+  ellipsize: TextUtils.TruncateAt = TextUtils.TruncateAt.END,
+  lineCount: Int = Defaults.AXIS_LABEL_MAX_LINES,
+  padding: Dimensions =
+    Dimensions.of(
+      Defaults.AXIS_LABEL_HORIZONTAL_PADDING.dp,
+      Defaults.AXIS_LABEL_VERTICAL_PADDING.dp,
+    ),
+  margins: Dimensions =
+    Dimensions.of(Defaults.AXIS_LABEL_HORIZONTAL_MARGIN.dp, Defaults.AXIS_LABEL_VERTICAL_MARGIN.dp),
+  typeface: Typeface = Typeface.MONOSPACE,
+  textAlignment: Layout.Alignment = Layout.Alignment.ALIGN_NORMAL,
 ): TextComponent =
-    rememberTextComponent(
-        color,
-        textSize,
-        background,
-        ellipsize,
-        lineCount,
-        padding,
-        margins,
-        typeface,
-        textAlignment,
-    )
+  rememberTextComponent(
+    color,
+    textSize,
+    background,
+    ellipsize,
+    lineCount,
+    padding,
+    margins,
+    typeface,
+    textAlignment,
+  )
 
 /**
  * Creates and remembers a [LineComponent] styled as an axis line.
@@ -94,23 +97,23 @@ public fun rememberAxisLabelComponent(
  */
 @Composable
 public fun rememberAxisLineComponent(
-    color: Color = vicoTheme.lineColor,
-    thickness: Dp = Defaults.AXIS_LINE_WIDTH.dp,
-    shape: Shape = Shape.Rectangle,
-    strokeWidth: Dp = 0.dp,
-    strokeColor: Color = Color.Transparent,
-    brush: Brush? = null,
-    margins: Dimensions = Dimensions.Empty,
+  color: Color = vicoTheme.lineColor,
+  thickness: Dp = Defaults.AXIS_LINE_WIDTH.dp,
+  shape: Shape = Shape.Rectangle,
+  strokeWidth: Dp = 0.dp,
+  strokeColor: Color = Color.Transparent,
+  brush: Brush? = null,
+  margins: Dimensions = Dimensions.Empty,
 ): LineComponent =
-    rememberLineComponent(
-        color = color,
-        thickness = thickness,
-        shape = shape,
-        dynamicShader = brush?.let(::BrushShader),
-        margins = margins,
-        strokeWidth = strokeWidth,
-        strokeColor = strokeColor,
-    )
+  rememberLineComponent(
+    color = color,
+    thickness = thickness,
+    shape = shape,
+    dynamicShader = brush?.let(::BrushShader),
+    margins = margins,
+    strokeWidth = strokeWidth,
+    strokeColor = strokeColor,
+  )
 
 /**
  * Creates and remembers a [LineComponent] styled as a tick line.
@@ -124,21 +127,21 @@ public fun rememberAxisLineComponent(
  */
 @Composable
 public fun rememberAxisTickComponent(
-    color: Color = vicoTheme.lineColor,
-    thickness: Dp = Defaults.AXIS_LINE_WIDTH.dp,
-    shape: Shape = Shape.Rectangle,
-    strokeWidth: Dp = 0.dp,
-    strokeColor: Color = Color.Transparent,
-    dynamicShader: DynamicShader? = null,
+  color: Color = vicoTheme.lineColor,
+  thickness: Dp = Defaults.AXIS_LINE_WIDTH.dp,
+  shape: Shape = Shape.Rectangle,
+  strokeWidth: Dp = 0.dp,
+  strokeColor: Color = Color.Transparent,
+  dynamicShader: DynamicShader? = null,
 ): LineComponent =
-    rememberLineComponent(
-        color = color,
-        thickness = thickness,
-        dynamicShader = dynamicShader,
-        shape = shape,
-        strokeWidth = strokeWidth,
-        strokeColor = strokeColor,
-    )
+  rememberLineComponent(
+    color = color,
+    thickness = thickness,
+    dynamicShader = dynamicShader,
+    shape = shape,
+    strokeWidth = strokeWidth,
+    strokeColor = strokeColor,
+  )
 
 /**
  * Creates and remembers a [LineComponent] styled as a tick line.
@@ -152,21 +155,21 @@ public fun rememberAxisTickComponent(
  */
 @Composable
 public fun rememberAxisTickComponent(
-    color: Color,
-    thickness: Dp = Defaults.AXIS_LINE_WIDTH.dp,
-    shape: androidx.compose.ui.graphics.Shape = RectangleShape,
-    strokeWidth: Dp = 0.dp,
-    strokeColor: Color = Color.Transparent,
-    brush: Brush? = null,
+  color: Color,
+  thickness: Dp = Defaults.AXIS_LINE_WIDTH.dp,
+  shape: androidx.compose.ui.graphics.Shape = RectangleShape,
+  strokeWidth: Dp = 0.dp,
+  strokeColor: Color = Color.Transparent,
+  brush: Brush? = null,
 ): LineComponent =
-    rememberLineComponent(
-        color = color,
-        thickness = thickness,
-        dynamicShader = brush?.let(::BrushShader),
-        shape = shape.toVicoShape(),
-        strokeWidth = strokeWidth,
-        strokeColor = strokeColor,
-    )
+  rememberLineComponent(
+    color = color,
+    thickness = thickness,
+    dynamicShader = brush?.let(::BrushShader),
+    shape = shape.toVicoShape(),
+    strokeWidth = strokeWidth,
+    strokeColor = strokeColor,
+  )
 
 /**
  * Creates and remembers a [LineComponent] styled as a guideline.
@@ -181,20 +184,20 @@ public fun rememberAxisTickComponent(
  */
 @Composable
 public fun rememberAxisGuidelineComponent(
-    color: Color = vicoTheme.lineColor,
-    thickness: Dp = Defaults.AXIS_GUIDELINE_WIDTH.dp,
-    shape: Shape = Shape.dashed(Shape.Rectangle, Defaults.DASH_LENGTH.dp, Defaults.DASH_GAP.dp),
-    strokeWidth: Dp = 0.dp,
-    strokeColor: Color = Color.Transparent,
-    dynamicShader: DynamicShader? = null,
-    margins: Dimensions = Dimensions.Empty,
+  color: Color = vicoTheme.lineColor,
+  thickness: Dp = Defaults.AXIS_GUIDELINE_WIDTH.dp,
+  shape: Shape = Shape.dashed(Shape.Rectangle, Defaults.DASH_LENGTH.dp, Defaults.DASH_GAP.dp),
+  strokeWidth: Dp = 0.dp,
+  strokeColor: Color = Color.Transparent,
+  dynamicShader: DynamicShader? = null,
+  margins: Dimensions = Dimensions.Empty,
 ): LineComponent =
-    rememberLineComponent(
-        color = color,
-        thickness = thickness,
-        dynamicShader = dynamicShader,
-        shape = shape,
-        margins = margins,
-        strokeWidth = strokeWidth,
-        strokeColor = strokeColor,
-    )
+  rememberLineComponent(
+    color = color,
+    thickness = thickness,
+    dynamicShader = dynamicShader,
+    shape = shape,
+    margins = margins,
+    strokeWidth = strokeWidth,
+    strokeColor = strokeColor,
+  )

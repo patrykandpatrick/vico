@@ -22,63 +22,63 @@ import com.patrykandpatrick.vico.core.common.set
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import kotlin.math.sqrt
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
-import kotlin.math.sqrt
 
 public class RectFExtensionsTest {
-    @MockK
-    private lateinit var rect: RectF
+  @MockK private lateinit var rect: RectF
 
-    @Before
-    public fun setUp() {
-        MockKAnnotations.init(this)
-        every { rect.width() } answers { rect.right - rect.left }
-        every { rect.height() } answers { rect.bottom - rect.top }
-        every { rect.centerX() } answers { (rect.right + rect.left) / 2 }
-        every { rect.centerY() } answers { (rect.bottom + rect.top) / 2 }
-        every { rect.set(any(), any(), any(), any()) } answers {
-            rect.left = args[0] as Float
-            rect.top = args[1] as Float
-            rect.right = args[2] as Float
-            rect.bottom = args[3] as Float
-        }
-    }
+  @Before
+  public fun setUp() {
+    MockKAnnotations.init(this)
+    every { rect.width() } answers { rect.right - rect.left }
+    every { rect.height() } answers { rect.bottom - rect.top }
+    every { rect.centerX() } answers { (rect.right + rect.left) / 2 }
+    every { rect.centerY() } answers { (rect.bottom + rect.top) / 2 }
+    every { rect.set(any(), any(), any(), any()) } answers
+      {
+        rect.left = args[0] as Float
+        rect.top = args[1] as Float
+        rect.right = args[2] as Float
+        rect.bottom = args[3] as Float
+      }
+  }
 
-    @Test
-    public fun `Given square is rotated by 45 degrees width increases`() {
-        rect.set(0f, 0f, 10f, 10f)
-        val squareDiagonalWidth = rect.width() * sqrt(2f)
-        val originalCenterX = rect.centerX()
-        val originalCenterY = rect.centerY()
-        rect.rotate(45f)
-        Assert.assertEquals(squareDiagonalWidth, rect.width())
-        Assert.assertEquals(originalCenterX, rect.centerX())
-        Assert.assertEquals(originalCenterY, rect.centerY())
-    }
+  @Test
+  public fun `Given square is rotated by 45 degrees width increases`() {
+    rect.set(0f, 0f, 10f, 10f)
+    val squareDiagonalWidth = rect.width() * sqrt(2f)
+    val originalCenterX = rect.centerX()
+    val originalCenterY = rect.centerY()
+    rect.rotate(45f)
+    Assert.assertEquals(squareDiagonalWidth, rect.width())
+    Assert.assertEquals(originalCenterX, rect.centerX())
+    Assert.assertEquals(originalCenterY, rect.centerY())
+  }
 
-    @Test
-    public fun `Given RectF is rotated by 180 degrees resulting RectF has exact same dimensions`() {
-        val left = 0f
-        val top = 0f
-        val right = 10f
-        val bottom = 10f
-        rect.set(left, top, right, bottom)
-        rect.rotate(180f)
-        Assert.assertEquals(left, rect.left)
-        Assert.assertEquals(top, rect.top)
-        Assert.assertEquals(right, rect.right)
-        Assert.assertEquals(bottom, rect.bottom)
-    }
+  @Test
+  public fun `Given RectF is rotated by 180 degrees resulting RectF has exact same dimensions`() {
+    val left = 0f
+    val top = 0f
+    val right = 10f
+    val bottom = 10f
+    rect.set(left, top, right, bottom)
+    rect.rotate(180f)
+    Assert.assertEquals(left, rect.left)
+    Assert.assertEquals(top, rect.top)
+    Assert.assertEquals(right, rect.right)
+    Assert.assertEquals(bottom, rect.bottom)
+  }
 
-    @Test
-    public fun `Given RectF is rotated by 90 degrees width and height are interchanged`() {
-        val width = 5f
-        val height = 10f
-        rect.set(0, 0, width, height)
-        rect.rotate(90f)
-        Assert.assertEquals(rect.width(), height)
-        Assert.assertEquals(rect.height(), width)
-    }
+  @Test
+  public fun `Given RectF is rotated by 90 degrees width and height are interchanged`() {
+    val width = 5f
+    val height = 10f
+    rect.set(0, 0, width, height)
+    rect.rotate(90f)
+    Assert.assertEquals(rect.width(), height)
+    Assert.assertEquals(rect.height(), width)
+  }
 }

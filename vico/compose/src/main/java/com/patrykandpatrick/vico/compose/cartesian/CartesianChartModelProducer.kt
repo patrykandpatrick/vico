@@ -44,105 +44,106 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
 
-internal val defaultCartesianDiffAnimationSpec: AnimationSpec<Float> = tween(durationMillis = Animation.DIFF_DURATION)
+internal val defaultCartesianDiffAnimationSpec: AnimationSpec<Float> =
+  tween(durationMillis = Animation.DIFF_DURATION)
 
 @Composable
 internal fun CartesianChartModelProducer.collectAsState(
-    chart: CartesianChart,
-    animationSpec: AnimationSpec<Float>?,
-    runInitialAnimation: Boolean,
-    mutableChartValues: MutableChartValues,
-    getXStep: ((CartesianChartModel) -> Float)?,
-    dispatcher: CoroutineDispatcher,
+  chart: CartesianChart,
+  animationSpec: AnimationSpec<Float>?,
+  runInitialAnimation: Boolean,
+  mutableChartValues: MutableChartValues,
+  getXStep: ((CartesianChartModel) -> Float)?,
+  dispatcher: CoroutineDispatcher,
 ): State<CartesianChartModelWrapper> {
-    var previousHashCode by remember { ValueWrapper<Int?>(null) }
-    val hashCode = hashCode()
-    check(previousHashCode == null || hashCode == previousHashCode) { NEW_PRODUCER_ERROR_MESSAGE }
-    previousHashCode = hashCode
-    val modelWrapperState = remember(chart) { CartesianChartModelWrapperState() }
-    val extraStore = remember(chart) { MutableExtraStore() }
-    val scope = rememberCoroutineScope()
-    val isInPreview = LocalInspectionMode.current
-    DisposableEffect(chart, runInitialAnimation, isInPreview) {
-        var mainAnimationJob: Job? = null
-        var animationFrameJob: Job? = null
-        var finalAnimationFrameJob: Job? = null
-        var isAnimationRunning: Boolean
-        var isAnimationFrameGenerationRunning = false
-        val startAnimation: (transformModel: suspend (key: Any, fraction: Float) -> Unit) -> Unit = { transformModel ->
-            if (animationSpec != null && !isInPreview &&
-                (modelWrapperState.value.model != null || runInitialAnimation)
-            ) {
-                isAnimationRunning = true
-                mainAnimationJob =
-                    scope.launch(dispatcher) {
-                        animate(
-                            initialValue = Animation.range.start,
-                            targetValue = Animation.range.endInclusive,
-                            animationSpec = animationSpec,
-                        ) { fraction, _ ->
-                            when {
-                                !isAnimationRunning -> return@animate
-                                !isAnimationFrameGenerationRunning -> {
-                                    isAnimationFrameGenerationRunning = true
-                                    animationFrameJob =
-                                        scope.launch(dispatcher) {
-                                            transformModel(chart, fraction)
-                                            isAnimationFrameGenerationRunning = false
-                                        }
-                                }
-
-                                fraction == 1f -> {
-                                    finalAnimationFrameJob =
-                                        scope.launch(dispatcher) {
-                                            animationFrameJob?.cancelAndJoin()
-                                            transformModel(chart, fraction)
-                                            isAnimationFrameGenerationRunning = false
-                                        }
-                                }
-                            }
-                        }
-                    }
-            } else {
-                finalAnimationFrameJob =
-                    scope.launch(dispatcher) {
-                        transformModel(chart, Animation.range.endInclusive)
-                    }
+  var previousHashCode by remember { ValueWrapper<Int?>(null) }
+  val hashCode = hashCode()
+  check(previousHashCode == null || hashCode == previousHashCode) { NEW_PRODUCER_ERROR_MESSAGE }
+  previousHashCode = hashCode
+  val modelWrapperState = remember(chart) { CartesianChartModelWrapperState() }
+  val extraStore = remember(chart) { MutableExtraStore() }
+  val scope = rememberCoroutineScope()
+  val isInPreview = LocalInspectionMode.current
+  DisposableEffect(chart, runInitialAnimation, isInPreview) {
+    var mainAnimationJob: Job? = null
+    var animationFrameJob: Job? = null
+    var finalAnimationFrameJob: Job? = null
+    var isAnimationRunning: Boolean
+    var isAnimationFrameGenerationRunning = false
+    val startAnimation: (transformModel: suspend (key: Any, fraction: Float) -> Unit) -> Unit =
+      { transformModel ->
+        if (
+          animationSpec != null &&
+            !isInPreview &&
+            (modelWrapperState.value.model != null || runInitialAnimation)
+        ) {
+          isAnimationRunning = true
+          mainAnimationJob =
+            scope.launch(dispatcher) {
+              animate(
+                initialValue = Animation.range.start,
+                targetValue = Animation.range.endInclusive,
+                animationSpec = animationSpec,
+              ) { fraction, _ ->
+                when {
+                  !isAnimationRunning -> return@animate
+                  !isAnimationFrameGenerationRunning -> {
+                    isAnimationFrameGenerationRunning = true
+                    animationFrameJob =
+                      scope.launch(dispatcher) {
+                        transformModel(chart, fraction)
+                        isAnimationFrameGenerationRunning = false
+                      }
+                  }
+                  fraction == 1f -> {
+                    finalAnimationFrameJob =
+                      scope.launch(dispatcher) {
+                        animationFrameJob?.cancelAndJoin()
+                        transformModel(chart, fraction)
+                        isAnimationFrameGenerationRunning = false
+                      }
+                  }
+                }
+              }
             }
+        } else {
+          finalAnimationFrameJob =
+            scope.launch(dispatcher) { transformModel(chart, Animation.range.endInclusive) }
         }
-        scope.launch(dispatcher) {
-            registerForUpdates(
-                key = chart,
-                cancelAnimation = {
-                    mainAnimationJob?.cancelAndJoin()
-                    animationFrameJob?.cancelAndJoin()
-                    finalAnimationFrameJob?.cancelAndJoin()
-                    isAnimationRunning = false
-                    isAnimationFrameGenerationRunning = false
-                },
-                startAnimation = startAnimation,
-                prepareForTransformation = chart::prepareForTransformation,
-                transform = chart::transform,
-                extraStore = extraStore,
-                updateChartValues = { model ->
-                    mutableChartValues.reset()
-                    if (model != null) {
-                        chart.updateChartValues(mutableChartValues, model, getXStep?.invoke(model))
-                        mutableChartValues.toImmutable()
-                    } else {
-                        ChartValues.Empty
-                    }
-                },
-            ) { model, chartValues ->
-                modelWrapperState.set(model, chartValues)
-            }
-        }
-        onDispose {
-            mainAnimationJob?.cancel()
-            animationFrameJob?.cancel()
-            finalAnimationFrameJob?.cancel()
-            unregisterFromUpdates(chart)
-        }
+      }
+    scope.launch(dispatcher) {
+      registerForUpdates(
+        key = chart,
+        cancelAnimation = {
+          mainAnimationJob?.cancelAndJoin()
+          animationFrameJob?.cancelAndJoin()
+          finalAnimationFrameJob?.cancelAndJoin()
+          isAnimationRunning = false
+          isAnimationFrameGenerationRunning = false
+        },
+        startAnimation = startAnimation,
+        prepareForTransformation = chart::prepareForTransformation,
+        transform = chart::transform,
+        extraStore = extraStore,
+        updateChartValues = { model ->
+          mutableChartValues.reset()
+          if (model != null) {
+            chart.updateChartValues(mutableChartValues, model, getXStep?.invoke(model))
+            mutableChartValues.toImmutable()
+          } else {
+            ChartValues.Empty
+          }
+        },
+      ) { model, chartValues ->
+        modelWrapperState.set(model, chartValues)
+      }
     }
-    return modelWrapperState
+    onDispose {
+      mainAnimationJob?.cancel()
+      animationFrameJob?.cancel()
+      finalAnimationFrameJob?.cancel()
+      unregisterFromUpdates(chart)
+    }
+  }
+  return modelWrapperState
 }

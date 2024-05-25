@@ -38,39 +38,41 @@ import com.patrykandpatrick.vico.core.common.shader.LinearGradientShader
  * @property tileYMode the vertical tiling mode for the [component].
  */
 public fun DynamicShader.Companion.component(
-    component: Component,
-    componentSize: Dp,
-    checkeredArrangement: Boolean = true,
-    tileXMode: Shader.TileMode = Shader.TileMode.REPEAT,
-    tileYMode: Shader.TileMode = tileXMode,
+  component: Component,
+  componentSize: Dp,
+  checkeredArrangement: Boolean = true,
+  tileXMode: Shader.TileMode = Shader.TileMode.REPEAT,
+  tileYMode: Shader.TileMode = tileXMode,
 ): ComponentShader =
-    ComponentShader(
-        component = component,
-        componentSizeDp = componentSize.value,
-        checkeredArrangement = checkeredArrangement,
-        tileXMode = tileXMode,
-        tileYMode = tileYMode,
-    )
+  ComponentShader(
+    component = component,
+    componentSizeDp = componentSize.value,
+    checkeredArrangement = checkeredArrangement,
+    tileXMode = tileXMode,
+    tileYMode = tileYMode,
+  )
 
-/**
- * Creates a [ColorShader].
- */
+/** Creates a [ColorShader]. */
 public fun DynamicShader.Companion.color(color: Color): ColorShader = ColorShader(color.toArgb())
 
 /**
- * Creates a [DynamicShader] with a horizontal gradient. [colors] houses the gradient colors, and [positions] specifies
- * the color offsets (between 0 and 1), with `null` producing an even distribution.
+ * Creates a [DynamicShader] with a horizontal gradient. [colors] houses the gradient colors, and
+ * [positions] specifies the color offsets (between 0 and 1), with `null` producing an even
+ * distribution.
  */
 public fun DynamicShader.Companion.horizontalGradient(
-    colors: Array<Color>,
-    positions: FloatArray? = null,
-): DynamicShader = LinearGradientShader(IntArray(colors.size) { colors[it].toArgb() }, positions, true)
+  colors: Array<Color>,
+  positions: FloatArray? = null,
+): DynamicShader =
+  LinearGradientShader(IntArray(colors.size) { colors[it].toArgb() }, positions, true)
 
 /**
- * Creates a [DynamicShader] with a vertical gradient. [colors] houses the gradient colors, and [positions] specifies
- * the color offsets (between 0 and 1), with `null` producing an even distribution.
+ * Creates a [DynamicShader] with a vertical gradient. [colors] houses the gradient colors, and
+ * [positions] specifies the color offsets (between 0 and 1), with `null` producing an even
+ * distribution.
  */
 public fun DynamicShader.Companion.verticalGradient(
-    colors: Array<Color>,
-    positions: FloatArray? = null,
-): DynamicShader = LinearGradientShader(IntArray(colors.size) { colors[it].toArgb() }, positions, false)
+  colors: Array<Color>,
+  positions: FloatArray? = null,
+): DynamicShader =
+  LinearGradientShader(IntArray(colors.size) { colors[it].toArgb() }, positions, false)
