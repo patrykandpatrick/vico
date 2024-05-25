@@ -1,9 +1,9 @@
-name: Run Ktlint
+name: Check formatting
 on:
   push:
   pull_request:
 jobs:
-  run-ktlint:
+  check-formatting:
     runs-on: ubuntu-latest
     continue-on-error: true
     steps:
