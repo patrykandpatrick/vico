@@ -243,16 +243,16 @@ public fun rememberVicoScrollState(
         autoScrollCondition,
         autoScrollAnimationSpec,
         saver =
-        remember(scrollEnabled, initialScroll, autoScrollCondition, autoScrollAnimationSpec, nestedScroll) {
-            VicoScrollState.Saver(
-                scrollEnabled,
-                initialScroll,
-                autoScroll,
-                autoScrollCondition,
-                autoScrollAnimationSpec,
-                nestedScroll
-            )
-        },
+            remember(scrollEnabled, initialScroll, autoScrollCondition, autoScrollAnimationSpec, nestedScroll) {
+                VicoScrollState.Saver(
+                    scrollEnabled,
+                    initialScroll,
+                    autoScroll,
+                    autoScrollCondition,
+                    autoScrollAnimationSpec,
+                    nestedScroll
+                )
+            },
     ) {
         VicoScrollState(
             scrollEnabled, initialScroll, autoScroll, autoScrollCondition, autoScrollAnimationSpec, nestedScroll
