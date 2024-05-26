@@ -19,7 +19,10 @@ package com.patrykandpatrick.vico.compose.cartesian
 import android.graphics.RectF
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.spring
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.MutatePriority
+import androidx.compose.foundation.OverscrollEffect
+import androidx.compose.foundation.gestures.ScrollableDefaults
 import androidx.compose.foundation.gestures.ScrollableState
 import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.gestures.scrollBy
@@ -49,7 +52,6 @@ public class VicoScrollState {
     private val autoScroll: Scroll
     private val autoScrollCondition: AutoScrollCondition
     private val autoScrollAnimationSpec: AnimationSpec<Float>
-    private var overscrollEnabled: Boolean = false
     private val _value: MutableFloatState
     private val _maxValue = mutableFloatStateOf(0f)
     private var initialScrollHandled: Boolean
@@ -58,6 +60,7 @@ public class VicoScrollState {
     private var bounds: RectF? = null
     internal val scrollEnabled: Boolean
     internal val pointerXDeltas = MutableSharedFlow<Float>(extraBufferCapacity = 1)
+    internal var nestedScroll: VicoNestedScroll? = null
 
     internal val scrollableState =
         ScrollableState { delta ->
@@ -68,7 +71,7 @@ public class VicoScrollState {
             } else {
                 val consumedValue = value - oldValue
                 pointerXDeltas.tryEmit(consumedValue - delta)
-                if (overscrollEnabled) consumedValue else delta
+                if (nestedScroll != null) consumedValue else delta
             }
         }
 
@@ -98,7 +101,7 @@ public class VicoScrollState {
         autoScrollAnimationSpec: AnimationSpec<Float>,
         value: Float,
         initialScrollHandled: Boolean,
-        overscrollEnabled: Boolean
+        nestedScroll: VicoNestedScroll?
     ) {
         this.scrollEnabled = scrollEnabled
         this.initialScroll = initialScroll
@@ -107,7 +110,7 @@ public class VicoScrollState {
         this.autoScrollAnimationSpec = autoScrollAnimationSpec
         _value = mutableFloatStateOf(value)
         this.initialScrollHandled = initialScrollHandled
-        this.overscrollEnabled = overscrollEnabled
+        this.nestedScroll = nestedScroll
     }
 
     /**
@@ -126,7 +129,7 @@ public class VicoScrollState {
         autoScroll: Scroll,
         autoScrollCondition: AutoScrollCondition,
         autoScrollAnimationSpec: AnimationSpec<Float>,
-        overscrollEnabled: Boolean,
+        nestedScroll: VicoNestedScroll?,
     ) : this(
         scrollEnabled = scrollEnabled,
         initialScroll = initialScroll,
@@ -135,7 +138,7 @@ public class VicoScrollState {
         autoScrollAnimationSpec = autoScrollAnimationSpec,
         value = 0f,
         initialScrollHandled = false,
-        overscrollEnabled = overscrollEnabled
+        nestedScroll = nestedScroll
     )
 
     private inline fun withUpdated(block: (CartesianMeasureContext, HorizontalDimensions, RectF) -> Unit) {
@@ -204,7 +207,7 @@ public class VicoScrollState {
             autoScroll: Scroll,
             autoScrollCondition: AutoScrollCondition,
             autoScrollAnimationSpec: AnimationSpec<Float>,
-            overscrollEnabled: Boolean,
+            nestedScroll: VicoNestedScroll?,
         ) = Saver<VicoScrollState, Pair<Float, Boolean>>(
             save = { it.value to it.initialScrollHandled },
             restore = { (value, initialScrollHandled) ->
@@ -216,7 +219,7 @@ public class VicoScrollState {
                     autoScrollAnimationSpec,
                     value,
                     initialScrollHandled,
-                    overscrollEnabled
+                    nestedScroll
                 )
             },
         )
@@ -231,7 +234,7 @@ public fun rememberVicoScrollState(
     autoScroll: Scroll = initialScroll,
     autoScrollCondition: AutoScrollCondition = AutoScrollCondition.Never,
     autoScrollAnimationSpec: AnimationSpec<Float> = spring(),
-    overscrollEnabled: Boolean = false,
+    nestedScroll: VicoNestedScroll? = null,
 ): VicoScrollState =
     rememberSaveable(
         scrollEnabled,
@@ -240,18 +243,28 @@ public fun rememberVicoScrollState(
         autoScrollCondition,
         autoScrollAnimationSpec,
         saver =
-        remember(scrollEnabled, initialScroll, autoScrollCondition, autoScrollAnimationSpec, overscrollEnabled) {
+        remember(scrollEnabled, initialScroll, autoScrollCondition, autoScrollAnimationSpec, nestedScroll) {
             VicoScrollState.Saver(
                 scrollEnabled,
                 initialScroll,
                 autoScroll,
                 autoScrollCondition,
                 autoScrollAnimationSpec,
-                overscrollEnabled
+                nestedScroll
             )
         },
     ) {
         VicoScrollState(
-            scrollEnabled, initialScroll, autoScroll, autoScrollCondition, autoScrollAnimationSpec, overscrollEnabled
+            scrollEnabled, initialScroll, autoScroll, autoScrollCondition, autoScrollAnimationSpec, nestedScroll
         )
     }
+
+public class VicoNestedScroll @OptIn(ExperimentalFoundationApi::class)
+constructor(public val overscroll: OverscrollEffect, public val applyOverscroll: Boolean)
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+public fun rememberDefaultVicoNestedScroll(applyOverscroll: Boolean = true): VicoNestedScroll {
+    val effect = ScrollableDefaults.overscrollEffect()
+    return remember(effect) { VicoNestedScroll(effect, applyOverscroll) }
+}

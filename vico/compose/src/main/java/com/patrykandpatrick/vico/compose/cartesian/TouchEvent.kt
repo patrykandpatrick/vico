@@ -32,7 +32,6 @@ internal fun Modifier.chartTouchEvent(
     setTouchPoint: ((Point?) -> Unit)?,
     isScrollEnabled: Boolean,
     scrollState: VicoScrollState,
-    overscrollState: VicoOverscrollState?,
     onZoom: ((Float, Offset) -> Unit)?,
 ): Modifier =
     scrollable(
@@ -40,7 +39,7 @@ internal fun Modifier.chartTouchEvent(
         orientation = Orientation.Horizontal,
         reverseDirection = true,
         enabled = isScrollEnabled,
-        overscrollEffect = overscrollState?.effect,
+        overscrollEffect = scrollState.nestedScroll?.overscroll,
     )
         .then(
             if (setTouchPoint != null) {

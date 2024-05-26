@@ -93,8 +93,7 @@ public fun CartesianChartHost(
     modifier: Modifier = Modifier,
     marker: CartesianMarker? = null,
     markerVisibilityListener: CartesianMarkerVisibilityListener? = null,
-    overscroll: VicoOverscrollState? = null,
-    scrollState: VicoScrollState = rememberVicoScrollState(overscrollEnabled = overscroll != null),
+    scrollState: VicoScrollState = rememberVicoScrollState(),
     zoomState: VicoZoomState = rememberDefaultVicoZoomState(scrollState.scrollEnabled),
     diffAnimationSpec: AnimationSpec<Float>? = defaultCartesianDiffAnimationSpec,
     runInitialAnimation: Boolean = true,
@@ -117,7 +116,6 @@ public fun CartesianChartHost(
                 marker = marker,
                 markerVisibilityListener = markerVisibilityListener,
                 scrollState = scrollState,
-                overscrollState = overscroll,
                 zoomState = zoomState,
                 horizontalLayout = horizontalLayout,
                 chartValues = chartValues,
@@ -154,8 +152,7 @@ public fun CartesianChartHost(
     modifier: Modifier = Modifier,
     marker: CartesianMarker? = null,
     markerVisibilityListener: CartesianMarkerVisibilityListener? = null,
-    overscrollState: VicoOverscrollState? = null,
-    scrollState: VicoScrollState = rememberVicoScrollState(overscrollState != null),
+    scrollState: VicoScrollState = rememberVicoScrollState(),
     zoomState: VicoZoomState = rememberDefaultVicoZoomState(scrollState.scrollEnabled),
     oldModel: CartesianChartModel? = null,
     horizontalLayout: HorizontalLayout = HorizontalLayout.segmented(),
@@ -177,7 +174,6 @@ public fun CartesianChartHost(
             oldModel = oldModel,
             horizontalLayout = horizontalLayout,
             chartValues = chartValues.toImmutable(),
-            overscrollState = overscrollState,
         )
     }
 }
@@ -190,7 +186,6 @@ internal fun CartesianChartHostImpl(
     marker: CartesianMarker?,
     markerVisibilityListener: CartesianMarkerVisibilityListener?,
     scrollState: VicoScrollState,
-    overscrollState: VicoOverscrollState?,
     zoomState: VicoZoomState,
     oldModel: CartesianChartModel?,
     horizontalLayout: HorizontalLayout,
@@ -228,15 +223,15 @@ internal fun CartesianChartHostImpl(
             Modifier
                 .fillMaxSize()
                 .then(
-                    if (overscrollState?.autoApply == true) Modifier.overscroll(overscrollState.effect)
-                    else Modifier
+                    scrollState.nestedScroll?.takeIf { it.applyOverscroll }?.let {
+                        Modifier.overscroll(it.overscroll)
+                    } ?: Modifier
                 )
                 .chartTouchEvent(
                     setTouchPoint =
                         remember(marker == null) { if (marker != null) markerTouchPoint.component2() else null },
                     isScrollEnabled = scrollState.scrollEnabled,
                     scrollState = scrollState,
-                    overscrollState = overscrollState,
                     onZoom =
                         remember(zoomState, scrollState, chart, coroutineScope) {
                             if (zoomState.zoomEnabled) {
