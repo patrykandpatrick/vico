@@ -16,6 +16,7 @@
 
 package com.patrykandpatrick.vico.compose.cartesian
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.gestures.scrollable
@@ -26,10 +27,12 @@ import androidx.compose.ui.input.pointer.pointerInput
 import com.patrykandpatrick.vico.compose.common.detectZoomGestures
 import com.patrykandpatrick.vico.core.common.Point
 
+@OptIn(ExperimentalFoundationApi::class)
 internal fun Modifier.chartTouchEvent(
     setTouchPoint: ((Point?) -> Unit)?,
     isScrollEnabled: Boolean,
     scrollState: VicoScrollState,
+    overscrollState: VicoOverscrollState?,
     onZoom: ((Float, Offset) -> Unit)?,
 ): Modifier =
     scrollable(
@@ -37,6 +40,7 @@ internal fun Modifier.chartTouchEvent(
         orientation = Orientation.Horizontal,
         reverseDirection = true,
         enabled = isScrollEnabled,
+        overscrollEffect = overscrollState?.effect,
     )
         .then(
             if (setTouchPoint != null) {
