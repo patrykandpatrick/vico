@@ -49,6 +49,7 @@ public class VicoScrollState {
     private val autoScroll: Scroll
     private val autoScrollCondition: AutoScrollCondition
     private val autoScrollAnimationSpec: AnimationSpec<Float>
+    private var overscrollEnabled: Boolean = false
     private val _value: MutableFloatState
     private val _maxValue = mutableFloatStateOf(0f)
     private var initialScrollHandled: Boolean
@@ -62,9 +63,13 @@ public class VicoScrollState {
         ScrollableState { delta ->
             val oldValue = value
             value += delta
-            val consumedValue = value - oldValue
-            if (consumedValue != delta) pointerXDeltas.tryEmit(consumedValue - delta)
-            delta
+            if (oldValue + delta == value) {
+                delta
+            } else {
+                val consumedValue = value - oldValue
+                pointerXDeltas.tryEmit(consumedValue - delta)
+                if (overscrollEnabled) consumedValue else delta
+            }
         }
 
     /** The current scroll value (in pixels). */
@@ -93,6 +98,7 @@ public class VicoScrollState {
         autoScrollAnimationSpec: AnimationSpec<Float>,
         value: Float,
         initialScrollHandled: Boolean,
+        overscrollEnabled: Boolean
     ) {
         this.scrollEnabled = scrollEnabled
         this.initialScroll = initialScroll
@@ -101,6 +107,7 @@ public class VicoScrollState {
         this.autoScrollAnimationSpec = autoScrollAnimationSpec
         _value = mutableFloatStateOf(value)
         this.initialScrollHandled = initialScrollHandled
+        this.overscrollEnabled = overscrollEnabled
     }
 
     /**
@@ -119,6 +126,7 @@ public class VicoScrollState {
         autoScroll: Scroll,
         autoScrollCondition: AutoScrollCondition,
         autoScrollAnimationSpec: AnimationSpec<Float>,
+        overscrollEnabled: Boolean,
     ) : this(
         scrollEnabled = scrollEnabled,
         initialScroll = initialScroll,
@@ -127,6 +135,7 @@ public class VicoScrollState {
         autoScrollAnimationSpec = autoScrollAnimationSpec,
         value = 0f,
         initialScrollHandled = false,
+        overscrollEnabled = overscrollEnabled
     )
 
     private inline fun withUpdated(block: (CartesianMeasureContext, HorizontalDimensions, RectF) -> Unit) {
@@ -195,6 +204,7 @@ public class VicoScrollState {
             autoScroll: Scroll,
             autoScrollCondition: AutoScrollCondition,
             autoScrollAnimationSpec: AnimationSpec<Float>,
+            overscrollEnabled: Boolean,
         ) = Saver<VicoScrollState, Pair<Float, Boolean>>(
             save = { it.value to it.initialScrollHandled },
             restore = { (value, initialScrollHandled) ->
@@ -206,6 +216,7 @@ public class VicoScrollState {
                     autoScrollAnimationSpec,
                     value,
                     initialScrollHandled,
+                    overscrollEnabled
                 )
             },
         )
@@ -220,6 +231,7 @@ public fun rememberVicoScrollState(
     autoScroll: Scroll = initialScroll,
     autoScrollCondition: AutoScrollCondition = AutoScrollCondition.Never,
     autoScrollAnimationSpec: AnimationSpec<Float> = spring(),
+    overscrollEnabled: Boolean = false,
 ): VicoScrollState =
     rememberSaveable(
         scrollEnabled,
@@ -228,15 +240,18 @@ public fun rememberVicoScrollState(
         autoScrollCondition,
         autoScrollAnimationSpec,
         saver =
-            remember(scrollEnabled, initialScroll, autoScrollCondition, autoScrollAnimationSpec) {
-                VicoScrollState.Saver(
-                    scrollEnabled,
-                    initialScroll,
-                    autoScroll,
-                    autoScrollCondition,
-                    autoScrollAnimationSpec,
-                )
-            },
+        remember(scrollEnabled, initialScroll, autoScrollCondition, autoScrollAnimationSpec, overscrollEnabled) {
+            VicoScrollState.Saver(
+                scrollEnabled,
+                initialScroll,
+                autoScroll,
+                autoScrollCondition,
+                autoScrollAnimationSpec,
+                overscrollEnabled
+            )
+        },
     ) {
-        VicoScrollState(scrollEnabled, initialScroll, autoScroll, autoScrollCondition, autoScrollAnimationSpec)
+        VicoScrollState(
+            scrollEnabled, initialScroll, autoScroll, autoScrollCondition, autoScrollAnimationSpec, overscrollEnabled
+        )
     }
