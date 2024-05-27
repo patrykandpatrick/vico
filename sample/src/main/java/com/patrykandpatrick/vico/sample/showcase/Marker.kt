@@ -101,14 +101,18 @@ internal fun rememberMarker(
                 horizontalDimensions: HorizontalDimensions,
             ) {
                 with(context) {
-                    outInsets.top =
+                    super.getInsets(context, outInsets, horizontalDimensions)
+                    val shadowInset =
                         (
                             CLIPPING_FREE_SHADOW_RADIUS_MULTIPLIER * LABEL_BACKGROUND_SHADOW_RADIUS_DP -
                                 LABEL_BACKGROUND_SHADOW_DY_DP
                         )
                             .pixels
-                    if (labelPosition == LabelPosition.AroundPoint) return
-                    outInsets.top += label.getHeight(context) + labelBackgroundShape.tickSizeDp.pixels
+                    when (labelPosition) {
+                        LabelPosition.Top, LabelPosition.AroundPoint, LabelPosition.AbovePoint ->
+                            outInsets.top += shadowInset
+                        LabelPosition.Bottom -> outInsets.bottom += shadowInset
+                    }
                 }
             }
         }
