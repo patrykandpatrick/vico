@@ -25,13 +25,16 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.isSpecified
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.patrykandpatrick.vico.compose.common.pixelSize
 import com.patrykandpatrick.vico.compose.common.shader.toDynamicShader
+import com.patrykandpatrick.vico.compose.common.text.toGraphicsTypeFace
 import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.Dimensions
 import com.patrykandpatrick.vico.core.common.LayeredComponent
@@ -154,6 +157,11 @@ public fun rememberLayeredComponent(
  * @param textAlignment the text alignment.
  * @param minWidth defines the minimum width.
  */
+@Deprecated(
+    message = """
+        Use the Composable function that accepts a Compose UI TextStyle instead of an android graphics Typeface.
+    """,
+)
 @Composable
 public fun rememberTextComponent(
     color: Color = Color.Black,
@@ -181,6 +189,61 @@ public fun rememberTextComponent(
             this.minWidth = minWidth
         }
     }
+
+/**
+ * Create and remember [TextComponent].
+ *
+ * @param style the [TextStyle] for the text.
+ * @param color the [Color] of the text. The default value is [style.color][TextStyle.color] if [Color.isSpecified] is
+ * true, otherwise the default is [Color.Black].
+ * @param size the text's size. The default value is [style.fontSize][TextStyle.fontSize].
+ * @param background an optional [ShapeComponent] to be displayed behind the text.
+ * @param ellipsize the text truncation behavior.
+ * @param lineCount the line count.
+ * @param padding the padding between the text and the background.
+ * @param margins the margins around the background.
+ * @param textAlignment the text alignment.
+ * @param minWidth defines the minimum width.
+ */
+@Composable
+public fun rememberTextComponent(
+    style: TextStyle = TextStyle.Default,
+    color: Color = if (style.color.isSpecified) style.color else Color.Black,
+    size: TextUnit = style.fontSize,
+    background: ShapeComponent? = null,
+    ellipsize: TextUtils.TruncateAt = TextUtils.TruncateAt.END,
+    lineCount: Int = Defaults.LABEL_LINE_COUNT,
+    padding: MutableDimensions = MutableDimensions.empty(),
+    margins: MutableDimensions = MutableDimensions.empty(),
+    textAlignment: Layout.Alignment = Layout.Alignment.ALIGN_NORMAL,
+    minWidth: TextComponent.MinWidth = TextComponent.MinWidth.fixed(),
+): TextComponent {
+    val typeface = style.toGraphicsTypeFace()
+    return remember(
+        style, typeface, color, size,
+        background,
+        ellipsize,
+        lineCount,
+        padding,
+        margins,
+        typeface,
+        textAlignment,
+        minWidth,
+    ) {
+        TextComponent.build {
+            this.color = color.toArgb()
+            this.textSizeSp = size.pixelSize()
+            this.ellipsize = ellipsize
+            this.lineCount = lineCount
+            this.background = background
+            this.padding = padding
+            this.margins = margins
+            this.typeface = typeface
+            this.textAlignment = textAlignment
+            this.minWidth = minWidth
+        }
+    }
+}
 
 /** A [Dp] version of [TextComponent.MinWidth.fixed]. */
 @Stable

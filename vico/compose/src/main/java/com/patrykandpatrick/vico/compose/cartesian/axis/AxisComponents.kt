@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("DeprecatedCallableAddReplaceWith")
+
 package com.patrykandpatrick.vico.compose.cartesian.axis
 
 import android.graphics.Typeface
@@ -23,10 +25,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.isSpecified
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.patrykandpatrick.vico.compose.common.VicoTheme
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.common.of
@@ -55,6 +60,11 @@ import com.patrykandpatrick.vico.core.common.shape.Shape
  * @param typeface the [Typeface] for the text.
  * @param textAlignment the text alignment.
  */
+@Deprecated(
+    message = """
+        Use the Composable function that accepts a Compose UI TextStyle instead of an android graphics Typeface.
+    """,
+)
 @Composable
 public fun rememberAxisLabelComponent(
     color: Color = vicoTheme.textColor,
@@ -79,6 +89,52 @@ public fun rememberAxisLabelComponent(
         margins,
         typeface,
         textAlignment,
+    )
+
+/**
+ * Creates and remembers a [TextComponent] to be used for axis labels.
+ *
+ * @param style the [TextStyle] for the text.
+ * @param color the [Color] of the text. The default value is [style.color][TextStyle.color] if [Color.isSpecified] is
+ * true, otherwise the default is [vicoTheme.textColor][VicoTheme.textColor].
+ * @param size the text's size. The default value is [style.fontSize][TextStyle.fontSize].
+ * @param background an optional [ShapeComponent] to be displayed behind the text.
+ * @param ellipsize the text truncation behavior.
+ * @param lineCount the line count.
+ * @param padding the padding between the text and the background.
+ * @param margins the margins around the background.
+ * @param textAlignment the text alignment.
+ */
+@Composable
+public fun rememberAxisLabelComponent(
+    style: TextStyle = TextStyle.Default,
+    color: Color = if (style.color.isSpecified) style.color else vicoTheme.textColor,
+    size: TextUnit = style.fontSize,
+    background: ShapeComponent? = null,
+    ellipsize: TextUtils.TruncateAt = TextUtils.TruncateAt.END,
+    lineCount: Int = Defaults.AXIS_LABEL_MAX_LINES,
+    padding: MutableDimensions =
+        MutableDimensions.of(
+            Defaults.AXIS_LABEL_HORIZONTAL_PADDING.dp,
+            Defaults.AXIS_LABEL_VERTICAL_PADDING.dp,
+        ),
+    margins: MutableDimensions =
+        MutableDimensions.of(
+            Defaults.AXIS_LABEL_HORIZONTAL_MARGIN.dp,
+            Defaults.AXIS_LABEL_VERTICAL_MARGIN.dp,
+        ),
+    textAlignment: Layout.Alignment = Layout.Alignment.ALIGN_NORMAL,
+): TextComponent =
+    rememberTextComponent(
+        style = style,
+        color = color,
+        size = size,
+        background = background,
+        ellipsize = ellipsize,
+        lineCount = lineCount,
+        padding = padding,
+        margins = margins,
+        textAlignment = textAlignment,
     )
 
 /**
