@@ -102,16 +102,16 @@ internal fun rememberMarker(
             ) {
                 with(context) {
                     super.getInsets(context, outInsets, horizontalDimensions)
-                    val shadowClipping =
+                    val shadowInset =
                         (
                             CLIPPING_FREE_SHADOW_RADIUS_MULTIPLIER * LABEL_BACKGROUND_SHADOW_RADIUS_DP -
                                 LABEL_BACKGROUND_SHADOW_DY_DP
                         )
                             .pixels
                     when (labelPosition) {
-                        LabelPosition.Top -> outInsets.top += shadowClipping
-                        LabelPosition.Bottom -> outInsets.bottom += shadowClipping
-                        LabelPosition.AroundPoint, LabelPosition.AbovePoint -> Unit
+                        LabelPosition.Top, LabelPosition.AroundPoint, LabelPosition.AbovePoint ->
+                            outInsets.top += shadowInset
+                        LabelPosition.Bottom -> outInsets.bottom += shadowInset
                     }
                 }
             }

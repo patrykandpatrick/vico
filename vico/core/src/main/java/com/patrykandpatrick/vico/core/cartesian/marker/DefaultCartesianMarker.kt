@@ -191,18 +191,16 @@ public open class DefaultCartesianMarker(
         outInsets: Insets,
         horizontalDimensions: HorizontalDimensions,
     ) {
-        when (labelPosition) {
-            LabelPosition.Top, LabelPosition.AbovePoint ->
-                with(context) {
+        with(context) {
+            when (labelPosition) {
+                LabelPosition.Top, LabelPosition.AbovePoint ->
                     outInsets.top = label.getHeight(context) + label.tickSizeDp.pixels
-                }
 
-            LabelPosition.Bottom ->
-                with(context) {
+                LabelPosition.Bottom ->
                     outInsets.bottom = label.getHeight(context) + label.tickSizeDp.pixels
-                }
 
-            LabelPosition.AroundPoint -> Unit // Will be inside the chart
+                LabelPosition.AroundPoint -> Unit // Will be inside the chart
+            }
         }
     }
 
