@@ -1,0 +1,16 @@
+body:
+  - type: textarea
+    attributes:
+      label: Question
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Vico version(s)
+  - type: dropdown
+    attributes:
+      label: UI framework(s)
+      multiple: true
+      options:
+        - Jetpack Compose
+        - Views
