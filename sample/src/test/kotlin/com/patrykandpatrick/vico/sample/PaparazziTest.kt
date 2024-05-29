@@ -18,6 +18,7 @@ package com.patrykandpatrick.vico.sample
 
 import androidx.compose.runtime.Composable
 import app.cash.paparazzi.Paparazzi
+import com.android.ide.common.rendering.api.SessionParams
 import com.patrykandpatrick.vico.sample.paparazzi.lightConfig
 import com.patrykandpatrick.vico.sample.paparazzi.nightConfig
 import com.patrykandpatrick.vico.sample.previews.composables.column.DefaultColumnChart
@@ -50,7 +51,13 @@ public class PaparazziTest {
       "ColumnChart Long Not Scrollable" to { DefaultColumnChartLongNonScrollable() },
     )
 
-  @get:Rule public val paparazzi: Paparazzi = Paparazzi(deviceConfig = lightConfig)
+  @get:Rule
+  public val paparazzi =
+    Paparazzi(
+      deviceConfig = lightConfig,
+      renderingMode = SessionParams.RenderingMode.SHRINK,
+      maxPercentDifference = .2,
+    )
 
   private fun List<Pair<String, @Composable () -> Unit>>.snapshotAll() {
     forEach { (name, composable) -> paparazzi.snapshot(name) { composable() } }
