@@ -44,7 +44,7 @@ import com.patrykandpatrick.vico.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun ChartListScreen(navController: NavController) {
-  var uiSystem by rememberSaveable { mutableStateOf(UISystem.Compose) }
+  var uiFramework by rememberSaveable { mutableStateOf(UIFramework.Compose) }
   val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
   Scaffold(
     Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -60,13 +60,13 @@ internal fun ChartListScreen(navController: NavController) {
         SingleChoiceSegmentedButtonRow(
           Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, bottom = 8.dp)
         ) {
-          UISystem.entries.forEachIndexed { index, segmentUISystem ->
+          UIFramework.entries.forEachIndexed { index, segmentUIFramework ->
             SegmentedButton(
-              selected = uiSystem == segmentUISystem,
-              onClick = { uiSystem = segmentUISystem },
-              shape = SegmentedButtonDefaults.itemShape(index, UISystem.entries.size),
+              selected = uiFramework == segmentUIFramework,
+              onClick = { uiFramework = segmentUIFramework },
+              shape = SegmentedButtonDefaults.itemShape(index, UIFramework.entries.size),
             ) {
-              Text(stringResource(segmentUISystem.labelResourceID))
+              Text(stringResource(segmentUIFramework.labelResourceID))
             }
           }
         }
@@ -74,7 +74,7 @@ internal fun ChartListScreen(navController: NavController) {
       items(charts.size) { chartID ->
         ListItem(
           { Text(stringResource(R.string.chart_x, chartID + 1)) },
-          Modifier.clickable { navController.navigate("chart/$chartID/${uiSystem.ordinal}") },
+          Modifier.clickable { navController.navigate("chart/$chartID/${uiFramework.ordinal}") },
         )
       }
     }

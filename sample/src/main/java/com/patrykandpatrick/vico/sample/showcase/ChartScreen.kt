@@ -52,7 +52,7 @@ import com.patrykandpatrick.vico.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun ChartScreen(navController: NavController, initialChartID: Int, uiSystemID: Int) {
+internal fun ChartScreen(navController: NavController, initialChartID: Int, uiFrameworkID: Int) {
   val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
   val nestedNavController = rememberNavController()
   val chartID =
@@ -113,7 +113,7 @@ internal fun ChartScreen(navController: NavController, initialChartID: Int, uiSy
         BackHandler(onBack = navigateBack)
         val arguments = requireNotNull(backStackEntry.arguments)
         charts[arguments.getInt("chartID")](
-          UISystem.entries[uiSystemID],
+          UIFramework.entries[uiFrameworkID],
           Modifier.padding(horizontal = 16.dp),
         )
       }

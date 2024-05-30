@@ -33,7 +33,7 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.RandomCartesianModelGenerator
 import com.patrykandpatrick.vico.databinding.Chart10Binding
 import com.patrykandpatrick.vico.sample.showcase.Defaults
-import com.patrykandpatrick.vico.sample.showcase.UISystem
+import com.patrykandpatrick.vico.sample.showcase.UIFramework
 import com.patrykandpatrick.vico.sample.showcase.rememberMarker
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -41,21 +41,23 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 
 @Composable
-internal fun Chart10(uiSystem: UISystem, modifier: Modifier) {
+internal fun Chart10(uiFramework: UIFramework, modifier: Modifier) {
   val modelProducer = remember { CartesianChartModelProducer.build() }
   LaunchedEffect(key1 = Unit) {
     withContext(Dispatchers.Default) {
       while (isActive) {
         modelProducer.tryRunTransaction {
+          /* Learn more:
+          https://patrykandpatrick.com/vico/wiki/cartesian-charts/layers/candlestick-layer#data. */
           add(RandomCartesianModelGenerator.getRandomCandlestickLayerModelPartial())
         }
         delay(Defaults.TRANSACTION_INTERVAL_MS)
       }
     }
   }
-  when (uiSystem) {
-    UISystem.Compose -> ComposeChart10(modelProducer, modifier)
-    UISystem.Views -> ViewChart10(modelProducer, modifier)
+  when (uiFramework) {
+    UIFramework.Compose -> ComposeChart10(modelProducer, modifier)
+    UIFramework.Views -> ViewChart10(modelProducer, modifier)
   }
 }
 

@@ -32,17 +32,17 @@ internal fun VicoApp() {
     NavHost(navController = navController, startDestination = "chartList") {
       composable("chartList") { ChartListScreen(navController) }
       composable(
-        "chart/{initialChartID}/{uiSystemID}",
+        "chart/{initialChartID}/{uiFrameworkID}",
         listOf(
           navArgument("initialChartID") { type = NavType.IntType },
-          navArgument("uiSystemID") { type = NavType.IntType },
+          navArgument("uiFrameworkID") { type = NavType.IntType },
         ),
       ) { backStackEntry ->
         val arguments = requireNotNull(backStackEntry.arguments)
         ChartScreen(
           navController,
           arguments.getInt("initialChartID"),
-          arguments.getInt("uiSystemID"),
+          arguments.getInt("uiFrameworkID"),
         )
       }
     }

@@ -50,7 +50,7 @@ import com.patrykandpatrick.vico.core.common.component.TextComponent
 import com.patrykandpatrick.vico.core.common.shape.Shape
 import com.patrykandpatrick.vico.databinding.Chart2Binding
 import com.patrykandpatrick.vico.sample.showcase.Defaults
-import com.patrykandpatrick.vico.sample.showcase.UISystem
+import com.patrykandpatrick.vico.sample.showcase.UIFramework
 import com.patrykandpatrick.vico.sample.showcase.rememberMarker
 import java.text.DateFormatSymbols
 import java.util.Locale
@@ -61,21 +61,23 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 
 @Composable
-internal fun Chart2(uiSystem: UISystem, modifier: Modifier) {
+internal fun Chart2(uiFramework: UIFramework, modifier: Modifier) {
   val modelProducer = remember { CartesianChartModelProducer.build() }
   LaunchedEffect(Unit) {
     withContext(Dispatchers.Default) {
       while (isActive) {
         modelProducer.tryRunTransaction {
+          /* Learn more:
+          https://patrykandpatrick.com/vico/wiki/cartesian-charts/layers/column-layer#data. */
           columnSeries { series(List(47) { 2 + Random.nextFloat() * 18 }) }
         }
         delay(Defaults.TRANSACTION_INTERVAL_MS)
       }
     }
   }
-  when (uiSystem) {
-    UISystem.Compose -> ComposeChart2(modelProducer, modifier)
-    UISystem.Views -> ViewChart2(modelProducer, modifier)
+  when (uiFramework) {
+    UIFramework.Compose -> ComposeChart2(modelProducer, modifier)
+    UIFramework.Views -> ViewChart2(modelProducer, modifier)
   }
 }
 
@@ -158,8 +160,8 @@ private fun getViewHorizontalLine() =
         background = ShapeComponent(Shape.Pill, HORIZONTAL_LINE_COLOR)
         padding =
           Dimensions(
-            HORIZONTAL_LINE_LABEL_VERTICAL_PADDING_DP,
             HORIZONTAL_LINE_LABEL_HORIZONTAL_PADDING_DP,
+            HORIZONTAL_LINE_LABEL_VERTICAL_PADDING_DP,
           )
         margins = Dimensions(HORIZONTAL_LINE_LABEL_MARGIN_DP)
         typeface = Typeface.MONOSPACE

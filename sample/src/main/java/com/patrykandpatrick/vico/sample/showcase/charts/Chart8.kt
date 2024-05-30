@@ -45,7 +45,7 @@ import com.patrykandpatrick.vico.core.common.shader.DynamicShader
 import com.patrykandpatrick.vico.core.common.shape.Shape
 import com.patrykandpatrick.vico.databinding.Chart8Binding
 import com.patrykandpatrick.vico.sample.showcase.Defaults
-import com.patrykandpatrick.vico.sample.showcase.UISystem
+import com.patrykandpatrick.vico.sample.showcase.UIFramework
 import com.patrykandpatrick.vico.sample.showcase.rememberMarker
 import kotlin.random.Random
 import kotlinx.coroutines.Dispatchers
@@ -54,12 +54,14 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 
 @Composable
-internal fun Chart8(uiSystem: UISystem, modifier: Modifier) {
+internal fun Chart8(uiFramework: UIFramework, modifier: Modifier) {
   val modelProducer = remember { CartesianChartModelProducer.build() }
   LaunchedEffect(Unit) {
     withContext(Dispatchers.Default) {
       while (isActive) {
         modelProducer.tryRunTransaction {
+          /* Learn more:
+          https://patrykandpatrick.com/vico/wiki/cartesian-charts/layers/column-layer#data. */
           columnSeries {
             repeat(Defaults.MULTI_SERIES_COUNT) {
               series(
@@ -70,6 +72,8 @@ internal fun Chart8(uiSystem: UISystem, modifier: Modifier) {
               )
             }
           }
+          /* Learn more:
+          https://patrykandpatrick.com/vico/wiki/cartesian-charts/layers/line-layer#data. */
           lineSeries { series(List(Defaults.ENTRY_COUNT) { Random.nextFloat() * Defaults.MAX_Y }) }
         }
         delay(Defaults.TRANSACTION_INTERVAL_MS)
@@ -77,9 +81,9 @@ internal fun Chart8(uiSystem: UISystem, modifier: Modifier) {
     }
   }
 
-  when (uiSystem) {
-    UISystem.Compose -> ComposeChart8(modelProducer, modifier)
-    UISystem.Views -> ViewChart8(modelProducer, modifier)
+  when (uiFramework) {
+    UIFramework.Compose -> ComposeChart8(modelProducer, modifier)
+    UIFramework.Views -> ViewChart8(modelProducer, modifier)
   }
 }
 

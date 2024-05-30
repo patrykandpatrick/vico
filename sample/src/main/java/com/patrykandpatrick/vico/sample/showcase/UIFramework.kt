@@ -19,7 +19,7 @@ package com.patrykandpatrick.vico.sample.showcase
 import androidx.annotation.StringRes
 import com.patrykandpatrick.vico.R
 
-internal enum class UISystem(@StringRes val labelResourceID: Int) {
+internal enum class UIFramework(@StringRes val labelResourceID: Int) {
   Compose(R.string.compose),
   Views(R.string.views),
 }

@@ -51,7 +51,7 @@ import com.patrykandpatrick.vico.core.common.shader.DynamicShader
 import com.patrykandpatrick.vico.core.common.shape.Shape
 import com.patrykandpatrick.vico.databinding.Chart3Binding
 import com.patrykandpatrick.vico.sample.showcase.Defaults
-import com.patrykandpatrick.vico.sample.showcase.UISystem
+import com.patrykandpatrick.vico.sample.showcase.UIFramework
 import com.patrykandpatrick.vico.sample.showcase.rememberMarker
 import kotlin.random.Random
 import kotlinx.coroutines.Dispatchers
@@ -60,21 +60,23 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 
 @Composable
-internal fun Chart3(uiSystem: UISystem, modifier: Modifier) {
+internal fun Chart3(uiFramework: UIFramework, modifier: Modifier) {
   val modelProducer = remember { CartesianChartModelProducer.build() }
   LaunchedEffect(Unit) {
     withContext(Dispatchers.Default) {
       while (isActive) {
         modelProducer.tryRunTransaction {
+          /* Learn more:
+          https://patrykandpatrick.com/vico/wiki/cartesian-charts/layers/line-layer#data. */
           lineSeries { series(List(Defaults.ENTRY_COUNT) { Random.nextFloat() * 20 }) }
         }
         delay(Defaults.TRANSACTION_INTERVAL_MS)
       }
     }
   }
-  when (uiSystem) {
-    UISystem.Compose -> ComposeChart3(modelProducer, modifier)
-    UISystem.Views -> ViewChart3(modelProducer, modifier)
+  when (uiFramework) {
+    UIFramework.Compose -> ComposeChart3(modelProducer, modifier)
+    UIFramework.Views -> ViewChart3(modelProducer, modifier)
   }
 }
 
