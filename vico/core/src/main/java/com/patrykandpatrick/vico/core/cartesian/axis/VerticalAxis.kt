@@ -27,7 +27,9 @@ import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis.HorizontalLabe
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis.VerticalLabelPosition.Center
 import com.patrykandpatrick.vico.core.common.HorizontalPosition
 import com.patrykandpatrick.vico.core.common.VerticalPosition
+import com.patrykandpatrick.vico.core.common.ceil
 import com.patrykandpatrick.vico.core.common.component.TextComponent
+import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.core.common.getEnd
 import com.patrykandpatrick.vico.core.common.getStart
 import com.patrykandpatrick.vico.core.common.half
@@ -52,6 +54,8 @@ public open class VerticalAxis<Position : AxisPosition.Vertical>(override val po
   protected val textHorizontalPosition: HorizontalPosition
     get() =
       if (areLabelsOutsideAtStartOrInsideAtEnd) HorizontalPosition.Start else HorizontalPosition.End
+
+  protected val maxLabelWidthKey: ExtraStore.Key<Float> = ExtraStore.Key()
 
   /**
    * Determines for what _y_ values this [VerticalAxis] is to display labels, ticks, and guidelines.
@@ -192,7 +196,9 @@ public open class VerticalAxis<Position : AxisPosition.Vertical>(override val po
           horizontalPosition = textHorizontalPosition,
           verticalPosition = verticalLabelPosition.textPosition,
           rotationDegrees = labelRotationDegrees,
-          maxTextWidth = (bounds.width() - tickLength - axisThickness).toInt(),
+          maxTextWidth =
+            (extraStore.getOrNull(maxLabelWidthKey) ?: (chartBounds.width().half - tickLength))
+              .toInt(),
         )
       }
     }
@@ -270,7 +276,11 @@ public open class VerticalAxis<Position : AxisPosition.Vertical>(override val po
               .orZero
           val labelSpace =
             when (horizontalLabelPosition) {
-              Outside -> getMaxLabelWidth(height) + tickLength
+              Outside -> {
+                val maxLabelWidth = getMaxLabelWidth(height).ceil
+                extraStore[maxLabelWidthKey] = maxLabelWidth
+                maxLabelWidth + tickLength
+              }
               Inside -> 0f
             }
           (labelSpace + titleComponentWidth + axisThickness).coerceIn(
@@ -295,7 +305,11 @@ public open class VerticalAxis<Position : AxisPosition.Vertical>(override val po
     label
       ?.let { label ->
         itemPlacer.getHeightMeasurementLabelValues(this, position).maxOfOrNull { value ->
-          label.getHeight(this, valueFormatter.format(value, chartValues, position))
+          label.getHeight(
+            context = this,
+            text = valueFormatter.format(value, chartValues, position),
+            rotationDegrees = labelRotationDegrees,
+          )
         }
       }
       .orZero
@@ -306,7 +320,11 @@ public open class VerticalAxis<Position : AxisPosition.Vertical>(override val po
         itemPlacer
           .getWidthMeasurementLabelValues(this, axisHeight, getMaxLabelHeight(), position)
           .maxOfOrNull { value ->
-            label.getWidth(this, valueFormatter.format(value, chartValues, position))
+            label.getWidth(
+              context = this,
+              text = valueFormatter.format(value, chartValues, position),
+              rotationDegrees = labelRotationDegrees,
+            )
           }
       }
       .orZero

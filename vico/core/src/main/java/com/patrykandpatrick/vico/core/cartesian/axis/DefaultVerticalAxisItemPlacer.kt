@@ -132,14 +132,18 @@ internal class DefaultVerticalAxisItemPlacer(
       ): List<Float> {
         val values = mutableListOf<Float>()
         val requestedStep = context.getStepOrThrow() ?: 10f.pow(log10(maxY).floor - 1)
-        val minStep = (maxY - minY) / (freeHeight / maxLabelHeight).floor
         val step =
-          (maxY / requestedStep)
-            .takeIf { it == it.floor }
-            ?.toInt()
-            ?.getDivisors(includeDividend = false)
-            ?.firstOrNull { it * requestedStep >= minStep }
-            ?.let { it * requestedStep } ?: ((minStep / requestedStep).ceil * requestedStep)
+          if (maxLabelHeight != 0f) {
+            val minStep = (maxY - minY) / (freeHeight / maxLabelHeight).floor
+            ((maxY - minY) / requestedStep)
+              .takeIf { it == it.floor }
+              ?.toInt()
+              ?.getDivisors(includeDividend = false)
+              ?.firstOrNull { it * requestedStep >= minStep }
+              ?.let { it * requestedStep } ?: ((minStep / requestedStep).ceil * requestedStep)
+          } else {
+            requestedStep
+          }
         repeat(((maxY - minY) / step).toInt()) { values += multiplier * (minY + (it + 1) * step) }
         return values
       }
@@ -211,6 +215,10 @@ internal class DefaultVerticalAxisItemPlacer(
         val yRange = context.chartValues.getYRange(position)
         values += yRange.minY
         if (requestedItemCount == 1) return values
+        if (maxLabelHeight == 0f) {
+          values += yRange.maxY
+          return values
+        }
         var extraItemCount = (axisHeight / maxLabelHeight).toInt()
         if (requestedItemCount != null)
           extraItemCount = extraItemCount.coerceAtMost(requestedItemCount - 1)
@@ -231,6 +239,11 @@ internal class DefaultVerticalAxisItemPlacer(
         values += 0f
         if (requestedItemCount == 1) return values
         val yRange = context.chartValues.getYRange(position)
+        if (maxLabelHeight == 0f) {
+          values += yRange.minY
+          values += yRange.maxY
+          return values
+        }
         val topHeight = yRange.maxY / yRange.length * axisHeight
         val bottomHeight = -yRange.minY / yRange.length * axisHeight
         val maxTopItemCount =
