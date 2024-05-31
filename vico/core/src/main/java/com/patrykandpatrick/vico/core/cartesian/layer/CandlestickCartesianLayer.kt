@@ -30,6 +30,7 @@ import com.patrykandpatrick.vico.core.cartesian.data.CandlestickCartesianLayerMo
 import com.patrykandpatrick.vico.core.cartesian.data.ChartValues
 import com.patrykandpatrick.vico.core.cartesian.data.MutableChartValues
 import com.patrykandpatrick.vico.core.cartesian.data.forEachIn
+import com.patrykandpatrick.vico.core.cartesian.data.getXSpacingMultiplier
 import com.patrykandpatrick.vico.core.cartesian.layer.CandlestickCartesianLayer.Candle
 import com.patrykandpatrick.vico.core.cartesian.marker.CandlestickCartesianLayerMarkerTarget
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
@@ -130,8 +131,7 @@ public open class CandlestickCartesianLayer(
     model.series.forEachIn(chartValues.minX..chartValues.maxX) { entry, _ ->
       candle = candles.getCandle(entry, model.extraStore)
       val candleInfo = drawingModel?.entries?.get(entry.x) ?: entry.toCandleInfo(yRange)
-
-      val xSpacingMultiplier = (entry.x - chartValues.minX) / chartValues.xStep
+      val xSpacingMultiplier = chartValues.getXSpacingMultiplier(entry.x)
       bodyCenterX =
         drawingStart +
           layoutDirectionMultiplier * horizontalDimensions.xSpacing * xSpacingMultiplier +

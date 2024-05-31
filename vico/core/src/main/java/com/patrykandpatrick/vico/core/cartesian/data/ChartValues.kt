@@ -18,6 +18,9 @@ package com.patrykandpatrick.vico.core.cartesian.data
 
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition
+import com.patrykandpatrick.vico.core.common.round
+import kotlin.math.absoluteValue
+import kotlin.math.ulp
 
 /** Houses a [CartesianChart]’s [CartesianChartModel] and _x_ and _y_ ranges. */
 public interface ChartValues {
@@ -80,4 +83,12 @@ public interface ChartValues {
       error(ERROR_MESSAGE)
     }
   }
+}
+
+internal fun ChartValues.getXSpacingMultiplier(entryX: Float): Float {
+  val xSpacingMultiplier = (entryX - minX) / xStep
+  check((xSpacingMultiplier - xSpacingMultiplier.round).absoluteValue <= xSpacingMultiplier.ulp) {
+    "Each entry’s x value must be a multiple of the x step."
+  }
+  return xSpacingMultiplier
 }

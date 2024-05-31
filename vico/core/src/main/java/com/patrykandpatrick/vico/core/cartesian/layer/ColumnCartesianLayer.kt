@@ -28,6 +28,7 @@ import com.patrykandpatrick.vico.core.cartesian.data.ColumnCartesianLayerDrawing
 import com.patrykandpatrick.vico.core.cartesian.data.ColumnCartesianLayerModel
 import com.patrykandpatrick.vico.core.cartesian.data.MutableChartValues
 import com.patrykandpatrick.vico.core.cartesian.data.forEachIn
+import com.patrykandpatrick.vico.core.cartesian.data.getXSpacingMultiplier
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.core.cartesian.marker.ColumnCartesianLayerMarkerTarget
 import com.patrykandpatrick.vico.core.cartesian.marker.MutableColumnCartesianLayerMarkerTarget
@@ -126,10 +127,7 @@ public open class ColumnCartesianLayer(
       entryCollection.forEachIn(chartValues.minX..chartValues.maxX) { entry, _ ->
         val columnInfo = drawingModel?.getOrNull(index)?.get(entry.x)
         height = (columnInfo?.height ?: (abs(entry.y) / yRange.length)) * bounds.height()
-        val xSpacingMultiplier = (entry.x - chartValues.minX) / chartValues.xStep
-        check(xSpacingMultiplier % 1f == 0f) {
-          "Each entry’s x value must be a multiple of the x step."
-        }
+        val xSpacingMultiplier = chartValues.getXSpacingMultiplier(entry.x)
         val column = columnProvider.getColumn(entry, index, model.extraStore)
         columnCenterX =
           drawingStart +
