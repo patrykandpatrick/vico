@@ -35,6 +35,8 @@ import com.patrykandpatrick.vico.core.component.text.HorizontalPosition
 import com.patrykandpatrick.vico.core.component.text.TextComponent
 import com.patrykandpatrick.vico.core.component.text.VerticalPosition
 import com.patrykandpatrick.vico.core.context.MeasureContext
+import com.patrykandpatrick.vico.core.context.getExtraOr
+import com.patrykandpatrick.vico.core.extension.ceil
 import com.patrykandpatrick.vico.core.extension.getEnd
 import com.patrykandpatrick.vico.core.extension.getStart
 import com.patrykandpatrick.vico.core.extension.half
@@ -43,6 +45,7 @@ import com.patrykandpatrick.vico.core.extension.translate
 import com.patrykandpatrick.vico.core.throwable.UnknownAxisPositionException
 
 private const val TITLE_ABS_ROTATION_DEGREES = 90f
+private const val MAX_LABEL_WIDTH_KEY = "maxLabelWidthKey"
 
 /**
  * An implementation of [AxisRenderer] used for vertical axes. This class extends [Axis].
@@ -218,7 +221,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
                 horizontalPosition = textHorizontalPosition,
                 verticalPosition = verticalLabelPosition.textPosition,
                 rotationDegrees = labelRotationDegrees,
-                maxTextWidth = (bounds.width() - tickLength - axisThickness).toInt(),
+                maxTextWidth = getExtraOr(MAX_LABEL_WIDTH_KEY) { chartBounds.width().half - tickLength }.toInt(),
             )
         }
     }
@@ -275,12 +278,18 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
                 )
             }.orZero
             val labelSpace = when (horizontalLabelPosition) {
-                Outside -> getMaxLabelWidth(height) + tickLength
+                Outside -> {
+                    val maxLabelWidth = getMaxLabelWidth(height).ceil
+                    putExtra(MAX_LABEL_WIDTH_KEY, maxLabelWidth)
+                    maxLabelWidth + tickLength
+                }
+
                 Inside -> 0f
             }
             (labelSpace + titleComponentWidth + axisThickness)
                 .coerceIn(minimumValue = constraint.minSizeDp.pixels, maximumValue = constraint.maxSizeDp.pixels)
         }
+
         is SizeConstraint.Exact -> constraint.sizeDp.pixels
         is SizeConstraint.Fraction -> canvasBounds.width() * constraint.fraction
         is SizeConstraint.TextWidth -> label?.getWidth(
@@ -294,14 +303,26 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         val chartValues = chartValuesProvider.getChartValues(position)
         itemPlacer
             .getHeightMeasurementLabelValues(this, position)
-            .maxOfOrNull { value -> label.getHeight(this, valueFormatter.formatValue(value, chartValues)) }
+            .maxOfOrNull { value ->
+                label.getHeight(
+                    context = this,
+                    text = valueFormatter.formatValue(value, chartValues),
+                    rotationDegrees = labelRotationDegrees,
+                )
+            }
     }.orZero
 
     private fun MeasureContext.getMaxLabelWidth(axisHeight: Float) = label?.let { label ->
         val chartValues = chartValuesProvider.getChartValues(position)
         itemPlacer
             .getWidthMeasurementLabelValues(this, axisHeight, getMaxLabelHeight(), position)
-            .maxOfOrNull { value -> label.getWidth(this, valueFormatter.formatValue(value, chartValues)) }
+            .maxOfOrNull { value ->
+                label.getWidth(
+                    context = this,
+                    text = valueFormatter.formatValue(value, chartValues),
+                    rotationDegrees = labelRotationDegrees,
+                )
+            }
     }.orZero
 
     private fun ChartDrawContext.getLineCanvasYCorrection(thickness: Float, y: Float): Float {
