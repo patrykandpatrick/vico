@@ -210,7 +210,7 @@ internal fun CartesianChartHostImpl(
       with(LocalContext.current) { ::spToPx },
       chartValues,
     )
-  val previousMarkerX = remember { ValueWrapper<Float?>(null) }
+  val previousMarkerTargetHashCode = remember { ValueWrapper<Int?>(null) }
 
   val elevationOverlayColor = vicoTheme.elevationOverlayColor.toArgb()
   val coroutineScope = rememberCoroutineScope()
@@ -280,13 +280,13 @@ internal fun CartesianChartHostImpl(
     chart.draw(cartesianDrawContext, model)
 
     if (marker != null) {
-      previousMarkerX.value =
+      previousMarkerTargetHashCode.value =
         cartesianDrawContext.drawMarker(
           marker,
           markerTouchPoint.value,
           chart,
           markerVisibilityListener,
-          previousMarkerX.value,
+          previousMarkerTargetHashCode.value,
         )
     }
 

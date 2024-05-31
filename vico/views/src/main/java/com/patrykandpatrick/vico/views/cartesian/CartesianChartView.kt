@@ -84,7 +84,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 
   private var markerTouchPoint: Point? = null
 
-  private var previousMarkerX: Float? = null
+  private var previousMarkerTargetHashCode: Int? = null
 
   private var scrollDirectionResolved = false
 
@@ -346,13 +346,13 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       chart.draw(cartesianDrawContext, model)
 
       marker?.also { marker ->
-        previousMarkerX =
+        previousMarkerTargetHashCode =
           cartesianDrawContext.drawMarker(
             marker,
             markerTouchPoint,
             chart,
             markerVisibilityListener,
-            previousMarkerX,
+            previousMarkerTargetHashCode,
           )
       }
       measureContext.reset()

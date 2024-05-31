@@ -47,13 +47,14 @@ import com.patrykandpatrick.vico.core.common.shape.MarkerCorneredShape
  * @param guideline drawn vertically through the marked points.
  */
 public open class DefaultCartesianMarker(
-  public val label: TextComponent,
-  public var valueFormatter: CartesianMarkerValueFormatter = DefaultCartesianMarkerValueFormatter(),
-  public val labelPosition: LabelPosition = LabelPosition.Top,
-  public val indicator: Component? = null,
-  public var indicatorSizeDp: Float = Defaults.MARKER_INDICATOR_SIZE,
-  public var setIndicatorColor: ((Int) -> Unit)? = null,
-  public val guideline: LineComponent? = null,
+  protected val label: TextComponent,
+  protected val valueFormatter: CartesianMarkerValueFormatter =
+    DefaultCartesianMarkerValueFormatter(),
+  protected val labelPosition: LabelPosition = LabelPosition.Top,
+  protected val indicator: Component? = null,
+  protected val indicatorSizeDp: Float = Defaults.MARKER_INDICATOR_SIZE,
+  protected val setIndicatorColor: ((Int) -> Unit)? = null,
+  protected val guideline: LineComponent? = null,
 ) : CartesianMarker {
   protected val tempBounds: RectF = RectF()
 

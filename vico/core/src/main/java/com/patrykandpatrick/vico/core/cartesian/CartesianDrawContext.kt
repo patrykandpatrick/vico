@@ -99,10 +99,10 @@ public fun CartesianDrawContext.drawMarker(
   markerTouchPoint: Point?,
   chart: CartesianChart,
   visibilityListener: CartesianMarkerVisibilityListener?,
-  previousX: Float?,
-): Float? {
+  previousTargetHashCode: Int?,
+): Int? {
   if (markerTouchPoint == null || chart.markerTargets.isEmpty()) {
-    if (previousX != null) visibilityListener?.onHidden(marker)
+    if (previousTargetHashCode != null) visibilityListener?.onHidden(marker)
     return null
   }
   var targets = emptyList<CartesianMarker.Target>()
@@ -115,11 +115,11 @@ public fun CartesianDrawContext.drawMarker(
     previousDistance = distance
   }
   marker.draw(this, targets)
-  val x = targets.first().x
-  if (previousX == null) {
+  val targetHashCode = targets.hashCode()
+  if (previousTargetHashCode == null) {
     visibilityListener?.onShown(marker, targets)
-  } else if (x != previousX) {
-    visibilityListener?.onMoved(marker, targets)
+  } else if (targetHashCode != previousTargetHashCode) {
+    visibilityListener?.onUpdated(marker, targets)
   }
-  return x
+  return targetHashCode
 }

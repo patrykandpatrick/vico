@@ -21,8 +21,14 @@ public interface CartesianMarkerVisibilityListener {
   /** Called when the specified [CartesianMarker] is shown. */
   public fun onShown(marker: CartesianMarker, targets: List<CartesianMarker.Target>)
 
-  /** Called when the specified [CartesianMarker]’s _x_ value changes. */
-  public fun onMoved(marker: CartesianMarker, targets: List<CartesianMarker.Target>): Unit = Unit
+  /** Called when the specified [CartesianMarker]’s [CartesianMarker.Target]s change. */
+  public fun onUpdated(marker: CartesianMarker, targets: List<CartesianMarker.Target>) {
+    @Suppress("DEPRECATION") onMoved(marker, targets)
+  }
+
+  /** Called when the specified [CartesianMarker]’s [CartesianMarker.Target]s change. */
+  @Deprecated("Use `onUpdated` instead.")
+  public fun onMoved(marker: CartesianMarker, targets: List<CartesianMarker.Target>) {}
 
   /** Called when the specified [CartesianMarker] is hidden. */
   public fun onHidden(marker: CartesianMarker)
