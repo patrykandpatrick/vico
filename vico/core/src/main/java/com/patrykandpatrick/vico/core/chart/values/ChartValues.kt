@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,11 @@ package com.patrykandpatrick.vico.core.chart.values
 
 import com.patrykandpatrick.vico.core.chart.Chart
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
+import com.patrykandpatrick.vico.core.extension.round
 import kotlin.math.abs
+import kotlin.math.absoluteValue
 import kotlin.math.ceil
+import kotlin.math.ulp
 
 /**
  * Where [Chart]s get their data from.
@@ -93,4 +96,12 @@ public interface ChartValues {
      */
     public fun getMaxMajorEntryCount(): Int =
         ceil(abs(maxX - minX) / xStep + 1).toInt()
+}
+
+internal fun ChartValues.getXSpacingMultiplier(entryX: Float): Float {
+    val xSpacingMultiplier = (entryX - minX) / xStep
+    check((xSpacingMultiplier - xSpacingMultiplier.round).absoluteValue <= xSpacingMultiplier.ulp) {
+        "Each entry’s x value must be a multiple of the x step."
+    }
+    return xSpacingMultiplier
 }

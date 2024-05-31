@@ -30,6 +30,7 @@ import com.patrykandpatrick.vico.core.chart.put
 import com.patrykandpatrick.vico.core.chart.values.ChartValues
 import com.patrykandpatrick.vico.core.chart.values.ChartValuesManager
 import com.patrykandpatrick.vico.core.chart.values.ChartValuesProvider
+import com.patrykandpatrick.vico.core.chart.values.getXSpacingMultiplier
 import com.patrykandpatrick.vico.core.component.shape.LineComponent
 import com.patrykandpatrick.vico.core.component.text.TextComponent
 import com.patrykandpatrick.vico.core.component.text.VerticalPosition
@@ -161,8 +162,7 @@ public open class ColumnChart(
 
                 val columnInfo = drawingModel?.getOrNull(index)?.get(entry.x)
                 height = (columnInfo?.height ?: (abs(entry.y) / chartValues.lengthY)) * bounds.height()
-                val xSpacingMultiplier = (entry.x - chartValues.minX) / chartValues.xStep
-                check(xSpacingMultiplier % 1f == 0f) { "Each entry’s x value must be a multiple of the x step." }
+                val xSpacingMultiplier = chartValues.getXSpacingMultiplier(entry.x)
                 columnCenterX = drawingStart +
                     (horizontalDimensions.xSpacing * xSpacingMultiplier + column.thicknessDp.half.pixels * zoom) *
                     layoutDirectionMultiplier
