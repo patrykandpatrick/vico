@@ -76,7 +76,5 @@ dependencies {
     implementation libs.systemUIController
     implementation libs.viewModelCompose
     debugImplementation libs.composeUITooling
-    testImplementation libs.JUnit
-    testImplementation libs.JUnitExt
     testImplementation libs.kotlinTest
 }

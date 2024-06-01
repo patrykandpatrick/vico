@@ -76,7 +76,5 @@ dependencies {
     implementation libs.composeFoundation
     implementation libs.composeUI
     implementation libs.kotlinStdLib
-    testImplementation libs.JUnit
-    testImplementation libs.JUnitExt
     testImplementation libs.kotlinTest
 }

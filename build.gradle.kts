@@ -30,3 +30,7 @@ plugins {
 apply("versions.gradle")
 
 tasks.register<Delete>("clean") { delete(rootProject.layout.buildDirectory) }
+
+subprojects.forEach { project ->
+  project.tasks.withType<Test>().configureEach { useJUnitPlatform() }
+}

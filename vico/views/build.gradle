@@ -62,7 +62,5 @@ dependencies {
     implementation libs.androidXCore
     implementation libs.appcompat
     implementation libs.kotlinStdLib
-    testImplementation libs.JUnit
-    testImplementation libs.JUnitExt
     testImplementation libs.kotlinTest
 }

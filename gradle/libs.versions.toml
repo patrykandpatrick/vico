@@ -11,6 +11,7 @@ coroutines = "1.8.1"
 dokka = "1.9.20"
 jUnit = "4.13.2"
 jUnitExt = "1.1.5"
+jupiter = "5.10.2"
 kotlin = "2.0.0"
 lifecycle = "2.8.1"
 material = "1.12.0"
@@ -34,8 +35,9 @@ composeUI = { group = "androidx.compose.ui", name = "ui" }
 composeUITooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 composeViewBinding = { group = "androidx.compose.ui", name = "ui-viewbinding" }
 coroutinesCore = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
-jUnit = { group = "junit", name = "junit", version.ref = "jUnit" }
-jUnitExt = { group = "androidx.test.ext", name = "junit", version.ref = "jUnitExt" }
+jUnit = { module = "junit:junit", version.ref = "jUnit" }
+jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "jupiter" }
+jupiterParams = { module = "org.junit.jupiter:junit-jupiter-params", version.ref = "jupiter" }
 kotlinGradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
 kotlinStdLib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlin" }
 kotlinTest = { group = "org.jetbrains.kotlin", name = "kotlin-test", version.ref = "kotlin" }
