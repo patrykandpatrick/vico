@@ -45,7 +45,6 @@ import com.patrykandpatrick.vico.core.extension.translate
 import com.patrykandpatrick.vico.core.throwable.UnknownAxisPositionException
 
 private const val TITLE_ABS_ROTATION_DEGREES = 90f
-private const val MAX_LABEL_WIDTH_KEY = "maxLabelWidthKey"
 
 /**
  * An implementation of [AxisRenderer] used for vertical axes. This class extends [Axis].
@@ -63,6 +62,8 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
 
     private val textHorizontalPosition: HorizontalPosition
         get() = if (areLabelsOutsideAtStartOrInsideAtEnd) HorizontalPosition.Start else HorizontalPosition.End
+
+    private val maxLabelWidthKey = System.identityHashCode(this)
 
     /**
      * The maximum label count.
@@ -221,7 +222,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
                 horizontalPosition = textHorizontalPosition,
                 verticalPosition = verticalLabelPosition.textPosition,
                 rotationDegrees = labelRotationDegrees,
-                maxTextWidth = getExtraOr(MAX_LABEL_WIDTH_KEY) { chartBounds.width().half - tickLength }.toInt(),
+                maxTextWidth = getExtraOr(maxLabelWidthKey) { chartBounds.width().half - tickLength }.toInt(),
             )
         }
     }
@@ -280,7 +281,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
             val labelSpace = when (horizontalLabelPosition) {
                 Outside -> {
                     val maxLabelWidth = getMaxLabelWidth(height).ceil
-                    putExtra(MAX_LABEL_WIDTH_KEY, maxLabelWidth)
+                    putExtra(maxLabelWidthKey, maxLabelWidth)
                     maxLabelWidth + tickLength
                 }
 
