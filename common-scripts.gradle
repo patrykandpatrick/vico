@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -109,8 +109,8 @@ void setUpRepositories(RepositoryHandler handler) {
         url = isReleaseVersion() ? releaseUrl : snapshotUrl
 
         credentials {
-            username = "patrykandpatrick"
-            password = findProperty("OSSRH_PASSWORD")
+            username = findProperty("OSSRH_TOKEN")
+            password = findProperty("OSSRH_TOKEN_PASSWORD")
         }
     }
 }
