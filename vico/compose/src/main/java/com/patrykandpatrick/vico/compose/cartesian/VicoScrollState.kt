@@ -63,8 +63,12 @@ public class VicoScrollState {
     val oldValue = value
     value += delta
     val consumedValue = value - oldValue
-    if (consumedValue != delta) pointerXDeltas.tryEmit(consumedValue - delta)
-    delta
+    if (oldValue + delta == value) {
+      delta
+    } else {
+      pointerXDeltas.tryEmit(consumedValue - delta)
+      consumedValue
+    }
   }
 
   /** The current scroll value (in pixels). */
