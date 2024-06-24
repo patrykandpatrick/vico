@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("DeprecatedCallableAddReplaceWith")
+
 package com.patrykandpatrick.vico.compose.cartesian.axis
 
 import android.graphics.Typeface
@@ -153,6 +155,12 @@ public fun rememberAxisTickComponent(
  * @param strokeColor the stroke color.
  * @param brush an optional [Brush] to apply to the line.
  */
+@Deprecated(
+  message =
+    "Use the `rememberAxisTickComponent` overload that takes a " +
+      "`com.patrykandpatrick.vico.core.component.shape.Shape`. " +
+      "Convert the Compose shape using `androidx.compose.ui.graphics.Shape.toVicoShape()`."
+)
 @Composable
 public fun rememberAxisTickComponent(
   color: Color,
