@@ -16,8 +16,6 @@
 
 package com.patrykandpatrick.vico.core.common
 
-internal const val FULL_DEGREES: Float = 360f
-
 internal const val ERR_REPEATING_COLLECTION_EMPTY =
   "Cannot get repeated item from empty collection."
 
