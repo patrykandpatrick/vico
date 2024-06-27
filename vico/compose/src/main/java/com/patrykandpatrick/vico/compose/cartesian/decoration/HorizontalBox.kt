@@ -26,7 +26,7 @@ import com.patrykandpatrick.vico.core.common.component.ShapeComponent
 import com.patrykandpatrick.vico.core.common.component.TextComponent
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
 
-/** Creates and remembers a [HorizontalBox] */
+/** Creates and remembers a [HorizontalBox]. */
 @Composable
 public fun rememberHorizontalBox(
   y: (ExtraStore) -> ClosedFloatingPointRange<Float>,
