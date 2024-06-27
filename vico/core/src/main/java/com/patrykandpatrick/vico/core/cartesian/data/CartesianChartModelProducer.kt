@@ -33,7 +33,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 
 /** Creates [CartesianChartModel]s and handles difference animations. */
-public class CartesianChartModelProducer private constructor(dispatcher: CoroutineDispatcher) {
+public class CartesianChartModelProducer(dispatcher: CoroutineDispatcher = Dispatchers.Default) {
   private var partials = emptyList<CartesianLayerModel.Partial>()
   private var extraStore = MutableExtraStore()
   private var cachedModel: CartesianChartModel? = null
@@ -230,6 +230,11 @@ public class CartesianChartModelProducer private constructor(dispatcher: Corouti
      * Creates a [CartesianChartModelProducer], running an initial [Transaction]. [dispatcher] is
      * the [CoroutineDispatcher] to be used for update handling.
      */
+    @Suppress("DeprecatedCallableAddReplaceWith")
+    @Deprecated(
+      "To create a `CartesianChartModelProducer`, use the constructor. To run an initial " +
+        "`Transaction`, use `tryRunTransaction` immediately after the constructor invocation."
+    )
     public fun build(
       dispatcher: CoroutineDispatcher = Dispatchers.Default,
       transaction: (Transaction.() -> Unit)? = null,

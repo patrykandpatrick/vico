@@ -42,7 +42,7 @@ import kotlinx.coroutines.withContext
 
 @Composable
 internal fun Chart10(uiFramework: UIFramework, modifier: Modifier) {
-  val modelProducer = remember { CartesianChartModelProducer.build() }
+  val modelProducer = remember { CartesianChartModelProducer() }
   LaunchedEffect(key1 = Unit) {
     withContext(Dispatchers.Default) {
       while (isActive) {

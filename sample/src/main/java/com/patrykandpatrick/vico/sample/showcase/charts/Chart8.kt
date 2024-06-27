@@ -55,7 +55,7 @@ import kotlinx.coroutines.withContext
 
 @Composable
 internal fun Chart8(uiFramework: UIFramework, modifier: Modifier) {
-  val modelProducer = remember { CartesianChartModelProducer.build() }
+  val modelProducer = remember { CartesianChartModelProducer() }
   LaunchedEffect(Unit) {
     withContext(Dispatchers.Default) {
       while (isActive) {
