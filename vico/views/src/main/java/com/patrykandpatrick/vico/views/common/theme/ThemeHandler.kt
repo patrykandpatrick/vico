@@ -56,9 +56,18 @@ internal class ThemeHandler(private val context: Context, attrs: AttributeSet?) 
   init {
     context.obtainStyledAttributes(attrs, R.styleable.CartesianChartView).use { typedArray ->
       scrollEnabled =
-        typedArray.getBoolean(R.styleable.CartesianChartView_chartHorizontalScrollingEnabled, true)
+        typedArray.getBoolean(
+          R.styleable.CartesianChartView_scrollEnabled,
+          typedArray.getBoolean(
+            R.styleable.CartesianChartView_chartHorizontalScrollingEnabled,
+            true,
+          ),
+        )
       isChartZoomEnabled =
-        typedArray.getBoolean(R.styleable.CartesianChartView_chartZoomEnabled, true)
+        typedArray.getBoolean(
+          R.styleable.CartesianChartView_zoomEnabled,
+          typedArray.getBoolean(R.styleable.CartesianChartView_chartZoomEnabled, true),
+        )
       horizontalLayout = typedArray.getHorizontalLayout()
 
       context.obtainStyledAttributes(attrs, R.styleable.CartesianChartView).use {

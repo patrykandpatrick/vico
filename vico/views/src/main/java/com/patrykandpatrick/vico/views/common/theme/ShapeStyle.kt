@@ -60,15 +60,22 @@ internal fun TypedArray.getShape(context: Context): Shape {
         ),
     )
 
-  val dashLength =
+  val dashLengthDp =
     getRawDimension(context = context, index = R.styleable.Shape_dashLength, defaultValue = 0f)
-  val dashGapLength =
-    getRawDimension(context = context, index = R.styleable.Shape_dashGapLength, defaultValue = 0f)
 
-  return if (dashLength == 0f) {
+  return if (dashLengthDp == 0f) {
     shape
   } else {
-    DashedShape(shape = shape, dashLengthDp = dashLength, gapLengthDp = dashGapLength)
+    DashedShape(
+      shape = shape,
+      dashLengthDp = dashLengthDp,
+      gapLengthDp =
+        getRawDimension(
+          context,
+          R.styleable.Shape_gapLength,
+          getRawDimension(context, R.styleable.Shape_dashGapLength, 0f),
+        ),
+    )
   }
 }
 

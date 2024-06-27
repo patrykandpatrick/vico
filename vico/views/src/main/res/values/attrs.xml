@@ -49,7 +49,11 @@
         <attr name="showTopAxis" format="boolean" />
         <attr name="showEndAxis" format="boolean" />
         <attr name="showBottomAxis" format="boolean" />
+        <attr name="scrollEnabled" format="boolean" />
+        <!-- Deprecated. Use `scrollEnabled`. -->
         <attr name="chartHorizontalScrollingEnabled" format="boolean" />
+        <attr name="zoomEnabled" format="boolean" />
+        <!-- Deprecated. Use `zoomEnabled`. -->
         <attr name="chartZoomEnabled" format="boolean" />
         <attr name="fadingEdgeWidth" format="dimension" />
         <attr name="startFadingEdgeWidth" format="dimension" />
@@ -115,6 +119,8 @@
     </declare-styleable>
 
     <declare-styleable name="TextComponentStyle">
+        <attr name="android:color" />
+        <!-- Deprecated. Use `android:color`. -->
         <attr name="labelColor" format="color" />
         <attr name="backgroundStyle" format="reference" />
         <attr name="android:padding" />
@@ -184,6 +190,8 @@
         </attr>
 
         <attr name="dashLength" format="dimension" />
+        <attr name="gapLength" format="dimension" />
+        <!-- Deprecated. Use `gapLength`. -->
         <attr name="dashGapLength" format="dimension" />
     </declare-styleable>
 </resources>

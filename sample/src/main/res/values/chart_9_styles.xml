@@ -68,7 +68,7 @@
 
     <style name="Chart9AxisGuidelineShapeStyle">
         <item name="dashLength">4dp</item>
-        <item name="dashGapLength">8dp</item>
+        <item name="gapLength">8dp</item>
     </style>
 
     <style name="Chart9ThemeOverlay" parent="Theme.Vico">
