@@ -16,11 +16,14 @@
 
 package com.patrykandpatrick.vico.core.common
 
+import androidx.annotation.RestrictTo
+
 internal const val ERR_REPEATING_COLLECTION_EMPTY =
   "Cannot get repeated item from empty collection."
 
-internal const val ELLIPSIS: String = "…"
+internal const val ELLIPSIS = "…"
 
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public const val NEW_PRODUCER_ERROR_MESSAGE: String =
-  "A new `CartesianChartModelProducer` was provided. Run data " +
-    "updates via `tryRunTransaction` or `runTransaction`, not by creating new `CartesianChartModelProducer`s."
+  "A new `CartesianChartModelProducer` was provided. Run data updates via `tryRunTransaction` or " +
+    "`runTransaction`, not by creating new `CartesianChartModelProducer`s."
