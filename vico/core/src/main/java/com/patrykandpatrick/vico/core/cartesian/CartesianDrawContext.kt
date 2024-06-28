@@ -37,8 +37,13 @@ public interface CartesianDrawContext : DrawContext, CartesianMeasureContext {
   /** The point inside the chart’s coordinates where physical touch is occurring. */
   public val markerTouchPoint: Point?
 
-  /** The current amount of horizontal scroll. */
+  /** The scroll value (in pixels). */
+  public val scroll: Float
+
+  /** The scroll value (in pixels). */
+  @Deprecated("Use `scroll`.", ReplaceWith("scroll"))
   public val horizontalScroll: Float
+    get() = scroll
 
   /** The zoom factor. */
   public val zoom: Float
@@ -66,7 +71,7 @@ public fun CartesianDrawContext(
   markerTouchPoint: Point?,
   horizontalDimensions: HorizontalDimensions,
   chartBounds: RectF,
-  horizontalScroll: Float,
+  scroll: Float,
   zoom: Float,
 ): CartesianDrawContext =
   object : CartesianDrawContext, CartesianMeasureContext by measureContext {
@@ -78,11 +83,11 @@ public fun CartesianDrawContext(
 
     override val markerTouchPoint: Point? = markerTouchPoint
 
-    override val zoom: Float = zoom
-
     override val horizontalDimensions: HorizontalDimensions = horizontalDimensions
 
-    override val horizontalScroll: Float = horizontalScroll
+    override val scroll: Float = scroll
+
+    override val zoom: Float = zoom
 
     override fun withOtherCanvas(canvas: Canvas, block: (DrawContext) -> Unit) {
       val originalCanvas = this.canvas

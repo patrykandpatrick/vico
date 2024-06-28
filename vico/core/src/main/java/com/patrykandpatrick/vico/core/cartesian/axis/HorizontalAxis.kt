@@ -78,13 +78,11 @@ public open class HorizontalAxis<Position : AxisPosition.Horizontal>(
 
       val textY = if (position.isBottom) tickMarkBottom else tickMarkTop
       val baseCanvasX =
-        bounds.getStart(isLtr) - horizontalScroll +
+        bounds.getStart(isLtr) - scroll +
           horizontalDimensions.startPadding * layoutDirectionMultiplier
       val firstVisibleX =
         fullXRange.start +
-          horizontalScroll / horizontalDimensions.xSpacing *
-            chartValues.xStep *
-            layoutDirectionMultiplier
+          scroll / horizontalDimensions.xSpacing * chartValues.xStep * layoutDirectionMultiplier
       val lastVisibleX =
         firstVisibleX + bounds.width() / horizontalDimensions.xSpacing * chartValues.xStep
       val visibleXRange = firstVisibleX..lastVisibleX

@@ -77,7 +77,7 @@ public class VicoZoomState {
   /**
    * Houses information on a [CartesianChart]’s zoom factor. Allows for zoom customization.
    *
-   * @param zoomEnabled whether zooming is enabled.
+   * @param zoomEnabled whether zoom is enabled.
    * @param initialZoom represents the initial zoom factor.
    * @param minZoom represents the minimum zoom factor.
    * @param maxZoom represents the maximum zoom factor.

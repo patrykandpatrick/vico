@@ -36,7 +36,7 @@ import com.patrykandpatrick.vico.core.common.rangeWith
  * Houses information on a [CartesianChart]’s scroll value. Allows for scroll customization and
  * programmatic scrolling.
  *
- * @property scrollEnabled whether scrolling is enabled.
+ * @property scrollEnabled whether scroll is enabled.
  * @property initialScroll represents the initial scroll value.
  * @property autoScroll represents the scroll value or delta for automatic scrolling.
  * @property autoScrollCondition defines when an automatic scroll should be performed.

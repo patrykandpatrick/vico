@@ -73,8 +73,10 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       density = context.density,
       isLtr = context.isLtr,
       scrollEnabled = false,
-      spToPx = context::spToPx,
+      zoomEnabled = false,
+      horizontalLayout = HorizontalLayout.Segmented,
       chartValues = ChartValues.Empty,
+      spToPx = context::spToPx,
     )
 
   private val scaleGestureListener: ScaleGestureDetector.OnScaleGestureListener =
@@ -108,7 +110,9 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   public var zoomHandler: ZoomHandler by
     invalidatingObservable(
       ZoomHandler.default(themeHandler.isChartZoomEnabled, scrollHandler.scrollEnabled)
-    )
+    ) { _, newValue ->
+      measureContext.zoomEnabled = newValue.zoomEnabled
+    }
 
   private val motionEventHandler =
     MotionEventHandler(
@@ -339,7 +343,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
           markerTouchPoint = markerTouchPoint,
           horizontalDimensions = horizontalDimensions,
           chartBounds = chart.bounds,
-          horizontalScroll = scrollHandler.value,
+          scroll = scrollHandler.value,
           zoom = zoomHandler.value,
         )
 

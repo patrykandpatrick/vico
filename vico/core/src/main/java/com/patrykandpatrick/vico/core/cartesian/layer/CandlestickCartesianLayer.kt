@@ -122,7 +122,7 @@ public open class CandlestickCartesianLayer(
     val drawingStart =
       bounds.getStart(isLtr) +
         (horizontalDimensions.startPadding - halfMaxCandleWidth * zoom) *
-          layoutDirectionMultiplier - horizontalScroll
+          layoutDirectionMultiplier - scroll
 
     var bodyCenterX: Float
     var candle: Candle

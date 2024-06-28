@@ -205,6 +205,7 @@ internal fun CartesianChartHostImpl(
   val measureContext =
     rememberCartesianMeasureContext(
       scrollState.scrollEnabled,
+      zoomState.zoomEnabled,
       bounds,
       horizontalLayout,
       with(LocalContext.current) { ::spToPx },
@@ -273,7 +274,7 @@ internal fun CartesianChartHostImpl(
         markerTouchPoint = markerTouchPoint.value,
         horizontalDimensions = horizontalDimensions,
         chartBounds = chart.bounds,
-        horizontalScroll = scrollState.value,
+        scroll = scrollState.value,
         zoom = zoomState.value,
       )
 

@@ -29,6 +29,7 @@ import com.patrykandpatrick.vico.core.cartesian.data.ChartValues
 @Composable
 internal fun rememberCartesianMeasureContext(
   scrollEnabled: Boolean,
+  zoomEnabled: Boolean,
   canvasBounds: RectF,
   horizontalLayout: HorizontalLayout,
   spToPx: (Float) -> Float,
@@ -39,15 +40,19 @@ internal fun rememberCartesianMeasureContext(
         canvasBounds = canvasBounds,
         density = 0f,
         isLtr = true,
-        spToPx = spToPx,
+        scrollEnabled = scrollEnabled,
+        zoomEnabled = zoomEnabled,
+        horizontalLayout = horizontalLayout,
         chartValues = chartValues,
+        spToPx = spToPx,
       )
     }
     .apply {
       this.density = LocalDensity.current.density
       this.isLtr = LocalLayoutDirection.current == LayoutDirection.Ltr
       this.scrollEnabled = scrollEnabled
+      this.zoomEnabled = zoomEnabled
       this.horizontalLayout = horizontalLayout
-      this.spToPx = spToPx
       this.chartValues = chartValues
+      this.spToPx = spToPx
     }

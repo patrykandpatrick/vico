@@ -277,8 +277,7 @@ public open class LineCartesianLayer(
         val drawingStartAlignmentCorrection =
           layoutDirectionMultiplier * horizontalDimensions.startPadding
 
-        val drawingStart =
-          bounds.getStart(isLtr = isLtr) + drawingStartAlignmentCorrection - horizontalScroll
+        val drawingStart = bounds.getStart(isLtr = isLtr) + drawingStartAlignmentCorrection - scroll
 
         forEachPointInBounds(
           series = entries,

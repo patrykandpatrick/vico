@@ -28,8 +28,9 @@ public class MutableCartesianMeasureContext(
   override val canvasBounds: RectF,
   override var density: Float,
   override var isLtr: Boolean,
-  override var scrollEnabled: Boolean = false,
-  override var horizontalLayout: HorizontalLayout = HorizontalLayout.Segmented,
+  override var scrollEnabled: Boolean,
+  override var zoomEnabled: Boolean,
+  override var horizontalLayout: HorizontalLayout,
   override var chartValues: ChartValues,
   spToPx: (Float) -> Float,
 ) :

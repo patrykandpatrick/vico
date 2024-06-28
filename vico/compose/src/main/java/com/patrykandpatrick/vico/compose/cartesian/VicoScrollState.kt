@@ -111,7 +111,7 @@ public class VicoScrollState {
    * Houses information on a [CartesianChart]’s scroll value. Allows for scroll customization and
    * programmatic scrolling.
    *
-   * @param scrollEnabled whether scrolling is enabled.
+   * @param scrollEnabled whether scroll is enabled.
    * @param initialScroll represents the initial scroll value.
    * @param autoScroll represents the scroll value or delta for automatic scrolling.
    * @param autoScrollCondition defines when an automatic scroll should occur.

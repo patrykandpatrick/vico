@@ -27,8 +27,11 @@ public interface CartesianMeasureContext : MeasureContext {
   /** The chart’s [ChartValues]. */
   public val chartValues: ChartValues
 
-  /** Whether horizontal scrolling is enabled. */
+  /** Whether scroll is enabled. */
   public val scrollEnabled: Boolean
+
+  /** Whether zoom is enabled. */
+  public val zoomEnabled: Boolean
 
   /** Defines how the chart’s content is positioned horizontally. */
   public val horizontalLayout: HorizontalLayout
