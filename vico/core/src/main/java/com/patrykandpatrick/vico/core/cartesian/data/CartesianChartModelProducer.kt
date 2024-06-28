@@ -188,8 +188,17 @@ public class CartesianChartModelProducer(dispatcher: CoroutineDispatcher = Dispa
      * Allows for adding auxiliary values, which can later be retrieved via
      * [CartesianChartModel.extraStore].
      */
-    public fun updateExtras(block: (MutableExtraStore) -> Unit) {
+    public fun extras(block: (MutableExtraStore) -> Unit) {
       block(newExtraStore)
+    }
+
+    /**
+     * Allows for adding auxiliary values, which can later be retrieved via
+     * [CartesianChartModel.extraStore].
+     */
+    @Deprecated("Use `extras`.", ReplaceWith("extras(block)"))
+    public fun updateExtras(block: (MutableExtraStore) -> Unit) {
+      extras(block)
     }
 
     /**
