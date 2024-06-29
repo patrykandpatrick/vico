@@ -275,33 +275,31 @@ public open class HorizontalAxis<Position : AxisPosition.Horizontal>(
     }
   }
 
-  override fun getInsets(
+  override fun updateInsets(
     context: CartesianMeasureContext,
-    outInsets: Insets,
     horizontalDimensions: HorizontalDimensions,
+    insets: Insets,
   ) {
     val maxLabelWidth =
       context.getMaxLabelWidth(horizontalDimensions, context.getFullXRange(horizontalDimensions))
-    with(outInsets) {
-      start =
-        itemPlacer.getStartHorizontalAxisInset(
-          context,
-          horizontalDimensions,
-          context.tickThickness,
-          maxLabelWidth,
-        )
-      end =
-        itemPlacer.getEndHorizontalAxisInset(
-          context,
-          horizontalDimensions,
-          context.tickThickness,
-          maxLabelWidth,
-        )
-      top =
-        if (position.isTop) getDesiredHeight(context, horizontalDimensions, maxLabelWidth) else 0f
-      bottom =
-        if (position.isBottom) getDesiredHeight(context, horizontalDimensions, maxLabelWidth)
-        else 0f
+    val height = getHeight(context, horizontalDimensions, maxLabelWidth)
+    insets.ensureValuesAtLeast(
+      itemPlacer.getStartHorizontalAxisInset(
+        context,
+        horizontalDimensions,
+        context.tickThickness,
+        maxLabelWidth,
+      ),
+      itemPlacer.getEndHorizontalAxisInset(
+        context,
+        horizontalDimensions,
+        context.tickThickness,
+        maxLabelWidth,
+      ),
+    )
+    when {
+      position.isTop -> insets.ensureValuesAtLeast(top = height)
+      position.isBottom -> insets.ensureValuesAtLeast(bottom = height)
     }
   }
 
@@ -314,7 +312,7 @@ public open class HorizontalAxis<Position : AxisPosition.Horizontal>(
       start..end
     }
 
-  protected open fun getDesiredHeight(
+  protected open fun getHeight(
     context: CartesianMeasureContext,
     horizontalDimensions: HorizontalDimensions,
     maxLabelWidth: Float,

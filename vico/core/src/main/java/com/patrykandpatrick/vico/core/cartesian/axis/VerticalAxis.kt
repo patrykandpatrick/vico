@@ -215,29 +215,27 @@ public open class VerticalAxis<Position : AxisPosition.Vertical>(override val po
     }
   }
 
-  override fun getHorizontalInsets(
+  override fun updateHorizontalInsets(
     context: CartesianMeasureContext,
-    availableHeight: Float,
-    outInsets: HorizontalInsets,
-  ): Unit =
-    with(context) {
-      val desiredWidth = getDesiredWidth(this, availableHeight)
-
-      outInsets.set(
-        start = if (position.isStart) desiredWidth else 0f,
-        end = if (position.isEnd) desiredWidth else 0f,
-      )
+    freeHeight: Float,
+    insets: HorizontalInsets,
+  ) {
+    val width = getWidth(context, freeHeight)
+    when {
+      position.isStart -> insets.ensureValuesAtLeast(start = width)
+      position.isEnd -> insets.ensureValuesAtLeast(end = width)
     }
+  }
 
-  override fun getInsets(
+  override fun updateInsets(
     context: CartesianMeasureContext,
-    outInsets: Insets,
     horizontalDimensions: HorizontalDimensions,
+    insets: Insets,
   ): Unit =
     with(context) {
       val maxLabelHeight = getMaxLabelHeight()
       val maxLineThickness = maxOf(axisThickness, tickThickness)
-      outInsets.set(
+      insets.ensureValuesAtLeast(
         top =
           itemPlacer.getTopVerticalAxisInset(
             context,
@@ -255,11 +253,7 @@ public open class VerticalAxis<Position : AxisPosition.Vertical>(override val po
       )
     }
 
-  /**
-   * Calculates the optimal width for this [VerticalAxis], accounting for the value of
-   * [sizeConstraint].
-   */
-  protected open fun getDesiredWidth(context: CartesianMeasureContext, height: Float): Float =
+  protected open fun getWidth(context: CartesianMeasureContext, freeHeight: Float): Float =
     with(context) {
       when (val constraint = sizeConstraint) {
         is SizeConstraint.Auto -> {
@@ -277,7 +271,7 @@ public open class VerticalAxis<Position : AxisPosition.Vertical>(override val po
           val labelSpace =
             when (horizontalLabelPosition) {
               Outside -> {
-                val maxLabelWidth = getMaxLabelWidth(height).ceil
+                val maxLabelWidth = getMaxLabelWidth(freeHeight).ceil
                 extraStore[maxLabelWidthKey] = maxLabelWidth
                 maxLabelWidth + tickLength
               }

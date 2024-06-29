@@ -34,6 +34,7 @@ import com.patrykandpatrick.vico.core.common.BoundsAware
 import com.patrykandpatrick.vico.core.common.Legend
 import com.patrykandpatrick.vico.core.common.data.MutableExtraStore
 import com.patrykandpatrick.vico.core.common.inClip
+import com.patrykandpatrick.vico.core.common.orZero
 import com.patrykandpatrick.vico.core.common.set
 import com.patrykandpatrick.vico.core.common.setAll
 import java.util.SortedMap
@@ -52,9 +53,8 @@ public open class CartesianChart(
 ) : BoundsAware, ChartInsetter {
   private val decorations = mutableListOf<Decoration>()
   private val persistentMarkers = mutableMapOf<Float, CartesianMarker>()
-  private val tempInsets = Insets()
+  private val insets = Insets()
   private val axisManager = AxisManager()
-  private val virtualLayout = VirtualLayout(axisManager)
   private val _markerTargets = sortedMapOf<Float, MutableList<CartesianMarker.Target>>()
 
   private val drawingModelAndLayerConsumer =
@@ -102,6 +102,7 @@ public open class CartesianChart(
   public val layers: List<CartesianLayer<*>> = layers.toList()
 
   /** The [CartesianChart]’s [ChartInsetter]s (persistent [CartesianMarker]s). */
+  @Deprecated("This is no longer used. Consumers aren’t expected to require this property.")
   public val chartInsetters: Collection<ChartInsetter> = persistentMarkers.values
 
   /** Links _x_ values to [CartesianMarker.Target]s. */
@@ -139,10 +140,11 @@ public open class CartesianChart(
     context: CartesianMeasureContext,
     model: CartesianChartModel,
     horizontalDimensions: MutableHorizontalDimensions,
-    bounds: RectF,
+    canvasBounds: RectF,
     marker: CartesianMarker?,
   ) {
     _markerTargets.clear()
+    insets.clear()
     model.forEachWithLayer(
       horizontalDimensionUpdateModelAndLayerConsumer.apply {
         this.context = context
@@ -153,7 +155,29 @@ public open class CartesianChart(
     topAxis?.updateHorizontalDimensions(context, horizontalDimensions)
     endAxis?.updateHorizontalDimensions(context, horizontalDimensions)
     bottomAxis?.updateHorizontalDimensions(context, horizontalDimensions)
-    virtualLayout.setBounds(context, bounds, this, legend, horizontalDimensions, marker)
+    val insetters = buildList {
+      add(this@CartesianChart)
+      addAll(axisManager.axisCache)
+      if (marker != null) add(marker)
+      addAll(persistentMarkers.values)
+    }
+    insetters.forEach { it.updateInsets(context, horizontalDimensions, insets) }
+    val legendHeight = legend?.getHeight(context, canvasBounds.width()).orZero
+    val freeHeight = canvasBounds.height() - insets.vertical - legendHeight
+    insetters.forEach { it.updateHorizontalInsets(context, freeHeight, insets) }
+    setBounds(
+      canvasBounds.left + insets.getLeft(context.isLtr),
+      canvasBounds.top + insets.top,
+      canvasBounds.right - insets.getRight(context.isLtr),
+      canvasBounds.bottom - insets.bottom - legendHeight,
+    )
+    axisManager.setAxesBounds(context, canvasBounds, bounds, insets)
+    legend?.setBounds(
+      left = canvasBounds.left,
+      top = bounds.bottom + insets.bottom,
+      right = canvasBounds.right,
+      bottom = bounds.bottom + insets.bottom + legendHeight,
+    )
   }
 
   /** Draws the [CartesianChart]. */
@@ -188,24 +212,20 @@ public open class CartesianChart(
     )
   }
 
-  override fun getInsets(
+  override fun updateInsets(
     context: CartesianMeasureContext,
-    outInsets: Insets,
     horizontalDimensions: HorizontalDimensions,
+    insets: Insets,
   ) {
-    tempInsets.clear()
-    layers.forEach { it.getInsets(context, tempInsets, horizontalDimensions) }
-    outInsets.setValuesIfGreater(tempInsets)
+    layers.forEach { it.updateInsets(context, horizontalDimensions, insets) }
   }
 
-  override fun getHorizontalInsets(
+  override fun updateHorizontalInsets(
     context: CartesianMeasureContext,
-    availableHeight: Float,
-    outInsets: HorizontalInsets,
+    freeHeight: Float,
+    insets: HorizontalInsets,
   ) {
-    tempInsets.clear()
-    layers.forEach { it.getHorizontalInsets(context, availableHeight, tempInsets) }
-    outInsets.setValuesIfGreater(start = tempInsets.start, end = tempInsets.end)
+    layers.forEach { it.updateHorizontalInsets(context, freeHeight, insets) }
   }
 
   /** Prepares the [CartesianLayer]s for a difference animation. */

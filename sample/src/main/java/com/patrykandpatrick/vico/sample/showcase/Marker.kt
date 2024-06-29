@@ -97,17 +97,25 @@ internal fun rememberMarker(
           },
         guideline = guideline,
       ) {
-      override fun getInsets(
+      override fun updateInsets(
         context: CartesianMeasureContext,
-        outInsets: Insets,
         horizontalDimensions: HorizontalDimensions,
+        insets: Insets,
       ) {
         with(context) {
-          super.getInsets(context, outInsets, horizontalDimensions)
           val baseShadowInsetDp =
             CLIPPING_FREE_SHADOW_RADIUS_MULTIPLIER * LABEL_BACKGROUND_SHADOW_RADIUS_DP
-          outInsets.top += (baseShadowInsetDp - LABEL_BACKGROUND_SHADOW_DY_DP).pixels
-          outInsets.bottom += (baseShadowInsetDp + LABEL_BACKGROUND_SHADOW_DY_DP).pixels
+          var topInset = (baseShadowInsetDp - LABEL_BACKGROUND_SHADOW_DY_DP).pixels
+          var bottomInset = (baseShadowInsetDp + LABEL_BACKGROUND_SHADOW_DY_DP).pixels
+          when (labelPosition) {
+            LabelPosition.Top,
+            LabelPosition.AbovePoint ->
+              topInset += label.getHeight(context) + label.tickSizeDp.pixels
+            LabelPosition.Bottom ->
+              bottomInset += label.getHeight(context) + label.tickSizeDp.pixels
+            LabelPosition.AroundPoint -> {}
+          }
+          insets.ensureValuesAtLeast(top = topInset, bottom = bottomInset)
         }
       }
     }

@@ -16,127 +16,82 @@
 
 package com.patrykandpatrick.vico.core.cartesian
 
-import com.patrykandpatrick.vico.core.common.half
-import kotlin.math.max
-
 /**
  * Used to store the insets requested by [ChartInsetter]s.
  *
- * @param start the start inset.
- * @param top the top inset.
- * @param end the end inset.
- * @param bottom the bottom inset.
  * @see ChartInsetter
  */
-public class Insets(
-  public var start: Float = 0f,
-  public var top: Float = 0f,
-  public var end: Float = 0f,
-  public var bottom: Float = 0f,
-) : HorizontalInsets {
-  /** The sum of the sizes of the start inset and the end inset. */
-  public val horizontal: Float
-    get() = start + end
+public class Insets : HorizontalInsets {
+  /** The start inset’s size (in pixels). */
+  public override var start: Float = 0f
+    private set
 
-  /** The sum of the sizes of the top inset and the bottom inset. */
+  /** The top inset’s size (in pixels). */
+  public var top: Float = 0f
+    private set
+
+  /** The end inset’s size (in pixels). */
+  public override var end: Float = 0f
+    private set
+
+  /** The bottom inset’s size (in pixels). */
+  public var bottom: Float = 0f
+    private set
+
+  /** The sum of [top] and [bottom]. */
   public val vertical: Float
     get() = top + bottom
 
-  /** The largest of the four insets. */
+  /** The largest of [start], [top], [end], and [bottom]. */
   public val max: Float
     get() = maxOf(start, top, end, bottom)
 
-  /**
-   * Updates the size of each of the four insets to match the size of its corresponding inset from
-   * the provided [Insets] instance.
-   */
-  public fun set(other: Insets): Insets = set(other.start, other.top, other.end, other.bottom)
-
-  /** Sets a common size for all four insets. */
-  public fun set(all: Float): Insets = set(all, all, all, all)
-
-  /** Updates the size of each of the four insets individually. */
-  public fun set(start: Float = 0f, top: Float = 0f, end: Float = 0f, bottom: Float = 0f): Insets =
-    apply {
-      this.start = start
-      this.top = top
-      this.end = end
-      this.bottom = bottom
-    }
-
-  /** Updates the sizes of the start inset and the end inset. */
-  override fun set(start: Float, end: Float) {
-    this.start = start
-    this.end = end
+  override fun ensureValuesAtLeast(start: Float, end: Float) {
+    this.start = this.start.coerceAtLeast(start)
+    this.end = this.end.coerceAtLeast(end)
   }
 
-  /**
-   * Returns the size of the left inset, taking into account the layout direction.
-   *
-   * @param isLtr whether the layout is left-to-right.
-   */
-  public fun getLeft(isLtr: Boolean): Float = if (isLtr) start else end
-
-  /**
-   * Returns the size of the right inset, taking into account the layout direction.
-   *
-   * @param isLtr whether the layout is left-to-right.
-   */
-  public fun getRight(isLtr: Boolean): Float = if (isLtr) end else start
-
-  /**
-   * Sets the sizes of the start inset and the end inset. [value] represents the sum of the two
-   * insets’ sizes, meaning the size of either inset will be half of [value].
-   */
-  public fun setHorizontal(value: Float): Insets = apply {
-    start = value.half
-    end = value.half
+  /** Ensures that the stored values are no smaller than the provided ones. */
+  public fun ensureValuesAtLeast(
+    start: Float = this.start,
+    top: Float = this.top,
+    end: Float = this.end,
+    bottom: Float = this.bottom,
+  ) {
+    this.start = this.start.coerceAtLeast(start)
+    this.top = this.top.coerceAtLeast(top)
+    this.end = this.end.coerceAtLeast(end)
+    this.bottom = this.bottom.coerceAtLeast(bottom)
   }
 
-  /**
-   * Sets the sizes of the top inset and the bottom inset. [value] represents the sum of the two
-   * insets’ sizes, meaning the size of either inset will be half of [value].
-   */
-  public fun setVertical(value: Float): Insets = apply {
-    top = value.half
-    bottom = value.half
-  }
-
-  override fun setValuesIfGreater(start: Float, end: Float) {
-    this.start = max(start, this.start)
-    this.end = max(end, this.end)
-  }
-
-  /**
-   * For each of the four insets, updates the size of the inset to the size of the corresponding
-   * inset from the provided [Insets] instance if the size of the corresponding inset from the
-   * provided [Insets] instance is greater.
-   */
-  public fun setValuesIfGreater(other: Insets) {
-    start = max(start, other.start)
-    top = max(top, other.top)
-    end = max(end, other.end)
-    bottom = max(bottom, other.bottom)
-  }
-
-  /**
-   * For each of the four insets, updates the size of the inset to the corresponding provided value
-   * if the corresponding provided value is greater.
-   */
+  /** Ensures that the stored values are no smaller than the provided ones. */
+  @Deprecated(
+    "Use `ensureValuesAtLeast`.",
+    ReplaceWith("ensureValuesAtLeast(start, top, end, bottom)"),
+  )
   public fun setAllIfGreater(
     start: Float = this.start,
     top: Float = this.top,
     end: Float = this.end,
     bottom: Float = this.bottom,
   ) {
-    this.start = max(start, this.start)
-    this.top = max(top, this.top)
-    this.end = max(end, this.end)
-    this.bottom = max(bottom, this.bottom)
+    ensureValuesAtLeast(start, top, end, bottom)
   }
 
-  /** Sets the size of each of the four insets to zero. */
+  /** Ensures that the stored values are no smaller than those in [other]. */
+  @Deprecated(
+    "Use `ensureValuesAtLeast`.",
+    ReplaceWith("ensureValuesAtLeast(other.start, other.top, other.end, other.bottom)"),
+  )
+  public fun setValuesIfGreater(other: Insets) {
+    ensureValuesAtLeast(other.start, other.top, other.end, other.bottom)
+  }
+
+  /** Clears the stored values. */
   public fun clear() {
-    set(0f)
+    start = 0f
+    top = 0f
+    end = 0f
+    bottom = 0f
   }
 }

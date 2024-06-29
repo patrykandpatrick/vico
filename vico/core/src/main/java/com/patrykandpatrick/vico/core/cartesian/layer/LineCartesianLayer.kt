@@ -546,17 +546,17 @@ public open class LineCartesianLayer(
     )
   }
 
-  override fun getInsets(
+  override fun updateInsets(
     context: CartesianMeasureContext,
-    outInsets: Insets,
     horizontalDimensions: HorizontalDimensions,
+    insets: Insets,
   ): Unit =
     with(context) {
-      outInsets.setVertical(
+      val verticalInset =
         lines
           .maxOf { if (it.point != null) max(it.thicknessDp, it.pointSizeDp) else it.thicknessDp }
           .pixels
-      )
+      insets.ensureValuesAtLeast(top = verticalInset, bottom = verticalInset)
     }
 
   override fun prepareForTransformation(

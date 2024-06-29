@@ -53,7 +53,7 @@ public abstract class BaseCartesianLayer<T : CartesianLayerModel> : CartesianLay
   override fun draw(context: CartesianDrawContext, model: T) {
     with(context) {
       insets.clear()
-      getInsets(this, insets, horizontalDimensions)
+      updateInsets(this, horizontalDimensions, insets)
       canvas.inClip(
         left = bounds.left - insets.getLeft(isLtr),
         top = bounds.top - insets.top,

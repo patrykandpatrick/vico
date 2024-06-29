@@ -200,18 +200,18 @@ public open class DefaultCartesianMarker(
       .forEach { x -> guideline?.drawVertical(this, chartBounds.top, chartBounds.bottom, x) }
   }
 
-  override fun getInsets(
+  override fun updateInsets(
     context: CartesianMeasureContext,
-    outInsets: Insets,
     horizontalDimensions: HorizontalDimensions,
+    insets: Insets,
   ) {
     with(context) {
       when (labelPosition) {
         LabelPosition.Top,
         LabelPosition.AbovePoint ->
-          outInsets.top = label.getHeight(context) + label.tickSizeDp.pixels
+          insets.ensureValuesAtLeast(top = label.getHeight(context) + label.tickSizeDp.pixels)
         LabelPosition.Bottom ->
-          outInsets.bottom = label.getHeight(context) + label.tickSizeDp.pixels
+          insets.ensureValuesAtLeast(bottom = label.getHeight(context) + label.tickSizeDp.pixels)
         LabelPosition.AroundPoint -> Unit // Will be inside the chart
       }
     }

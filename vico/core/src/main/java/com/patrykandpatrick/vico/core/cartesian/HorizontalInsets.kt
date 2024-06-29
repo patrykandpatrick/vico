@@ -23,12 +23,29 @@ package com.patrykandpatrick.vico.core.cartesian
  * @see Insets
  */
 public interface HorizontalInsets {
-  /** Sets the start and end insets. */
-  public fun set(start: Float, end: Float)
+  /** The start inset’s size (in pixels). */
+  public val start: Float
 
-  /**
-   * For the start and end insets, updates the value of the inset to the corresponding provided
-   * value if the provided value is greater than the current value.
-   */
-  public fun setValuesIfGreater(start: Float, end: Float)
+  /** The end inset’s size (in pixels). */
+  public val end: Float
+
+  /** The sum of [start] and [end]. */
+  public val horizontal: Float
+    get() = start + end
+
+  /** Returns the left inset’s size (in pixels). */
+  public fun getLeft(isLtr: Boolean): Float = if (isLtr) start else end
+
+  /** Returns the right inset’s size (in pixels). */
+  public fun getRight(isLtr: Boolean): Float = if (isLtr) end else start
+
+  /** Ensures that the stored values are no smaller than the provided ones. */
+  public fun ensureValuesAtLeast(start: Float = this.start, end: Float = this.end)
+
+  /** Ensures that the stored values are no smaller than the provided ones. */
+  @Suppress("DeprecatedCallableAddReplaceWith")
+  @Deprecated("Use `ensureValuesAtLeast`.")
+  public fun setValuesIfGreater(start: Float, end: Float) {
+    ensureValuesAtLeast(start, end)
+  }
 }

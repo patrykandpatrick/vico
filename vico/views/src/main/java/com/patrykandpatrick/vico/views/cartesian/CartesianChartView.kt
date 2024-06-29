@@ -69,7 +69,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 
   override val measureContext: MutableCartesianMeasureContext =
     MutableCartesianMeasureContext(
-      canvasBounds = contentBounds,
+      canvasBounds = canvasBounds,
       density = context.density,
       isLtr = context.isLtr,
       scrollEnabled = false,
@@ -322,7 +322,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     withChartAndModel { chart, model ->
       measureContext.reset()
       horizontalDimensions.clear()
-      chart.prepare(measureContext, model, horizontalDimensions, contentBounds, marker)
+      chart.prepare(measureContext, model, horizontalDimensions, canvasBounds, marker)
 
       if (chart.bounds.isEmpty) return@withChartAndModel
 

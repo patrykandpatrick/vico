@@ -200,13 +200,13 @@ internal fun CartesianChartHostImpl(
   horizontalLayout: HorizontalLayout,
   chartValues: ChartValues,
 ) {
-  val bounds = remember { RectF() }
+  val canvasBounds = remember { RectF() }
   val markerTouchPoint = remember { mutableStateOf<Point?>(null) }
   val measureContext =
     rememberCartesianMeasureContext(
       scrollState.scrollEnabled,
       zoomState.zoomEnabled,
-      bounds,
+      canvasBounds,
       horizontalLayout,
       with(LocalContext.current) { ::spToPx },
       chartValues,
@@ -251,10 +251,10 @@ internal fun CartesianChartHostImpl(
             },
         )
   ) {
-    bounds.set(left = 0, top = 0, right = size.width, bottom = size.height)
+    canvasBounds.set(left = 0, top = 0, right = size.width, bottom = size.height)
 
     horizontalDimensions.clear()
-    chart.prepare(measureContext, model, horizontalDimensions, bounds, marker)
+    chart.prepare(measureContext, model, horizontalDimensions, canvasBounds, marker)
 
     if (chart.bounds.isEmpty) return@Canvas
 

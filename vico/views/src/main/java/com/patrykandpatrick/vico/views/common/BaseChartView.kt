@@ -50,11 +50,11 @@ public abstract class BaseChartView<Model>
 @JvmOverloads
 constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) :
   FrameLayout(context, attrs, defStyleAttr) {
-  protected val contentBounds: RectF = RectF()
+  protected val canvasBounds: RectF = RectF()
 
   protected open val measureContext: MutableMeasureContext =
     MutableMeasureContext(
-      canvasBounds = contentBounds,
+      canvasBounds = canvasBounds,
       density = context.density,
       isLtr = context.isLtr,
       spToPx = context::spToPx,
@@ -151,7 +151,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
       MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY),
     )
-    contentBounds.set(
+    canvasBounds.set(
       left = paddingLeft,
       top = paddingTop,
       right = width - paddingRight,
