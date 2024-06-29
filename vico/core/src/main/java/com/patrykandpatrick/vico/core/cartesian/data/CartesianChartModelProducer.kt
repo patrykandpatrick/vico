@@ -155,6 +155,7 @@ public class CartesianChartModelProducer(dispatcher: CoroutineDispatcher = Dispa
   }
 
   /** Creates a [Transaction] instance. */
+  @Deprecated("Use the `Transaction` constructor.", ReplaceWith("Transaction()"))
   public fun createTransaction(): Transaction = Transaction()
 
   /**
@@ -162,20 +163,20 @@ public class CartesianChartModelProducer(dispatcher: CoroutineDispatcher = Dispa
    * For suspending behavior, use [runTransaction].
    */
   public fun tryRunTransaction(block: Transaction.() -> Unit): Boolean =
-    createTransaction().also(block).tryCommit()
+    Transaction().also(block).tryCommit()
 
   /**
    * Creates a [Transaction], runs [block], and calls [Transaction.commit], returning its output.
    */
   public suspend fun runTransaction(block: Transaction.() -> Unit): Deferred<Unit> =
-    createTransaction().also(block).commit()
+    Transaction().also(block).commit()
 
   /**
    * Handles data updates. An initially empty list of [CartesianLayerModel.Partial]s is created and
    * can be updated via the class’s functions. Each [CartesianLayerModel.Partial] corresponds to a
    * [CartesianLayer].
    */
-  public inner class Transaction internal constructor() {
+  public inner class Transaction {
     private val newPartials = mutableListOf<CartesianLayerModel.Partial>()
     private val newExtraStore = MutableExtraStore()
 
