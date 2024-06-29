@@ -25,10 +25,9 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 
@@ -54,9 +53,9 @@ public class CartesianChartModelProducer(dispatcher: CoroutineDispatcher = Dispa
     this.partials = immutablePartials
     this.extraStore = extraStore
     cachedModel = null
-    val deferredUpdates = updateReceivers.values.map { coroutineScope.async { it.handleUpdate() } }
+    val receiverJobs = updateReceivers.values.map { coroutineScope.launch { it.handleUpdate() } }
     coroutineScope.launch {
-      deferredUpdates.awaitAll()
+      receiverJobs.joinAll()
       mutex.unlock()
     }
     return true
@@ -77,9 +76,9 @@ public class CartesianChartModelProducer(dispatcher: CoroutineDispatcher = Dispa
     this.partials = partials.toList()
     this.extraStore = extraStore
     cachedModel = null
-    val deferredUpdates = updateReceivers.values.map { coroutineScope.async { it.handleUpdate() } }
+    val receiverJobs = updateReceivers.values.map { coroutineScope.launch { it.handleUpdate() } }
     coroutineScope.launch {
-      deferredUpdates.awaitAll()
+      receiverJobs.joinAll()
       mutex.unlock()
       completableDeferred.complete(Unit)
     }
