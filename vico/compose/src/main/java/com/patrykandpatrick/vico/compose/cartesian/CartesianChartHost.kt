@@ -204,12 +204,12 @@ internal fun CartesianChartHostImpl(
   val markerTouchPoint = remember { mutableStateOf<Point?>(null) }
   val measureContext =
     rememberCartesianMeasureContext(
-      scrollState.scrollEnabled,
-      zoomState.zoomEnabled,
-      canvasBounds,
-      horizontalLayout,
-      with(LocalContext.current) { ::spToPx },
-      chartValues,
+      scrollEnabled = scrollState.scrollEnabled,
+      zoomEnabled = scrollState.scrollEnabled && zoomState.zoomEnabled,
+      canvasBounds = canvasBounds,
+      horizontalLayout = horizontalLayout,
+      spToPx = with(LocalContext.current) { ::spToPx },
+      chartValues = chartValues,
     )
   val previousMarkerTargetHashCode = remember { ValueWrapper<Int?>(null) }
 

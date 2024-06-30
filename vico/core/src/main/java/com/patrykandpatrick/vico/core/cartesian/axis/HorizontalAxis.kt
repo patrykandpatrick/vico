@@ -246,15 +246,20 @@ public open class HorizontalAxis<Position : AxisPosition.Horizontal>(
           chartValues = chartValues,
           verticalAxisPosition = null,
         )
-      label
-        .getWidth(
-          context = context,
-          text = text,
-          rotationDegrees = labelRotationDegrees,
-          pad = true,
-        )
-        .half
-        .let { horizontalDimensions.ensureValuesAtLeast(unscalableStartPadding = it) }
+      var unscalableStartPadding =
+        label
+          .getWidth(
+            context = context,
+            text = text,
+            rotationDegrees = labelRotationDegrees,
+            pad = true,
+          )
+          .half
+      if (!context.zoomEnabled) {
+        unscalableStartPadding -=
+          (firstLabelValue - chartValues.minX) * horizontalDimensions.xSpacing
+      }
+      horizontalDimensions.ensureValuesAtLeast(unscalableStartPadding = unscalableStartPadding)
     }
     if (lastLabelValue != null) {
       val text =
@@ -263,15 +268,19 @@ public open class HorizontalAxis<Position : AxisPosition.Horizontal>(
           chartValues = chartValues,
           verticalAxisPosition = null,
         )
-      label
-        .getWidth(
-          context = context,
-          text = text,
-          rotationDegrees = labelRotationDegrees,
-          pad = true,
-        )
-        .half
-        .let { horizontalDimensions.ensureValuesAtLeast(unscalableEndPadding = it) }
+      var unscalableEndPadding =
+        label
+          .getWidth(
+            context = context,
+            text = text,
+            rotationDegrees = labelRotationDegrees,
+            pad = true,
+          )
+          .half
+      if (!context.zoomEnabled) {
+        unscalableEndPadding -= (chartValues.maxX - lastLabelValue) * horizontalDimensions.xSpacing
+      }
+      horizontalDimensions.ensureValuesAtLeast(unscalableEndPadding = unscalableEndPadding)
     }
   }
 

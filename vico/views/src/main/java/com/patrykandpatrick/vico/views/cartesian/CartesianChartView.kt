@@ -104,6 +104,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       newValue.postInvalidate = ::postInvalidate
       newValue.postInvalidateOnAnimation = ::postInvalidateOnAnimation
       measureContext.scrollEnabled = newValue.scrollEnabled
+      measureContext.zoomEnabled = measureContext.zoomEnabled && newValue.scrollEnabled
     }
 
   /** Houses information on the [CartesianChart]’s zoom factor. Allows for zoom customization. */
@@ -111,7 +112,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     invalidatingObservable(
       ZoomHandler.default(themeHandler.isChartZoomEnabled, scrollHandler.scrollEnabled)
     ) { _, newValue ->
-      measureContext.zoomEnabled = newValue.zoomEnabled
+      measureContext.zoomEnabled = newValue.zoomEnabled && measureContext.scrollEnabled
     }
 
   private val motionEventHandler =
