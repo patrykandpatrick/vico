@@ -23,6 +23,7 @@ internal const val ERR_REPEATING_COLLECTION_EMPTY =
 
 internal const val ELLIPSIS = "…"
 
+/** @suppress */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public const val NEW_PRODUCER_ERROR_MESSAGE: String =
   "A new `CartesianChartModelProducer` was provided. Run data updates via `tryRunTransaction` or " +
