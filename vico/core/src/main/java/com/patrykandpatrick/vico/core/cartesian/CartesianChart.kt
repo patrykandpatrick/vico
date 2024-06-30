@@ -30,7 +30,7 @@ import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
-import com.patrykandpatrick.vico.core.common.BoundsAware
+import com.patrykandpatrick.vico.core.common.Bounded
 import com.patrykandpatrick.vico.core.common.Legend
 import com.patrykandpatrick.vico.core.common.data.MutableExtraStore
 import com.patrykandpatrick.vico.core.common.inClip
@@ -50,7 +50,7 @@ public open class CartesianChart(
   layers: List<CartesianLayer<*>>,
   public var legend: Legend<CartesianMeasureContext, CartesianDrawContext>? = null,
   public var fadingEdges: FadingEdges? = null,
-) : BoundsAware, ChartInsetter {
+) : Bounded, ChartInsetter {
   private val decorations = mutableListOf<Decoration>()
   private val persistentMarkers = mutableMapOf<Float, CartesianMarker>()
   private val insets = Insets()

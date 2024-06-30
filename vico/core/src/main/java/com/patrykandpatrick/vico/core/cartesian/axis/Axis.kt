@@ -22,13 +22,13 @@ import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasureContext
 import com.patrykandpatrick.vico.core.cartesian.ChartInsetter
 import com.patrykandpatrick.vico.core.cartesian.MutableHorizontalDimensions
-import com.patrykandpatrick.vico.core.common.BoundsAware
+import com.patrykandpatrick.vico.core.common.Bounded
 
 /**
  * Defines the minimal set of properties and functions required by other parts of the library to
  * draw an axis.
  */
-public interface Axis<Position : AxisPosition> : BoundsAware, ChartInsetter {
+public interface Axis<Position : AxisPosition> : Bounded, ChartInsetter {
   /** Defines the position of the axis relative to the [CartesianChart]. */
   public val position: Position
 

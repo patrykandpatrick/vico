@@ -25,14 +25,14 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianLayerModel
 import com.patrykandpatrick.vico.core.cartesian.data.ChartValues
 import com.patrykandpatrick.vico.core.cartesian.data.MutableChartValues
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
-import com.patrykandpatrick.vico.core.common.BoundsAware
+import com.patrykandpatrick.vico.core.common.Bounded
 import com.patrykandpatrick.vico.core.common.data.MutableExtraStore
 
 /**
  * Visualizes data on a Cartesian plane. [CartesianLayer]s are combined and drawn by
  * [CartesianChart]s.
  */
-public interface CartesianLayer<T : CartesianLayerModel> : BoundsAware, ChartInsetter {
+public interface CartesianLayer<T : CartesianLayerModel> : Bounded, ChartInsetter {
   /** Links _x_ values to [CartesianMarker.Target]s. */
   public val markerTargets: Map<Float, List<CartesianMarker.Target>>
 

@@ -19,7 +19,7 @@ package com.patrykandpatrick.vico.core.common
 import android.graphics.RectF
 
 /** Defines an abstract component that has some physical bounds. */
-public interface BoundsAware {
+public interface Bounded {
   /** The bounds of the abstract component. */
   public val bounds: RectF
 
@@ -33,3 +33,6 @@ public interface BoundsAware {
     this.bounds.set(bounds)
   }
 }
+
+@Deprecated("Use `Bounded`.", ReplaceWith("Bounded"))
+public typealias BoundsAware = Bounded

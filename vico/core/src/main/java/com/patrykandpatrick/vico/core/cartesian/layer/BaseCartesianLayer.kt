@@ -23,12 +23,12 @@ import com.patrykandpatrick.vico.core.cartesian.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.data.AxisValueOverrider
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianLayerModel
 import com.patrykandpatrick.vico.core.cartesian.data.ChartValues
-import com.patrykandpatrick.vico.core.common.BoundsAware
+import com.patrykandpatrick.vico.core.common.Bounded
 import com.patrykandpatrick.vico.core.common.half
 import com.patrykandpatrick.vico.core.common.inClip
 
 /** A base [CartesianLayer] implementation. */
-public abstract class BaseCartesianLayer<T : CartesianLayerModel> : CartesianLayer<T>, BoundsAware {
+public abstract class BaseCartesianLayer<T : CartesianLayerModel> : CartesianLayer<T>, Bounded {
   private val insets: Insets = Insets()
 
   override val bounds: RectF = RectF()
