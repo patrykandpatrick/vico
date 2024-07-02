@@ -24,7 +24,6 @@ import com.patrykandpatrick.vico.core.common.Dimensions
 import com.patrykandpatrick.vico.core.common.DrawContext
 import com.patrykandpatrick.vico.core.common.alpha
 import com.patrykandpatrick.vico.core.common.half
-import com.patrykandpatrick.vico.core.common.round
 import com.patrykandpatrick.vico.core.common.shader.DynamicShader
 import com.patrykandpatrick.vico.core.common.shape.Shape
 import com.patrykandpatrick.vico.core.common.withOpacity
@@ -48,8 +47,12 @@ public open class ShapeComponent(
   public val strokeWidthDp: Float = 0f,
   strokeColor: Int = Color.TRANSPARENT,
 ) : PaintComponent<ShapeComponent>(), Component {
-  private val paint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
-  private val strokePaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
+  private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply { this.color = color }
+  private val strokePaint =
+    Paint(Paint.ANTI_ALIAS_FLAG).apply {
+      this.color = strokeColor
+      style = Paint.Style.STROKE
+    }
 
   protected val path: Path = Path()
 
@@ -61,12 +64,7 @@ public open class ShapeComponent(
     Delegates.observable(strokeColor) { _, _, value -> strokePaint.color = value }
 
   init {
-    paint.color = color
-
-    with(strokePaint) {
-      this.color = strokeColor
-      style = Paint.Style.STROKE
-    }
+    require(strokeWidthDp >= 0) { "`strokeWidthDp` must be nonnegative." }
   }
 
   override fun draw(
@@ -76,48 +74,40 @@ public open class ShapeComponent(
     right: Float,
     bottom: Float,
     opacity: Float,
-  ): Unit =
+  ) {
     with(context) {
-      if (left == right || top == bottom) return // Skip drawing shape that will be invisible.
-      path.rewind()
-      applyShader(context, left, top, right, bottom)
-      val centerX = (left + right).half
-      val centerY = (top + bottom).half
-      componentShadow.maybeUpdateShadowLayer(
-        context = this,
-        paint = paint,
-        backgroundColor = color,
-        opacity = opacity,
-      )
-
+      var adjustedLeft = left + margins.getLeftDp(isLtr).pixels
+      var adjustedTop = top + margins.topDp.pixels
+      var adjustedRight = right - margins.getRightDp(isLtr).pixels
+      var adjustedBottom = bottom - margins.bottomDp.pixels
+      if (adjustedLeft >= adjustedRight || adjustedTop >= adjustedBottom) return
       val strokeWidth = strokeWidthDp.pixels
-      strokePaint.strokeWidth = strokeWidth
-
-      fun drawShape(paint: Paint, isStroke: Boolean) {
-        val strokeCompensation = if (isStroke) strokeWidth.half else 0f
-
-        shape.drawShape(
-          context = context,
-          paint = paint,
-          path = path,
-          left =
-            minOf(left + margins.startDp.pixels + strokeWidth.half, centerX - strokeCompensation)
-              .round,
-          top =
-            minOf(top + margins.topDp.pixels + strokeWidth.half, centerY - strokeCompensation)
-              .round,
-          right =
-            maxOf(right - margins.endDp.pixels - strokeWidth.half, centerX + strokeCompensation)
-              .round,
-          bottom =
-            maxOf(bottom - margins.bottomDp.pixels - strokeWidth.half, centerY + strokeCompensation)
-              .round,
-        )
+      if (strokeWidth != 0f) {
+        adjustedLeft += strokeWidth.half
+        adjustedTop += strokeWidth.half
+        adjustedRight -= strokeWidth.half
+        adjustedBottom -= strokeWidth.half
+        if (adjustedLeft > adjustedRight || adjustedTop > adjustedBottom) return
       }
-
-      paint.withOpacity(opacity) { paint -> drawShape(paint = paint, isStroke = false) }
-      if (strokeWidth > 0f && strokeColor.alpha > 0) drawShape(paint = strokePaint, isStroke = true)
+      path.rewind()
+      applyShader(this, left, top, right, bottom)
+      componentShadow.maybeUpdateShadowLayer(this, paint, color, opacity)
+      paint.withOpacity(opacity) { paint ->
+        shape.drawShape(this, paint, path, adjustedLeft, adjustedTop, adjustedRight, adjustedBottom)
+      }
+      if (strokeWidth == 0f || strokeColor.alpha == 0) return
+      strokePaint.strokeWidth = strokeWidth
+      shape.drawShape(
+        this,
+        strokePaint,
+        path,
+        adjustedLeft,
+        adjustedTop,
+        adjustedRight,
+        adjustedBottom,
+      )
     }
+  }
 
   protected fun applyShader(
     context: DrawContext,
