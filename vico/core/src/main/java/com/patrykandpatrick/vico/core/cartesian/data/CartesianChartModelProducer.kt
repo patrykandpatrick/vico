@@ -153,7 +153,7 @@ public class CartesianChartModelProducer private constructor(dispatcher: Corouti
   /** Checks if an update listener with the given key is registered. */
   public fun isRegistered(key: Any): Boolean = updateReceivers.containsKey(key)
 
-  /** Unregisters the update listener associated with the given [key]. */
+  /** Unregisters the update listener associated with the given key. */
   public fun unregisterFromUpdates(key: Any) {
     updateReceivers.remove(key)
   }
