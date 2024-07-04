@@ -67,7 +67,7 @@ internal fun Chart7(uiFramework: UIFramework, modifier: Modifier) {
   LaunchedEffect(Unit) {
     withContext(Dispatchers.Default) {
       while (isActive) {
-        modelProducer.tryRunTransaction {
+        modelProducer.runTransaction {
           /* Learn more:
           https://patrykandpatrick.com/vico/wiki/cartesian-charts/layers/line-layer#data. */
           lineSeries {

@@ -46,7 +46,7 @@ internal fun Chart10(uiFramework: UIFramework, modifier: Modifier) {
   LaunchedEffect(key1 = Unit) {
     withContext(Dispatchers.Default) {
       while (isActive) {
-        modelProducer.tryRunTransaction {
+        modelProducer.runTransaction {
           /* Learn more:
           https://patrykandpatrick.com/vico/wiki/cartesian-charts/layers/candlestick-layer#data. */
           add(RandomCartesianModelGenerator.getRandomCandlestickLayerModelPartial())

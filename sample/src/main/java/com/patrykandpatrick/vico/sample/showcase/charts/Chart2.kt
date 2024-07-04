@@ -66,7 +66,7 @@ internal fun Chart2(uiFramework: UIFramework, modifier: Modifier) {
   LaunchedEffect(Unit) {
     withContext(Dispatchers.Default) {
       while (isActive) {
-        modelProducer.tryRunTransaction {
+        modelProducer.runTransaction {
           /* Learn more:
           https://patrykandpatrick.com/vico/wiki/cartesian-charts/layers/column-layer#data. */
           columnSeries { series(List(47) { 2 + Random.nextFloat() * 18 }) }

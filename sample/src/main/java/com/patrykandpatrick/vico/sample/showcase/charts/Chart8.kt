@@ -59,7 +59,7 @@ internal fun Chart8(uiFramework: UIFramework, modifier: Modifier) {
   LaunchedEffect(Unit) {
     withContext(Dispatchers.Default) {
       while (isActive) {
-        modelProducer.tryRunTransaction {
+        modelProducer.runTransaction {
           /* Learn more:
           https://patrykandpatrick.com/vico/wiki/cartesian-charts/layers/column-layer#data. */
           columnSeries {

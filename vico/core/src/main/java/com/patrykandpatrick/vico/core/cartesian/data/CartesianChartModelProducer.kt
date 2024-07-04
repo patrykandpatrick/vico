@@ -17,37 +17,43 @@
 package com.patrykandpatrick.vico.core.cartesian.data
 
 import androidx.annotation.WorkerThread
+import com.patrykandpatrick.vico.core.cartesian.CartesianChart
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayer
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.core.common.data.MutableExtraStore
-import kotlinx.coroutines.CompletableDeferred
+import java.util.concurrent.ConcurrentHashMap
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 /** Creates [CartesianChartModel]s and handles difference animations. */
-public class CartesianChartModelProducer(dispatcher: CoroutineDispatcher = Dispatchers.Default) {
+public class CartesianChartModelProducer private constructor(dispatcher: CoroutineDispatcher) {
   private var partials = emptyList<CartesianLayerModel.Partial>()
   private var extraStore = MutableExtraStore()
   private var cachedModel: CartesianChartModel? = null
-  private val mutex = Mutex()
+  private val updateMutex = Mutex()
+  private val registrationMutex = Mutex()
   private val coroutineScope = CoroutineScope(dispatcher)
-  private val updateReceivers = mutableMapOf<Any, UpdateReceiver>()
+  private val updateReceivers = ConcurrentHashMap<Any, UpdateReceiver>()
+
+  /** Creates a [CartesianChartModelProducer]. */
+  public constructor() : this(Dispatchers.Default)
 
   private fun tryUpdate(
     partials: List<CartesianLayerModel.Partial>,
     extraStore: MutableExtraStore,
   ): Boolean {
-    if (!mutex.tryLock()) return false
+    if (!updateMutex.tryLock()) return false
     val immutablePartials = partials.toList()
     if (immutablePartials == this.partials && extraStore == this.extraStore) {
-      mutex.unlock()
+      updateMutex.unlock()
       return true
     }
     this.partials = immutablePartials
@@ -56,7 +62,7 @@ public class CartesianChartModelProducer(dispatcher: CoroutineDispatcher = Dispa
     val receiverJobs = updateReceivers.values.map { coroutineScope.launch { it.handleUpdate() } }
     coroutineScope.launch {
       receiverJobs.joinAll()
-      mutex.unlock()
+      updateMutex.unlock()
     }
     return true
   }
@@ -64,25 +70,23 @@ public class CartesianChartModelProducer(dispatcher: CoroutineDispatcher = Dispa
   private suspend fun update(
     partials: List<CartesianLayerModel.Partial>,
     extraStore: MutableExtraStore,
-  ): Deferred<Unit> {
-    mutex.lock()
-    val completableDeferred = CompletableDeferred<Unit>()
+  ) {
+    updateMutex.lock()
+    registrationMutex.lock()
     val immutablePartials = partials.toList()
     if (immutablePartials == this.partials && extraStore == this.extraStore) {
-      mutex.unlock()
-      completableDeferred.complete(Unit)
-      return completableDeferred
+      updateMutex.unlock()
+      registrationMutex.unlock()
+      return
     }
     this.partials = partials.toList()
     this.extraStore = extraStore
     cachedModel = null
-    val receiverJobs = updateReceivers.values.map { coroutineScope.launch { it.handleUpdate() } }
-    coroutineScope.launch {
-      receiverJobs.joinAll()
-      mutex.unlock()
-      completableDeferred.complete(Unit)
+    coroutineScope {
+      updateReceivers.values.forEach { launch { it.handleUpdate() } }
+      registrationMutex.unlock()
     }
-    return completableDeferred
+    updateMutex.unlock()
   }
 
   private fun getModel(extraStore: ExtraStore) =
@@ -130,7 +134,8 @@ public class CartesianChartModelProducer(dispatcher: CoroutineDispatcher = Dispa
     updateChartValues: (CartesianChartModel?) -> ChartValues,
     onModelCreated: (CartesianChartModel?, ChartValues) -> Unit,
   ) {
-    UpdateReceiver(
+    val receiver =
+      UpdateReceiver(
         cancelAnimation,
         startAnimation,
         onModelCreated,
@@ -139,10 +144,10 @@ public class CartesianChartModelProducer(dispatcher: CoroutineDispatcher = Dispa
         transform,
         updateChartValues,
       )
-      .run {
-        updateReceivers[key] = this
-        handleUpdate()
-      }
+    registrationMutex.withLock {
+      updateReceivers[key] = receiver
+      receiver.handleUpdate()
+    }
   }
 
   /** Checks if an update listener with the given key is registered. */
@@ -161,14 +166,18 @@ public class CartesianChartModelProducer(dispatcher: CoroutineDispatcher = Dispa
    * Creates a [Transaction], runs [block], and calls [Transaction.tryCommit], returning its output.
    * For suspending behavior, use [runTransaction].
    */
+  @Suppress("DeprecatedCallableAddReplaceWith")
+  @Deprecated(
+    "Use `runTransaction`. More information: " +
+      "https://patrykandpatrick.com/vico/releases/2.0.0-alpha.22."
+  )
   public fun tryRunTransaction(block: Transaction.() -> Unit): Boolean =
-    Transaction().also(block).tryCommit()
+    @Suppress("DEPRECATION") Transaction().also(block).tryCommit()
 
-  /**
-   * Creates a [Transaction], runs [block], and calls [Transaction.commit], returning its output.
-   */
-  public suspend fun runTransaction(block: Transaction.() -> Unit): Deferred<Unit> =
+  /** Creates a [Transaction], runs [block], and calls [Transaction.commit]. */
+  public suspend fun runTransaction(block: Transaction.() -> Unit) {
     Transaction().also(block).commit()
+  }
 
   /**
    * Handles data updates. An initially empty list of [CartesianLayerModel.Partial]s is created and
@@ -206,14 +215,20 @@ public class CartesianChartModelProducer(dispatcher: CoroutineDispatcher = Dispa
      * rejected, which occurs when there’s already an update in progress, `false` is returned. For
      * suspending behavior, use [commit].
      */
+    @Deprecated(
+      "Use `commit`. More information: https://patrykandpatrick.com/vico/releases/2.0.0-alpha.22."
+    )
     public fun tryCommit(): Boolean = tryUpdate(newPartials, newExtraStore)
 
     /**
-     * Runs a data update. Unlike [tryCommit], this function suspends the current coroutine and
-     * waits until an update can be run, meaning the update cannot be rejected. The returned
-     * [Deferred] implementation is marked as completed once the update has been processed.
+     * Runs a data update, returning once the update is complete. If there’s already an update in
+     * progress, the current coroutine is first suspended until the ongoing update’s completion. An
+     * update is complete once a new [CartesianChartModel] has been generated, and the
+     * [CartesianChart] hosts have been notified.
      */
-    public suspend fun commit(): Deferred<Unit> = update(newPartials, newExtraStore)
+    public suspend fun commit() {
+      update(newPartials, newExtraStore)
+    }
   }
 
   private inner class UpdateReceiver(
@@ -239,17 +254,18 @@ public class CartesianChartModelProducer(dispatcher: CoroutineDispatcher = Dispa
      * Creates a [CartesianChartModelProducer], running an initial [Transaction]. [dispatcher] is
      * the [CoroutineDispatcher] to be used for update handling.
      */
-    @Suppress("DeprecatedCallableAddReplaceWith")
     @Deprecated(
-      "To create a `CartesianChartModelProducer`, use the constructor. To run an initial " +
-        "`Transaction`, use `tryRunTransaction` immediately after the constructor invocation."
+      "To create a `CartesianChartModelProducer`, use the constructor. Rather than passing a " +
+        "`CoroutineDispatcher`, use `runTransaction` with a `CoroutineContext` that includes the " +
+        "`CoroutineDispatcher`. Also use `runTransaction` to run an initial `Transaction`. " +
+        "More information: https://patrykandpatrick.com/vico/releases/2.0.0-alpha.22."
     )
     public fun build(
       dispatcher: CoroutineDispatcher = Dispatchers.Default,
       transaction: (Transaction.() -> Unit)? = null,
     ): CartesianChartModelProducer =
       CartesianChartModelProducer(dispatcher).apply {
-        if (transaction != null) tryRunTransaction(transaction)
+        if (transaction != null) @Suppress("DEPRECATION") tryRunTransaction(transaction)
       }
   }
 }

@@ -46,7 +46,7 @@ internal fun Chart1(uiFramework: UIFramework, modifier: Modifier) {
   val modelProducer = remember { CartesianChartModelProducer() }
   LaunchedEffect(Unit) {
     withContext(Dispatchers.Default) {
-      modelProducer.tryRunTransaction {
+      modelProducer.runTransaction {
         /* Learn more:
         https://patrykandpatrick.com/vico/wiki/cartesian-charts/layers/line-layer#data. */
         lineSeries { series(x, x.map { Random.nextFloat() * 15 }) }
