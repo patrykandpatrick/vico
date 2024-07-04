@@ -187,7 +187,7 @@ public open class CartesianChart(
     decorations.forEach { it.onDrawBehindChart(context, bounds) }
     model.forEachWithLayer(drawingModelAndLayerConsumer.apply { this.context = context })
     fadingEdges?.run {
-      applyFadingEdges(context, bounds)
+      draw(context, bounds)
       context.restoreCanvasToCount(canvasSaveCount)
     }
     axisManager.drawAboveChart(context)
