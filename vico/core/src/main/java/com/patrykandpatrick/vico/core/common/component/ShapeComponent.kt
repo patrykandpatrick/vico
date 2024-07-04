@@ -93,19 +93,11 @@ public open class ShapeComponent(
       applyShader(this, left, top, right, bottom)
       componentShadow.maybeUpdateShadowLayer(this, paint, color, opacity)
       paint.withOpacity(opacity) { paint ->
-        shape.drawShape(this, paint, path, adjustedLeft, adjustedTop, adjustedRight, adjustedBottom)
+        shape.draw(this, paint, path, adjustedLeft, adjustedTop, adjustedRight, adjustedBottom)
       }
       if (strokeWidth == 0f || strokeColor.alpha == 0) return
       strokePaint.strokeWidth = strokeWidth
-      shape.drawShape(
-        this,
-        strokePaint,
-        path,
-        adjustedLeft,
-        adjustedTop,
-        adjustedRight,
-        adjustedBottom,
-      )
+      shape.draw(this, strokePaint, path, adjustedLeft, adjustedTop, adjustedRight, adjustedBottom)
     }
   }
 

@@ -71,7 +71,7 @@ public fun androidx.compose.ui.graphics.Shape.toVicoShape(): Shape =
     private val radii by lazy { FloatArray(RADII_ARRAY_SIZE) }
     private val matrix: Matrix by lazy { Matrix() }
 
-    override fun drawShape(
+    override fun draw(
       context: DrawContext,
       paint: Paint,
       path: Path,
@@ -103,6 +103,22 @@ public fun androidx.compose.ui.graphics.Shape.toVicoShape(): Shape =
         }
       }
       context.canvas.drawPath(path, paint)
+    }
+
+    @Deprecated(
+      "Use `draw`.",
+      replaceWith = ReplaceWith("draw(context, paint, path, left, top, right, bottom)"),
+    )
+    override fun drawShape(
+      context: DrawContext,
+      paint: Paint,
+      path: Path,
+      left: Float,
+      top: Float,
+      right: Float,
+      bottom: Float,
+    ) {
+      draw(context, paint, path, left, top, right, bottom)
     }
   }
 

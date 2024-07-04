@@ -64,7 +64,7 @@ private fun PreviewShape(shape: Shape) {
     Text(text = "Canvas")
 
     Canvas(modifier = Modifier.fillMaxWidth().height(50.dp)) {
-      shape.drawShape(
+      shape.draw(
         context = drawContext(drawContext.canvas.nativeCanvas),
         paint = paint,
         path = path,

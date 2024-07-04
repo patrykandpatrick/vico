@@ -57,7 +57,7 @@ public open class MarkerCorneredShape(
     tickSizeDp = tickSizeDp,
   )
 
-  override fun drawShape(
+  override fun draw(
     context: DrawContext,
     paint: Paint,
     path: Path,
@@ -110,9 +110,25 @@ public open class MarkerCorneredShape(
         path.close()
         context.canvas.drawPath(path, paint)
       } else {
-        super.drawShape(context, paint, path, left, top, right, bottom)
+        super.draw(context, paint, path, left, top, right, bottom)
       }
     }
+
+  @Deprecated(
+    "Use `draw`.",
+    replaceWith = ReplaceWith("draw(context, paint, path, left, top, right, bottom)"),
+  )
+  override fun drawShape(
+    context: DrawContext,
+    paint: Paint,
+    path: Path,
+    left: Float,
+    top: Float,
+    right: Float,
+    bottom: Float,
+  ) {
+    draw(context, paint, path, left, top, right, bottom)
+  }
 
   /** Specifies the position of a [MarkerCorneredShape]’s tick. */
   public enum class TickPosition {

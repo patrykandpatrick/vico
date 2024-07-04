@@ -40,7 +40,7 @@ public class DashedShape(
   private var drawDashLength = dashLengthDp
   private var drawGapLength = gapLengthDp
 
-  override fun drawShape(
+  override fun draw(
     context: DrawContext,
     paint: Paint,
     path: Path,
@@ -54,6 +54,22 @@ public class DashedShape(
     } else {
       drawVerticalDashes(context, paint, path, left, top, right, bottom)
     }
+  }
+
+  @Deprecated(
+    "Use `draw`.",
+    replaceWith = ReplaceWith("draw(context, paint, path, left, top, right, bottom)"),
+  )
+  override fun drawShape(
+    context: DrawContext,
+    paint: Paint,
+    path: Path,
+    left: Float,
+    top: Float,
+    right: Float,
+    bottom: Float,
+  ) {
+    draw(context, paint, path, left, top, right, bottom)
   }
 
   private fun drawHorizontalDashes(
@@ -73,7 +89,7 @@ public class DashedShape(
       drawnLength +=
         if (index % 2 == 0) {
           path.reset()
-          shape.drawShape(
+          shape.draw(
             context = context,
             paint = paint,
             path = path,
@@ -107,7 +123,7 @@ public class DashedShape(
       drawnLength +=
         if (index % 2 == 0) {
           path.reset()
-          shape.drawShape(
+          shape.draw(
             context = context,
             paint = paint,
             path = path,

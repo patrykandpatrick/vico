@@ -73,7 +73,7 @@ public class ShapeDrawable(
   }
 
   override fun draw(canvas: Canvas) {
-    shape.drawShape(
+    shape.draw(
       drawContext(canvas = canvas, density = density, isLtr = isLtr()),
       paint = paint,
       path = path,

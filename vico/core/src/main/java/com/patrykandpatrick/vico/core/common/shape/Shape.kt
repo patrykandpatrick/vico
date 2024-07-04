@@ -40,6 +40,37 @@ public interface Shape {
    * @param bottom the _y_ coordinate of the bottom edge of the bounds in which the shape should be
    *   drawn.
    */
+  @Suppress("DEPRECATION")
+  public fun draw(
+    context: DrawContext,
+    paint: Paint,
+    path: Path,
+    left: Float,
+    top: Float,
+    right: Float,
+    bottom: Float,
+  ) {
+    drawShape(context, paint, path, left, top, right, bottom)
+  }
+
+  /**
+   * Draws the [Shape] on the canvas.
+   *
+   * @param context holds environment data.
+   * @param paint the [Paint] used to draw the shape.
+   * @param path the [Path] defining the shape.
+   * @param left the _x_ coordinate of the left edge of the bounds in which the shape should be
+   *   drawn.
+   * @param top the _y_ coordinate of the top edge of the bounds in which the shape should be drawn.
+   * @param right the _x_ coordinate of the right edge of the bounds in which the shape should be
+   *   drawn.
+   * @param bottom the _y_ coordinate of the bottom edge of the bounds in which the shape should be
+   *   drawn.
+   */
+  @Deprecated(
+    message = "Use `draw`.",
+    replaceWith = ReplaceWith("draw(context, paint, path, left, top, right, bottom)"),
+  )
   public fun drawShape(
     context: DrawContext,
     paint: Paint,
@@ -54,7 +85,7 @@ public interface Shape {
     /** A rectangle with sharp corners. */
     public val Rectangle: Shape =
       object : Shape {
-        override fun drawShape(
+        override fun draw(
           context: DrawContext,
           paint: Paint,
           path: Path,
@@ -69,6 +100,22 @@ public interface Shape {
           path.lineTo(left, bottom)
           path.close()
           context.canvas.drawPath(path, paint)
+        }
+
+        @Deprecated(
+          "Use `draw`.",
+          replaceWith = ReplaceWith("draw(context, paint, path, left, top, right, bottom)"),
+        )
+        override fun drawShape(
+          context: DrawContext,
+          paint: Paint,
+          path: Path,
+          left: Float,
+          top: Float,
+          right: Float,
+          bottom: Float,
+        ) {
+          draw(context, paint, path, left, top, right, bottom)
         }
       }
 
@@ -187,7 +234,7 @@ public interface Shape {
           drawable.intrinsicWidth.coerceAtLeast(1) /
             drawable.intrinsicHeight.coerceAtLeast(1).toFloat()
 
-        override fun drawShape(
+        override fun draw(
           context: DrawContext,
           paint: Paint,
           path: Path,
@@ -233,7 +280,7 @@ public interface Shape {
           otherShape ?: return
 
           if (bottom - otherComponentTop > 0 && right - otherComponentLeft > 0) {
-            otherShape.drawShape(
+            otherShape.draw(
               context = context,
               paint = paint,
               path = path,
@@ -243,6 +290,22 @@ public interface Shape {
               bottom = bottom,
             )
           }
+        }
+
+        @Deprecated(
+          "Use `draw`.",
+          replaceWith = ReplaceWith("draw(context, paint, path, left, top, right, bottom)"),
+        )
+        override fun drawShape(
+          context: DrawContext,
+          paint: Paint,
+          path: Path,
+          left: Float,
+          top: Float,
+          right: Float,
+          bottom: Float,
+        ) {
+          draw(context, paint, path, left, top, right, bottom)
         }
       }
   }
