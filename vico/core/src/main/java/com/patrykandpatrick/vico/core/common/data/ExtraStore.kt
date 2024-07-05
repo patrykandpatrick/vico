@@ -89,16 +89,3 @@ public class MutableExtraStore internal constructor(mapDelegate: Map<Key<*>, Any
       }
     )
 }
-
-internal fun <T : Any> MutableExtraStore.getOrSet(key: ExtraStore.Key<T>, block: () -> T): T =
-  getOrNull(key) ?: block().also { this[key] = it }
-
-internal fun <K : Any, V> MutableExtraStore.getOrSetCached(
-  cacheKey: ExtraStore.Key<Pair<K, V>>,
-  valueKey: K,
-  block: () -> V,
-): V {
-  val cache = getOrNull(cacheKey)
-  return if (cache?.first == valueKey) cache.second
-  else block().also { this[cacheKey] = valueKey to it }
-}

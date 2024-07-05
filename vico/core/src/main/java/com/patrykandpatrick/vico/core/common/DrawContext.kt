@@ -20,6 +20,7 @@ import android.graphics.Canvas
 import android.graphics.RectF
 import androidx.annotation.RestrictTo
 import com.patrykandpatrick.vico.core.common.component.ShapeComponent
+import com.patrykandpatrick.vico.core.common.data.CacheStore
 import com.patrykandpatrick.vico.core.common.data.MutableExtraStore
 
 /**
@@ -104,11 +105,22 @@ public fun drawContext(
 ): DrawContext =
   object : DrawContext {
     override val canvasBounds: RectF = canvasBounds
+
     override val elevationOverlayColor: Long = elevationOverlayColor
+
     override var canvas: Canvas = canvas
+
     override val density: Float = density
+
     override val isLtr: Boolean = isLtr
+
+    @Deprecated(
+      "To cache drawing data, use `cacheStore`. If using `extraStore` for communication between " +
+        "functions or classes, switch to a suitable alternative."
+    )
     override val extraStore: MutableExtraStore = MutableExtraStore()
+
+    override val cacheStore: CacheStore = CacheStore()
 
     override fun withOtherCanvas(canvas: Canvas, block: (DrawContext) -> Unit) {
       val originalCanvas = this.canvas

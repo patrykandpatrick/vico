@@ -29,7 +29,6 @@ import com.patrykandpatrick.vico.core.common.HorizontalPosition
 import com.patrykandpatrick.vico.core.common.VerticalPosition
 import com.patrykandpatrick.vico.core.common.ceil
 import com.patrykandpatrick.vico.core.common.component.TextComponent
-import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.core.common.getEnd
 import com.patrykandpatrick.vico.core.common.getStart
 import com.patrykandpatrick.vico.core.common.half
@@ -55,7 +54,7 @@ public open class VerticalAxis<Position : AxisPosition.Vertical>(override val po
     get() =
       if (areLabelsOutsideAtStartOrInsideAtEnd) HorizontalPosition.Start else HorizontalPosition.End
 
-  protected val maxLabelWidthKey: ExtraStore.Key<Float> = ExtraStore.Key()
+  protected var maxLabelWidth: Float? = null
 
   /**
    * Determines for what _y_ values this [VerticalAxis] is to display labels, ticks, and guidelines.
@@ -196,9 +195,7 @@ public open class VerticalAxis<Position : AxisPosition.Vertical>(override val po
           horizontalPosition = textHorizontalPosition,
           verticalPosition = verticalLabelPosition.textPosition,
           rotationDegrees = labelRotationDegrees,
-          maxTextWidth =
-            (extraStore.getOrNull(maxLabelWidthKey) ?: (chartBounds.width().half - tickLength))
-              .toInt(),
+          maxTextWidth = (maxLabelWidth ?: (chartBounds.width().half - tickLength)).toInt(),
         )
       }
     }
@@ -270,11 +267,7 @@ public open class VerticalAxis<Position : AxisPosition.Vertical>(override val po
               .orZero
           val labelSpace =
             when (horizontalLabelPosition) {
-              Outside -> {
-                val maxLabelWidth = getMaxLabelWidth(freeHeight).ceil
-                extraStore[maxLabelWidthKey] = maxLabelWidth
-                maxLabelWidth + tickLength
-              }
+              Outside -> getMaxLabelWidth(freeHeight).ceil.also { maxLabelWidth = it } + tickLength
               Inside -> 0f
             }
           (labelSpace + titleComponentWidth + axisThickness).coerceIn(

@@ -41,6 +41,18 @@ public open class MarkerCorneredShape(
   bottomLeft: Corner,
   public val tickSizeDp: Float = MARKER_TICK_SIZE,
 ) : CorneredShape(topLeft, topRight, bottomRight, bottomLeft) {
+  /** The tick’s _x_ coordinate. If this is null, the tick isn’t drawn. */
+  public var tickX: Float? = null
+
+  /** Specifies the tick position. */
+  public var tickPosition: TickPosition = TickPosition.Bottom
+    set(value) {
+      field = value
+      tickPositionSet = true
+    }
+
+  private var tickPositionSet = false
+
   public constructor(
     all: Corner,
     tickSizeDp: Float = MARKER_TICK_SIZE,
@@ -65,12 +77,16 @@ public open class MarkerCorneredShape(
     top: Float,
     right: Float,
     bottom: Float,
-  ): Unit =
+  ) {
     with(context) {
-      val tickX: Float? = context.extraStore.getOrNull(tickXKey)
+      val tickX = tickX ?: @Suppress("DEPRECATION") context.extraStore.getOrNull(tickXKey)
       if (tickX != null) {
-        val tickPosition: TickPosition =
-          context.extraStore.getOrNull(tickPositionKey) ?: TickPosition.Bottom
+        val tickPosition =
+          if (tickPositionSet) {
+            tickPosition
+          } else {
+            (@Suppress("DEPRECATION") context.extraStore.getOrNull(tickPositionKey)) ?: tickPosition
+          }
         createPath(
           context = context,
           path = path,
@@ -113,6 +129,7 @@ public open class MarkerCorneredShape(
         super.draw(context, paint, path, left, top, right, bottom)
       }
     }
+  }
 
   @Deprecated(
     "Use `draw`.",
@@ -141,9 +158,11 @@ public open class MarkerCorneredShape(
 
   public companion object {
     /** Used to store and retrieve the _x_ coordinate of a [MarkerCorneredShape]’s tick. */
+    @Deprecated("Use the `tickX` instance property.")
     public val tickXKey: ExtraStore.Key<Float> = ExtraStore.Key()
 
     /** Used to store and retrieve a [MarkerCorneredShape]’s [TickPosition]. */
+    @Deprecated("Use the `tickPosition` instance property.")
     public val tickPositionKey: ExtraStore.Key<TickPosition> = ExtraStore.Key()
   }
 }

@@ -22,17 +22,16 @@ import android.graphics.Paint
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.common.DrawContext
 import com.patrykandpatrick.vico.core.common.Point
-import com.patrykandpatrick.vico.core.common.data.ExtraStore
-import com.patrykandpatrick.vico.core.common.data.getOrSet
+import com.patrykandpatrick.vico.core.common.data.CacheStore
 import kotlin.math.roundToInt
 
 /** A base [DynamicShader] implementation. This overrides [getColorAt]. */
 public abstract class BaseDynamicShader : DynamicShader {
-  private val bitmapKey: ExtraStore.Key<Bitmap> = ExtraStore.Key()
+  private val cacheKeyNamespace = CacheStore.KeyNamespace()
 
   override fun getColorAt(point: Point, context: DrawContext, bounds: RectF): Int =
-    context.extraStore
-      .getOrSet(bitmapKey) { toBitmap(context, bounds) }
+    context.cacheStore
+      .getOrSet(cacheKeyNamespace) { toBitmap(context, bounds) }
       .getPixel(
         (point.x - bounds.left).toInt().coerceIn(0, bounds.width().toInt() - 1),
         (point.y - bounds.top).toInt().coerceIn(0, bounds.height().toInt() - 1),

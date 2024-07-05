@@ -109,10 +109,8 @@ internal fun rememberMarker(
           var bottomInset = (baseShadowInsetDp + LABEL_BACKGROUND_SHADOW_DY_DP).pixels
           when (labelPosition) {
             LabelPosition.Top,
-            LabelPosition.AbovePoint ->
-              topInset += label.getHeight(context) + label.tickSizeDp.pixels
-            LabelPosition.Bottom ->
-              bottomInset += label.getHeight(context) + label.tickSizeDp.pixels
+            LabelPosition.AbovePoint -> topInset += label.getHeight(context) + tickSizeDp.pixels
+            LabelPosition.Bottom -> bottomInset += label.getHeight(context) + tickSizeDp.pixels
             LabelPosition.AroundPoint -> {}
           }
           insets.ensureValuesAtLeast(top = topInset, bottom = bottomInset)

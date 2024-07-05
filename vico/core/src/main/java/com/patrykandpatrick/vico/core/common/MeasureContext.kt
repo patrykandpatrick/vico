@@ -18,6 +18,7 @@ package com.patrykandpatrick.vico.core.common
 
 import android.graphics.Canvas
 import android.graphics.RectF
+import com.patrykandpatrick.vico.core.common.data.CacheStore
 import com.patrykandpatrick.vico.core.common.data.MutableExtraStore
 
 /** Holds data used for measuring and drawing. */
@@ -49,7 +50,14 @@ public interface MeasureContext {
   public val isLtr: Boolean
 
   /** Stores temporary auxiliary data. */
+  @Deprecated(
+    "To cache drawing data, use `cacheStore`. If using `extraStore` for communication between " +
+      "functions or classes, switch to a suitable alternative."
+  )
   public val extraStore: MutableExtraStore
+
+  /** Caches drawing data. */
+  public val cacheStore: CacheStore
 
   /** `1f` if [isLtr] is `true`, and `-1f` otherwise. */
   public val layoutDirectionMultiplier: Float
@@ -57,6 +65,7 @@ public interface MeasureContext {
 
   /** Removes all temporary data. */
   public fun reset() {
-    extraStore.clear()
+    @Suppress("DEPRECATION") extraStore.clear()
+    cacheStore.purge()
   }
 }

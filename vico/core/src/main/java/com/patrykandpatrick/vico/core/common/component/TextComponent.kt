@@ -35,8 +35,7 @@ import com.patrykandpatrick.vico.core.common.HorizontalPosition
 import com.patrykandpatrick.vico.core.common.MeasureContext
 import com.patrykandpatrick.vico.core.common.VerticalPosition
 import com.patrykandpatrick.vico.core.common.copy
-import com.patrykandpatrick.vico.core.common.data.ExtraStore
-import com.patrykandpatrick.vico.core.common.data.getOrSetCached
+import com.patrykandpatrick.vico.core.common.data.CacheStore
 import com.patrykandpatrick.vico.core.common.getBounds
 import com.patrykandpatrick.vico.core.common.half
 import com.patrykandpatrick.vico.core.common.piRad
@@ -49,7 +48,6 @@ import kotlin.math.cos
 import kotlin.math.min
 import kotlin.math.sin
 
-private const val LAYOUT_KEY_PREFIX = "layout_"
 private const val DEF_LAYOUT_SIZE = 100000
 
 /**
@@ -66,7 +64,6 @@ private const val DEF_LAYOUT_SIZE = 100000
 public open class TextComponent protected constructor() {
   private val textPaint: TextPaint = TextPaint(Paint.ANTI_ALIAS_FLAG)
   private val tempMeasureBounds = RectF()
-  private val layoutCacheKey: ExtraStore.Key<Pair<String, StaticLayout>> = ExtraStore.Key()
 
   /** The text’s color. */
   public var color: Int by textPaint::color
@@ -397,14 +394,15 @@ public open class TextComponent protected constructor() {
           } - padding.horizontalDp.wholePixels)
           .coerceAtLeast(0)
 
-      extraStore.getOrSetCached(
-        cacheKey = layoutCacheKey,
-        valueKey =
-          LAYOUT_KEY_PREFIX +
-            text.hashCode() +
-            correctedWidth +
-            rotationDegrees +
-            textPaint.hashCode(),
+      cacheStore.getOrSet(
+        cacheKeyNamespace,
+        text.hashCode(),
+        textPaint.hashCode(),
+        textSizeSp,
+        correctedWidth,
+        lineCount,
+        ellipsize,
+        textAlignment,
       ) {
         textPaint.textSize = spToPx(textSizeSp)
         staticLayout(
@@ -532,6 +530,8 @@ public open class TextComponent protected constructor() {
 
   /** Houses a [TextComponent] factory function. */
   public companion object {
+    private val cacheKeyNamespace = CacheStore.KeyNamespace()
+
     /**
      * Creates a [TextComponent] via [Builder]. Sample usage:
      * ```

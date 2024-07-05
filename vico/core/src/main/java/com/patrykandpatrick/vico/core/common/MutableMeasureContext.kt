@@ -18,6 +18,7 @@ package com.patrykandpatrick.vico.core.common
 
 import android.graphics.RectF
 import androidx.annotation.RestrictTo
+import com.patrykandpatrick.vico.core.common.data.CacheStore
 import com.patrykandpatrick.vico.core.common.data.MutableExtraStore
 
 /** A [MeasureContext] implementation that facilitates the mutation of some of its properties. */
@@ -27,7 +28,13 @@ public open class MutableMeasureContext(
   override var isLtr: Boolean,
   @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) public var spToPx: (Float) -> Float,
 ) : MeasureContext {
+  @Deprecated(
+    "To cache drawing data, use `cacheStore`. If using `extraStore` for communication between " +
+      "functions or classes, switch to a suitable alternative."
+  )
   override val extraStore: MutableExtraStore = MutableExtraStore()
+
+  override val cacheStore: CacheStore = CacheStore()
 
   override fun spToPx(sp: Float): Float = spToPx.invoke(sp)
 }

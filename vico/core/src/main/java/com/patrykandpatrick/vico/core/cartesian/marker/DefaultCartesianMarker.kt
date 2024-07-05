@@ -58,6 +58,17 @@ public open class DefaultCartesianMarker(
 ) : CartesianMarker {
   protected val tempBounds: RectF = RectF()
 
+  protected val markerCorneredShape: MarkerCorneredShape? =
+    (label.background as? ShapeComponent)?.shape as? MarkerCorneredShape
+
+  protected val tickSizeDp: Float = markerCorneredShape?.tickSizeDp.orZero
+
+  @Suppress("DeprecatedCallableAddReplaceWith")
+  @Deprecated(
+    "Replace `label.tickSizeDp` with `tickSizeDp`. If using `TextComponent.tickSizeDp` with " +
+      "another `TextComponent`, check the property’s definition, and add equivalent logic to " +
+      "your code."
+  )
   protected val TextComponent.tickSizeDp: Float
     get() = ((background as? ShapeComponent)?.shape as? MarkerCorneredShape)?.tickSizeDp.orZero
 
@@ -132,19 +143,19 @@ public open class DefaultCartesianMarker(
         )
       val halfOfTextWidth = labelBounds.width().half
       val x = overrideXPositionToFit(targetX, chartBounds, halfOfTextWidth)
-      extraStore[MarkerCorneredShape.tickXKey] = targetX
+      markerCorneredShape?.tickX = targetX
       val tickPosition: MarkerCorneredShape.TickPosition
       val y: Float
       val verticalPosition: VerticalPosition
       when (labelPosition) {
         LabelPosition.Top -> {
           tickPosition = MarkerCorneredShape.TickPosition.Bottom
-          y = context.chartBounds.top - label.tickSizeDp.pixels
+          y = context.chartBounds.top - tickSizeDp.pixels
           verticalPosition = VerticalPosition.Top
         }
         LabelPosition.Bottom -> {
           tickPosition = MarkerCorneredShape.TickPosition.Top
-          y = context.chartBounds.bottom + label.tickSizeDp.pixels
+          y = context.chartBounds.bottom + tickSizeDp.pixels
           verticalPosition = VerticalPosition.Bottom
         }
         LabelPosition.AroundPoint,
@@ -162,15 +173,15 @@ public open class DefaultCartesianMarker(
             }
           val flip =
             labelPosition == LabelPosition.AroundPoint &&
-              topPointY - labelBounds.height() - label.tickSizeDp.pixels < context.chartBounds.top
+              topPointY - labelBounds.height() - tickSizeDp.pixels < context.chartBounds.top
           tickPosition =
             if (flip) MarkerCorneredShape.TickPosition.Top
             else MarkerCorneredShape.TickPosition.Bottom
-          y = topPointY + (if (flip) 1 else -1) * label.tickSizeDp.pixels
+          y = topPointY + (if (flip) 1 else -1) * tickSizeDp.pixels
           verticalPosition = if (flip) VerticalPosition.Bottom else VerticalPosition.Top
         }
       }
-      extraStore[MarkerCorneredShape.tickPositionKey] = tickPosition
+      markerCorneredShape?.tickPosition = tickPosition
 
       label.drawText(
         context = context,
@@ -209,9 +220,9 @@ public open class DefaultCartesianMarker(
       when (labelPosition) {
         LabelPosition.Top,
         LabelPosition.AbovePoint ->
-          insets.ensureValuesAtLeast(top = label.getHeight(context) + label.tickSizeDp.pixels)
+          insets.ensureValuesAtLeast(top = label.getHeight(context) + tickSizeDp.pixels)
         LabelPosition.Bottom ->
-          insets.ensureValuesAtLeast(bottom = label.getHeight(context) + label.tickSizeDp.pixels)
+          insets.ensureValuesAtLeast(bottom = label.getHeight(context) + tickSizeDp.pixels)
         LabelPosition.AroundPoint -> Unit // Will be inside the chart
       }
     }
