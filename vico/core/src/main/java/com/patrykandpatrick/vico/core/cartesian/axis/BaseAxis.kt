@@ -14,14 +14,10 @@
  * limitations under the License.
  */
 
-@file:Suppress("DeprecatedCallableAddReplaceWith")
-
 package com.patrykandpatrick.vico.core.cartesian.axis
 
 import android.graphics.RectF
-import androidx.annotation.RestrictTo
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
-import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.MeasureContext
 import com.patrykandpatrick.vico.core.common.component.LineComponent
 import com.patrykandpatrick.vico.core.common.component.TextComponent
@@ -29,19 +25,37 @@ import com.patrykandpatrick.vico.core.common.orZero
 import com.patrykandpatrick.vico.core.common.setAll
 
 /**
- * A basic implementation of [Axis] used throughout the library.
+ * A base [Axis] implementation. This is extended by [HorizontalAxis] and [VerticalAxis].
  *
- * @see Axis
- * @see HorizontalAxis
- * @see VerticalAxis
+ * @property line used for the axis line.
+ * @property label used for the labels.
+ * @property labelRotationDegrees the label rotation (in degrees).
+ * @property valueFormatter formats the values.
+ * @property tick used for the ticks.
+ * @property tickLengthDp the tick length (in dp).
+ * @property guideline used for the guidelines.
+ * @property sizeConstraint determines how the [BaseAxis] sizes itself.
+ * @property titleComponent the title [TextComponent].
+ * @property title the title text.
  */
-public abstract class BaseAxis<Position : AxisPosition> : Axis<Position> {
+public abstract class BaseAxis<Position : AxisPosition>(
+  public var line: LineComponent?,
+  public var label: TextComponent?,
+  public var labelRotationDegrees: Float,
+  public var valueFormatter: CartesianValueFormatter,
+  public var tick: LineComponent?,
+  public var tickLengthDp: Float,
+  public var guideline: LineComponent?,
+  public var sizeConstraint: SizeConstraint,
+  public var titleComponent: TextComponent?,
+  public var title: CharSequence?,
+) : Axis<Position> {
   private val restrictedBounds: MutableList<RectF> = mutableListOf()
 
   override val bounds: RectF = RectF()
 
-  protected val MeasureContext.axisThickness: Float
-    get() = axisLine?.thicknessDp.orZero.pixels
+  protected val MeasureContext.lineThickness: Float
+    get() = line?.thicknessDp.orZero.pixels
 
   protected val MeasureContext.tickThickness: Float
     get() = tick?.thicknessDp.orZero.pixels
@@ -51,36 +65,6 @@ public abstract class BaseAxis<Position : AxisPosition> : Axis<Position> {
 
   protected val MeasureContext.tickLength: Float
     get() = if (tick != null) tickLengthDp.pixels else 0f
-
-  /** The [TextComponent] to use for labels. */
-  public var label: TextComponent? = null
-
-  /** The [LineComponent] to use for the axis line. */
-  public var axisLine: LineComponent? = null
-
-  /** The [LineComponent] to use for ticks. */
-  public var tick: LineComponent? = null
-
-  /** The [LineComponent] to use for guidelines. */
-  public var guideline: LineComponent? = null
-
-  /** The tick length (in dp). */
-  public var tickLengthDp: Float = 0f
-
-  /** Used by [BaseAxis] subclasses for sizing and layout. */
-  public var sizeConstraint: SizeConstraint = SizeConstraint.Auto()
-
-  /** The [CartesianValueFormatter] for the axis. */
-  public var valueFormatter: CartesianValueFormatter = CartesianValueFormatter.decimal()
-
-  /** The rotation of axis labels (in degrees). */
-  public var labelRotationDegrees: Float = 0f
-
-  /** An optional [TextComponent] to use as the axis title. */
-  public var titleComponent: TextComponent? = null
-
-  /** The axis title. */
-  public var title: CharSequence? = null
 
   override fun setRestrictedBounds(vararg bounds: RectF?) {
     restrictedBounds.setAll(bounds.filterNotNull())
@@ -96,47 +80,10 @@ public abstract class BaseAxis<Position : AxisPosition> : Axis<Position> {
       it.contains(left, top, right, bottom) || it.intersects(left, top, right, bottom)
     }
 
-  /** Used to construct [BaseAxis] instances. */
-  public open class Builder<Position : AxisPosition>(builder: Builder<Position>? = null) {
-    /** The [TextComponent] to use for labels. */
-    public var label: TextComponent? = builder?.label
-
-    /** The [LineComponent] to use for the axis line. */
-    public var axis: LineComponent? = builder?.axis
-
-    /** The [LineComponent] to use for axis ticks. */
-    public var tick: LineComponent? = builder?.tick
-
-    /** The tick length (in dp). */
-    public var tickLengthDp: Float = builder?.tickLengthDp ?: Defaults.AXIS_TICK_LENGTH
-
-    /** The [LineComponent] to use for guidelines. */
-    public var guideline: LineComponent? = builder?.guideline
-
-    /** The [CartesianValueFormatter] for the axis. */
-    public var valueFormatter: CartesianValueFormatter =
-      builder?.valueFormatter ?: CartesianValueFormatter.decimal()
-
-    /** Used by [BaseAxis] subclasses for sizing and layout. */
-    public var sizeConstraint: SizeConstraint = SizeConstraint.Auto()
-
-    /** An optional [TextComponent] to use as the axis title. */
-    public var titleComponent: TextComponent? = builder?.titleComponent
-
-    /** The axis title. */
-    public var title: CharSequence? = builder?.title
-
-    /** The rotation of axis labels (in degrees). */
-    public var labelRotationDegrees: Float = builder?.labelRotationDegrees ?: 0f
-  }
-
   /**
-   * Defines how a [BaseAxis] is to size itself.
+   * Determines how a [BaseAxis] sizes itself.
    * - For [VerticalAxis], this defines the width.
    * - For [HorizontalAxis], this defines the height.
-   *
-   * @see [VerticalAxis]
-   * @see [HorizontalAxis]
    */
   public sealed class SizeConstraint {
     /**
@@ -176,22 +123,4 @@ public abstract class BaseAxis<Position : AxisPosition> : Axis<Position> {
      */
     public class TextWidth(public val text: String) : SizeConstraint()
   }
-}
-
-/** @suppress */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public fun <Position : AxisPosition, A : BaseAxis<Position>> BaseAxis.Builder<Position>.setTo(
-  axis: A
-): A {
-  axis.axisLine = this.axis
-  axis.tick = tick
-  axis.guideline = guideline
-  axis.label = label
-  axis.tickLengthDp = tickLengthDp
-  axis.valueFormatter = valueFormatter
-  axis.sizeConstraint = sizeConstraint
-  axis.titleComponent = titleComponent
-  axis.title = title
-  axis.labelRotationDegrees = labelRotationDegrees
-  return axis
 }

@@ -16,7 +16,6 @@
 
 package com.patrykandpatrick.vico.compose.m2.common
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -32,8 +31,6 @@ public fun rememberM2VicoTheme(
   columnCartesianLayerColors: List<Color> =
     listOf(MaterialTheme.colors.primary, MaterialTheme.colors.secondary),
   lineCartesianLayerColors: List<Color> = columnCartesianLayerColors,
-  elevationOverlayColor: Color =
-    if (isSystemInDarkTheme()) MaterialTheme.colors.onBackground else Color.Transparent,
   lineColor: Color = MaterialTheme.colors.onBackground.copy(alpha = .2f),
   textColor: Color = MaterialTheme.colors.onBackground,
 ): VicoTheme =
@@ -41,7 +38,6 @@ public fun rememberM2VicoTheme(
     candlestickCartesianLayerColors,
     columnCartesianLayerColors,
     lineCartesianLayerColors,
-    elevationOverlayColor,
     lineColor,
     textColor,
   ) {
@@ -49,7 +45,6 @@ public fun rememberM2VicoTheme(
       candlestickCartesianLayerColors,
       columnCartesianLayerColors,
       lineCartesianLayerColors,
-      elevationOverlayColor,
       lineColor,
       textColor,
     )

@@ -14,13 +14,19 @@
  * limitations under the License.
  */
 
-package com.patrykandpatrick.vico.core.common
+package com.patrykandpatrick.vico.compose.common.data
 
-/** Defines the functions required by the library to draw a chart legend. */
-public interface Legend<M : MeasureContext, D : DrawContext> : Bounded {
-  /** Returns the height of the legend. */
-  public fun getHeight(context: M, maxWidth: Float): Float
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import com.patrykandpatrick.vico.core.common.data.ExtraStore
 
-  /** Draws the legend. */
-  public fun draw(context: D)
-}
+/**
+ * Remembers an [ExtraStore] lambda. When either initially composed or recomposed with new [keys]
+ * values, this function saves and returns [lambda]. When recomposed with unchanged [keys] values,
+ * it ignores [lambda] and returns the lambda that was last saved.
+ */
+@Composable
+public fun <R> rememberExtraLambda(
+  vararg keys: Any?,
+  lambda: R.(ExtraStore) -> Unit,
+): R.(ExtraStore) -> Unit = remember(*keys) { lambda }

@@ -27,8 +27,8 @@ import android.text.Spanned
 import android.text.StaticLayout
 import android.text.TextPaint
 import android.text.TextUtils
-import com.patrykandpatrick.vico.core.common.Defaults.LABEL_LINE_COUNT
-import com.patrykandpatrick.vico.core.common.Defaults.TEXT_COMPONENT_TEXT_SIZE
+import com.patrykandpatrick.vico.core.common.Defaults
+import com.patrykandpatrick.vico.core.common.Defaults.TEXT_COMPONENT_LINE_COUNT
 import com.patrykandpatrick.vico.core.common.Dimensions
 import com.patrykandpatrick.vico.core.common.DrawContext
 import com.patrykandpatrick.vico.core.common.HorizontalPosition
@@ -59,95 +59,75 @@ private const val DEF_LAYOUT_SIZE = 100000
  * - text backgrounds (any [Component])
  * - margins and padding
  *
- * It’s recommended to create instances via [TextComponent.build].
+ * @param color the text color.
+ * @param typeface the [Typeface].
+ * @property textSizeSp the text size (in sp).
+ * @property textAlignment the text alignment.
+ * @property lineCount the line count.
+ * @property truncateAt the truncation type.
+ * @property padding the padding.
+ * @property margins the margins.
+ * @property background drawn behind the text.
+ * @property minWidth defines the minimum width.
  */
-public open class TextComponent protected constructor() {
-  private val textPaint: TextPaint = TextPaint(Paint.ANTI_ALIAS_FLAG)
+public open class TextComponent(
+  color: Int = Color.BLACK,
+  typeface: Typeface = Typeface.DEFAULT,
+  public var textSizeSp: Float = Defaults.TEXT_COMPONENT_TEXT_SIZE,
+  public var textAlignment: Layout.Alignment = Layout.Alignment.ALIGN_NORMAL,
+  public var lineCount: Int = TEXT_COMPONENT_LINE_COUNT,
+  public var truncateAt: TextUtils.TruncateAt? = TextUtils.TruncateAt.END,
+  public var margins: Dimensions = Dimensions.Empty,
+  public var padding: Dimensions = Dimensions.Empty,
+  public var background: Component? = null,
+  public var minWidth: MinWidth = MinWidth.fixed(),
+) {
+  private val textPaint =
+    TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
+      this.color = color
+      this.typeface = typeface
+    }
+  private var layout: Layout = staticLayout("", textPaint, 0)
   private val tempMeasureBounds = RectF()
 
-  /** The text’s color. */
+  /** The text color. */
   public var color: Int by textPaint::color
 
-  /** The [Typeface] for the text. */
-  public var typeface: Typeface? by textPaint::typeface
-
-  /** The font size (in sp). */
-  public var textSizeSp: Float = 0f
-
-  /**
-   * The type of text truncation to be used when the text’s width exceeds the amount of available
-   * space. By default, text is truncated at the end, and an ellipsis (…) is used.
-   */
-  public var ellipsize: TextUtils.TruncateAt? = TextUtils.TruncateAt.END
-
-  /**
-   * The maximum number of lines for the text. For performance reasons, during the measurement
-   * phase, it is presumed that the actual number of lines is equal to this value.
-   */
-  public var lineCount: Int = LABEL_LINE_COUNT
-
-  /**
-   * The text’s background. Use [padding] to set the padding between the text and the background.
-   *
-   * @see [padding]
-   */
-  public var background: Component? = null
-
-  /** The text alignment. */
-  public var textAlignment: Layout.Alignment = Layout.Alignment.ALIGN_NORMAL
-
-  /** Defines the minimum width. */
-  public var minWidth: MinWidth = MinWidth.fixed()
-
-  /**
-   * The padding between the text and the background. This is applied even if [background] is null.
-   *
-   * @see [background]
-   */
-  public var padding: Dimensions = Dimensions.Empty
-
-  /**
-   * The margins around the background. This is applied even if [background] is null.
-   *
-   * @see [background]
-   */
-  public var margins: Dimensions = Dimensions.Empty
-
-  private var layout: Layout = staticLayout("", textPaint, 0)
+  /** The [Typeface]. */
+  public var typeface: Typeface by textPaint::typeface
 
   /**
    * Uses [Canvas] to draw this [TextComponent].
    *
    * @param context holds environment data.
    * @param text the text to be drawn.
-   * @param textX the _x_ coordinate for the text.
-   * @param textY the _y_ coordinate for the text.
-   * @param horizontalPosition the horizontal position of the text, relative to [textX].
-   * @param verticalPosition the vertical position of the text, relative to [textY].
-   * @param maxTextWidth the maximum width available for the text (in pixels).
-   * @param maxTextHeight the maximum height available for the text (in pixels).
+   * @param x the _x_ coordinate for the text.
+   * @param y the _y_ coordinate for the text.
+   * @param horizontalPosition the horizontal position of the text, relative to [x].
+   * @param verticalPosition the vertical position of the text, relative to [y].
+   * @param maxWidth the maximum width available for the text (in pixels).
+   * @param maxHeight the maximum height available for the text (in pixels).
    * @param rotationDegrees the rotation of the text (in degrees).
    */
-  public fun drawText(
+  public fun draw(
     context: DrawContext,
     text: CharSequence,
-    textX: Float,
-    textY: Float,
+    x: Float,
+    y: Float,
     horizontalPosition: HorizontalPosition = HorizontalPosition.Center,
     verticalPosition: VerticalPosition = VerticalPosition.Center,
-    maxTextWidth: Int = DEF_LAYOUT_SIZE,
-    maxTextHeight: Int = DEF_LAYOUT_SIZE,
+    maxWidth: Int = DEF_LAYOUT_SIZE,
+    maxHeight: Int = DEF_LAYOUT_SIZE,
     rotationDegrees: Float = 0f,
-  ): Unit =
+  ) {
     with(context) {
       if (text.isBlank()) return
-      layout = getLayout(this, text, maxTextWidth, maxTextHeight, rotationDegrees)
+      layout = getLayout(this, text, maxWidth, maxHeight, rotationDegrees)
 
       val shouldRotate = rotationDegrees % 2f.piRad != 0f
       val textStartPosition =
-        horizontalPosition.getTextStartPosition(context, textX, layout.widestLineWidth)
-      val textTopPosition =
-        verticalPosition.getTextTopPosition(context, textY, layout.height.toFloat())
+        horizontalPosition.getTextStartPosition(context, x, layout.widestLineWidth)
+      val textTopPosition = verticalPosition.getTextTopPosition(context, y, layout.height.toFloat())
 
       context.withSavedCanvas {
         val bounds = layout.getBounds(tempMeasureBounds)
@@ -157,13 +137,8 @@ public open class TextComponent protected constructor() {
 
         with(receiver = bounds) {
           val minWidth =
-            minWidth.getValue(
-              context,
-              this@TextComponent,
-              maxTextWidth,
-              maxTextHeight,
-              rotationDegrees,
-            ) - padding.horizontalDp.pixels
+            minWidth.getValue(context, this@TextComponent, maxWidth, maxHeight, rotationDegrees) -
+              padding.horizontalDp.pixels
           val minWidthCorrection =
             (minWidth.coerceAtMost(layout.width.toFloat()) - width()).coerceAtLeast(0f)
           left -= minWidthCorrection.half
@@ -219,6 +194,7 @@ public open class TextComponent protected constructor() {
         layout.draw(this)
       }
     }
+  }
 
   private fun HorizontalPosition.getTextStartPosition(
     context: MeasureContext,
@@ -277,61 +253,59 @@ public open class TextComponent protected constructor() {
     }
 
   /**
-   * Returns the width of this [TextComponent] for the given [text] and the available [width] and
-   * [height]. [pad] defines whether to extend [text] by such a number of blank lines that it has
-   * [lineCount] lines.
+   * Returns the width of this [TextComponent] for the given text and maximum dimensions. [pad]
+   * defines whether to extend [text] by such a number of blank lines that it has [lineCount] lines.
    */
   public fun getWidth(
     context: MeasureContext,
     text: CharSequence? = null,
-    width: Int = DEF_LAYOUT_SIZE,
-    height: Int = DEF_LAYOUT_SIZE,
+    maxWidth: Int = DEF_LAYOUT_SIZE,
+    maxHeight: Int = DEF_LAYOUT_SIZE,
     rotationDegrees: Float = 0f,
     pad: Boolean = text == null,
   ): Float =
-    getTextBounds(
+    getBounds(
         context = context,
         text = text,
-        width = width,
-        height = height,
+        maxWidth = maxWidth,
+        maxHeight = maxHeight,
         rotationDegrees = rotationDegrees,
         pad = pad,
       )
       .width()
 
   /**
-   * Returns the height of this [TextComponent] for the given [text] and the available [width] and
-   * [height]. [pad] defines whether to extend [text] by such a number of blank lines that it has
-   * [lineCount] lines.
+   * Returns the height of this [TextComponent] for the given text and maximum dimensions. [pad]
+   * defines whether to extend [text] by such a number of blank lines that it has [lineCount] lines.
    */
   public fun getHeight(
     context: MeasureContext,
     text: CharSequence? = null,
-    width: Int = DEF_LAYOUT_SIZE,
-    height: Int = DEF_LAYOUT_SIZE,
+    maxWidth: Int = DEF_LAYOUT_SIZE,
+    maxHeight: Int = DEF_LAYOUT_SIZE,
     rotationDegrees: Float = 0f,
     pad: Boolean = text == null,
   ): Float =
-    getTextBounds(
+    getBounds(
         context = context,
         text = text,
-        width = width,
-        height = height,
+        maxWidth = maxWidth,
+        maxHeight = maxHeight,
         rotationDegrees = rotationDegrees,
         pad = pad,
       )
       .height()
 
   /**
-   * Returns the bounds ([RectF]) of this [TextComponent] for the given [text] and the available
-   * [width] and [height]. [pad] defines whether to extend [text] by such a number of blank lines
-   * that it has [lineCount] lines.
+   * Returns the bounds ([RectF]) of this [TextComponent] for the given [text] and maximum
+   * dimensions. [pad] defines whether to extend [text] by such a number of blank lines that it has
+   * [lineCount] lines.
    */
-  public fun getTextBounds(
+  public fun getBounds(
     context: MeasureContext,
     text: CharSequence? = null,
-    width: Int = DEF_LAYOUT_SIZE,
-    height: Int = DEF_LAYOUT_SIZE,
+    maxWidth: Int = DEF_LAYOUT_SIZE,
+    maxHeight: Int = DEF_LAYOUT_SIZE,
     outRect: RectF = tempMeasureBounds,
     includePaddingAndMargins: Boolean = true,
     rotationDegrees: Float = 0f,
@@ -343,12 +317,12 @@ public open class TextComponent protected constructor() {
         repeat((lineCount - measuredText.lines().size).coerceAtLeast(0)) {
           measuredText.append('\n')
         }
-      val layout = getLayout(this, measuredText, width, height, rotationDegrees)
+      val layout = getLayout(this, measuredText, maxWidth, maxHeight, rotationDegrees)
       layout
         .getBounds(outRect)
         .apply {
           val minWidth =
-            minWidth.getValue(context, this@TextComponent, width, height, rotationDegrees) -
+            minWidth.getValue(context, this@TextComponent, maxWidth, maxHeight, rotationDegrees) -
               padding.horizontalDp.pixels
           right = right.coerceAtLeast(minWidth).coerceAtMost(layout.width.toFloat())
           if (includePaddingAndMargins) {
@@ -401,7 +375,7 @@ public open class TextComponent protected constructor() {
         textSizeSp,
         correctedWidth,
         lineCount,
-        ellipsize,
+        truncateAt,
         textAlignment,
       ) {
         textPaint.textSize = spToPx(textSizeSp)
@@ -410,7 +384,7 @@ public open class TextComponent protected constructor() {
           paint = textPaint,
           width = correctedWidth,
           maxLines = lineCount,
-          ellipsize = ellipsize,
+          ellipsize = truncateAt,
           align = textAlignment,
         )
       }
@@ -420,54 +394,6 @@ public open class TextComponent protected constructor() {
     canvas.save()
     canvas.block()
     canvas.restore()
-  }
-
-  /** Creates [TextComponent]s. It’s recommended to use this via [TextComponent.build]. */
-  public class Builder {
-    /** @see [TextComponent.color] */
-    public var color: Int = Color.BLACK
-
-    /** @see [TextComponent.textSizeSp] */
-    public var textSizeSp: Float = TEXT_COMPONENT_TEXT_SIZE
-
-    /** @see [TextComponent.typeface] */
-    public var typeface: Typeface? = null
-
-    /** @see [TextComponent.ellipsize] */
-    public var ellipsize: TextUtils.TruncateAt = TextUtils.TruncateAt.END
-
-    /** @see [TextComponent.lineCount] */
-    public var lineCount: Int = LABEL_LINE_COUNT
-
-    /** @see [TextComponent.background] */
-    public var background: Component? = null
-
-    /** @see TextComponent.textAlignment */
-    public var textAlignment: Layout.Alignment = Layout.Alignment.ALIGN_NORMAL
-
-    /** Defines the minimum width. */
-    public var minWidth: MinWidth = MinWidth.fixed()
-
-    /** @see [TextComponent.padding] */
-    public var padding: Dimensions = Dimensions.Empty
-
-    /** @see [TextComponent.margins] */
-    public var margins: Dimensions = Dimensions.Empty
-
-    /** Creates a new instance of [TextComponent] with the supplied properties. */
-    public fun build(): TextComponent =
-      TextComponent().apply {
-        color = this@Builder.color
-        textSizeSp = this@Builder.textSizeSp
-        typeface = this@Builder.typeface
-        ellipsize = this@Builder.ellipsize
-        lineCount = this@Builder.lineCount
-        background = this@Builder.background
-        textAlignment = this@Builder.textAlignment
-        minWidth = this@Builder.minWidth
-        padding = this@Builder.padding
-        margins = this@Builder.margins
-      }
   }
 
   /** Defines a [TextComponent]’s minimum width. */
@@ -531,19 +457,6 @@ public open class TextComponent protected constructor() {
   /** Houses a [TextComponent] factory function. */
   public companion object {
     private val cacheKeyNamespace = CacheStore.KeyNamespace()
-
-    /**
-     * Creates a [TextComponent] via [Builder]. Sample usage:
-     * ```
-     * TextComponent.build {
-     *     color = Color.BLACK
-     *     textSizeSp = 12f
-     *     typeface = Typeface.MONOSPACE
-     * }
-     * ```
-     */
-    public inline fun build(block: Builder.() -> Unit = {}): TextComponent =
-      Builder().apply(block).build()
   }
 }
 

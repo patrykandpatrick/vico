@@ -35,7 +35,6 @@ import com.patrykandpatrick.vico.sample.previews.resource.shortColumnModel
 @Composable
 public fun DefaultColumnChart(
   model: CartesianChartModel = shortColumnModel,
-  oldModel: CartesianChartModel? = null,
   scrollable: Boolean = true,
   initialScroll: Scroll.Absolute = Scroll.Absolute.Start,
   autoScrollCondition: AutoScrollCondition = AutoScrollCondition.Never,
@@ -49,7 +48,6 @@ public fun DefaultColumnChart(
           bottomAxis = rememberBottomAxis(),
         ),
       model = model,
-      oldModel = oldModel,
       scrollState =
         rememberVicoScrollState(
           scrollEnabled = scrollable,

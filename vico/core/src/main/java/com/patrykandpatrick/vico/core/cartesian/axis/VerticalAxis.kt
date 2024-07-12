@@ -16,6 +16,8 @@
 
 package com.patrykandpatrick.vico.core.cartesian.axis
 
+import androidx.annotation.RestrictTo
+import com.patrykandpatrick.vico.core.cartesian.CartesianChart
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasureContext
 import com.patrykandpatrick.vico.core.cartesian.HorizontalDimensions
@@ -25,26 +27,63 @@ import com.patrykandpatrick.vico.core.cartesian.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis.HorizontalLabelPosition.Inside
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis.HorizontalLabelPosition.Outside
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis.VerticalLabelPosition.Center
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
+import com.patrykandpatrick.vico.core.cartesian.data.ChartValues
+import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayer
 import com.patrykandpatrick.vico.core.common.HorizontalPosition
 import com.patrykandpatrick.vico.core.common.VerticalPosition
 import com.patrykandpatrick.vico.core.common.ceil
+import com.patrykandpatrick.vico.core.common.component.LineComponent
 import com.patrykandpatrick.vico.core.common.component.TextComponent
-import com.patrykandpatrick.vico.core.common.getEnd
-import com.patrykandpatrick.vico.core.common.getStart
+import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.core.common.half
 import com.patrykandpatrick.vico.core.common.orZero
 import com.patrykandpatrick.vico.core.common.translate
+import kotlin.math.max
 
 private const val TITLE_ABS_ROTATION_DEGREES = 90f
 
 /**
- * An implementation of [Axis] used for vertical axes. This class extends [BaseAxis].
+ * Draws vertical axes. See the [BaseAxis] documentation for descriptions of the inherited
+ * properties.
  *
- * @see Axis
- * @see BaseAxis
+ * @property itemPlacer determines for what _y_ values the [VerticalAxis] displays labels, ticks,
+ *   and guidelines.
+ * @property horizontalLabelPosition defines the horizontal position of the labels relative to the
+ *   axis line.
+ * @property verticalLabelPosition defines the vertical positions of the labels relative to their
+ *   ticks.
  */
-public open class VerticalAxis<Position : AxisPosition.Vertical>(override val position: Position) :
-  BaseAxis<Position>() {
+public open class VerticalAxis<Position : AxisPosition.Vertical>
+protected constructor(
+  override val position: Position,
+  line: LineComponent?,
+  label: TextComponent?,
+  labelRotationDegrees: Float,
+  public var horizontalLabelPosition: HorizontalLabelPosition = Outside,
+  public var verticalLabelPosition: VerticalLabelPosition = Center,
+  valueFormatter: CartesianValueFormatter,
+  tick: LineComponent?,
+  tickLengthDp: Float,
+  guideline: LineComponent?,
+  public var itemPlacer: ItemPlacer = ItemPlacer.step(),
+  sizeConstraint: SizeConstraint,
+  titleComponent: TextComponent?,
+  title: CharSequence?,
+) :
+  BaseAxis<Position>(
+    line,
+    label,
+    labelRotationDegrees,
+    valueFormatter,
+    tick,
+    tickLengthDp,
+    guideline,
+    sizeConstraint,
+    titleComponent,
+    title,
+  ) {
   protected val areLabelsOutsideAtStartOrInsideAtEnd: Boolean
     get() =
       horizontalLabelPosition == Outside && position is AxisPosition.Vertical.Start ||
@@ -56,18 +95,30 @@ public open class VerticalAxis<Position : AxisPosition.Vertical>(override val po
 
   protected var maxLabelWidth: Float? = null
 
-  /**
-   * Determines for what _y_ values this [VerticalAxis] is to display labels, ticks, and guidelines.
-   */
-  public var itemPlacer: AxisItemPlacer.Vertical = AxisItemPlacer.Vertical.step()
+  @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+  public constructor(
+    position: Position,
+    horizontalLabelPosition: HorizontalLabelPosition,
+    verticalLabelPosition: VerticalLabelPosition,
+    itemPlacer: ItemPlacer,
+  ) : this(
+    position = position,
+    line = null,
+    label = null,
+    labelRotationDegrees = 0f,
+    horizontalLabelPosition = horizontalLabelPosition,
+    verticalLabelPosition = verticalLabelPosition,
+    valueFormatter = CartesianValueFormatter.decimal(),
+    tick = null,
+    tickLengthDp = 0f,
+    guideline = null,
+    itemPlacer = itemPlacer,
+    sizeConstraint = SizeConstraint.Auto(),
+    titleComponent = null,
+    title = null,
+  )
 
-  /** Defines the horizontal position of each axis label relative to the axis line. */
-  public var horizontalLabelPosition: HorizontalLabelPosition = Outside
-
-  /** Defines the vertical position of each axis label relative to its corresponding tick. */
-  public var verticalLabelPosition: VerticalLabelPosition = Center
-
-  override fun drawBehindChart(context: CartesianDrawContext): Unit =
+  override fun drawUnderLayers(context: CartesianDrawContext) {
     with(context) {
       var centerY: Float
       val yRange = chartValues.getYRange(position)
@@ -84,40 +135,41 @@ public open class VerticalAxis<Position : AxisPosition.Vertical>(override val po
         guideline
           ?.takeIf {
             isNotInRestrictedBounds(
-              left = chartBounds.left,
+              left = layerBounds.left,
               top = centerY - guidelineThickness.half,
-              right = chartBounds.right,
+              right = layerBounds.right,
               bottom = centerY + guidelineThickness.half,
             )
           }
           ?.drawHorizontal(
             context = context,
-            left = chartBounds.left,
-            right = chartBounds.right,
+            left = layerBounds.left,
+            right = layerBounds.right,
             centerY = centerY,
           )
       }
-      val axisLineExtensionLength = if (itemPlacer.getShiftTopLines(this)) tickThickness else 0f
-      axisLine?.drawVertical(
+      val lineExtensionLength = if (itemPlacer.getShiftTopLines(this)) tickThickness else 0f
+      line?.drawVertical(
         context = context,
-        top = bounds.top - axisLineExtensionLength,
-        bottom = bounds.bottom + axisLineExtensionLength,
+        top = bounds.top - lineExtensionLength,
+        bottom = bounds.bottom + lineExtensionLength,
         centerX =
           if (position.isLeft(isLtr = isLtr)) {
-            bounds.right - axisThickness.half
+            bounds.right - lineThickness.half
           } else {
-            bounds.left + axisThickness.half
+            bounds.left + lineThickness.half
           },
       )
     }
+  }
 
-  override fun drawAboveChart(context: CartesianDrawContext): Unit =
+  override fun drawOverLayers(context: CartesianDrawContext) {
     with(context) {
       val label = label
       val labelValues =
         itemPlacer.getLabelValues(this, bounds.height(), getMaxLabelHeight(), position)
       val tickLeftX = getTickLeftX()
-      val tickRightX = tickLeftX + axisThickness + tickLength
+      val tickRightX = tickLeftX + lineThickness + tickLength
       val labelX = if (areLabelsOutsideAtStartOrInsideAtEnd == isLtr) tickLeftX else tickRightX
       var tickCenterY: Float
       val yRange = chartValues.getYRange(position)
@@ -137,28 +189,28 @@ public open class VerticalAxis<Position : AxisPosition.Vertical>(override val po
         label ?: return@forEach
         drawLabel(
           context = this,
-          label = label,
-          labelText = valueFormatter.format(labelValue, chartValues, position),
+          labelComponent = label,
+          label = valueFormatter.format(labelValue, chartValues, position),
           labelX = labelX,
           tickCenterY = tickCenterY,
         )
       }
 
       title?.let { title ->
-        titleComponent?.drawText(
+        titleComponent?.draw(
           context = this,
           text = title,
-          textX =
-            if (position.isStart) bounds.getStart(isLtr = isLtr) else bounds.getEnd(isLtr = isLtr),
-          textY = bounds.centerY(),
+          x = if (position.isLeft(isLtr)) bounds.left else bounds.right,
+          y = bounds.centerY(),
           horizontalPosition =
             if (position.isStart) HorizontalPosition.End else HorizontalPosition.Start,
           verticalPosition = VerticalPosition.Center,
           rotationDegrees = TITLE_ABS_ROTATION_DEGREES * if (position.isStart) -1f else 1f,
-          maxTextHeight = bounds.height().toInt(),
+          maxHeight = bounds.height().toInt(),
         )
       }
     }
+  }
 
   override fun updateHorizontalDimensions(
     context: CartesianMeasureContext,
@@ -167,16 +219,16 @@ public open class VerticalAxis<Position : AxisPosition.Vertical>(override val po
 
   protected open fun drawLabel(
     context: CartesianDrawContext,
-    label: TextComponent,
-    labelText: CharSequence,
+    labelComponent: TextComponent,
+    label: CharSequence,
     labelX: Float,
     tickCenterY: Float,
   ): Unit =
     with(context) {
       val textBounds =
-        label.getTextBounds(this, labelText, rotationDegrees = labelRotationDegrees).apply {
-          translate(x = labelX, y = tickCenterY - centerY())
-        }
+        labelComponent
+          .getBounds(context = this, text = label, rotationDegrees = labelRotationDegrees)
+          .apply { translate(labelX, tickCenterY - centerY()) }
 
       if (
         horizontalLabelPosition == Outside ||
@@ -187,15 +239,15 @@ public open class VerticalAxis<Position : AxisPosition.Vertical>(override val po
             bottom = textBounds.bottom,
           )
       ) {
-        label.drawText(
+        labelComponent.draw(
           context = this,
-          text = labelText,
-          textX = labelX,
-          textY = tickCenterY,
+          text = label,
+          x = labelX,
+          y = tickCenterY,
           horizontalPosition = textHorizontalPosition,
           verticalPosition = verticalLabelPosition.textPosition,
           rotationDegrees = labelRotationDegrees,
-          maxTextWidth = (maxLabelWidth ?: (chartBounds.width().half - tickLength)).toInt(),
+          maxWidth = (maxLabelWidth ?: (layerBounds.width().half - tickLength)).toInt(),
         )
       }
     }
@@ -204,8 +256,8 @@ public open class VerticalAxis<Position : AxisPosition.Vertical>(override val po
     val onLeft = position.isLeft(isLtr = isLtr)
     val base = if (onLeft) bounds.right else bounds.left
     return when {
-      onLeft && horizontalLabelPosition == Outside -> base - axisThickness - tickLength
-      onLeft && horizontalLabelPosition == Inside -> base - axisThickness
+      onLeft && horizontalLabelPosition == Outside -> base - lineThickness - tickLength
+      onLeft && horizontalLabelPosition == Inside -> base - lineThickness
       horizontalLabelPosition == Outside -> base
       horizontalLabelPosition == Inside -> base - tickLength
       else -> error("Unexpected combination of axis position and label position")
@@ -215,6 +267,7 @@ public open class VerticalAxis<Position : AxisPosition.Vertical>(override val po
   override fun updateHorizontalInsets(
     context: CartesianMeasureContext,
     freeHeight: Float,
+    model: CartesianChartModel,
     insets: HorizontalInsets,
   ) {
     val width = getWidth(context, freeHeight)
@@ -227,11 +280,12 @@ public open class VerticalAxis<Position : AxisPosition.Vertical>(override val po
   override fun updateInsets(
     context: CartesianMeasureContext,
     horizontalDimensions: HorizontalDimensions,
+    model: CartesianChartModel,
     insets: Insets,
   ): Unit =
     with(context) {
       val maxLabelHeight = getMaxLabelHeight()
-      val maxLineThickness = maxOf(axisThickness, tickThickness)
+      val maxLineThickness = max(lineThickness, tickThickness)
       insets.ensureValuesAtLeast(
         top =
           itemPlacer.getTopVerticalAxisInset(
@@ -261,7 +315,7 @@ public open class VerticalAxis<Position : AxisPosition.Vertical>(override val po
                   context = this,
                   text = title,
                   rotationDegrees = TITLE_ABS_ROTATION_DEGREES,
-                  height = bounds.height().toInt(),
+                  maxHeight = bounds.height().toInt(),
                 )
               }
               .orZero
@@ -270,7 +324,7 @@ public open class VerticalAxis<Position : AxisPosition.Vertical>(override val po
               Outside -> getMaxLabelWidth(freeHeight).ceil.also { maxLabelWidth = it } + tickLength
               Inside -> 0f
             }
-          (labelSpace + titleComponentWidth + axisThickness).coerceIn(
+          (labelSpace + titleComponentWidth + lineThickness).coerceIn(
             minimumValue = constraint.minSizeDp.pixels,
             maximumValue = constraint.maxSizeDp.pixels,
           )
@@ -284,7 +338,7 @@ public open class VerticalAxis<Position : AxisPosition.Vertical>(override val po
               text = constraint.text,
               rotationDegrees = labelRotationDegrees,
             )
-            .orZero + tickLength + axisThickness.half
+            .orZero + tickLength + lineThickness.half
       }
     }
 
@@ -344,46 +398,173 @@ public open class VerticalAxis<Position : AxisPosition.Vertical>(override val po
     Bottom(VerticalPosition.Bottom),
   }
 
-  /** Creates [VerticalAxis] instances. It’s recommended to use this via [VerticalAxis.build]. */
-  public class Builder<Position : AxisPosition.Vertical>(
-    builder: BaseAxis.Builder<Position>? = null
-  ) : BaseAxis.Builder<Position>(builder) {
+  /** Determines for what _y_ values a [VerticalAxis] displays labels, ticks, and guidelines. */
+  public interface ItemPlacer {
     /**
-     * Determines for what _y_ values this [VerticalAxis] is to display labels, ticks, and
-     * guidelines.
+     * Returns a boolean indicating whether to shift the lines whose _y_ values are equal to
+     * [ChartValues.YRange.maxY], if such lines are present, such that they’re immediately above the
+     * [CartesianLayer] bounds. If the [CartesianChart] has a top axis, the shifted tick is then
+     * aligned with it, and the shifted guideline is hidden.
      */
-    public var itemPlacer: AxisItemPlacer.Vertical = AxisItemPlacer.Vertical.step()
+    public fun getShiftTopLines(context: CartesianDrawContext): Boolean = true
 
-    /** Defines the horizontal position of each axis label relative to the axis line. */
-    public var horizontalLabelPosition: HorizontalLabelPosition = Outside
+    /** Returns, as a list, the _y_ values for which labels are to be displayed. */
+    public fun getLabelValues(
+      context: CartesianDrawContext,
+      axisHeight: Float,
+      maxLabelHeight: Float,
+      position: AxisPosition.Vertical,
+    ): List<Float>
 
-    /** Defines the vertical position of each axis label relative to its corresponding tick. */
-    public var verticalLabelPosition: VerticalLabelPosition = Center
+    /**
+     * Returns, as a list, the _y_ values for which the [VerticalAxis] is to create labels and
+     * measure their widths during the measuring phase. This affects how much horizontal space the
+     * [VerticalAxis] requests.
+     */
+    public fun getWidthMeasurementLabelValues(
+      context: CartesianMeasureContext,
+      axisHeight: Float,
+      maxLabelHeight: Float,
+      position: AxisPosition.Vertical,
+    ): List<Float>
 
-    /** Creates a [VerticalAxis] instance with the properties from this [Builder]. */
-    @Suppress("UNCHECKED_CAST")
-    public inline fun <reified T : Position> build(): VerticalAxis<T> {
-      val position =
-        when (T::class.java) {
-          AxisPosition.Vertical.Start::class.java -> AxisPosition.Vertical.Start
-          AxisPosition.Vertical.End::class.java -> AxisPosition.Vertical.End
-          else ->
-            throw IllegalStateException("Got unknown AxisPosition class ${T::class.java.name}")
-        }
-          as Position
-      return setTo(VerticalAxis(position)).also { axis ->
-        axis.itemPlacer = itemPlacer
-        axis.horizontalLabelPosition = horizontalLabelPosition
-        axis.verticalLabelPosition = verticalLabelPosition
-      } as VerticalAxis<T>
+    /**
+     * Returns, as a list, the _y_ values for which the [VerticalAxis] is to create labels and
+     * measure their heights during the measuring phase. The height of the tallest label is passed
+     * to other functions.
+     */
+    public fun getHeightMeasurementLabelValues(
+      context: CartesianMeasureContext,
+      position: AxisPosition.Vertical,
+    ): List<Float>
+
+    /** Returns, as a list, the _y_ values for which ticks and guidelines are to be displayed. */
+    public fun getLineValues(
+      context: CartesianDrawContext,
+      axisHeight: Float,
+      maxLabelHeight: Float,
+      position: AxisPosition.Vertical,
+    ): List<Float>? = null
+
+    /** Returns the top inset required by the [VerticalAxis]. */
+    public fun getTopVerticalAxisInset(
+      context: CartesianMeasureContext,
+      verticalLabelPosition: VerticalLabelPosition,
+      maxLabelHeight: Float,
+      maxLineThickness: Float,
+    ): Float
+
+    /** Returns the bottom inset required by the [VerticalAxis]. */
+    public fun getBottomVerticalAxisInset(
+      context: CartesianMeasureContext,
+      verticalLabelPosition: VerticalLabelPosition,
+      maxLabelHeight: Float,
+      maxLineThickness: Float,
+    ): Float
+
+    /** Houses [ItemPlacer] factory functions. */
+    public companion object {
+      /**
+       * Creates a step-based [ItemPlacer] implementation. [step] returns the difference between the
+       * _y_ values of neighboring labels (and their corresponding line pairs). A multiple of this
+       * may be used for overlap prevention. If `null` is returned, the step will be determined
+       * automatically. [shiftTopLines] defines whether to shift the lines whose _y_ values are
+       * equal to [ChartValues.YRange.maxY], if such lines are present, such that they’re
+       * immediately above the [CartesianChart]’s bounds. If the chart has a top axis, the shifted
+       * tick will then be aligned with this axis, and the shifted guideline will be hidden.
+       */
+      public fun step(
+        step: (ExtraStore) -> Float? = { null },
+        shiftTopLines: Boolean = true,
+      ): ItemPlacer =
+        DefaultVerticalAxisItemPlacer(DefaultVerticalAxisItemPlacer.Mode.Step(step), shiftTopLines)
+
+      /**
+       * Creates a count-based [ItemPlacer] implementation. [count] returns the number of labels
+       * (and their corresponding line pairs) to be displayed. This may be reduced for overlap
+       * prevention. If `null` is returned, the [VerticalAxis] will display as many items as
+       * possible. [shiftTopLines] defines whether to shift the lines whose _y_ values are equal to
+       * [ChartValues.YRange.maxY], if such lines are present, such that they’re immediately above
+       * the [CartesianChart]’s bounds. If the chart has a top axis, the shifted tick will then be
+       * aligned with this axis, and the shifted guideline will be hidden.
+       */
+      public fun count(
+        count: (ExtraStore) -> Int? = { null },
+        shiftTopLines: Boolean = true,
+      ): ItemPlacer =
+        DefaultVerticalAxisItemPlacer(
+          DefaultVerticalAxisItemPlacer.Mode.Count(count),
+          shiftTopLines,
+        )
     }
   }
 
-  /** Houses a [VerticalAxis] factory function. */
+  /** Houses [VerticalAxis] factory functions. */
   public companion object {
-    /** Creates a [VerticalAxis] via [Builder]. */
-    public inline fun <reified P : AxisPosition.Vertical> build(
-      block: Builder<P>.() -> Unit = {}
-    ): VerticalAxis<P> = Builder<P>().apply(block).build()
+    /** Creates a start [VerticalAxis]. */
+    public fun start(
+      line: LineComponent? = null,
+      label: TextComponent? = null,
+      labelRotationDegrees: Float = 0f,
+      horizontalLabelPosition: HorizontalLabelPosition = Outside,
+      verticalLabelPosition: VerticalLabelPosition = Center,
+      valueFormatter: CartesianValueFormatter = CartesianValueFormatter.decimal(),
+      tick: LineComponent? = null,
+      tickLengthDp: Float = 0f,
+      guideline: LineComponent? = null,
+      itemPlacer: ItemPlacer = ItemPlacer.step(),
+      sizeConstraint: SizeConstraint = SizeConstraint.Auto(),
+      titleComponent: TextComponent? = null,
+      title: CharSequence? = null,
+    ): VerticalAxis<AxisPosition.Vertical.Start> =
+      VerticalAxis(
+        AxisPosition.Vertical.Start,
+        line,
+        label,
+        labelRotationDegrees,
+        horizontalLabelPosition,
+        verticalLabelPosition,
+        valueFormatter,
+        tick,
+        tickLengthDp,
+        guideline,
+        itemPlacer,
+        sizeConstraint,
+        titleComponent,
+        title,
+      )
+
+    /** Creates an end [VerticalAxis]. */
+    public fun end(
+      line: LineComponent? = null,
+      label: TextComponent? = null,
+      labelRotationDegrees: Float = 0f,
+      horizontalLabelPosition: HorizontalLabelPosition = Outside,
+      verticalLabelPosition: VerticalLabelPosition = Center,
+      valueFormatter: CartesianValueFormatter = CartesianValueFormatter.decimal(),
+      tick: LineComponent? = null,
+      tickLengthDp: Float = 0f,
+      guideline: LineComponent? = null,
+      itemPlacer: ItemPlacer = ItemPlacer.step(),
+      sizeConstraint: SizeConstraint = SizeConstraint.Auto(),
+      titleComponent: TextComponent? = null,
+      title: CharSequence? = null,
+    ): VerticalAxis<AxisPosition.Vertical.End> =
+      VerticalAxis(
+        AxisPosition.Vertical.End,
+        line,
+        label,
+        labelRotationDegrees,
+        horizontalLabelPosition,
+        verticalLabelPosition,
+        valueFormatter,
+        tick,
+        tickLengthDp,
+        guideline,
+        itemPlacer,
+        sizeConstraint,
+        titleComponent,
+        title,
+      )
   }
 }

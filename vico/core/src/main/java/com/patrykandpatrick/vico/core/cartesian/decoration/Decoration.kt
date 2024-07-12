@@ -16,9 +16,9 @@
 
 package com.patrykandpatrick.vico.core.cartesian.decoration
 
-import android.graphics.RectF
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
+import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayer
 
 /**
  * A [Decoration] presents additional information on a [CartesianChart].
@@ -27,19 +27,9 @@ import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
  * @see [HorizontalLine]
  */
 public interface Decoration {
-  /**
-   * Called before the [CartesianChart] starts drawing itself.
-   *
-   * @param [context] holds the information needed to draw the [CartesianChart].
-   * @param [bounds] the bounding box of the [CartesianChart].
-   */
-  public fun onDrawBehindChart(context: CartesianDrawContext, bounds: RectF): Unit = Unit
+  /** Draws content under the [CartesianLayer]s. */
+  public fun drawUnderLayers(context: CartesianDrawContext) {}
 
-  /**
-   * Called immediately after the [CartesianChart] finishes drawing itself.
-   *
-   * @param [context] holds the information needed to draw the [CartesianChart].
-   * @param [bounds] the bounding box of the [CartesianChart].
-   */
-  public fun onDrawAboveChart(context: CartesianDrawContext, bounds: RectF): Unit = Unit
+  /** Draws content over the [CartesianLayer]s. */
+  public fun drawOverLayers(context: CartesianDrawContext) {}
 }

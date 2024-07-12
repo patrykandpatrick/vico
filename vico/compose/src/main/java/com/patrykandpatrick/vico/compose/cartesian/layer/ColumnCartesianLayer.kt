@@ -49,9 +49,8 @@ public fun rememberColumnCartesianLayer(
         )
       }
     ),
-  spacing: Dp = Defaults.COLUMN_OUTSIDE_SPACING.dp,
-  innerSpacing: Dp = Defaults.COLUMN_INSIDE_SPACING.dp,
-  mergeMode: (ExtraStore) -> MergeMode = { MergeMode.Grouped },
+  columnCollectionSpacing: Dp = Defaults.COLUMN_COLLECTION_SPACING.dp,
+  mergeMode: (ExtraStore) -> MergeMode = { MergeMode.grouped() },
   verticalAxisPosition: AxisPosition.Vertical? = null,
   dataLabel: TextComponent? = null,
   dataLabelVerticalPosition: VerticalPosition = VerticalPosition.Top,
@@ -70,8 +69,7 @@ public fun rememberColumnCartesianLayer(
   remember { ColumnCartesianLayer(columnProvider) }
     .apply {
       this.columnProvider = columnProvider
-      this.spacingDp = spacing.value
-      this.innerSpacingDp = innerSpacing.value
+      this.columnCollectionSpacingDp = columnCollectionSpacing.value
       this.mergeMode = mergeMode
       this.dataLabel = dataLabel
       this.dataLabelVerticalPosition = dataLabelVerticalPosition
@@ -81,3 +79,11 @@ public fun rememberColumnCartesianLayer(
       this.verticalAxisPosition = verticalAxisPosition
       this.drawingModelInterpolator = drawingModelInterpolator
     }
+
+/** Creates a [MergeMode.Grouped] instance. */
+public fun MergeMode.Companion.grouped(
+  columnSpacing: Dp = Defaults.GROUPED_COLUMN_SPACING.dp
+): MergeMode.Grouped = MergeMode.Grouped(columnSpacing.value)
+
+/** Returns a [MergeMode.Stacked] instance. */
+public fun MergeMode.Companion.stacked(): MergeMode.Stacked = MergeMode.Stacked

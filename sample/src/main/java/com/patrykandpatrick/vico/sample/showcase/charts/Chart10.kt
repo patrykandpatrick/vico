@@ -28,7 +28,7 @@ import com.patrykandpatrick.vico.compose.cartesian.fullWidth
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberCandlestickCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
-import com.patrykandpatrick.vico.core.cartesian.axis.AxisItemPlacer
+import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.RandomCartesianModelGenerator
 import com.patrykandpatrick.vico.databinding.Chart10Binding
@@ -74,14 +74,14 @@ private fun ComposeChart10(modelProducer: CartesianChartModelProducer, modifier:
             guideline = null,
             itemPlacer =
               remember {
-                AxisItemPlacer.Horizontal.default(spacing = 3, addExtremeLabelPadding = true)
+                HorizontalAxis.ItemPlacer.default(spacing = 3, addExtremeLabelPadding = true)
               },
           ),
+        marker = marker,
+        horizontalLayout = HorizontalLayout.fullWidth(),
       ),
     modelProducer = modelProducer,
-    marker = marker,
     modifier = modifier,
-    horizontalLayout = HorizontalLayout.fullWidth(),
   )
 }
 
@@ -90,6 +90,6 @@ private fun ViewChart10(modelProducer: CartesianChartModelProducer, modifier: Mo
   val marker = rememberMarker(showIndicator = false)
   AndroidViewBinding(Chart10Binding::inflate, modifier = modifier) {
     chartView.modelProducer = modelProducer
-    chartView.marker = marker
+    chartView.chart?.marker = marker
   }
 }

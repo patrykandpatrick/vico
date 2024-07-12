@@ -28,6 +28,6 @@
     </style>
 
     <style name="Chart2ColumnLayerStyle">
-        <item name="column1">@style/Chart2Column1Style</item>
+        <item name="column1Style">@style/Chart2Column1Style</item>
     </style>
 </resources>

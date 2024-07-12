@@ -16,7 +16,6 @@
 
 package com.patrykandpatrick.vico.sample.showcase.charts
 
-import android.graphics.Typeface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -36,8 +35,8 @@ import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.common.of
 import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
-import com.patrykandpatrick.vico.core.cartesian.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.cartesian.axis.BaseAxis
+import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
@@ -101,15 +100,15 @@ private fun ComposeChart2(modelProducer: CartesianChartModelProducer, modifier: 
             valueFormatter = bottomAxisValueFormatter,
             itemPlacer =
               remember {
-                AxisItemPlacer.Horizontal.default(spacing = 3, addExtremeLabelPadding = true)
+                HorizontalAxis.ItemPlacer.default(spacing = 3, addExtremeLabelPadding = true)
               },
           ),
+        marker = rememberMarker(),
+        horizontalLayout = HorizontalLayout.fullWidth(),
         decorations = listOf(rememberComposeHorizontalLine()),
       ),
     modelProducer = modelProducer,
     modifier = modifier,
-    marker = rememberMarker(),
-    horizontalLayout = HorizontalLayout.fullWidth(),
   )
 }
 
@@ -120,10 +119,10 @@ private fun ViewChart2(modelProducer: CartesianChartModelProducer, modifier: Mod
     { inflater, parent, attachToParent ->
       Chart2Binding.inflate(inflater, parent, attachToParent).apply {
         with(chartView) {
-          chart?.addDecoration(getViewHorizontalLine())
+          chart?.decorations = listOf(getViewHorizontalLine())
           this.modelProducer = modelProducer
           (chart?.bottomAxis as BaseAxis).valueFormatter = bottomAxisValueFormatter
-          this.marker = marker
+          chart?.marker = marker
         }
       }
     },
@@ -139,14 +138,13 @@ private fun rememberComposeHorizontalLine(): HorizontalLine {
     line = rememberLineComponent(color, HORIZONTAL_LINE_THICKNESS_DP.dp),
     labelComponent =
       rememberTextComponent(
-        background = rememberShapeComponent(Shape.Pill, color),
+        margins = Dimensions.of(HORIZONTAL_LINE_LABEL_MARGIN_DP.dp),
         padding =
           Dimensions.of(
             HORIZONTAL_LINE_LABEL_HORIZONTAL_PADDING_DP.dp,
             HORIZONTAL_LINE_LABEL_VERTICAL_PADDING_DP.dp,
           ),
-        margins = Dimensions.of(HORIZONTAL_LINE_LABEL_MARGIN_DP.dp),
-        typeface = Typeface.MONOSPACE,
+        background = rememberShapeComponent(color, Shape.Pill),
       ),
   )
 }
@@ -156,16 +154,15 @@ private fun getViewHorizontalLine() =
     y = { HORIZONTAL_LINE_Y },
     line = LineComponent(HORIZONTAL_LINE_COLOR, HORIZONTAL_LINE_THICKNESS_DP),
     labelComponent =
-      TextComponent.build {
-        background = ShapeComponent(Shape.Pill, HORIZONTAL_LINE_COLOR)
+      TextComponent(
+        margins = Dimensions(HORIZONTAL_LINE_LABEL_MARGIN_DP),
         padding =
           Dimensions(
             HORIZONTAL_LINE_LABEL_HORIZONTAL_PADDING_DP,
             HORIZONTAL_LINE_LABEL_VERTICAL_PADDING_DP,
-          )
-        margins = Dimensions(HORIZONTAL_LINE_LABEL_MARGIN_DP)
-        typeface = Typeface.MONOSPACE
-      },
+          ),
+        background = ShapeComponent(HORIZONTAL_LINE_COLOR, Shape.Pill),
+      ),
   )
 
 private const val HORIZONTAL_LINE_Y = 14f

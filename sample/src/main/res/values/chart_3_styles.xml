@@ -69,11 +69,11 @@
     </style>
 
     <style name="Chart3LineLayerStyle">
-        <item name="line1Spec">@style/Chart3Line1Style</item>
+        <item name="line1Style">@style/Chart3Line1Style</item>
     </style>
 
     <style name="Chart3StartAxisStyle" parent="Chart3AxisStyle">
-        <item name="showGuideline">false</item>
+        <item name="showGuidelines">false</item>
         <item name="verticalAxisHorizontalLabelPosition">inside</item>
         <item name="titleStyle">@style/Chart3StartAxisTitleStyle</item>
         <item name="title">@string/y_axis</item>

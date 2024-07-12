@@ -20,11 +20,11 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
 
-/** Returns an instance of [HorizontalLayout.Segmented]. */
+/** Returns a [HorizontalLayout.Segmented] instance. */
 public fun HorizontalLayout.Companion.segmented(): HorizontalLayout.Segmented =
   HorizontalLayout.Segmented
 
-/** Creates and returns an instance of [HorizontalLayout.FullWidth]. */
+/** Creates a [HorizontalLayout.FullWidth] instance. */
 public fun HorizontalLayout.Companion.fullWidth(
   scalableStartPadding: Dp = 0.dp,
   scalableEndPadding: Dp = 0.dp,

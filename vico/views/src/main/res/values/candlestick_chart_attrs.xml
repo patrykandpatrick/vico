@@ -17,7 +17,7 @@
 <resources>
     <attr name="candlestickLayerStyle" format="reference" />
 
-    <declare-styleable name="CandlestickLayerStyle">
+    <declare-styleable name="CandlestickCartesianLayerStyle">
         <attr name="candleStyle" format="enum">
             <enum name="absolute" value="0" />
             <enum name="absoluteRelative" value="1" />

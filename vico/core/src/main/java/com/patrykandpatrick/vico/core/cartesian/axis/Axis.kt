@@ -22,32 +22,23 @@ import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasureContext
 import com.patrykandpatrick.vico.core.cartesian.ChartInsetter
 import com.patrykandpatrick.vico.core.cartesian.MutableHorizontalDimensions
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
+import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayer
 import com.patrykandpatrick.vico.core.common.Bounded
 
 /**
  * Defines the minimal set of properties and functions required by other parts of the library to
  * draw an axis.
  */
-public interface Axis<Position : AxisPosition> : Bounded, ChartInsetter {
+public interface Axis<Position : AxisPosition> : Bounded, ChartInsetter<CartesianChartModel> {
   /** Defines the position of the axis relative to the [CartesianChart]. */
   public val position: Position
 
-  /**
-   * Called before the [CartesianChart] is drawn. Implementations should rely on this function to
-   * draw themselves, unless they need to draw something above the [CartesianChart].
-   *
-   * @param context holds the information needed to draw the axis.
-   * @see drawAboveChart
-   */
-  public fun drawBehindChart(context: CartesianDrawContext)
+  /** Draws content under the [CartesianLayer]s. */
+  public fun drawUnderLayers(context: CartesianDrawContext)
 
-  /**
-   * Called after the [CartesianChart] is drawn. Implementations can use this function to draw
-   * content above the [CartesianChart].
-   *
-   * @param context holds the information needed to draw the axis.
-   */
-  public fun drawAboveChart(context: CartesianDrawContext)
+  /** Draws content over the [CartesianLayer]s. */
+  public fun drawOverLayers(context: CartesianDrawContext)
 
   /** The bounds ([RectF]) passed here define the area where the [Axis] shouldn’t draw anything. */
   public fun setRestrictedBounds(vararg bounds: RectF?)

@@ -16,7 +16,6 @@
 
 package com.patrykandpatrick.vico.sample.showcase.charts
 
-import android.graphics.Typeface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -24,15 +23,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.patrykandpatrick.vico.R
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberAxisLabelComponent
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStartAxis
+import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLine
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
-import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineSpec
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
 import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
@@ -48,6 +46,7 @@ import com.patrykandpatrick.vico.core.cartesian.CartesianMeasureContext
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
+import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.common.Dimensions
 import com.patrykandpatrick.vico.core.common.shader.DynamicShader
 import com.patrykandpatrick.vico.core.common.shape.Shape
@@ -98,10 +97,11 @@ private fun ComposeChart7(modelProducer: CartesianChartModelProducer, modifier: 
     chart =
       rememberCartesianChart(
         rememberLineCartesianLayer(
-          lines =
+          LineCartesianLayer.LineProvider.series(
             chartColors.map { color ->
-              rememberLineSpec(shader = DynamicShader.color(color), backgroundShader = null)
+              rememberLine(shader = DynamicShader.color(color), backgroundShader = null)
             }
+          )
         ),
         startAxis =
           rememberStartAxis(
@@ -109,12 +109,11 @@ private fun ComposeChart7(modelProducer: CartesianChartModelProducer, modifier: 
             horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
           ),
         bottomAxis = rememberBottomAxis(),
+        marker = rememberMarker(),
         legend = rememberLegend(),
       ),
     modelProducer = modelProducer,
     modifier = modifier,
-    marker = rememberMarker(),
-    runInitialAnimation = false,
     zoomState = rememberVicoZoomState(zoomEnabled = false),
   )
 }
@@ -126,12 +125,11 @@ private fun ViewChart7(modelProducer: CartesianChartModelProducer, modifier: Mod
   val legend = rememberLegend()
   AndroidViewBinding(Chart7Binding::inflate, modifier) {
     with(chartView) {
-      runInitialAnimation = false
       this.modelProducer = modelProducer
       (chart?.startAxis as VerticalAxis).horizontalLabelPosition =
         VerticalAxis.HorizontalLabelPosition.Inside
       (chart?.startAxis as VerticalAxis).label = startAxisLabel
-      this.marker = marker
+      chart?.marker = marker
       chart?.legend = legend
     }
   }
@@ -141,9 +139,9 @@ private fun ViewChart7(modelProducer: CartesianChartModelProducer, modifier: Mod
 private fun rememberStartAxisLabel() =
   rememberAxisLabelComponent(
     color = Color.Black,
-    background = rememberShapeComponent(shape = Shape.rounded(4.dp), color = Color(0xfffab94d)),
-    padding = Dimensions.of(horizontal = 8.dp, vertical = 2.dp),
-    margins = Dimensions.of(all = 4.dp),
+    margins = Dimensions.of(4.dp),
+    padding = Dimensions.of(8.dp, 2.dp),
+    background = rememberShapeComponent(Color(0xfffab94d), Shape.rounded(4.dp)),
   )
 
 @Composable
@@ -152,14 +150,9 @@ private fun rememberLegend() =
     items =
       chartColors.mapIndexed { index, chartColor ->
         rememberLegendItem(
-          icon = rememberShapeComponent(Shape.Pill, chartColor),
-          label =
-            rememberTextComponent(
-              color = vicoTheme.textColor,
-              textSize = 12.sp,
-              typeface = Typeface.MONOSPACE,
-            ),
-          labelText = stringResource(R.string.series_x, index + 1),
+          icon = rememberShapeComponent(chartColor, Shape.Pill),
+          labelComponent = rememberTextComponent(vicoTheme.textColor),
+          label = stringResource(R.string.series_x, index + 1),
         )
       },
     iconSize = 8.dp,

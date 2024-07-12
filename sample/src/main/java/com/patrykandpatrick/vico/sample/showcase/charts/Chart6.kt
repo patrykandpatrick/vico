@@ -16,7 +16,6 @@
 
 package com.patrykandpatrick.vico.sample.showcase.charts
 
-import android.graphics.Typeface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -90,7 +89,6 @@ internal fun Chart6(uiFramework: UIFramework, modifier: Modifier) {
 
 @Composable
 private fun ComposeChart6(modelProducer: CartesianChartModelProducer, modifier: Modifier) {
-  val horizontalBox = rememberComposeHorizontalBox()
   val shape = remember { Shape.cut(topLeftPercent = 50) }
   CartesianChartHost(
     chart =
@@ -102,12 +100,11 @@ private fun ComposeChart6(modelProducer: CartesianChartModelProducer, modifier: 
         ),
         startAxis = rememberStartAxis(),
         bottomAxis = rememberBottomAxis(valueFormatter = bottomAxisValueFormatter),
-        decorations = remember(horizontalBox) { listOf(horizontalBox) },
+        marker = rememberMarker(),
+        decorations = listOf(rememberComposeHorizontalBox()),
       ),
     modelProducer = modelProducer,
     modifier = modifier,
-    marker = rememberMarker(),
-    runInitialAnimation = false,
     zoomState = rememberVicoZoomState(zoomEnabled = false),
   )
 }
@@ -119,12 +116,11 @@ private fun ViewChart6(modelProducer: CartesianChartModelProducer, modifier: Mod
     { inflater, parent, attachToParent ->
       Chart6Binding.inflate(inflater, parent, attachToParent).apply {
         with(chartView) {
-          chart?.addDecoration(getViewHorizontalBox())
-          runInitialAnimation = false
+          chart?.decorations = listOf(getViewHorizontalBox())
           this.modelProducer = modelProducer
           (chart?.bottomAxis as HorizontalAxis<AxisPosition.Horizontal.Bottom>).valueFormatter =
             bottomAxisValueFormatter
-          this.marker = marker
+          chart?.marker = marker
         }
       }
     },
@@ -140,14 +136,13 @@ private fun rememberComposeHorizontalBox(): HorizontalBox {
     box = rememberShapeComponent(color = color.copy(HORIZONTAL_BOX_ALPHA)),
     labelComponent =
       rememberTextComponent(
-        background = rememberShapeComponent(Shape.Rectangle, color),
+        margins = Dimensions.of(HORIZONTAL_BOX_LABEL_MARGIN_DP.dp),
         padding =
           Dimensions.of(
             HORIZONTAL_BOX_LABEL_HORIZONTAL_PADDING_DP.dp,
             HORIZONTAL_BOX_LABEL_VERTICAL_PADDING_DP.dp,
           ),
-        margins = Dimensions.of(HORIZONTAL_BOX_LABEL_MARGIN_DP.dp),
-        typeface = Typeface.MONOSPACE,
+        background = rememberShapeComponent(color, Shape.Rectangle),
       ),
   )
 }
@@ -157,16 +152,15 @@ private fun getViewHorizontalBox() =
     y = { horizontalBoxY },
     box = ShapeComponent(color = HORIZONTAL_BOX_COLOR.copyColor(HORIZONTAL_BOX_ALPHA)),
     labelComponent =
-      TextComponent.build {
-        typeface = Typeface.MONOSPACE
-        background = ShapeComponent(Shape.Rectangle, HORIZONTAL_BOX_COLOR)
+      TextComponent(
+        margins = Dimensions(HORIZONTAL_BOX_LABEL_MARGIN_DP),
         padding =
           Dimensions(
             HORIZONTAL_BOX_LABEL_HORIZONTAL_PADDING_DP,
             HORIZONTAL_BOX_LABEL_VERTICAL_PADDING_DP,
-          )
-        margins = Dimensions(HORIZONTAL_BOX_LABEL_MARGIN_DP)
-      },
+          ),
+        background = ShapeComponent(HORIZONTAL_BOX_COLOR, Shape.Rectangle),
+      ),
   )
 
 private const val HORIZONTAL_BOX_COLOR = -1448529

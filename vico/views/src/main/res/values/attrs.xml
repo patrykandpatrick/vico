@@ -20,10 +20,11 @@
     <attr name="negativeColor" format="color" />
     <attr name="shapeStyle" format="reference" />
     <attr name="strokeColor" format="color" />
-    <attr name="strokeWidth" format="dimension" />
+    <attr name="strokeThickness" format="dimension" />
     <attr name="dataLabelRotationDegrees" format="float" />
     <attr name="showDataLabels" format="boolean" />
     <attr name="dataLabelStyle" format="reference" />
+    <attr name="thickness" format="dimension" />
 
     <attr name="dataLabelVerticalPosition" format="enum">
         <enum name="top" value="0" />
@@ -77,16 +78,16 @@
     </declare-styleable>
 
     <!-- Defines the appearance of chart axes. -->
-    <declare-styleable name="Axis">
-        <attr name="showAxisLine" format="boolean" />
-        <attr name="axisLineStyle" format="reference" />
-        <attr name="showGuideline" format="boolean" />
-        <attr name="axisGuidelineStyle" format="reference" />
-        <attr name="showTick" format="boolean" />
-        <attr name="axisTickStyle" format="reference" />
-        <attr name="axisLabelStyle" format="reference" />
-        <attr name="axisTickLength" format="dimension" />
-        <attr name="axisLabelBackground" format="color|reference" />
+    <declare-styleable name="AxisStyle">
+        <attr name="showLine" format="boolean" />
+        <attr name="lineStyle" format="reference" />
+        <attr name="showGuidelines" format="boolean" />
+        <attr name="guidelineStyle" format="reference" />
+        <attr name="showTicks" format="boolean" />
+        <attr name="tickStyle" format="reference" />
+        <attr name="labelStyle" format="reference" />
+        <attr name="tickLength" format="dimension" />
+        <attr name="labelBackground" format="color|reference" />
         <attr name="verticalAxisHorizontalLabelPosition" format="enum">
             <enum name="outside" value="0" />
             <enum name="inside" value="1" />
@@ -110,12 +111,12 @@
         <attr name="verticalAxisItemCount" format="integer" />
     </declare-styleable>
 
-    <declare-styleable name="LineComponent">
+    <declare-styleable name="LineComponentStyle">
         <attr name="color" />
-        <attr name="thickness" format="dimension" />
+        <attr name="thickness" />
         <attr name="shapeStyle" />
         <attr name="strokeColor" />
-        <attr name="strokeWidth" />
+        <attr name="strokeThickness" />
     </declare-styleable>
 
     <declare-styleable name="TextComponentStyle">
@@ -158,7 +159,7 @@
         </attr>
     </declare-styleable>
 
-    <declare-styleable name="Shape">
+    <declare-styleable name="ShapeStyle">
         <attr name="cornerSize" format="dimension|fraction" />
         <attr name="cornerTreatment" format="enum">
             <enum name="rounded" value="0" />

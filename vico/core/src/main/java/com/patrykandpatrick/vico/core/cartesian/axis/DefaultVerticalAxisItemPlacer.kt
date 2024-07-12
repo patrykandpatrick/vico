@@ -31,7 +31,7 @@ import kotlin.math.pow
 internal class DefaultVerticalAxisItemPlacer(
   private val mode: Mode,
   private val shiftTopLines: Boolean,
-) : AxisItemPlacer.Vertical {
+) : VerticalAxis.ItemPlacer {
   override fun getShiftTopLines(context: CartesianDrawContext): Boolean = shiftTopLines
 
   override fun getLabelValues(
@@ -83,7 +83,7 @@ internal class DefaultVerticalAxisItemPlacer(
       !mode.insetsRequired(context) -> 0f
       verticalLabelPosition == VerticalAxis.VerticalLabelPosition.Top -> maxLineThickness
       verticalLabelPosition == VerticalAxis.VerticalLabelPosition.Center ->
-        (maxOf(maxLabelHeight, maxLineThickness) + maxLineThickness).half
+        (max(maxLabelHeight, maxLineThickness) + maxLineThickness).half
       else -> maxLabelHeight + maxLineThickness.half
     }
 

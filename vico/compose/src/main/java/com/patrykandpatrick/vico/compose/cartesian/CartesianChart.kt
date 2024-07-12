@@ -18,23 +18,28 @@ package com.patrykandpatrick.vico.compose.cartesian
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import com.patrykandpatrick.vico.compose.cartesian.layer.rememberCandlestickCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasureContext
 import com.patrykandpatrick.vico.core.cartesian.FadingEdges
+import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
 import com.patrykandpatrick.vico.core.cartesian.axis.Axis
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.core.cartesian.decoration.Decoration
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
+import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerVisibilityListener
 import com.patrykandpatrick.vico.core.common.Legend
+import com.patrykandpatrick.vico.core.common.data.ExtraStore
 
 /**
- * Creates and remembers a [CartesianChart] with the given [CartesianLayer]s, axes, [Legend], and
- * [FadingEdges] instance. Adds the given [Decoration]s and persistent [CartesianMarker]s.
+ * Creates and remembers a [CartesianChart].
  *
+ * @see rememberCandlestickCartesianLayer
  * @see rememberColumnCartesianLayer
  * @see rememberLineCartesianLayer
  */
@@ -45,19 +50,28 @@ public fun rememberCartesianChart(
   topAxis: Axis<AxisPosition.Horizontal.Top>? = null,
   endAxis: Axis<AxisPosition.Vertical.End>? = null,
   bottomAxis: Axis<AxisPosition.Horizontal.Bottom>? = null,
+  marker: CartesianMarker? = null,
+  markerVisibilityListener: CartesianMarkerVisibilityListener? = null,
+  horizontalLayout: HorizontalLayout = HorizontalLayout.segmented(),
   legend: Legend<CartesianMeasureContext, CartesianDrawContext>? = null,
   fadingEdges: FadingEdges? = null,
-  decorations: List<Decoration>? = null,
-  persistentMarkers: Map<Float, CartesianMarker>? = null,
-): CartesianChart =
-  remember(*layers) { CartesianChart(*layers) }
+  decorations: List<Decoration> = emptyList(),
+  persistentMarkers: (CartesianChart.PersistentMarkerScope.(ExtraStore) -> Unit)? = null,
+  getXStep: ((CartesianChartModel) -> Float) = { it.getXDeltaGcd() },
+): CartesianChart {
+  return remember(*layers) { CartesianChart(*layers) }
     .apply {
       this.startAxis = startAxis
       this.topAxis = topAxis
       this.endAxis = endAxis
       this.bottomAxis = bottomAxis
+      this.marker = marker
+      this.markerVisibilityListener = markerVisibilityListener
+      this.horizontalLayout = horizontalLayout
       this.legend = legend
       this.fadingEdges = fadingEdges
-      decorations?.let(::setDecorations)
-      persistentMarkers?.let(::setPersistentMarkers)
+      this.decorations = decorations
+      this.persistentMarkers = persistentMarkers
+      this.getXStep = getXStep
     }
+}

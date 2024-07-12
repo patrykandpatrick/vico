@@ -25,33 +25,32 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianLayerModel
 import com.patrykandpatrick.vico.core.cartesian.data.ChartValues
 import com.patrykandpatrick.vico.core.cartesian.data.MutableChartValues
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
-import com.patrykandpatrick.vico.core.common.Bounded
 import com.patrykandpatrick.vico.core.common.data.MutableExtraStore
 
 /**
  * Visualizes data on a Cartesian plane. [CartesianLayer]s are combined and drawn by
  * [CartesianChart]s.
  */
-public interface CartesianLayer<T : CartesianLayerModel> : Bounded, ChartInsetter {
+public interface CartesianLayer<M : CartesianLayerModel> : ChartInsetter<M> {
   /** Links _x_ values to [CartesianMarker.Target]s. */
   public val markerTargets: Map<Float, List<CartesianMarker.Target>>
 
   /** Draws the [CartesianLayer]. */
-  public fun draw(context: CartesianDrawContext, model: T)
+  public fun draw(context: CartesianDrawContext, model: M)
 
   /** Updates [horizontalDimensions] to match this [CartesianLayer]’s dimensions. */
   public fun updateHorizontalDimensions(
     context: CartesianMeasureContext,
     horizontalDimensions: MutableHorizontalDimensions,
-    model: T,
+    model: M,
   )
 
   /** Updates [chartValues] in accordance with [model]. */
-  public fun updateChartValues(chartValues: MutableChartValues, model: T)
+  public fun updateChartValues(chartValues: MutableChartValues, model: M)
 
   /** Prepares the [CartesianLayer] for a difference animation. */
   public fun prepareForTransformation(
-    model: T?,
+    model: M?,
     extraStore: MutableExtraStore,
     chartValues: ChartValues,
   )

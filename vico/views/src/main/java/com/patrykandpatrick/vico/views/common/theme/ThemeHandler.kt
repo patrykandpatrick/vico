@@ -22,22 +22,17 @@ import android.content.res.TypedArray
 import android.util.AttributeSet
 import android.util.Log
 import android.view.animation.AccelerateInterpolator
-import androidx.annotation.StyleableRes
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
 import com.patrykandpatrick.vico.core.cartesian.FadingEdges
 import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
 import com.patrykandpatrick.vico.core.cartesian.axis.Axis
-import com.patrykandpatrick.vico.core.cartesian.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition
-import com.patrykandpatrick.vico.core.cartesian.axis.BaseAxis
 import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.Defaults.FADING_EDGE_VISIBILITY_THRESHOLD_DP
-import com.patrykandpatrick.vico.core.common.component.LineComponent
 import com.patrykandpatrick.vico.core.common.hasFlag
 import com.patrykandpatrick.vico.core.common.shape.DashedShape
-import com.patrykandpatrick.vico.core.common.shape.Shape
 import com.patrykandpatrick.vico.views.R
 
 internal class ThemeHandler(private val context: Context, attrs: AttributeSet?) {
@@ -48,9 +43,6 @@ internal class ThemeHandler(private val context: Context, attrs: AttributeSet?) 
     private set
 
   var chart: CartesianChart? = null
-    private set
-
-  lateinit var horizontalLayout: HorizontalLayout
     private set
 
   init {
@@ -68,7 +60,6 @@ internal class ThemeHandler(private val context: Context, attrs: AttributeSet?) 
           R.styleable.CartesianChartView_zoomEnabled,
           typedArray.getBoolean(R.styleable.CartesianChartView_chartZoomEnabled, true),
         )
-      horizontalLayout = typedArray.getHorizontalLayout()
 
       context.obtainStyledAttributes(attrs, R.styleable.CartesianChartView).use {
         chart = getChart(it, typedArray)
@@ -76,111 +67,120 @@ internal class ThemeHandler(private val context: Context, attrs: AttributeSet?) 
     }
   }
 
-  private fun <Position : AxisPosition, Builder : BaseAxis.Builder<Position>> TypedArray
-    .getAxisBuilder(styleAttrId: Int, builder: Builder): Builder {
-    fun TypedArray.getLineComponent(
-      @StyleableRes resourceId: Int,
-      @StyleableRes styleableResourceId: IntArray,
-      defaultShape: Shape = Shape.Rectangle,
-    ): LineComponent =
-      getNestedTypedArray(
-          context = context,
-          resourceId = resourceId,
-          styleableResourceId = styleableResourceId,
-        )
-        .getLineComponent(context = context, defaultShape = defaultShape)
-
-    val axisStyle =
-      getNestedTypedArray(
-        context = context,
-        resourceId =
-          if (hasValue(styleAttrId)) styleAttrId else R.styleable.CartesianChartView_axisStyle,
-        styleableResourceId = R.styleable.Axis,
-      )
-
-    return builder
-      .apply {
-        axis =
-          axisStyle
-            .takeIf { it.getBoolean(R.styleable.Axis_showAxisLine, true) }
-            ?.getLineComponent(
-              resourceId = R.styleable.Axis_axisLineStyle,
-              styleableResourceId = R.styleable.LineComponent,
-            )
-        tick =
-          axisStyle
-            .takeIf { it.getBoolean(R.styleable.Axis_showTick, true) }
-            ?.getLineComponent(
-              resourceId = R.styleable.Axis_axisTickStyle,
-              styleableResourceId = R.styleable.LineComponent,
-            )
-        tickLengthDp =
-          axisStyle.getRawDimension(
-            context = context,
-            R.styleable.Axis_axisTickLength,
-            defaultValue = Defaults.AXIS_TICK_LENGTH,
+  private fun <P : AxisPosition> TypedArray.getAxis(position: P): Axis<P>? {
+    val visibilityAttributeIndex: Int
+    var styleAttributeIndex: Int
+    when {
+      position.isStart -> {
+        visibilityAttributeIndex = R.styleable.CartesianChartView_showStartAxis
+        styleAttributeIndex = R.styleable.CartesianChartView_startAxisStyle
+      }
+      position.isTop -> {
+        visibilityAttributeIndex = R.styleable.CartesianChartView_showTopAxis
+        styleAttributeIndex = R.styleable.CartesianChartView_topAxisStyle
+      }
+      position.isEnd -> {
+        visibilityAttributeIndex = R.styleable.CartesianChartView_showEndAxis
+        styleAttributeIndex = R.styleable.CartesianChartView_endAxisStyle
+      }
+      position.isBottom -> {
+        visibilityAttributeIndex = R.styleable.CartesianChartView_showBottomAxis
+        styleAttributeIndex = R.styleable.CartesianChartView_bottomAxisStyle
+      }
+      else -> throw IllegalArgumentException("Unexpected `AxisPosition` subclass.")
+    }
+    if (!getBoolean(visibilityAttributeIndex, false)) return null
+    if (!hasValue(styleAttributeIndex)) {
+      styleAttributeIndex = R.styleable.CartesianChartView_axisStyle
+    }
+    return getNestedTypedArray(context, styleAttributeIndex, R.styleable.AxisStyle).use { axisStyle
+      ->
+      @Suppress("UNCHECKED_CAST")
+      when (position) {
+        is AxisPosition.Horizontal ->
+          HorizontalAxis(position, axisStyle.getHorizontalAxisItemPlacer())
+        is AxisPosition.Vertical ->
+          VerticalAxis(
+            position = position,
+            horizontalLabelPosition =
+              VerticalAxis.HorizontalLabelPosition.entries[
+                  axisStyle.getInteger(
+                    R.styleable.AxisStyle_verticalAxisHorizontalLabelPosition,
+                    0,
+                  )],
+            verticalLabelPosition =
+              VerticalAxis.VerticalLabelPosition.entries[
+                  axisStyle.getInteger(R.styleable.AxisStyle_verticalAxisVerticalLabelPosition, 0)],
+            itemPlacer = axisStyle.getVerticalAxisItemPlacer(),
           )
-        guideline =
-          axisStyle
-            .takeIf { it.getBoolean(R.styleable.Axis_showGuideline, true) }
-            ?.getLineComponent(
-              resourceId = R.styleable.Axis_axisGuidelineStyle,
-              styleableResourceId = R.styleable.LineComponent,
-              defaultShape = DashedShape(),
-            )
-        labelRotationDegrees = axisStyle.getFloat(R.styleable.Axis_labelRotationDegrees, 0f)
-        label =
-          axisStyle
-            .getNestedTypedArray(
-              context = context,
-              resourceId = R.styleable.Axis_axisLabelStyle,
-              styleableResourceId = R.styleable.TextComponentStyle,
-            )
-            .getTextComponent(context = context)
-        titleComponent =
-          if (axisStyle.getBoolean(R.styleable.Axis_showTitle, false)) {
+        else -> throw IllegalArgumentException("Unexpected `AxisPosition` subclass.")
+      }.apply {
+        line =
+          if (axisStyle.getBoolean(R.styleable.AxisStyle_showLine, true)) {
             axisStyle
               .getNestedTypedArray(
-                context = context,
-                resourceId = R.styleable.Axis_titleStyle,
-                styleableResourceId = R.styleable.TextComponentStyle,
+                context,
+                R.styleable.AxisStyle_lineStyle,
+                R.styleable.LineComponentStyle,
               )
-              .getTextComponent(context = context)
+              .getLineComponent(context)
           } else {
             null
           }
-        title = axisStyle.getString(R.styleable.Axis_title)
-
-        when (this) {
-          is VerticalAxis.Builder<*> -> {
-            horizontalLabelPosition =
-              axisStyle.getInteger(R.styleable.Axis_verticalAxisHorizontalLabelPosition, 0).let {
-                value ->
-                val values = VerticalAxis.HorizontalLabelPosition.entries
-                values[value % values.size]
-              }
-
-            verticalLabelPosition =
-              axisStyle.getInteger(R.styleable.Axis_verticalAxisVerticalLabelPosition, 0).let {
-                value ->
-                val values = VerticalAxis.VerticalLabelPosition.entries
-                values[value % values.size]
-              }
-
-            itemPlacer = axisStyle.getVerticalAxisItemPlacer()
-          }
-          is HorizontalAxis.Builder<*> -> {
-            itemPlacer =
-              AxisItemPlacer.Horizontal.default(
-                axisStyle.getInteger(R.styleable.Axis_horizontalAxisLabelSpacing, 1),
-                axisStyle.getInteger(R.styleable.Axis_horizontalAxisLabelOffset, 0),
-                axisStyle.getBoolean(R.styleable.Axis_shiftExtremeHorizontalAxisTicks, true),
-                axisStyle.getBoolean(R.styleable.Axis_addExtremeHorizontalAxisLabelPadding, false),
+        label =
+          axisStyle
+            .getNestedTypedArray(
+              context,
+              R.styleable.AxisStyle_labelStyle,
+              R.styleable.TextComponentStyle,
+            )
+            .getTextComponent(context)
+        labelRotationDegrees = axisStyle.getFloat(R.styleable.AxisStyle_labelRotationDegrees, 0f)
+        tick =
+          if (axisStyle.getBoolean(R.styleable.AxisStyle_showTicks, true)) {
+            axisStyle
+              .getNestedTypedArray(
+                context,
+                R.styleable.AxisStyle_tickStyle,
+                R.styleable.LineComponentStyle,
               )
+              .getLineComponent(context)
+          } else {
+            null
           }
-        }
-      }
-      .also { axisStyle.recycle() }
+        tickLengthDp =
+          axisStyle.getRawDimension(
+            context,
+            R.styleable.AxisStyle_tickLength,
+            Defaults.AXIS_TICK_LENGTH,
+          )
+        guideline =
+          if (axisStyle.getBoolean(R.styleable.AxisStyle_showGuidelines, true)) {
+            axisStyle
+              .getNestedTypedArray(
+                context,
+                R.styleable.AxisStyle_guidelineStyle,
+                R.styleable.LineComponentStyle,
+              )
+              .getLineComponent(context = context, defaultShape = DashedShape())
+          } else {
+            null
+          }
+        titleComponent =
+          if (axisStyle.getBoolean(R.styleable.AxisStyle_showTitle, false)) {
+            axisStyle
+              .getNestedTypedArray(
+                context,
+                R.styleable.AxisStyle_titleStyle,
+                R.styleable.TextComponentStyle,
+              )
+              .getTextComponent(context)
+          } else {
+            null
+          }
+        title = axisStyle.getString(R.styleable.AxisStyle_title)
+      } as Axis<P>
+    }
   }
 
   private fun TypedArray.getHorizontalLayout(): HorizontalLayout =
@@ -216,20 +216,20 @@ internal class ThemeHandler(private val context: Context, attrs: AttributeSet?) 
       else null
 
     return CartesianChart(
-        layers =
-          buildList {
+      layers =
+        buildList {
             if (columnLayer != null) add(columnLayer)
             if (lineLayer != null) add(lineLayer)
             if (candlestickLayer != null) add(candlestickLayer)
-          },
-        fadingEdges = baseTypedArray.getFadingEdges(),
-      )
-      .apply {
-        startAxis = baseTypedArray.getStartAxis()
-        topAxis = baseTypedArray.getTopAxis()
-        endAxis = baseTypedArray.getEndAxis()
-        bottomAxis = baseTypedArray.getBottomAxis()
-      }
+          }
+          .toTypedArray(),
+      startAxis = baseTypedArray.getAxis(AxisPosition.Vertical.Start),
+      topAxis = baseTypedArray.getAxis(AxisPosition.Horizontal.Top),
+      endAxis = baseTypedArray.getAxis(AxisPosition.Vertical.End),
+      bottomAxis = baseTypedArray.getAxis(AxisPosition.Horizontal.Bottom),
+      fadingEdges = baseTypedArray.getFadingEdges(),
+      horizontalLayout = baseTypedArray.getHorizontalLayout(),
+    )
   }
 
   private fun TypedArray.getFadingEdges(): FadingEdges? {
@@ -279,54 +279,30 @@ internal class ThemeHandler(private val context: Context, attrs: AttributeSet?) 
     }
   }
 
-  private fun TypedArray.getVerticalAxisItemPlacer(): AxisItemPlacer.Vertical {
-    val shiftTopLines = getBoolean(R.styleable.Axis_shiftTopVerticalAxisLines, true)
+  private fun TypedArray.getHorizontalAxisItemPlacer(): HorizontalAxis.ItemPlacer =
+    HorizontalAxis.ItemPlacer.default(
+      getInteger(R.styleable.AxisStyle_horizontalAxisLabelSpacing, 1),
+      getInteger(R.styleable.AxisStyle_horizontalAxisLabelOffset, 0),
+      getBoolean(R.styleable.AxisStyle_shiftExtremeHorizontalAxisTicks, true),
+      getBoolean(R.styleable.AxisStyle_addExtremeHorizontalAxisLabelPadding, false),
+    )
+
+  private fun TypedArray.getVerticalAxisItemPlacer(): VerticalAxis.ItemPlacer {
+    val shiftTopLines = getBoolean(R.styleable.AxisStyle_shiftTopVerticalAxisLines, true)
     return if (
-      hasValue(R.styleable.Axis_verticalAxisItemCount) ||
-        hasValue(R.styleable.Axis_maxVerticalAxisItemCount)
+      hasValue(R.styleable.AxisStyle_verticalAxisItemCount) ||
+        hasValue(R.styleable.AxisStyle_maxVerticalAxisItemCount)
     ) {
       val itemCount =
         getInteger(
-          R.styleable.Axis_verticalAxisItemCount,
-          getInteger(R.styleable.Axis_maxVerticalAxisItemCount, -1),
+          R.styleable.AxisStyle_verticalAxisItemCount,
+          getInteger(R.styleable.AxisStyle_maxVerticalAxisItemCount, -1),
         )
-      AxisItemPlacer.Vertical.count({ itemCount }, shiftTopLines)
+      VerticalAxis.ItemPlacer.count({ itemCount }, shiftTopLines)
     } else {
-      AxisItemPlacer.Vertical.step(shiftTopLines = shiftTopLines)
+      VerticalAxis.ItemPlacer.step(shiftTopLines = shiftTopLines)
     }
   }
-
-  private fun TypedArray.getStartAxis(): Axis<AxisPosition.Vertical.Start>? =
-    if (getBoolean(R.styleable.CartesianChartView_showStartAxis, false)) {
-      getAxisBuilder(R.styleable.CartesianChartView_startAxisStyle, VerticalAxis.Builder())
-        .build<AxisPosition.Vertical.Start>()
-    } else {
-      null
-    }
-
-  private fun TypedArray.getTopAxis(): Axis<AxisPosition.Horizontal.Top>? =
-    if (getBoolean(R.styleable.CartesianChartView_showTopAxis, false)) {
-      getAxisBuilder(R.styleable.CartesianChartView_topAxisStyle, HorizontalAxis.Builder())
-        .build<AxisPosition.Horizontal.Top>()
-    } else {
-      null
-    }
-
-  private fun TypedArray.getEndAxis(): Axis<AxisPosition.Vertical.End>? =
-    if (getBoolean(R.styleable.CartesianChartView_showEndAxis, false)) {
-      getAxisBuilder(R.styleable.CartesianChartView_endAxisStyle, VerticalAxis.Builder())
-        .build<AxisPosition.Vertical.End>()
-    } else {
-      null
-    }
-
-  private fun TypedArray.getBottomAxis(): Axis<AxisPosition.Horizontal.Bottom>? =
-    if (getBoolean(R.styleable.CartesianChartView_showBottomAxis, false)) {
-      getAxisBuilder(R.styleable.CartesianChartView_bottomAxisStyle, HorizontalAxis.Builder())
-        .build<AxisPosition.Horizontal.Bottom>()
-    } else {
-      null
-    }
 
   private companion object {
     const val COLUMN_LAYER = 1

@@ -31,7 +31,7 @@ internal class DefaultHorizontalAxisItemPlacer(
   private val offset: Int,
   private val shiftExtremeTicks: Boolean,
   private val addExtremeLabelPadding: Boolean,
-) : AxisItemPlacer.Horizontal {
+) : HorizontalAxis.ItemPlacer {
   private val CartesianMeasureContext.addExtremeLabelPadding
     get() =
       this@DefaultHorizontalAxisItemPlacer.addExtremeLabelPadding &&
@@ -45,7 +45,7 @@ internal class DefaultHorizontalAxisItemPlacer(
       if (xLength >= 2 * xStep) add(minX + xStep * (xLength.half / xStep).round)
     }
 
-  override fun getShiftExtremeTicks(context: CartesianDrawContext): Boolean = shiftExtremeTicks
+  override fun getShiftExtremeLines(context: CartesianDrawContext): Boolean = shiftExtremeTicks
 
   override fun getFirstLabelValue(context: CartesianMeasureContext, maxLabelWidth: Float) =
     if (context.addExtremeLabelPadding)

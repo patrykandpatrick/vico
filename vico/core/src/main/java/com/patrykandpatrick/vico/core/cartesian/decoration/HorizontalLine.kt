@@ -16,7 +16,6 @@
 
 package com.patrykandpatrick.vico.core.cartesian.decoration
 
-import android.graphics.RectF
 import androidx.annotation.RestrictTo
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition
@@ -56,18 +55,18 @@ public class HorizontalLine(
   private val labelRotationDegrees: Float = 0f,
   private val verticalAxisPosition: AxisPosition.Vertical? = null,
 ) : Decoration {
-  override fun onDrawAboveChart(context: CartesianDrawContext, bounds: RectF) {
+  override fun drawOverLayers(context: CartesianDrawContext) {
     with(context) {
       val yRange = chartValues.getYRange(verticalAxisPosition)
       val extraStore = chartValues.model.extraStore
       val y = y(extraStore)
       val label = label(extraStore)
-      val canvasY = bounds.bottom - (y - yRange.minY) / yRange.length * bounds.height()
-      line.drawHorizontal(context, bounds.left, bounds.right, canvasY)
+      val canvasY = layerBounds.bottom - (y - yRange.minY) / yRange.length * layerBounds.height()
+      line.drawHorizontal(context, layerBounds.left, layerBounds.right, canvasY)
       if (labelComponent == null) return
       val clippingFreeVerticalLabelPosition =
         verticalLabelPosition.inBounds(
-          bounds = bounds,
+          bounds = layerBounds,
           distanceFromPoint = line.thicknessDp.half.pixels,
           componentHeight =
             labelComponent.getHeight(
@@ -77,16 +76,16 @@ public class HorizontalLine(
             ),
           y = canvasY,
         )
-      labelComponent.drawText(
+      labelComponent.draw(
         context = context,
         text = label,
-        textX =
+        x =
           when (horizontalLabelPosition) {
-            HorizontalPosition.Start -> bounds.getStart(isLtr)
-            HorizontalPosition.Center -> bounds.centerX()
-            HorizontalPosition.End -> bounds.getEnd(isLtr)
+            HorizontalPosition.Start -> layerBounds.getStart(isLtr)
+            HorizontalPosition.Center -> layerBounds.centerX()
+            HorizontalPosition.End -> layerBounds.getEnd(isLtr)
           },
-        textY =
+        y =
           when (clippingFreeVerticalLabelPosition) {
             VerticalPosition.Top -> canvasY - line.thicknessDp.half.pixels
             VerticalPosition.Center -> canvasY
@@ -94,7 +93,7 @@ public class HorizontalLine(
           },
         horizontalPosition = -horizontalLabelPosition,
         verticalPosition = clippingFreeVerticalLabelPosition,
-        maxTextWidth = bounds.width().toInt(),
+        maxWidth = layerBounds.width().toInt(),
         rotationDegrees = labelRotationDegrees,
       )
     }

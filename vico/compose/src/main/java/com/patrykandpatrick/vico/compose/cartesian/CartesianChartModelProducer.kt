@@ -28,7 +28,6 @@ import androidx.compose.ui.platform.LocalInspectionMode
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModelWrapper
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModelWrapperState
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
-import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.ChartValues
 import com.patrykandpatrick.vico.core.cartesian.data.MutableChartValues
@@ -39,7 +38,7 @@ import com.patrykandpatrick.vico.core.common.ValueWrapper
 import com.patrykandpatrick.vico.core.common.data.MutableExtraStore
 import com.patrykandpatrick.vico.core.common.getValue
 import com.patrykandpatrick.vico.core.common.setValue
-import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
@@ -53,8 +52,6 @@ internal fun CartesianChartModelProducer.collectAsState(
   animationSpec: AnimationSpec<Float>?,
   runInitialAnimation: Boolean,
   mutableChartValues: MutableChartValues,
-  getXStep: ((CartesianChartModel) -> Float)?,
-  dispatcher: CoroutineDispatcher,
 ): State<CartesianChartModelWrapper> {
   var previousHashCode by remember { ValueWrapper<Int?>(null) }
   val hashCode = hashCode()
@@ -79,7 +76,7 @@ internal fun CartesianChartModelProducer.collectAsState(
         ) {
           isAnimationRunning = true
           mainAnimationJob =
-            scope.launch(dispatcher) {
+            scope.launch {
               animate(
                 initialValue = Animation.range.start,
                 targetValue = Animation.range.endInclusive,
@@ -90,14 +87,14 @@ internal fun CartesianChartModelProducer.collectAsState(
                   !isAnimationFrameGenerationRunning -> {
                     isAnimationFrameGenerationRunning = true
                     animationFrameJob =
-                      scope.launch(dispatcher) {
+                      scope.launch {
                         transformModel(chart, fraction)
                         isAnimationFrameGenerationRunning = false
                       }
                   }
                   fraction == 1f -> {
                     finalAnimationFrameJob =
-                      scope.launch(dispatcher) {
+                      scope.launch(Dispatchers.Default) {
                         animationFrameJob?.cancelAndJoin()
                         transformModel(chart, fraction)
                         isAnimationFrameGenerationRunning = false
@@ -108,10 +105,10 @@ internal fun CartesianChartModelProducer.collectAsState(
             }
         } else {
           finalAnimationFrameJob =
-            scope.launch(dispatcher) { transformModel(chart, Animation.range.endInclusive) }
+            scope.launch { transformModel(chart, Animation.range.endInclusive) }
         }
       }
-    scope.launch(dispatcher) {
+    scope.launch {
       registerForUpdates(
         key = chart,
         cancelAnimation = {
@@ -128,7 +125,7 @@ internal fun CartesianChartModelProducer.collectAsState(
         updateChartValues = { model ->
           mutableChartValues.reset()
           if (model != null) {
-            chart.updateChartValues(mutableChartValues, model, getXStep?.invoke(model))
+            chart.updateChartValues(mutableChartValues, model)
             mutableChartValues.toImmutable()
           } else {
             ChartValues.Empty

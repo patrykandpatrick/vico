@@ -17,6 +17,7 @@
 package com.patrykandpatrick.vico.core.common
 
 import android.graphics.RectF
+import kotlin.math.max
 
 /**
  * [HorizontalLegend] displays legend items beside one another in lines.
@@ -43,40 +44,37 @@ public open class HorizontalLegend<M : MeasureContext, D : DrawContext>(
 
   override val bounds: RectF = RectF()
 
-  override fun getHeight(context: M, availableWidth: Float): Float =
+  override fun getHeight(context: M, maxWidth: Float): Float =
     with(context) {
       if (items.isEmpty()) return@with 0f
       lines.clear()
       lines.add(mutableListOf())
       var height =
-        maxOf(
-          items.first().getLabelHeight(context, availableWidth, iconPaddingDp, iconSizeDp),
+        max(
+          items.first().getLabelHeight(context, maxWidth, iconPaddingDp, iconSizeDp),
           iconSizeDp.pixels,
         )
       heights.add(height)
-      buildLines(context, availableWidth) {
+      buildLines(context, maxWidth) {
         val currentHeight =
-          maxOf(
-            it.getLabelHeight(context, availableWidth, iconPaddingDp, iconSizeDp),
-            iconSizeDp.pixels,
-          )
+          max(it.getLabelHeight(context, maxWidth, iconPaddingDp, iconSizeDp), iconSizeDp.pixels)
         heights.add(currentHeight)
         height += currentHeight
       }
       height + (lines.size - 1) * lineSpacingDp.pixels + padding.verticalDp.pixels
     }
 
-  override fun draw(context: D, chartBounds: RectF): Unit =
+  override fun draw(context: D) {
     with(context) {
       var currentTop = bounds.top + padding.topDp.pixels
       // isLtr? startX means the line starts at X from left : it starts at X from right
       val startX =
         if (isLtr) {
-          chartBounds.left + padding.startDp.pixels
+          bounds.left + padding.startDp.pixels
         } else {
-          chartBounds.right - padding.startDp.pixels - iconSizeDp.pixels
+          bounds.right - padding.startDp.pixels - iconSizeDp.pixels
         }
-      val availableWidth = chartBounds.width()
+      val availableWidth = bounds.width()
       if (lines.isEmpty()) {
         buildLines(context, availableWidth)
       }
@@ -103,16 +101,15 @@ public open class HorizontalLegend<M : MeasureContext, D : DrawContext>(
             } else {
               -iconPaddingDp.pixels
             }
-          it.label.drawText(
+          it.labelComponent.draw(
             context = context,
-            text = it.labelText,
-            textX = startX + currentStart,
-            textY = centerY,
+            text = it.label,
+            x = startX + currentStart,
+            y = centerY,
             horizontalPosition = HorizontalPosition.End,
             verticalPosition = VerticalPosition.Center,
-            maxTextWidth =
-              (chartBounds.width() - (iconSizeDp + iconPaddingDp + padding.horizontalDp).pixels)
-                .toInt(),
+            maxWidth =
+              (bounds.width() - (iconSizeDp + iconPaddingDp + padding.horizontalDp).pixels).toInt(),
           )
           currentStart +=
             if (isLtr) {
@@ -127,6 +124,7 @@ public open class HorizontalLegend<M : MeasureContext, D : DrawContext>(
         currentTop += currentLineHeight + lineSpacingDp.pixels
       }
     }
+  }
 
   protected fun buildLines(
     context: MeasureContext,

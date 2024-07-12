@@ -26,7 +26,7 @@ import androidx.annotation.StyleableRes
 import androidx.core.content.res.ResourcesCompat
 import com.patrykandpatrick.vico.core.common.Defaults.AXIS_LABEL_HORIZONTAL_PADDING
 import com.patrykandpatrick.vico.core.common.Defaults.AXIS_LABEL_VERTICAL_PADDING
-import com.patrykandpatrick.vico.core.common.Defaults.LABEL_LINE_COUNT
+import com.patrykandpatrick.vico.core.common.Defaults.TEXT_COMPONENT_LINE_COUNT
 import com.patrykandpatrick.vico.core.common.Defaults.TEXT_COMPONENT_TEXT_SIZE
 import com.patrykandpatrick.vico.core.common.Dimensions
 import com.patrykandpatrick.vico.core.common.component.TextComponent
@@ -38,35 +38,33 @@ import com.patrykandpatrick.vico.views.common.defaultColors
 private const val FONT_WEIGHT_NORMAL = 400
 
 internal fun TypedArray.getTextComponent(context: Context): TextComponent = use {
-  val color =
-    getColor(
-      R.styleable.TextComponentStyle_android_color,
-      getColor(R.styleable.TextComponentStyle_labelColor, context.defaultColors.textColor.toInt()),
-    )
-  val background =
-    getNestedTypedArray(
-        context = context,
-        resourceId = R.styleable.TextComponentStyle_backgroundStyle,
-        styleableResourceId = R.styleable.ComponentStyle,
-      )
-      .getComponent(context)
-
-  TextComponent.build {
-    this.color = color
-    this.background = background
-    this.padding = getPadding(context)
-    this.margins = getMargins(context)
-    this.textSizeSp =
+  TextComponent(
+    color =
+      getColor(
+        R.styleable.TextComponentStyle_android_color,
+        getColor(R.styleable.TextComponentStyle_labelColor, context.defaultColors.textColor.toInt()),
+      ),
+    typeface = getTypeface(context) ?: Typeface.DEFAULT,
+    textSizeSp =
       getRawDimension(
         context = context,
         index = R.styleable.TextComponentStyle_android_textSize,
         defaultValue = TEXT_COMPONENT_TEXT_SIZE,
-      )
-    this.lineCount = getInteger(R.styleable.TextComponentStyle_android_maxLines, LABEL_LINE_COUNT)
-    this.ellipsize = getTruncateAt()
-    getTypeface(context)?.let { this.typeface = it }
-    this.textAlignment = getTextAlignment()
-  }
+      ),
+    textAlignment = getTextAlignment(),
+    lineCount =
+      getInteger(R.styleable.TextComponentStyle_android_maxLines, TEXT_COMPONENT_LINE_COUNT),
+    truncateAt = getTruncateAt(),
+    margins = getMargins(context),
+    padding = getPadding(context),
+    background =
+      getNestedTypedArray(
+          context = context,
+          resourceId = R.styleable.TextComponentStyle_backgroundStyle,
+          styleableResourceId = R.styleable.ComponentStyle,
+        )
+        .getComponent(context),
+  )
 }
 
 private fun TypedArray.getTruncateAt(): TextUtils.TruncateAt {
@@ -102,7 +100,7 @@ private fun TypedArray.getTypeface(context: Context): Typeface? {
     if (fontResId > 0) {
       ResourcesCompat.getFont(context, fontResId)
     } else {
-      when (getInteger(R.styleable.TextComponentStyle_typeface, 3)) {
+      when (getInteger(R.styleable.TextComponentStyle_typeface, 0)) {
         0 -> Typeface.DEFAULT
         1 -> Typeface.SANS_SERIF
         2 -> Typeface.SERIF

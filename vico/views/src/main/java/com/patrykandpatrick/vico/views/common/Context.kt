@@ -18,20 +18,14 @@ package com.patrykandpatrick.vico.views.common
 
 import android.content.Context
 import android.content.res.Configuration
-import android.os.Build
-import androidx.core.view.ViewCompat
+import android.view.View.LAYOUT_DIRECTION_LTR
 import com.patrykandpatrick.vico.core.common.DefaultColors
 
 internal val Context.density: Float
   get() = resources.displayMetrics.density
 
 internal val Context.isLtr: Boolean
-  get() =
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-      resources.configuration.layoutDirection == ViewCompat.LAYOUT_DIRECTION_LTR
-    } else {
-      true
-    }
+  get() = resources.configuration.layoutDirection == LAYOUT_DIRECTION_LTR
 
 internal val Context.isDarkMode: Boolean
   get() =

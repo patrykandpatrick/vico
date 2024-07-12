@@ -19,7 +19,6 @@ package com.patrykandpatrick.vico.core.common.component
 import android.graphics.Paint
 import com.patrykandpatrick.vico.core.common.DrawContext
 import com.patrykandpatrick.vico.core.common.alphaFloat
-import com.patrykandpatrick.vico.core.common.applyElevationOverlayToColor
 import com.patrykandpatrick.vico.core.common.copyColor
 
 /**
@@ -29,15 +28,12 @@ import com.patrykandpatrick.vico.core.common.copyColor
  * @property dx the horizontal offset.
  * @property dy the vertical offset.
  * @property color the shadow color.
- * @property applyElevationOverlay whether to apply an elevation overlay to the component casting
- *   the shadow.
  */
 public data class ComponentShadow(
   var radius: Float = 0f,
   var dx: Float = 0f,
   var dy: Float = 0f,
   var color: Int = 0,
-  var applyElevationOverlay: Boolean = false,
 ) {
   private var laRadius: Float = 0f
   private var laDx: Float = 0f
@@ -45,35 +41,20 @@ public data class ComponentShadow(
   private var laColor: Int = 0
   private var laDensity: Float = 0f
 
-  /** Checks whether the applied shadow layer needs to be updated. */
-  public fun maybeUpdateShadowLayer(
-    context: DrawContext,
-    paint: Paint,
-    backgroundColor: Int,
-    opacity: Float = 1f,
-  ): Unit =
+  /** Updates the shadow layer. */
+  public fun updateShadowLayer(context: DrawContext, paint: Paint, opacity: Float = 1f) {
     with(context) {
-      if (shouldUpdateShadowLayer(opacity)) {
-        updateShadowLayer(paint, backgroundColor, opacity)
+      if (!shouldUpdateShadowLayer(opacity)) return
+      if (color == 0 || radius == 0f && dx == 0f && dy == 0f) {
+        paint.clearShadowLayer()
+      } else {
+        paint.setShadowLayer(
+          radius.pixels,
+          dx.pixels,
+          dy.pixels,
+          color.copyColor(color.alphaFloat * opacity),
+        )
       }
-    }
-
-  private fun DrawContext.updateShadowLayer(paint: Paint, backgroundColor: Int, opacity: Float) {
-    if (color == 0 || radius == 0f && dx == 0f && dy == 0f) {
-      paint.clearShadowLayer()
-    } else {
-      paint.color =
-        if (applyElevationOverlay) {
-          applyElevationOverlayToColor(color = backgroundColor, elevationDp = radius * opacity)
-        } else {
-          backgroundColor
-        }
-      paint.setShadowLayer(
-        radius.pixels,
-        dx.pixels,
-        dy.pixels,
-        color.copyColor(color.alphaFloat * opacity),
-      )
     }
   }
 

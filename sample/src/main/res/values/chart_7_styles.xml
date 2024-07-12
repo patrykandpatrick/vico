@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-  ~ Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+  ~ Copyright 2024 by Patryk Goworowski and Patrick Michalik.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -37,8 +37,8 @@
     </style>
 
     <style name="Chart7LineLayerStyle">
-        <item name="line1Spec">@style/Chart7Line1Style</item>
-        <item name="line2Spec">@style/Chart7Line2Style</item>
-        <item name="line3Spec">@style/Chart7Line3Style</item>
+        <item name="line1Style">@style/Chart7Line1Style</item>
+        <item name="line2Style">@style/Chart7Line2Style</item>
+        <item name="line3Style">@style/Chart7Line3Style</item>
     </style>
 </resources>

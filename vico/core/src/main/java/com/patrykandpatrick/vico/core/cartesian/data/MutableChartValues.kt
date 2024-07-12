@@ -47,7 +47,7 @@ public class MutableChartValues : ChartValues {
   override var model: CartesianChartModel = CartesianChartModel.empty
 
   /** Updates [MutableChartValues.xStep] and [MutableChartValues.model]. */
-  public fun update(xStep: Float? = null, model: CartesianChartModel) {
+  public fun update(xStep: Float, model: CartesianChartModel) {
     _xStep = xStep
     this.model = model
   }

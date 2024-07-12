@@ -41,7 +41,7 @@ import com.patrykandpatrick.vico.core.common.Defaults.FADING_EDGE_WIDTH_DP
 @Composable
 public fun rememberFadingEdges(
   startEdgeWidth: Dp = FadingEdgesDefaults.edgeWidth,
-  endEdgeWidth: Dp = startEdgeWidth,
+  endEdgeWidth: Dp = FadingEdgesDefaults.edgeWidth,
   visibilityThreshold: Dp = FadingEdgesDefaults.visibilityThreshold,
   visibilityEasing: Easing = FadingEdgesDefaults.visibilityEasing,
 ): FadingEdges =

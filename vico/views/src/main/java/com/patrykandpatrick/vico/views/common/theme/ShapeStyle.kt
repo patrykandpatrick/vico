@@ -37,31 +37,31 @@ internal fun TypedArray.getShape(context: Context): Shape {
       topLeft =
         getCorner(
           context = context,
-          sizeIndex = R.styleable.Shape_topStartCornerSize,
-          treatmentIndex = R.styleable.Shape_topStartCornerTreatment,
+          sizeIndex = R.styleable.ShapeStyle_topStartCornerSize,
+          treatmentIndex = R.styleable.ShapeStyle_topStartCornerTreatment,
         ),
       topRight =
         getCorner(
           context = context,
-          sizeIndex = R.styleable.Shape_topEndCornerSize,
-          treatmentIndex = R.styleable.Shape_topEndCornerTreatment,
+          sizeIndex = R.styleable.ShapeStyle_topEndCornerSize,
+          treatmentIndex = R.styleable.ShapeStyle_topEndCornerTreatment,
         ),
       bottomLeft =
         getCorner(
           context = context,
-          sizeIndex = R.styleable.Shape_bottomStartCornerSize,
-          treatmentIndex = R.styleable.Shape_bottomStartCornerTreatment,
+          sizeIndex = R.styleable.ShapeStyle_bottomStartCornerSize,
+          treatmentIndex = R.styleable.ShapeStyle_bottomStartCornerTreatment,
         ),
       bottomRight =
         getCorner(
           context = context,
-          sizeIndex = R.styleable.Shape_bottomEndCornerSize,
-          treatmentIndex = R.styleable.Shape_bottomEndCornerTreatment,
+          sizeIndex = R.styleable.ShapeStyle_bottomEndCornerSize,
+          treatmentIndex = R.styleable.ShapeStyle_bottomEndCornerTreatment,
         ),
     )
 
   val dashLengthDp =
-    getRawDimension(context = context, index = R.styleable.Shape_dashLength, defaultValue = 0f)
+    getRawDimension(context = context, index = R.styleable.ShapeStyle_dashLength, defaultValue = 0f)
 
   return if (dashLengthDp == 0f) {
     shape
@@ -72,8 +72,8 @@ internal fun TypedArray.getShape(context: Context): Shape {
       gapLengthDp =
         getRawDimension(
           context,
-          R.styleable.Shape_gapLength,
-          getRawDimension(context, R.styleable.Shape_dashGapLength, 0f),
+          R.styleable.ShapeStyle_gapLength,
+          getRawDimension(context, R.styleable.ShapeStyle_dashGapLength, 0f),
         ),
     )
   }
@@ -89,7 +89,7 @@ private fun TypedArray.getCorner(
     !hasValue(sizeIndex) && handleNullSizeIndex -> {
       getCorner(
         context = context,
-        sizeIndex = R.styleable.Shape_cornerSize,
+        sizeIndex = R.styleable.ShapeStyle_cornerSize,
         treatmentIndex = treatmentIndex,
         handleNullSizeIndex = false,
       )
@@ -125,7 +125,7 @@ private fun TypedArray.getCornerTreatment(
   defaultValue: Int = -1,
 ): CornerTreatment =
   when (getInt(index, defaultValue)) {
-    -1 -> getCornerTreatment(R.styleable.Shape_cornerTreatment, defaultValue = 0)
+    -1 -> getCornerTreatment(R.styleable.ShapeStyle_cornerTreatment, defaultValue = 0)
     0 -> RoundedCornerTreatment
     else -> CutCornerTreatment
   }

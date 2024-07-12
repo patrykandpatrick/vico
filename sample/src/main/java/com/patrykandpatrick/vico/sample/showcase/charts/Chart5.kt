@@ -30,7 +30,6 @@ import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesian
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
-import com.patrykandpatrick.vico.core.cartesian.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
@@ -113,11 +112,10 @@ private fun ComposeChart5(modelProducer: CartesianChartModelProducer, modifier: 
             labelRotationDegrees = AXIS_LABEL_ROTATION_DEGREES,
           ),
         bottomAxis = rememberBottomAxis(labelRotationDegrees = AXIS_LABEL_ROTATION_DEGREES),
+        marker = rememberMarker(),
       ),
     modelProducer = modelProducer,
     modifier = modifier,
-    marker = rememberMarker(),
-    runInitialAnimation = false,
     zoomState = rememberVicoZoomState(zoomEnabled = false),
   )
 }
@@ -127,10 +125,9 @@ private fun ViewChart5(modelProducer: CartesianChartModelProducer, modifier: Mod
   val marker = rememberMarker()
   AndroidViewBinding(Chart5Binding::inflate, modifier) {
     with(chartView) {
-      runInitialAnimation = false
       this.modelProducer = modelProducer
       (chart?.startAxis as VerticalAxis).itemPlacer = startAxisItemPlacer
-      this.marker = marker
+      chart?.marker = marker
     }
   }
 }
@@ -142,4 +139,4 @@ private const val AXIS_LABEL_ROTATION_DEGREES = 45f
 private val color1 = Color(0xff6438a7)
 private val color2 = Color(0xff3490de)
 private val color3 = Color(0xff73e8dc)
-private val startAxisItemPlacer = AxisItemPlacer.Vertical.count({ 3 })
+private val startAxisItemPlacer = VerticalAxis.ItemPlacer.count({ 3 })

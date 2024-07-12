@@ -28,8 +28,8 @@ import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberEndAxis
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStartAxis
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
+import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLine
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
-import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineSpec
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
@@ -103,17 +103,17 @@ private fun ComposeChart8(modelProducer: CartesianChartModelProducer, modifier: 
           verticalAxisPosition = AxisPosition.Vertical.Start,
         ),
         rememberLineCartesianLayer(
-          lines = listOf(rememberLineSpec(shader = DynamicShader.color(color4))),
+          lineProvider =
+            LineCartesianLayer.LineProvider.series(rememberLine(DynamicShader.color(color4))),
           verticalAxisPosition = AxisPosition.Vertical.End,
         ),
         startAxis = rememberStartAxis(guideline = null),
         endAxis = rememberEndAxis(guideline = null),
         bottomAxis = rememberBottomAxis(),
+        marker = rememberMarker(),
       ),
     modelProducer = modelProducer,
     modifier = modifier,
-    marker = rememberMarker(),
-    runInitialAnimation = false,
     zoomState = rememberVicoZoomState(zoomEnabled = false),
   )
 }
@@ -126,10 +126,9 @@ private fun ViewChart8(modelProducer: CartesianChartModelProducer, modifier: Mod
       (chart?.layers?.get(0) as ColumnCartesianLayer).verticalAxisPosition =
         AxisPosition.Vertical.Start
       (chart?.layers?.get(1) as LineCartesianLayer).verticalAxisPosition = AxisPosition.Vertical.End
-      runInitialAnimation = false
       this.modelProducer = modelProducer
       (chart?.startAxis as BaseAxis).guideline = null
-      this.marker = marker
+      chart?.marker = marker
     }
   }
 }

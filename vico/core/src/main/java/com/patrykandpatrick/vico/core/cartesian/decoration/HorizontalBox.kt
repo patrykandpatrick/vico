@@ -16,7 +16,6 @@
 
 package com.patrykandpatrick.vico.core.cartesian.decoration
 
-import android.graphics.RectF
 import androidx.annotation.RestrictTo
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition
@@ -56,35 +55,37 @@ public class HorizontalBox(
   private val labelRotationDegrees: Float = 0f,
   private val verticalAxisPosition: AxisPosition.Vertical? = null,
 ) : Decoration {
-  override fun onDrawAboveChart(context: CartesianDrawContext, bounds: RectF) {
+  override fun drawOverLayers(context: CartesianDrawContext) {
     with(context) {
       val yRange = chartValues.getYRange(verticalAxisPosition)
       val extraStore = chartValues.model.extraStore
       val y = y(extraStore)
       val label = label(extraStore)
-      val topY = bounds.bottom - (y.endInclusive - yRange.minY) / yRange.length * bounds.height()
-      val bottomY = bounds.bottom - (y.start - yRange.minY) / yRange.length * bounds.height()
+      val topY =
+        layerBounds.bottom - (y.endInclusive - yRange.minY) / yRange.length * layerBounds.height()
+      val bottomY =
+        layerBounds.bottom - (y.start - yRange.minY) / yRange.length * layerBounds.height()
       val labelY =
         when (verticalLabelPosition) {
           VerticalPosition.Top -> topY
           VerticalPosition.Center -> (topY + bottomY).half
           VerticalPosition.Bottom -> bottomY
         }
-      box.draw(context, bounds.left, topY, bounds.right, bottomY)
-      labelComponent?.drawText(
+      box.draw(context, layerBounds.left, topY, layerBounds.right, bottomY)
+      labelComponent?.draw(
         context = context,
         text = label,
-        textX =
+        x =
           when (horizontalLabelPosition) {
-            HorizontalPosition.Start -> bounds.getStart(isLtr)
-            HorizontalPosition.Center -> bounds.centerX()
-            HorizontalPosition.End -> bounds.getEnd(isLtr)
+            HorizontalPosition.Start -> layerBounds.getStart(isLtr)
+            HorizontalPosition.Center -> layerBounds.centerX()
+            HorizontalPosition.End -> layerBounds.getEnd(isLtr)
           },
-        textY = labelY,
+        y = labelY,
         horizontalPosition = -horizontalLabelPosition,
         verticalPosition =
           verticalLabelPosition.inBounds(
-            bounds = bounds,
+            bounds = layerBounds,
             componentHeight =
               labelComponent.getHeight(
                 context = context,
@@ -93,7 +94,7 @@ public class HorizontalBox(
               ),
             y = labelY,
           ),
-        maxTextWidth = bounds.width().toInt(),
+        maxWidth = layerBounds.width().toInt(),
         rotationDegrees = labelRotationDegrees,
       )
     }

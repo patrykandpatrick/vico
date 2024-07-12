@@ -16,7 +16,6 @@
 
 package com.patrykandpatrick.vico.core.common
 
-import android.graphics.Color
 import androidx.annotation.RestrictTo
 
 private const val ALPHA_BIT_SHIFT = 24
@@ -24,7 +23,6 @@ private const val RED_BIT_SHIFT = 16
 private const val GREEN_BIT_SHIFT = 8
 private const val BLUE_BIT_SHIFT = 0
 private const val COLOR_MASK = 0xff
-private const val BYTE_MAX_VALUE: Int = 0xFF
 internal const val MAX_HEX_VALUE = 255f
 
 /** @suppress */
@@ -62,66 +60,8 @@ internal val Int.alpha: Int
 internal val Int.alphaFloat: Float
   get() = alpha / MAX_HEX_VALUE
 
-internal val Int.isNotTransparent: Boolean
-  get() = this != Color.TRANSPARENT
-
-internal val Int.isTransparent: Boolean
-  get() = this == Color.TRANSPARENT
-
 private fun Int.extractColorChannel(bitShift: Int): Int = this shr bitShift and COLOR_MASK
-
-private fun getElevationOverlayColorWithCorrectAlpha(
-  elevationOverlayColor: Long,
-  elevationDp: Float,
-): Int {
-  val overlayPercentage =
-    when {
-      elevationDp < 1f -> 0.00f
-      elevationDp < 2f -> 0.05f
-      elevationDp < 3f -> 0.07f
-      elevationDp < 4f -> 0.08f
-      elevationDp < 6f -> 0.09f
-      elevationDp < 8f -> 0.11f
-      elevationDp < 12f -> 0.12f
-      elevationDp < 16f -> 0.14f
-      elevationDp < 24f -> 0.15f
-      else -> 0.16f
-    }
-  return if (elevationOverlayColor.alpha == 0f) {
-    Color.TRANSPARENT
-  } else {
-    elevationOverlayColor.toInt().copyColor(alpha = overlayPercentage)
-  }
-}
-
-internal fun DrawContext.applyElevationOverlayToColor(color: Int, elevationDp: Float): Int =
-  color.overlayColor(
-    getElevationOverlayColorWithCorrectAlpha(
-      elevationOverlayColor = elevationOverlayColor,
-      elevationDp = elevationDp,
-    )
-  )
 
 internal val Long.alpha: Float
   get() =
     if (this and 0x3fL == 0L) (this shr 56 and 0xff) / 255.0f else (this shr 6 and 0x3ff) / 1023.0f
-
-internal fun Int.overlayColor(overlayingColor: Int): Int {
-  val bgAlpha = Color.alpha(this)
-  val fgAlpha = Color.alpha(overlayingColor)
-  val alpha = compositeAlpha(fgAlpha, bgAlpha)
-  val red = compositeComponent(Color.red(overlayingColor), fgAlpha, Color.red(this), bgAlpha, alpha)
-  val green =
-    compositeComponent(Color.green(overlayingColor), fgAlpha, Color.green(this), bgAlpha, alpha)
-  val blue =
-    compositeComponent(Color.blue(overlayingColor), fgAlpha, Color.blue(this), bgAlpha, alpha)
-  return Color.argb(alpha, red, green, blue)
-}
-
-private fun compositeAlpha(foregroundAlpha: Int, backgroundAlpha: Int): Int =
-  BYTE_MAX_VALUE -
-    (BYTE_MAX_VALUE - backgroundAlpha) * (BYTE_MAX_VALUE - foregroundAlpha) / BYTE_MAX_VALUE
-
-private fun compositeComponent(fgC: Int, fgA: Int, bgC: Int, bgA: Int, a: Int): Int =
-  if (a == 0) 0
-  else (BYTE_MAX_VALUE * fgC * fgA + bgC * bgA * (BYTE_MAX_VALUE - fgA)) / (a * BYTE_MAX_VALUE)

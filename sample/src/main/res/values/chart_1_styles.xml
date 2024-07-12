@@ -22,6 +22,6 @@
     </style>
 
     <style name="Chart1LineLayerStyle">
-        <item name="line1Spec">@style/Chart1Line1Style</item>
+        <item name="line1Style">@style/Chart1Line1Style</item>
     </style>
 </resources>

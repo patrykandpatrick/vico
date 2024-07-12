@@ -16,18 +16,18 @@
 
 <resources>
     <attr name="lineLayerStyle" format="reference" />
-    <attr name="line1Spec" format="reference" />
-    <attr name="line2Spec" format="reference" />
-    <attr name="line3Spec" format="reference" />
+    <attr name="line1Style" format="reference" />
+    <attr name="line2Style" format="reference" />
+    <attr name="line3Style" format="reference" />
 
     <declare-styleable name="LineCartesianLayerStyle">
-        <attr name="line1Spec" />
-        <attr name="line2Spec" />
-        <attr name="line3Spec" />
-        <attr name="spacing" format="dimension" />
+        <attr name="line1Style" />
+        <attr name="line2Style" />
+        <attr name="line3Style" />
+        <attr name="pointSpacing" format="dimension" />
     </declare-styleable>
 
-    <declare-styleable name="LineSpec">
+    <declare-styleable name="LineStyle">
         <attr name="color" />
         <attr name="positiveColor" />
         <attr name="negativeColor" />
@@ -38,9 +38,9 @@
         <attr name="negativeGradientTopColor" format="color" />
         <attr name="negativeGradientBottomColor" format="color" />
         <attr name="pointSize" format="dimension" />
-        <attr name="lineThickness" format="dimension" />
+        <attr name="thickness" />
         <attr name="pointStyle" format="reference" />
-        <attr name="cubicStrength" format="fraction" />
+        <attr name="curvature" format="fraction" />
         <attr name="showDataLabels" />
         <attr name="dataLabelStyle" />
         <attr name="dataLabelVerticalPosition" />
@@ -51,7 +51,7 @@
         <attr name="color" />
         <attr name="shapeStyle" />
         <attr name="strokeColor" />
-        <attr name="strokeWidth" />
+        <attr name="strokeThickness" />
         <attr name="overlayingComponentStyle" format="reference"/>
         <attr name="layeredComponentStyle" format="reference" />
         <attr name="overlayingComponentPadding" format="dimension"/>

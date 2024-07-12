@@ -19,6 +19,8 @@ package com.patrykandpatrick.vico.core.cartesian.data
 import androidx.annotation.RestrictTo
 import com.patrykandpatrick.vico.core.common.length
 import com.patrykandpatrick.vico.core.common.random
+import kotlin.math.max
+import kotlin.math.min
 import kotlin.random.Random
 
 /** @suppress */
@@ -94,8 +96,8 @@ public object RandomCartesianModelGenerator {
             }
       opening += openingPrice
       closing += closingPrice
-      low += minOf(openingPrice, closingPrice) - lowHighRange.random()
-      high += maxOf(openingPrice, closingPrice) + lowHighRange.random()
+      low += min(openingPrice, closingPrice) - lowHighRange.random()
+      high += max(openingPrice, closingPrice) + lowHighRange.random()
       previousClosingPrice = closingPrice
     }
     return CandlestickCartesianLayerModel.partial(x.toList(), opening, closing, low, high)

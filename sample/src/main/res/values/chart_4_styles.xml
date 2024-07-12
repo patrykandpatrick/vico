@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-  ~ Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+  ~ Copyright 2024 by Patryk Goworowski and Patrick Michalik.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -42,16 +42,16 @@
 
     <style name="Chart4Line1Style">
         <item name="color">@color/chart_4_color_4</item>
-        <item name="cubicStrength">0%</item>
+        <item name="curvature">0%</item>
     </style>
 
     <style name="Chart4ColumnLayerStyle">
-        <item name="column1">@style/Chart4Column1Style</item>
-        <item name="column2">@style/Chart4Column2Style</item>
-        <item name="column3">@style/Chart4Column3Style</item>
+        <item name="column1Style">@style/Chart4Column1Style</item>
+        <item name="column2Style">@style/Chart4Column2Style</item>
+        <item name="column3Style">@style/Chart4Column3Style</item>
     </style>
 
     <style name="Chart4LineLayerStyle">
-        <item name="line1Spec">@style/Chart4Line1Style</item>
+        <item name="line1Style">@style/Chart4Line1Style</item>
     </style>
 </resources>

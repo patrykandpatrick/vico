@@ -43,15 +43,25 @@ internal fun TypedArray.getColumnCartesianLayer(
   getNestedTypedArray(context, resourceId, styleableResourceId).run {
     val defaultShape = Shape.rounded(allPercent = Defaults.COLUMN_ROUNDNESS_PERCENT)
     val mergeMode =
-      getInteger(R.styleable.ColumnCartesianLayerStyle_mergeMode, 0)
-        .let(ColumnCartesianLayer.MergeMode.entries::get)
+      when (getInteger(R.styleable.ColumnCartesianLayerStyle_mergeMode, 0)) {
+        0 ->
+          ColumnCartesianLayer.MergeMode.Grouped(
+            getRawDimension(
+              context,
+              R.styleable.ColumnCartesianLayerStyle_groupedColumnSpacing,
+              Defaults.GROUPED_COLUMN_SPACING,
+            )
+          )
+        1 -> ColumnCartesianLayer.MergeMode.Stacked
+        else -> throw IllegalArgumentException("Unexpected `mergeMode` value.")
+      }
     ColumnCartesianLayer(
       columnProvider =
         ColumnCartesianLayer.ColumnProvider.series(
           getNestedTypedArray(
               context = context,
-              resourceId = R.styleable.ColumnCartesianLayerStyle_column1,
-              styleableResourceId = R.styleable.LineComponent,
+              resourceId = R.styleable.ColumnCartesianLayerStyle_column1Style,
+              styleableResourceId = R.styleable.LineComponentStyle,
             )
             .getLineComponent(
               context = context,
@@ -61,8 +71,8 @@ internal fun TypedArray.getColumnCartesianLayer(
             ),
           getNestedTypedArray(
               context = context,
-              resourceId = R.styleable.ColumnCartesianLayerStyle_column2,
-              styleableResourceId = R.styleable.LineComponent,
+              resourceId = R.styleable.ColumnCartesianLayerStyle_column2Style,
+              styleableResourceId = R.styleable.LineComponentStyle,
             )
             .getLineComponent(
               context = context,
@@ -72,8 +82,8 @@ internal fun TypedArray.getColumnCartesianLayer(
             ),
           getNestedTypedArray(
               context = context,
-              resourceId = R.styleable.ColumnCartesianLayerStyle_column3,
-              styleableResourceId = R.styleable.LineComponent,
+              resourceId = R.styleable.ColumnCartesianLayerStyle_column3Style,
+              styleableResourceId = R.styleable.LineComponentStyle,
             )
             .getLineComponent(
               context = context,
@@ -82,17 +92,11 @@ internal fun TypedArray.getColumnCartesianLayer(
               defaultShape = defaultShape,
             ),
         ),
-      spacingDp =
+      columnCollectionSpacingDp =
         getRawDimension(
           context = context,
-          index = R.styleable.ColumnCartesianLayerStyle_columnOuterSpacing,
-          defaultValue = Defaults.COLUMN_OUTSIDE_SPACING,
-        ),
-      innerSpacingDp =
-        getRawDimension(
-          context = context,
-          index = R.styleable.ColumnCartesianLayerStyle_columnInnerSpacing,
-          defaultValue = Defaults.COLUMN_INSIDE_SPACING,
+          index = R.styleable.ColumnCartesianLayerStyle_columnCollectionSpacing,
+          defaultValue = Defaults.COLUMN_COLLECTION_SPACING,
         ),
       mergeMode = { mergeMode },
       dataLabel =
@@ -107,11 +111,8 @@ internal fun TypedArray.getColumnCartesianLayer(
           null
         },
       dataLabelVerticalPosition =
-        getInteger(R.styleable.ColumnCartesianLayerStyle_dataLabelVerticalPosition, 0).let { value
-          ->
-          val values = VerticalPosition.entries
-          values[value % values.size]
-        },
+        VerticalPosition.entries[
+            getInteger(R.styleable.ColumnCartesianLayerStyle_dataLabelVerticalPosition, 0)],
       dataLabelRotationDegrees =
         getFloat(R.styleable.ColumnCartesianLayerStyle_dataLabelRotationDegrees, 0f),
     )
@@ -124,40 +125,40 @@ internal fun TypedArray.getLineCartesianLayer(
 ): LineCartesianLayer =
   getNestedTypedArray(context, resourceId, styleableResourceId).run {
     LineCartesianLayer(
-      lines =
-        listOf(
+      lineProvider =
+        LineCartesianLayer.LineProvider.series(
           getNestedTypedArray(
               context = context,
-              resourceId = R.styleable.LineCartesianLayerStyle_line1Spec,
-              styleableResourceId = R.styleable.LineSpec,
+              resourceId = R.styleable.LineCartesianLayerStyle_line1Style,
+              styleableResourceId = R.styleable.LineStyle,
             )
-            .getLineSpec(
+            .getLine(
               context = context,
               defaultColor = context.defaultColors.cartesianLayerColors[0].toInt(),
             ),
           getNestedTypedArray(
               context = context,
-              resourceId = R.styleable.LineCartesianLayerStyle_line2Spec,
-              styleableResourceId = R.styleable.LineSpec,
+              resourceId = R.styleable.LineCartesianLayerStyle_line2Style,
+              styleableResourceId = R.styleable.LineStyle,
             )
-            .getLineSpec(
+            .getLine(
               context = context,
               defaultColor = context.defaultColors.cartesianLayerColors.getRepeating(1).toInt(),
             ),
           getNestedTypedArray(
               context = context,
-              resourceId = R.styleable.LineCartesianLayerStyle_line3Spec,
-              styleableResourceId = R.styleable.LineSpec,
+              resourceId = R.styleable.LineCartesianLayerStyle_line3Style,
+              styleableResourceId = R.styleable.LineStyle,
             )
-            .getLineSpec(
+            .getLine(
               context = context,
               defaultColor = context.defaultColors.cartesianLayerColors.getRepeating(2).toInt(),
             ),
         ),
-      spacingDp =
+      pointSpacingDp =
         getRawDimension(
           context = context,
-          index = R.styleable.LineCartesianLayerStyle_spacing,
+          index = R.styleable.LineCartesianLayerStyle_pointSpacing,
           defaultValue = Defaults.POINT_SPACING,
         ),
     )
@@ -170,45 +171,55 @@ internal fun TypedArray.getCandlestickCartesianLayer(context: Context): Candlest
   return getNestedTypedArray(
       context,
       R.styleable.CartesianChartView_candlestickLayerStyle,
-      R.styleable.CandlestickLayerStyle,
+      R.styleable.CandlestickCartesianLayerStyle,
     )
     .use { typedArray ->
       val candleProvider =
-        when (typedArray.getInteger(R.styleable.CandlestickLayerStyle_candleStyle, 0)) {
+        when (typedArray.getInteger(R.styleable.CandlestickCartesianLayerStyle_candleStyle, 0)) {
           0 -> {
             val bullish =
-              typedArray.getCandle(context, R.styleable.CandlestickLayerStyle_bullishCandleStyle)
-                ?: CandlestickCartesianLayer.Candle.sharpFilledCandle(bullishColor)
+              typedArray.getCandle(
+                context,
+                R.styleable.CandlestickCartesianLayerStyle_bullishCandleStyle,
+              ) ?: CandlestickCartesianLayer.Candle.sharpFilledCandle(bullishColor)
             CandlestickCartesianLayer.CandleProvider.absolute(
               bullish = bullish,
               neutral =
-                typedArray.getCandle(context, R.styleable.CandlestickLayerStyle_neutralCandleStyle)
-                  ?: bullish.copyWithColor(neutralColor),
+                typedArray.getCandle(
+                  context,
+                  R.styleable.CandlestickCartesianLayerStyle_neutralCandleStyle,
+                ) ?: bullish.copyWithColor(neutralColor),
               bearish =
-                typedArray.getCandle(context, R.styleable.CandlestickLayerStyle_bearishCandleStyle)
-                  ?: bullish.copyWithColor(bearishColor),
+                typedArray.getCandle(
+                  context,
+                  R.styleable.CandlestickCartesianLayerStyle_bearishCandleStyle,
+                ) ?: bullish.copyWithColor(bearishColor),
             )
           }
           1 -> {
             val absolutelyBullishRelativelyBullish =
               typedArray.getCandle(
                 context,
-                R.styleable.CandlestickLayerStyle_absolutelyBullishRelativelyBullishCandleStyle,
+                R.styleable
+                  .CandlestickCartesianLayerStyle_absolutelyBullishRelativelyBullishCandleStyle,
               ) ?: CandlestickCartesianLayer.Candle.sharpHollowCandle(bullishColor)
             val absolutelyBullishRelativelyNeutral =
               typedArray.getCandle(
                 context,
-                R.styleable.CandlestickLayerStyle_absolutelyBullishRelativelyNeutralCandleStyle,
+                R.styleable
+                  .CandlestickCartesianLayerStyle_absolutelyBullishRelativelyNeutralCandleStyle,
               ) ?: absolutelyBullishRelativelyBullish.copyWithColor(neutralColor)
             val absolutelyBullishRelativelyBearish =
               typedArray.getCandle(
                 context,
-                R.styleable.CandlestickLayerStyle_absolutelyBullishRelativelyBearishCandleStyle,
+                R.styleable
+                  .CandlestickCartesianLayerStyle_absolutelyBullishRelativelyBearishCandleStyle,
               ) ?: absolutelyBullishRelativelyBullish.copyWithColor(bearishColor)
             val absolutelyBearishRelativelyBullish =
               typedArray.getCandle(
                 context,
-                R.styleable.CandlestickLayerStyle_absolutelyBearishRelativelyBullishCandleStyle,
+                R.styleable
+                  .CandlestickCartesianLayerStyle_absolutelyBearishRelativelyBullishCandleStyle,
               ) ?: CandlestickCartesianLayer.Candle.sharpFilledCandle(bullishColor)
             CandlestickCartesianLayer.CandleProvider.absoluteRelative(
               absolutelyBullishRelativelyBullish = absolutelyBullishRelativelyBullish,
@@ -217,49 +228,54 @@ internal fun TypedArray.getCandlestickCartesianLayer(context: Context): Candlest
               absolutelyNeutralRelativelyBullish =
                 typedArray.getCandle(
                   context,
-                  R.styleable.CandlestickLayerStyle_absolutelyNeutralRelativelyBullishCandleStyle,
+                  R.styleable
+                    .CandlestickCartesianLayerStyle_absolutelyNeutralRelativelyBullishCandleStyle,
                 ) ?: absolutelyBullishRelativelyBullish,
               absolutelyNeutralRelativelyNeutral =
                 typedArray.getCandle(
                   context,
-                  R.styleable.CandlestickLayerStyle_absolutelyNeutralRelativelyNeutralCandleStyle,
+                  R.styleable
+                    .CandlestickCartesianLayerStyle_absolutelyNeutralRelativelyNeutralCandleStyle,
                 ) ?: absolutelyBullishRelativelyNeutral,
               absolutelyNeutralRelativelyBearish =
                 typedArray.getCandle(
                   context,
-                  R.styleable.CandlestickLayerStyle_absolutelyNeutralRelativelyBearishCandleStyle,
+                  R.styleable
+                    .CandlestickCartesianLayerStyle_absolutelyNeutralRelativelyBearishCandleStyle,
                 ) ?: absolutelyBullishRelativelyBearish,
               absolutelyBearishRelativelyBullish = absolutelyBearishRelativelyBullish,
               absolutelyBearishRelativelyNeutral =
                 typedArray.getCandle(
                   context,
-                  R.styleable.CandlestickLayerStyle_absolutelyBearishRelativelyNeutralCandleStyle,
+                  R.styleable
+                    .CandlestickCartesianLayerStyle_absolutelyBearishRelativelyNeutralCandleStyle,
                 ) ?: absolutelyBearishRelativelyBullish.copyWithColor(neutralColor),
               absolutelyBearishRelativelyBearish =
                 typedArray.getCandle(
                   context,
-                  R.styleable.CandlestickLayerStyle_absolutelyBearishRelativelyBearishCandleStyle,
+                  R.styleable
+                    .CandlestickCartesianLayerStyle_absolutelyBearishRelativelyBearishCandleStyle,
                 ) ?: absolutelyBearishRelativelyBullish.copyWithColor(bearishColor),
             )
           }
-          else -> error("Unexpected `candleStyle` value.")
+          else -> throw IllegalArgumentException("Unexpected `candleStyle` value.")
         }
       CandlestickCartesianLayer(
         candles = candleProvider,
         minCandleBodyHeightDp =
           typedArray.getRawDimension(
             context,
-            R.styleable.CandlestickLayerStyle_minCandleBodyHeight,
+            R.styleable.CandlestickCartesianLayerStyle_minCandleBodyHeight,
             Defaults.MIN_CANDLE_BODY_HEIGHT_DP,
           ),
         candleSpacingDp =
           typedArray.getRawDimension(
             context,
-            R.styleable.CandlestickLayerStyle_candleSpacing,
+            R.styleable.CandlestickCartesianLayerStyle_candleSpacing,
             Defaults.CANDLE_SPACING_DP,
           ),
         scaleCandleWicks =
-          typedArray.getBoolean(R.styleable.CandlestickLayerStyle_scaleCandleWicks, false),
+          typedArray.getBoolean(R.styleable.CandlestickCartesianLayerStyle_scaleCandleWicks, false),
       )
     }
 }
@@ -275,7 +291,7 @@ private fun TypedArray.getCandle(
           .getNestedTypedArray(
             context,
             R.styleable.CandleStyle_bodyStyle,
-            R.styleable.LineComponent,
+            R.styleable.LineComponentStyle,
           )
           .getLineComponent(context = context, defaultThickness = Defaults.CANDLE_BODY_WIDTH_DP)
       val topWick =
@@ -284,7 +300,7 @@ private fun TypedArray.getCandle(
             .getNestedTypedArray(
               context,
               R.styleable.CandleStyle_topWickStyle,
-              R.styleable.LineComponent,
+              R.styleable.LineComponentStyle,
             )
             .getLineComponent(context)
         } else {
@@ -296,7 +312,7 @@ private fun TypedArray.getCandle(
             .getNestedTypedArray(
               context,
               R.styleable.CandleStyle_bottomWickStyle,
-              R.styleable.LineComponent,
+              R.styleable.LineComponentStyle,
             )
             .getLineComponent(context)
         } else {

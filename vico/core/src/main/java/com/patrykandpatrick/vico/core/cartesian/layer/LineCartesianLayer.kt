@@ -21,7 +21,7 @@ import android.graphics.Path
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasureContext
-import com.patrykandpatrick.vico.core.cartesian.DefaultPointConnector
+import com.patrykandpatrick.vico.core.cartesian.CubicPointConnector
 import com.patrykandpatrick.vico.core.cartesian.HorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
 import com.patrykandpatrick.vico.core.cartesian.Insets
@@ -34,8 +34,7 @@ import com.patrykandpatrick.vico.core.cartesian.data.LineCartesianLayerDrawingMo
 import com.patrykandpatrick.vico.core.cartesian.data.LineCartesianLayerModel
 import com.patrykandpatrick.vico.core.cartesian.data.MutableChartValues
 import com.patrykandpatrick.vico.core.cartesian.data.forEachIn
-import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer.LineSpec
-import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer.LineSpec.PointConnector
+import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer.Line
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.core.cartesian.marker.LineCartesianLayerMarkerTarget
 import com.patrykandpatrick.vico.core.cartesian.marker.MutableLineCartesianLayerMarkerTarget
@@ -55,6 +54,7 @@ import com.patrykandpatrick.vico.core.common.getRepeating
 import com.patrykandpatrick.vico.core.common.getStart
 import com.patrykandpatrick.vico.core.common.half
 import com.patrykandpatrick.vico.core.common.inBounds
+import com.patrykandpatrick.vico.core.common.orZero
 import com.patrykandpatrick.vico.core.common.shader.DynamicShader
 import com.patrykandpatrick.vico.core.common.shader.TopBottomShader
 import com.patrykandpatrick.vico.core.common.withOpacity
@@ -64,16 +64,16 @@ import kotlin.math.min
 /**
  * [LineCartesianLayer] displays data as a continuous line.
  *
- * @param lines a [List] of [LineSpec]s defining the style of each line.
- * @param spacingDp the spacing between each [LineSpec.point] (in dp).
+ * @param lineProvider provides the [Line]s.
+ * @param pointSpacingDp the point spacing (in dp).
  * @param verticalAxisPosition the position of the [VerticalAxis] with which the
  *   [LineCartesianLayer] should be associated. Use this for independent [CartesianLayer] scaling.
  * @param drawingModelInterpolator interpolates the [LineCartesianLayer]’s
  *   [LineCartesianLayerDrawingModel]s.
  */
 public open class LineCartesianLayer(
-  public var lines: List<LineSpec>,
-  public var spacingDp: Float = Defaults.POINT_SPACING,
+  public var lineProvider: LineProvider,
+  public var pointSpacingDp: Float = Defaults.POINT_SPACING,
   public var verticalAxisPosition: AxisPosition.Vertical? = null,
   public var drawingModelInterpolator:
     DrawingModelInterpolator<
@@ -83,20 +83,6 @@ public open class LineCartesianLayer(
     DefaultDrawingModelInterpolator(),
 ) : BaseCartesianLayer<LineCartesianLayerModel>() {
   /**
-   * Creates a [LineCartesianLayer] with a common style for all lines.
-   *
-   * @param line a [LineSpec] defining the style of each line.
-   * @param spacingDp the spacing between each [LineSpec.point] (in dp).
-   * @param verticalAxisPosition the position of the [VerticalAxis] with which the
-   *   [LineCartesianLayer] should be associated. Use this for independent [CartesianLayer] scaling.
-   */
-  public constructor(
-    line: LineSpec,
-    spacingDp: Float,
-    verticalAxisPosition: AxisPosition.Vertical? = null,
-  ) : this(listOf(line), spacingDp, verticalAxisPosition)
-
-  /**
    * Defines the appearance of a line in a line chart.
    *
    * @param shader the [DynamicShader] for the line.
@@ -104,29 +90,27 @@ public open class LineCartesianLayer(
    * @param backgroundShader an optional [DynamicShader] to use for the areas bounded by the
    *   [LineCartesianLayer] line and the zero line (_y_ = 0).
    * @param cap the stroke cap for the line.
-   * @param point an optional [Component] that can be drawn at a given point on the line.
-   * @param pointSizeDp the size of the [point] (in dp).
+   * @param pointProvider provides the [Point]s.
    * @param dataLabel an optional [TextComponent] to use for data labels.
    * @param dataLabelVerticalPosition the vertical position of data labels relative to the line.
    * @param dataLabelValueFormatter the [CartesianValueFormatter] to use for data labels.
    * @param dataLabelRotationDegrees the rotation of data labels (in degrees).
    * @param pointConnector the [PointConnector] for the line.
    */
-  public open class LineSpec(
+  public open class Line(
     public var shader: DynamicShader,
     public var thicknessDp: Float = Defaults.LINE_SPEC_THICKNESS_DP,
     public var backgroundShader: DynamicShader? = null,
-    public var cap: Paint.Cap = Paint.Cap.ROUND,
-    public var point: Component? = null,
-    public var pointSizeDp: Float = Defaults.POINT_SIZE,
+    cap: Paint.Cap = Paint.Cap.ROUND,
+    public var pointProvider: PointProvider? = null,
+    public var pointConnector: PointConnector = PointConnector.cubic(),
     public var dataLabel: TextComponent? = null,
     public var dataLabelVerticalPosition: VerticalPosition = VerticalPosition.Top,
     public var dataLabelValueFormatter: CartesianValueFormatter = CartesianValueFormatter.decimal(),
     public var dataLabelRotationDegrees: Float = 0f,
-    public var pointConnector: PointConnector = DefaultPointConnector(),
   ) {
     /** Returns `true` if the [backgroundShader] is not null, and `false` otherwise. */
-    public val hasLineBackgroundShader: Boolean
+    public val hasBackgroundShader: Boolean
       get() = backgroundShader != null
 
     protected val linePaint: Paint =
@@ -144,15 +128,7 @@ public open class LineCartesianLayer(
     protected val pathBounds: RectF = RectF()
 
     /** The stroke cap for the line. */
-    public var lineStrokeCap: Paint.Cap by linePaint::strokeCap
-
-    /**
-     * Draws a [point] at the given [x] and [y] coordinates, using the provided [context].
-     *
-     * @see Component
-     */
-    public fun drawPoint(context: CartesianDrawContext, x: Float, y: Float): Unit =
-      with(context) { point?.drawPoint(context, x, y, pointSizeDp.pixels.half) }
+    public var cap: Paint.Cap by linePaint::strokeCap
 
     /** Draws the line. */
     public fun drawLine(
@@ -171,7 +147,7 @@ public open class LineCartesianLayer(
     }
 
     /** Draws the line background. */
-    public fun drawBackgroundLine(
+    public fun drawBackground(
       context: DrawContext,
       bounds: RectF,
       zeroLineYFraction: Float,
@@ -220,35 +196,113 @@ public open class LineCartesianLayer(
       (shader as? TopBottomShader)?.splitY = splitY
       (backgroundShader as? TopBottomShader)?.splitY = splitY
     }
+  }
 
-    /**
-     * Defines the shape of a line in a line chart by specifying how points are to be connected.
-     *
-     * @see DefaultPointConnector
-     */
-    public interface PointConnector {
-      /** Draws a line between two points. */
-      public fun connect(
-        path: Path,
-        prevX: Float,
-        prevY: Float,
-        x: Float,
-        y: Float,
-        horizontalDimensions: HorizontalDimensions,
-        bounds: RectF,
+  /** Connects a [LineCartesianLayer] line’s points, thus defining its shape. */
+  public fun interface PointConnector {
+    /** Connects ([x1], [y2]) and ([x2], [y2]). */
+    public fun connect(
+      context: CartesianDrawContext,
+      path: Path,
+      x1: Float,
+      y1: Float,
+      x2: Float,
+      y2: Float,
+    )
+
+    /** Houses a [PointConnector] factory function. */
+    public companion object {
+      /**
+       * Uses cubic Bézier curves. [curvature], which must be in the interval [[0, 1]], defines
+       * their strength.
+       */
+      public fun cubic(curvature: Float = Defaults.LINE_CURVATURE): PointConnector =
+        CubicPointConnector(curvature)
+    }
+  }
+
+  /** Provides [Line]s to [LineCartesianLayer]s. */
+  public fun interface LineProvider {
+    /** Returns the [Line] for the specified series. */
+    public fun getLine(seriesIndex: Int, extraStore: ExtraStore): Line
+
+    /** Houses [LineProvider] factory functions. */
+    public companion object {
+      private data class Series(private val lines: List<Line>) : LineProvider {
+        override fun getLine(seriesIndex: Int, extraStore: ExtraStore) =
+          lines.getRepeating(seriesIndex)
+      }
+
+      /**
+       * Uses the provided [Line]s. The [Line]s and series are associated by index. If there are
+       * more series than [Line]s, [lines] is iterated multiple times.
+       */
+      public fun series(lines: List<Line>): LineProvider = Series(lines)
+
+      /**
+       * Uses the provided [Line]s. The [Line]s and series are associated by index. If there are
+       * more series than [Line]s, the [Line] list is iterated multiple times.
+       */
+      public fun series(vararg lines: Line): LineProvider = series(lines.toList())
+    }
+  }
+
+  /**
+   * Defines a point style.
+   *
+   * @param component the point [Component].
+   * @property sizeDp the point size (in dp).
+   */
+  public data class Point(
+    private val component: Component,
+    public val sizeDp: Float = Defaults.POINT_SIZE,
+  ) {
+    /** Draws a point at ([x], [y]). */
+    public fun draw(context: CartesianDrawContext, x: Float, y: Float) {
+      val halfSize = context.run { sizeDp.half.pixels }
+      component.draw(
+        context = context,
+        left = x - halfSize,
+        top = y - halfSize,
+        right = x + halfSize,
+        bottom = y + halfSize,
       )
+    }
+  }
+
+  /** Provides [Point]s to [LineCartesianLayer]s. */
+  public interface PointProvider {
+    /** Returns the [Point] for the point with the given properties. */
+    public fun getPoint(
+      entry: LineCartesianLayerModel.Entry,
+      seriesIndex: Int,
+      extraStore: ExtraStore,
+    ): Point?
+
+    /** Returns the largest [Point]. */
+    public fun getLargestPoint(extraStore: ExtraStore): Point?
+
+    /** Houses a [PointProvider] factory function. */
+    public companion object {
+      private data class Single(private val point: Point) : PointProvider {
+        override fun getPoint(
+          entry: LineCartesianLayerModel.Entry,
+          seriesIndex: Int,
+          extraStore: ExtraStore,
+        ) = point
+
+        override fun getLargestPoint(extraStore: ExtraStore) = point
+      }
+
+      /** Uses [point] for each point. */
+      public fun single(point: Point): PointProvider = Single(point)
     }
   }
 
   private val _markerTargets = mutableMapOf<Float, List<MutableLineCartesianLayerMarkerTarget>>()
 
-  /** The [Path] used to draw the lines, each of which corresponds to a [LineSpec]. */
   protected val linePath: Path = Path()
 
-  /**
-   * The [Path] used to draw the backgrounds of the lines, each of which corresponds to a
-   * [LineSpec].
-   */
   protected val lineBackgroundPath: Path = Path()
 
   protected val drawingModelKey: ExtraStore.Key<LineCartesianLayerDrawingModel> = ExtraStore.Key()
@@ -264,71 +318,58 @@ public open class LineCartesianLayer(
       val zeroLineYFraction =
         drawingModel?.zeroY ?: (yRange.minY / yRange.length + 1f).coerceIn(0f..1f)
 
-      model.series.forEachIndexed { entryListIndex, entries ->
-        val pointInfoMap = drawingModel?.getOrNull(entryListIndex)
+      model.series.forEachIndexed { seriesIndex, series ->
+        val pointInfoMap = drawingModel?.getOrNull(seriesIndex)
 
         linePath.rewind()
         lineBackgroundPath.rewind()
-        val component = lines.getRepeating(entryListIndex).apply { setSplitY(zeroLineYFraction) }
+        val line =
+          lineProvider.getLine(seriesIndex, chartValues.model.extraStore).apply {
+            setSplitY(zeroLineYFraction)
+          }
 
-        var prevX = bounds.getStart(isLtr = isLtr)
-        var prevY = bounds.bottom
+        var prevX = layerBounds.getStart(isLtr = isLtr)
+        var prevY = layerBounds.bottom
 
         val drawingStartAlignmentCorrection =
           layoutDirectionMultiplier * horizontalDimensions.startPadding
 
-        val drawingStart = bounds.getStart(isLtr = isLtr) + drawingStartAlignmentCorrection - scroll
+        val drawingStart =
+          layerBounds.getStart(isLtr = isLtr) + drawingStartAlignmentCorrection - scroll
 
-        forEachPointInBounds(
-          series = entries,
-          drawingStart = drawingStart,
-          pointInfoMap = pointInfoMap,
-        ) { entry, x, y, _, _ ->
+        forEachPointInBounds(series, drawingStart, pointInfoMap) { entry, x, y, _, _ ->
           if (linePath.isEmpty) {
             linePath.moveTo(x, y)
           } else {
-            component.pointConnector.connect(
-              path = linePath,
-              prevX = prevX,
-              prevY = prevY,
-              x = x,
-              y = y,
-              horizontalDimensions = horizontalDimensions,
-              bounds = bounds,
-            )
+            line.pointConnector.connect(this, linePath, prevX, prevY, x, y)
           }
           prevX = x
           prevY = y
 
-          updateMarkerTargets(entry, x, y, component)
+          updateMarkerTargets(entry, x, y, line)
         }
 
-        if (component.hasLineBackgroundShader) {
+        if (line.hasBackgroundShader) {
           lineBackgroundPath.addPath(linePath)
-          lineBackgroundPath.lineTo(prevX, bounds.bottom)
-          component.drawBackgroundLine(
+          lineBackgroundPath.lineTo(prevX, layerBounds.bottom)
+          line.drawBackground(
             context,
-            bounds,
+            layerBounds,
             zeroLineYFraction,
             lineBackgroundPath,
             drawingModel?.opacity ?: 1f,
           )
         }
 
-        component.drawLine(
+        line.drawLine(
           context,
-          bounds,
+          layerBounds,
           zeroLineYFraction,
           linePath,
           drawingModel?.opacity ?: 1f,
         )
 
-        drawPointsAndDataLabels(
-          lineSpec = component,
-          series = entries,
-          drawingStart = drawingStart,
-          pointInfoMap = pointInfoMap,
-        )
+        drawPointsAndDataLabels(line, series, seriesIndex, drawingStart, pointInfoMap)
       }
     }
 
@@ -336,10 +377,10 @@ public open class LineCartesianLayer(
     entry: LineCartesianLayerModel.Entry,
     canvasX: Float,
     canvasY: Float,
-    lineSpec: LineSpec,
+    line: Line,
   ) {
-    if (canvasX <= bounds.left - 1 || canvasX >= bounds.right + 1) return
-    val limitedCanvasY = canvasY.coerceIn(bounds.top, bounds.bottom)
+    if (canvasX <= layerBounds.left - 1 || canvasX >= layerBounds.right + 1) return
+    val limitedCanvasY = canvasY.coerceIn(layerBounds.top, layerBounds.bottom)
     _markerTargets
       .getOrPut(entry.x) { listOf(MutableLineCartesianLayerMarkerTarget(entry.x, canvasX)) }
       .first()
@@ -347,30 +388,27 @@ public open class LineCartesianLayer(
       LineCartesianLayerMarkerTarget.Point(
         entry,
         limitedCanvasY,
-        lineSpec.shader.getColorAt(Point(canvasX, limitedCanvasY), this, bounds),
+        line.shader.getColorAt(Point(canvasX, limitedCanvasY), this, layerBounds),
       )
   }
 
-  /**
-   * Draws a line’s points ([LineSpec.point]) and their corresponding data labels
-   * ([LineSpec.dataLabel]).
-   */
   protected open fun CartesianDrawContext.drawPointsAndDataLabels(
-    lineSpec: LineSpec,
+    line: Line,
     series: List<LineCartesianLayerModel.Entry>,
+    seriesIndex: Int,
     drawingStart: Float,
     pointInfoMap: Map<Float, LineCartesianLayerDrawingModel.PointInfo>?,
   ) {
-    if (lineSpec.point == null && lineSpec.dataLabel == null) return
-
     forEachPointInBounds(
       series = series,
       drawingStart = drawingStart,
       pointInfoMap = pointInfoMap,
     ) { chartEntry, x, y, previousX, nextX ->
-      if (lineSpec.point != null) lineSpec.drawPoint(context = this, x = x, y = y)
+      val point =
+        line.pointProvider?.getPoint(chartEntry, seriesIndex, chartValues.model.extraStore)
+      point?.draw(this, x, y)
 
-      lineSpec.dataLabel
+      line.dataLabel
         .takeIf {
           horizontalLayout is HorizontalLayout.Segmented ||
             chartEntry.x != chartValues.minX && chartEntry.x != chartValues.maxX ||
@@ -378,26 +416,25 @@ public open class LineCartesianLayer(
             chartEntry.x == chartValues.maxX && horizontalDimensions.endPadding > 0
         }
         ?.let { textComponent ->
-          val distanceFromLine =
-            maxOf(a = lineSpec.thicknessDp, b = lineSpec.pointSizeDpOrZero).half.pixels
+          val distanceFromLine = max(line.thicknessDp, point?.sizeDp.orZero).half.pixels
 
           val text =
-            lineSpec.dataLabelValueFormatter.format(
+            line.dataLabelValueFormatter.format(
               value = chartEntry.y,
               chartValues = chartValues,
               verticalAxisPosition = verticalAxisPosition,
             )
           val maxWidth = getMaxDataLabelWidth(chartEntry, x, previousX, nextX)
           val verticalPosition =
-            lineSpec.dataLabelVerticalPosition.inBounds(
-              bounds = bounds,
+            line.dataLabelVerticalPosition.inBounds(
+              bounds = layerBounds,
               distanceFromPoint = distanceFromLine,
               componentHeight =
                 textComponent.getHeight(
                   context = this,
                   text = text,
-                  width = maxWidth,
-                  rotationDegrees = lineSpec.dataLabelRotationDegrees,
+                  maxWidth = maxWidth,
+                  rotationDegrees = line.dataLabelRotationDegrees,
                 ),
               y = y,
             )
@@ -408,14 +445,14 @@ public open class LineCartesianLayer(
                 VerticalPosition.Center -> 0f
                 VerticalPosition.Bottom -> distanceFromLine
               }
-          textComponent.drawText(
+          textComponent.draw(
             context = this,
-            textX = x,
-            textY = dataLabelY,
+            x = x,
+            y = dataLabelY,
             text = text,
             verticalPosition = verticalPosition,
-            maxTextWidth = maxWidth,
-            rotationDegrees = lineSpec.dataLabelRotationDegrees,
+            maxWidth = maxWidth,
+            rotationDegrees = line.dataLabelRotationDegrees,
           )
         }
     }
@@ -455,7 +492,6 @@ public open class LineCartesianLayer(
       }
     }.toInt()
 
-  /** Clears the temporary data saved during a single [drawInternal] run. */
   protected fun resetTempData() {
     _markerTargets.clear()
     linePath.rewind()
@@ -478,8 +514,8 @@ public open class LineCartesianLayer(
     var x: Float? = null
     var nextX: Float? = null
 
-    val boundsStart = bounds.getStart(isLtr = isLtr)
-    val boundsEnd = boundsStart + layoutDirectionMultiplier * bounds.width()
+    val boundsStart = layerBounds.getStart(isLtr = isLtr)
+    val boundsEnd = boundsStart + layoutDirectionMultiplier * layerBounds.width()
 
     fun getDrawX(entry: LineCartesianLayerModel.Entry): Float =
       drawingStart +
@@ -487,9 +523,9 @@ public open class LineCartesianLayer(
 
     fun getDrawY(entry: LineCartesianLayerModel.Entry): Float {
       val yRange = chartValues.getYRange(verticalAxisPosition)
-      return bounds.bottom -
+      return layerBounds.bottom -
         (pointInfoMap?.get(entry.x)?.y ?: ((entry.y - yRange.minY) / yRange.length)) *
-          bounds.height()
+          layerBounds.height()
     }
 
     series.forEachIn(range = minX..maxX, padding = 1) { entry, next ->
@@ -516,8 +552,18 @@ public open class LineCartesianLayer(
     model: LineCartesianLayerModel,
   ) {
     with(context) {
-      val maxPointSize = lines.maxOf { it.pointSizeDpOrZero }.pixels
-      val xSpacing = maxPointSize + spacingDp.pixels
+      val maxPointSize =
+        (0..<model.series.size)
+          .maxOf {
+            lineProvider
+              .getLine(it, model.extraStore)
+              .pointProvider
+              ?.getLargestPoint(model.extraStore)
+              ?.sizeDp
+              .orZero
+          }
+          .pixels
+      val xSpacing = maxPointSize + pointSpacingDp.pixels
       when (val horizontalLayout = horizontalLayout) {
         is HorizontalLayout.Segmented ->
           horizontalDimensions.ensureSegmentedValues(xSpacing, chartValues)
@@ -549,15 +595,21 @@ public open class LineCartesianLayer(
   override fun updateInsets(
     context: CartesianMeasureContext,
     horizontalDimensions: HorizontalDimensions,
+    model: LineCartesianLayerModel,
     insets: Insets,
-  ): Unit =
+  ) {
     with(context) {
       val verticalInset =
-        lines
-          .maxOf { if (it.point != null) max(it.thicknessDp, it.pointSizeDp) else it.thicknessDp }
+        (0..<model.series.size)
+          .mapNotNull { lineProvider.getLine(it, model.extraStore) }
+          .maxOf {
+            max(it.thicknessDp, it.pointProvider?.getLargestPoint(model.extraStore)?.sizeDp.orZero)
+          }
+          .half
           .pixels
       insets.ensureValuesAtLeast(top = verticalInset, bottom = verticalInset)
     }
+  }
 
   override fun prepareForTransformation(
     model: LineCartesianLayerModel?,
@@ -594,49 +646,3 @@ public open class LineCartesianLayer(
       }
   }
 }
-
-/** Creates a new [LineCartesianLayer.LineSpec] based on this one, updating select properties. */
-public fun LineSpec.copy(
-  shader: DynamicShader = this.shader,
-  thicknessDp: Float = this.thicknessDp,
-  backgroundShader: DynamicShader? = this.backgroundShader,
-  cap: Paint.Cap = this.cap,
-  point: Component? = this.point,
-  pointSizeDp: Float = this.pointSizeDp,
-  dataLabel: TextComponent? = this.dataLabel,
-  dataLabelVerticalPosition: VerticalPosition = this.dataLabelVerticalPosition,
-  dataLabelValueFormatter: CartesianValueFormatter = this.dataLabelValueFormatter,
-  dataLabelRotationDegrees: Float = this.dataLabelRotationDegrees,
-  pointConnector: PointConnector = this.pointConnector,
-): LineSpec =
-  LineSpec(
-    shader = shader,
-    thicknessDp = thicknessDp,
-    backgroundShader = backgroundShader,
-    cap = cap,
-    point = point,
-    pointSizeDp = pointSizeDp,
-    dataLabel = dataLabel,
-    dataLabelVerticalPosition = dataLabelVerticalPosition,
-    dataLabelValueFormatter = dataLabelValueFormatter,
-    dataLabelRotationDegrees = dataLabelRotationDegrees,
-    pointConnector = pointConnector,
-  )
-
-internal fun Component.drawPoint(
-  context: CartesianDrawContext,
-  x: Float,
-  y: Float,
-  halfPointSize: Float,
-) {
-  draw(
-    context = context,
-    left = x - halfPointSize,
-    top = y - halfPointSize,
-    right = x + halfPointSize,
-    bottom = y + halfPointSize,
-  )
-}
-
-internal inline val LineSpec.pointSizeDpOrZero: Float
-  get() = if (point != null) pointSizeDp else 0f

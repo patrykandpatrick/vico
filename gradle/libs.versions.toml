@@ -7,6 +7,7 @@ androidXCore = "1.13.1"
 appcompat = "1.7.0"
 composeBom = "2024.06.00"
 composeNavigation = "2.7.7"
+composeStableMarker = "1.0.5"
 coroutines = "1.8.1"
 dokka = "1.9.20"
 jUnit = "4.13.2"
@@ -31,6 +32,7 @@ composeMaterial = { group = "androidx.compose.material", name = "material" }
 composeMaterial3 = { group = "androidx.compose.material3", name = "material3" }
 composeNavigation = { group = "androidx.navigation", name = "navigation-compose", version.ref = "composeNavigation" }
 composePreview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+composeStableMarker = { group = "com.github.skydoves", name = "compose-stable-marker", version.ref = "composeStableMarker" }
 composeUI = { group = "androidx.compose.ui", name = "ui" }
 composeUITooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 composeViewBinding = { group = "androidx.compose.ui", name = "ui-viewbinding" }

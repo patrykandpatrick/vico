@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-  ~ Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+  ~ Copyright 2024 by Patryk Goworowski and Patrick Michalik.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -18,11 +18,11 @@
     <attr name="columnLayerStyle" format="reference" />
 
     <declare-styleable name="ColumnCartesianLayerStyle">
-        <attr name="column1" format="reference" />
-        <attr name="column2" format="reference" />
-        <attr name="column3" format="reference" />
-        <attr name="columnOuterSpacing" format="dimension" />
-        <attr name="columnInnerSpacing" format="dimension" />
+        <attr name="column1Style" format="reference" />
+        <attr name="column2Style" format="reference" />
+        <attr name="column3Style" format="reference" />
+        <attr name="columnCollectionSpacing" format="dimension" />
+        <attr name="groupedColumnSpacing" format="dimension" />
         <attr name="showDataLabels" />
         <attr name="dataLabelStyle" />
         <attr name="dataLabelVerticalPosition" />

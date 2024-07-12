@@ -23,23 +23,13 @@ import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.core.common.Dimensions
 import com.patrykandpatrick.vico.core.common.DrawContext
 import com.patrykandpatrick.vico.core.common.HorizontalLegend
-import com.patrykandpatrick.vico.core.common.Legend
 import com.patrykandpatrick.vico.core.common.LegendItem
 import com.patrykandpatrick.vico.core.common.MeasureContext
 import com.patrykandpatrick.vico.core.common.VerticalLegend
 import com.patrykandpatrick.vico.core.common.component.Component
 import com.patrykandpatrick.vico.core.common.component.TextComponent
 
-/**
- * Creates a [VerticalLegend].
- *
- * @param items a [Collection] of [LegendItem]s to be displayed by this [VerticalLegend].
- * @param iconSize defines the size of all [LegendItem.icon]s.
- * @param iconPadding defines the padding between each [LegendItem.icon] and its corresponding
- *   [LegendItem.label].
- * @param spacing defines the vertical spacing between each [LegendItem].
- * @param padding defines the padding of the content.
- */
+/** Creates and remembers a [VerticalLegend]. */
 @Composable
 public fun <M : MeasureContext, D : DrawContext> rememberVerticalLegend(
   items: Collection<LegendItem>,
@@ -58,32 +48,15 @@ public fun <M : MeasureContext, D : DrawContext> rememberVerticalLegend(
     )
   }
 
-/**
- * Defines the appearance of an item of a [Legend].
- *
- * @param icon the [Component] used as the item’s icon.
- * @param label the [TextComponent] used for the label.
- * @param labelText the text content of the label.
- */
+/** Creates and remembers a [LegendItem]. */
 @Composable
 public fun rememberLegendItem(
   icon: Component,
-  label: TextComponent,
-  labelText: CharSequence,
-): LegendItem =
-  remember(icon, label, labelText) { LegendItem(icon = icon, label = label, labelText = labelText) }
+  labelComponent: TextComponent,
+  label: CharSequence,
+): LegendItem = remember(icon, labelComponent, label) { LegendItem(icon, labelComponent, label) }
 
-/**
- * Creates a [HorizontalLegend].
- *
- * @param items a [Collection] of [LegendItem]s to be displayed by this [HorizontalLegend].
- * @param iconSize defines the size of all [LegendItem.icon]s.
- * @param iconPadding defines the padding between each [LegendItem.icon] and its corresponding
- *   [LegendItem.label].
- * @param lineSpacing defines the spacing between adjacent lines.
- * @param spacing defines the horizontal spacing between adjacent [LegendItem]s.
- * @param padding defines the padding of the content.
- */
+/** Creates and remembers a [HorizontalLegend]. */
 @Composable
 public fun <M : MeasureContext, D : DrawContext> rememberHorizontalLegend(
   items: Collection<LegendItem>,

@@ -25,14 +25,16 @@ import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStartAxis
+import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLine
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
-import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineSpec
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
+import com.patrykandpatrick.vico.compose.common.data.rememberExtraLambda
 import com.patrykandpatrick.vico.compose.common.shader.color
 import com.patrykandpatrick.vico.core.cartesian.axis.BaseAxis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
+import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.common.shader.DynamicShader
 import com.patrykandpatrick.vico.databinding.Chart1Binding
 import com.patrykandpatrick.vico.sample.showcase.UIFramework
@@ -66,15 +68,17 @@ private fun ComposeChart1(modelProducer: CartesianChartModelProducer, modifier: 
     chart =
       rememberCartesianChart(
         rememberLineCartesianLayer(
-          listOf(rememberLineSpec(DynamicShader.color(Color(0xffa485e0))))
+          LineCartesianLayer.LineProvider.series(
+            rememberLine(DynamicShader.color(Color(0xffa485e0)))
+          )
         ),
         startAxis = rememberStartAxis(),
         bottomAxis = rememberBottomAxis(guideline = null),
-        persistentMarkers = mapOf(PERSISTENT_MARKER_X to marker),
+        marker = marker,
+        persistentMarkers = rememberExtraLambda(marker) { marker at PERSISTENT_MARKER_X },
       ),
     modelProducer = modelProducer,
     modifier = modifier,
-    marker = marker,
     zoomState = rememberVicoZoomState(zoomEnabled = false),
   )
 }
@@ -86,10 +90,10 @@ private fun ViewChart1(modelProducer: CartesianChartModelProducer, modifier: Mod
     { inflater, parent, attachToParent ->
       Chart1Binding.inflate(inflater, parent, attachToParent).apply {
         with(chartView) {
-          chart?.addPersistentMarker(PERSISTENT_MARKER_X, marker)
+          chart?.persistentMarkers = { marker at PERSISTENT_MARKER_X }
           this.modelProducer = modelProducer
           (chart?.bottomAxis as BaseAxis).guideline = null
-          this.marker = marker
+          chart?.marker = marker
         }
       }
     },

@@ -60,9 +60,9 @@
     </style>
 
     <style name="Chart5ColumnLayerStyle">
-        <item name="column1">@style/Chart5Column1Style</item>
-        <item name="column2">@style/Chart5Column2Style</item>
-        <item name="column3">@style/Chart5Column3Style</item>
+        <item name="column1Style">@style/Chart5Column1Style</item>
+        <item name="column2Style">@style/Chart5Column2Style</item>
+        <item name="column3Style">@style/Chart5Column3Style</item>
         <item name="mergeMode">stacked</item>
     </style>
 </resources>

@@ -19,7 +19,6 @@ package com.patrykandpatrick.vico.core.common
 import android.graphics.Canvas
 import android.graphics.RectF
 import androidx.annotation.RestrictTo
-import com.patrykandpatrick.vico.core.common.component.ShapeComponent
 import com.patrykandpatrick.vico.core.common.data.CacheStore
 import com.patrykandpatrick.vico.core.common.data.MutableExtraStore
 
@@ -28,9 +27,6 @@ import com.patrykandpatrick.vico.core.common.data.MutableExtraStore
  * also defines helpful drawing functions.
  */
 public interface DrawContext : MeasureContext {
-  /** The elevation overlay color, applied to [ShapeComponent]s that cast shadows. */
-  public val elevationOverlayColor: Long
-
   /** The canvas to draw the chart on. */
   public val canvas: Canvas
 
@@ -99,14 +95,11 @@ public fun drawContext(
   canvas: Canvas,
   density: Float = 1f,
   isLtr: Boolean = true,
-  elevationOverlayColor: Long = DefaultColors.Light.elevationOverlayColor,
   canvasBounds: RectF = RectF(0f, 0f, canvas.width.toFloat(), canvas.height.toFloat()),
   spToPx: (Float) -> Float = { it },
 ): DrawContext =
   object : DrawContext {
     override val canvasBounds: RectF = canvasBounds
-
-    override val elevationOverlayColor: Long = elevationOverlayColor
 
     override var canvas: Canvas = canvas
 

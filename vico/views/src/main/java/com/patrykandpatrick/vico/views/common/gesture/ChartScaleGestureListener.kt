@@ -20,7 +20,7 @@ import android.graphics.RectF
 import android.view.ScaleGestureDetector
 
 internal class ChartScaleGestureListener(
-  private val getChartBounds: () -> RectF?,
+  private val getLayerBounds: () -> RectF?,
   private val onZoom: (focusX: Float, zoomChange: Float) -> Unit,
 ) : ScaleGestureDetector.OnScaleGestureListener {
   override fun onScale(detector: ScaleGestureDetector): Boolean {
@@ -29,7 +29,7 @@ internal class ChartScaleGestureListener(
   }
 
   override fun onScaleBegin(detector: ScaleGestureDetector): Boolean =
-    getChartBounds()?.contains(detector.focusX, detector.focusY) == true
+    getLayerBounds()?.contains(detector.focusX, detector.focusY) == true
 
   override fun onScaleEnd(detector: ScaleGestureDetector) = Unit
 }

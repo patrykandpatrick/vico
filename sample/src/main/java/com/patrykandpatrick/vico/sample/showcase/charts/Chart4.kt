@@ -27,18 +27,18 @@ import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberEndAxis
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberTopAxis
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
+import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLine
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
-import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineSpec
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.common.shader.color
 import com.patrykandpatrick.vico.compose.common.shape.rounded
-import com.patrykandpatrick.vico.core.cartesian.DefaultPointConnector
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
 import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
 import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
+import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.common.shader.DynamicShader
 import com.patrykandpatrick.vico.core.common.shape.Shape
 import com.patrykandpatrick.vico.databinding.Chart4Binding
@@ -98,21 +98,19 @@ private fun ComposeChart4(modelProducer: CartesianChartModelProducer, modifier: 
             )
         ),
         rememberLineCartesianLayer(
-          lines =
-            listOf(
-              rememberLineSpec(
-                shader = DynamicShader.color(lineColor),
-                pointConnector = DefaultPointConnector(cubicStrength = 0f),
-              )
+          LineCartesianLayer.LineProvider.series(
+            rememberLine(
+              shader = DynamicShader.color(lineColor),
+              pointConnector = remember { LineCartesianLayer.PointConnector.cubic(curvature = 0f) },
             )
+          )
         ),
         topAxis = rememberTopAxis(),
         endAxis = rememberEndAxis(),
+        marker = rememberMarker(),
       ),
     modelProducer = modelProducer,
     modifier = modifier,
-    marker = rememberMarker(),
-    runInitialAnimation = false,
     zoomState = rememberVicoZoomState(zoomEnabled = false),
   )
 }
@@ -122,9 +120,8 @@ private fun ViewChart4(modelProducer: CartesianChartModelProducer, modifier: Mod
   val marker = rememberMarker()
   AndroidViewBinding(Chart4Binding::inflate, modifier) {
     with(chartView) {
-      runInitialAnimation = false
       this.modelProducer = modelProducer
-      this.marker = marker
+      chart?.marker = marker
     }
   }
 }

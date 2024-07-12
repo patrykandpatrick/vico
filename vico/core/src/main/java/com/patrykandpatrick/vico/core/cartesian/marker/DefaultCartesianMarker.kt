@@ -22,6 +22,7 @@ import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasureContext
 import com.patrykandpatrick.vico.core.cartesian.HorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.Insets
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.VerticalPosition
 import com.patrykandpatrick.vico.core.common.averageOf
@@ -34,6 +35,7 @@ import com.patrykandpatrick.vico.core.common.doubled
 import com.patrykandpatrick.vico.core.common.half
 import com.patrykandpatrick.vico.core.common.orZero
 import com.patrykandpatrick.vico.core.common.shape.MarkerCorneredShape
+import kotlin.math.min
 
 /**
  * The default [CartesianMarker] implementation.
@@ -135,14 +137,14 @@ public open class DefaultCartesianMarker(
       val text = valueFormatter.format(context, targets)
       val targetX = targets.averageOf { it.canvasX }
       val labelBounds =
-        label.getTextBounds(
+        label.getBounds(
           context = context,
           text = text,
-          width = chartBounds.width().toInt(),
+          maxWidth = layerBounds.width().toInt(),
           outRect = tempBounds,
         )
       val halfOfTextWidth = labelBounds.width().half
-      val x = overrideXPositionToFit(targetX, chartBounds, halfOfTextWidth)
+      val x = overrideXPositionToFit(targetX, layerBounds, halfOfTextWidth)
       markerCorneredShape?.tickX = targetX
       val tickPosition: MarkerCorneredShape.TickPosition
       val y: Float
@@ -150,12 +152,12 @@ public open class DefaultCartesianMarker(
       when (labelPosition) {
         LabelPosition.Top -> {
           tickPosition = MarkerCorneredShape.TickPosition.Bottom
-          y = context.chartBounds.top - tickSizeDp.pixels
+          y = context.layerBounds.top - tickSizeDp.pixels
           verticalPosition = VerticalPosition.Top
         }
         LabelPosition.Bottom -> {
           tickPosition = MarkerCorneredShape.TickPosition.Top
-          y = context.chartBounds.bottom + tickSizeDp.pixels
+          y = context.layerBounds.bottom + tickSizeDp.pixels
           verticalPosition = VerticalPosition.Bottom
         }
         LabelPosition.AroundPoint,
@@ -173,7 +175,7 @@ public open class DefaultCartesianMarker(
             }
           val flip =
             labelPosition == LabelPosition.AroundPoint &&
-              topPointY - labelBounds.height() - tickSizeDp.pixels < context.chartBounds.top
+              topPointY - labelBounds.height() - tickSizeDp.pixels < context.layerBounds.top
           tickPosition =
             if (flip) MarkerCorneredShape.TickPosition.Top
             else MarkerCorneredShape.TickPosition.Bottom
@@ -183,13 +185,13 @@ public open class DefaultCartesianMarker(
       }
       markerCorneredShape?.tickPosition = tickPosition
 
-      label.drawText(
+      label.draw(
         context = context,
         text = text,
-        textX = x,
-        textY = y,
+        x = x,
+        y = y,
         verticalPosition = verticalPosition,
-        maxTextWidth = minOf(chartBounds.right - x, x - chartBounds.left).doubled.ceil.toInt(),
+        maxWidth = min(layerBounds.right - x, x - layerBounds.left).doubled.ceil.toInt(),
       )
     }
 
@@ -208,12 +210,13 @@ public open class DefaultCartesianMarker(
     targets
       .map { it.canvasX }
       .toSet()
-      .forEach { x -> guideline?.drawVertical(this, chartBounds.top, chartBounds.bottom, x) }
+      .forEach { x -> guideline?.drawVertical(this, layerBounds.top, layerBounds.bottom, x) }
   }
 
   override fun updateInsets(
     context: CartesianMeasureContext,
     horizontalDimensions: HorizontalDimensions,
+    model: CartesianChartModel,
     insets: Insets,
   ) {
     with(context) {

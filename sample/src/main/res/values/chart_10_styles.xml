@@ -18,6 +18,6 @@
     <style name="Chart10BottomAxisStyle">
         <item name="addExtremeHorizontalAxisLabelPadding">true</item>
         <item name="horizontalAxisLabelSpacing">3</item>
-        <item name="showGuideline">false</item>
+        <item name="showGuidelines">false</item>
     </style>
 </resources>

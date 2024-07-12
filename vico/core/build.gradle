@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -62,6 +62,7 @@ dependencies {
     implementation libs.androidXAnnotation
     implementation libs.coroutinesCore
     implementation libs.kotlinStdLib
+    compileOnly libs.composeStableMarker
     testImplementation libs.JUnit
     testImplementation libs.jupiter
     testImplementation libs.jupiterParams

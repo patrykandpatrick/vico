@@ -25,19 +25,10 @@ import com.patrykandpatrick.vico.core.common.DrawContext
 public open class PaintComponent<C> protected constructor() {
   protected val componentShadow: ComponentShadow = ComponentShadow()
 
-  /** Checks whether the applied shadow layer needs to be updated. */
-  protected fun maybeUpdateShadowLayer(
-    context: DrawContext,
-    paint: Paint,
-    backgroundColor: Int,
-    opacity: Float = 1f,
-  ): Unit =
-    componentShadow.maybeUpdateShadowLayer(
-      context = context,
-      paint = paint,
-      backgroundColor = backgroundColor,
-      opacity = opacity,
-    )
+  /** Updates the shadow layer. */
+  protected fun updateShadowLayer(context: DrawContext, paint: Paint, opacity: Float = 1f) {
+    componentShadow.updateShadowLayer(context, paint, opacity)
+  }
 
   /**
    * Applies a drop shadow.
@@ -46,14 +37,12 @@ public open class PaintComponent<C> protected constructor() {
    * @param dx the horizontal offset.
    * @param dy the vertical offset.
    * @param color the shadow color.
-   * @param applyElevationOverlay whether to apply an elevation overlay to the shape.
    */
   public fun setShadow(
     radius: Float,
     dx: Float = 0f,
     dy: Float = 0f,
     color: Int = Defaults.SHADOW_COLOR,
-    applyElevationOverlay: Boolean = false,
   ): C =
     apply {
       componentShadow.apply {
@@ -61,7 +50,6 @@ public open class PaintComponent<C> protected constructor() {
         this.dx = dx
         this.dy = dy
         this.color = color
-        this.applyElevationOverlay = applyElevationOverlay
       }
     }
       as C

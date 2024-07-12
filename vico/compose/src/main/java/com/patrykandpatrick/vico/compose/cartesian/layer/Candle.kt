@@ -43,14 +43,14 @@ private fun Candle.Companion.sharpFilledCandle(
 private fun Candle.Companion.sharpHollowCandle(
   color: Color,
   thickness: Dp = Defaults.CANDLE_BODY_WIDTH_DP.dp,
-  strokeWidth: Dp = Defaults.HOLLOW_CANDLE_STROKE_WIDTH_DP.dp,
+  strokeThickness: Dp = Defaults.HOLLOW_CANDLE_STROKE_THICKNESS_DP.dp,
 ) =
   rememberCandle(
     rememberLineComponent(
       color = Color.Transparent,
       thickness = thickness,
-      strokeWidth = strokeWidth,
       strokeColor = color,
+      strokeThickness = strokeThickness,
     )
   )
 

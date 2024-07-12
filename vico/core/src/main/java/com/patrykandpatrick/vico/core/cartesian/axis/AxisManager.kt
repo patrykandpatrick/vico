@@ -34,51 +34,28 @@ internal class AxisManager {
   fun setAxesBounds(
     measureContext: CartesianMeasureContext,
     canvasBounds: RectF,
-    chartBounds: RectF,
+    layerBounds: RectF,
     insets: Insets,
   ) {
-    startAxis?.setStartAxisBounds(
-      context = measureContext,
-      canvasBounds = canvasBounds,
-      chartBounds = chartBounds,
-      insets = insets,
-    )
-
-    topAxis?.setTopAxisBounds(
-      context = measureContext,
-      canvasBounds = canvasBounds,
-      insets = insets,
-    )
-
-    endAxis?.setEndAxisBounds(
-      context = measureContext,
-      canvasBounds = canvasBounds,
-      chartBounds = chartBounds,
-      insets = insets,
-    )
-
-    bottomAxis?.setBottomAxisBounds(
-      context = measureContext,
-      canvasBounds = canvasBounds,
-      chartBounds = chartBounds,
-      insets = insets,
-    )
-
+    startAxis?.setStartAxisBounds(measureContext, canvasBounds, layerBounds, insets)
+    topAxis?.setTopAxisBounds(measureContext, canvasBounds, insets)
+    endAxis?.setEndAxisBounds(measureContext, canvasBounds, layerBounds, insets)
+    bottomAxis?.setBottomAxisBounds(measureContext, canvasBounds, layerBounds, insets)
     setRestrictedBounds()
   }
 
   private fun Axis<AxisPosition.Vertical.Start>.setStartAxisBounds(
     context: CartesianMeasureContext,
     canvasBounds: RectF,
-    chartBounds: RectF,
+    layerBounds: RectF,
     insets: Insets,
   ) {
     with(context) {
       setBounds(
         left = if (isLtr) canvasBounds.left else canvasBounds.right - insets.start,
-        top = chartBounds.top,
+        top = layerBounds.top,
         right = if (isLtr) canvasBounds.left + insets.start else canvasBounds.right,
-        bottom = chartBounds.bottom,
+        bottom = layerBounds.bottom,
       )
     }
   }
@@ -101,15 +78,15 @@ internal class AxisManager {
   private fun Axis<AxisPosition.Vertical.End>.setEndAxisBounds(
     context: CartesianMeasureContext,
     canvasBounds: RectF,
-    chartBounds: RectF,
+    layerBounds: RectF,
     insets: Insets,
   ) {
     with(context) {
       setBounds(
         left = if (isLtr) canvasBounds.right - insets.end else canvasBounds.left,
-        top = chartBounds.top,
+        top = layerBounds.top,
         right = if (isLtr) canvasBounds.right else canvasBounds.left + insets.end,
-        bottom = chartBounds.bottom,
+        bottom = layerBounds.bottom,
       )
     }
   }
@@ -117,15 +94,15 @@ internal class AxisManager {
   private fun Axis<AxisPosition.Horizontal.Bottom>.setBottomAxisBounds(
     context: CartesianMeasureContext,
     canvasBounds: RectF,
-    chartBounds: RectF,
+    layerBounds: RectF,
     insets: Insets,
   ) {
     with(context) {
       setBounds(
         left = canvasBounds.left + if (isLtr) insets.start else insets.end,
-        top = chartBounds.bottom,
+        top = layerBounds.bottom,
         right = canvasBounds.right - if (isLtr) insets.end else insets.start,
-        bottom = chartBounds.bottom + insets.bottom,
+        bottom = layerBounds.bottom + insets.bottom,
       )
     }
   }
@@ -137,12 +114,12 @@ internal class AxisManager {
     bottomAxis?.setRestrictedBounds(topAxis?.bounds, endAxis?.bounds, startAxis?.bounds)
   }
 
-  fun drawBehindChart(context: CartesianDrawContext) {
-    axisCache.forEach { axis -> axis.drawBehindChart(context) }
+  fun drawUnderLayers(context: CartesianDrawContext) {
+    axisCache.forEach { axis -> axis.drawUnderLayers(context) }
   }
 
-  fun drawAboveChart(context: CartesianDrawContext) {
-    axisCache.forEach { axis -> axis.drawAboveChart(context) }
+  fun drawOverLayers(context: CartesianDrawContext) {
+    axisCache.forEach { axis -> axis.drawOverLayers(context) }
   }
 
   private fun <S, T : Axis<S>?> cacheInList(): ReadWriteProperty<AxisManager, T?> =

@@ -40,20 +40,20 @@ public object Defaults {
   public const val AXIS_LINE_WIDTH: Float = 1f
   public const val AXIS_TICK_LENGTH: Float = 4f
   public const val COLUMN_WIDTH: Float = 8f
-  public const val COLUMN_INSIDE_SPACING: Float = 8f
-  public const val COLUMN_OUTSIDE_SPACING: Float = 32f
+  public const val GROUPED_COLUMN_SPACING: Float = 8f
+  public const val COLUMN_COLLECTION_SPACING: Float = 32f
   public const val COLUMN_ROUNDNESS_PERCENT: Int = 40
   public const val CANDLE_BODY_WIDTH_DP: Float = 8f
   public const val MIN_CANDLE_BODY_HEIGHT_DP: Float = 1f
   public const val WICK_DEFAULT_WIDTH_DP: Float = 1f
-  public const val HOLLOW_CANDLE_STROKE_WIDTH_DP: Float = 1f
+  public const val HOLLOW_CANDLE_STROKE_THICKNESS_DP: Float = 1f
   public const val CANDLE_SPACING_DP: Float = 4f
-  public const val CUBIC_STRENGTH: Float = 1f
+  public const val LINE_CURVATURE: Float = .5f
   public const val DASH_LENGTH: Float = 4f
   public const val DASH_GAP: Float = 2f
   public const val FADING_EDGE_VISIBILITY_THRESHOLD_DP: Float = 16f
   public const val FADING_EDGE_WIDTH_DP: Float = 32f
-  public const val LABEL_LINE_COUNT: Int = 1
+  public const val TEXT_COMPONENT_LINE_COUNT: Int = 1
   public const val LINE_COMPONENT_THICKNESS_DP: Float = 1f
   public const val LINE_SPEC_THICKNESS_DP: Float = 2f
   public const val MARKER_INDICATOR_SIZE: Float = 16f
@@ -76,7 +76,6 @@ public class DefaultColors(
   public val neutralCandleColor: Long,
   public val bearishCandleColor: Long,
   public val cartesianLayerColors: List<Long>,
-  public val elevationOverlayColor: Long,
   public val lineColor: Long,
   public val textColor: Long,
 ) {
@@ -87,7 +86,6 @@ public class DefaultColors(
         neutralCandleColor = 0xff212121,
         bearishCandleColor = 0xffea284b,
         cartesianLayerColors = listOf(0xff787878, 0xff5a5a5a, 0xff383838),
-        elevationOverlayColor = 0x00000000,
         lineColor = 0x47000000,
         textColor = 0xde000000,
       )
@@ -98,7 +96,6 @@ public class DefaultColors(
         neutralCandleColor = 0xff8a8a8a,
         bearishCandleColor = 0xffea284b,
         cartesianLayerColors = listOf(0xffcacaca, 0xffa8a8a8, 0xff888888),
-        elevationOverlayColor = 0xffffffff,
         lineColor = 0xff555555,
         textColor = 0xffffffff,
       )

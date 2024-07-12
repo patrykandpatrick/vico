@@ -26,21 +26,18 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Interpolator
 import android.widget.FrameLayout
-import androidx.core.view.ViewCompat
 import androidx.core.view.isVisible
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
 import com.patrykandpatrick.vico.core.common.Animation
 import com.patrykandpatrick.vico.core.common.MutableMeasureContext
-import com.patrykandpatrick.vico.core.common.component.ShapeComponent
 import com.patrykandpatrick.vico.core.common.data.MutableExtraStore
 import com.patrykandpatrick.vico.core.common.set
 import com.patrykandpatrick.vico.core.common.spToPx
-import kotlinx.coroutines.CoroutineDispatcher
+import kotlin.coroutines.EmptyCoroutineContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
@@ -90,12 +87,9 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
    */
   public var runInitialAnimation: Boolean = true
 
-  /** Used for handling [model] updates. */
-  public var dispatcher: CoroutineDispatcher = Dispatchers.Default
-
   override fun onAttachedToWindow() {
     super.onAttachedToWindow()
-    coroutineScope = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob())
+    coroutineScope = CoroutineScope(EmptyCoroutineContext)
   }
 
   override fun onDetachedFromWindow() {
@@ -105,9 +99,6 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     animator.cancel()
     isAnimationRunning = false
   }
-
-  /** The color of elevation overlays, which are applied to [ShapeComponent]s that cast shadows. */
-  public var elevationOverlayColor: Int = context.defaultColors.elevationOverlayColor.toInt()
 
   override fun addView(child: View, index: Int, params: ViewGroup.LayoutParams?) {
     check(childCount == 0) { "Only one placeholder can be added." }
@@ -169,14 +160,14 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
             !isAnimationFrameGenerationRunning -> {
               isAnimationFrameGenerationRunning = true
               animationFrameJob =
-                coroutineScope?.launch(dispatcher) {
+                coroutineScope?.launch {
                   transformModel(this@BaseChartView, fraction)
                   isAnimationFrameGenerationRunning = false
                 }
             }
             fraction == 1f -> {
               finalAnimationFrameJob =
-                coroutineScope?.launch(dispatcher) {
+                coroutineScope?.launch(Dispatchers.Default) {
                   animationFrameJob?.cancelAndJoin()
                   transformModel(this@BaseChartView, fraction)
                   isAnimationFrameGenerationRunning = false
@@ -187,21 +178,19 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       }
     } else {
       finalAnimationFrameJob =
-        coroutineScope?.launch(dispatcher) {
-          transformModel(this@BaseChartView, Animation.range.endInclusive)
-        }
+        coroutineScope?.launch { transformModel(this@BaseChartView, Animation.range.endInclusive) }
     }
   }
 
   protected abstract fun getChartDesiredHeight(widthMeasureSpec: Int, heightMeasureSpec: Int): Int
 
   /** Sets the duration (in milliseconds) of difference animations. */
-  public fun setDiffAnimationDuration(durationMillis: Long) {
+  public fun setAnimationDuration(durationMillis: Long) {
     animator.duration = durationMillis
   }
 
   /** Sets the [Interpolator] for difference animations. */
-  public fun setDiffAnimationInterpolator(interpolator: Interpolator) {
+  public fun setAnimationInterpolator(interpolator: Interpolator) {
     animator.interpolator = interpolator
   }
 
@@ -212,7 +201,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     // In this case, we can ignore this callback, as the layout direction will be determined when
     // the
     // MeasureContext instance is created.
-    measureContext?.isLtr = layoutDirection == ViewCompat.LAYOUT_DIRECTION_LTR
+    measureContext?.isLtr = layoutDirection == View.LAYOUT_DIRECTION_LTR
   }
 }
 

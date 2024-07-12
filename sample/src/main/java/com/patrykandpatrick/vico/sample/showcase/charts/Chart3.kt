@@ -16,7 +16,6 @@
 
 package com.patrykandpatrick.vico.sample.showcase.charts
 
-import android.graphics.Typeface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -30,8 +29,8 @@ import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStartAxis
 import com.patrykandpatrick.vico.compose.cartesian.fullWidth
+import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLine
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
-import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineSpec
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.rememberFadingEdges
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
@@ -86,7 +85,8 @@ private fun ComposeChart3(modelProducer: CartesianChartModelProducer, modifier: 
     chart =
       rememberCartesianChart(
         rememberLineCartesianLayer(
-          lines = listOf(rememberLineSpec(shader = DynamicShader.color(lineColor))),
+          lineProvider =
+            LineCartesianLayer.LineProvider.series(rememberLine(DynamicShader.color(lineColor))),
           axisValueOverrider = axisValueOverrider,
         ),
         startAxis =
@@ -96,10 +96,9 @@ private fun ComposeChart3(modelProducer: CartesianChartModelProducer, modifier: 
             titleComponent =
               rememberTextComponent(
                 color = Color.Black,
-                background = rememberShapeComponent(Shape.Pill, lineColor),
-                padding = Dimensions.of(horizontal = 8.dp, vertical = 2.dp),
                 margins = Dimensions.of(end = 4.dp),
-                typeface = Typeface.MONOSPACE,
+                padding = Dimensions.of(8.dp, 2.dp),
+                background = rememberShapeComponent(lineColor, Shape.Pill),
               ),
             title = stringResource(R.string.y_axis),
           ),
@@ -107,21 +106,19 @@ private fun ComposeChart3(modelProducer: CartesianChartModelProducer, modifier: 
           rememberBottomAxis(
             titleComponent =
               rememberTextComponent(
-                background = rememberShapeComponent(Shape.Pill, bottomAxisLabelBackgroundColor),
                 color = Color.White,
-                padding = Dimensions.of(horizontal = 8.dp, vertical = 2.dp),
                 margins = Dimensions.of(top = 4.dp),
-                typeface = Typeface.MONOSPACE,
+                padding = Dimensions.of(8.dp, 2.dp),
+                background = rememberShapeComponent(bottomAxisLabelBackgroundColor, Shape.Pill),
               ),
             title = stringResource(R.string.x_axis),
           ),
+        marker = rememberMarker(DefaultCartesianMarker.LabelPosition.AroundPoint),
+        horizontalLayout = HorizontalLayout.fullWidth(),
         fadingEdges = rememberFadingEdges(),
       ),
     modelProducer = modelProducer,
     modifier = modifier,
-    marker = rememberMarker(DefaultCartesianMarker.LabelPosition.AroundPoint),
-    runInitialAnimation = false,
-    horizontalLayout = HorizontalLayout.fullWidth(),
     zoomState = rememberVicoZoomState(zoomEnabled = false),
   )
 }
@@ -133,9 +130,8 @@ private fun ViewChart3(modelProducer: CartesianChartModelProducer, modifier: Mod
   AndroidViewBinding(Chart3Binding::inflate, modifier) {
     with(chartView) {
       (chart?.layers?.get(0) as LineCartesianLayer?)?.axisValueOverrider = axisValueOverrider
-      runInitialAnimation = false
       this.modelProducer = modelProducer
-      this.marker = marker
+      chart?.marker = marker
     }
   }
 }

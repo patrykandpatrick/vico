@@ -19,7 +19,6 @@ package com.patrykandpatrick.vico.core.common.component
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
-import android.graphics.Shader
 import com.patrykandpatrick.vico.core.common.Dimensions
 import com.patrykandpatrick.vico.core.common.DrawContext
 import com.patrykandpatrick.vico.core.common.alpha
@@ -30,22 +29,22 @@ import com.patrykandpatrick.vico.core.common.withOpacity
 import kotlin.properties.Delegates
 
 /**
- * [ShapeComponent] is a [Component] that draws a shape.
+ * Draws [Shape]s.
  *
- * @param shape the [Shape] that will be drawn.
- * @param color the color of the shape.
- * @param dynamicShader an optional [Shader] provider used as the shape’s background.
- * @param margins the [Component]’s margins.
- * @param strokeWidthDp the width of the shape’s stroke (in dp).
- * @param strokeColor the color of the stroke.
+ * @param color the fill color.
+ * @param strokeColor the stroke color.
+ * @property shape the [Shape].
+ * @property margins the margins.
+ * @property strokeThicknessDp the stroke thickness (in dp).
+ * @property shader applied to the fill.
  */
 public open class ShapeComponent(
-  public val shape: Shape = Shape.Rectangle,
   color: Int = Color.BLACK,
-  public val dynamicShader: DynamicShader? = null,
+  public val shape: Shape = Shape.Rectangle,
   override val margins: Dimensions = Dimensions.Empty,
-  public val strokeWidthDp: Float = 0f,
   strokeColor: Int = Color.TRANSPARENT,
+  public val strokeThicknessDp: Float = 0f,
+  public val shader: DynamicShader? = null,
 ) : PaintComponent<ShapeComponent>(), Component {
   private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply { this.color = color }
   private val strokePaint =
@@ -56,15 +55,15 @@ public open class ShapeComponent(
 
   protected val path: Path = Path()
 
-  /** The color of the shape. */
+  /** The fill color. */
   public var color: Int by Delegates.observable(color) { _, _, value -> paint.color = value }
 
-  /** The color of the stroke. */
+  /** The stroke color. */
   public var strokeColor: Int by
     Delegates.observable(strokeColor) { _, _, value -> strokePaint.color = value }
 
   init {
-    require(strokeWidthDp >= 0) { "`strokeWidthDp` must be nonnegative." }
+    require(strokeThicknessDp >= 0) { "`strokeThicknessDp` must be nonnegative." }
   }
 
   override fun draw(
@@ -81,22 +80,22 @@ public open class ShapeComponent(
       var adjustedRight = right - margins.getRightDp(isLtr).pixels
       var adjustedBottom = bottom - margins.bottomDp.pixels
       if (adjustedLeft >= adjustedRight || adjustedTop >= adjustedBottom) return
-      val strokeWidth = strokeWidthDp.pixels
-      if (strokeWidth != 0f) {
-        adjustedLeft += strokeWidth.half
-        adjustedTop += strokeWidth.half
-        adjustedRight -= strokeWidth.half
-        adjustedBottom -= strokeWidth.half
+      val strokeThickness = strokeThicknessDp.pixels
+      if (strokeThickness != 0f) {
+        adjustedLeft += strokeThickness.half
+        adjustedTop += strokeThickness.half
+        adjustedRight -= strokeThickness.half
+        adjustedBottom -= strokeThickness.half
         if (adjustedLeft > adjustedRight || adjustedTop > adjustedBottom) return
       }
       path.rewind()
       applyShader(this, left, top, right, bottom)
-      componentShadow.maybeUpdateShadowLayer(this, paint, color, opacity)
+      componentShadow.updateShadowLayer(this, paint, opacity)
       paint.withOpacity(opacity) { paint ->
         shape.draw(this, paint, path, adjustedLeft, adjustedTop, adjustedRight, adjustedBottom)
       }
-      if (strokeWidth == 0f || strokeColor.alpha == 0) return
-      strokePaint.strokeWidth = strokeWidth
+      if (strokeThickness == 0f || strokeColor.alpha == 0) return
+      strokePaint.strokeWidth = strokeThickness
       shape.draw(this, strokePaint, path, adjustedLeft, adjustedTop, adjustedRight, adjustedBottom)
     }
   }
@@ -108,7 +107,7 @@ public open class ShapeComponent(
     right: Float,
     bottom: Float,
   ) {
-    dynamicShader?.provideShader(context, left, top, right, bottom)?.let { shader ->
+    shader?.provideShader(context, left, top, right, bottom)?.let { shader ->
       paint.shader = shader
     }
   }

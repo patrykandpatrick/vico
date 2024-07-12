@@ -21,7 +21,7 @@
     <color name="chart_8_color_4">#ffc3a1</color>
 
     <style name="Chart8VerticalAxisStyle">
-        <item name="showGuideline">false</item>
+        <item name="showGuidelines">false</item>
     </style>
 
     <style name="Chart8Column1Style">
@@ -41,13 +41,13 @@
     </style>
 
     <style name="Chart8ColumnLayerStyle">
-        <item name="column1">@style/Chart8Column1Style</item>
-        <item name="column2">@style/Chart8Column2Style</item>
-        <item name="column3">@style/Chart8Column3Style</item>
+        <item name="column1Style">@style/Chart8Column1Style</item>
+        <item name="column2Style">@style/Chart8Column2Style</item>
+        <item name="column3Style">@style/Chart8Column3Style</item>
         <item name="mergeMode">stacked</item>
     </style>
 
     <style name="Chart8LineLayerStyle">
-        <item name="line1Spec">@style/Chart8Line1Style</item>
+        <item name="line1Style">@style/Chart8Line1Style</item>
     </style>
 </resources>

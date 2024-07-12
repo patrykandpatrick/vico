@@ -38,14 +38,14 @@ internal fun Candle.Companion.sharpFilledCandle(
 internal fun Candle.Companion.sharpHollowCandle(
   color: Int,
   thicknessDp: Float = Defaults.CANDLE_BODY_WIDTH_DP,
-  strokeWidthDp: Float = Defaults.HOLLOW_CANDLE_STROKE_WIDTH_DP,
+  strokeThicknessDp: Float = Defaults.HOLLOW_CANDLE_STROKE_THICKNESS_DP,
 ): Candle {
   val hollowBody =
     LineComponent(
       color = Color.TRANSPARENT,
       thicknessDp = thicknessDp,
-      strokeWidthDp = strokeWidthDp,
       strokeColor = color,
+      strokeThicknessDp = strokeThicknessDp,
     )
 
   return Candle(body = hollowBody)

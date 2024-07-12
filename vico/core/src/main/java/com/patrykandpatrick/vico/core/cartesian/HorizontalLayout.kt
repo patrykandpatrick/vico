@@ -16,19 +16,22 @@
 
 package com.patrykandpatrick.vico.core.cartesian
 
+import androidx.compose.runtime.Immutable
 import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
+import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayer
 
 /**
- * Defines how a chart’s content is positioned horizontally. This affects the [CartesianChart] and
- * the [HorizontalAxis] instances.
+ * Defines how a [CartesianChart]’s content is positioned horizontally. This affects the
+ * [CartesianLayer]s and the [HorizontalAxis] instances.
  */
+@Immutable
 public sealed interface HorizontalLayout {
   /**
    * When this is applied, the [CartesianChart] centers each major entry in a designated segment.
    * Some empty space is visible at the start and end of the [CartesianChart]. [HorizontalAxis]
    * instances display ticks and guidelines at the edges of the segments.
    */
-  public object Segmented : HorizontalLayout
+  public data object Segmented : HorizontalLayout
 
   /**
    * When this is applied, the [CartesianChart]’s content takes up the [CartesianChart]’s entire
@@ -44,7 +47,23 @@ public sealed interface HorizontalLayout {
     public val scalableEndPaddingDp: Float = 0f,
     public val unscalableStartPaddingDp: Float = 0f,
     public val unscalableEndPaddingDp: Float = 0f,
-  ) : HorizontalLayout
+  ) : HorizontalLayout {
+    override fun equals(other: Any?): Boolean =
+      this === other ||
+        other is FullWidth &&
+          scalableStartPaddingDp == other.scalableStartPaddingDp &&
+          scalableEndPaddingDp == other.scalableEndPaddingDp &&
+          unscalableStartPaddingDp == other.unscalableStartPaddingDp &&
+          unscalableEndPaddingDp == other.unscalableEndPaddingDp
+
+    override fun hashCode(): Int {
+      var result = scalableStartPaddingDp.hashCode()
+      result = 31 * result + scalableEndPaddingDp.hashCode()
+      result = 31 * result + unscalableStartPaddingDp.hashCode()
+      result = 31 * result + unscalableEndPaddingDp.hashCode()
+      return result
+    }
+  }
 
   public companion object
 }
