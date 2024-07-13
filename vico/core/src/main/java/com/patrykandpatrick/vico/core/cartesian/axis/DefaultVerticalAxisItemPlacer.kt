@@ -19,6 +19,7 @@ package com.patrykandpatrick.vico.core.cartesian.axis
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasureContext
 import com.patrykandpatrick.vico.core.common.ceil
+import com.patrykandpatrick.vico.core.common.data.CacheStore
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.core.common.floor
 import com.patrykandpatrick.vico.core.common.getDivisors
@@ -130,22 +131,34 @@ internal class DefaultVerticalAxisItemPlacer(
         maxLabelHeight: Float,
         multiplier: Int = 1,
       ): List<Float> {
-        val values = mutableListOf<Float>()
-        val requestedStep = context.getStepOrThrow() ?: 10f.pow(log10(maxY).floor - 1)
-        val step =
-          if (maxLabelHeight != 0f) {
-            val minStep = (maxY - minY) / (freeHeight / maxLabelHeight).floor
-            ((maxY - minY) / requestedStep)
-              .takeIf { it == it.floor }
-              ?.toInt()
-              ?.getDivisors(includeDividend = false)
-              ?.firstOrNull { it * requestedStep >= minStep }
-              ?.let { it * requestedStep } ?: ((minStep / requestedStep).ceil * requestedStep)
-          } else {
-            requestedStep
-          }
-        repeat(((maxY - minY) / step).toInt()) { values += multiplier * (minY + (it + 1) * step) }
-        return values
+        val requestedStep = context.getStepOrThrow()
+        return context.cacheStore.getOrSet(
+          cacheKeyNamespace,
+          requestedStep,
+          maxY,
+          minY,
+          freeHeight,
+          maxLabelHeight,
+          multiplier,
+        ) {
+          val values = mutableListOf<Float>()
+          val requestedOrDefaultStep = requestedStep ?: 10f.pow(log10(maxY).floor - 1)
+          val step =
+            if (maxLabelHeight != 0f) {
+              val minStep = (maxY - minY) / (freeHeight / maxLabelHeight).floor
+              ((maxY - minY) / requestedOrDefaultStep)
+                .takeIf { it == it.floor }
+                ?.toInt()
+                ?.getDivisors(includeDividend = false)
+                ?.firstOrNull { it * requestedOrDefaultStep >= minStep }
+                ?.let { it * requestedOrDefaultStep }
+                ?: ((minStep / requestedOrDefaultStep).ceil * requestedOrDefaultStep)
+            } else {
+              requestedOrDefaultStep
+            }
+          repeat(((maxY - minY) / step).toInt()) { values += multiplier * (minY + (it + 1) * step) }
+          values
+        }
       }
 
       override fun getSimpleLabelValues(
@@ -195,6 +208,10 @@ internal class DefaultVerticalAxisItemPlacer(
             )
           topLabelValues + bottomLabelValues + 0f
         }
+
+      private companion object {
+        val cacheKeyNamespace = CacheStore.KeyNamespace()
+      }
     }
 
     class Count(private val count: (ExtraStore) -> Int?) : Mode {
