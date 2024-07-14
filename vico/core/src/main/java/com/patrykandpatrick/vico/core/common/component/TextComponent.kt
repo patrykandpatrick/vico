@@ -454,9 +454,8 @@ public open class TextComponent(
     }
   }
 
-  /** Houses a [TextComponent] factory function. */
-  public companion object {
-    private val cacheKeyNamespace = CacheStore.KeyNamespace()
+  private companion object {
+    val cacheKeyNamespace = CacheStore.KeyNamespace()
   }
 }
 
