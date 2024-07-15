@@ -27,13 +27,13 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
 
   override val id: Int
 
-  override val minX: Float
+  override val minX: Double
 
-  override val maxX: Float
+  override val maxX: Double
 
-  override val minY: Float
+  override val minY: Double
 
-  override val maxY: Float
+  override val maxY: Double
 
   override val extraStore: ExtraStore
 
@@ -54,10 +54,10 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
   private constructor(
     series: List<Entry>,
     id: Int,
-    minX: Float,
-    maxX: Float,
-    minY: Float,
-    maxY: Float,
+    minX: Double,
+    maxX: Double,
+    minY: Double,
+    maxY: Double,
     extraStore: ExtraStore,
   ) {
     this.series = series
@@ -69,7 +69,7 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
     this.extraStore = extraStore
   }
 
-  override fun getXDeltaGcd(): Float = series.getXDeltaGcd()
+  override fun getXDeltaGcd(): Double = series.getXDeltaGcd()
 
   override fun copy(extraStore: ExtraStore): CartesianLayerModel =
     CandlestickCartesianLayerModel(series, id, minX, maxX, minY, maxY, extraStore)
@@ -110,11 +110,11 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
    */
   public open class Entry
   internal constructor(
-    override val x: Float,
-    public val opening: Float,
-    public val closing: Float,
-    public val low: Float,
-    public val high: Float,
+    override val x: Double,
+    public val opening: Double,
+    public val closing: Double,
+    public val low: Double,
+    public val high: Double,
     public val absoluteChange: Change,
     public val relativeChange: Change,
   ) : CartesianLayerModel.Entry {
@@ -127,11 +127,11 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
       absoluteChange: Change,
       relativeChange: Change,
     ) : this(
-      x.toFloat(),
-      opening.toFloat(),
-      closing.toFloat(),
-      low.toFloat(),
-      high.toFloat(),
+      x.toDouble(),
+      opening.toDouble(),
+      closing.toDouble(),
+      low.toDouble(),
+      high.toDouble(),
       absoluteChange,
       relativeChange,
     )

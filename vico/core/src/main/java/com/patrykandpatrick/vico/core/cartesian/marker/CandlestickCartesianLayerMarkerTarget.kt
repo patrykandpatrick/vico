@@ -37,7 +37,7 @@ import com.patrykandpatrick.vico.core.cartesian.layer.CandlestickCartesianLayer
  * @property highColor the color of [CandlestickCartesianLayer.Candle.topWick].
  */
 public data class CandlestickCartesianLayerMarkerTarget(
-  override val x: Float,
+  override val x: Double,
   override val canvasX: Float,
   public val entry: CandlestickCartesianLayerModel.Entry,
   public val openingCanvasY: Float,

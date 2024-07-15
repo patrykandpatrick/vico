@@ -195,15 +195,17 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
             RandomCartesianModelGenerator.defaultX.last,
           )
         val minY =
-          typedArray.getFloat(
-            R.styleable.CartesianChartView_previewMinY,
-            RandomCartesianModelGenerator.defaultY.start,
-          )
+          if (typedArray.hasValue(R.styleable.CartesianChartView_previewMinY)) {
+            typedArray.getFloat(R.styleable.CartesianChartView_previewMinY, 0f).toDouble()
+          } else {
+            RandomCartesianModelGenerator.defaultY.start
+          }
         val maxY =
-          typedArray.getFloat(
-            R.styleable.CartesianChartView_previewMaxY,
-            RandomCartesianModelGenerator.defaultY.endInclusive,
-          )
+          if (typedArray.hasValue(R.styleable.CartesianChartView_previewMaxY)) {
+            typedArray.getFloat(R.styleable.CartesianChartView_previewMaxY, 0f).toDouble()
+          } else {
+            RandomCartesianModelGenerator.defaultY.endInclusive
+          }
         setModel(
           RandomCartesianModelGenerator.getRandomModel(
             typedArray.getInt(R.styleable.CartesianChartView_previewColumnSeriesCount, 1),

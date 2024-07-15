@@ -44,7 +44,7 @@ public interface ColumnCartesianLayerMarkerTarget : CartesianMarker.Target {
 }
 
 internal data class MutableColumnCartesianLayerMarkerTarget(
-  override val x: Float,
+  override val x: Double,
   override val canvasX: Float,
   override val columns: MutableList<ColumnCartesianLayerMarkerTarget.Column> = mutableListOf(),
 ) : ColumnCartesianLayerMarkerTarget

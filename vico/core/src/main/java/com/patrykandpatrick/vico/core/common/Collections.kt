@@ -38,14 +38,6 @@ internal fun <K, V> MutableMap<K, V>.setAll(other: Map<K, V>) {
 internal fun <T> Collection<T>.averageOf(selector: (T) -> Float): Float =
   fold(0f) { sum, element -> sum + selector(element) } / size
 
-internal inline fun <T> Iterable<T>.sumOf(selector: (T) -> Float): Float {
-  var sum = 0f
-  for (element in this) {
-    sum += selector(element)
-  }
-  return sum
-}
-
 internal fun <T> mutableListOf(sourceCollection: Collection<T>): MutableList<T> =
   ArrayList<T>(sourceCollection.size).apply { addAll(sourceCollection) }
 

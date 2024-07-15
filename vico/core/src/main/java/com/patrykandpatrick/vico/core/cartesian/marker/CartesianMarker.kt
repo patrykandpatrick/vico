@@ -29,7 +29,7 @@ public interface CartesianMarker : ChartInsetter<CartesianChartModel> {
   /** Houses information on an object to be marked. */
   public interface Target {
     /** The _x_ value. */
-    public val x: Float
+    public val x: Double
 
     /** The pixel _x_ coordinate. */
     public val canvasX: Float

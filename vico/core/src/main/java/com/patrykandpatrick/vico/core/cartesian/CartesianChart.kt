@@ -77,16 +77,16 @@ public open class CartesianChart(
   public var fadingEdges: FadingEdges? = null,
   public var decorations: List<Decoration> = emptyList(),
   public var persistentMarkers: (PersistentMarkerScope.(ExtraStore) -> Unit)? = null,
-  public var getXStep: ((CartesianChartModel) -> Float) = { it.getXDeltaGcd() },
+  public var getXStep: ((CartesianChartModel) -> Double) = { it.getXDeltaGcd() },
 ) : ChartInsetter<CartesianChartModel> {
-  private val persistentMarkerMap = mutableMapOf<Float, CartesianMarker>()
+  private val persistentMarkerMap = mutableMapOf<Double, CartesianMarker>()
   private val persistentMarkerScope = PersistentMarkerScope {
-    persistentMarkerMap[it.toFloat()] = this
+    persistentMarkerMap[it.toDouble()] = this
   }
   private var previousPersistentMarkerHashCode: Int? = null
   private val insets = Insets()
   private val axisManager = AxisManager()
-  private val _markerTargets = sortedMapOf<Float, MutableList<CartesianMarker.Target>>()
+  private val _markerTargets = sortedMapOf<Double, MutableList<CartesianMarker.Target>>()
   private var previousMarkerTargetHashCode: Int? = null
 
   private val drawingModelAndLayerConsumer =
@@ -160,8 +160,8 @@ public open class CartesianChart(
 
   /** Links _x_ values to [CartesianMarker.Target]s. */
   @Suppress("UNCHECKED_CAST")
-  public val markerTargets: SortedMap<Float, List<CartesianMarker.Target>> =
-    _markerTargets as SortedMap<Float, List<CartesianMarker.Target>>
+  public val markerTargets: SortedMap<Double, List<CartesianMarker.Target>> =
+    _markerTargets as SortedMap<Double, List<CartesianMarker.Target>>
 
   /** The start axis. */
   public var startAxis: Axis<AxisPosition.Vertical.Start>? by axisManager::startAxis

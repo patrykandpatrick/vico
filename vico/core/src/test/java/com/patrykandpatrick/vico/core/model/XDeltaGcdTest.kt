@@ -26,36 +26,36 @@ import org.junit.Test
 public class XDeltaGcdTest {
   private fun getEntries(vararg x: Number) =
     x.map { value ->
-      mockk<CartesianLayerModel.Entry> { every { this@mockk.x } returns value.toFloat() }
+      mockk<CartesianLayerModel.Entry> { every { this@mockk.x } returns value.toDouble() }
     }
 
   @Test
   public fun `Ensure 1 is returned for empty collection`() {
-    assertEquals(1f, getEntries().getXDeltaGcd())
+    assertEquals(1.0, getEntries().getXDeltaGcd())
   }
 
   @Test
   public fun `Ensure 1 is returned for single number`() {
-    assertEquals(1f, getEntries(4).getXDeltaGcd())
+    assertEquals(1.0, getEntries(4).getXDeltaGcd())
   }
 
   @Test
   public fun `Ensure 2 is returned for multiples of 2`() {
-    assertEquals(2f, getEntries(0, 2, 4, 6).getXDeltaGcd())
+    assertEquals(2.0, getEntries(0, 2, 4, 6).getXDeltaGcd())
   }
 
   @Test
   public fun `Ensure 1 is returned for primes`() {
-    assertEquals(1f, getEntries(2, 3, 5, 7).getXDeltaGcd())
+    assertEquals(1.0, getEntries(2, 3, 5, 7).getXDeltaGcd())
   }
 
   @Test
   public fun `Ensure one half is returned for multiples of one half`() {
-    assertEquals(.5f, getEntries(0, .5, 1, 1.5).getXDeltaGcd())
+    assertEquals(0.5, getEntries(0, 0.5, 1, 1.5).getXDeltaGcd())
   }
 
   @Test
   public fun `Ensure 3 is returned for shuffled multiples of 3`() {
-    assertEquals(3f, getEntries(12, 3, 6, 21).getXDeltaGcd())
+    assertEquals(3.0, getEntries(12, 3, 6, 21).getXDeltaGcd())
   }
 }

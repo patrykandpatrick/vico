@@ -28,7 +28,6 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.ChartValues
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayer
 import com.patrykandpatrick.vico.core.common.VerticalPosition
-import com.patrykandpatrick.vico.core.common.ceil
 import com.patrykandpatrick.vico.core.common.component.LineComponent
 import com.patrykandpatrick.vico.core.common.component.TextComponent
 import com.patrykandpatrick.vico.core.common.doubled
@@ -36,6 +35,7 @@ import com.patrykandpatrick.vico.core.common.getStart
 import com.patrykandpatrick.vico.core.common.half
 import com.patrykandpatrick.vico.core.common.isBoundOf
 import com.patrykandpatrick.vico.core.common.orZero
+import kotlin.math.ceil
 import kotlin.math.max
 import kotlin.math.min
 
@@ -139,14 +139,13 @@ protected constructor(
       labelValues.forEachIndexed { index, x ->
         val canvasX =
           baseCanvasX +
-            (x - chartValues.minX) / chartValues.xStep *
+            ((x - chartValues.minX) / chartValues.xStep).toFloat() *
               horizontalDimensions.xSpacing *
               layoutDirectionMultiplier
         val previousX = labelValues.getOrNull(index - 1) ?: (fullXRange.start.doubled - x)
         val nextX = labelValues.getOrNull(index + 1) ?: (fullXRange.endInclusive.doubled - x)
         val maxWidth =
-          (min(x - previousX, nextX - x) / chartValues.xStep * horizontalDimensions.xSpacing)
-            .ceil
+          ceil(min(x - previousX, nextX - x) / chartValues.xStep * horizontalDimensions.xSpacing)
             .toInt()
 
         label?.draw(
@@ -182,7 +181,7 @@ protected constructor(
           bottom = tickBottom,
           centerX =
             baseCanvasX +
-              (x - chartValues.minX) / chartValues.xStep *
+              ((x - chartValues.minX) / chartValues.xStep).toFloat() *
                 horizontalDimensions.xSpacing *
                 layoutDirectionMultiplier +
               getLinesCorrectionX(x, fullXRange),
@@ -228,9 +227,9 @@ protected constructor(
   protected open fun drawGuidelines(
     context: CartesianDrawContext,
     baseCanvasX: Float,
-    fullXRange: ClosedFloatingPointRange<Float>,
-    labelValues: List<Float>,
-    lineValues: List<Float>?,
+    fullXRange: ClosedFloatingPointRange<Double>,
+    labelValues: List<Double>,
+    lineValues: List<Double>?,
   ): Unit =
     with(context) {
       val guideline = guideline ?: return
@@ -241,7 +240,7 @@ protected constructor(
         labelValues.forEach { x ->
           val canvasX =
             baseCanvasX +
-              (x - chartValues.minX) / chartValues.xStep *
+              ((x - chartValues.minX) / chartValues.xStep).toFloat() *
                 horizontalDimensions.xSpacing *
                 layoutDirectionMultiplier
 
@@ -253,7 +252,7 @@ protected constructor(
         lineValues.forEach { x ->
           val canvasX =
             baseCanvasX +
-              (x - chartValues.minX) / chartValues.xStep *
+              ((x - chartValues.minX) / chartValues.xStep).toFloat() *
                 horizontalDimensions.xSpacing *
                 layoutDirectionMultiplier +
               getLinesCorrectionX(x, fullXRange)
@@ -268,8 +267,8 @@ protected constructor(
     }
 
   protected fun CartesianDrawContext.getLinesCorrectionX(
-    entryX: Float,
-    fullXRange: ClosedFloatingPointRange<Float>,
+    entryX: Double,
+    fullXRange: ClosedFloatingPointRange<Double>,
   ): Float =
     when {
       itemPlacer.getShiftExtremeLines(this).not() -> 0f
@@ -308,7 +307,7 @@ protected constructor(
           .half
       if (!context.zoomEnabled) {
         unscalableStartPadding -=
-          (firstLabelValue - chartValues.minX) * horizontalDimensions.xSpacing
+          (firstLabelValue - chartValues.minX).toFloat() * horizontalDimensions.xSpacing
       }
       horizontalDimensions.ensureValuesAtLeast(unscalableStartPadding = unscalableStartPadding)
     }
@@ -329,7 +328,8 @@ protected constructor(
           )
           .half
       if (!context.zoomEnabled) {
-        unscalableEndPadding -= (chartValues.maxX - lastLabelValue) * horizontalDimensions.xSpacing
+        unscalableEndPadding -=
+          ((chartValues.maxX - lastLabelValue) * horizontalDimensions.xSpacing).toFloat()
       }
       horizontalDimensions.ensureValuesAtLeast(unscalableEndPadding = unscalableEndPadding)
     }
@@ -366,7 +366,7 @@ protected constructor(
 
   protected fun CartesianMeasureContext.getFullXRange(
     horizontalDimensions: HorizontalDimensions
-  ): ClosedFloatingPointRange<Float> =
+  ): ClosedFloatingPointRange<Double> =
     with(horizontalDimensions) {
       val start = chartValues.minX - startPadding / xSpacing * chartValues.xStep
       val end = chartValues.maxX + endPadding / xSpacing * chartValues.xStep
@@ -419,7 +419,7 @@ protected constructor(
 
   protected fun CartesianMeasureContext.getMaxLabelWidth(
     horizontalDimensions: HorizontalDimensions,
-    fullXRange: ClosedFloatingPointRange<Float>,
+    fullXRange: ClosedFloatingPointRange<Double>,
   ): Float {
     val label = label ?: return 0f
     return itemPlacer
@@ -443,7 +443,7 @@ protected constructor(
 
   protected fun CartesianMeasureContext.getMaxLabelHeight(
     horizontalDimensions: HorizontalDimensions,
-    fullXRange: ClosedFloatingPointRange<Float>,
+    fullXRange: ClosedFloatingPointRange<Double>,
     maxLabelWidth: Float,
   ): Float {
     val label = label ?: return 0f
@@ -481,14 +481,14 @@ protected constructor(
      * If the [HorizontalAxis] is to reserve room for the first label, returns the first label’s _x_
      * value. Otherwise, returns `null`.
      */
-    public fun getFirstLabelValue(context: CartesianMeasureContext, maxLabelWidth: Float): Float? =
+    public fun getFirstLabelValue(context: CartesianMeasureContext, maxLabelWidth: Float): Double? =
       null
 
     /**
      * If the [HorizontalAxis] is to reserve room for the last label, returns the last label’s _x_
      * value. Otherwise, returns `null`.
      */
-    public fun getLastLabelValue(context: CartesianMeasureContext, maxLabelWidth: Float): Float? =
+    public fun getLastLabelValue(context: CartesianMeasureContext, maxLabelWidth: Float): Double? =
       null
 
     /**
@@ -497,10 +497,10 @@ protected constructor(
      */
     public fun getLabelValues(
       context: CartesianDrawContext,
-      visibleXRange: ClosedFloatingPointRange<Float>,
-      fullXRange: ClosedFloatingPointRange<Float>,
+      visibleXRange: ClosedFloatingPointRange<Double>,
+      fullXRange: ClosedFloatingPointRange<Double>,
       maxLabelWidth: Float,
-    ): List<Float>
+    ): List<Double>
 
     /**
      * Returns, as a list, the _x_ values for which the [HorizontalAxis] is to create labels and
@@ -510,8 +510,8 @@ protected constructor(
     public fun getWidthMeasurementLabelValues(
       context: CartesianMeasureContext,
       horizontalDimensions: HorizontalDimensions,
-      fullXRange: ClosedFloatingPointRange<Float>,
-    ): List<Float>
+      fullXRange: ClosedFloatingPointRange<Double>,
+    ): List<Double>
 
     /**
      * Returns, as a list, the _x_ values for which the [HorizontalAxis] is to create labels and
@@ -521,9 +521,9 @@ protected constructor(
     public fun getHeightMeasurementLabelValues(
       context: CartesianMeasureContext,
       horizontalDimensions: HorizontalDimensions,
-      fullXRange: ClosedFloatingPointRange<Float>,
+      fullXRange: ClosedFloatingPointRange<Double>,
       maxLabelWidth: Float,
-    ): List<Float>
+    ): List<Double>
 
     /**
      * Returns, as a list, the _x_ values for which ticks and guidelines are to be displayed,
@@ -532,10 +532,10 @@ protected constructor(
      */
     public fun getLineValues(
       context: CartesianDrawContext,
-      visibleXRange: ClosedFloatingPointRange<Float>,
-      fullXRange: ClosedFloatingPointRange<Float>,
+      visibleXRange: ClosedFloatingPointRange<Double>,
+      fullXRange: ClosedFloatingPointRange<Double>,
       maxLabelWidth: Float,
-    ): List<Float>? = null
+    ): List<Double>? = null
 
     /** Returns the start inset required by the [HorizontalAxis]. */
     public fun getStartHorizontalAxisInset(

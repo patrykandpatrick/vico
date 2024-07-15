@@ -20,8 +20,8 @@ import kotlin.math.max
 import kotlin.math.min
 
 internal inline fun <T> Iterable<T>.rangeOf(
-  selector: (T) -> Float
-): ClosedFloatingPointRange<Float> {
+  selector: (T) -> Double
+): ClosedFloatingPointRange<Double> {
   val iterator = iterator()
   var minValue = selector(iterator.next())
   var maxValue = minValue
@@ -34,8 +34,8 @@ internal inline fun <T> Iterable<T>.rangeOf(
 }
 
 internal inline fun <T> Iterable<T>.rangeOfPair(
-  selector: (T) -> Pair<Float, Float>
-): ClosedFloatingPointRange<Float> {
+  selector: (T) -> Pair<Double, Double>
+): ClosedFloatingPointRange<Double> {
   val iterator = iterator()
   var (minValue, maxValue) = selector(iterator.next())
   while (iterator.hasNext()) {

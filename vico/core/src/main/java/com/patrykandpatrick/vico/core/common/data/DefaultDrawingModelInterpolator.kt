@@ -25,7 +25,7 @@ import kotlinx.coroutines.ensureActive
 @Suppress("UNCHECKED_CAST")
 public class DefaultDrawingModelInterpolator<T : DrawingModel.DrawingInfo, R : DrawingModel<T>> :
   DrawingModelInterpolator<T, R> {
-  private var transformationMaps = emptyList<Map<Float, TransformationModel<T>>>()
+  private var transformationMaps = emptyList<Map<Double, TransformationModel<T>>>()
   private var oldDrawingModel: R? = null
   private var newDrawingModel: R? = null
 
@@ -56,7 +56,7 @@ public class DefaultDrawingModelInterpolator<T : DrawingModel.DrawingInfo, R : D
   private fun updateTransformationMap() {
     transformationMaps = buildList {
       repeat(max(oldDrawingModel?.size.orZero, newDrawingModel?.size.orZero)) { index ->
-        val map = mutableMapOf<Float, TransformationModel<T>>()
+        val map = mutableMapOf<Double, TransformationModel<T>>()
         oldDrawingModel?.getOrNull(index)?.forEach { (x, drawingInfo) ->
           map[x] = TransformationModel(drawingInfo)
         }

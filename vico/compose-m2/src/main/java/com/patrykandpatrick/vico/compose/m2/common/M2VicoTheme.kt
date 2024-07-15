@@ -31,7 +31,7 @@ public fun rememberM2VicoTheme(
   columnCartesianLayerColors: List<Color> =
     listOf(MaterialTheme.colors.primary, MaterialTheme.colors.secondary),
   lineCartesianLayerColors: List<Color> = columnCartesianLayerColors,
-  lineColor: Color = MaterialTheme.colors.onBackground.copy(alpha = .2f),
+  lineColor: Color = MaterialTheme.colors.onBackground.copy(alpha = 0.2f),
   textColor: Color = MaterialTheme.colors.onBackground,
 ): VicoTheme =
   remember(

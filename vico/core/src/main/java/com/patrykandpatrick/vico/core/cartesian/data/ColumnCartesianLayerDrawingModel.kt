@@ -23,11 +23,11 @@ import com.patrykandpatrick.vico.core.common.orZero
 
 /** Houses drawing information for a [ColumnCartesianLayer]. [opacity] is the columns’ opacity. */
 public class ColumnCartesianLayerDrawingModel(
-  private val entries: List<Map<Float, ColumnInfo>>,
+  private val entries: List<Map<Double, ColumnInfo>>,
   public val opacity: Float = 1f,
 ) : DrawingModel<ColumnCartesianLayerDrawingModel.ColumnInfo>(entries) {
   override fun transform(
-    drawingInfo: List<Map<Float, ColumnInfo>>,
+    drawingInfo: List<Map<Double, ColumnInfo>>,
     from: DrawingModel<ColumnInfo>?,
     fraction: Float,
   ): DrawingModel<ColumnInfo> {

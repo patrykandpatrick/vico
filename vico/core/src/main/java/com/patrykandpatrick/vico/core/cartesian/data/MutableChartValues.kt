@@ -24,22 +24,22 @@ import kotlin.math.min
 
 /** An implementation of [ChartValues] whose every property is mutable. */
 public class MutableChartValues : ChartValues {
-  private var _minX: Float? = null
+  private var _minX: Double? = null
 
-  private var _maxX: Float? = null
+  private var _maxX: Double? = null
 
-  private var _xStep: Float? = null
+  private var _xStep: Double? = null
 
   internal var yRanges: MutableMap<AxisPosition.Vertical?, MutableYRange> = mutableMapOf()
 
-  override val minX: Float
+  override val minX: Double
     get() = _minX.orZero
 
-  override val maxX: Float
+  override val maxX: Double
     get() = _maxX.orZero
 
-  override val xStep: Float
-    get() = _xStep ?: 1f
+  override val xStep: Double
+    get() = _xStep ?: 1.0
 
   override fun getYRange(axisPosition: AxisPosition.Vertical?): ChartValues.YRange =
     yRanges[axisPosition] ?: yRanges.getValue(null)
@@ -47,7 +47,7 @@ public class MutableChartValues : ChartValues {
   override var model: CartesianChartModel = CartesianChartModel.empty
 
   /** Updates [MutableChartValues.xStep] and [MutableChartValues.model]. */
-  public fun update(xStep: Float, model: CartesianChartModel) {
+  public fun update(xStep: Double, model: CartesianChartModel) {
     _xStep = xStep
     this.model = model
   }
@@ -57,10 +57,10 @@ public class MutableChartValues : ChartValues {
    * only be increased.
    */
   public fun tryUpdate(
-    minX: Float,
-    maxX: Float,
-    minY: Float,
-    maxY: Float,
+    minX: Double,
+    maxX: Double,
+    minY: Double,
+    maxY: Double,
     axisPosition: AxisPosition.Vertical?,
   ) {
     _minX = _minX?.coerceAtMost(minX) ?: minX
@@ -82,16 +82,16 @@ public class MutableChartValues : ChartValues {
   }
 
   /** A mutable implementation of [ChartValues.YRange]. */
-  public class MutableYRange(override var minY: Float, override var maxY: Float) :
+  public class MutableYRange(override var minY: Double, override var maxY: Double) :
     ChartValues.YRange {
-    override val length: Float
+    override val length: Double
       get() = maxY - minY
 
     /**
      * Tries to update [MutableYRange.minY] and [MutableYRange.maxY]. [MutableYRange.minY] can only
      * be decreased. [MutableYRange.maxY] can only be increased.
      */
-    public fun tryUpdate(minY: Float, maxY: Float) {
+    public fun tryUpdate(minY: Double, maxY: Double) {
       this.minY = min(this.minY, minY)
       this.maxY = max(this.maxY, maxY)
     }
@@ -103,9 +103,9 @@ public class MutableChartValues : ChartValues {
 public fun MutableChartValues.toImmutable(): ChartValues =
   object : ChartValues {
     private val yRanges = this@toImmutable.yRanges
-    override val minX: Float = this@toImmutable.minX
-    override val maxX: Float = this@toImmutable.maxX
-    override val xStep: Float = this@toImmutable.xStep
+    override val minX: Double = this@toImmutable.minX
+    override val maxX: Double = this@toImmutable.maxX
+    override val xStep: Double = this@toImmutable.xStep
     override val model: CartesianChartModel = this@toImmutable.model.toImmutable()
 
     override fun getYRange(axisPosition: AxisPosition.Vertical?): ChartValues.YRange =

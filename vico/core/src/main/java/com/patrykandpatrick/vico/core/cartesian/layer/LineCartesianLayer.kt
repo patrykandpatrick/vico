@@ -299,7 +299,7 @@ public open class LineCartesianLayer(
     }
   }
 
-  private val _markerTargets = mutableMapOf<Float, List<MutableLineCartesianLayerMarkerTarget>>()
+  private val _markerTargets = mutableMapOf<Double, List<MutableLineCartesianLayerMarkerTarget>>()
 
   protected val linePath: Path = Path()
 
@@ -307,7 +307,7 @@ public open class LineCartesianLayer(
 
   protected val drawingModelKey: ExtraStore.Key<LineCartesianLayerDrawingModel> = ExtraStore.Key()
 
-  override val markerTargets: Map<Float, List<CartesianMarker.Target>> = _markerTargets
+  override val markerTargets: Map<Double, List<CartesianMarker.Target>> = _markerTargets
 
   override fun drawInternal(context: CartesianDrawContext, model: LineCartesianLayerModel): Unit =
     with(context) {
@@ -316,7 +316,7 @@ public open class LineCartesianLayer(
       val drawingModel = model.extraStore.getOrNull(drawingModelKey)
       val yRange = chartValues.getYRange(verticalAxisPosition)
       val zeroLineYFraction =
-        drawingModel?.zeroY ?: (yRange.minY / yRange.length + 1f).coerceIn(0f..1f)
+        drawingModel?.zeroY ?: (yRange.maxY / yRange.length).coerceIn(0.0..1.0).toFloat()
 
       model.series.forEachIndexed { seriesIndex, series ->
         val pointInfoMap = drawingModel?.getOrNull(seriesIndex)
@@ -397,7 +397,7 @@ public open class LineCartesianLayer(
     series: List<LineCartesianLayerModel.Entry>,
     seriesIndex: Int,
     drawingStart: Float,
-    pointInfoMap: Map<Float, LineCartesianLayerDrawingModel.PointInfo>?,
+    pointInfoMap: Map<Double, LineCartesianLayerDrawingModel.PointInfo>?,
   ) {
     forEachPointInBounds(
       series = series,
@@ -477,6 +477,7 @@ public open class LineCartesianLayer(
         ((entry.x - chartValues.minX) / chartValues.xStep * horizontalDimensions.xSpacing +
             extraSpace)
           .doubled
+          .toFloat()
           .coerceAtMost(nextX - x)
       }
       else -> {
@@ -488,6 +489,7 @@ public open class LineCartesianLayer(
         ((chartValues.maxX - entry.x) / chartValues.xStep * horizontalDimensions.xSpacing +
             extraSpace)
           .doubled
+          .toFloat()
           .coerceAtMost(x - previousX!!)
       }
     }.toInt()
@@ -501,7 +503,7 @@ public open class LineCartesianLayer(
   protected open fun CartesianDrawContext.forEachPointInBounds(
     series: List<LineCartesianLayerModel.Entry>,
     drawingStart: Float,
-    pointInfoMap: Map<Float, LineCartesianLayerDrawingModel.PointInfo>?,
+    pointInfoMap: Map<Double, LineCartesianLayerDrawingModel.PointInfo>?,
     action:
       (
         entry: LineCartesianLayerModel.Entry, x: Float, y: Float, previousX: Float?, nextX: Float?,
@@ -519,12 +521,14 @@ public open class LineCartesianLayer(
 
     fun getDrawX(entry: LineCartesianLayerModel.Entry): Float =
       drawingStart +
-        layoutDirectionMultiplier * horizontalDimensions.xSpacing * (entry.x - minX) / xStep
+        layoutDirectionMultiplier *
+          horizontalDimensions.xSpacing *
+          ((entry.x - minX) / xStep).toFloat()
 
     fun getDrawY(entry: LineCartesianLayerModel.Entry): Float {
       val yRange = chartValues.getYRange(verticalAxisPosition)
       return layerBounds.bottom -
-        (pointInfoMap?.get(entry.x)?.y ?: ((entry.y - yRange.minY) / yRange.length)) *
+        (pointInfoMap?.get(entry.x)?.y ?: ((entry.y - yRange.minY) / yRange.length).toFloat()) *
           layerBounds.height()
     }
 
@@ -635,13 +639,15 @@ public open class LineCartesianLayer(
       .map { series ->
         series.associate { entry ->
           entry.x to
-            LineCartesianLayerDrawingModel.PointInfo((entry.y - yRange.minY) / yRange.length)
+            LineCartesianLayerDrawingModel.PointInfo(
+              ((entry.y - yRange.minY) / yRange.length).toFloat()
+            )
         }
       }
       .let { pointInfo ->
         LineCartesianLayerDrawingModel(
           pointInfo,
-          (yRange.minY / yRange.length + 1f).coerceIn(0f..1f),
+          (yRange.maxY / yRange.length).coerceIn(0.0..1.0).toFloat(),
         )
       }
   }

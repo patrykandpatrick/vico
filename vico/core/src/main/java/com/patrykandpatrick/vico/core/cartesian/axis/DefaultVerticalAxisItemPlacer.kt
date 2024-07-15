@@ -18,13 +18,13 @@ package com.patrykandpatrick.vico.core.cartesian.axis
 
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasureContext
-import com.patrykandpatrick.vico.core.common.ceil
 import com.patrykandpatrick.vico.core.common.data.CacheStore
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
-import com.patrykandpatrick.vico.core.common.floor
 import com.patrykandpatrick.vico.core.common.getDivisors
 import com.patrykandpatrick.vico.core.common.half
 import kotlin.math.abs
+import kotlin.math.ceil
+import kotlin.math.floor
 import kotlin.math.log10
 import kotlin.math.max
 import kotlin.math.pow
@@ -47,12 +47,12 @@ internal class DefaultVerticalAxisItemPlacer(
     axisHeight: Float,
     maxLabelHeight: Float,
     position: AxisPosition.Vertical,
-  ): List<Float> = mode.getLabelValues(context, axisHeight, maxLabelHeight, position)
+  ): List<Double> = mode.getLabelValues(context, axisHeight, maxLabelHeight, position)
 
   override fun getHeightMeasurementLabelValues(
     context: CartesianMeasureContext,
     position: AxisPosition.Vertical,
-  ): List<Float> {
+  ): List<Double> {
     val yRange = context.chartValues.getYRange(position)
     return listOf(yRange.minY, (yRange.minY + yRange.maxY).half, yRange.maxY)
   }
@@ -94,14 +94,14 @@ internal class DefaultVerticalAxisItemPlacer(
       axisHeight: Float,
       maxLabelHeight: Float,
       position: AxisPosition.Vertical,
-    ): List<Float>
+    ): List<Double>
 
     fun getMixedLabelValues(
       context: CartesianMeasureContext,
       axisHeight: Float,
       maxLabelHeight: Float,
       position: AxisPosition.Vertical,
-    ): List<Float>
+    ): List<Double>
 
     fun insetsRequired(context: CartesianMeasureContext): Boolean = true
 
@@ -117,7 +117,7 @@ internal class DefaultVerticalAxisItemPlacer(
         getMixedLabelValues(context, axisHeight, maxLabelHeight, position)
       }
 
-    class Step(private val step: (ExtraStore) -> Float?) : Mode {
+    class Step(private val step: (ExtraStore) -> Double?) : Mode {
       private fun CartesianMeasureContext.getStepOrThrow() =
         step(chartValues.model.extraStore)?.also {
           require(it > 0) { "`step` must return a positive value." }
@@ -125,12 +125,12 @@ internal class DefaultVerticalAxisItemPlacer(
 
       private fun getPartialLabelValues(
         context: CartesianMeasureContext,
-        minY: Float,
-        maxY: Float,
+        minY: Double,
+        maxY: Double,
         freeHeight: Float,
         maxLabelHeight: Float,
         multiplier: Int = 1,
-      ): List<Float> {
+      ): List<Double> {
         val requestedStep = context.getStepOrThrow()
         return context.cacheStore.getOrSet(
           cacheKeyNamespace,
@@ -141,18 +141,18 @@ internal class DefaultVerticalAxisItemPlacer(
           maxLabelHeight,
           multiplier,
         ) {
-          val values = mutableListOf<Float>()
-          val requestedOrDefaultStep = requestedStep ?: 10f.pow(log10(maxY).floor - 1)
+          val values = mutableListOf<Double>()
+          val requestedOrDefaultStep = requestedStep ?: 10.0.pow(floor(log10(maxY)) - 1)
           val step =
             if (maxLabelHeight != 0f) {
-              val minStep = (maxY - minY) / (freeHeight / maxLabelHeight).floor
+              val minStep = (maxY - minY) / floor(freeHeight / maxLabelHeight)
               ((maxY - minY) / requestedOrDefaultStep)
-                .takeIf { it == it.floor }
+                .takeIf { it == floor(it) }
                 ?.toInt()
                 ?.getDivisors(includeDividend = false)
                 ?.firstOrNull { it * requestedOrDefaultStep >= minStep }
                 ?.let { it * requestedOrDefaultStep }
-                ?: ((minStep / requestedOrDefaultStep).ceil * requestedOrDefaultStep)
+                ?: (ceil(minStep / requestedOrDefaultStep) * requestedOrDefaultStep)
             } else {
               requestedOrDefaultStep
             }
@@ -166,7 +166,7 @@ internal class DefaultVerticalAxisItemPlacer(
         axisHeight: Float,
         maxLabelHeight: Float,
         position: AxisPosition.Vertical,
-      ): List<Float> =
+      ): List<Double> =
         context.chartValues.getYRange(position).run {
           if (maxY > 0) {
             getPartialLabelValues(context, minY, maxY, axisHeight, maxLabelHeight) + minY
@@ -187,26 +187,26 @@ internal class DefaultVerticalAxisItemPlacer(
         axisHeight: Float,
         maxLabelHeight: Float,
         position: AxisPosition.Vertical,
-      ): List<Float> =
+      ): List<Double> =
         context.chartValues.getYRange(position).run {
           val topLabelValues =
             getPartialLabelValues(
               context = context,
-              minY = 0f,
+              minY = 0.0,
               maxY = maxY,
-              freeHeight = maxY / length * axisHeight,
+              freeHeight = (maxY / length).toFloat() * axisHeight,
               maxLabelHeight = maxLabelHeight,
             )
           val bottomLabelValues =
             getPartialLabelValues(
               context = context,
-              minY = 0f,
+              minY = 0.0,
               maxY = abs(minY),
-              freeHeight = -minY / length * axisHeight,
+              freeHeight = (-minY / length).toFloat() * axisHeight,
               maxLabelHeight = maxLabelHeight,
               multiplier = -1,
             )
-          topLabelValues + bottomLabelValues + 0f
+          topLabelValues + bottomLabelValues + 0.0
         }
 
       private companion object {
@@ -225,8 +225,8 @@ internal class DefaultVerticalAxisItemPlacer(
         axisHeight: Float,
         maxLabelHeight: Float,
         position: AxisPosition.Vertical,
-      ): List<Float> {
-        val values = mutableListOf<Float>()
+      ): List<Double> {
+        val values = mutableListOf<Double>()
         val requestedItemCount = context.getCountOrThrow()
         if (requestedItemCount == 0) return values
         val yRange = context.chartValues.getYRange(position)
@@ -249,11 +249,11 @@ internal class DefaultVerticalAxisItemPlacer(
         axisHeight: Float,
         maxLabelHeight: Float,
         position: AxisPosition.Vertical,
-      ): List<Float> {
-        val values = mutableListOf<Float>()
+      ): List<Double> {
+        val values = mutableListOf<Double>()
         val requestedItemCount = context.getCountOrThrow()
         if (requestedItemCount == 0) return values
-        values += 0f
+        values += 0.0
         if (requestedItemCount == 1) return values
         val yRange = context.chartValues.getYRange(position)
         if (maxLabelHeight == 0f) {

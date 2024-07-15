@@ -30,7 +30,6 @@ import com.patrykandpatrick.vico.core.cartesian.data.CandlestickCartesianLayerMo
 import com.patrykandpatrick.vico.core.cartesian.data.ChartValues
 import com.patrykandpatrick.vico.core.cartesian.data.MutableChartValues
 import com.patrykandpatrick.vico.core.cartesian.data.forEachIn
-import com.patrykandpatrick.vico.core.cartesian.data.getXSpacingMultiplier
 import com.patrykandpatrick.vico.core.cartesian.layer.CandlestickCartesianLayer.Candle
 import com.patrykandpatrick.vico.core.cartesian.marker.CandlestickCartesianLayerMarkerTarget
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
@@ -89,7 +88,7 @@ public open class CandlestickCartesianLayer(
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) public companion object
   }
 
-  private val _markerTargets = mutableMapOf<Float, List<CandlestickCartesianLayerMarkerTarget>>()
+  private val _markerTargets = mutableMapOf<Double, List<CandlestickCartesianLayerMarkerTarget>>()
 
   /** Holds information on the [CandlestickCartesianLayer]’s horizontal dimensions. */
   protected val horizontalDimensions: MutableHorizontalDimensions = MutableHorizontalDimensions()
@@ -97,7 +96,7 @@ public open class CandlestickCartesianLayer(
   protected val drawingModelKey: ExtraStore.Key<CandlestickCartesianLayerDrawingModel> =
     ExtraStore.Key()
 
-  override val markerTargets: Map<Float, List<CartesianMarker.Target>> = _markerTargets
+  override val markerTargets: Map<Double, List<CartesianMarker.Target>> = _markerTargets
 
   override fun drawInternal(
     context: CartesianDrawContext,
@@ -132,7 +131,7 @@ public open class CandlestickCartesianLayer(
     model.series.forEachIn(chartValues.minX..chartValues.maxX) { entry, _ ->
       candle = candles.getCandle(entry, model.extraStore)
       val candleInfo = drawingModel?.entries?.get(entry.x) ?: entry.toCandleInfo(yRange)
-      val xSpacingMultiplier = chartValues.getXSpacingMultiplier(entry.x)
+      val xSpacingMultiplier = ((entry.x - chartValues.minX) / chartValues.xStep).toFloat()
       bodyCenterX =
         drawingStart +
           layoutDirectionMultiplier * horizontalDimensions.xSpacing * xSpacingMultiplier +
@@ -279,10 +278,10 @@ public open class CandlestickCartesianLayer(
 
   private fun CandlestickCartesianLayerModel.Entry.toCandleInfo(yRange: ChartValues.YRange) =
     CandlestickCartesianLayerDrawingModel.CandleInfo(
-      bodyBottomY = (minOf(opening, closing) - yRange.minY) / yRange.length,
-      bodyTopY = (max(opening, closing) - yRange.minY) / yRange.length,
-      bottomWickY = (low - yRange.minY) / yRange.length,
-      topWickY = (high - yRange.minY) / yRange.length,
+      bodyBottomY = ((minOf(opening, closing) - yRange.minY) / yRange.length).toFloat(),
+      bodyTopY = ((max(opening, closing) - yRange.minY) / yRange.length).toFloat(),
+      bottomWickY = ((low - yRange.minY) / yRange.length).toFloat(),
+      topWickY = ((high - yRange.minY) / yRange.length).toFloat(),
     )
 
   private fun CandlestickCartesianLayerModel.toDrawingModel(

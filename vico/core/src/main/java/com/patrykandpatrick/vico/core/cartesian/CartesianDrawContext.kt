@@ -22,7 +22,7 @@ import androidx.annotation.RestrictTo
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayer
 import com.patrykandpatrick.vico.core.common.DrawContext
 import com.patrykandpatrick.vico.core.common.Point
-import com.patrykandpatrick.vico.core.common.ceil
+import kotlin.math.ceil
 
 /** A [DrawContext] extension with [CartesianChart]-specific data. */
 public interface CartesianDrawContext : DrawContext, CartesianMeasureContext {
@@ -53,9 +53,11 @@ public fun CartesianMeasureContext.getMaxScrollDistance(
   chartWidth: Float,
   horizontalDimensions: HorizontalDimensions,
 ): Float =
-  (layoutDirectionMultiplier * (horizontalDimensions.getContentWidth(this) - chartWidth))
-    .run { if (isLtr) coerceAtLeast(minimumValue = 0f) else coerceAtMost(maximumValue = 0f) }
-    .ceil
+  ceil(
+    (layoutDirectionMultiplier * (horizontalDimensions.getContentWidth(this) - chartWidth)).run {
+      if (isLtr) coerceAtLeast(0f) else coerceAtMost(0f)
+    }
+  )
 
 internal fun CartesianDrawContext.getMaxScrollDistance() =
   getMaxScrollDistance(layerBounds.width(), horizontalDimensions)

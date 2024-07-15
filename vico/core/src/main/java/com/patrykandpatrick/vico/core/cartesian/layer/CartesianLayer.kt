@@ -33,7 +33,7 @@ import com.patrykandpatrick.vico.core.common.data.MutableExtraStore
  */
 public interface CartesianLayer<M : CartesianLayerModel> : ChartInsetter<M> {
   /** Links _x_ values to [CartesianMarker.Target]s. */
-  public val markerTargets: Map<Float, List<CartesianMarker.Target>>
+  public val markerTargets: Map<Double, List<CartesianMarker.Target>>
 
   /** Draws the [CartesianLayer]. */
   public fun draw(context: CartesianDrawContext, model: M)

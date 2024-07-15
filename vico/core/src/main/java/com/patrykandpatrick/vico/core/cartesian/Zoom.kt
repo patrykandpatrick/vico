@@ -45,8 +45,8 @@ public fun interface Zoom {
     public fun static(value: Float = 1f): Zoom = Zoom { _, _, _ -> value }
 
     /** Ensures the specified number of _x_ units is visible. */
-    public fun x(x: Float): Zoom = Zoom { context, horizontalDimensions, bounds ->
-      bounds.width() * context.chartValues.xStep / (x * horizontalDimensions.xSpacing)
+    public fun x(x: Double): Zoom = Zoom { context, horizontalDimensions, bounds ->
+      bounds.width() * (context.chartValues.xStep / x).toFloat() / horizontalDimensions.xSpacing
     }
 
     /** Uses the smaller of [a]’s zoom factor and [b]’s zoom factor. */

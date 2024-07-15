@@ -67,7 +67,9 @@ public interface HorizontalDimensions {
 
   /** Calculates the width of the [CartesianChart]’s scalable content (in pixels). */
   public fun getScalableContentWidth(context: CartesianMeasureContext): Float =
-    with(context) { xSpacing * chartValues.xLength / chartValues.xStep + scalablePadding }
+    with(context) {
+      xSpacing * (chartValues.xLength / chartValues.xStep).toFloat() + scalablePadding
+    }
 
   /** Calculates the width of the [CartesianChart]’s content (in pixels). */
   public fun getContentWidth(context: CartesianMeasureContext): Float =

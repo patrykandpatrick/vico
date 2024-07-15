@@ -42,7 +42,7 @@ public abstract class BaseCartesianLayer<T : CartesianLayerModel> : CartesianLay
       xSpacing = xSpacing,
       scalableStartPadding = xSpacing.half,
       scalableEndPadding =
-        ((-chartValues.xLength / chartValues.xStep - 0.5f) % 1f + 1f) % 1f * xSpacing,
+        (((-chartValues.xLength / chartValues.xStep - 0.5) % 1 + 1) % 1).toFloat() * xSpacing,
     )
   }
 

@@ -28,22 +28,22 @@ public interface CartesianLayerModel {
   public val id: Int
 
   /** The minimum _x_ value. */
-  public val minX: Float
+  public val minX: Double
 
   /** The maximum _x_ value. */
-  public val maxX: Float
+  public val maxX: Double
 
   /** The minimum _y_ value. */
-  public val minY: Float
+  public val minY: Double
 
   /** The maximum _y_ value. */
-  public val maxY: Float
+  public val maxY: Double
 
   /** Stores auxiliary data, including [DrawingModel]s. */
   public val extraStore: ExtraStore
 
   /** Returns the greatest common divisor of the _x_ values’ differences. */
-  public fun getXDeltaGcd(): Float
+  public fun getXDeltaGcd(): Double
 
   /** Creates a copy of this [CartesianLayerModel] with the given [ExtraStore]. */
   public fun copy(extraStore: ExtraStore): CartesianLayerModel
@@ -55,7 +55,7 @@ public interface CartesianLayerModel {
   /** Represents a single entity in a [CartesianLayerModel]. */
   public interface Entry {
     /** The _x_ coordinate. */
-    public val x: Float
+    public val x: Double
 
     override fun equals(other: Any?): Boolean
 
@@ -72,26 +72,26 @@ public interface CartesianLayerModel {
   }
 }
 
-internal fun List<CartesianLayerModel.Entry>.getXDeltaGcd(): Float {
-  if (isEmpty()) return 1f
+internal fun List<CartesianLayerModel.Entry>.getXDeltaGcd(): Double {
+  if (isEmpty()) return 1.0
   val iterator = iterator()
   var prevX = iterator.next().x
-  var gcd: Float? = null
+  var gcd: Double? = null
   while (iterator.hasNext()) {
     val x = iterator.next().x
     val delta = abs(x - prevX)
     prevX = x
-    if (delta != 0f) gcd = gcd?.gcdWith(delta) ?: delta
+    if (delta != 0.0) gcd = gcd?.gcdWith(delta) ?: delta
   }
   return gcd?.also {
-    require(it != 0f) {
-      "The x values are too precise. The maximum precision is two decimal places."
+    require(it != 0.0) {
+      "The x values are too precise. The maximum precision is four decimal places."
     }
-  } ?: 1f
+  } ?: 1.0
 }
 
 internal inline fun <T : CartesianLayerModel.Entry> List<T>.forEachIn(
-  range: ClosedFloatingPointRange<Float>,
+  range: ClosedFloatingPointRange<Double>,
   padding: Int = 0,
   action: (T, T?) -> Unit,
 ) {

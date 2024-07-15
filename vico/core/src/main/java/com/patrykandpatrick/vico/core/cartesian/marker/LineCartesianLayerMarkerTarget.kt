@@ -39,7 +39,7 @@ public interface LineCartesianLayerMarkerTarget : CartesianMarker.Target {
 }
 
 internal data class MutableLineCartesianLayerMarkerTarget(
-  override val x: Float,
+  override val x: Double,
   override val canvasX: Float,
   override val points: MutableList<LineCartesianLayerMarkerTarget.Point> = mutableListOf(),
 ) : LineCartesianLayerMarkerTarget

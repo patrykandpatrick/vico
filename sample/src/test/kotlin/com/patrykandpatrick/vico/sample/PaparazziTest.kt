@@ -56,7 +56,7 @@ public class PaparazziTest {
     Paparazzi(
       deviceConfig = lightConfig,
       renderingMode = SessionParams.RenderingMode.SHRINK,
-      maxPercentDifference = .2,
+      maxPercentDifference = 0.2,
     )
 
   private fun List<Pair<String, @Composable () -> Unit>>.snapshotAll() {

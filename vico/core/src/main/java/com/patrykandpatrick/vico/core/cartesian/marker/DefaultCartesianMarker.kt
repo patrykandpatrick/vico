@@ -26,7 +26,6 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.VerticalPosition
 import com.patrykandpatrick.vico.core.common.averageOf
-import com.patrykandpatrick.vico.core.common.ceil
 import com.patrykandpatrick.vico.core.common.component.Component
 import com.patrykandpatrick.vico.core.common.component.LineComponent
 import com.patrykandpatrick.vico.core.common.component.ShapeComponent
@@ -35,6 +34,7 @@ import com.patrykandpatrick.vico.core.common.doubled
 import com.patrykandpatrick.vico.core.common.half
 import com.patrykandpatrick.vico.core.common.orZero
 import com.patrykandpatrick.vico.core.common.shape.MarkerCorneredShape
+import kotlin.math.ceil
 import kotlin.math.min
 
 /**
@@ -191,7 +191,7 @@ public open class DefaultCartesianMarker(
         x = x,
         y = y,
         verticalPosition = verticalPosition,
-        maxWidth = min(layerBounds.right - x, x - layerBounds.left).doubled.ceil.toInt(),
+        maxWidth = ceil(min(layerBounds.right - x, x - layerBounds.left).doubled).toInt(),
       )
     }
 

@@ -165,7 +165,7 @@ private fun getViewHorizontalLine() =
       ),
   )
 
-private const val HORIZONTAL_LINE_Y = 14f
+private const val HORIZONTAL_LINE_Y = 14.0
 private const val HORIZONTAL_LINE_COLOR = -2893786
 private const val HORIZONTAL_LINE_THICKNESS_DP = 2f
 private const val HORIZONTAL_LINE_LABEL_HORIZONTAL_PADDING_DP = 8f

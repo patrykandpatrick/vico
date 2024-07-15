@@ -25,11 +25,11 @@ import com.patrykandpatrick.vico.core.common.orZero
  * Houses drawing information for a [CandlestickCartesianLayer]. [opacity] is the columns’ opacity.
  */
 public class CandlestickCartesianLayerDrawingModel(
-  public val entries: Map<Float, CandleInfo>,
+  public val entries: Map<Double, CandleInfo>,
   public val opacity: Float = 1f,
 ) : DrawingModel<CandlestickCartesianLayerDrawingModel.CandleInfo>(listOf(entries)) {
   override fun transform(
-    drawingInfo: List<Map<Float, CandleInfo>>,
+    drawingInfo: List<Map<Double, CandleInfo>>,
     from: DrawingModel<CandleInfo>?,
     fraction: Float,
   ): DrawingModel<CandleInfo> {

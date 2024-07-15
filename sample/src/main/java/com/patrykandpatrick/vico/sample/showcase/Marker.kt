@@ -83,7 +83,7 @@ internal fun rememberMarker(
         setIndicatorColor =
           if (showIndicator) {
             { color ->
-              indicatorRearComponent.color = color.copyColor(alpha = .15f)
+              indicatorRearComponent.color = color.copyColor(alpha = 0.15f)
               indicatorCenterComponent.color = color
               indicatorCenterComponent.setShadow(radius = 12f, color = color)
             }

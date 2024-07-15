@@ -22,7 +22,6 @@ import android.text.style.ForegroundColorSpan
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianLayerModel
 import com.patrykandpatrick.vico.core.common.appendCompat
-import com.patrykandpatrick.vico.core.common.sumOf
 import java.text.DecimalFormat
 
 /**
@@ -34,7 +33,7 @@ public open class DefaultCartesianMarkerValueFormatter(
   private val decimalFormat: DecimalFormat = DecimalFormat("#.##;−#.##"),
   private val colorCode: Boolean = true,
 ) : CartesianMarkerValueFormatter {
-  protected open fun SpannableStringBuilder.append(y: Float, color: Int? = null) {
+  protected open fun SpannableStringBuilder.append(y: Double, color: Int? = null) {
     if (colorCode && color != null) {
       appendCompat(
         decimalFormat.format(y),

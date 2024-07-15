@@ -20,8 +20,8 @@ import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayer
 
 /** Houses drawing information for a [CartesianLayer]. */
 public abstract class DrawingModel<T : DrawingModel.DrawingInfo>(
-  private val drawingInfo: List<Map<Float, T>>
-) : List<Map<Float, T>> by drawingInfo {
+  private val drawingInfo: List<Map<Double, T>>
+) : List<Map<Double, T>> by drawingInfo {
   /**
    * Returns an intermediate [DrawingModel] between this one and [from]. The returned drawing model
    * includes the provided [DrawingInfo] list. [fraction] is the balance between [from] and this
@@ -30,7 +30,7 @@ public abstract class DrawingModel<T : DrawingModel.DrawingInfo>(
    * belongs.
    */
   public abstract fun transform(
-    drawingInfo: List<Map<Float, T>>,
+    drawingInfo: List<Map<Double, T>>,
     from: DrawingModel<T>?,
     fraction: Float,
   ): DrawingModel<T>

@@ -28,7 +28,7 @@ public fun interface CartesianValueFormatter {
    * is associated. Pass this to [ChartValues.getYRange].
    */
   public fun format(
-    value: Float,
+    value: Double,
     chartValues: ChartValues,
     verticalAxisPosition: AxisPosition.Vertical?,
   ): CharSequence
@@ -37,7 +37,7 @@ public fun interface CartesianValueFormatter {
   public companion object {
     private class Decimal(private val decimalFormat: DecimalFormat) : CartesianValueFormatter {
       override fun format(
-        value: Float,
+        value: Double,
         chartValues: ChartValues,
         verticalAxisPosition: AxisPosition.Vertical?,
       ): CharSequence = decimalFormat.format(value)
@@ -50,7 +50,7 @@ public fun interface CartesianValueFormatter {
 
     private class YPercent(private val decimalFormat: DecimalFormat) : CartesianValueFormatter {
       override fun format(
-        value: Float,
+        value: Double,
         chartValues: ChartValues,
         verticalAxisPosition: AxisPosition.Vertical?,
       ): CharSequence =

@@ -21,10 +21,10 @@ import com.patrykandpatrick.vico.core.cartesian.CartesianMeasureContext
 import com.patrykandpatrick.vico.core.cartesian.HorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
 import com.patrykandpatrick.vico.core.cartesian.data.ChartValues
-import com.patrykandpatrick.vico.core.common.ceil
-import com.patrykandpatrick.vico.core.common.floor
 import com.patrykandpatrick.vico.core.common.half
-import com.patrykandpatrick.vico.core.common.round
+import com.patrykandpatrick.vico.core.common.roundedToNearest
+import kotlin.math.ceil
+import kotlin.math.floor
 
 internal class DefaultHorizontalAxisItemPlacer(
   private val spacing: Int,
@@ -41,8 +41,8 @@ internal class DefaultHorizontalAxisItemPlacer(
     get() = buildList {
       add(minX)
       if (xLength < xStep) return@buildList
-      add(minX + xStep * (xLength / xStep).floor)
-      if (xLength >= 2 * xStep) add(minX + xStep * (xLength.half / xStep).round)
+      add(minX + xStep * floor(xLength / xStep))
+      if (xLength >= 2 * xStep) add(minX + xStep * (xLength.half / xStep).roundedToNearest)
     }
 
   override fun getShiftExtremeLines(context: CartesianDrawContext): Boolean = shiftExtremeTicks
@@ -61,15 +61,15 @@ internal class DefaultHorizontalAxisItemPlacer(
 
   override fun getLabelValues(
     context: CartesianDrawContext,
-    visibleXRange: ClosedFloatingPointRange<Float>,
-    fullXRange: ClosedFloatingPointRange<Float>,
+    visibleXRange: ClosedFloatingPointRange<Double>,
+    fullXRange: ClosedFloatingPointRange<Double>,
     maxLabelWidth: Float,
-  ): List<Float> {
+  ): List<Double> {
     with(context) {
       val dynamicSpacing =
         spacing *
           if (this.addExtremeLabelPadding) {
-            (maxLabelWidth / (horizontalDimensions.xSpacing * spacing)).ceil.toInt()
+            ceil(maxLabelWidth / (horizontalDimensions.xSpacing * spacing)).toInt()
           } else {
             1
           }
@@ -78,13 +78,14 @@ internal class DefaultHorizontalAxisItemPlacer(
       val firstValue =
         visibleXRange.start + (dynamicSpacing - remainder) % dynamicSpacing * chartValues.xStep
       val minXOffset = chartValues.minX % chartValues.xStep
-      val values = mutableListOf<Float>()
+      val values = mutableListOf<Double>()
       var multiplier = -LABEL_OVERFLOW_SIZE
       var hasEndOverflow = false
       while (true) {
         var potentialValue = firstValue + multiplier++ * dynamicSpacing * chartValues.xStep
         potentialValue =
-          chartValues.xStep * ((potentialValue - minXOffset) / chartValues.xStep).round + minXOffset
+          chartValues.xStep * ((potentialValue - minXOffset) / chartValues.xStep).roundedToNearest +
+            minXOffset
         if (potentialValue < chartValues.minX || potentialValue == fullXRange.start) continue
         if (potentialValue > chartValues.maxX || potentialValue == fullXRange.endInclusive) break
         values += potentialValue
@@ -101,29 +102,29 @@ internal class DefaultHorizontalAxisItemPlacer(
   override fun getWidthMeasurementLabelValues(
     context: CartesianMeasureContext,
     horizontalDimensions: HorizontalDimensions,
-    fullXRange: ClosedFloatingPointRange<Float>,
+    fullXRange: ClosedFloatingPointRange<Double>,
   ) = if (context.addExtremeLabelPadding) context.chartValues.measuredLabelValues else emptyList()
 
   override fun getHeightMeasurementLabelValues(
     context: CartesianMeasureContext,
     horizontalDimensions: HorizontalDimensions,
-    fullXRange: ClosedFloatingPointRange<Float>,
+    fullXRange: ClosedFloatingPointRange<Double>,
     maxLabelWidth: Float,
   ) = context.chartValues.measuredLabelValues
 
   override fun getLineValues(
     context: CartesianDrawContext,
-    visibleXRange: ClosedFloatingPointRange<Float>,
-    fullXRange: ClosedFloatingPointRange<Float>,
+    visibleXRange: ClosedFloatingPointRange<Double>,
+    fullXRange: ClosedFloatingPointRange<Double>,
     maxLabelWidth: Float,
-  ): List<Float>? =
+  ): List<Double>? =
     with(context) {
       when (horizontalLayout) {
         is HorizontalLayout.Segmented -> {
           val remainder = (visibleXRange.start - fullXRange.start) % chartValues.xStep
           val firstValue = visibleXRange.start + (chartValues.xStep - remainder) % chartValues.xStep
           var multiplier = -TICK_OVERFLOW_SIZE
-          val values = mutableListOf<Float>()
+          val values = mutableListOf<Double>()
           while (true) {
             val potentialValue = firstValue + multiplier++ * chartValues.xStep
             if (potentialValue < fullXRange.start) continue

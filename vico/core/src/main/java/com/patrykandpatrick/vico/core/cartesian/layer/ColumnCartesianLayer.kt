@@ -29,7 +29,6 @@ import com.patrykandpatrick.vico.core.cartesian.data.ColumnCartesianLayerDrawing
 import com.patrykandpatrick.vico.core.cartesian.data.ColumnCartesianLayerModel
 import com.patrykandpatrick.vico.core.cartesian.data.MutableChartValues
 import com.patrykandpatrick.vico.core.cartesian.data.forEachIn
-import com.patrykandpatrick.vico.core.cartesian.data.getXSpacingMultiplier
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.core.cartesian.marker.ColumnCartesianLayerMarkerTarget
 import com.patrykandpatrick.vico.core.cartesian.marker.MutableColumnCartesianLayerMarkerTarget
@@ -83,16 +82,16 @@ public open class ColumnCartesianLayer(
     DefaultDrawingModelInterpolator(),
 ) : BaseCartesianLayer<ColumnCartesianLayerModel>() {
   private val _markerTargets =
-    mutableMapOf<Float, MutableList<MutableColumnCartesianLayerMarkerTarget>>()
+    mutableMapOf<Double, MutableList<MutableColumnCartesianLayerMarkerTarget>>()
 
-  protected val stackInfo: MutableMap<Float, StackInfo> = mutableMapOf()
+  protected val stackInfo: MutableMap<Double, StackInfo> = mutableMapOf()
 
   /** Holds information on the [ColumnCartesianLayer]’s horizontal dimensions. */
   protected val horizontalDimensions: MutableHorizontalDimensions = MutableHorizontalDimensions()
 
   protected val drawingModelKey: ExtraStore.Key<ColumnCartesianLayerDrawingModel> = ExtraStore.Key()
 
-  override val markerTargets: Map<Float, List<CartesianMarker.Target>> = _markerTargets
+  override val markerTargets: Map<Double, List<CartesianMarker.Target>> = _markerTargets
 
   override fun drawInternal(context: CartesianDrawContext, model: ColumnCartesianLayerModel): Unit =
     with(context) {
@@ -111,14 +110,15 @@ public open class ColumnCartesianLayer(
     drawingModel: ColumnCartesianLayerDrawingModel?,
   ) {
     val yRange = chartValues.getYRange(verticalAxisPosition)
-    val heightMultiplier = layerBounds.height() / yRange.length
+    val heightMultiplier = layerBounds.height() / yRange.length.toFloat()
 
     var drawingStart: Float
     var height: Float
     var columnCenterX: Float
     var columnTop: Float
     var columnBottom: Float
-    val zeroLinePosition = layerBounds.bottom + yRange.minY / yRange.length * layerBounds.height()
+    val zeroLinePosition =
+      layerBounds.bottom + (yRange.minY / yRange.length).toFloat() * layerBounds.height()
     val mergeMode = mergeMode(model.extraStore)
 
     model.series.forEachIndexed { index, entryCollection ->
@@ -126,8 +126,9 @@ public open class ColumnCartesianLayer(
 
       entryCollection.forEachIn(chartValues.minX..chartValues.maxX) { entry, _ ->
         val columnInfo = drawingModel?.getOrNull(index)?.get(entry.x)
-        height = (columnInfo?.height ?: (abs(entry.y) / yRange.length)) * layerBounds.height()
-        val xSpacingMultiplier = chartValues.getXSpacingMultiplier(entry.x)
+        height =
+          (columnInfo?.height ?: (abs(entry.y) / yRange.length)).toFloat() * layerBounds.height()
+        val xSpacingMultiplier = ((entry.x - chartValues.minX) / chartValues.xStep).toFloat()
         val column = columnProvider.getColumn(entry, index, model.extraStore)
         columnCenterX =
           drawingStart +
@@ -142,7 +143,7 @@ public open class ColumnCartesianLayer(
           MergeMode.Stacked -> {
             val stackInfo = stackInfo.getOrPut(entry.x) { StackInfo() }
             columnBottom =
-              if (entry.y >= 0f) {
+              if (entry.y >= 0) {
                 zeroLinePosition - stackInfo.topHeight
               } else {
                 zeroLinePosition + stackInfo.bottomHeight + height
@@ -247,7 +248,7 @@ public open class ColumnCartesianLayer(
   protected open fun CartesianDrawContext.drawDataLabel(
     modelEntriesSize: Int,
     columnThicknessDp: Float,
-    dataLabelValue: Float,
+    dataLabelValue: Double,
     x: Float,
     y: Float,
     isFirst: Boolean,
@@ -443,10 +444,10 @@ public open class ColumnCartesianLayer(
   @Immutable
   public sealed interface MergeMode {
     /** Returns the minimum _y_ value. */
-    public fun getMinY(model: ColumnCartesianLayerModel): Float
+    public fun getMinY(model: ColumnCartesianLayerModel): Double
 
     /** Returns the maximum _y_ value. */
-    public fun getMaxY(model: ColumnCartesianLayerModel): Float
+    public fun getMaxY(model: ColumnCartesianLayerModel): Double
 
     /**
      * Groups columns with matching _x_ values horizontally, positioning them [columnSpacingDp] dp
@@ -454,9 +455,9 @@ public open class ColumnCartesianLayer(
      */
     public class Grouped(internal val columnSpacingDp: Float = Defaults.GROUPED_COLUMN_SPACING) :
       MergeMode {
-      override fun getMinY(model: ColumnCartesianLayerModel): Float = model.minY
+      override fun getMinY(model: ColumnCartesianLayerModel): Double = model.minY
 
-      override fun getMaxY(model: ColumnCartesianLayerModel): Float = model.maxY
+      override fun getMaxY(model: ColumnCartesianLayerModel): Double = model.maxY
 
       override fun equals(other: Any?): Boolean =
         this === other || other is Grouped && columnSpacingDp == other.columnSpacingDp
@@ -466,9 +467,9 @@ public open class ColumnCartesianLayer(
 
     /** Stacks columns with matching _x_ values. */
     public data object Stacked : MergeMode {
-      override fun getMinY(model: ColumnCartesianLayerModel): Float = model.minAggregateY
+      override fun getMinY(model: ColumnCartesianLayerModel): Double = model.minAggregateY
 
-      override fun getMaxY(model: ColumnCartesianLayerModel): Float = model.maxAggregateY
+      override fun getMaxY(model: ColumnCartesianLayerModel): Double = model.maxAggregateY
     }
 
     /** Provides access to [MergeMode] factory functions. */
@@ -497,19 +498,19 @@ public open class ColumnCartesianLayer(
         series.associate { entry ->
           entry.x to
             ColumnCartesianLayerDrawingModel.ColumnInfo(
-              height = abs(entry.y) / chartValues.getYRange(verticalAxisPosition).length
+              height = (abs(entry.y) / chartValues.getYRange(verticalAxisPosition).length).toFloat()
             )
         }
       }
       .let(::ColumnCartesianLayerDrawingModel)
 
   protected data class StackInfo(
-    var topY: Float = 0f,
-    var bottomY: Float = 0f,
+    var topY: Double = 0.0,
+    var bottomY: Double = 0.0,
     var topHeight: Float = 0f,
     var bottomHeight: Float = 0f,
   ) {
-    public fun update(y: Float, height: Float) {
+    public fun update(y: Double, height: Float) {
       if (y >= 0f) {
         topY += y
         topHeight += height

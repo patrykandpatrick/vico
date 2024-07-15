@@ -46,7 +46,7 @@ import java.text.DecimalFormat
  *   should use when interpreting [y].
  */
 public class HorizontalBox(
-  private val y: (ExtraStore) -> ClosedFloatingPointRange<Float>,
+  private val y: (ExtraStore) -> ClosedFloatingPointRange<Double>,
   private val box: ShapeComponent,
   private val labelComponent: TextComponent? = null,
   private val label: (ExtraStore) -> CharSequence = { getLabel(y(it)) },
@@ -62,9 +62,11 @@ public class HorizontalBox(
       val y = y(extraStore)
       val label = label(extraStore)
       val topY =
-        layerBounds.bottom - (y.endInclusive - yRange.minY) / yRange.length * layerBounds.height()
+        layerBounds.bottom -
+          ((y.endInclusive - yRange.minY) / yRange.length).toFloat() * layerBounds.height()
       val bottomY =
-        layerBounds.bottom - (y.start - yRange.minY) / yRange.length * layerBounds.height()
+        (layerBounds.bottom - (y.start - yRange.minY) / yRange.length * layerBounds.height())
+          .toFloat()
       val labelY =
         when (verticalLabelPosition) {
           VerticalPosition.Top -> topY
@@ -105,7 +107,7 @@ public class HorizontalBox(
   public companion object {
     private val decimalFormat = DecimalFormat("#.##;−#.##")
 
-    public fun getLabel(y: ClosedFloatingPointRange<Float>): String =
+    public fun getLabel(y: ClosedFloatingPointRange<Double>): String =
       "${decimalFormat.format(y.start)}–${decimalFormat.format(y.endInclusive)}"
   }
 }

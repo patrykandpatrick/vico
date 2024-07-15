@@ -17,11 +17,11 @@
 package com.patrykandpatrick.vico.core.cartesian.data
 
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayer
-import com.patrykandpatrick.vico.core.common.ceil
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
-import com.patrykandpatrick.vico.core.common.floor
-import com.patrykandpatrick.vico.core.common.round
+import com.patrykandpatrick.vico.core.common.roundedToNearest
 import kotlin.math.abs
+import kotlin.math.ceil
+import kotlin.math.floor
 import kotlin.math.log10
 import kotlin.math.max
 import kotlin.math.pow
@@ -30,62 +30,62 @@ import kotlin.math.sign
 /** Overrides a [CartesianLayer]’s _x_ and _y_ ranges. */
 public interface AxisValueOverrider {
   /** Returns the minimum _x_ value. */
-  public fun getMinX(minX: Float, maxX: Float, extraStore: ExtraStore): Float = minX
+  public fun getMinX(minX: Double, maxX: Double, extraStore: ExtraStore): Double = minX
 
   /** Returns the maximum _x_ value. */
-  public fun getMaxX(minX: Float, maxX: Float, extraStore: ExtraStore): Float = maxX
+  public fun getMaxX(minX: Double, maxX: Double, extraStore: ExtraStore): Double = maxX
 
   /** Returns the minimum _y_ value. */
-  public fun getMinY(minY: Float, maxY: Float, extraStore: ExtraStore): Float =
-    minY.coerceAtMost(0f)
+  public fun getMinY(minY: Double, maxY: Double, extraStore: ExtraStore): Double =
+    minY.coerceAtMost(0.0)
 
   /** Returns the maximum _y_ value. */
-  public fun getMaxY(minY: Float, maxY: Float, extraStore: ExtraStore): Float =
-    if (minY == 0f && maxY == 0f) 1f else maxY.coerceAtLeast(0f)
+  public fun getMaxY(minY: Double, maxY: Double, extraStore: ExtraStore): Double =
+    if (minY == 0.0 && maxY == 0.0) 1.0 else maxY.coerceAtLeast(0.0)
 
   public companion object {
     /** Uses dynamic rounding. */
     public fun auto(): AxisValueOverrider =
       object : AxisValueOverrider {
-        override fun getMinY(minY: Float, maxY: Float, extraStore: ExtraStore) =
-          if (minY == 0f && maxY == 0f || minY >= 0f) 0f else minY.round(maxY)
+        override fun getMinY(minY: Double, maxY: Double, extraStore: ExtraStore) =
+          if (minY == 0.0 && maxY == 0.0 || minY >= 0.0) 0.0 else minY.round(maxY)
 
-        override fun getMaxY(minY: Float, maxY: Float, extraStore: ExtraStore) =
+        override fun getMaxY(minY: Double, maxY: Double, extraStore: ExtraStore) =
           when {
-            minY == 0f && maxY == 0f -> 1f
-            maxY <= 0f -> 0f
+            minY == 0.0 && maxY == 0.0 -> 1.0
+            maxY <= 0.0 -> 0.0
             else -> maxY.round(minY)
           }
 
-        private fun Float.round(other: Float): Float {
+        private fun Double.round(other: Double): Double {
           val absoluteValue = abs(this)
-          val base = 10f.pow(log10(max(absoluteValue, abs(other))).floor - 1)
-          return sign * (absoluteValue / base).ceil * base
+          val base = 10.0.pow(floor(log10(max(absoluteValue, abs(other)))) - 1)
+          return sign * ceil(absoluteValue / base) * base
         }
       }
 
     /** Overrides the defaults with the provided values. */
     public fun fixed(
-      minX: Float? = null,
-      maxX: Float? = null,
-      minY: Float? = null,
-      maxY: Float? = null,
+      minX: Double? = null,
+      maxX: Double? = null,
+      minY: Double? = null,
+      maxY: Double? = null,
     ): AxisValueOverrider {
       val newMinX = minX
       val newMaxX = maxX
       val newMinY = minY
       val newMaxY = maxY
       return object : AxisValueOverrider {
-        override fun getMinX(minX: Float, maxX: Float, extraStore: ExtraStore) =
+        override fun getMinX(minX: Double, maxX: Double, extraStore: ExtraStore) =
           newMinX ?: super.getMinX(minX, maxX, extraStore)
 
-        override fun getMaxX(minX: Float, maxX: Float, extraStore: ExtraStore) =
+        override fun getMaxX(minX: Double, maxX: Double, extraStore: ExtraStore) =
           newMaxX ?: super.getMaxX(minX, maxX, extraStore)
 
-        override fun getMinY(minY: Float, maxY: Float, extraStore: ExtraStore) =
+        override fun getMinY(minY: Double, maxY: Double, extraStore: ExtraStore) =
           newMinY ?: super.getMinY(minY, maxY, extraStore)
 
-        override fun getMaxY(minY: Float, maxY: Float, extraStore: ExtraStore) =
+        override fun getMaxY(minY: Double, maxY: Double, extraStore: ExtraStore) =
           newMaxY ?: super.getMaxY(getMinY(minY, maxY, extraStore), maxY, extraStore)
       }
     }
@@ -97,19 +97,20 @@ public interface AxisValueOverrider {
      */
     public fun adaptiveYValues(yFraction: Float, round: Boolean = false): AxisValueOverrider =
       object : AxisValueOverrider {
+        private val Double.conditionallyRoundedToNearest
+          get() = if (round) roundedToNearest else this
+
         init {
           require(yFraction > 0f)
         }
 
-        override fun getMinY(minY: Float, maxY: Float, extraStore: ExtraStore): Float {
+        override fun getMinY(minY: Double, maxY: Double, extraStore: ExtraStore): Double {
           val difference = abs(getMaxY(minY, maxY, extraStore) - maxY)
-          return (minY - difference).maybeRound().coerceAtLeast(0f)
+          return (minY - difference).conditionallyRoundedToNearest.coerceAtLeast(0.0)
         }
 
-        override fun getMaxY(minY: Float, maxY: Float, extraStore: ExtraStore): Float =
-          if (minY == 0f && maxY == 0f) 1f else (yFraction * maxY).maybeRound()
-
-        private fun Float.maybeRound() = if (round) this.round else this
+        override fun getMaxY(minY: Double, maxY: Double, extraStore: ExtraStore): Double =
+          if (minY == 0.0 && maxY == 0.0) 1.0 else (yFraction * maxY).conditionallyRoundedToNearest
       }
   }
 }

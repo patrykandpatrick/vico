@@ -33,13 +33,13 @@ import com.patrykandpatrick.vico.core.cartesian.data.ChartValues
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayer
 import com.patrykandpatrick.vico.core.common.HorizontalPosition
 import com.patrykandpatrick.vico.core.common.VerticalPosition
-import com.patrykandpatrick.vico.core.common.ceil
 import com.patrykandpatrick.vico.core.common.component.LineComponent
 import com.patrykandpatrick.vico.core.common.component.TextComponent
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.core.common.half
 import com.patrykandpatrick.vico.core.common.orZero
 import com.patrykandpatrick.vico.core.common.translate
+import kotlin.math.ceil
 import kotlin.math.max
 
 private const val TITLE_ABS_ROTATION_DEGREES = 90f
@@ -129,7 +129,7 @@ protected constructor(
 
       lineValues.forEach { lineValue ->
         centerY =
-          bounds.bottom - bounds.height() * (lineValue - yRange.minY) / yRange.length +
+          bounds.bottom - bounds.height() * ((lineValue - yRange.minY) / yRange.length).toFloat() +
             getLineCanvasYCorrection(guidelineThickness, lineValue)
 
         guideline
@@ -176,7 +176,7 @@ protected constructor(
 
       labelValues.forEach { labelValue ->
         tickCenterY =
-          bounds.bottom - bounds.height() * (labelValue - yRange.minY) / yRange.length +
+          bounds.bottom - bounds.height() * ((labelValue - yRange.minY) / yRange.length).toFloat() +
             getLineCanvasYCorrection(tickThickness, labelValue)
 
         tick?.drawHorizontal(
@@ -321,7 +321,7 @@ protected constructor(
               .orZero
           val labelSpace =
             when (horizontalLabelPosition) {
-              Outside -> getMaxLabelWidth(freeHeight).ceil.also { maxLabelWidth = it } + tickLength
+              Outside -> ceil(getMaxLabelWidth(freeHeight)).also { maxLabelWidth = it } + tickLength
               Inside -> 0f
             }
           (labelSpace + titleComponentWidth + lineThickness).coerceIn(
@@ -370,7 +370,7 @@ protected constructor(
       }
       .orZero
 
-  protected fun CartesianDrawContext.getLineCanvasYCorrection(thickness: Float, y: Float): Float =
+  protected fun CartesianDrawContext.getLineCanvasYCorrection(thickness: Float, y: Double): Float =
     if (y == chartValues.getYRange(position).maxY && itemPlacer.getShiftTopLines(this)) {
       -thickness.half
     } else {
@@ -414,7 +414,7 @@ protected constructor(
       axisHeight: Float,
       maxLabelHeight: Float,
       position: AxisPosition.Vertical,
-    ): List<Float>
+    ): List<Double>
 
     /**
      * Returns, as a list, the _y_ values for which the [VerticalAxis] is to create labels and
@@ -426,7 +426,7 @@ protected constructor(
       axisHeight: Float,
       maxLabelHeight: Float,
       position: AxisPosition.Vertical,
-    ): List<Float>
+    ): List<Double>
 
     /**
      * Returns, as a list, the _y_ values for which the [VerticalAxis] is to create labels and
@@ -436,7 +436,7 @@ protected constructor(
     public fun getHeightMeasurementLabelValues(
       context: CartesianMeasureContext,
       position: AxisPosition.Vertical,
-    ): List<Float>
+    ): List<Double>
 
     /** Returns, as a list, the _y_ values for which ticks and guidelines are to be displayed. */
     public fun getLineValues(
@@ -444,7 +444,7 @@ protected constructor(
       axisHeight: Float,
       maxLabelHeight: Float,
       position: AxisPosition.Vertical,
-    ): List<Float>? = null
+    ): List<Double>? = null
 
     /** Returns the top inset required by the [VerticalAxis]. */
     public fun getTopVerticalAxisInset(
@@ -474,7 +474,7 @@ protected constructor(
        * tick will then be aligned with this axis, and the shifted guideline will be hidden.
        */
       public fun step(
-        step: (ExtraStore) -> Float? = { null },
+        step: (ExtraStore) -> Double? = { null },
         shiftTopLines: Boolean = true,
       ): ItemPlacer =
         DefaultVerticalAxisItemPlacer(DefaultVerticalAxisItemPlacer.Mode.Step(step), shiftTopLines)

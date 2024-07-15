@@ -33,7 +33,7 @@ public class CartesianChartModel {
    * Expresses the size of this [CartesianChartModel] in terms of the range of the _x_ values
    * covered.
    */
-  public val width: Float
+  public val width: Double
 
   /** Stores auxiliary data, including [DrawingModel]s. */
   public val extraStore: ExtraStore
@@ -57,7 +57,7 @@ public class CartesianChartModel {
   internal constructor(
     models: List<CartesianLayerModel>,
     id: Int,
-    width: Float,
+    width: Double,
     extraStore: ExtraStore,
   ) {
     this.models = models
@@ -67,11 +67,11 @@ public class CartesianChartModel {
   }
 
   /** Returns the greatest common divisor of the _x_ values’ differences. */
-  public fun getXDeltaGcd(): Float =
-    models.fold<CartesianLayerModel, Float?>(null) { gcd, layerModel ->
+  public fun getXDeltaGcd(): Double =
+    models.fold<CartesianLayerModel, Double?>(null) { gcd, layerModel ->
       val layerModelGcd = layerModel.getXDeltaGcd()
       gcd?.gcdWith(layerModelGcd) ?: layerModelGcd
-    } ?: 1f
+    } ?: 1.0
 
   /**
    * Creates a copy of this [CartesianChartModel] with the given [ExtraStore], which is also applied
@@ -86,6 +86,6 @@ public class CartesianChartModel {
   public companion object {
     /** An empty [CartesianChartModel]. */
     public val empty: CartesianChartModel =
-      CartesianChartModel(models = emptyList(), id = 0, width = 0f, extraStore = ExtraStore.empty)
+      CartesianChartModel(models = emptyList(), id = 0, width = 0.0, extraStore = ExtraStore.empty)
   }
 }

@@ -46,7 +46,7 @@ import java.text.DecimalFormat
  *   [HorizontalLine] should use when interpreting [y].
  */
 public class HorizontalLine(
-  private val y: (ExtraStore) -> Float,
+  private val y: (ExtraStore) -> Double,
   private val line: LineComponent,
   private val labelComponent: TextComponent? = null,
   private val label: (ExtraStore) -> CharSequence = { getLabel(y(it)) },
@@ -61,7 +61,8 @@ public class HorizontalLine(
       val extraStore = chartValues.model.extraStore
       val y = y(extraStore)
       val label = label(extraStore)
-      val canvasY = layerBounds.bottom - (y - yRange.minY) / yRange.length * layerBounds.height()
+      val canvasY =
+        layerBounds.bottom - ((y - yRange.minY) / yRange.length).toFloat() * layerBounds.height()
       line.drawHorizontal(context, layerBounds.left, layerBounds.right, canvasY)
       if (labelComponent == null) return
       val clippingFreeVerticalLabelPosition =
@@ -104,6 +105,6 @@ public class HorizontalLine(
   public companion object {
     private val decimalFormat: DecimalFormat = DecimalFormat("#.##;−#.##")
 
-    public fun getLabel(y: Float): String = decimalFormat.format(y)
+    public fun getLabel(y: Double): String = decimalFormat.format(y)
   }
 }

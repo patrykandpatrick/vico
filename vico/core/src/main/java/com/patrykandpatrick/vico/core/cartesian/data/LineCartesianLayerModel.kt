@@ -30,13 +30,13 @@ public class LineCartesianLayerModel : CartesianLayerModel {
 
   override val id: Int
 
-  override val minX: Float
+  override val minX: Double
 
-  override val maxX: Float
+  override val maxX: Double
 
-  override val minY: Float
+  override val minY: Double
 
-  override val maxY: Float
+  override val maxY: Double
 
   override val extraStore: ExtraStore
 
@@ -64,10 +64,10 @@ public class LineCartesianLayerModel : CartesianLayerModel {
     entries: List<Entry>,
     series: List<List<Entry>>,
     id: Int,
-    minX: Float,
-    maxX: Float,
-    minY: Float,
-    maxY: Float,
+    minX: Double,
+    maxX: Double,
+    minY: Double,
+    maxY: Double,
     extraStore: ExtraStore,
   ) {
     this.entries = entries
@@ -80,7 +80,7 @@ public class LineCartesianLayerModel : CartesianLayerModel {
     this.extraStore = extraStore
   }
 
-  override fun getXDeltaGcd(): Float = entries.getXDeltaGcd()
+  override fun getXDeltaGcd(): Double = entries.getXDeltaGcd()
 
   override fun copy(extraStore: ExtraStore): CartesianLayerModel =
     LineCartesianLayerModel(entries, series, id, minX, maxX, minY, maxY, extraStore)
@@ -108,9 +108,9 @@ public class LineCartesianLayerModel : CartesianLayerModel {
   }
 
   /** Represents a line node at ([x], [y]). */
-  public class Entry internal constructor(override val x: Float, public val y: Float) :
+  public class Entry internal constructor(override val x: Double, public val y: Double) :
     CartesianLayerModel.Entry {
-    public constructor(x: Number, y: Number) : this(x.toFloat(), y.toFloat())
+    public constructor(x: Number, y: Number) : this(x.toDouble(), y.toDouble())
 
     override fun equals(other: Any?): Boolean =
       this === other || other is Entry && x == other.x && y == other.y

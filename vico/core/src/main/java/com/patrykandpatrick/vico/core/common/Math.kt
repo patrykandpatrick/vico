@@ -18,7 +18,6 @@ package com.patrykandpatrick.vico.core.common
 
 import androidx.annotation.RestrictTo
 import kotlin.math.abs
-import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.pow
 import kotlin.math.roundToInt
@@ -27,31 +26,31 @@ import kotlin.random.Random
 
 internal const val PI_RAD: Float = 180f
 
-internal const val FLOAT_GCD_DECIMALS = 2
+internal const val DOUBLE_GCD_DECIMALS = 4
 
-private fun Float.round(decimals: Int): Float {
-  val multiplier = 10f.pow(n = decimals)
-  return (this * multiplier).round / multiplier
+private fun Double.roundToNearest(decimals: Int): Double {
+  val multiplier = 10f.pow(decimals)
+  return (this * multiplier).roundedToNearest / multiplier
 }
 
-private fun Float.gcdWithImpl(other: Float, threshold: Float): Float =
+private fun Double.gcdWithImpl(other: Double, threshold: Double): Double =
   when {
-    this < other -> other.gcdWithImpl(other = this, threshold = threshold)
-    abs(x = other) < threshold -> this
-    else -> other.gcdWithImpl(other = this - (this / other).floor * other, threshold = threshold)
+    this < other -> other.gcdWithImpl(this, threshold)
+    abs(other) < threshold -> this
+    else -> other.gcdWithImpl(this - floor(this / other) * other, threshold)
   }
 
-internal fun Float.gcdWith(other: Float): Float =
-  gcdWithImpl(other = other, threshold = 10f.pow(n = -FLOAT_GCD_DECIMALS - 1))
-    .round(decimals = FLOAT_GCD_DECIMALS)
+internal fun Double.gcdWith(other: Double) =
+  gcdWithImpl(other = other, threshold = 10.0.pow(-DOUBLE_GCD_DECIMALS - 1))
+    .roundToNearest(DOUBLE_GCD_DECIMALS)
 
 internal fun <T : Comparable<T>> T.isBoundOf(range: ClosedFloatingPointRange<T>) =
   this == range.start || this == range.endInclusive
 
-internal val ClosedFloatingPointRange<Float>.length
+internal val ClosedFloatingPointRange<Double>.length
   get() = endInclusive - start
 
-internal fun ClosedFloatingPointRange<Float>.random() = start + Random.nextFloat() * length
+internal fun ClosedFloatingPointRange<Double>.random() = start + Random.nextDouble() * length
 
 internal fun Int.getDivisors(includeDividend: Boolean = true) = buildList {
   add(1)
@@ -77,29 +76,26 @@ internal inline val Double.half: Double
   get() = this / 2
 
 internal inline val Float.doubled: Float
-  get() = this * 2
+  get() = 2 * this
+
+internal inline val Double.doubled: Double
+  get() = 2 * this
 
 /** @suppress */
 public inline val Float?.orZero: Float
   @RestrictTo(RestrictTo.Scope.LIBRARY) get() = this ?: 0f
 
+internal val Double?.orZero: Double
+  get() = this ?: 0.0
+
 internal inline val Int?.orZero: Int
   get() = this ?: 0
 
-internal inline val Float.round: Float
-  get() = roundToInt().toFloat()
+internal inline val Double.roundedToNearest: Double
+  get() = roundToInt().toDouble()
 
 internal inline val Float.piRad: Float
   get() = this * PI_RAD
-
-internal inline val Float.floor: Float
-  get() = floor(this)
-
-internal inline val Float.ceil: Float
-  get() = ceil(this)
-
-internal inline val ClosedFloatingPointRange<Float>.median: Float
-  get() = (endInclusive + start) / 2
 
 /** @suppress */
 @RestrictTo(RestrictTo.Scope.LIBRARY)

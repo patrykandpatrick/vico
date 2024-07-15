@@ -29,7 +29,7 @@ import com.patrykandpatrick.vico.core.common.data.ExtraStore
 /** Creates and remembers a [HorizontalLine]. */
 @Composable
 public fun rememberHorizontalLine(
-  y: (ExtraStore) -> Float,
+  y: (ExtraStore) -> Double,
   line: LineComponent,
   labelComponent: TextComponent? = null,
   label: (ExtraStore) -> CharSequence = { HorizontalLine.getLabel(y(it)) },

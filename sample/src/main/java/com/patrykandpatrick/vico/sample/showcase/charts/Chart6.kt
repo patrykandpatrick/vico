@@ -164,13 +164,13 @@ private fun getViewHorizontalBox() =
   )
 
 private const val HORIZONTAL_BOX_COLOR = -1448529
-private const val HORIZONTAL_BOX_ALPHA = .36f
+private const val HORIZONTAL_BOX_ALPHA = 0.36f
 private const val HORIZONTAL_BOX_LABEL_HORIZONTAL_PADDING_DP = 8f
 private const val HORIZONTAL_BOX_LABEL_VERTICAL_PADDING_DP = 2f
 private const val HORIZONTAL_BOX_LABEL_MARGIN_DP = 4f
 
 private val columnColors = listOf(Color(0xff3e6558), Color(0xff5e836a), Color(0xffa5ba8e))
-private val horizontalBoxY = 7f..14f
+private val horizontalBoxY = 7.0..14.0
 private val daysOfWeek = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
 private val bottomAxisValueFormatter = CartesianValueFormatter { x, _, _ ->
   daysOfWeek[x.toInt() % daysOfWeek.size]

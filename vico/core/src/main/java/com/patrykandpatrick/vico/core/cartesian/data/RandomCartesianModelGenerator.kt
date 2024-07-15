@@ -27,14 +27,14 @@ import kotlin.random.Random
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public object RandomCartesianModelGenerator {
   public val defaultX: IntProgression = 0..96
-  public val defaultY: ClosedFloatingPointRange<Float> = 2f..20f
-  public val defaultOpeningClosingRange: ClosedFloatingPointRange<Float> = 5f..15f
-  public val defaultLowHighRange: ClosedFloatingPointRange<Float> = .5f..5f
+  public val defaultY: ClosedFloatingPointRange<Double> = 2.0..20.0
+  public val defaultOpeningClosingRange: ClosedFloatingPointRange<Double> = 5.0..15.0
+  public val defaultLowHighRange: ClosedFloatingPointRange<Double> = 0.5..5.0
 
   public fun getRandomColumnLayerModelPartial(
     seriesCount: Int = 1,
     x: IntProgression = defaultX,
-    y: ClosedFloatingPointRange<Float> = defaultY,
+    y: ClosedFloatingPointRange<Double> = defaultY,
   ): ColumnCartesianLayerModel.Partial =
     ColumnCartesianLayerModel.partial {
       repeat(seriesCount) { series(x.toList(), x.map { y.random() }) }
@@ -43,7 +43,7 @@ public object RandomCartesianModelGenerator {
   public fun getRandomLineLayerModelPartial(
     seriesCount: Int = 1,
     x: IntProgression = defaultX,
-    y: ClosedFloatingPointRange<Float> = defaultY,
+    y: ClosedFloatingPointRange<Double> = defaultY,
   ): LineCartesianLayerModel.Partial =
     LineCartesianLayerModel.partial {
       repeat(seriesCount) { series(x.toList(), x.map { y.random() }) }
@@ -51,18 +51,17 @@ public object RandomCartesianModelGenerator {
 
   public fun getRandomCandlestickLayerModelPartial(
     x: IntProgression = defaultX,
-    y: ClosedFloatingPointRange<Float> = defaultY,
-    openingClosingRange: ClosedFloatingPointRange<Float> = defaultOpeningClosingRange,
-    lowHighRange: ClosedFloatingPointRange<Float> = defaultLowHighRange,
+    openingClosingRange: ClosedFloatingPointRange<Double> = defaultOpeningClosingRange,
+    lowHighRange: ClosedFloatingPointRange<Double> = defaultLowHighRange,
   ): CandlestickCartesianLayerModel.Partial {
-    var previousClosingPrice: Float? = null
-    val opening = mutableListOf<Float>()
-    val closing = mutableListOf<Float>()
-    val low = mutableListOf<Float>()
-    val high = mutableListOf<Float>()
-    val maxOpeningPriceDelta = .2f * openingClosingRange.length
-    val changeOverrideThreshold = .2f * openingClosingRange.length
-    val maxClosingPriceDelta = .8f * openingClosingRange.length
+    var previousClosingPrice: Double? = null
+    val opening = mutableListOf<Double>()
+    val closing = mutableListOf<Double>()
+    val low = mutableListOf<Double>()
+    val high = mutableListOf<Double>()
+    val maxOpeningPriceDelta = 0.2 * openingClosingRange.length
+    val changeOverrideThreshold = 0.2 * openingClosingRange.length
+    val maxClosingPriceDelta = 0.8 * openingClosingRange.length
     for (i in x) {
       val openingPrice =
         if (previousClosingPrice != null) {
@@ -107,13 +106,13 @@ public object RandomCartesianModelGenerator {
     columnSeriesCount: Int = 1,
     lineSeriesCount: Int = 1,
     x: IntProgression = defaultX,
-    y: ClosedFloatingPointRange<Float> = defaultY,
+    y: ClosedFloatingPointRange<Double> = defaultY,
   ): CartesianChartModel =
     CartesianChartModel(
       buildList {
         add(getRandomColumnLayerModelPartial(columnSeriesCount, x, y).complete())
         add(getRandomLineLayerModelPartial(lineSeriesCount, x, y).complete())
-        add(getRandomCandlestickLayerModelPartial(x, y).complete())
+        add(getRandomCandlestickLayerModelPartial(x).complete())
       }
     )
 }

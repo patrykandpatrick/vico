@@ -48,10 +48,10 @@ public sealed interface Scroll {
        * Scrolls to the specified _x_ coordinate, positioning it anywhere between the start edge
        * ([bias] = 0) and the end edge ([bias] = 1) of the [CartesianChart].
        */
-      public fun x(x: Float, bias: Float = 0f): Absolute =
+      public fun x(x: Double, bias: Float = 0f): Absolute =
         Absolute { context, horizontalDimensions, bounds, _ ->
           horizontalDimensions.startPadding +
-            (x - context.chartValues.minX) / context.chartValues.xStep *
+            ((x - context.chartValues.minX) / context.chartValues.xStep).toFloat() *
               horizontalDimensions.xSpacing - bias * bounds.width()
         }
     }
@@ -73,8 +73,8 @@ public sealed interface Scroll {
       public fun pixels(pixels: Float): Relative = Relative { _, _, _, _ -> pixels }
 
       /** Scrolls by the specified number of _x_ units. */
-      public fun x(x: Float): Relative = Relative { context, horizontalDimensions, _, _ ->
-        x / context.chartValues.xStep * horizontalDimensions.xSpacing
+      public fun x(x: Double): Relative = Relative { context, horizontalDimensions, _, _ ->
+        (x / context.chartValues.xStep).toFloat() * horizontalDimensions.xSpacing
       }
     }
   }

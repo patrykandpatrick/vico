@@ -353,7 +353,7 @@ public open class TextComponent(
       val correctedWidth =
         (when {
             rotationDegrees % 1f.piRad == 0f -> widthWithoutMargins
-            rotationDegrees % .5f.piRad == 0f -> heightWithoutMargins
+            rotationDegrees % 0.5f.piRad == 0f -> heightWithoutMargins
             else -> {
               val cumulatedHeight =
                 lineCount * textPaint.lineHeight + padding.verticalDp.wholePixels

@@ -20,7 +20,7 @@ import android.graphics.Paint
 import android.graphics.Path
 import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.DrawContext
-import com.patrykandpatrick.vico.core.common.ceil
+import kotlin.math.ceil
 
 /**
  * [DashedShape] draws a dashed line by interchangeably drawing the provided [shape] and leaving a
@@ -157,7 +157,7 @@ public class DashedShape(
           }
           else -> {
             val gapAndDashLength = gapLength + dashLength
-            val ratio = length / (dashLength + (length / gapAndDashLength).ceil * gapAndDashLength)
+            val ratio = length / (dashLength + ceil(length / gapAndDashLength) * gapAndDashLength)
             drawDashLength = dashLength * ratio
             drawGapLength = gapLength * ratio
           }
