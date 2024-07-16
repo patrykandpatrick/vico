@@ -34,17 +34,19 @@ import com.patrykandpatrick.vico.core.common.shape.Shape
  * @param strokeColor the stroke color.
  * @param strokeThicknessDp the stroke thickness (in dp).
  * @param shader applied to the fill.
+ * @param shadow stores the shadow properties.
  * @property thicknessDp the line thickness (in dp).
  */
 public open class LineComponent(
   color: Int,
-  public var thicknessDp: Float = Defaults.LINE_COMPONENT_THICKNESS_DP,
+  public val thicknessDp: Float = Defaults.LINE_COMPONENT_THICKNESS_DP,
   shape: Shape = Shape.Rectangle,
   margins: Dimensions = Dimensions.Empty,
   strokeColor: Int = Color.TRANSPARENT,
   strokeThicknessDp: Float = 0f,
   shader: DynamicShader? = null,
-) : ShapeComponent(color, shape, margins, strokeColor, strokeThicknessDp, shader) {
+  shadow: Shadow? = null,
+) : ShapeComponent(color, shape, margins, strokeColor, strokeThicknessDp, shader, shadow) {
   private val MeasureContext.thickness: Float
     get() = thicknessDp.pixels
 
@@ -153,6 +155,27 @@ public open class LineComponent(
     }
 
   /** Creates a new [LineComponent] based on this one. */
+  override fun copy(
+    color: Int,
+    shape: Shape,
+    margins: Dimensions,
+    strokeColor: Int,
+    strokeThicknessDp: Float,
+    shader: DynamicShader?,
+    shadow: Shadow?,
+  ): LineComponent =
+    LineComponent(
+      color,
+      thicknessDp,
+      shape,
+      margins,
+      strokeColor,
+      strokeThicknessDp,
+      shader,
+      shadow,
+    )
+
+  /** Creates a new [LineComponent] based on this one. */
   public open fun copy(
     color: Int = this.color,
     thicknessDp: Float = this.thicknessDp,
@@ -161,6 +184,16 @@ public open class LineComponent(
     strokeColor: Int = this.strokeColor,
     strokeThicknessDp: Float = this.strokeThicknessDp,
     shader: DynamicShader? = this.shader,
+    shadow: Shadow? = this.shadow,
   ): LineComponent =
-    LineComponent(color, thicknessDp, shape, margins, strokeColor, strokeThicknessDp, shader)
+    LineComponent(
+      color,
+      thicknessDp,
+      shape,
+      margins,
+      strokeColor,
+      strokeThicknessDp,
+      shader,
+      shadow,
+    )
 }

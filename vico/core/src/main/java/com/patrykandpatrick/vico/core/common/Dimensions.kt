@@ -16,6 +16,8 @@
 
 package com.patrykandpatrick.vico.core.common
 
+import androidx.compose.runtime.Immutable
+
 /**
  * Defines the size of each edge of a rectangle. Used to store measurements such as padding or
  * margin values.
@@ -25,6 +27,7 @@ package com.patrykandpatrick.vico.core.common
  * @param endDp the value for the end edge in the dp unit.
  * @param bottomDp the value for the bottom edge in the dp unit.
  */
+@Immutable
 public data class Dimensions(
   public val startDp: Float,
   public val topDp: Float,

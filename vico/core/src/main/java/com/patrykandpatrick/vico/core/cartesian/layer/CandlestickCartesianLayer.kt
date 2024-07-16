@@ -16,7 +16,6 @@
 
 package com.patrykandpatrick.vico.core.cartesian.layer
 
-import android.graphics.Color
 import androidx.annotation.RestrictTo
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasureContext
@@ -382,7 +381,7 @@ public open class CandlestickCartesianLayer(
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public fun LineComponent.asWick(): LineComponent =
   copy(
-    color = if (color == Color.TRANSPARENT) strokeColor else color,
+    color = solidOrStrokeColor,
     thicknessDp = Defaults.WICK_DEFAULT_WIDTH_DP,
     shape = Shape.Rectangle,
     strokeThicknessDp = 0f,

@@ -16,6 +16,7 @@
 
 package com.patrykandpatrick.vico.core.cartesian.data
 
+import androidx.annotation.RestrictTo
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayer
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
@@ -121,15 +122,7 @@ public class CartesianChartModelProducer private constructor(dispatcher: Corouti
     }
   }
 
-  /**
-   * Registers an update listener associated with a [key]. [cancelAnimation] and [startAnimation]
-   * are called after a data update is requested, with [cancelAnimation] being called before the
-   * update starts being processed (at which point [transformModel] should stop being used), and
-   * [startAnimation] being called once the update has been processed (at which point it’s safe to
-   * use [transformModel]). [updateChartValues] updates the chart’s [MutableChartValues] instance
-   * and returns an immutable copy of it. [onModelCreated] is called when a new
-   * [CartesianChartModel] has been generated.
-   */
+  @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
   public suspend fun registerForUpdates(
     key: Any,
     cancelAnimation: suspend () -> Unit,
@@ -158,10 +151,10 @@ public class CartesianChartModelProducer private constructor(dispatcher: Corouti
     }
   }
 
-  /** Checks if an update listener with the given key is registered. */
+  @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
   public fun isRegistered(key: Any): Boolean = updateReceivers.containsKey(key)
 
-  /** Unregisters the update listener associated with the given key. */
+  @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
   public fun unregisterFromUpdates(key: Any) {
     updateReceivers.remove(key)
   }

@@ -37,6 +37,7 @@ import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.Dimensions
 import com.patrykandpatrick.vico.core.common.component.Component
 import com.patrykandpatrick.vico.core.common.component.LineComponent
+import com.patrykandpatrick.vico.core.common.component.Shadow
 import com.patrykandpatrick.vico.core.common.component.TextComponent
 import com.patrykandpatrick.vico.core.common.shader.DynamicShader
 import com.patrykandpatrick.vico.core.common.shape.Shape
@@ -83,8 +84,18 @@ public fun rememberAxisLineComponent(
   strokeColor: Color = Color.Transparent,
   strokeThickness: Dp = 0.dp,
   shader: DynamicShader? = null,
+  shadow: Shadow? = null,
 ): LineComponent =
-  rememberLineComponent(color, thickness, shape, margins, strokeColor, strokeThickness, shader)
+  rememberLineComponent(
+    color,
+    thickness,
+    shape,
+    margins,
+    strokeColor,
+    strokeThickness,
+    shader,
+    shadow,
+  )
 
 /** A [rememberLineComponent] alias with defaults for [Axis] ticks. */
 @Composable
@@ -96,8 +107,18 @@ public fun rememberAxisTickComponent(
   strokeColor: Color = Color.Transparent,
   strokeThickness: Dp = 0.dp,
   shader: DynamicShader? = null,
+  shadow: Shadow? = null,
 ): LineComponent =
-  rememberLineComponent(color, thickness, shape, margins, strokeColor, strokeThickness, shader)
+  rememberLineComponent(
+    color,
+    thickness,
+    shape,
+    margins,
+    strokeColor,
+    strokeThickness,
+    shader,
+    shadow,
+  )
 
 /** A [rememberLineComponent] alias with defaults for [Axis] guidelines. */
 @Composable
@@ -109,5 +130,15 @@ public fun rememberAxisGuidelineComponent(
   strokeColor: Color = Color.Transparent,
   strokeThickness: Dp = 0.dp,
   shader: DynamicShader? = null,
+  shadow: Shadow? = null,
 ): LineComponent =
-  rememberLineComponent(color, thickness, shape, margins, strokeColor, strokeThickness, shader)
+  rememberLineComponent(
+    color,
+    thickness,
+    shape,
+    margins,
+    strokeColor,
+    strokeThickness,
+    shader,
+    shadow,
+  )

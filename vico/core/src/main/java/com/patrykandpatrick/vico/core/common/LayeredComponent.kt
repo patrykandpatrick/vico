@@ -23,10 +23,10 @@ import com.patrykandpatrick.vico.core.common.component.Component
  * between them.
  */
 public open class LayeredComponent(
-  public val rear: Component,
-  public val front: Component,
-  public val padding: Dimensions = Dimensions.Empty,
-  override val margins: Dimensions = Dimensions.Empty,
+  protected val rear: Component,
+  protected val front: Component,
+  protected val padding: Dimensions = Dimensions.Empty,
+  protected val margins: Dimensions = Dimensions.Empty,
 ) : Component {
   override fun draw(
     context: DrawContext,

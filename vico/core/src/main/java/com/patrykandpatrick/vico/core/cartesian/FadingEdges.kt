@@ -24,6 +24,7 @@ import android.graphics.PorterDuffXfermode
 import android.graphics.RectF
 import android.graphics.Shader
 import android.view.animation.AccelerateDecelerateInterpolator
+import androidx.compose.runtime.Immutable
 import com.patrykandpatrick.vico.core.common.Defaults.FADING_EDGE_VISIBILITY_THRESHOLD_DP
 import com.patrykandpatrick.vico.core.common.Defaults.FADING_EDGE_WIDTH_DP
 import com.patrykandpatrick.vico.core.common.copyColor
@@ -44,11 +45,12 @@ private const val NO_FADE: Int = 0x00000000
  *   a mapping of the degree to which [visibilityThresholdDp] has been satisfied to the opacity of
  *   the fading edges.
  */
+@Immutable
 public open class FadingEdges(
-  public var startEdgeWidthDp: Float = FADING_EDGE_WIDTH_DP,
-  public var endEdgeWidthDp: Float = FADING_EDGE_WIDTH_DP,
-  public var visibilityThresholdDp: Float = FADING_EDGE_VISIBILITY_THRESHOLD_DP,
-  public var visibilityInterpolator: TimeInterpolator = AccelerateDecelerateInterpolator(),
+  protected val startEdgeWidthDp: Float = FADING_EDGE_WIDTH_DP,
+  protected val endEdgeWidthDp: Float = FADING_EDGE_WIDTH_DP,
+  protected val visibilityThresholdDp: Float = FADING_EDGE_VISIBILITY_THRESHOLD_DP,
+  protected val visibilityInterpolator: TimeInterpolator = AccelerateDecelerateInterpolator(),
 ) {
   private val paint: Paint = Paint()
 

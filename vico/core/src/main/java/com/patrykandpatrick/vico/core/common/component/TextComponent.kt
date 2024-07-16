@@ -27,6 +27,7 @@ import android.text.Spanned
 import android.text.StaticLayout
 import android.text.TextPaint
 import android.text.TextUtils
+import androidx.compose.runtime.Immutable
 import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.Defaults.TEXT_COMPONENT_LINE_COUNT
 import com.patrykandpatrick.vico.core.common.Dimensions
@@ -59,8 +60,8 @@ private const val DEF_LAYOUT_SIZE = 100000
  * - text backgrounds (any [Component])
  * - margins and padding
  *
- * @param color the text color.
- * @param typeface the [Typeface].
+ * @property color the text color.
+ * @property typeface the [Typeface].
  * @property textSizeSp the text size (in sp).
  * @property textAlignment the text alignment.
  * @property lineCount the line count.
@@ -71,16 +72,16 @@ private const val DEF_LAYOUT_SIZE = 100000
  * @property minWidth defines the minimum width.
  */
 public open class TextComponent(
-  color: Int = Color.BLACK,
-  typeface: Typeface = Typeface.DEFAULT,
-  public var textSizeSp: Float = Defaults.TEXT_COMPONENT_TEXT_SIZE,
-  public var textAlignment: Layout.Alignment = Layout.Alignment.ALIGN_NORMAL,
-  public var lineCount: Int = TEXT_COMPONENT_LINE_COUNT,
-  public var truncateAt: TextUtils.TruncateAt? = TextUtils.TruncateAt.END,
-  public var margins: Dimensions = Dimensions.Empty,
-  public var padding: Dimensions = Dimensions.Empty,
-  public var background: Component? = null,
-  public var minWidth: MinWidth = MinWidth.fixed(),
+  protected val color: Int = Color.BLACK,
+  protected val typeface: Typeface = Typeface.DEFAULT,
+  protected val textSizeSp: Float = Defaults.TEXT_COMPONENT_TEXT_SIZE,
+  protected val textAlignment: Layout.Alignment = Layout.Alignment.ALIGN_NORMAL,
+  protected val lineCount: Int = TEXT_COMPONENT_LINE_COUNT,
+  protected val truncateAt: TextUtils.TruncateAt? = TextUtils.TruncateAt.END,
+  protected val margins: Dimensions = Dimensions.Empty,
+  protected val padding: Dimensions = Dimensions.Empty,
+  public val background: Component? = null,
+  protected val minWidth: MinWidth = MinWidth.fixed(),
 ) {
   private val textPaint =
     TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -89,12 +90,6 @@ public open class TextComponent(
     }
   private var layout: Layout = staticLayout("", textPaint, 0)
   private val tempMeasureBounds = RectF()
-
-  /** The text color. */
-  public var color: Int by textPaint::color
-
-  /** The [Typeface]. */
-  public var typeface: Typeface by textPaint::typeface
 
   /**
    * Uses [Canvas] to draw this [TextComponent].
@@ -339,6 +334,32 @@ public open class TextComponent(
         }
     }
 
+  /** Creates a new [TextComponent] based on this one. */
+  public open fun copy(
+    color: Int = this.color,
+    typeface: Typeface = this.typeface,
+    textSizeSp: Float = this.textSizeSp,
+    textAlignment: Layout.Alignment = this.textAlignment,
+    lineCount: Int = this.lineCount,
+    truncateAt: TextUtils.TruncateAt? = this.truncateAt,
+    margins: Dimensions = this.margins,
+    padding: Dimensions = this.padding,
+    background: Component? = this.background,
+    minWidth: MinWidth = this.minWidth,
+  ): TextComponent =
+    TextComponent(
+      color,
+      typeface,
+      textSizeSp,
+      textAlignment,
+      lineCount,
+      truncateAt,
+      margins,
+      padding,
+      background,
+      minWidth,
+    )
+
   private fun getLayout(
     context: MeasureContext,
     text: CharSequence,
@@ -397,6 +418,7 @@ public open class TextComponent(
   }
 
   /** Defines a [TextComponent]’s minimum width. */
+  @Immutable
   public fun interface MinWidth {
     /** Returns the minimum width. */
     public fun getValue(
@@ -454,8 +476,8 @@ public open class TextComponent(
     }
   }
 
-  private companion object {
-    val cacheKeyNamespace = CacheStore.KeyNamespace()
+  protected companion object {
+    public val cacheKeyNamespace: CacheStore.KeyNamespace = CacheStore.KeyNamespace()
   }
 }
 

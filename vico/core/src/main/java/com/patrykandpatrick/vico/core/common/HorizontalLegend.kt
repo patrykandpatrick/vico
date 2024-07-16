@@ -31,12 +31,12 @@ import kotlin.math.max
  * @param padding defines the padding of the content.
  */
 public open class HorizontalLegend<M : MeasureContext, D : DrawContext>(
-  public var items: Collection<LegendItem>,
-  public var iconSizeDp: Float,
-  public var iconPaddingDp: Float,
-  public var lineSpacingDp: Float = 0f,
-  public var spacingDp: Float = 0f,
-  public val padding: Dimensions = Dimensions.Empty,
+  protected val items: Collection<LegendItem>,
+  protected val iconSizeDp: Float,
+  protected val iconPaddingDp: Float,
+  protected val lineSpacingDp: Float = 0f,
+  protected val spacingDp: Float = 0f,
+  protected val padding: Dimensions = Dimensions.Empty,
 ) : Legend<M, D> {
   private val heights = mutableListOf<Float>()
 

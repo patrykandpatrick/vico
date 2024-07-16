@@ -16,7 +16,6 @@
 
 package com.patrykandpatrick.vico.core.common.component
 
-import com.patrykandpatrick.vico.core.common.Dimensions
 import com.patrykandpatrick.vico.core.common.DrawContext
 
 /**
@@ -24,9 +23,6 @@ import com.patrykandpatrick.vico.core.common.DrawContext
  * coordinates. Its subclasses are used throughout the library.
  */
 public interface Component {
-  /** The margins. */
-  public val margins: Dimensions
-
   /** Instructs the [Component] to draw itself at the given coordinates. */
   public fun draw(
     context: DrawContext,

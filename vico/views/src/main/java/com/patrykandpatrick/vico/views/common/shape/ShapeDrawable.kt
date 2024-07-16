@@ -32,109 +32,80 @@ import com.patrykandpatrick.vico.core.common.shape.Shape
 import com.patrykandpatrick.vico.views.common.density
 import com.patrykandpatrick.vico.views.common.isLtr
 
-/**
- * Creates a [Drawable] out of the provided [shape].
- *
- * @param shape the [Shape] used as a [Drawable].
- * @param isLtr whether the device layout is left-to-right.
- * @param density the pixel density of the device screen.
- * @param width the width of the [Drawable].
- * @param height the height of the [Drawable].
- */
-public class ShapeDrawable(
-  private val shape: Shape,
-  private val isLtr: Boolean,
-  private val density: Float,
-  private val width: Int = 0,
-  private val height: Int = 0,
-) : Drawable() {
-  public constructor(
-    context: Context,
-    shape: Shape,
-    width: Int = 0,
-    height: Int = 0,
-  ) : this(
-    shape = shape,
-    density = context.density,
-    isLtr = context.isLtr,
-    width = width,
-    height = height,
-  )
+private const val DEFAULT_COLOR = Color.BLACK
 
-  private val path: Path = Path()
-
-  private var tintList: ColorStateList? = null
-
-  /** The [Paint] used to draw the shape. */
-  public val paint: Paint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = DEF_COLOR }
-
-  init {
-    setBounds(0, 0, width, height)
-  }
-
-  override fun draw(canvas: Canvas) {
-    shape.draw(
-      drawContext(canvas = canvas, density = density, isLtr = isLtr()),
-      paint = paint,
-      path = path,
-      left = bounds.left.toFloat(),
-      top = bounds.top.toFloat(),
-      right = bounds.right.toFloat(),
-      bottom = bounds.bottom.toFloat(),
-    )
-    path.reset()
-  }
-
-  private fun isLtr(): Boolean =
-    if (Build.VERSION.SDK_INT == Build.VERSION_CODES.M) {
-      layoutDirection == LayoutDirection.LTR
-    } else {
-      isLtr
-    }
-
-  override fun setAlpha(alpha: Int) {
-    paint.alpha = alpha
-  }
-
-  override fun setColorFilter(colorFilter: ColorFilter?) {
-    paint.colorFilter = colorFilter
-  }
-
-  override fun setTintList(tint: ColorStateList?) {
-    tintList = tint
-    updateColor()
-  }
-
-  override fun setState(stateSet: IntArray): Boolean {
-    val result = super.setState(stateSet)
-    updateColor()
-    return result
-  }
-
-  private fun updateColor() {
-    paint.color = tintList?.getColorForState(state, DEF_COLOR) ?: DEF_COLOR
-  }
-
-  @Deprecated("`Drawable#getOpacity` is deprecated.")
-  override fun getOpacity(): Int = PixelFormat.TRANSLUCENT
-
-  override fun getIntrinsicWidth(): Int = width
-
-  override fun getIntrinsicHeight(): Int = height
-
-  private companion object {
-    const val DEF_COLOR = Color.BLACK
-  }
-}
-
-/**
- * Converts this [Shape] to a [Drawable].
- *
- * @param intrinsicWidth the width of the [Drawable].
- * @param intrinsicHeight the height of the [Drawable].
- */
+/** Converts this [Shape] to a [Drawable]. */
 public fun Shape.toDrawable(
   context: Context,
-  intrinsicWidth: Int = 0,
-  intrinsicHeight: Int = 0,
-): Drawable = ShapeDrawable(context, this, intrinsicWidth, intrinsicHeight)
+  intrinsicWidth: Int = -1,
+  intrinsicHeight: Int = -1,
+): Drawable {
+  val density = context.density
+  val isLtr = context.isLtr
+  return object : Drawable() {
+    val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = DEFAULT_COLOR }
+    val path = Path()
+
+    var tintList: ColorStateList? = null
+      @JvmName("setShapeDrawableTintList")
+      set(value) {
+        field = value
+        applyTint()
+      }
+
+    init {
+      setBounds(0, 0, intrinsicWidth, intrinsicHeight)
+    }
+
+    fun applyTint() {
+      paint.color = tintList?.getColorForState(state, DEFAULT_COLOR) ?: DEFAULT_COLOR
+    }
+
+    override fun draw(canvas: Canvas) {
+      draw(
+        drawContext(
+          canvas = canvas,
+          density = density,
+          isLtr =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+              layoutDirection == LayoutDirection.LTR
+            } else {
+              isLtr
+            },
+        ),
+        paint,
+        path,
+        bounds.left.toFloat(),
+        bounds.top.toFloat(),
+        bounds.right.toFloat(),
+        bounds.bottom.toFloat(),
+      )
+      path.rewind()
+    }
+
+    override fun setAlpha(alpha: Int) {
+      paint.alpha = alpha
+    }
+
+    override fun setColorFilter(colorFilter: ColorFilter?) {
+      paint.colorFilter = colorFilter
+    }
+
+    override fun setTintList(tint: ColorStateList?) {
+      tintList = tint
+    }
+
+    override fun setState(stateSet: IntArray): Boolean {
+      val result = super.setState(stateSet)
+      applyTint()
+      return result
+    }
+
+    @Deprecated("`Drawable#getOpacity` is deprecated.")
+    override fun getOpacity() = PixelFormat.TRANSLUCENT
+
+    override fun getIntrinsicWidth() = intrinsicWidth
+
+    override fun getIntrinsicHeight() = intrinsicHeight
+  }
+}

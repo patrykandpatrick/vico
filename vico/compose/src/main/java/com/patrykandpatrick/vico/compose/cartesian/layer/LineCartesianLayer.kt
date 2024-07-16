@@ -24,8 +24,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.patrykandpatrick.vico.compose.common.shader.BrushShader
 import com.patrykandpatrick.vico.compose.common.shader.color
+import com.patrykandpatrick.vico.compose.common.shader.toDynamicShader
 import com.patrykandpatrick.vico.compose.common.vicoTheme
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition
 import com.patrykandpatrick.vico.core.cartesian.data.AxisValueOverrider
@@ -126,25 +126,21 @@ private fun DynamicShader.getDefaultBackgroundShader(): DynamicShader? =
     is ColorShader ->
       TopBottomShader(
         topShader =
-          BrushShader(
-            brush =
-              Brush.verticalGradient(
-                listOf(
-                  Color(color).copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_START),
-                  Color(color).copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_END),
-                )
+          Brush.verticalGradient(
+              listOf(
+                Color(color).copy(DefaultAlpha.LINE_BACKGROUND_SHADER_START),
+                Color(color).copy(DefaultAlpha.LINE_BACKGROUND_SHADER_END),
               )
-          ),
+            )
+            .toDynamicShader(),
         bottomShader =
-          BrushShader(
-            brush =
-              Brush.verticalGradient(
-                listOf(
-                  Color(color).copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_END),
-                  Color(color).copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_START),
-                )
+          Brush.verticalGradient(
+              listOf(
+                Color(color).copy(DefaultAlpha.LINE_BACKGROUND_SHADER_END),
+                Color(color).copy(DefaultAlpha.LINE_BACKGROUND_SHADER_START),
               )
-          ),
+            )
+            .toDynamicShader(),
       )
     is TopBottomShader -> {
       val topShader = topShader
@@ -152,26 +148,21 @@ private fun DynamicShader.getDefaultBackgroundShader(): DynamicShader? =
       if (topShader is ColorShader && bottomShader is ColorShader) {
         TopBottomShader(
           topShader =
-            BrushShader(
-              brush =
-                Brush.verticalGradient(
-                  listOf(
-                    Color(topShader.color).copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_START),
-                    Color(topShader.color).copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_END),
-                  )
+            Brush.verticalGradient(
+                listOf(
+                  Color(topShader.color).copy(DefaultAlpha.LINE_BACKGROUND_SHADER_START),
+                  Color(topShader.color).copy(DefaultAlpha.LINE_BACKGROUND_SHADER_END),
                 )
-            ),
+              )
+              .toDynamicShader(),
           bottomShader =
-            BrushShader(
-              brush =
-                Brush.verticalGradient(
-                  listOf(
-                    Color(bottomShader.color).copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_END),
-                    Color(bottomShader.color)
-                      .copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_START),
-                  )
+            Brush.verticalGradient(
+                listOf(
+                  Color(bottomShader.color).copy(DefaultAlpha.LINE_BACKGROUND_SHADER_END),
+                  Color(bottomShader.color).copy(DefaultAlpha.LINE_BACKGROUND_SHADER_START),
                 )
-            ),
+              )
+              .toDynamicShader(),
         )
       } else {
         null

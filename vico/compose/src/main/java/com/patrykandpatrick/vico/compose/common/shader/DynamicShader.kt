@@ -19,10 +19,16 @@
 package com.patrykandpatrick.vico.compose.common.shader
 
 import android.graphics.Shader
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
+import androidx.core.graphics.translationMatrix
+import com.patrykandpatrick.vico.core.common.DrawContext
 import com.patrykandpatrick.vico.core.common.component.Component
+import com.patrykandpatrick.vico.core.common.shader.CacheableDynamicShader
 import com.patrykandpatrick.vico.core.common.shader.ColorShader
 import com.patrykandpatrick.vico.core.common.shader.ComponentShader
 import com.patrykandpatrick.vico.core.common.shader.DynamicShader
@@ -76,3 +82,19 @@ public fun DynamicShader.Companion.verticalGradient(
   positions: FloatArray? = null,
 ): DynamicShader =
   LinearGradientShader(IntArray(colors.size) { colors[it].toArgb() }, positions, false)
+
+/** Converts this [Brush] to a [DynamicShader]. */
+public fun Brush.toDynamicShader(): DynamicShader =
+  object : CacheableDynamicShader() {
+    override fun createShader(
+      context: DrawContext,
+      left: Float,
+      top: Float,
+      right: Float,
+      bottom: Float,
+    ): Shader {
+      val paint = Paint()
+      applyTo(size = Size(right - left, bottom - top), p = paint, alpha = 1f)
+      return paint.shader!!.apply { setLocalMatrix(translationMatrix(left, top)) }
+    }
+  }

@@ -21,7 +21,6 @@ import android.graphics.Typeface
 import android.text.Layout
 import android.text.TextUtils
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
@@ -35,6 +34,7 @@ import com.patrykandpatrick.vico.core.common.Dimensions
 import com.patrykandpatrick.vico.core.common.LayeredComponent
 import com.patrykandpatrick.vico.core.common.component.Component
 import com.patrykandpatrick.vico.core.common.component.LineComponent
+import com.patrykandpatrick.vico.core.common.component.Shadow
 import com.patrykandpatrick.vico.core.common.component.ShapeComponent
 import com.patrykandpatrick.vico.core.common.component.TextComponent
 import com.patrykandpatrick.vico.core.common.shader.DynamicShader
@@ -50,8 +50,9 @@ public fun rememberLineComponent(
   strokeColor: Color = Color.Transparent,
   strokeThickness: Dp = 0.dp,
   shader: DynamicShader? = null,
+  shadow: Shadow? = null,
 ): LineComponent =
-  remember(color, shape, thickness, margins, strokeColor, strokeThickness, shader) {
+  remember(color, shape, thickness, margins, strokeColor, strokeThickness, shader, shadow) {
     LineComponent(
       color.toArgb(),
       thickness.value,
@@ -60,8 +61,29 @@ public fun rememberLineComponent(
       strokeColor.toArgb(),
       strokeThickness.value,
       shader,
+      shadow,
     )
   }
+
+/** Creates a [ShapeComponent]. */
+public fun shapeComponent(
+  color: Color = Color.Black,
+  shape: Shape = Shape.Rectangle,
+  margins: Dimensions = Dimensions.Empty,
+  strokeColor: Color = Color.Transparent,
+  strokeThickness: Dp = 0.dp,
+  shader: DynamicShader? = null,
+  shadow: Shadow? = null,
+): ShapeComponent =
+  ShapeComponent(
+    color.toArgb(),
+    shape,
+    margins,
+    strokeColor.toArgb(),
+    strokeThickness.value,
+    shader,
+    shadow,
+  )
 
 /** Creates and remembers a [ShapeComponent]. */
 @Composable
@@ -72,16 +94,10 @@ public fun rememberShapeComponent(
   strokeColor: Color = Color.Transparent,
   strokeThickness: Dp = 0.dp,
   shader: DynamicShader? = null,
+  shadow: Shadow? = null,
 ): ShapeComponent =
-  remember(color, shape, margins, strokeColor, strokeThickness, shader) {
-    ShapeComponent(
-      color.toArgb(),
-      shape,
-      margins,
-      strokeColor.toArgb(),
-      strokeThickness.value,
-      shader,
-    )
+  remember(color, shape, margins, strokeColor, strokeThickness, shader, shadow) {
+    shapeComponent(color, shape, margins, strokeColor, strokeThickness, shader, shadow)
   }
 
 /** Creates and remembers a [LayeredComponent]. */
@@ -108,37 +124,41 @@ public fun rememberTextComponent(
   background: Component? = null,
   minWidth: TextComponent.MinWidth = TextComponent.MinWidth.fixed(),
 ): TextComponent =
-  remember { TextComponent() }
-    .apply {
-      this.color = color.toArgb()
-      this.typeface = typeface
-      this.textSizeSp = textSize.pixelSize()
-      this.textAlignment = textAlignment
-      this.lineCount = lineCount
-      this.truncateAt = truncateAt
-      this.padding = padding
-      this.margins = margins
-      this.background = background
-      this.minWidth = minWidth
-    }
+  remember(
+    color,
+    typeface,
+    textSize,
+    textAlignment,
+    lineCount,
+    truncateAt,
+    margins,
+    padding,
+    background,
+    minWidth,
+  ) {
+    TextComponent(
+      color.toArgb(),
+      typeface,
+      textSize.pixelSize(),
+      textAlignment,
+      lineCount,
+      truncateAt,
+      margins,
+      padding,
+      background,
+      minWidth,
+    )
+  }
+
+/** Creates a [Shadow]. */
+public fun shadow(radius: Dp, dx: Dp = 0.dp, dy: Dp = 0.dp, color: Color? = null): Shadow =
+  Shadow(radius.value, dx.value, dy.value, color?.toArgb() ?: Defaults.SHADOW_COLOR)
+
+/** Creates and remembers a [Shadow]. */
+@Composable
+public fun rememberShadow(radius: Dp, dx: Dp = 0.dp, dy: Dp = 0.dp, color: Color? = null): Shadow =
+  remember(radius, dx, dy, color) { shadow(radius, dx, dy, color) }
 
 /** A [Dp] version of [TextComponent.MinWidth.fixed]. */
-@Stable
 public fun TextComponent.MinWidth.Companion.fixed(value: Dp = 0.dp): TextComponent.MinWidth =
   fixed(value.value)
-
-/**
- * Applies a drop shadow to this [ShapeComponent].
- *
- * @param radius the blur radius.
- * @param dx the horizontal offset.
- * @param dy the vertical offset.
- * @param color the shadow color.
- */
-@Suppress("UNCHECKED_CAST")
-public fun <T : ShapeComponent> T.setShadow(
-  radius: Dp,
-  dx: Dp = 0.dp,
-  dy: Dp = 0.dp,
-  color: Color = Color(Defaults.SHADOW_COLOR),
-): T = setShadow(radius.value, dx.value, dy.value, color.toArgb()) as T

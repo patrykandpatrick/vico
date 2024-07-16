@@ -26,27 +26,28 @@ import com.patrykandpatrick.vico.core.common.half
 import com.patrykandpatrick.vico.core.common.shader.DynamicShader
 import com.patrykandpatrick.vico.core.common.shape.Shape
 import com.patrykandpatrick.vico.core.common.withOpacity
-import kotlin.properties.Delegates
 
 /**
  * Draws [Shape]s.
  *
- * @param color the fill color.
- * @param strokeColor the stroke color.
+ * @property color the fill color.
  * @property shape the [Shape].
  * @property margins the margins.
+ * @property strokeColor the stroke color.
  * @property strokeThicknessDp the stroke thickness (in dp).
  * @property shader applied to the fill.
+ * @property shadow stores the shadow properties.
  */
 public open class ShapeComponent(
-  color: Int = Color.BLACK,
+  public val color: Int = Color.BLACK,
   public val shape: Shape = Shape.Rectangle,
-  override val margins: Dimensions = Dimensions.Empty,
-  strokeColor: Int = Color.TRANSPARENT,
-  public val strokeThicknessDp: Float = 0f,
-  public val shader: DynamicShader? = null,
-) : PaintComponent<ShapeComponent>(), Component {
-  private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply { this.color = color }
+  protected val margins: Dimensions = Dimensions.Empty,
+  public val strokeColor: Int = Color.TRANSPARENT,
+  protected val strokeThicknessDp: Float = 0f,
+  protected val shader: DynamicShader? = null,
+  protected val shadow: Shadow? = null,
+) : Component {
+  private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = this@ShapeComponent.color }
   private val strokePaint =
     Paint(Paint.ANTI_ALIAS_FLAG).apply {
       this.color = strokeColor
@@ -55,15 +56,18 @@ public open class ShapeComponent(
 
   protected val path: Path = Path()
 
-  /** The fill color. */
-  public var color: Int by Delegates.observable(color) { _, _, value -> paint.color = value }
-
-  /** The stroke color. */
-  public var strokeColor: Int by
-    Delegates.observable(strokeColor) { _, _, value -> strokePaint.color = value }
-
   init {
     require(strokeThicknessDp >= 0) { "`strokeThicknessDp` must be nonnegative." }
+  }
+
+  protected fun applyShader(
+    context: DrawContext,
+    left: Float,
+    top: Float,
+    right: Float,
+    bottom: Float,
+  ) {
+    shader?.provideShader(context, left, top, right, bottom)?.let(paint::setShader)
   }
 
   override fun draw(
@@ -90,7 +94,7 @@ public open class ShapeComponent(
       }
       path.rewind()
       applyShader(this, left, top, right, bottom)
-      componentShadow.updateShadowLayer(this, paint, opacity)
+      shadow?.updateShadowLayer(this, paint, opacity)
       paint.withOpacity(opacity) { paint ->
         shape.draw(this, paint, path, adjustedLeft, adjustedTop, adjustedRight, adjustedBottom)
       }
@@ -100,15 +104,15 @@ public open class ShapeComponent(
     }
   }
 
-  protected fun applyShader(
-    context: DrawContext,
-    left: Float,
-    top: Float,
-    right: Float,
-    bottom: Float,
-  ) {
-    shader?.provideShader(context, left, top, right, bottom)?.let { shader ->
-      paint.shader = shader
-    }
-  }
+  /** Creates a new [ShapeComponent] based on this one. */
+  public open fun copy(
+    color: Int = this.color,
+    shape: Shape = this.shape,
+    margins: Dimensions = this.margins,
+    strokeColor: Int = this.strokeColor,
+    strokeThicknessDp: Float = this.strokeThicknessDp,
+    shader: DynamicShader? = this.shader,
+    shadow: Shadow? = this.shadow,
+  ): ShapeComponent =
+    ShapeComponent(color, shape, margins, strokeColor, strokeThicknessDp, shader, shadow)
 }
