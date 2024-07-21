@@ -84,6 +84,7 @@ public open class CandlestickCartesianLayer(
       get() = maxOf(body.thicknessDp, topWick.thicknessDp, bottomWick.thicknessDp)
 
     // Empty companion object is needed for extension functions.
+    /** @suppress */
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) public companion object
   }
 

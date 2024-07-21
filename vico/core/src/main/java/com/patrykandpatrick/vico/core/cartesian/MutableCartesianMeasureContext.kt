@@ -21,6 +21,7 @@ import androidx.annotation.RestrictTo
 import com.patrykandpatrick.vico.core.cartesian.data.ChartValues
 import com.patrykandpatrick.vico.core.common.MutableMeasureContext
 
+/** @suppress */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public class MutableCartesianMeasureContext(
   override val canvasBounds: RectF,

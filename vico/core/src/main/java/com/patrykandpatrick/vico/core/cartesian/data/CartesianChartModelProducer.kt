@@ -122,6 +122,7 @@ public class CartesianChartModelProducer private constructor(dispatcher: Corouti
     }
   }
 
+  /** @suppress */
   @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
   public suspend fun registerForUpdates(
     key: Any,
@@ -151,9 +152,11 @@ public class CartesianChartModelProducer private constructor(dispatcher: Corouti
     }
   }
 
+  /** @suppress */
   @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
   public fun isRegistered(key: Any): Boolean = updateReceivers.containsKey(key)
 
+  /** @suppress */
   @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
   public fun unregisterFromUpdates(key: Any) {
     updateReceivers.remove(key)
