@@ -84,9 +84,9 @@ public open class TextComponent(
   protected val minWidth: MinWidth = MinWidth.fixed(),
 ) {
   private val textPaint =
-    TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
-      this.color = color
-      this.typeface = typeface
+    TextPaint(Paint.ANTI_ALIAS_FLAG).also { textPaint ->
+      textPaint.color = color
+      textPaint.typeface = typeface
     }
   private var layout: Layout = staticLayout("", textPaint, 0)
   private val tempMeasureBounds = RectF()
