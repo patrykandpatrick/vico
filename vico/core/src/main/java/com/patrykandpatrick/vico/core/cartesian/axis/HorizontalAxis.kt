@@ -76,6 +76,7 @@ protected constructor(
   protected val AxisPosition.Horizontal.textVerticalPosition: VerticalPosition
     get() = if (isBottom) VerticalPosition.Bottom else VerticalPosition.Top
 
+  /** @suppress */
   @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
   public constructor(
     position: Position,

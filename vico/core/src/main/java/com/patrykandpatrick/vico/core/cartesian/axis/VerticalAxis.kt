@@ -95,6 +95,7 @@ protected constructor(
 
   protected var maxLabelWidth: Float? = null
 
+  /** @suppress */
   @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
   public constructor(
     position: Position,
