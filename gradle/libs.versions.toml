@@ -2,7 +2,7 @@
 accompanist = "0.34.0"
 activity = "1.9.1"
 agp = "8.5.1"
-androidXAnnotation = "1.8.0"
+androidXAnnotation = "1.8.1"
 androidXCore = "1.13.1"
 appcompat = "1.7.0"
 composeBom = "2024.06.00"
