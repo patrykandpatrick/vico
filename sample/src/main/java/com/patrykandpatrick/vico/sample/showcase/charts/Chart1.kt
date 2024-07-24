@@ -30,12 +30,11 @@ import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLa
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
 import com.patrykandpatrick.vico.compose.common.data.rememberExtraLambda
-import com.patrykandpatrick.vico.compose.common.shader.color
+import com.patrykandpatrick.vico.compose.common.fill
 import com.patrykandpatrick.vico.core.cartesian.axis.BaseAxis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
-import com.patrykandpatrick.vico.core.common.shader.DynamicShader
 import com.patrykandpatrick.vico.databinding.Chart1Binding
 import com.patrykandpatrick.vico.sample.showcase.UIFramework
 import com.patrykandpatrick.vico.sample.showcase.rememberMarker
@@ -69,7 +68,7 @@ private fun ComposeChart1(modelProducer: CartesianChartModelProducer, modifier: 
       rememberCartesianChart(
         rememberLineCartesianLayer(
           LineCartesianLayer.LineProvider.series(
-            rememberLine(DynamicShader.color(Color(0xffa485e0)))
+            rememberLine(remember { LineCartesianLayer.LineFill.single(fill(Color(0xffa485e0))) })
           )
         ),
         startAxis = rememberStartAxis(),

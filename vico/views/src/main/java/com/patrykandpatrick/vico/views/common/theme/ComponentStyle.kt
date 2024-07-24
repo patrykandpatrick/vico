@@ -23,15 +23,14 @@ import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.common.DefaultAlpha
 import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.Dimensions
+import com.patrykandpatrick.vico.core.common.Fill
 import com.patrykandpatrick.vico.core.common.LayeredComponent
 import com.patrykandpatrick.vico.core.common.VerticalPosition
 import com.patrykandpatrick.vico.core.common.component.Component
 import com.patrykandpatrick.vico.core.common.component.LineComponent
 import com.patrykandpatrick.vico.core.common.component.ShapeComponent
 import com.patrykandpatrick.vico.core.common.copyColor
-import com.patrykandpatrick.vico.core.common.shader.ColorShader
 import com.patrykandpatrick.vico.core.common.shader.DynamicShader
-import com.patrykandpatrick.vico.core.common.shader.TopBottomShader
 import com.patrykandpatrick.vico.core.common.shape.Shape
 import com.patrykandpatrick.vico.views.R
 import com.patrykandpatrick.vico.views.common.defaultColors
@@ -174,18 +173,18 @@ internal fun TypedArray.getLine(context: Context, defaultColor: Int): LineCartes
     )
 
   return LineCartesianLayer.Line(
-    shader =
+    fill =
       if (positiveLineColor != negativeLineColor) {
-        TopBottomShader(ColorShader(positiveLineColor), ColorShader(negativeLineColor))
+        LineCartesianLayer.LineFill.double(Fill(positiveLineColor), Fill(negativeLineColor))
       } else {
-        ColorShader(positiveLineColor)
+        LineCartesianLayer.LineFill.single(Fill(positiveLineColor))
       },
     thicknessDp =
       getRawDimension(context, R.styleable.LineStyle_thickness, Defaults.LINE_SPEC_THICKNESS_DP),
-    backgroundShader =
-      TopBottomShader(
-        DynamicShader.verticalGradient(positiveGradientTopColor, positiveGradientBottomColor),
-        DynamicShader.verticalGradient(negativeGradientTopColor, negativeGradientBottomColor),
+    areaFill =
+      LineCartesianLayer.AreaFill.double(
+        Fill(DynamicShader.verticalGradient(positiveGradientTopColor, positiveGradientBottomColor)),
+        Fill(DynamicShader.verticalGradient(negativeGradientTopColor, negativeGradientBottomColor)),
       ),
     pointProvider =
       getNestedTypedArray(context, R.styleable.LineStyle_pointStyle, R.styleable.ComponentStyle)

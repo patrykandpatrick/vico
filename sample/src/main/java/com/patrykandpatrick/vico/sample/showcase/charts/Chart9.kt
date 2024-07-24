@@ -39,8 +39,9 @@ import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLa
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
+import com.patrykandpatrick.vico.compose.common.component.shapeComponent
+import com.patrykandpatrick.vico.compose.common.fill
 import com.patrykandpatrick.vico.compose.common.of
-import com.patrykandpatrick.vico.compose.common.shader.color
 import com.patrykandpatrick.vico.compose.common.shader.component
 import com.patrykandpatrick.vico.compose.common.shader.verticalGradient
 import com.patrykandpatrick.vico.compose.common.shape.dashed
@@ -52,9 +53,10 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.common.Dimensions
+import com.patrykandpatrick.vico.core.common.Fill
 import com.patrykandpatrick.vico.core.common.component.ShapeComponent
+import com.patrykandpatrick.vico.core.common.shader.ComponentShader
 import com.patrykandpatrick.vico.core.common.shader.DynamicShader
-import com.patrykandpatrick.vico.core.common.shader.TopBottomShader
 import com.patrykandpatrick.vico.core.common.shape.Shape
 import com.patrykandpatrick.vico.databinding.Chart9Binding
 import com.patrykandpatrick.vico.sample.showcase.Defaults
@@ -99,38 +101,48 @@ private fun ComposeChart9(modelProducer: CartesianChartModelProducer, modifier: 
           lineProvider =
             LineCartesianLayer.LineProvider.series(
               rememberLine(
-                shader =
-                  TopBottomShader(DynamicShader.color(colors[0]), DynamicShader.color(colors[1])),
-                backgroundShader =
-                  TopBottomShader(
-                    DynamicShader.compose(
-                      DynamicShader.component(
-                        componentSize = 6.dp,
-                        component =
-                          rememberShapeComponent(
-                            color = colors[0],
-                            shape = Shape.Pill,
-                            margins = Dimensions.of(1.dp),
-                          ),
-                      ),
-                      DynamicShader.verticalGradient(arrayOf(Color.Black, Color.Transparent)),
-                      PorterDuff.Mode.DST_IN,
-                    ),
-                    DynamicShader.compose(
-                      DynamicShader.component(
-                        componentSize = 5.dp,
-                        component =
-                          rememberShapeComponent(
-                            color = colors[1],
-                            shape = Shape.Rectangle,
-                            margins = Dimensions.of(horizontal = 2.dp),
-                          ),
-                        checkeredArrangement = false,
-                      ),
-                      DynamicShader.verticalGradient(arrayOf(Color.Transparent, Color.Black)),
-                      PorterDuff.Mode.DST_IN,
-                    ),
-                  ),
+                fill =
+                  remember(colors) {
+                    LineCartesianLayer.LineFill.double(fill(colors[0]), fill(colors[1]))
+                  },
+                areaFill =
+                  remember(colors) {
+                    LineCartesianLayer.AreaFill.double(
+                      topFill =
+                        fill(
+                          DynamicShader.compose(
+                            DynamicShader.component(
+                              component =
+                                shapeComponent(
+                                  color = colors[0],
+                                  shape = Shape.Pill,
+                                  margins = Dimensions.of(1.dp),
+                                ),
+                              componentSize = 6.dp,
+                            ),
+                            DynamicShader.verticalGradient(arrayOf(Color.Black, Color.Transparent)),
+                            PorterDuff.Mode.DST_IN,
+                          )
+                        ),
+                      bottomFill =
+                        fill(
+                          DynamicShader.compose(
+                            DynamicShader.component(
+                              component =
+                                shapeComponent(
+                                  color = colors[1],
+                                  shape = Shape.Rectangle,
+                                  margins = Dimensions.of(horizontal = 2.dp),
+                                ),
+                              componentSize = 5.dp,
+                              checkeredArrangement = false,
+                            ),
+                            DynamicShader.verticalGradient(arrayOf(Color.Transparent, Color.Black)),
+                            PorterDuff.Mode.DST_IN,
+                          )
+                        ),
+                    )
+                  },
               )
             )
         ),
@@ -190,37 +202,52 @@ private fun ViewChart9(modelProducer: CartesianChartModelProducer, modifier: Mod
             lineProvider =
               LineCartesianLayer.LineProvider.series(
                 LineCartesianLayer.Line(
-                  shader =
-                    TopBottomShader(DynamicShader.color(colors[0]), DynamicShader.color(colors[1])),
-                  backgroundShader =
-                    TopBottomShader(
-                      DynamicShader.compose(
-                        DynamicShader.component(
-                          componentSize = 6.dp,
-                          component =
-                            ShapeComponent(
-                              color = colors[0].toArgb(),
-                              shape = Shape.Pill,
-                              margins = Dimensions.of(1.dp),
+                  fill =
+                    LineCartesianLayer.LineFill.double(
+                      topFill = Fill(colors[0].toArgb()),
+                      bottomFill = Fill(colors[1].toArgb()),
+                    ),
+                  areaFill =
+                    LineCartesianLayer.AreaFill.double(
+                      topFill =
+                        Fill(
+                          DynamicShader.compose(
+                            ComponentShader(
+                              component =
+                                ShapeComponent(
+                                  color = colors[0].toArgb(),
+                                  shape = Shape.Pill,
+                                  margins = Dimensions(allDp = 1f),
+                                ),
+                              componentSizeDp = 6f,
                             ),
-                        ),
-                        DynamicShader.verticalGradient(arrayOf(Color.Black, Color.Transparent)),
-                        PorterDuff.Mode.DST_IN,
-                      ),
-                      DynamicShader.compose(
-                        DynamicShader.component(
-                          componentSize = 5.dp,
-                          component =
-                            ShapeComponent(
-                              color = colors[1].toArgb(),
-                              shape = Shape.Rectangle,
-                              margins = Dimensions.of(horizontal = 2.dp),
+                            DynamicShader.verticalGradient(
+                              android.graphics.Color.BLACK,
+                              android.graphics.Color.TRANSPARENT,
                             ),
-                          checkeredArrangement = false,
+                            PorterDuff.Mode.DST_IN,
+                          )
                         ),
-                        DynamicShader.verticalGradient(arrayOf(Color.Transparent, Color.Black)),
-                        PorterDuff.Mode.DST_IN,
-                      ),
+                      bottomFill =
+                        Fill(
+                          DynamicShader.compose(
+                            ComponentShader(
+                              component =
+                                ShapeComponent(
+                                  color = colors[1].toArgb(),
+                                  shape = Shape.Rectangle,
+                                  margins = Dimensions(horizontalDp = 2f, verticalDp = 0f),
+                                ),
+                              componentSizeDp = 5f,
+                              checkeredArrangement = false,
+                            ),
+                            DynamicShader.verticalGradient(
+                              android.graphics.Color.TRANSPARENT,
+                              android.graphics.Color.BLACK,
+                            ),
+                            PorterDuff.Mode.DST_IN,
+                          )
+                        ),
                     ),
                 )
               )

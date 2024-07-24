@@ -23,7 +23,7 @@ import com.patrykandpatrick.vico.core.common.DrawContext
  * [CacheableDynamicShader] can cache created [Shader] instances for reuse between identical sets of
  * bounds.
  */
-public abstract class CacheableDynamicShader : BaseDynamicShader() {
+public abstract class CacheableDynamicShader : DynamicShader {
   private val cache = HashMap<String, Shader>(1)
 
   override fun provideShader(

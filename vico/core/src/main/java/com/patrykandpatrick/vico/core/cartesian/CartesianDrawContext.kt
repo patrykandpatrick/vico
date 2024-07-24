@@ -86,10 +86,10 @@ public fun CartesianDrawContext(
 
     override val zoom: Float = zoom
 
-    override fun withOtherCanvas(canvas: Canvas, block: (DrawContext) -> Unit) {
+    override fun withOtherCanvas(canvas: Canvas, block: () -> Unit) {
       val originalCanvas = this.canvas
       this.canvas = canvas
-      block(this)
+      block()
       this.canvas = originalCanvas
     }
   }

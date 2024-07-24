@@ -32,14 +32,13 @@ import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLa
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
-import com.patrykandpatrick.vico.compose.common.shader.color
+import com.patrykandpatrick.vico.compose.common.fill
 import com.patrykandpatrick.vico.compose.common.shape.rounded
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
 import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
 import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
-import com.patrykandpatrick.vico.core.common.shader.DynamicShader
 import com.patrykandpatrick.vico.core.common.shape.Shape
 import com.patrykandpatrick.vico.databinding.Chart4Binding
 import com.patrykandpatrick.vico.sample.showcase.Defaults
@@ -100,7 +99,7 @@ private fun ComposeChart4(modelProducer: CartesianChartModelProducer, modifier: 
         rememberLineCartesianLayer(
           LineCartesianLayer.LineProvider.series(
             rememberLine(
-              shader = DynamicShader.color(lineColor),
+              fill = remember { LineCartesianLayer.LineFill.single(fill(lineColor)) },
               pointConnector = remember { LineCartesianLayer.PointConnector.cubic(curvature = 0f) },
             )
           )

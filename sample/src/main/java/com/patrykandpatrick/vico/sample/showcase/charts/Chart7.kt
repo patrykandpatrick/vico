@@ -35,10 +35,10 @@ import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
 import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
+import com.patrykandpatrick.vico.compose.common.fill
 import com.patrykandpatrick.vico.compose.common.of
 import com.patrykandpatrick.vico.compose.common.rememberLegendItem
 import com.patrykandpatrick.vico.compose.common.rememberVerticalLegend
-import com.patrykandpatrick.vico.compose.common.shader.color
 import com.patrykandpatrick.vico.compose.common.shape.rounded
 import com.patrykandpatrick.vico.compose.common.vicoTheme
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
@@ -48,7 +48,6 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.common.Dimensions
-import com.patrykandpatrick.vico.core.common.shader.DynamicShader
 import com.patrykandpatrick.vico.core.common.shape.Shape
 import com.patrykandpatrick.vico.databinding.Chart7Binding
 import com.patrykandpatrick.vico.sample.showcase.Defaults
@@ -99,7 +98,10 @@ private fun ComposeChart7(modelProducer: CartesianChartModelProducer, modifier: 
         rememberLineCartesianLayer(
           LineCartesianLayer.LineProvider.series(
             chartColors.map { color ->
-              rememberLine(shader = DynamicShader.color(color), backgroundShader = null)
+              rememberLine(
+                fill = remember { LineCartesianLayer.LineFill.single(fill(color)) },
+                areaFill = null,
+              )
             }
           )
         ),

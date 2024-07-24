@@ -29,7 +29,6 @@ import androidx.core.graphics.translationMatrix
 import com.patrykandpatrick.vico.core.common.DrawContext
 import com.patrykandpatrick.vico.core.common.component.Component
 import com.patrykandpatrick.vico.core.common.shader.CacheableDynamicShader
-import com.patrykandpatrick.vico.core.common.shader.ColorShader
 import com.patrykandpatrick.vico.core.common.shader.ComponentShader
 import com.patrykandpatrick.vico.core.common.shader.DynamicShader
 import com.patrykandpatrick.vico.core.common.shader.LinearGradientShader
@@ -57,9 +56,6 @@ public fun DynamicShader.Companion.component(
     tileXMode = tileXMode,
     tileYMode = tileYMode,
   )
-
-/** Creates a [ColorShader]. */
-public fun DynamicShader.Companion.color(color: Color): ColorShader = ColorShader(color.toArgb())
 
 /**
  * Creates a [DynamicShader] with a horizontal gradient. [colors] houses the gradient colors, and

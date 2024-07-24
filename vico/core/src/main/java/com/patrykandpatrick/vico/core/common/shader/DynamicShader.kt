@@ -26,13 +26,8 @@ import android.graphics.Shader
 import android.os.Build
 import androidx.annotation.RequiresApi
 import com.patrykandpatrick.vico.core.common.DrawContext
-import com.patrykandpatrick.vico.core.common.Point
 
-/**
- * [DynamicShader] creates [Shader] instances on demand.
- *
- * @see Shader
- */
+/** Creates [Shader]s on demand. */
 public interface DynamicShader {
   /** Creates a [Shader] by using the provided [bounds]. */
   public fun provideShader(context: DrawContext, bounds: RectF): Shader =
@@ -52,9 +47,6 @@ public interface DynamicShader {
     right: Float,
     bottom: Float,
   ): Shader
-
-  /** Gets the color of the pixel at the given point. [bounds] specifies the shaded area. */
-  public fun getColorAt(point: Point, context: DrawContext, bounds: RectF): Int
 
   public companion object {
     /** Creates a [DynamicShader] out of the given [bitmap]. */
@@ -83,7 +75,7 @@ public interface DynamicShader {
       second: DynamicShader,
       mode: BlendMode,
     ): DynamicShader =
-      object : BaseDynamicShader() {
+      object : DynamicShader {
         override fun provideShader(
           context: DrawContext,
           left: Float,
@@ -107,7 +99,7 @@ public interface DynamicShader {
       second: DynamicShader,
       mode: PorterDuff.Mode,
     ): DynamicShader =
-      object : BaseDynamicShader() {
+      object : DynamicShader {
         override fun provideShader(
           context: DrawContext,
           left: Float,
@@ -161,3 +153,15 @@ public interface DynamicShader {
       LinearGradientShader(colors, positions, false)
   }
 }
+
+/** Converts this [Shader] to a [DynamicShader]. */
+public fun Shader.toDynamicShader(): DynamicShader =
+  object : DynamicShader {
+    override fun provideShader(
+      context: DrawContext,
+      left: Float,
+      top: Float,
+      right: Float,
+      bottom: Float,
+    ): Shader = this@toDynamicShader
+  }

@@ -37,8 +37,11 @@ public interface DrawContext : MeasureContext {
    */
   public fun saveCanvas(): Int = canvas.save()
 
-  /** Temporarily swaps the [Canvas] and yields [DrawContext] as the [block]’s receiver. */
-  public fun withOtherCanvas(canvas: Canvas, block: (DrawContext) -> Unit)
+  /**
+   * Updates the value of [DrawContext.canvas] to [canvas], runs [block], and restores the previous
+   * [DrawContext.canvas] value.
+   */
+  public fun withOtherCanvas(canvas: Canvas, block: () -> Unit)
 
   /**
    * Clips the [Canvas] to the specified rectangle.
@@ -115,10 +118,10 @@ public fun drawContext(
 
     override val cacheStore: CacheStore = CacheStore()
 
-    override fun withOtherCanvas(canvas: Canvas, block: (DrawContext) -> Unit) {
+    override fun withOtherCanvas(canvas: Canvas, block: () -> Unit) {
       val originalCanvas = this.canvas
       this.canvas = canvas
-      block(this)
+      block()
       this.canvas = originalCanvas
     }
 

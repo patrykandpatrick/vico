@@ -21,43 +21,28 @@ import com.patrykandpatrick.vico.core.common.data.DrawingModel
 import com.patrykandpatrick.vico.core.common.lerp
 import com.patrykandpatrick.vico.core.common.orZero
 
-/**
- * Houses drawing information for a [LineCartesianLayer]. [opacity] is the lines’ opacity. [zeroY],
- * restricted to the interval [[0, 1]], specifies the position of the zero line (_y_ = 0) from the
- * top of the [LineCartesianLayer] as a fraction of the [LineCartesianLayer]’s height.
- */
+/** Houses [LineCartesianLayer] drawing information. [opacity] is the lines’ opacity. */
 public class LineCartesianLayerDrawingModel(
   private val pointInfo: List<Map<Double, PointInfo>>,
-  public val zeroY: Float,
   public val opacity: Float = 1f,
 ) : DrawingModel<LineCartesianLayerDrawingModel.PointInfo>(pointInfo) {
   override fun transform(
     drawingInfo: List<Map<Double, PointInfo>>,
     from: DrawingModel<PointInfo>?,
     fraction: Float,
-  ): DrawingModel<PointInfo> {
-    val oldOpacity = (from as LineCartesianLayerDrawingModel?)?.opacity.orZero
-    val oldZeroY = from?.zeroY ?: zeroY
-    return LineCartesianLayerDrawingModel(
+  ): DrawingModel<PointInfo> =
+    LineCartesianLayerDrawingModel(
       drawingInfo,
-      oldZeroY.lerp(zeroY, fraction),
-      oldOpacity.lerp(opacity, fraction),
+      (from as LineCartesianLayerDrawingModel?)?.opacity.orZero.lerp(opacity, fraction),
     )
-  }
 
   override fun equals(other: Any?): Boolean =
     this === other ||
       other is LineCartesianLayerDrawingModel &&
         pointInfo == other.pointInfo &&
-        zeroY == other.zeroY &&
         opacity == other.opacity
 
-  override fun hashCode(): Int {
-    var result = pointInfo.hashCode()
-    result = 31 * result + zeroY.hashCode()
-    result = 31 * result + opacity.hashCode()
-    return result
-  }
+  override fun hashCode(): Int = 31 * pointInfo.hashCode() + opacity.hashCode()
 
   /**
    * Houses positional information for a [LineCartesianLayer]’s point. [y] expresses the distance of

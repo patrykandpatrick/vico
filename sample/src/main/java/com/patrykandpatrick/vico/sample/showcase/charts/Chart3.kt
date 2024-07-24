@@ -36,8 +36,8 @@ import com.patrykandpatrick.vico.compose.cartesian.rememberFadingEdges
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
 import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
+import com.patrykandpatrick.vico.compose.common.fill
 import com.patrykandpatrick.vico.compose.common.of
-import com.patrykandpatrick.vico.compose.common.shader.color
 import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.data.AxisValueOverrider
@@ -46,7 +46,6 @@ import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
 import com.patrykandpatrick.vico.core.common.Dimensions
-import com.patrykandpatrick.vico.core.common.shader.DynamicShader
 import com.patrykandpatrick.vico.core.common.shape.Shape
 import com.patrykandpatrick.vico.databinding.Chart3Binding
 import com.patrykandpatrick.vico.sample.showcase.Defaults
@@ -86,7 +85,9 @@ private fun ComposeChart3(modelProducer: CartesianChartModelProducer, modifier: 
       rememberCartesianChart(
         rememberLineCartesianLayer(
           lineProvider =
-            LineCartesianLayer.LineProvider.series(rememberLine(DynamicShader.color(lineColor))),
+            LineCartesianLayer.LineProvider.series(
+              rememberLine(remember { LineCartesianLayer.LineFill.single(fill(lineColor)) })
+            ),
           axisValueOverrider = axisValueOverrider,
         ),
         startAxis =

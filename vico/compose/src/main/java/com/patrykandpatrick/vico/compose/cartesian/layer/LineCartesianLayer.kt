@@ -19,36 +19,32 @@ package com.patrykandpatrick.vico.compose.cartesian.layer
 import android.graphics.Paint
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.patrykandpatrick.vico.compose.common.shader.color
-import com.patrykandpatrick.vico.compose.common.shader.toDynamicShader
+import com.patrykandpatrick.vico.compose.common.fill
 import com.patrykandpatrick.vico.compose.common.vicoTheme
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition
 import com.patrykandpatrick.vico.core.cartesian.data.AxisValueOverrider
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.LineCartesianLayerDrawingModel
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
-import com.patrykandpatrick.vico.core.common.DefaultAlpha
+import com.patrykandpatrick.vico.core.cartesian.layer.getDefaultAreaFill
 import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.VerticalPosition
 import com.patrykandpatrick.vico.core.common.component.Component
 import com.patrykandpatrick.vico.core.common.component.TextComponent
 import com.patrykandpatrick.vico.core.common.data.DefaultDrawingModelInterpolator
 import com.patrykandpatrick.vico.core.common.data.DrawingModelInterpolator
-import com.patrykandpatrick.vico.core.common.shader.ColorShader
-import com.patrykandpatrick.vico.core.common.shader.DynamicShader
-import com.patrykandpatrick.vico.core.common.shader.TopBottomShader
 
 /** Creates and remembers a [LineCartesianLayer]. */
 @Composable
 public fun rememberLineCartesianLayer(
   lineProvider: LineCartesianLayer.LineProvider =
     LineCartesianLayer.LineProvider.series(
-      vicoTheme.lineCartesianLayerColors.map { rememberLine(DynamicShader.color(it)) }
+      vicoTheme.lineCartesianLayerColors.map { color ->
+        rememberLine(LineCartesianLayer.LineFill.single(fill(color)))
+      }
     ),
   pointSpacing: Dp = Defaults.POINT_SPACING.dp,
   axisValueOverrider: AxisValueOverrider = remember { AxisValueOverrider.auto() },
@@ -74,9 +70,12 @@ public fun rememberLineCartesianLayer(
 /** Creates and remembers a [LineCartesianLayer.Line]. */
 @Composable
 public fun rememberLine(
-  shader: DynamicShader = DynamicShader.color(vicoTheme.lineCartesianLayerColors.first()),
+  fill: LineCartesianLayer.LineFill =
+    vicoTheme.lineCartesianLayerColors.first().let { color ->
+      remember(color) { LineCartesianLayer.LineFill.single(fill(color)) }
+    },
   thickness: Dp = Defaults.LINE_SPEC_THICKNESS_DP.dp,
-  backgroundShader: DynamicShader? = shader.getDefaultBackgroundShader(),
+  areaFill: LineCartesianLayer.AreaFill? = remember(fill) { fill.getDefaultAreaFill() },
   cap: StrokeCap = StrokeCap.Round,
   pointProvider: LineCartesianLayer.PointProvider? = null,
   pointConnector: LineCartesianLayer.PointConnector = remember {
@@ -88,9 +87,9 @@ public fun rememberLine(
   dataLabelRotationDegrees: Float = 0f,
 ): LineCartesianLayer.Line =
   remember(
-    shader,
+    fill,
     thickness,
-    backgroundShader,
+    areaFill,
     cap,
     pointProvider,
     pointConnector,
@@ -100,9 +99,9 @@ public fun rememberLine(
     dataLabelRotationDegrees,
   ) {
     LineCartesianLayer.Line(
-      shader,
+      fill,
       thickness.value,
-      backgroundShader,
+      areaFill,
       cap.paintCap,
       pointProvider,
       pointConnector,
@@ -120,56 +119,6 @@ public fun rememberPoint(
   size: Dp = Defaults.POINT_SIZE.dp,
 ): LineCartesianLayer.Point =
   remember(component, size) { LineCartesianLayer.Point(component, size.value) }
-
-private fun DynamicShader.getDefaultBackgroundShader(): DynamicShader? =
-  when (this) {
-    is ColorShader ->
-      TopBottomShader(
-        topShader =
-          Brush.verticalGradient(
-              listOf(
-                Color(color).copy(DefaultAlpha.LINE_BACKGROUND_SHADER_START),
-                Color(color).copy(DefaultAlpha.LINE_BACKGROUND_SHADER_END),
-              )
-            )
-            .toDynamicShader(),
-        bottomShader =
-          Brush.verticalGradient(
-              listOf(
-                Color(color).copy(DefaultAlpha.LINE_BACKGROUND_SHADER_END),
-                Color(color).copy(DefaultAlpha.LINE_BACKGROUND_SHADER_START),
-              )
-            )
-            .toDynamicShader(),
-      )
-    is TopBottomShader -> {
-      val topShader = topShader
-      val bottomShader = bottomShader
-      if (topShader is ColorShader && bottomShader is ColorShader) {
-        TopBottomShader(
-          topShader =
-            Brush.verticalGradient(
-                listOf(
-                  Color(topShader.color).copy(DefaultAlpha.LINE_BACKGROUND_SHADER_START),
-                  Color(topShader.color).copy(DefaultAlpha.LINE_BACKGROUND_SHADER_END),
-                )
-              )
-              .toDynamicShader(),
-          bottomShader =
-            Brush.verticalGradient(
-                listOf(
-                  Color(bottomShader.color).copy(DefaultAlpha.LINE_BACKGROUND_SHADER_END),
-                  Color(bottomShader.color).copy(DefaultAlpha.LINE_BACKGROUND_SHADER_START),
-                )
-              )
-              .toDynamicShader(),
-        )
-      } else {
-        null
-      }
-    }
-    else -> null
-  }
 
 private val StrokeCap.paintCap: Paint.Cap
   get() =
