@@ -1,6 +1,6 @@
 [versions]
 accompanist = "0.34.0"
-activity = "1.9.0"
+activity = "1.9.1"
 agp = "8.5.1"
 androidXAnnotation = "1.8.0"
 androidXCore = "1.13.1"
