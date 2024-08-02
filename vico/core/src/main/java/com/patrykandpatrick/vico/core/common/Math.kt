@@ -18,9 +18,9 @@ package com.patrykandpatrick.vico.core.common
 
 import androidx.annotation.RestrictTo
 import kotlin.math.abs
+import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.pow
-import kotlin.math.roundToInt
 import kotlin.math.sqrt
 import kotlin.random.Random
 
@@ -92,7 +92,7 @@ internal inline val Int?.orZero: Int
   get() = this ?: 0
 
 internal inline val Double.roundedToNearest: Double
-  get() = roundToInt().toDouble()
+  get() = if (this % 1 >= 0.5) ceil(this) else floor(this)
 
 internal inline val Float.piRad: Float
   get() = this * PI_RAD
