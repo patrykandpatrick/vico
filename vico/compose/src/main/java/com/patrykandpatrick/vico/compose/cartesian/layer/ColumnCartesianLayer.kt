@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.common.vicoTheme
-import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition
+import com.patrykandpatrick.vico.core.cartesian.axis.Axis
 import com.patrykandpatrick.vico.core.cartesian.data.AxisValueOverrider
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.ColumnCartesianLayerDrawingModel
@@ -51,7 +51,7 @@ public fun rememberColumnCartesianLayer(
     ),
   columnCollectionSpacing: Dp = Defaults.COLUMN_COLLECTION_SPACING.dp,
   mergeMode: (ExtraStore) -> MergeMode = { MergeMode.grouped() },
-  verticalAxisPosition: AxisPosition.Vertical? = null,
+  verticalAxisPosition: Axis.Position.Vertical? = null,
   dataLabel: TextComponent? = null,
   dataLabelVerticalPosition: VerticalPosition = VerticalPosition.Top,
   dataLabelValueFormatter: CartesianValueFormatter = remember { CartesianValueFormatter.decimal() },

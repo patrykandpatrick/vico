@@ -21,7 +21,7 @@ import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasureContext
 import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
 import com.patrykandpatrick.vico.core.cartesian.MutableHorizontalDimensions
-import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition
+import com.patrykandpatrick.vico.core.cartesian.axis.Axis
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.data.CandlestickCartesianLayerDrawingModel
 import com.patrykandpatrick.vico.core.cartesian.data.CandlestickCartesianLayerModel
@@ -59,7 +59,7 @@ public open class CandlestickCartesianLayer(
   public var minCandleBodyHeightDp: Float = Defaults.MIN_CANDLE_BODY_HEIGHT_DP,
   public var candleSpacingDp: Float = Defaults.CANDLE_SPACING_DP,
   public var scaleCandleWicks: Boolean = false,
-  public var verticalAxisPosition: AxisPosition.Vertical? = null,
+  public var verticalAxisPosition: Axis.Position.Vertical? = null,
   public var drawingModelInterpolator:
     DrawingModelInterpolator<
       CandlestickCartesianLayerDrawingModel.CandleInfo,

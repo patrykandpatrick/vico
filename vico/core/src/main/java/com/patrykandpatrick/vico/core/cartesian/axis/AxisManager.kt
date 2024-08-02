@@ -26,10 +26,10 @@ import kotlin.reflect.KProperty
 internal class AxisManager {
   internal val axisCache = ArrayList<Axis<*>>(MAX_AXIS_COUNT)
 
-  var startAxis: Axis<AxisPosition.Vertical.Start>? by cacheInList()
-  var topAxis: Axis<AxisPosition.Horizontal.Top>? by cacheInList()
-  var endAxis: Axis<AxisPosition.Vertical.End>? by cacheInList()
-  var bottomAxis: Axis<AxisPosition.Horizontal.Bottom>? by cacheInList()
+  var startAxis: Axis<Axis.Position.Vertical.Start>? by cacheInList()
+  var topAxis: Axis<Axis.Position.Horizontal.Top>? by cacheInList()
+  var endAxis: Axis<Axis.Position.Vertical.End>? by cacheInList()
+  var bottomAxis: Axis<Axis.Position.Horizontal.Bottom>? by cacheInList()
 
   fun setAxesBounds(
     measureContext: CartesianMeasureContext,
@@ -44,7 +44,7 @@ internal class AxisManager {
     setRestrictedBounds()
   }
 
-  private fun Axis<AxisPosition.Vertical.Start>.setStartAxisBounds(
+  private fun Axis<Axis.Position.Vertical.Start>.setStartAxisBounds(
     context: CartesianMeasureContext,
     canvasBounds: RectF,
     layerBounds: RectF,
@@ -60,7 +60,7 @@ internal class AxisManager {
     }
   }
 
-  private fun Axis<AxisPosition.Horizontal.Top>.setTopAxisBounds(
+  private fun Axis<Axis.Position.Horizontal.Top>.setTopAxisBounds(
     context: CartesianMeasureContext,
     canvasBounds: RectF,
     insets: Insets,
@@ -75,7 +75,7 @@ internal class AxisManager {
     }
   }
 
-  private fun Axis<AxisPosition.Vertical.End>.setEndAxisBounds(
+  private fun Axis<Axis.Position.Vertical.End>.setEndAxisBounds(
     context: CartesianMeasureContext,
     canvasBounds: RectF,
     layerBounds: RectF,
@@ -91,7 +91,7 @@ internal class AxisManager {
     }
   }
 
-  private fun Axis<AxisPosition.Horizontal.Bottom>.setBottomAxisBounds(
+  private fun Axis<Axis.Position.Horizontal.Bottom>.setBottomAxisBounds(
     context: CartesianMeasureContext,
     canvasBounds: RectF,
     layerBounds: RectF,

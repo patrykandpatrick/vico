@@ -46,9 +46,9 @@ import kotlin.math.min
  * @property itemPlacer determines for what _x_ values the [HorizontalAxis] displays labels, ticks,
  *   and guidelines.
  */
-public open class HorizontalAxis<Position : AxisPosition.Horizontal>
+public open class HorizontalAxis<P : Axis.Position.Horizontal>
 protected constructor(
-  override val position: Position,
+  override val position: P,
   line: LineComponent?,
   label: TextComponent?,
   labelRotationDegrees: Float,
@@ -61,7 +61,7 @@ protected constructor(
   titleComponent: TextComponent?,
   title: CharSequence?,
 ) :
-  BaseAxis<Position>(
+  BaseAxis<P>(
     line,
     label,
     labelRotationDegrees,
@@ -73,13 +73,17 @@ protected constructor(
     titleComponent,
     title,
   ) {
-  protected val AxisPosition.Horizontal.textVerticalPosition: VerticalPosition
-    get() = if (isBottom) VerticalPosition.Bottom else VerticalPosition.Top
+  protected val Axis.Position.Horizontal.textVerticalPosition: VerticalPosition
+    get() =
+      when (this) {
+        Axis.Position.Horizontal.Top -> VerticalPosition.Top
+        Axis.Position.Horizontal.Bottom -> VerticalPosition.Bottom
+      }
 
   /** @suppress */
   @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
   public constructor(
-    position: Position,
+    position: P,
     itemPlacer: ItemPlacer,
   ) : this(
     position = position,
@@ -100,7 +104,11 @@ protected constructor(
     with(context) {
       val clipRestoreCount = canvas.save()
       val tickTop =
-        if (position.isBottom) bounds.top else bounds.bottom - lineThickness - tickLength
+        if (position == Axis.Position.Horizontal.Top) {
+          bounds.bottom - lineThickness - tickLength
+        } else {
+          bounds.top
+        }
       val tickBottom = tickTop + lineThickness + tickLength
       val fullXRange = getFullXRange(horizontalDimensions)
       val maxLabelWidth = getMaxLabelWidth(horizontalDimensions, fullXRange)
@@ -124,7 +132,7 @@ protected constructor(
         max(bounds.bottom, layerBounds.bottom),
       )
 
-      val textY = if (position.isBottom) tickBottom else tickTop
+      val textY = if (position == Axis.Position.Horizontal.Top) tickTop else tickBottom
       val baseCanvasX =
         bounds.getStart(isLtr) - scroll +
           horizontalDimensions.startPadding * layoutDirectionMultiplier
@@ -201,10 +209,10 @@ protected constructor(
         left = layerBounds.left - lineExtensionLength,
         right = layerBounds.right + lineExtensionLength,
         centerY =
-          if (position.isBottom) {
-            bounds.top + lineThickness.half
-          } else {
+          if (position == Axis.Position.Horizontal.Top) {
             bounds.bottom - lineThickness.half
+          } else {
+            bounds.top + lineThickness.half
           },
       )
 
@@ -212,8 +220,13 @@ protected constructor(
         titleComponent?.draw(
           context = context,
           x = bounds.centerX(),
-          y = if (position.isTop) bounds.top else bounds.bottom,
-          verticalPosition = if (position.isTop) VerticalPosition.Bottom else VerticalPosition.Top,
+          y = if (position == Axis.Position.Horizontal.Top) bounds.top else bounds.bottom,
+          verticalPosition =
+            if (position == Axis.Position.Horizontal.Top) {
+              VerticalPosition.Bottom
+            } else {
+              VerticalPosition.Top
+            },
           maxWidth = bounds.width().toInt(),
           text = title,
         )
@@ -359,9 +372,9 @@ protected constructor(
         maxLabelWidth,
       ),
     )
-    when {
-      position.isTop -> insets.ensureValuesAtLeast(top = height)
-      position.isBottom -> insets.ensureValuesAtLeast(bottom = height)
+    when (position) {
+      Axis.Position.Horizontal.Top -> insets.ensureValuesAtLeast(top = height)
+      Axis.Position.Horizontal.Bottom -> insets.ensureValuesAtLeast(bottom = height)
     }
   }
 
@@ -397,7 +410,7 @@ protected constructor(
               .orZero
           (labelHeight +
               titleComponentHeight +
-              (if (position.isBottom) lineThickness else 0f) +
+              (if (position == Axis.Position.Horizontal.Bottom) lineThickness else 0f) +
               tickLength)
             .coerceAtMost(maximumValue = canvasBounds.height() / MAX_HEIGHT_DIVISOR)
             .coerceIn(
@@ -593,9 +606,9 @@ protected constructor(
       sizeConstraint: SizeConstraint = SizeConstraint.Auto(),
       titleComponent: TextComponent? = null,
       title: CharSequence? = null,
-    ): HorizontalAxis<AxisPosition.Horizontal.Top> =
+    ): HorizontalAxis<Axis.Position.Horizontal.Top> =
       HorizontalAxis(
-        AxisPosition.Horizontal.Top,
+        Axis.Position.Horizontal.Top,
         line,
         label,
         labelRotationDegrees,
@@ -622,9 +635,9 @@ protected constructor(
       sizeConstraint: SizeConstraint = SizeConstraint.Auto(),
       titleComponent: TextComponent? = null,
       title: CharSequence? = null,
-    ): HorizontalAxis<AxisPosition.Horizontal.Bottom> =
+    ): HorizontalAxis<Axis.Position.Horizontal.Bottom> =
       HorizontalAxis(
-        AxisPosition.Horizontal.Bottom,
+        Axis.Position.Horizontal.Bottom,
         line,
         label,
         labelRotationDegrees,

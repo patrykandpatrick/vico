@@ -20,7 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition
+import com.patrykandpatrick.vico.core.cartesian.axis.Axis
 import com.patrykandpatrick.vico.core.cartesian.axis.BaseAxis
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
@@ -46,7 +46,7 @@ public fun rememberStartAxis(
   sizeConstraint: BaseAxis.SizeConstraint = remember { BaseAxis.SizeConstraint.Auto() },
   titleComponent: TextComponent? = null,
   title: CharSequence? = null,
-): VerticalAxis<AxisPosition.Vertical.Start> =
+): VerticalAxis<Axis.Position.Vertical.Start> =
   remember { VerticalAxis.start() }
     .apply {
       this.line = line
@@ -82,7 +82,7 @@ public fun rememberEndAxis(
   sizeConstraint: BaseAxis.SizeConstraint = remember { BaseAxis.SizeConstraint.Auto() },
   titleComponent: TextComponent? = null,
   title: CharSequence? = null,
-): VerticalAxis<AxisPosition.Vertical.End> =
+): VerticalAxis<Axis.Position.Vertical.End> =
   remember { VerticalAxis.end() }
     .apply {
       this.line = line

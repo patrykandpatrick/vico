@@ -55,9 +55,9 @@ private const val TITLE_ABS_ROTATION_DEGREES = 90f
  * @property verticalLabelPosition defines the vertical positions of the labels relative to their
  *   ticks.
  */
-public open class VerticalAxis<Position : AxisPosition.Vertical>
+public open class VerticalAxis<P : Axis.Position.Vertical>
 protected constructor(
-  override val position: Position,
+  override val position: P,
   line: LineComponent?,
   label: TextComponent?,
   labelRotationDegrees: Float,
@@ -72,7 +72,7 @@ protected constructor(
   titleComponent: TextComponent?,
   title: CharSequence?,
 ) :
-  BaseAxis<Position>(
+  BaseAxis<P>(
     line,
     label,
     labelRotationDegrees,
@@ -86,8 +86,8 @@ protected constructor(
   ) {
   protected val areLabelsOutsideAtStartOrInsideAtEnd: Boolean
     get() =
-      horizontalLabelPosition == Outside && position is AxisPosition.Vertical.Start ||
-        horizontalLabelPosition == Inside && position is AxisPosition.Vertical.End
+      position == Axis.Position.Vertical.Start && horizontalLabelPosition == Outside ||
+        position == Axis.Position.Vertical.End && horizontalLabelPosition == Inside
 
   protected val textHorizontalPosition: HorizontalPosition
     get() =
@@ -98,7 +98,7 @@ protected constructor(
   /** @suppress */
   @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
   public constructor(
-    position: Position,
+    position: P,
     horizontalLabelPosition: HorizontalLabelPosition,
     verticalLabelPosition: VerticalLabelPosition,
     itemPlacer: ItemPlacer,
@@ -155,7 +155,7 @@ protected constructor(
         top = bounds.top - lineExtensionLength,
         bottom = bounds.bottom + lineExtensionLength,
         centerX =
-          if (position.isLeft(isLtr = isLtr)) {
+          if (position.isLeft(this)) {
             bounds.right - lineThickness.half
           } else {
             bounds.left + lineThickness.half
@@ -201,12 +201,21 @@ protected constructor(
         titleComponent?.draw(
           context = this,
           text = title,
-          x = if (position.isLeft(isLtr)) bounds.left else bounds.right,
+          x = if (position.isLeft(this)) bounds.left else bounds.right,
           y = bounds.centerY(),
           horizontalPosition =
-            if (position.isStart) HorizontalPosition.End else HorizontalPosition.Start,
+            if (position == Axis.Position.Vertical.Start) {
+              HorizontalPosition.End
+            } else {
+              HorizontalPosition.Start
+            },
           verticalPosition = VerticalPosition.Center,
-          rotationDegrees = TITLE_ABS_ROTATION_DEGREES * if (position.isStart) -1f else 1f,
+          rotationDegrees =
+            if (position == Axis.Position.Vertical.Start) {
+              -TITLE_ABS_ROTATION_DEGREES
+            } else {
+              TITLE_ABS_ROTATION_DEGREES
+            },
           maxHeight = bounds.height().toInt(),
         )
       }
@@ -254,7 +263,7 @@ protected constructor(
     }
 
   protected fun CartesianMeasureContext.getTickLeftX(): Float {
-    val onLeft = position.isLeft(isLtr = isLtr)
+    val onLeft = position.isLeft(this)
     val base = if (onLeft) bounds.right else bounds.left
     return when {
       onLeft && horizontalLabelPosition == Outside -> base - lineThickness - tickLength
@@ -272,9 +281,9 @@ protected constructor(
     insets: HorizontalInsets,
   ) {
     val width = getWidth(context, freeHeight)
-    when {
-      position.isStart -> insets.ensureValuesAtLeast(start = width)
-      position.isEnd -> insets.ensureValuesAtLeast(end = width)
+    when (position) {
+      Axis.Position.Vertical.Start -> insets.ensureValuesAtLeast(start = width)
+      Axis.Position.Vertical.End -> insets.ensureValuesAtLeast(end = width)
     }
   }
 
@@ -414,7 +423,7 @@ protected constructor(
       context: CartesianDrawContext,
       axisHeight: Float,
       maxLabelHeight: Float,
-      position: AxisPosition.Vertical,
+      position: Axis.Position.Vertical,
     ): List<Double>
 
     /**
@@ -426,7 +435,7 @@ protected constructor(
       context: CartesianMeasureContext,
       axisHeight: Float,
       maxLabelHeight: Float,
-      position: AxisPosition.Vertical,
+      position: Axis.Position.Vertical,
     ): List<Double>
 
     /**
@@ -436,7 +445,7 @@ protected constructor(
      */
     public fun getHeightMeasurementLabelValues(
       context: CartesianMeasureContext,
-      position: AxisPosition.Vertical,
+      position: Axis.Position.Vertical,
     ): List<Double>
 
     /** Returns, as a list, the _y_ values for which ticks and guidelines are to be displayed. */
@@ -444,7 +453,7 @@ protected constructor(
       context: CartesianDrawContext,
       axisHeight: Float,
       maxLabelHeight: Float,
-      position: AxisPosition.Vertical,
+      position: Axis.Position.Vertical,
     ): List<Double>? = null
 
     /** Returns the top inset required by the [VerticalAxis]. */
@@ -517,9 +526,9 @@ protected constructor(
       sizeConstraint: SizeConstraint = SizeConstraint.Auto(),
       titleComponent: TextComponent? = null,
       title: CharSequence? = null,
-    ): VerticalAxis<AxisPosition.Vertical.Start> =
+    ): VerticalAxis<Axis.Position.Vertical.Start> =
       VerticalAxis(
-        AxisPosition.Vertical.Start,
+        Axis.Position.Vertical.Start,
         line,
         label,
         labelRotationDegrees,
@@ -550,9 +559,9 @@ protected constructor(
       sizeConstraint: SizeConstraint = SizeConstraint.Auto(),
       titleComponent: TextComponent? = null,
       title: CharSequence? = null,
-    ): VerticalAxis<AxisPosition.Vertical.End> =
+    ): VerticalAxis<Axis.Position.Vertical.End> =
       VerticalAxis(
-        AxisPosition.Vertical.End,
+        Axis.Position.Vertical.End,
         line,
         label,
         labelRotationDegrees,

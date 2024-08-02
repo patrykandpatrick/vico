@@ -21,7 +21,6 @@ import androidx.annotation.RestrictTo
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart.PersistentMarkerScope
 import com.patrykandpatrick.vico.core.cartesian.axis.Axis
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisManager
-import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianLayerModel
 import com.patrykandpatrick.vico.core.cartesian.data.ChartValues
@@ -66,10 +65,10 @@ import kotlin.math.abs
  */
 public open class CartesianChart(
   vararg layers: CartesianLayer<*>,
-  startAxis: Axis<AxisPosition.Vertical.Start>? = null,
-  topAxis: Axis<AxisPosition.Horizontal.Top>? = null,
-  endAxis: Axis<AxisPosition.Vertical.End>? = null,
-  bottomAxis: Axis<AxisPosition.Horizontal.Bottom>? = null,
+  startAxis: Axis<Axis.Position.Vertical.Start>? = null,
+  topAxis: Axis<Axis.Position.Horizontal.Top>? = null,
+  endAxis: Axis<Axis.Position.Vertical.End>? = null,
+  bottomAxis: Axis<Axis.Position.Horizontal.Bottom>? = null,
   public var marker: CartesianMarker? = null,
   public var markerVisibilityListener: CartesianMarkerVisibilityListener? = null,
   public var horizontalLayout: HorizontalLayout = HorizontalLayout.Segmented,
@@ -163,17 +162,17 @@ public open class CartesianChart(
   public val markerTargets: SortedMap<Double, List<CartesianMarker.Target>> =
     _markerTargets as SortedMap<Double, List<CartesianMarker.Target>>
 
-  /** The start axis. */
-  public var startAxis: Axis<AxisPosition.Vertical.Start>? by axisManager::startAxis
+  /** The start [Axis]. */
+  public var startAxis: Axis<Axis.Position.Vertical.Start>? by axisManager::startAxis
 
-  /** The top axis. */
-  public var topAxis: Axis<AxisPosition.Horizontal.Top>? by axisManager::topAxis
+  /** The top [Axis]. */
+  public var topAxis: Axis<Axis.Position.Horizontal.Top>? by axisManager::topAxis
 
-  /** The end axis. */
-  public var endAxis: Axis<AxisPosition.Vertical.End>? by axisManager::endAxis
+  /** The end [Axis]. */
+  public var endAxis: Axis<Axis.Position.Vertical.End>? by axisManager::endAxis
 
-  /** The bottom axis. */
-  public var bottomAxis: Axis<AxisPosition.Horizontal.Bottom>? by axisManager::bottomAxis
+  /** The bottom [Axis]. */
+  public var bottomAxis: Axis<Axis.Position.Horizontal.Bottom>? by axisManager::bottomAxis
 
   init {
     axisManager.startAxis = startAxis

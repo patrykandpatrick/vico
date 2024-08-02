@@ -26,7 +26,6 @@ import com.patrykandpatrick.vico.core.cartesian.CartesianChart
 import com.patrykandpatrick.vico.core.cartesian.FadingEdges
 import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
 import com.patrykandpatrick.vico.core.cartesian.axis.Axis
-import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition
 import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.common.Defaults
@@ -67,27 +66,27 @@ internal class ThemeHandler(private val context: Context, attrs: AttributeSet?) 
     }
   }
 
-  private fun <P : AxisPosition> TypedArray.getAxis(position: P): Axis<P>? {
+  private fun <P : Axis.Position> TypedArray.getAxis(position: P): Axis<P>? {
     val visibilityAttributeIndex: Int
     var styleAttributeIndex: Int
-    when {
-      position.isStart -> {
+    when (position) {
+      Axis.Position.Vertical.Start -> {
         visibilityAttributeIndex = R.styleable.CartesianChartView_showStartAxis
         styleAttributeIndex = R.styleable.CartesianChartView_startAxisStyle
       }
-      position.isTop -> {
+      Axis.Position.Horizontal.Top -> {
         visibilityAttributeIndex = R.styleable.CartesianChartView_showTopAxis
         styleAttributeIndex = R.styleable.CartesianChartView_topAxisStyle
       }
-      position.isEnd -> {
+      Axis.Position.Vertical.End -> {
         visibilityAttributeIndex = R.styleable.CartesianChartView_showEndAxis
         styleAttributeIndex = R.styleable.CartesianChartView_endAxisStyle
       }
-      position.isBottom -> {
+      Axis.Position.Horizontal.Bottom -> {
         visibilityAttributeIndex = R.styleable.CartesianChartView_showBottomAxis
         styleAttributeIndex = R.styleable.CartesianChartView_bottomAxisStyle
       }
-      else -> throw IllegalArgumentException("Unexpected `AxisPosition` subclass.")
+      else -> throw IllegalArgumentException("Unexpected `Axis.Position` subclass.")
     }
     if (!getBoolean(visibilityAttributeIndex, false)) return null
     if (!hasValue(styleAttributeIndex)) {
@@ -97,9 +96,9 @@ internal class ThemeHandler(private val context: Context, attrs: AttributeSet?) 
       ->
       @Suppress("UNCHECKED_CAST")
       when (position) {
-        is AxisPosition.Horizontal ->
+        is Axis.Position.Horizontal ->
           HorizontalAxis(position, axisStyle.getHorizontalAxisItemPlacer())
-        is AxisPosition.Vertical ->
+        is Axis.Position.Vertical ->
           VerticalAxis(
             position = position,
             horizontalLabelPosition =
@@ -113,7 +112,7 @@ internal class ThemeHandler(private val context: Context, attrs: AttributeSet?) 
                   axisStyle.getInteger(R.styleable.AxisStyle_verticalAxisVerticalLabelPosition, 0)],
             itemPlacer = axisStyle.getVerticalAxisItemPlacer(),
           )
-        else -> throw IllegalArgumentException("Unexpected `AxisPosition` subclass.")
+        else -> throw IllegalArgumentException("Unexpected `Axis.Position` subclass.")
       }.apply {
         line =
           if (axisStyle.getBoolean(R.styleable.AxisStyle_showLine, true)) {
@@ -223,10 +222,10 @@ internal class ThemeHandler(private val context: Context, attrs: AttributeSet?) 
             if (candlestickLayer != null) add(candlestickLayer)
           }
           .toTypedArray(),
-      startAxis = baseTypedArray.getAxis(AxisPosition.Vertical.Start),
-      topAxis = baseTypedArray.getAxis(AxisPosition.Horizontal.Top),
-      endAxis = baseTypedArray.getAxis(AxisPosition.Vertical.End),
-      bottomAxis = baseTypedArray.getAxis(AxisPosition.Horizontal.Bottom),
+      startAxis = baseTypedArray.getAxis(Axis.Position.Vertical.Start),
+      topAxis = baseTypedArray.getAxis(Axis.Position.Horizontal.Top),
+      endAxis = baseTypedArray.getAxis(Axis.Position.Vertical.End),
+      bottomAxis = baseTypedArray.getAxis(Axis.Position.Horizontal.Bottom),
       fadingEdges = baseTypedArray.getFadingEdges(),
       horizontalLayout = baseTypedArray.getHorizontalLayout(),
     )

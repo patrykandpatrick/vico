@@ -17,7 +17,7 @@
 package com.patrykandpatrick.vico.core.cartesian.data
 
 import androidx.annotation.RestrictTo
-import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition
+import com.patrykandpatrick.vico.core.cartesian.axis.Axis
 import com.patrykandpatrick.vico.core.common.orZero
 import kotlin.math.max
 import kotlin.math.min
@@ -30,7 +30,7 @@ public class MutableChartValues : ChartValues {
 
   private var _xStep: Double? = null
 
-  internal var yRanges: MutableMap<AxisPosition.Vertical?, MutableYRange> = mutableMapOf()
+  internal var yRanges: MutableMap<Axis.Position.Vertical?, MutableYRange> = mutableMapOf()
 
   override val minX: Double
     get() = _minX.orZero
@@ -41,7 +41,7 @@ public class MutableChartValues : ChartValues {
   override val xStep: Double
     get() = _xStep ?: 1.0
 
-  override fun getYRange(axisPosition: AxisPosition.Vertical?): ChartValues.YRange =
+  override fun getYRange(axisPosition: Axis.Position.Vertical?): ChartValues.YRange =
     yRanges[axisPosition] ?: yRanges.getValue(null)
 
   override var model: CartesianChartModel = CartesianChartModel.empty
@@ -61,7 +61,7 @@ public class MutableChartValues : ChartValues {
     maxX: Double,
     minY: Double,
     maxY: Double,
-    axisPosition: AxisPosition.Vertical?,
+    axisPosition: Axis.Position.Vertical?,
   ) {
     _minX = _minX?.coerceAtMost(minX) ?: minX
     _maxX = _maxX?.coerceAtLeast(maxX) ?: maxX
@@ -108,6 +108,6 @@ public fun MutableChartValues.toImmutable(): ChartValues =
     override val xStep: Double = this@toImmutable.xStep
     override val model: CartesianChartModel = this@toImmutable.model.toImmutable()
 
-    override fun getYRange(axisPosition: AxisPosition.Vertical?): ChartValues.YRange =
+    override fun getYRange(axisPosition: Axis.Position.Vertical?): ChartValues.YRange =
       yRanges[axisPosition] ?: yRanges.getValue(null)
   }

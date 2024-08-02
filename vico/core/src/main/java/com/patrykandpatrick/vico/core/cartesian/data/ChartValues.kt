@@ -17,7 +17,7 @@
 package com.patrykandpatrick.vico.core.cartesian.data
 
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
-import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition
+import com.patrykandpatrick.vico.core.cartesian.axis.Axis
 
 /** Houses a [CartesianChart]’s [CartesianChartModel] and _x_ and _y_ ranges. */
 public interface ChartValues {
@@ -34,10 +34,10 @@ public interface ChartValues {
   public val model: CartesianChartModel
 
   /**
-   * Returns the _y_ range associated with the given [AxisPosition.Vertical] subclass. If
-   * [axisPosition] is `null` or has no associated _y_ range, the global _y_ range is returned.
+   * Returns the [YRange] associated with the given [Axis.Position.Vertical] subclass. If
+   * [axisPosition] is `null` or has no associated [YRange], the global [YRange] is returned.
    */
-  public fun getYRange(axisPosition: AxisPosition.Vertical?): YRange
+  public fun getYRange(axisPosition: Axis.Position.Vertical?): YRange
 
   /** The difference between [maxX] and [minX]. */
   public val xLength: Double
@@ -76,7 +76,7 @@ public interface ChartValues {
 
     override val model: CartesianChartModel = CartesianChartModel.empty
 
-    override fun getYRange(axisPosition: AxisPosition.Vertical?): YRange {
+    override fun getYRange(axisPosition: Axis.Position.Vertical?): YRange {
       error(ERROR_MESSAGE)
     }
   }

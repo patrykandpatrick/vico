@@ -20,7 +20,7 @@ import android.graphics.Paint
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffXfermode
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
-import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition
+import com.patrykandpatrick.vico.core.cartesian.axis.Axis
 import com.patrykandpatrick.vico.core.common.Fill
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
 
@@ -34,7 +34,7 @@ internal data class SingleLineFill(val fill: Fill) : LineCartesianLayer.LineFill
   override fun draw(
     context: CartesianDrawContext,
     halfLineThickness: Float,
-    verticalAxisPosition: AxisPosition.Vertical?,
+    verticalAxisPosition: Axis.Position.Vertical?,
   ) {
     with(context) {
       paint.shader =
@@ -61,7 +61,7 @@ internal data class DoubleLineFill(
   override fun draw(
     context: CartesianDrawContext,
     halfLineThickness: Float,
-    verticalAxisPosition: AxisPosition.Vertical?,
+    verticalAxisPosition: Axis.Position.Vertical?,
   ) {
     with(context) {
       val canvasSplitY = getCanvasSplitY(splitY, halfLineThickness, verticalAxisPosition)

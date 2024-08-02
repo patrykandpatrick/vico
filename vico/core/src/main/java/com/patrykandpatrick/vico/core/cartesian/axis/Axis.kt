@@ -17,6 +17,7 @@
 package com.patrykandpatrick.vico.core.cartesian.axis
 
 import android.graphics.RectF
+import androidx.annotation.RestrictTo
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasureContext
@@ -25,14 +26,12 @@ import com.patrykandpatrick.vico.core.cartesian.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayer
 import com.patrykandpatrick.vico.core.common.Bounded
+import com.patrykandpatrick.vico.core.common.MeasureContext
 
-/**
- * Defines the minimal set of properties and functions required by other parts of the library to
- * draw an axis.
- */
-public interface Axis<Position : AxisPosition> : Bounded, ChartInsetter<CartesianChartModel> {
-  /** Defines the position of the axis relative to the [CartesianChart]. */
-  public val position: Position
+/** Draws an axis. */
+public interface Axis<P : Axis.Position> : Bounded, ChartInsetter<CartesianChartModel> {
+  /** The position of the [Axis]. */
+  public val position: P
 
   /** Draws content under the [CartesianLayer]s. */
   public fun drawUnderLayers(context: CartesianDrawContext)
@@ -48,4 +47,33 @@ public interface Axis<Position : AxisPosition> : Bounded, ChartInsetter<Cartesia
     context: CartesianMeasureContext,
     horizontalDimensions: MutableHorizontalDimensions,
   )
+
+  /** Specifies the position of an [Axis]. */
+  public sealed class Position {
+    /** Specifies the position of a horizontal [Axis]. */
+    public sealed class Horizontal : Position() {
+      /** Denotes that a horizontal [Axis] is at the top of its [CartesianChart]. */
+      public data object Top : Horizontal()
+
+      /** Denotes that a horizontal [Axis] is at the bottom of its [CartesianChart]. */
+      public data object Bottom : Horizontal()
+    }
+
+    /** Specifies the position of a vertical [Axis]. */
+    public sealed class Vertical : Position() {
+      /** Denotes that a vertical [Axis] is at the start of its [CartesianChart]. */
+      public data object Start : Vertical()
+
+      /** Denotes that a vertical [Axis] is at the end of its [CartesianChart]. */
+      public data object End : Vertical()
+
+      /** @suppress */
+      @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+      public fun isLeft(context: MeasureContext): Boolean =
+        when (this) {
+          Start -> context.isLtr
+          End -> !context.isLtr
+        }
+    }
+  }
 }

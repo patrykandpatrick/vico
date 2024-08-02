@@ -27,7 +27,6 @@ import com.patrykandpatrick.vico.core.cartesian.CartesianMeasureContext
 import com.patrykandpatrick.vico.core.cartesian.FadingEdges
 import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
 import com.patrykandpatrick.vico.core.cartesian.axis.Axis
-import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.core.cartesian.decoration.Decoration
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayer
@@ -46,10 +45,10 @@ import com.patrykandpatrick.vico.core.common.data.ExtraStore
 @Composable
 public fun rememberCartesianChart(
   vararg layers: CartesianLayer<*>,
-  startAxis: Axis<AxisPosition.Vertical.Start>? = null,
-  topAxis: Axis<AxisPosition.Horizontal.Top>? = null,
-  endAxis: Axis<AxisPosition.Vertical.End>? = null,
-  bottomAxis: Axis<AxisPosition.Horizontal.Bottom>? = null,
+  startAxis: Axis<Axis.Position.Vertical.Start>? = null,
+  topAxis: Axis<Axis.Position.Horizontal.Top>? = null,
+  endAxis: Axis<Axis.Position.Vertical.End>? = null,
+  bottomAxis: Axis<Axis.Position.Horizontal.Bottom>? = null,
   marker: CartesianMarker? = null,
   markerVisibilityListener: CartesianMarkerVisibilityListener? = null,
   horizontalLayout: HorizontalLayout = HorizontalLayout.segmented(),

@@ -21,7 +21,7 @@ import android.graphics.Path
 import android.graphics.RectF
 import androidx.annotation.RestrictTo
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
-import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition
+import com.patrykandpatrick.vico.core.cartesian.axis.Axis
 import com.patrykandpatrick.vico.core.common.DefaultAlpha
 import com.patrykandpatrick.vico.core.common.Fill
 import com.patrykandpatrick.vico.core.common.copyColor
@@ -61,7 +61,7 @@ internal abstract class BaseAreaFill(open val splitY: (ExtraStore) -> Number) :
     linePath: Path,
     halfLineThickness: Float,
     opacity: Float,
-    verticalAxisPosition: AxisPosition.Vertical?,
+    verticalAxisPosition: Axis.Position.Vertical?,
   ) {
     reset()
     linePath.computeBounds(areaBounds, false)

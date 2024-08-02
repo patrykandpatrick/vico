@@ -34,7 +34,7 @@ import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.common.fill
-import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition
+import com.patrykandpatrick.vico.core.cartesian.axis.Axis
 import com.patrykandpatrick.vico.core.cartesian.axis.BaseAxis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
@@ -99,14 +99,14 @@ private fun ComposeChart8(modelProducer: CartesianChartModelProducer, modifier: 
               }
             ),
           mergeMode = { ColumnCartesianLayer.MergeMode.Stacked },
-          verticalAxisPosition = AxisPosition.Vertical.Start,
+          verticalAxisPosition = Axis.Position.Vertical.Start,
         ),
         rememberLineCartesianLayer(
           lineProvider =
             LineCartesianLayer.LineProvider.series(
               rememberLine(remember { LineCartesianLayer.LineFill.single(fill(color4)) })
             ),
-          verticalAxisPosition = AxisPosition.Vertical.End,
+          verticalAxisPosition = Axis.Position.Vertical.End,
         ),
         startAxis = rememberStartAxis(guideline = null),
         endAxis = rememberEndAxis(guideline = null),
@@ -125,8 +125,9 @@ private fun ViewChart8(modelProducer: CartesianChartModelProducer, modifier: Mod
   AndroidViewBinding(Chart8Binding::inflate, modifier) {
     with(chartView) {
       (chart?.layers?.get(0) as ColumnCartesianLayer).verticalAxisPosition =
-        AxisPosition.Vertical.Start
-      (chart?.layers?.get(1) as LineCartesianLayer).verticalAxisPosition = AxisPosition.Vertical.End
+        Axis.Position.Vertical.Start
+      (chart?.layers?.get(1) as LineCartesianLayer).verticalAxisPosition =
+        Axis.Position.Vertical.End
       this.modelProducer = modelProducer
       (chart?.startAxis as BaseAxis).guideline = null
       chart?.marker = marker

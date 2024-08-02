@@ -28,7 +28,7 @@ import com.patrykandpatrick.vico.core.cartesian.HorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
 import com.patrykandpatrick.vico.core.cartesian.Insets
 import com.patrykandpatrick.vico.core.cartesian.MutableHorizontalDimensions
-import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition
+import com.patrykandpatrick.vico.core.cartesian.axis.Axis
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.ChartValues
@@ -76,7 +76,7 @@ import kotlin.math.roundToInt
 public open class LineCartesianLayer(
   public var lineProvider: LineProvider,
   public var pointSpacingDp: Float = Defaults.POINT_SPACING,
-  public var verticalAxisPosition: AxisPosition.Vertical? = null,
+  public var verticalAxisPosition: Axis.Position.Vertical? = null,
   public var drawingModelInterpolator:
     DrawingModelInterpolator<
       LineCartesianLayerDrawingModel.PointInfo,
@@ -126,7 +126,7 @@ public open class LineCartesianLayer(
       path: Path,
       fillCanvas: Canvas,
       opacity: Float,
-      verticalAxisPosition: AxisPosition.Vertical?,
+      verticalAxisPosition: Axis.Position.Vertical?,
     ) {
       with(context) {
         val thickness = thicknessDp.pixels
@@ -145,7 +145,7 @@ public open class LineCartesianLayer(
     public fun draw(
       context: CartesianDrawContext,
       halfLineThickness: Float,
-      verticalAxisPosition: AxisPosition.Vertical?,
+      verticalAxisPosition: Axis.Position.Vertical?,
     )
 
     /** Houses [LineFill] factory functions. */
@@ -174,7 +174,7 @@ public open class LineCartesianLayer(
       linePath: Path,
       halfLineThickness: Float,
       opacity: Float,
-      verticalAxisPosition: AxisPosition.Vertical?,
+      verticalAxisPosition: Axis.Position.Vertical?,
     )
 
     /** Houses [AreaFill] factory functions. */
@@ -651,7 +651,7 @@ public open class LineCartesianLayer(
 internal fun CartesianDrawContext.getCanvasSplitY(
   splitY: (ExtraStore) -> Number,
   halfLineThickness: Float,
-  verticalAxisPosition: AxisPosition.Vertical?,
+  verticalAxisPosition: Axis.Position.Vertical?,
 ): Float {
   val yRange = chartValues.getYRange(verticalAxisPosition)
   val base =

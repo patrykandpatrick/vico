@@ -18,7 +18,7 @@ package com.patrykandpatrick.vico.core.cartesian.decoration
 
 import androidx.annotation.RestrictTo
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
-import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition
+import com.patrykandpatrick.vico.core.cartesian.axis.Axis
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.common.HorizontalPosition
 import com.patrykandpatrick.vico.core.common.VerticalPosition
@@ -53,7 +53,7 @@ public class HorizontalBox(
   private val horizontalLabelPosition: HorizontalPosition = HorizontalPosition.Start,
   private val verticalLabelPosition: VerticalPosition = VerticalPosition.Top,
   private val labelRotationDegrees: Float = 0f,
-  private val verticalAxisPosition: AxisPosition.Vertical? = null,
+  private val verticalAxisPosition: Axis.Position.Vertical? = null,
 ) : Decoration {
   override fun drawOverLayers(context: CartesianDrawContext) {
     with(context) {

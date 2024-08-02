@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.common.fill
 import com.patrykandpatrick.vico.compose.common.vicoTheme
-import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition
+import com.patrykandpatrick.vico.core.cartesian.axis.Axis
 import com.patrykandpatrick.vico.core.cartesian.data.AxisValueOverrider
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.LineCartesianLayerDrawingModel
@@ -48,7 +48,7 @@ public fun rememberLineCartesianLayer(
     ),
   pointSpacing: Dp = Defaults.POINT_SPACING.dp,
   axisValueOverrider: AxisValueOverrider = remember { AxisValueOverrider.auto() },
-  verticalAxisPosition: AxisPosition.Vertical? = null,
+  verticalAxisPosition: Axis.Position.Vertical? = null,
   drawingModelInterpolator:
     DrawingModelInterpolator<
       LineCartesianLayerDrawingModel.PointInfo,

@@ -39,19 +39,19 @@ internal class DefaultVerticalAxisItemPlacer(
     context: CartesianDrawContext,
     axisHeight: Float,
     maxLabelHeight: Float,
-    position: AxisPosition.Vertical,
+    position: Axis.Position.Vertical,
   ) = getWidthMeasurementLabelValues(context, axisHeight, maxLabelHeight, position)
 
   override fun getWidthMeasurementLabelValues(
     context: CartesianMeasureContext,
     axisHeight: Float,
     maxLabelHeight: Float,
-    position: AxisPosition.Vertical,
+    position: Axis.Position.Vertical,
   ): List<Double> = mode.getLabelValues(context, axisHeight, maxLabelHeight, position)
 
   override fun getHeightMeasurementLabelValues(
     context: CartesianMeasureContext,
-    position: AxisPosition.Vertical,
+    position: Axis.Position.Vertical,
   ): List<Double> {
     val yRange = context.chartValues.getYRange(position)
     return listOf(yRange.minY, (yRange.minY + yRange.maxY).half, yRange.maxY)
@@ -93,14 +93,14 @@ internal class DefaultVerticalAxisItemPlacer(
       context: CartesianMeasureContext,
       axisHeight: Float,
       maxLabelHeight: Float,
-      position: AxisPosition.Vertical,
+      position: Axis.Position.Vertical,
     ): List<Double>
 
     fun getMixedLabelValues(
       context: CartesianMeasureContext,
       axisHeight: Float,
       maxLabelHeight: Float,
-      position: AxisPosition.Vertical,
+      position: Axis.Position.Vertical,
     ): List<Double>
 
     fun insetsRequired(context: CartesianMeasureContext): Boolean = true
@@ -109,7 +109,7 @@ internal class DefaultVerticalAxisItemPlacer(
       context: CartesianMeasureContext,
       axisHeight: Float,
       maxLabelHeight: Float,
-      position: AxisPosition.Vertical,
+      position: Axis.Position.Vertical,
     ) =
       if (context.chartValues.getYRange(position).run { minY * maxY } >= 0) {
         getSimpleLabelValues(context, axisHeight, maxLabelHeight, position)
@@ -165,7 +165,7 @@ internal class DefaultVerticalAxisItemPlacer(
         context: CartesianMeasureContext,
         axisHeight: Float,
         maxLabelHeight: Float,
-        position: AxisPosition.Vertical,
+        position: Axis.Position.Vertical,
       ): List<Double> =
         context.chartValues.getYRange(position).run {
           if (maxY > 0) {
@@ -186,7 +186,7 @@ internal class DefaultVerticalAxisItemPlacer(
         context: CartesianMeasureContext,
         axisHeight: Float,
         maxLabelHeight: Float,
-        position: AxisPosition.Vertical,
+        position: Axis.Position.Vertical,
       ): List<Double> =
         context.chartValues.getYRange(position).run {
           val topLabelValues =
@@ -224,7 +224,7 @@ internal class DefaultVerticalAxisItemPlacer(
         context: CartesianMeasureContext,
         axisHeight: Float,
         maxLabelHeight: Float,
-        position: AxisPosition.Vertical,
+        position: Axis.Position.Vertical,
       ): List<Double> {
         val values = mutableListOf<Double>()
         val requestedItemCount = context.getCountOrThrow()
@@ -248,7 +248,7 @@ internal class DefaultVerticalAxisItemPlacer(
         context: CartesianMeasureContext,
         axisHeight: Float,
         maxLabelHeight: Float,
-        position: AxisPosition.Vertical,
+        position: Axis.Position.Vertical,
       ): List<Double> {
         val values = mutableListOf<Double>()
         val requestedItemCount = context.getCountOrThrow()

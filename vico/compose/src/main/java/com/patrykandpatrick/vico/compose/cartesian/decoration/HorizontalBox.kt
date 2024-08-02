@@ -18,7 +18,7 @@ package com.patrykandpatrick.vico.compose.cartesian.decoration
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition
+import com.patrykandpatrick.vico.core.cartesian.axis.Axis
 import com.patrykandpatrick.vico.core.cartesian.decoration.HorizontalBox
 import com.patrykandpatrick.vico.core.common.HorizontalPosition
 import com.patrykandpatrick.vico.core.common.VerticalPosition
@@ -36,7 +36,7 @@ public fun rememberHorizontalBox(
   horizontalLabelPosition: HorizontalPosition = HorizontalPosition.Start,
   verticalLabelPosition: VerticalPosition = VerticalPosition.Top,
   labelRotationDegrees: Float = 0f,
-  verticalAxisPosition: AxisPosition.Vertical? = null,
+  verticalAxisPosition: Axis.Position.Vertical? = null,
 ): HorizontalBox =
   remember(
     y,

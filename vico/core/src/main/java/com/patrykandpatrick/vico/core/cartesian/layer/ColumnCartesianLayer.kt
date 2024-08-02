@@ -21,7 +21,7 @@ import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasureContext
 import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
 import com.patrykandpatrick.vico.core.cartesian.MutableHorizontalDimensions
-import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition
+import com.patrykandpatrick.vico.core.cartesian.axis.Axis
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.ChartValues
@@ -69,7 +69,7 @@ public open class ColumnCartesianLayer(
   public var columnProvider: ColumnProvider,
   public var columnCollectionSpacingDp: Float = Defaults.COLUMN_COLLECTION_SPACING,
   public var mergeMode: (ExtraStore) -> MergeMode = { MergeMode.Grouped() },
-  public var verticalAxisPosition: AxisPosition.Vertical? = null,
+  public var verticalAxisPosition: Axis.Position.Vertical? = null,
   public var dataLabel: TextComponent? = null,
   public var dataLabelVerticalPosition: VerticalPosition = VerticalPosition.Top,
   public var dataLabelValueFormatter: CartesianValueFormatter = CartesianValueFormatter.decimal(),

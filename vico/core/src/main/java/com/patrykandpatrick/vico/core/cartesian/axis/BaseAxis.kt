@@ -38,7 +38,7 @@ import com.patrykandpatrick.vico.core.common.setAll
  * @property titleComponent the title [TextComponent].
  * @property title the title text.
  */
-public abstract class BaseAxis<Position : AxisPosition>(
+public abstract class BaseAxis<P : Axis.Position>(
   public var line: LineComponent?,
   public var label: TextComponent?,
   public var labelRotationDegrees: Float,
@@ -49,7 +49,7 @@ public abstract class BaseAxis<Position : AxisPosition>(
   public var sizeConstraint: SizeConstraint,
   public var titleComponent: TextComponent?,
   public var title: CharSequence?,
-) : Axis<Position> {
+) : Axis<P> {
   private val restrictedBounds: MutableList<RectF> = mutableListOf()
 
   override val bounds: RectF = RectF()
