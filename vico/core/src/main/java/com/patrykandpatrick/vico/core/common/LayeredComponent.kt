@@ -34,7 +34,6 @@ public open class LayeredComponent(
     top: Float,
     right: Float,
     bottom: Float,
-    opacity: Float,
   ): Unit =
     with(context) {
       val leftWithMargin = left + margins.getLeftDp(isLtr).pixels
@@ -42,14 +41,13 @@ public open class LayeredComponent(
       val rightWithMargin = right - margins.getRightDp(isLtr).pixels
       val bottomWithMargin = bottom - margins.bottomDp.pixels
 
-      rear.draw(context, leftWithMargin, topWithMargin, rightWithMargin, bottomWithMargin, opacity)
+      rear.draw(context, leftWithMargin, topWithMargin, rightWithMargin, bottomWithMargin)
       front.draw(
         context,
         leftWithMargin + padding.getLeftDp(isLtr).pixels,
         topWithMargin + padding.topDp.pixels,
         rightWithMargin - padding.getRightDp(isLtr).pixels,
         bottomWithMargin - padding.bottomDp.pixels,
-        opacity,
       )
     }
 }

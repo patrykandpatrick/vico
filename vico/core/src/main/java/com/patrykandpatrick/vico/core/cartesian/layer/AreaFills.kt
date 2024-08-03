@@ -29,7 +29,6 @@ import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.core.common.getEnd
 import com.patrykandpatrick.vico.core.common.getStart
 import com.patrykandpatrick.vico.core.common.shader.DynamicShader
-import com.patrykandpatrick.vico.core.common.withOpacity
 
 internal abstract class BaseAreaFill(open val splitY: (ExtraStore) -> Number) :
   LineCartesianLayer.AreaFill {
@@ -40,27 +39,16 @@ internal abstract class BaseAreaFill(open val splitY: (ExtraStore) -> Number) :
 
   open fun reset() {}
 
-  abstract fun onTopAreasCreated(
-    context: CartesianDrawContext,
-    path: Path,
-    fillBounds: RectF,
-    opacity: Float,
-  )
+  abstract fun onTopAreasCreated(context: CartesianDrawContext, path: Path, fillBounds: RectF)
 
-  abstract fun onBottomAreasCreated(
-    context: CartesianDrawContext,
-    path: Path,
-    fillBounds: RectF,
-    opacity: Float,
-  )
+  abstract fun onBottomAreasCreated(context: CartesianDrawContext, path: Path, fillBounds: RectF)
 
-  open fun onAreasCreated(context: CartesianDrawContext, fillBounds: RectF, opacity: Float) {}
+  open fun onAreasCreated(context: CartesianDrawContext, fillBounds: RectF) {}
 
   override fun draw(
     context: CartesianDrawContext,
     linePath: Path,
     halfLineThickness: Float,
-    opacity: Float,
     verticalAxisPosition: Axis.Position.Vertical?,
   ) {
     reset()
@@ -78,7 +66,7 @@ internal abstract class BaseAreaFill(open val splitY: (ExtraStore) -> Number) :
           close()
           op(clipPath, Path.Op.INTERSECT)
         }
-        onTopAreasCreated(this, areaPath, fillBounds, opacity)
+        onTopAreasCreated(this, areaPath, fillBounds)
       }
       if (canvasSplitY < layerBounds.bottom) {
         clipPath.rewind()
@@ -91,10 +79,10 @@ internal abstract class BaseAreaFill(open val splitY: (ExtraStore) -> Number) :
           close()
           op(clipPath, Path.Op.INTERSECT)
         }
-        onBottomAreasCreated(this, areaPath, fillBounds, opacity)
+        onBottomAreasCreated(this, areaPath, fillBounds)
       }
       fillBounds.set(layerBounds)
-      onAreasCreated(this, fillBounds, opacity)
+      onAreasCreated(this, fillBounds)
     }
   }
 }
@@ -110,29 +98,19 @@ internal data class SingleAreaFill(
     areaPath.rewind()
   }
 
-  override fun onTopAreasCreated(
-    context: CartesianDrawContext,
-    path: Path,
-    fillBounds: RectF,
-    opacity: Float,
-  ) {
+  override fun onTopAreasCreated(context: CartesianDrawContext, path: Path, fillBounds: RectF) {
     areaPath.addPath(path)
   }
 
-  override fun onBottomAreasCreated(
-    context: CartesianDrawContext,
-    path: Path,
-    fillBounds: RectF,
-    opacity: Float,
-  ) {
+  override fun onBottomAreasCreated(context: CartesianDrawContext, path: Path, fillBounds: RectF) {
     areaPath.addPath(path)
   }
 
-  override fun onAreasCreated(context: CartesianDrawContext, fillBounds: RectF, opacity: Float) {
+  override fun onAreasCreated(context: CartesianDrawContext, fillBounds: RectF) {
     with(context) {
       paint.color = fill.color
       paint.shader = fill.shader?.provideShader(this, fillBounds)
-      paint.withOpacity(opacity) { canvas.drawPath(areaPath, it) }
+      canvas.drawPath(areaPath, paint)
     }
   }
 }
@@ -144,29 +122,19 @@ internal data class DoubleAreaFill(
 ) : BaseAreaFill(splitY) {
   private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
 
-  override fun onTopAreasCreated(
-    context: CartesianDrawContext,
-    path: Path,
-    fillBounds: RectF,
-    opacity: Float,
-  ) {
+  override fun onTopAreasCreated(context: CartesianDrawContext, path: Path, fillBounds: RectF) {
     with(context) {
       paint.color = topFill.color
       paint.shader = topFill.shader?.provideShader(this, fillBounds)
-      paint.withOpacity(opacity) { canvas.drawPath(path, it) }
+      canvas.drawPath(path, paint)
     }
   }
 
-  override fun onBottomAreasCreated(
-    context: CartesianDrawContext,
-    path: Path,
-    fillBounds: RectF,
-    opacity: Float,
-  ) {
+  override fun onBottomAreasCreated(context: CartesianDrawContext, path: Path, fillBounds: RectF) {
     with(context) {
       paint.color = bottomFill.color
       paint.shader = bottomFill.shader?.provideShader(this, fillBounds)
-      paint.withOpacity(opacity) { canvas.drawPath(path, it) }
+      canvas.drawPath(path, paint)
     }
   }
 }

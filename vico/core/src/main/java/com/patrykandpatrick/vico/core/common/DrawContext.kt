@@ -31,65 +31,10 @@ public interface DrawContext : MeasureContext {
   public val canvas: Canvas
 
   /**
-   * Saves the [Canvas] state.
-   *
-   * @see Canvas.save
-   */
-  public fun saveCanvas(): Int = canvas.save()
-
-  /**
    * Updates the value of [DrawContext.canvas] to [canvas], runs [block], and restores the previous
    * [DrawContext.canvas] value.
    */
   public fun withOtherCanvas(canvas: Canvas, block: () -> Unit)
-
-  /**
-   * Clips the [Canvas] to the specified rectangle.
-   *
-   * @see Canvas.clipRect
-   */
-  public fun clipRect(left: Float, top: Float, right: Float, bottom: Float) {
-    canvas.clipRect(left, top, right, bottom)
-  }
-
-  /**
-   * Clips the [Canvas] to the specified [rectF].
-   *
-   * @see Canvas.clipRect
-   */
-  public fun clipRect(rectF: RectF) {
-    canvas.clipRect(rectF)
-  }
-
-  /**
-   * Restores the [Canvas] state.
-   *
-   * @see Canvas.restore
-   */
-  public fun restoreCanvas() {
-    canvas.restore()
-  }
-
-  /**
-   * Restores the [Canvas] state to the given save level.
-   *
-   * @see Canvas.restoreToCount
-   */
-  public fun restoreCanvasToCount(count: Int) {
-    canvas.restoreToCount(count)
-  }
-
-  /**
-   * A convenience function for [Canvas.saveLayer].
-   *
-   * @see Canvas.saveLayer
-   */
-  public fun saveLayer(
-    left: Float = 0f,
-    top: Float = 0f,
-    right: Float = canvas.width.toFloat(),
-    bottom: Float = canvas.height.toFloat(),
-  ): Int = canvas.saveLayer(left, top, right, bottom)
 }
 
 /** @suppress */

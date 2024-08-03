@@ -25,7 +25,6 @@ import com.patrykandpatrick.vico.core.common.alpha
 import com.patrykandpatrick.vico.core.common.half
 import com.patrykandpatrick.vico.core.common.shader.DynamicShader
 import com.patrykandpatrick.vico.core.common.shape.Shape
-import com.patrykandpatrick.vico.core.common.withOpacity
 
 /**
  * Draws [Shape]s.
@@ -70,14 +69,7 @@ public open class ShapeComponent(
     shader?.provideShader(context, left, top, right, bottom)?.let(paint::setShader)
   }
 
-  override fun draw(
-    context: DrawContext,
-    left: Float,
-    top: Float,
-    right: Float,
-    bottom: Float,
-    opacity: Float,
-  ) {
+  override fun draw(context: DrawContext, left: Float, top: Float, right: Float, bottom: Float) {
     with(context) {
       var adjustedLeft = left + margins.getLeftDp(isLtr).pixels
       var adjustedTop = top + margins.topDp.pixels
@@ -94,10 +86,8 @@ public open class ShapeComponent(
       }
       path.rewind()
       applyShader(this, left, top, right, bottom)
-      shadow?.updateShadowLayer(this, paint, opacity)
-      paint.withOpacity(opacity) { paint ->
-        shape.draw(this, paint, path, adjustedLeft, adjustedTop, adjustedRight, adjustedBottom)
-      }
+      shadow?.updateShadowLayer(this, paint)
+      shape.draw(this, paint, path, adjustedLeft, adjustedTop, adjustedRight, adjustedBottom)
       if (strokeThickness == 0f || strokeColor.alpha == 0) return
       strokePaint.strokeWidth = strokeThickness
       shape.draw(this, strokePaint, path, adjustedLeft, adjustedTop, adjustedRight, adjustedBottom)

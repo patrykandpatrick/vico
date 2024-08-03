@@ -61,7 +61,6 @@ public open class LineComponent(
     right: Float,
     centerY: Float,
     thicknessScale: Float = 1f,
-    opacity: Float = 1f,
   ): Unit =
     with(context) {
       draw(
@@ -70,7 +69,6 @@ public open class LineComponent(
         top = centerY - thickness * thicknessScale / 2,
         right = right,
         bottom = centerY + thickness * thicknessScale / 2,
-        opacity = opacity,
       )
     }
 
@@ -102,7 +100,6 @@ public open class LineComponent(
     bottom: Float,
     centerX: Float,
     thicknessScale: Float = 1f,
-    opacity: Float = 1f,
   ): Unit =
     with(context) {
       draw(
@@ -111,7 +108,6 @@ public open class LineComponent(
         top = top,
         right = centerX + thickness * thicknessScale / 2,
         bottom = bottom,
-        opacity = opacity,
       )
     }
 

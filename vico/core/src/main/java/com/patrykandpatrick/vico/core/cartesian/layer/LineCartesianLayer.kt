@@ -58,7 +58,7 @@ import com.patrykandpatrick.vico.core.common.getStart
 import com.patrykandpatrick.vico.core.common.half
 import com.patrykandpatrick.vico.core.common.inBounds
 import com.patrykandpatrick.vico.core.common.orZero
-import com.patrykandpatrick.vico.core.common.withOpacity
+import com.patrykandpatrick.vico.core.common.saveLayer
 import kotlin.math.ceil
 import kotlin.math.max
 import kotlin.math.min
@@ -125,15 +125,14 @@ public open class LineCartesianLayer(
       context: CartesianDrawContext,
       path: Path,
       fillCanvas: Canvas,
-      opacity: Float,
       verticalAxisPosition: Axis.Position.Vertical?,
     ) {
       with(context) {
         val thickness = thicknessDp.pixels
         linePaint.strokeWidth = thickness
         val halfThickness = thickness.half
-        areaFill?.draw(context, path, halfThickness, opacity, verticalAxisPosition)
-        linePaint.withOpacity(opacity) { fillCanvas.drawPath(path, it) }
+        areaFill?.draw(context, path, halfThickness, verticalAxisPosition)
+        fillCanvas.drawPath(path, linePaint)
         withOtherCanvas(fillCanvas) { fill.draw(context, halfThickness, verticalAxisPosition) }
       }
     }
@@ -173,7 +172,6 @@ public open class LineCartesianLayer(
       context: CartesianDrawContext,
       linePath: Path,
       halfLineThickness: Float,
-      opacity: Float,
       verticalAxisPosition: Axis.Position.Vertical?,
     )
 
@@ -344,17 +342,11 @@ public open class LineCartesianLayer(
           prevY = y
         }
 
+        canvas.saveLayer(opacity = drawingModel?.opacity ?: 1f)
+
         val lineFillBitmap = getLineFillBitmap(seriesIndex)
         lineFillCanvas.setBitmap(lineFillBitmap)
-
-        line.draw(
-          context,
-          linePath,
-          lineFillCanvas,
-          drawingModel?.opacity ?: 1f,
-          verticalAxisPosition,
-        )
-
+        line.draw(context, linePath, lineFillCanvas, verticalAxisPosition)
         canvas.drawBitmap(lineFillBitmap, 0f, 0f, null)
 
         forEachPointInBounds(series, drawingStart, pointInfoMap) { entry, x, y, _, _ ->
@@ -362,6 +354,8 @@ public open class LineCartesianLayer(
         }
 
         drawPointsAndDataLabels(line, series, seriesIndex, drawingStart, pointInfoMap)
+
+        canvas.restore()
       }
     }
 

@@ -18,6 +18,7 @@ package com.patrykandpatrick.vico.core.common
 
 import android.graphics.Canvas
 import android.os.Build
+import kotlin.math.roundToInt
 
 internal inline fun Canvas.inClip(
   left: Float,
@@ -32,10 +33,31 @@ internal inline fun Canvas.inClip(
   restoreToCount(clipRestoreCount)
 }
 
-@Suppress("DEPRECATION")
-internal fun Canvas.saveLayer(left: Float, top: Float, right: Float, bottom: Float): Int =
+internal fun Canvas.saveLayer(): Int =
   if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-    saveLayer(left, top, right, bottom, null)
+    saveLayer(0f, 0f, width.toFloat(), height.toFloat(), null)
   } else {
-    saveLayer(left, top, right, bottom, null, Canvas.ALL_SAVE_FLAG)
+    @Suppress("DEPRECATION")
+    saveLayer(0f, 0f, width.toFloat(), height.toFloat(), null, Canvas.ALL_SAVE_FLAG)
+  }
+
+internal fun Canvas.saveLayer(opacity: Float): Int =
+  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+    saveLayerAlpha(
+      0f,
+      0f,
+      width.toFloat(),
+      height.toFloat(),
+      (opacity * MAX_HEX_VALUE).roundToInt(),
+    )
+  } else {
+    @Suppress("DEPRECATION")
+    saveLayerAlpha(
+      0f,
+      0f,
+      width.toFloat(),
+      height.toFloat(),
+      (opacity * MAX_HEX_VALUE).roundToInt(),
+      Canvas.ALL_SAVE_FLAG,
+    )
   }

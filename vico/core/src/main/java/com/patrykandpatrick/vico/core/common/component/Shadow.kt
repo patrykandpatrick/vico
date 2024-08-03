@@ -20,8 +20,6 @@ import android.graphics.Paint
 import androidx.compose.runtime.Immutable
 import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.MeasureContext
-import com.patrykandpatrick.vico.core.common.alphaFloat
-import com.patrykandpatrick.vico.core.common.copyColor
 
 /**
  * Stores shadow properties.
@@ -39,14 +37,7 @@ public data class Shadow(
   private val color: Int = Defaults.SHADOW_COLOR,
 ) {
   /** Updates [paint]’s shadow layer. */
-  public fun updateShadowLayer(context: MeasureContext, paint: Paint, opacity: Float) {
-    with(context) {
-      paint.setShadowLayer(
-        radiusDp.pixels,
-        dxDp.pixels,
-        dyDp.pixels,
-        color.copyColor(opacity * color.alphaFloat),
-      )
-    }
+  public fun updateShadowLayer(context: MeasureContext, paint: Paint) {
+    with(context) { paint.setShadowLayer(radiusDp.pixels, dxDp.pixels, dyDp.pixels, color) }
   }
 }

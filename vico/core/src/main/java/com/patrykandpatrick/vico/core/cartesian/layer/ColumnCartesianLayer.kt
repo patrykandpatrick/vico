@@ -45,6 +45,7 @@ import com.patrykandpatrick.vico.core.common.getRepeating
 import com.patrykandpatrick.vico.core.common.getStart
 import com.patrykandpatrick.vico.core.common.half
 import com.patrykandpatrick.vico.core.common.inBounds
+import com.patrykandpatrick.vico.core.common.saveLayer
 import com.patrykandpatrick.vico.core.common.unaryMinus
 import kotlin.math.abs
 import kotlin.math.min
@@ -121,6 +122,8 @@ public open class ColumnCartesianLayer(
       layerBounds.bottom + (yRange.minY / yRange.length).toFloat() * layerBounds.height()
     val mergeMode = mergeMode(model.extraStore)
 
+    canvas.saveLayer(opacity = drawingModel?.opacity ?: 1f)
+
     model.series.forEachIndexed { index, entryCollection ->
       drawingStart = getDrawingStart(index, model.series.size, mergeMode) - scroll
 
@@ -170,14 +173,7 @@ public open class ColumnCartesianLayer(
           )
         ) {
           updateMarkerTargets(entry, columnCenterX, columnSignificantY, column, mergeMode)
-          column.drawVertical(
-            this,
-            columnTop,
-            columnBottom,
-            columnCenterX,
-            zoom,
-            drawingModel?.opacity ?: 1f,
-          )
+          column.drawVertical(this, columnTop, columnBottom, columnCenterX, zoom)
         }
 
         if (mergeMode is MergeMode.Grouped) {
@@ -206,6 +202,8 @@ public open class ColumnCartesianLayer(
         }
       }
     }
+
+    canvas.restore()
   }
 
   protected open fun CartesianDrawContext.drawStackedDataLabel(

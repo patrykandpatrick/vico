@@ -37,6 +37,7 @@ import com.patrykandpatrick.vico.core.common.Point
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.core.common.data.MutableExtraStore
 import com.patrykandpatrick.vico.core.common.orZero
+import com.patrykandpatrick.vico.core.common.saveLayer
 import java.util.Objects
 import java.util.SortedMap
 import kotlin.collections.component1
@@ -241,13 +242,13 @@ public open class CartesianChart(
     model: CartesianChartModel,
     pointerPosition: Point?,
   ) {
-    val canvasSaveCount = if (fadingEdges != null) context.saveLayer() else -1
+    val canvasSaveCount = if (fadingEdges != null) context.canvas.saveLayer() else -1
     axisManager.drawUnderLayers(context)
     decorations.forEach { it.drawUnderLayers(context) }
     model.forEachWithLayer(drawingModelAndLayerConsumer.apply { this.context = context })
     fadingEdges?.run {
       draw(context)
-      context.restoreCanvasToCount(canvasSaveCount)
+      context.canvas.restoreToCount(canvasSaveCount)
     }
     axisManager.drawOverLayers(context)
     decorations.forEach { it.drawOverLayers(context) }

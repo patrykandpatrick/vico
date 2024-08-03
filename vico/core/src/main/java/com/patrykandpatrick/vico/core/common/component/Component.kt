@@ -24,12 +24,5 @@ import com.patrykandpatrick.vico.core.common.DrawContext
  */
 public interface Component {
   /** Instructs the [Component] to draw itself at the given coordinates. */
-  public fun draw(
-    context: DrawContext,
-    left: Float,
-    top: Float,
-    right: Float,
-    bottom: Float,
-    opacity: Float = 1f,
-  )
+  public fun draw(context: DrawContext, left: Float, top: Float, right: Float, bottom: Float)
 }
