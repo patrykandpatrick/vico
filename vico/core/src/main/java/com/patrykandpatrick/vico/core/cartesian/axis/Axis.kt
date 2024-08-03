@@ -17,7 +17,6 @@
 package com.patrykandpatrick.vico.core.cartesian.axis
 
 import android.graphics.RectF
-import androidx.annotation.RestrictTo
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasureContext
@@ -49,31 +48,29 @@ public interface Axis<P : Axis.Position> : Bounded, ChartInsetter<CartesianChart
   )
 
   /** Specifies the position of an [Axis]. */
-  public sealed class Position {
+  public sealed interface Position {
     /** Specifies the position of a horizontal [Axis]. */
-    public sealed class Horizontal : Position() {
+    public sealed interface Horizontal : Position {
       /** Denotes that a horizontal [Axis] is at the top of its [CartesianChart]. */
-      public data object Top : Horizontal()
+      public data object Top : Horizontal
 
       /** Denotes that a horizontal [Axis] is at the bottom of its [CartesianChart]. */
-      public data object Bottom : Horizontal()
+      public data object Bottom : Horizontal
     }
 
     /** Specifies the position of a vertical [Axis]. */
-    public sealed class Vertical : Position() {
+    public sealed interface Vertical : Position {
       /** Denotes that a vertical [Axis] is at the start of its [CartesianChart]. */
-      public data object Start : Vertical()
+      public data object Start : Vertical
 
       /** Denotes that a vertical [Axis] is at the end of its [CartesianChart]. */
-      public data object End : Vertical()
-
-      /** @suppress */
-      @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-      public fun isLeft(context: MeasureContext): Boolean =
-        when (this) {
-          Start -> context.isLtr
-          End -> !context.isLtr
-        }
+      public data object End : Vertical
     }
   }
 }
+
+internal fun Axis.Position.Vertical.isLeft(context: MeasureContext) =
+  when (this) {
+    Axis.Position.Vertical.Start -> context.isLtr
+    Axis.Position.Vertical.End -> !context.isLtr
+  }
