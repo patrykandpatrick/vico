@@ -35,7 +35,6 @@ import com.patrykandpatrick.vico.core.common.VerticalPosition
 import com.patrykandpatrick.vico.core.common.component.Component
 import com.patrykandpatrick.vico.core.common.component.TextComponent
 import com.patrykandpatrick.vico.core.common.data.CartesianLayerDrawingModelInterpolator
-import com.patrykandpatrick.vico.core.common.data.DefaultCartesianLayerDrawingModelInterpolator
 
 /** Creates and remembers a [LineCartesianLayer]. */
 @Composable
@@ -55,7 +54,7 @@ public fun rememberLineCartesianLayer(
       LineCartesianLayerDrawingModel,
     > =
     remember {
-      DefaultCartesianLayerDrawingModelInterpolator()
+      CartesianLayerDrawingModelInterpolator.default()
     },
 ): LineCartesianLayer =
   remember { LineCartesianLayer(lineProvider) }

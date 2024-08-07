@@ -35,7 +35,6 @@ import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.component.LineComponent
 import com.patrykandpatrick.vico.core.common.data.CartesianLayerDrawingModelInterpolator
-import com.patrykandpatrick.vico.core.common.data.DefaultCartesianLayerDrawingModelInterpolator
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.core.common.data.MutableExtraStore
 import com.patrykandpatrick.vico.core.common.getStart
@@ -65,7 +64,7 @@ public open class CandlestickCartesianLayer(
       CandlestickCartesianLayerDrawingModel.CandleInfo,
       CandlestickCartesianLayerDrawingModel,
     > =
-    DefaultCartesianLayerDrawingModelInterpolator(),
+    CartesianLayerDrawingModelInterpolator.default(),
 ) : BaseCartesianLayer<CandlestickCartesianLayerModel>() {
   /**
    * Defines a candle style.

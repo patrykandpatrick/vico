@@ -49,7 +49,6 @@ import com.patrykandpatrick.vico.core.common.component.Component
 import com.patrykandpatrick.vico.core.common.component.TextComponent
 import com.patrykandpatrick.vico.core.common.data.CacheStore
 import com.patrykandpatrick.vico.core.common.data.CartesianLayerDrawingModelInterpolator
-import com.patrykandpatrick.vico.core.common.data.DefaultCartesianLayerDrawingModelInterpolator
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.core.common.data.MutableExtraStore
 import com.patrykandpatrick.vico.core.common.doubled
@@ -82,7 +81,7 @@ public open class LineCartesianLayer(
       LineCartesianLayerDrawingModel.PointInfo,
       LineCartesianLayerDrawingModel,
     > =
-    DefaultCartesianLayerDrawingModelInterpolator(),
+    CartesianLayerDrawingModelInterpolator.default(),
 ) : BaseCartesianLayer<LineCartesianLayerModel>() {
   /**
    * Defines the appearance of a line in a line chart.
