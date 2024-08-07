@@ -21,9 +21,8 @@ import kotlin.math.max
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 
-/** The default [CartesianLayerDrawingModelInterpolator] implementation. */
 @Suppress("UNCHECKED_CAST")
-public class DefaultCartesianLayerDrawingModelInterpolator<
+internal class DefaultCartesianLayerDrawingModelInterpolator<
   T : CartesianLayerDrawingModel.DrawingInfo,
   R : CartesianLayerDrawingModel<T>,
 > : CartesianLayerDrawingModelInterpolator<T, R> {

@@ -30,4 +30,16 @@ public interface CartesianLayerDrawingModelInterpolator<
    * [CartesianLayerDrawingModel], and 1 corresponding to the target [CartesianLayerDrawingModel].
    */
   public suspend fun transform(fraction: Float): R?
+
+  /** Houses a [CartesianLayerDrawingModelInterpolator] factory function. */
+  public companion object {
+    /**
+     * Creates an instance of the default [CartesianLayerDrawingModelInterpolator] implementation.
+     */
+    public fun <
+      T : CartesianLayerDrawingModel.DrawingInfo,
+      R : CartesianLayerDrawingModel<T>,
+    > default(): CartesianLayerDrawingModelInterpolator<T, R> =
+      DefaultCartesianLayerDrawingModelInterpolator()
+  }
 }

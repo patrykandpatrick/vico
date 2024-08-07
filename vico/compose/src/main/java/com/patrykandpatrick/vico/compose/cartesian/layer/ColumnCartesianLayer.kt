@@ -32,7 +32,6 @@ import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.VerticalPosition
 import com.patrykandpatrick.vico.core.common.component.TextComponent
 import com.patrykandpatrick.vico.core.common.data.CartesianLayerDrawingModelInterpolator
-import com.patrykandpatrick.vico.core.common.data.DefaultCartesianLayerDrawingModelInterpolator
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.core.common.shape.Shape
 
@@ -63,7 +62,7 @@ public fun rememberColumnCartesianLayer(
       ColumnCartesianLayerDrawingModel,
     > =
     remember {
-      DefaultCartesianLayerDrawingModelInterpolator()
+      CartesianLayerDrawingModelInterpolator.default()
     },
 ): ColumnCartesianLayer =
   remember { ColumnCartesianLayer(columnProvider) }
