@@ -23,6 +23,7 @@ import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
 import com.patrykandpatrick.vico.core.cartesian.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.axis.Axis
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
+import com.patrykandpatrick.vico.core.cartesian.data.AxisValueOverrider
 import com.patrykandpatrick.vico.core.cartesian.data.CandlestickCartesianLayerDrawingModel
 import com.patrykandpatrick.vico.core.cartesian.data.CandlestickCartesianLayerModel
 import com.patrykandpatrick.vico.core.cartesian.data.CandlestickCartesianLayerModel.Entry.Change
@@ -49,6 +50,7 @@ import kotlin.math.max
  * @property minCandleBodyHeightDp the minimum height of the candle bodies (in dp).
  * @property candleSpacingDp the spacing between neighboring candles.
  * @property scaleCandleWicks whether the candle wicks should be scaled based on the zoom factor.
+ * @property axisValueOverrider overrides the _x_ and _y_ ranges.
  * @property verticalAxisPosition the position of the [VerticalAxis] with which the
  *   [CandlestickCartesianLayer] should be associated. Use this for independent [CartesianLayer]
  *   scaling.
@@ -58,6 +60,7 @@ public open class CandlestickCartesianLayer(
   public var minCandleBodyHeightDp: Float = Defaults.MIN_CANDLE_BODY_HEIGHT_DP,
   public var candleSpacingDp: Float = Defaults.CANDLE_SPACING_DP,
   public var scaleCandleWicks: Boolean = false,
+  public var axisValueOverrider: AxisValueOverrider = AxisValueOverrider.auto(),
   public var verticalAxisPosition: Axis.Position.Vertical? = null,
   public var drawingModelInterpolator:
     CartesianLayerDrawingModelInterpolator<

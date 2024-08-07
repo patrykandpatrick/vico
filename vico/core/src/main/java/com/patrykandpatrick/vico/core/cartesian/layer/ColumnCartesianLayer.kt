@@ -23,6 +23,7 @@ import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
 import com.patrykandpatrick.vico.core.cartesian.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.axis.Axis
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
+import com.patrykandpatrick.vico.core.cartesian.data.AxisValueOverrider
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.ChartValues
 import com.patrykandpatrick.vico.core.cartesian.data.ColumnCartesianLayerDrawingModel
@@ -55,13 +56,14 @@ import kotlin.math.min
  * @property columnProvider provides the column [LineComponent]s.
  * @property columnCollectionSpacingDp the spacing between neighboring column collections (in dp).
  * @property mergeMode defines how columns should be drawn in column collections.
- * @property verticalAxisPosition the position of the [VerticalAxis] with which the
- *   [ColumnCartesianLayer] should be associated. Use this for independent [CartesianLayer] scaling.
  * @property dataLabel the [TextComponent] for the data labels. Use `null` for no data labels.
  * @property dataLabelVerticalPosition the vertical position of each data label relative to its
  *   column’s top edge.
  * @property dataLabelValueFormatter the [CartesianValueFormatter] for the data labels.
  * @property dataLabelRotationDegrees the rotation of the data labels (in degrees).
+ * @property axisValueOverrider overrides the _x_ and _y_ ranges.
+ * @property verticalAxisPosition the position of the [VerticalAxis] with which the
+ *   [ColumnCartesianLayer] should be associated. Use this for independent [CartesianLayer] scaling.
  * @property drawingModelInterpolator interpolates the [ColumnCartesianLayer]’s
  *   [ColumnCartesianLayerDrawingModel]s.
  */
@@ -69,11 +71,12 @@ public open class ColumnCartesianLayer(
   public var columnProvider: ColumnProvider,
   public var columnCollectionSpacingDp: Float = Defaults.COLUMN_COLLECTION_SPACING,
   public var mergeMode: (ExtraStore) -> MergeMode = { MergeMode.Grouped() },
-  public var verticalAxisPosition: Axis.Position.Vertical? = null,
   public var dataLabel: TextComponent? = null,
   public var dataLabelVerticalPosition: VerticalPosition = VerticalPosition.Top,
   public var dataLabelValueFormatter: CartesianValueFormatter = CartesianValueFormatter.decimal(),
   public var dataLabelRotationDegrees: Float = 0f,
+  public var axisValueOverrider: AxisValueOverrider = AxisValueOverrider.auto(),
+  public var verticalAxisPosition: Axis.Position.Vertical? = null,
   public var drawingModelInterpolator:
     CartesianLayerDrawingModelInterpolator<
       ColumnCartesianLayerDrawingModel.ColumnInfo,
