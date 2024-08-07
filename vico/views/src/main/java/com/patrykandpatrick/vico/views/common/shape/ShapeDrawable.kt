@@ -27,7 +27,7 @@ import android.graphics.PixelFormat
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.util.LayoutDirection
-import com.patrykandpatrick.vico.core.common.drawContext
+import com.patrykandpatrick.vico.core.common.DrawingContext
 import com.patrykandpatrick.vico.core.common.shape.Shape
 import com.patrykandpatrick.vico.views.common.density
 import com.patrykandpatrick.vico.views.common.isLtr
@@ -63,7 +63,7 @@ public fun Shape.toDrawable(
 
     override fun draw(canvas: Canvas) {
       draw(
-        drawContext(
+        DrawingContext(
           canvas = canvas,
           density = density,
           isLtr =

@@ -22,8 +22,8 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.PorterDuff
-import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
-import com.patrykandpatrick.vico.core.cartesian.CartesianMeasureContext
+import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
+import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
 import com.patrykandpatrick.vico.core.cartesian.HorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
 import com.patrykandpatrick.vico.core.cartesian.Insets
@@ -41,7 +41,7 @@ import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.core.cartesian.marker.LineCartesianLayerMarkerTarget
 import com.patrykandpatrick.vico.core.cartesian.marker.MutableLineCartesianLayerMarkerTarget
 import com.patrykandpatrick.vico.core.common.Defaults
-import com.patrykandpatrick.vico.core.common.DrawContext
+import com.patrykandpatrick.vico.core.common.DrawingContext
 import com.patrykandpatrick.vico.core.common.Fill
 import com.patrykandpatrick.vico.core.common.Point
 import com.patrykandpatrick.vico.core.common.VerticalPosition
@@ -122,7 +122,7 @@ public open class LineCartesianLayer(
 
     /** Draws the line. */
     public fun draw(
-      context: CartesianDrawContext,
+      context: CartesianDrawingContext,
       path: Path,
       fillCanvas: Canvas,
       verticalAxisPosition: Axis.Position.Vertical?,
@@ -142,7 +142,7 @@ public open class LineCartesianLayer(
   public interface LineFill {
     /** Draws the line fill. [PorterDuff.Mode.SRC_IN] should be used. */
     public fun draw(
-      context: CartesianDrawContext,
+      context: CartesianDrawingContext,
       halfLineThickness: Float,
       verticalAxisPosition: Axis.Position.Vertical?,
     )
@@ -169,7 +169,7 @@ public open class LineCartesianLayer(
   public interface AreaFill {
     /** Draws the area fill. */
     public fun draw(
-      context: CartesianDrawContext,
+      context: CartesianDrawingContext,
       linePath: Path,
       halfLineThickness: Float,
       verticalAxisPosition: Axis.Position.Vertical?,
@@ -202,7 +202,7 @@ public open class LineCartesianLayer(
   public fun interface PointConnector {
     /** Connects ([x1], [y2]) and ([x2], [y2]). */
     public fun connect(
-      context: CartesianDrawContext,
+      context: CartesianDrawingContext,
       path: Path,
       x1: Float,
       y1: Float,
@@ -258,7 +258,7 @@ public open class LineCartesianLayer(
     public val sizeDp: Float = Defaults.POINT_SIZE,
   ) {
     /** Draws a point at ([x], [y]). */
-    public fun draw(context: CartesianDrawContext, x: Float, y: Float) {
+    public fun draw(context: CartesianDrawingContext, x: Float, y: Float) {
       val halfSize = context.run { sizeDp.half.pixels }
       component.draw(
         context = context,
@@ -311,7 +311,7 @@ public open class LineCartesianLayer(
 
   override val markerTargets: Map<Double, List<CartesianMarker.Target>> = _markerTargets
 
-  override fun drawInternal(context: CartesianDrawContext, model: LineCartesianLayerModel): Unit =
+  override fun drawInternal(context: CartesianDrawingContext, model: LineCartesianLayerModel) {
     with(context) {
       resetTempData()
 
@@ -358,8 +358,9 @@ public open class LineCartesianLayer(
         canvas.restore()
       }
     }
+  }
 
-  private fun DrawContext.getLineFillBitmap(seriesIndex: Int) =
+  private fun DrawingContext.getLineFillBitmap(seriesIndex: Int) =
     cacheStore
       .getOrNull<Bitmap>(cacheKeyNamespace, seriesIndex)
       ?.takeIf { it.width == canvas.width && it.height == canvas.height }
@@ -368,7 +369,7 @@ public open class LineCartesianLayer(
         cacheStore[cacheKeyNamespace, seriesIndex] = it
       }
 
-  protected open fun CartesianDrawContext.updateMarkerTargets(
+  protected open fun CartesianDrawingContext.updateMarkerTargets(
     entry: LineCartesianLayerModel.Entry,
     canvasX: Float,
     canvasY: Float,
@@ -387,7 +388,7 @@ public open class LineCartesianLayer(
       )
   }
 
-  protected open fun CartesianDrawContext.drawPointsAndDataLabels(
+  protected open fun CartesianDrawingContext.drawPointsAndDataLabels(
     line: Line,
     series: List<LineCartesianLayerModel.Entry>,
     seriesIndex: Int,
@@ -453,7 +454,7 @@ public open class LineCartesianLayer(
     }
   }
 
-  protected fun CartesianDrawContext.getMaxDataLabelWidth(
+  protected fun CartesianDrawingContext.getMaxDataLabelWidth(
     entry: LineCartesianLayerModel.Entry,
     x: Float,
     previousX: Float?,
@@ -494,7 +495,7 @@ public open class LineCartesianLayer(
     linePath.rewind()
   }
 
-  protected open fun CartesianDrawContext.forEachPointInBounds(
+  protected open fun CartesianDrawingContext.forEachPointInBounds(
     series: List<LineCartesianLayerModel.Entry>,
     drawingStart: Float,
     pointInfoMap: Map<Double, LineCartesianLayerDrawingModel.PointInfo>?,
@@ -545,7 +546,7 @@ public open class LineCartesianLayer(
   }
 
   override fun updateHorizontalDimensions(
-    context: CartesianMeasureContext,
+    context: CartesianMeasuringContext,
     horizontalDimensions: MutableHorizontalDimensions,
     model: LineCartesianLayerModel,
   ) {
@@ -591,7 +592,7 @@ public open class LineCartesianLayer(
   }
 
   override fun updateInsets(
-    context: CartesianMeasureContext,
+    context: CartesianMeasuringContext,
     horizontalDimensions: HorizontalDimensions,
     model: LineCartesianLayerModel,
     insets: Insets,
@@ -642,7 +643,7 @@ public open class LineCartesianLayer(
   }
 }
 
-internal fun CartesianDrawContext.getCanvasSplitY(
+internal fun CartesianDrawingContext.getCanvasSplitY(
   splitY: (ExtraStore) -> Number,
   halfLineThickness: Float,
   verticalAxisPosition: Axis.Position.Vertical?,

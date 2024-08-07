@@ -29,7 +29,7 @@ public open class LayeredComponent(
   protected val margins: Dimensions = Dimensions.Empty,
 ) : Component {
   override fun draw(
-    context: DrawContext,
+    context: DrawingContext,
     left: Float,
     top: Float,
     right: Float,

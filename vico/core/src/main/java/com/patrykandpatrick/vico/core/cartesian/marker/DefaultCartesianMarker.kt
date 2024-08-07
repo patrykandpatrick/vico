@@ -18,8 +18,8 @@ package com.patrykandpatrick.vico.core.cartesian.marker
 
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
-import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
-import com.patrykandpatrick.vico.core.cartesian.CartesianMeasureContext
+import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
+import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
 import com.patrykandpatrick.vico.core.cartesian.HorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.Insets
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
@@ -73,7 +73,7 @@ public open class DefaultCartesianMarker(
   protected val TextComponent.tickSizeDp: Float
     get() = ((background as? ShapeComponent)?.shape as? MarkerCorneredShape)?.tickSizeDp.orZero
 
-  override fun draw(context: CartesianDrawContext, targets: List<CartesianMarker.Target>): Unit =
+  override fun draw(context: CartesianDrawingContext, targets: List<CartesianMarker.Target>) {
     with(context) {
       drawGuideline(targets)
       val halfIndicatorSize = indicatorSizeDp.half.pixels
@@ -110,8 +110,9 @@ public open class DefaultCartesianMarker(
       }
       drawLabel(context, targets)
     }
+  }
 
-  protected open fun CartesianDrawContext.drawIndicator(
+  protected open fun CartesianDrawingContext.drawIndicator(
     x: Float,
     y: Float,
     color: Int,
@@ -130,7 +131,7 @@ public open class DefaultCartesianMarker(
   }
 
   protected fun drawLabel(
-    context: CartesianDrawContext,
+    context: CartesianDrawingContext,
     targets: List<CartesianMarker.Target>,
   ): Unit =
     with(context) {
@@ -206,7 +207,7 @@ public open class DefaultCartesianMarker(
       else -> xPosition
     }
 
-  protected fun CartesianDrawContext.drawGuideline(targets: List<CartesianMarker.Target>) {
+  protected fun CartesianDrawingContext.drawGuideline(targets: List<CartesianMarker.Target>) {
     targets
       .map { it.canvasX }
       .toSet()
@@ -214,7 +215,7 @@ public open class DefaultCartesianMarker(
   }
 
   override fun updateInsets(
-    context: CartesianMeasureContext,
+    context: CartesianMeasuringContext,
     horizontalDimensions: HorizontalDimensions,
     model: CartesianChartModel,
     insets: Insets,

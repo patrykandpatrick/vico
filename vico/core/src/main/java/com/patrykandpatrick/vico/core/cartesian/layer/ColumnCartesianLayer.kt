@@ -17,8 +17,8 @@
 package com.patrykandpatrick.vico.core.cartesian.layer
 
 import androidx.compose.runtime.Immutable
-import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
-import com.patrykandpatrick.vico.core.cartesian.CartesianMeasureContext
+import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
+import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
 import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
 import com.patrykandpatrick.vico.core.cartesian.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.axis.Axis
@@ -94,7 +94,7 @@ public open class ColumnCartesianLayer(
 
   override val markerTargets: Map<Double, List<CartesianMarker.Target>> = _markerTargets
 
-  override fun drawInternal(context: CartesianDrawContext, model: ColumnCartesianLayerModel): Unit =
+  override fun drawInternal(context: CartesianDrawingContext, model: ColumnCartesianLayerModel) {
     with(context) {
       _markerTargets.clear()
       drawChartInternal(
@@ -104,8 +104,9 @@ public open class ColumnCartesianLayer(
       )
       stackInfo.clear()
     }
+  }
 
-  protected open fun CartesianDrawContext.drawChartInternal(
+  protected open fun CartesianDrawingContext.drawChartInternal(
     chartValues: ChartValues,
     model: ColumnCartesianLayerModel,
     drawingModel: ColumnCartesianLayerDrawingModel?,
@@ -206,7 +207,7 @@ public open class ColumnCartesianLayer(
     canvas.restore()
   }
 
-  protected open fun CartesianDrawContext.drawStackedDataLabel(
+  protected open fun CartesianDrawingContext.drawStackedDataLabel(
     modelEntriesSize: Int,
     columnThicknessDp: Float,
     stackInfo: StackInfo,
@@ -243,7 +244,7 @@ public open class ColumnCartesianLayer(
     }
   }
 
-  protected open fun CartesianDrawContext.drawDataLabel(
+  protected open fun CartesianDrawingContext.drawDataLabel(
     modelEntriesSize: Int,
     columnThicknessDp: Float,
     dataLabelValue: Double,
@@ -314,7 +315,7 @@ public open class ColumnCartesianLayer(
     }
   }
 
-  protected open fun CartesianDrawContext.updateMarkerTargets(
+  protected open fun CartesianDrawingContext.updateMarkerTargets(
     entry: ColumnCartesianLayerModel.Entry,
     canvasX: Float,
     canvasY: Float,
@@ -364,7 +365,7 @@ public open class ColumnCartesianLayer(
   }
 
   override fun updateHorizontalDimensions(
-    context: CartesianMeasureContext,
+    context: CartesianMeasuringContext,
     horizontalDimensions: MutableHorizontalDimensions,
     model: ColumnCartesianLayerModel,
   ) {
@@ -393,7 +394,7 @@ public open class ColumnCartesianLayer(
     }
   }
 
-  protected open fun CartesianMeasureContext.getColumnCollectionWidth(
+  protected open fun CartesianMeasuringContext.getColumnCollectionWidth(
     entryCollectionSize: Int,
     mergeMode: MergeMode,
   ): Float =
@@ -411,7 +412,7 @@ public open class ColumnCartesianLayer(
           mergeMode.columnSpacingDp.pixels * (entryCollectionSize - 1)
     }
 
-  protected open fun CartesianDrawContext.getDrawingStart(
+  protected open fun CartesianDrawingContext.getDrawingStart(
     entryCollectionIndex: Int,
     entryCollectionCount: Int,
     mergeMode: MergeMode,
@@ -429,7 +430,7 @@ public open class ColumnCartesianLayer(
           zoom) * layoutDirectionMultiplier
   }
 
-  protected open fun CartesianMeasureContext.getCumulatedThickness(count: Int): Float {
+  protected open fun CartesianMeasuringContext.getCumulatedThickness(count: Int): Float {
     var thickness = 0f
     for (seriesIndex in 0..<count) {
       thickness +=

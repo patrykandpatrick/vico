@@ -16,7 +16,7 @@
 
 package com.patrykandpatrick.vico.core.cartesian.layer
 
-import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
+import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.core.cartesian.Insets
 import com.patrykandpatrick.vico.core.cartesian.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.data.AxisValueOverrider
@@ -32,7 +32,7 @@ public abstract class BaseCartesianLayer<T : CartesianLayerModel> : CartesianLay
   /** Overrides the _x_ and _y_ ranges. */
   public var axisValueOverrider: AxisValueOverrider = AxisValueOverrider.auto()
 
-  protected abstract fun drawInternal(context: CartesianDrawContext, model: T)
+  protected abstract fun drawInternal(context: CartesianDrawingContext, model: T)
 
   protected fun MutableHorizontalDimensions.ensureSegmentedValues(
     xSpacing: Float,
@@ -46,7 +46,7 @@ public abstract class BaseCartesianLayer<T : CartesianLayerModel> : CartesianLay
     )
   }
 
-  override fun draw(context: CartesianDrawContext, model: T) {
+  override fun draw(context: CartesianDrawingContext, model: T) {
     with(context) {
       insets.clear()
       updateInsets(this, horizontalDimensions, model, insets)

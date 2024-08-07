@@ -17,8 +17,8 @@
 package com.patrykandpatrick.vico.core.cartesian.layer
 
 import androidx.annotation.RestrictTo
-import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
-import com.patrykandpatrick.vico.core.cartesian.CartesianMeasureContext
+import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
+import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
 import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
 import com.patrykandpatrick.vico.core.cartesian.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.axis.Axis
@@ -99,7 +99,7 @@ public open class CandlestickCartesianLayer(
   override val markerTargets: Map<Double, List<CartesianMarker.Target>> = _markerTargets
 
   override fun drawInternal(
-    context: CartesianDrawContext,
+    context: CartesianDrawingContext,
     model: CandlestickCartesianLayerModel,
   ): Unit =
     with(context) {
@@ -111,7 +111,7 @@ public open class CandlestickCartesianLayer(
       )
     }
 
-  private fun CartesianDrawContext.drawChartInternal(
+  private fun CartesianDrawingContext.drawChartInternal(
     chartValues: ChartValues,
     model: CandlestickCartesianLayerModel,
     drawingModel: CandlestickCartesianLayerDrawingModel?,
@@ -188,7 +188,7 @@ public open class CandlestickCartesianLayer(
     }
   }
 
-  protected open fun CartesianDrawContext.updateMarkerTargets(
+  protected open fun CartesianDrawingContext.updateMarkerTargets(
     entry: CandlestickCartesianLayerModel.Entry,
     canvasX: Float,
     bodyBottomCanvasY: Float,
@@ -236,7 +236,7 @@ public open class CandlestickCartesianLayer(
   }
 
   override fun updateHorizontalDimensions(
-    context: CartesianMeasureContext,
+    context: CartesianMeasuringContext,
     horizontalDimensions: MutableHorizontalDimensions,
     model: CandlestickCartesianLayerModel,
   ) {

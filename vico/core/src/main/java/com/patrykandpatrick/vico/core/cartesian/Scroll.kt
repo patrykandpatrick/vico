@@ -27,7 +27,7 @@ public sealed interface Scroll {
   public fun interface Absolute : Scroll {
     /** Returns the scroll value. */
     public fun getValue(
-      context: CartesianMeasureContext,
+      context: CartesianMeasuringContext,
       horizontalDimensions: HorizontalDimensions,
       bounds: RectF,
       maxValue: Float,
@@ -61,7 +61,7 @@ public sealed interface Scroll {
   public fun interface Relative : Scroll {
     /** Returns the scroll delta. */
     public fun getDelta(
-      context: CartesianMeasureContext,
+      context: CartesianMeasuringContext,
       horizontalDimensions: HorizontalDimensions,
       bounds: RectF,
       maxValue: Float,
@@ -83,7 +83,7 @@ public sealed interface Scroll {
 /** @suppress */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public fun Scroll.getDelta(
-  context: CartesianMeasureContext,
+  context: CartesianMeasuringContext,
   horizontalDimensions: HorizontalDimensions,
   bounds: RectF,
   maxValue: Float,

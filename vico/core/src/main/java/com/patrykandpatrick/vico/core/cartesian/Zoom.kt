@@ -24,7 +24,7 @@ import kotlin.math.min
 public fun interface Zoom {
   /** Returns the zoom factor. */
   public fun getValue(
-    context: CartesianMeasureContext,
+    context: CartesianMeasuringContext,
     horizontalDimensions: HorizontalDimensions,
     bounds: RectF,
   ): Float

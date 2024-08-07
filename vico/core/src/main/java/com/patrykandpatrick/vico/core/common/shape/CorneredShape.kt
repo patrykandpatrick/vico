@@ -18,7 +18,7 @@ package com.patrykandpatrick.vico.core.common.shape
 
 import android.graphics.Paint
 import android.graphics.Path
-import com.patrykandpatrick.vico.core.common.DrawContext
+import com.patrykandpatrick.vico.core.common.DrawingContext
 import kotlin.math.absoluteValue
 
 /**
@@ -61,7 +61,7 @@ public open class CorneredShape(
   }
 
   override fun draw(
-    context: DrawContext,
+    context: DrawingContext,
     paint: Paint,
     path: Path,
     left: Float,
@@ -78,7 +78,7 @@ public open class CorneredShape(
     replaceWith = ReplaceWith("draw(context, paint, path, left, top, right, bottom)"),
   )
   override fun drawShape(
-    context: DrawContext,
+    context: DrawingContext,
     paint: Paint,
     path: Path,
     left: Float,
@@ -90,7 +90,7 @@ public open class CorneredShape(
   }
 
   protected open fun createPath(
-    context: DrawContext,
+    context: DrawingContext,
     path: Path,
     left: Float,
     top: Float,

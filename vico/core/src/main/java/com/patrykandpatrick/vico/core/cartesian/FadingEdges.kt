@@ -85,7 +85,7 @@ public open class FadingEdges(
   }
 
   /** Applies the fade. */
-  public fun draw(context: CartesianDrawContext) {
+  public fun draw(context: CartesianDrawingContext) {
     with(context) {
       val maxScroll = getMaxScrollDistance()
       var fadeAlphaFraction: Float
@@ -118,7 +118,7 @@ public open class FadingEdges(
     }
   }
 
-  private fun CartesianDrawContext.drawFadingEdge(
+  private fun CartesianDrawingContext.drawFadingEdge(
     left: Float,
     top: Float,
     right: Float,

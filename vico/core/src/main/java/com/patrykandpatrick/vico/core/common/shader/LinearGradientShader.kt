@@ -19,7 +19,7 @@ package com.patrykandpatrick.vico.core.common.shader
 import android.graphics.LinearGradient
 import android.graphics.Shader
 import androidx.annotation.RestrictTo
-import com.patrykandpatrick.vico.core.common.DrawContext
+import com.patrykandpatrick.vico.core.common.DrawingContext
 import java.util.Objects
 
 /** @suppress */
@@ -30,7 +30,7 @@ public class LinearGradientShader(
   private val isHorizontal: Boolean,
 ) : CacheableDynamicShader() {
   override fun createShader(
-    context: DrawContext,
+    context: DrawingContext,
     left: Float,
     top: Float,
     right: Float,

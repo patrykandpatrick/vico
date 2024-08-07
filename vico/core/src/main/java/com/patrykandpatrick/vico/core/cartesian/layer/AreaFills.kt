@@ -20,7 +20,7 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
 import androidx.annotation.RestrictTo
-import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
+import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.core.cartesian.axis.Axis
 import com.patrykandpatrick.vico.core.common.DefaultAlpha
 import com.patrykandpatrick.vico.core.common.Fill
@@ -39,14 +39,14 @@ internal abstract class BaseAreaFill(open val splitY: (ExtraStore) -> Number) :
 
   open fun reset() {}
 
-  abstract fun onTopAreasCreated(context: CartesianDrawContext, path: Path, fillBounds: RectF)
+  abstract fun onTopAreasCreated(context: CartesianDrawingContext, path: Path, fillBounds: RectF)
 
-  abstract fun onBottomAreasCreated(context: CartesianDrawContext, path: Path, fillBounds: RectF)
+  abstract fun onBottomAreasCreated(context: CartesianDrawingContext, path: Path, fillBounds: RectF)
 
-  open fun onAreasCreated(context: CartesianDrawContext, fillBounds: RectF) {}
+  open fun onAreasCreated(context: CartesianDrawingContext, fillBounds: RectF) {}
 
   override fun draw(
-    context: CartesianDrawContext,
+    context: CartesianDrawingContext,
     linePath: Path,
     halfLineThickness: Float,
     verticalAxisPosition: Axis.Position.Vertical?,
@@ -98,15 +98,19 @@ internal data class SingleAreaFill(
     areaPath.rewind()
   }
 
-  override fun onTopAreasCreated(context: CartesianDrawContext, path: Path, fillBounds: RectF) {
+  override fun onTopAreasCreated(context: CartesianDrawingContext, path: Path, fillBounds: RectF) {
     areaPath.addPath(path)
   }
 
-  override fun onBottomAreasCreated(context: CartesianDrawContext, path: Path, fillBounds: RectF) {
+  override fun onBottomAreasCreated(
+    context: CartesianDrawingContext,
+    path: Path,
+    fillBounds: RectF,
+  ) {
     areaPath.addPath(path)
   }
 
-  override fun onAreasCreated(context: CartesianDrawContext, fillBounds: RectF) {
+  override fun onAreasCreated(context: CartesianDrawingContext, fillBounds: RectF) {
     with(context) {
       paint.color = fill.color
       paint.shader = fill.shader?.provideShader(this, fillBounds)
@@ -122,7 +126,7 @@ internal data class DoubleAreaFill(
 ) : BaseAreaFill(splitY) {
   private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
 
-  override fun onTopAreasCreated(context: CartesianDrawContext, path: Path, fillBounds: RectF) {
+  override fun onTopAreasCreated(context: CartesianDrawingContext, path: Path, fillBounds: RectF) {
     with(context) {
       paint.color = topFill.color
       paint.shader = topFill.shader?.provideShader(this, fillBounds)
@@ -130,7 +134,11 @@ internal data class DoubleAreaFill(
     }
   }
 
-  override fun onBottomAreasCreated(context: CartesianDrawContext, path: Path, fillBounds: RectF) {
+  override fun onBottomAreasCreated(
+    context: CartesianDrawingContext,
+    path: Path,
+    fillBounds: RectF,
+  ) {
     with(context) {
       paint.color = bottomFill.color
       paint.shader = bottomFill.shader?.provideShader(this, fillBounds)

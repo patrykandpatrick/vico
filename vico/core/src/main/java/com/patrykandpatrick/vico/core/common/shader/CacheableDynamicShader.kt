@@ -17,7 +17,7 @@
 package com.patrykandpatrick.vico.core.common.shader
 
 import android.graphics.Shader
-import com.patrykandpatrick.vico.core.common.DrawContext
+import com.patrykandpatrick.vico.core.common.DrawingContext
 
 /**
  * [CacheableDynamicShader] can cache created [Shader] instances for reuse between identical sets of
@@ -27,7 +27,7 @@ public abstract class CacheableDynamicShader : DynamicShader {
   private val cache = HashMap<String, Shader>(1)
 
   override fun provideShader(
-    context: DrawContext,
+    context: DrawingContext,
     left: Float,
     top: Float,
     right: Float,
@@ -46,7 +46,7 @@ public abstract class CacheableDynamicShader : DynamicShader {
    * [bottom] bounds have changed or there is no cached [Shader].
    */
   public abstract fun createShader(
-    context: DrawContext,
+    context: DrawingContext,
     left: Float,
     top: Float,
     right: Float,

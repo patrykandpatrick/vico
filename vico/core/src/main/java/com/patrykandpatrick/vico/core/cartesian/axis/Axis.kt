@@ -18,14 +18,14 @@ package com.patrykandpatrick.vico.core.cartesian.axis
 
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
-import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
-import com.patrykandpatrick.vico.core.cartesian.CartesianMeasureContext
+import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
+import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
 import com.patrykandpatrick.vico.core.cartesian.ChartInsetter
 import com.patrykandpatrick.vico.core.cartesian.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayer
 import com.patrykandpatrick.vico.core.common.Bounded
-import com.patrykandpatrick.vico.core.common.MeasureContext
+import com.patrykandpatrick.vico.core.common.MeasuringContext
 
 /** Draws an axis. */
 public interface Axis<P : Axis.Position> : Bounded, ChartInsetter<CartesianChartModel> {
@@ -33,17 +33,17 @@ public interface Axis<P : Axis.Position> : Bounded, ChartInsetter<CartesianChart
   public val position: P
 
   /** Draws content under the [CartesianLayer]s. */
-  public fun drawUnderLayers(context: CartesianDrawContext)
+  public fun drawUnderLayers(context: CartesianDrawingContext)
 
   /** Draws content over the [CartesianLayer]s. */
-  public fun drawOverLayers(context: CartesianDrawContext)
+  public fun drawOverLayers(context: CartesianDrawingContext)
 
   /** The bounds ([RectF]) passed here define the area where the [Axis] shouldn’t draw anything. */
   public fun setRestrictedBounds(vararg bounds: RectF?)
 
   /** Updates the chart’s [MutableHorizontalDimensions] instance. */
   public fun updateHorizontalDimensions(
-    context: CartesianMeasureContext,
+    context: CartesianMeasuringContext,
     horizontalDimensions: MutableHorizontalDimensions,
   )
 
@@ -69,7 +69,7 @@ public interface Axis<P : Axis.Position> : Bounded, ChartInsetter<CartesianChart
   }
 }
 
-internal fun Axis.Position.Vertical.isLeft(context: MeasureContext) =
+internal fun Axis.Position.Vertical.isLeft(context: MeasuringContext) =
   when (this) {
     Axis.Position.Vertical.Start -> context.isLtr
     Axis.Position.Vertical.End -> !context.isLtr

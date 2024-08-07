@@ -40,7 +40,7 @@ import com.patrykandpatrick.vico.compose.cartesian.data.component1
 import com.patrykandpatrick.vico.compose.cartesian.data.component2
 import com.patrykandpatrick.vico.compose.cartesian.data.component3
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
-import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
+import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.core.cartesian.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
@@ -152,8 +152,8 @@ internal fun CartesianChartHostImpl(
 ) {
   val canvasBounds = remember { RectF() }
   val markerTouchPoint = remember { mutableStateOf<Point?>(null) }
-  val measureContext =
-    rememberCartesianMeasureContext(
+  val measuringContext =
+    rememberCartesianMeasuringContext(
       scrollEnabled = scrollState.scrollEnabled,
       zoomEnabled = scrollState.scrollEnabled && zoomState.zoomEnabled,
       canvasBounds = canvasBounds,
@@ -202,22 +202,22 @@ internal fun CartesianChartHostImpl(
     canvasBounds.set(left = 0, top = 0, right = size.width, bottom = size.height)
 
     horizontalDimensions.clear()
-    chart.prepare(measureContext, model, horizontalDimensions, canvasBounds)
+    chart.prepare(measuringContext, model, horizontalDimensions, canvasBounds)
 
     if (chart.layerBounds.isEmpty) return@Canvas
 
-    zoomState.update(measureContext, horizontalDimensions, chart.layerBounds)
-    scrollState.update(measureContext, chart.layerBounds, horizontalDimensions)
+    zoomState.update(measuringContext, horizontalDimensions, chart.layerBounds)
+    scrollState.update(measuringContext, chart.layerBounds, horizontalDimensions)
 
     if (model.id != previousModelID) {
       coroutineScope.launch { scrollState.autoScroll(model, previousModel) }
       previousModelID = model.id
     }
 
-    val cartesianDrawContext =
-      CartesianDrawContext(
+    val drawingContext =
+      CartesianDrawingContext(
+        measuringContext = measuringContext,
         canvas = drawContext.canvas.nativeCanvas,
-        measureContext = measureContext,
         markerTouchPoint = markerTouchPoint.value,
         horizontalDimensions = horizontalDimensions,
         layerBounds = chart.layerBounds,
@@ -225,8 +225,8 @@ internal fun CartesianChartHostImpl(
         zoom = zoomState.value,
       )
 
-    chart.draw(cartesianDrawContext, model, markerTouchPoint.value)
-    measureContext.reset()
+    chart.draw(drawingContext, model, markerTouchPoint.value)
+    measuringContext.reset()
   }
 }
 

@@ -19,7 +19,7 @@ package com.patrykandpatrick.vico.core.cartesian.layer
 import android.graphics.Paint
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffXfermode
-import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
+import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.core.cartesian.axis.Axis
 import com.patrykandpatrick.vico.core.common.Fill
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
@@ -32,7 +32,7 @@ internal data class SingleLineFill(val fill: Fill) : LineCartesianLayer.LineFill
     }
 
   override fun draw(
-    context: CartesianDrawContext,
+    context: CartesianDrawingContext,
     halfLineThickness: Float,
     verticalAxisPosition: Axis.Position.Vertical?,
   ) {
@@ -59,7 +59,7 @@ internal data class DoubleLineFill(
     Paint(Paint.ANTI_ALIAS_FLAG).apply { xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN) }
 
   override fun draw(
-    context: CartesianDrawContext,
+    context: CartesianDrawingContext,
     halfLineThickness: Float,
     verticalAxisPosition: Axis.Position.Vertical?,
   ) {

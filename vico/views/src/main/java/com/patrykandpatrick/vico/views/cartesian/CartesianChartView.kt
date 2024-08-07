@@ -24,9 +24,9 @@ import android.view.ScaleGestureDetector
 import android.view.View
 import android.widget.OverScroller
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
-import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
+import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
-import com.patrykandpatrick.vico.core.cartesian.MutableCartesianMeasureContext
+import com.patrykandpatrick.vico.core.cartesian.MutableCartesianMeasuringContext
 import com.patrykandpatrick.vico.core.cartesian.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.Scroll
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
@@ -65,8 +65,8 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 
   private val mutableChartValues = MutableChartValues()
 
-  override val measureContext: MutableCartesianMeasureContext =
-    MutableCartesianMeasureContext(
+  override val measuringContext: MutableCartesianMeasuringContext =
+    MutableCartesianMeasuringContext(
       canvasBounds = canvasBounds,
       density = context.density,
       isLtr = context.isLtr,
@@ -97,8 +97,8 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       oldValue?.clearUpdated()
       newValue.postInvalidate = ::postInvalidate
       newValue.postInvalidateOnAnimation = ::postInvalidateOnAnimation
-      measureContext.scrollEnabled = newValue.scrollEnabled
-      measureContext.zoomEnabled = measureContext.zoomEnabled && newValue.scrollEnabled
+      measuringContext.scrollEnabled = newValue.scrollEnabled
+      measuringContext.zoomEnabled = measuringContext.zoomEnabled && newValue.scrollEnabled
     }
 
   /** Houses information on the [CartesianChart]’s zoom factor. Allows for zoom customization. */
@@ -106,7 +106,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     invalidatingObservable(
       ZoomHandler.default(themeHandler.isChartZoomEnabled, scrollHandler.scrollEnabled)
     ) { _, newValue ->
-      measureContext.zoomEnabled = newValue.zoomEnabled && measureContext.scrollEnabled
+      measuringContext.zoomEnabled = newValue.zoomEnabled && measuringContext.scrollEnabled
     }
 
   private val motionEventHandler =
@@ -120,7 +120,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   /** The [CartesianChart] displayed by this [View]. */
   public var chart: CartesianChart? by
     observable(themeHandler.chart) { _, _, newValue ->
-      if (newValue != null) measureContext.horizontalLayout = newValue.horizontalLayout
+      if (newValue != null) measuringContext.horizontalLayout = newValue.horizontalLayout
       tryInvalidate(chart = newValue, model = model, updateChartValues = true)
     }
 
@@ -162,7 +162,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       ) { model, chartValues ->
         post {
           setModel(model = model, updateChartValues = false)
-          measureContext.chartValues = chartValues
+          measuringContext.chartValues = chartValues
           postInvalidateOnAnimation()
         }
       }
@@ -244,7 +244,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     if (updateChartValues) {
       mutableChartValues.reset()
       chart.updateChartValues(mutableChartValues, model)
-      measureContext.chartValues = mutableChartValues.toImmutable()
+      measuringContext.chartValues = mutableChartValues.toImmutable()
     }
     if (isAttachedToWindowCompat) invalidate()
   }
@@ -302,9 +302,9 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     super.dispatchDraw(canvas)
 
     withChartAndModel { chart, model ->
-      measureContext.reset()
+      measuringContext.reset()
       horizontalDimensions.clear()
-      chart.prepare(measureContext, model, horizontalDimensions, canvasBounds)
+      chart.prepare(measuringContext, model, horizontalDimensions, canvasBounds)
 
       if (chart.layerBounds.isEmpty) return@withChartAndModel
 
@@ -314,13 +314,13 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
         postInvalidateOnAnimation()
       }
 
-      zoomHandler.update(measureContext, horizontalDimensions, chart.layerBounds)
-      scrollHandler.update(measureContext, chart.layerBounds, horizontalDimensions)
+      zoomHandler.update(measuringContext, horizontalDimensions, chart.layerBounds)
+      scrollHandler.update(measuringContext, chart.layerBounds, horizontalDimensions)
 
-      val cartesianDrawContext =
-        CartesianDrawContext(
+      val drawingContext =
+        CartesianDrawingContext(
+          measuringContext = measuringContext,
           canvas = canvas,
-          measureContext = measureContext,
           markerTouchPoint = markerTouchPoint,
           horizontalDimensions = horizontalDimensions,
           layerBounds = chart.layerBounds,
@@ -328,8 +328,8 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
           zoom = zoomHandler.value,
         )
 
-      chart.draw(cartesianDrawContext, model, markerTouchPoint)
-      measureContext.reset()
+      chart.draw(drawingContext, model, markerTouchPoint)
+      measuringContext.reset()
     }
   }
 

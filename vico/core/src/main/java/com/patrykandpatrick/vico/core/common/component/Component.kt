@@ -16,7 +16,7 @@
 
 package com.patrykandpatrick.vico.core.common.component
 
-import com.patrykandpatrick.vico.core.common.DrawContext
+import com.patrykandpatrick.vico.core.common.DrawingContext
 
 /**
  * [Component] is a generic concept of an object that can be drawn on a canvas at a given pair of
@@ -24,5 +24,5 @@ import com.patrykandpatrick.vico.core.common.DrawContext
  */
 public interface Component {
   /** Instructs the [Component] to draw itself at the given coordinates. */
-  public fun draw(context: DrawContext, left: Float, top: Float, right: Float, bottom: Float)
+  public fun draw(context: DrawingContext, left: Float, top: Float, right: Float, bottom: Float)
 }

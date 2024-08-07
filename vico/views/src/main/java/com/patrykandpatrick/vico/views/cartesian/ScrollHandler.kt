@@ -23,7 +23,7 @@ import android.os.Bundle
 import android.view.animation.AccelerateDecelerateInterpolator
 import com.patrykandpatrick.vico.core.cartesian.AutoScrollCondition
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
-import com.patrykandpatrick.vico.core.cartesian.CartesianMeasureContext
+import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
 import com.patrykandpatrick.vico.core.cartesian.HorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.Scroll
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
@@ -53,7 +53,7 @@ public class ScrollHandler(
 ) {
   private val scrollListeners = mutableSetOf<Listener>()
   private var initialScrollHandled = false
-  private var context: CartesianMeasureContext? = null
+  private var context: CartesianMeasuringContext? = null
   private var horizontalDimensions: HorizontalDimensions? = null
   private var bounds: RectF? = null
   internal var postInvalidate: (() -> Unit)? = null
@@ -84,7 +84,7 @@ public class ScrollHandler(
     }
 
   internal fun update(
-    context: CartesianMeasureContext,
+    context: CartesianMeasuringContext,
     bounds: RectF,
     horizontalDimensions: HorizontalDimensions,
   ) {
@@ -99,7 +99,7 @@ public class ScrollHandler(
   }
 
   private inline fun withUpdated(
-    block: (CartesianMeasureContext, HorizontalDimensions, RectF) -> Unit
+    block: (CartesianMeasuringContext, HorizontalDimensions, RectF) -> Unit
   ) {
     val context = this.context
     val horizontalDimensions = this.horizontalDimensions

@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.core.common.Defaults.MARKER_TICK_SIZE
-import com.patrykandpatrick.vico.core.common.DrawContext
+import com.patrykandpatrick.vico.core.common.DrawingContext
 import com.patrykandpatrick.vico.core.common.shape.Corner
 import com.patrykandpatrick.vico.core.common.shape.CorneredShape
 import com.patrykandpatrick.vico.core.common.shape.CutCornerTreatment
@@ -72,7 +72,7 @@ public fun androidx.compose.ui.graphics.Shape.toVicoShape(): Shape =
     private val matrix: Matrix by lazy { Matrix() }
 
     override fun draw(
-      context: DrawContext,
+      context: DrawingContext,
       paint: Paint,
       path: Path,
       left: Float,
@@ -110,7 +110,7 @@ public fun androidx.compose.ui.graphics.Shape.toVicoShape(): Shape =
       replaceWith = ReplaceWith("draw(context, paint, path, left, top, right, bottom)"),
     )
     override fun drawShape(
-      context: DrawContext,
+      context: DrawingContext,
       paint: Paint,
       path: Path,
       left: Float,

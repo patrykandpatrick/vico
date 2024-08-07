@@ -26,7 +26,7 @@ import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
 import androidx.core.graphics.translationMatrix
-import com.patrykandpatrick.vico.core.common.DrawContext
+import com.patrykandpatrick.vico.core.common.DrawingContext
 import com.patrykandpatrick.vico.core.common.component.Component
 import com.patrykandpatrick.vico.core.common.shader.CacheableDynamicShader
 import com.patrykandpatrick.vico.core.common.shader.ComponentShader
@@ -83,7 +83,7 @@ public fun DynamicShader.Companion.verticalGradient(
 public fun Brush.toDynamicShader(): DynamicShader =
   object : CacheableDynamicShader() {
     override fun createShader(
-      context: DrawContext,
+      context: DrawingContext,
       left: Float,
       top: Float,
       right: Float,

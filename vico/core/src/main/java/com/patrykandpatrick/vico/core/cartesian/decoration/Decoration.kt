@@ -17,7 +17,7 @@
 package com.patrykandpatrick.vico.core.cartesian.decoration
 
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
-import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
+import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayer
 
 /**
@@ -28,8 +28,8 @@ import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayer
  */
 public interface Decoration {
   /** Draws content under the [CartesianLayer]s. */
-  public fun drawUnderLayers(context: CartesianDrawContext) {}
+  public fun drawUnderLayers(context: CartesianDrawingContext) {}
 
   /** Draws content over the [CartesianLayer]s. */
-  public fun drawOverLayers(context: CartesianDrawContext) {}
+  public fun drawOverLayers(context: CartesianDrawingContext) {}
 }

@@ -17,13 +17,10 @@
 package com.patrykandpatrick.vico.core.cartesian
 
 import com.patrykandpatrick.vico.core.cartesian.data.ChartValues
-import com.patrykandpatrick.vico.core.common.MeasureContext
+import com.patrykandpatrick.vico.core.common.MeasuringContext
 
-/**
- * [CartesianMeasureContext] holds data used by various cartesian chart components during the
- * measuring and drawing phases.
- */
-public interface CartesianMeasureContext : MeasureContext {
+/** A [MeasuringContext] extension with [CartesianChart]-specific data. */
+public interface CartesianMeasuringContext : MeasuringContext {
   /** The chart’s [ChartValues]. */
   public val chartValues: ChartValues
 

@@ -29,7 +29,7 @@ import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.common.of
 import com.patrykandpatrick.vico.compose.common.shape.markerCornered
-import com.patrykandpatrick.vico.core.cartesian.CartesianMeasureContext
+import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
 import com.patrykandpatrick.vico.core.cartesian.HorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.Insets
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
@@ -115,7 +115,7 @@ internal fun rememberMarker(
         guideline = guideline,
       ) {
       override fun updateInsets(
-        context: CartesianMeasureContext,
+        context: CartesianMeasuringContext,
         horizontalDimensions: HorizontalDimensions,
         model: CartesianChartModel,
         insets: Insets,

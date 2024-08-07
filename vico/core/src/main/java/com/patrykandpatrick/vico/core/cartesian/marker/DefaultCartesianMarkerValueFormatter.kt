@@ -19,7 +19,7 @@ package com.patrykandpatrick.vico.core.cartesian.marker
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
-import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
+import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianLayerModel
 import com.patrykandpatrick.vico.core.common.appendCompat
 import java.text.DecimalFormat
@@ -87,7 +87,7 @@ public open class DefaultCartesianMarkerValueFormatter(
   }
 
   override fun format(
-    context: CartesianDrawContext,
+    context: CartesianDrawingContext,
     targets: List<CartesianMarker.Target>,
   ): CharSequence =
     SpannableStringBuilder().apply {
