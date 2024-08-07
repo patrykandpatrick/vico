@@ -50,12 +50,12 @@ public fun rememberColumnCartesianLayer(
     ),
   columnCollectionSpacing: Dp = Defaults.COLUMN_COLLECTION_SPACING.dp,
   mergeMode: (ExtraStore) -> MergeMode = { MergeMode.grouped() },
-  verticalAxisPosition: Axis.Position.Vertical? = null,
   dataLabel: TextComponent? = null,
   dataLabelVerticalPosition: VerticalPosition = VerticalPosition.Top,
   dataLabelValueFormatter: CartesianValueFormatter = remember { CartesianValueFormatter.decimal() },
   dataLabelRotationDegrees: Float = 0f,
   axisValueOverrider: AxisValueOverrider = remember { AxisValueOverrider.auto() },
+  verticalAxisPosition: Axis.Position.Vertical? = null,
   drawingModelInterpolator:
     CartesianLayerDrawingModelInterpolator<
       ColumnCartesianLayerDrawingModel.ColumnInfo,

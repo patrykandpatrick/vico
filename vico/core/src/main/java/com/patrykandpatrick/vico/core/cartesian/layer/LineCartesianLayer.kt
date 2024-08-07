@@ -30,6 +30,7 @@ import com.patrykandpatrick.vico.core.cartesian.Insets
 import com.patrykandpatrick.vico.core.cartesian.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.axis.Axis
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
+import com.patrykandpatrick.vico.core.cartesian.data.AxisValueOverrider
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.ChartValues
 import com.patrykandpatrick.vico.core.cartesian.data.LineCartesianLayerDrawingModel
@@ -68,6 +69,7 @@ import kotlin.math.roundToInt
  *
  * @property lineProvider provides the [Line]s.
  * @property pointSpacingDp the point spacing (in dp).
+ * @property axisValueOverrider overrides the _x_ and _y_ ranges.
  * @property verticalAxisPosition the position of the [VerticalAxis] with which the
  *   [LineCartesianLayer] should be associated. Use this for independent [CartesianLayer] scaling.
  * @property drawingModelInterpolator interpolates the [LineCartesianLayerDrawingModel]s.
@@ -75,6 +77,7 @@ import kotlin.math.roundToInt
 public open class LineCartesianLayer(
   public var lineProvider: LineProvider,
   public var pointSpacingDp: Float = Defaults.POINT_SPACING,
+  public var axisValueOverrider: AxisValueOverrider = AxisValueOverrider.auto(),
   public var verticalAxisPosition: Axis.Position.Vertical? = null,
   public var drawingModelInterpolator:
     CartesianLayerDrawingModelInterpolator<

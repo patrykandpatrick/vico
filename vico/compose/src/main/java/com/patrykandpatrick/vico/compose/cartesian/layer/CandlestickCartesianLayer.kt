@@ -35,8 +35,8 @@ public fun rememberCandlestickCartesianLayer(
   minCandleBodyHeight: Dp = Defaults.MIN_CANDLE_BODY_HEIGHT_DP.dp,
   candleSpacing: Dp = Defaults.CANDLE_SPACING_DP.dp,
   scaleCandleWicks: Boolean = false,
-  verticalAxisPosition: Axis.Position.Vertical? = null,
   axisValueOverrider: AxisValueOverrider = remember { AxisValueOverrider.auto() },
+  verticalAxisPosition: Axis.Position.Vertical? = null,
   drawingModelInterpolator:
     CartesianLayerDrawingModelInterpolator<
       CandlestickCartesianLayerDrawingModel.CandleInfo,
@@ -50,7 +50,7 @@ public fun rememberCandlestickCartesianLayer(
       minCandleBodyHeightDp = minCandleBodyHeight.value
       candleSpacingDp = candleSpacing.value
       this.scaleCandleWicks = scaleCandleWicks
-      this.verticalAxisPosition = verticalAxisPosition
       this.axisValueOverrider = axisValueOverrider
+      this.verticalAxisPosition = verticalAxisPosition
       this.drawingModelInterpolator = drawingModelInterpolator
     }
