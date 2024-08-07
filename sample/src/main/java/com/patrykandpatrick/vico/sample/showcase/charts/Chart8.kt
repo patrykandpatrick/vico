@@ -95,7 +95,11 @@ private fun ComposeChart8(modelProducer: CartesianChartModelProducer, modifier: 
           columnProvider =
             ColumnCartesianLayer.ColumnProvider.series(
               columnChartColors.map { color ->
-                rememberLineComponent(color = color, thickness = 8.dp, shape = Shape.rounded(40))
+                rememberLineComponent(
+                  fill = fill(color),
+                  thickness = 8.dp,
+                  shape = Shape.rounded(allPercent = 40),
+                )
               }
             ),
           mergeMode = { ColumnCartesianLayer.MergeMode.Stacked },

@@ -114,7 +114,7 @@ private fun ComposeChart9(modelProducer: CartesianChartModelProducer, modifier: 
                             DynamicShader.component(
                               component =
                                 shapeComponent(
-                                  color = colors[0],
+                                  fill = fill(colors[0]),
                                   shape = Shape.Pill,
                                   margins = Dimensions.of(1.dp),
                                 ),
@@ -130,7 +130,7 @@ private fun ComposeChart9(modelProducer: CartesianChartModelProducer, modifier: 
                             DynamicShader.component(
                               component =
                                 shapeComponent(
-                                  color = colors[1],
+                                  fill = fill(colors[1]),
                                   shape = Shape.Rectangle,
                                   margins = Dimensions.of(horizontal = 2.dp),
                                 ),
@@ -155,7 +155,7 @@ private fun ComposeChart9(modelProducer: CartesianChartModelProducer, modifier: 
                 padding = Dimensions.of(6.dp, 2.dp),
                 background =
                   rememberShapeComponent(
-                    color = Color.Transparent,
+                    fill = fill(Color.Transparent),
                     shape = Shape.Pill,
                     strokeColor = MaterialTheme.colorScheme.outlineVariant,
                     strokeThickness = 1.dp,
@@ -165,7 +165,7 @@ private fun ComposeChart9(modelProducer: CartesianChartModelProducer, modifier: 
             tick = null,
             guideline =
               rememberLineComponent(
-                color = MaterialTheme.colorScheme.outlineVariant,
+                fill = fill(MaterialTheme.colorScheme.outlineVariant),
                 shape =
                   remember { Shape.dashed(shape = Shape.Pill, dashLength = 4.dp, gapLength = 8.dp) },
               ),
@@ -215,7 +215,7 @@ private fun ViewChart9(modelProducer: CartesianChartModelProducer, modifier: Mod
                             ComponentShader(
                               component =
                                 ShapeComponent(
-                                  color = colors[0].toArgb(),
+                                  fill = Fill(colors[0].toArgb()),
                                   shape = Shape.Pill,
                                   margins = Dimensions(allDp = 1f),
                                 ),
@@ -234,7 +234,7 @@ private fun ViewChart9(modelProducer: CartesianChartModelProducer, modifier: Mod
                             ComponentShader(
                               component =
                                 ShapeComponent(
-                                  color = colors[1].toArgb(),
+                                  fill = Fill(colors[1].toArgb()),
                                   shape = Shape.Rectangle,
                                   margins = Dimensions(horizontalDp = 2f, verticalDp = 0f),
                                 ),

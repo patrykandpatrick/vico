@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
+import com.patrykandpatrick.vico.compose.common.fill
 import com.patrykandpatrick.vico.compose.common.vicoTheme
 import com.patrykandpatrick.vico.core.cartesian.layer.CandlestickCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.layer.CandlestickCartesianLayer.Candle
@@ -31,13 +32,14 @@ import com.patrykandpatrick.vico.core.cartesian.layer.absolute
 import com.patrykandpatrick.vico.core.cartesian.layer.absoluteRelative
 import com.patrykandpatrick.vico.core.cartesian.layer.asWick
 import com.patrykandpatrick.vico.core.common.Defaults
+import com.patrykandpatrick.vico.core.common.Fill
 import com.patrykandpatrick.vico.core.common.component.LineComponent
 
 @Composable
 private fun Candle.Companion.sharpFilledCandle(
   color: Color,
   thickness: Dp = Defaults.CANDLE_BODY_WIDTH_DP.dp,
-) = rememberCandle(rememberLineComponent(color, thickness))
+) = rememberCandle(rememberLineComponent(fill(color), thickness))
 
 @Composable
 private fun Candle.Companion.sharpHollowCandle(
@@ -47,7 +49,7 @@ private fun Candle.Companion.sharpHollowCandle(
 ) =
   rememberCandle(
     rememberLineComponent(
-      color = Color.Transparent,
+      fill = Fill.Transparent,
       thickness = thickness,
       strokeColor = color,
       strokeThickness = strokeThickness,
@@ -64,9 +66,10 @@ private fun Candle.copyWithColor(color: Color) =
 
 private fun LineComponent.copyWithColor(color: Color) =
   copy(
-    color = if (this.color == android.graphics.Color.TRANSPARENT) this.color else color.toArgb(),
+    fill =
+      Fill(if (fill.color == android.graphics.Color.TRANSPARENT) fill.color else color.toArgb()),
     strokeColor =
-      if (this.strokeColor == android.graphics.Color.TRANSPARENT) this.color else color.toArgb(),
+      if (strokeColor == android.graphics.Color.TRANSPARENT) strokeColor else color.toArgb(),
   )
 
 /** Creates and remembers a [CandlestickCartesianLayer.Candle]. */

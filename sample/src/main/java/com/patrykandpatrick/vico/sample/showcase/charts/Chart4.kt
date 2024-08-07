@@ -92,7 +92,11 @@ private fun ComposeChart4(modelProducer: CartesianChartModelProducer, modifier: 
           columnProvider =
             ColumnCartesianLayer.ColumnProvider.series(
               columnColors.map { color ->
-                rememberLineComponent(color = color, thickness = 8.dp, shape = Shape.rounded(2.dp))
+                rememberLineComponent(
+                  fill = fill(color),
+                  thickness = 8.dp,
+                  shape = Shape.rounded(2.dp),
+                )
               }
             )
         ),

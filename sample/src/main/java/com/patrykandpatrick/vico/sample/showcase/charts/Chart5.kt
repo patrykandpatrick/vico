@@ -30,6 +30,7 @@ import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesian
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
+import com.patrykandpatrick.vico.compose.common.fill
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
@@ -85,7 +86,7 @@ private fun ComposeChart5(modelProducer: CartesianChartModelProducer, modifier: 
           columnProvider =
             ColumnCartesianLayer.ColumnProvider.series(
               rememberLineComponent(
-                color = color1,
+                fill = fill(color1),
                 thickness = COLUMN_THICKNESS_DP.dp,
                 shape =
                   Shape.rounded(
@@ -93,9 +94,9 @@ private fun ComposeChart5(modelProducer: CartesianChartModelProducer, modifier: 
                     bottomRightPercent = COLUMN_ROUNDNESS_PERCENT,
                   ),
               ),
-              rememberLineComponent(color = color2, thickness = COLUMN_THICKNESS_DP.dp),
+              rememberLineComponent(fill = fill(color2), thickness = COLUMN_THICKNESS_DP.dp),
               rememberLineComponent(
-                color = color3,
+                fill = fill(color3),
                 thickness = COLUMN_THICKNESS_DP.dp,
                 shape =
                   Shape.rounded(

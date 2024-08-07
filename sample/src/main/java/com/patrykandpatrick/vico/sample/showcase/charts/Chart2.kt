@@ -33,6 +33,7 @@ import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
+import com.patrykandpatrick.vico.compose.common.fill
 import com.patrykandpatrick.vico.compose.common.of
 import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
 import com.patrykandpatrick.vico.core.cartesian.axis.BaseAxis
@@ -43,6 +44,7 @@ import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
 import com.patrykandpatrick.vico.core.cartesian.decoration.HorizontalLine
 import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.core.common.Dimensions
+import com.patrykandpatrick.vico.core.common.Fill
 import com.patrykandpatrick.vico.core.common.component.LineComponent
 import com.patrykandpatrick.vico.core.common.component.ShapeComponent
 import com.patrykandpatrick.vico.core.common.component.TextComponent
@@ -88,7 +90,7 @@ private fun ComposeChart2(modelProducer: CartesianChartModelProducer, modifier: 
         rememberColumnCartesianLayer(
           ColumnCartesianLayer.ColumnProvider.series(
             rememberLineComponent(
-              color = Color(0xffff5500),
+              fill = fill(Color(0xffff5500)),
               thickness = 16.dp,
               shape = remember { Shape.rounded(allPercent = 40) },
             )
@@ -135,7 +137,7 @@ private fun rememberComposeHorizontalLine(): HorizontalLine {
   val color = Color(HORIZONTAL_LINE_COLOR)
   return rememberHorizontalLine(
     y = { HORIZONTAL_LINE_Y },
-    line = rememberLineComponent(color, HORIZONTAL_LINE_THICKNESS_DP.dp),
+    line = rememberLineComponent(fill(color), HORIZONTAL_LINE_THICKNESS_DP.dp),
     labelComponent =
       rememberTextComponent(
         margins = Dimensions.of(HORIZONTAL_LINE_LABEL_MARGIN_DP.dp),
@@ -144,7 +146,7 @@ private fun rememberComposeHorizontalLine(): HorizontalLine {
             HORIZONTAL_LINE_LABEL_HORIZONTAL_PADDING_DP.dp,
             HORIZONTAL_LINE_LABEL_VERTICAL_PADDING_DP.dp,
           ),
-        background = rememberShapeComponent(color, Shape.Pill),
+        background = rememberShapeComponent(fill(color), Shape.Pill),
       ),
   )
 }
@@ -152,7 +154,7 @@ private fun rememberComposeHorizontalLine(): HorizontalLine {
 private fun getViewHorizontalLine() =
   HorizontalLine(
     y = { HORIZONTAL_LINE_Y },
-    line = LineComponent(HORIZONTAL_LINE_COLOR, HORIZONTAL_LINE_THICKNESS_DP),
+    line = LineComponent(Fill(HORIZONTAL_LINE_COLOR), HORIZONTAL_LINE_THICKNESS_DP),
     labelComponent =
       TextComponent(
         margins = Dimensions(HORIZONTAL_LINE_LABEL_MARGIN_DP),
@@ -161,7 +163,7 @@ private fun getViewHorizontalLine() =
             HORIZONTAL_LINE_LABEL_HORIZONTAL_PADDING_DP,
             HORIZONTAL_LINE_LABEL_VERTICAL_PADDING_DP,
           ),
-        background = ShapeComponent(HORIZONTAL_LINE_COLOR, Shape.Pill),
+        background = ShapeComponent(Fill(HORIZONTAL_LINE_COLOR), Shape.Pill),
       ),
   )
 

@@ -21,32 +21,30 @@ import android.graphics.Paint
 import android.graphics.Path
 import com.patrykandpatrick.vico.core.common.Dimensions
 import com.patrykandpatrick.vico.core.common.DrawingContext
+import com.patrykandpatrick.vico.core.common.Fill
 import com.patrykandpatrick.vico.core.common.alpha
 import com.patrykandpatrick.vico.core.common.half
-import com.patrykandpatrick.vico.core.common.shader.DynamicShader
 import com.patrykandpatrick.vico.core.common.shape.Shape
 
 /**
  * Draws [Shape]s.
  *
- * @property color the fill color.
+ * @property fill houses the fill properties.
  * @property shape the [Shape].
  * @property margins the margins.
  * @property strokeColor the stroke color.
  * @property strokeThicknessDp the stroke thickness (in dp).
- * @property shader applied to the fill.
  * @property shadow stores the shadow properties.
  */
 public open class ShapeComponent(
-  public val color: Int = Color.BLACK,
+  public val fill: Fill = Fill.Black,
   public val shape: Shape = Shape.Rectangle,
   protected val margins: Dimensions = Dimensions.Empty,
   public val strokeColor: Int = Color.TRANSPARENT,
   protected val strokeThicknessDp: Float = 0f,
-  protected val shader: DynamicShader? = null,
   protected val shadow: Shadow? = null,
 ) : Component {
-  private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = this@ShapeComponent.color }
+  private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = fill.color }
   private val strokePaint =
     Paint(Paint.ANTI_ALIAS_FLAG).apply {
       this.color = strokeColor
@@ -66,7 +64,7 @@ public open class ShapeComponent(
     right: Float,
     bottom: Float,
   ) {
-    shader?.provideShader(context, left, top, right, bottom)?.let(paint::setShader)
+    fill.shader?.provideShader(context, left, top, right, bottom)?.let(paint::setShader)
   }
 
   override fun draw(context: DrawingContext, left: Float, top: Float, right: Float, bottom: Float) {
@@ -96,13 +94,14 @@ public open class ShapeComponent(
 
   /** Creates a new [ShapeComponent] based on this one. */
   public open fun copy(
-    color: Int = this.color,
+    fill: Fill = this.fill,
     shape: Shape = this.shape,
     margins: Dimensions = this.margins,
     strokeColor: Int = this.strokeColor,
     strokeThicknessDp: Float = this.strokeThicknessDp,
-    shader: DynamicShader? = this.shader,
     shadow: Shadow? = this.shadow,
-  ): ShapeComponent =
-    ShapeComponent(color, shape, margins, strokeColor, strokeThicknessDp, shader, shadow)
+  ): ShapeComponent = ShapeComponent(fill, shape, margins, strokeColor, strokeThicknessDp, shadow)
 }
+
+internal val ShapeComponent.fillOrStrokeColor: Int
+  get() = if (fill.color == Color.TRANSPARENT) strokeColor else fill.color

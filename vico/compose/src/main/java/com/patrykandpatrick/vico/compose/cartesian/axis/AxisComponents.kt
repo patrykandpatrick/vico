@@ -29,17 +29,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
+import com.patrykandpatrick.vico.compose.common.fill
 import com.patrykandpatrick.vico.compose.common.of
 import com.patrykandpatrick.vico.compose.common.shape.dashed
 import com.patrykandpatrick.vico.compose.common.vicoTheme
 import com.patrykandpatrick.vico.core.cartesian.axis.Axis
 import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.Dimensions
+import com.patrykandpatrick.vico.core.common.Fill
 import com.patrykandpatrick.vico.core.common.component.Component
 import com.patrykandpatrick.vico.core.common.component.LineComponent
 import com.patrykandpatrick.vico.core.common.component.Shadow
 import com.patrykandpatrick.vico.core.common.component.TextComponent
-import com.patrykandpatrick.vico.core.common.shader.DynamicShader
 import com.patrykandpatrick.vico.core.common.shape.Shape
 
 /** A [rememberTextComponent] alias with defaults for [Axis] labels. */
@@ -77,68 +78,38 @@ public fun rememberAxisLabelComponent(
 /** A [rememberLineComponent] alias with defaults for [Axis] lines. */
 @Composable
 public fun rememberAxisLineComponent(
-  color: Color = vicoTheme.lineColor,
+  fill: Fill = fill(vicoTheme.lineColor),
   thickness: Dp = Defaults.AXIS_LINE_WIDTH.dp,
   shape: Shape = Shape.Rectangle,
   margins: Dimensions = Dimensions.Empty,
   strokeColor: Color = Color.Transparent,
   strokeThickness: Dp = 0.dp,
-  shader: DynamicShader? = null,
   shadow: Shadow? = null,
 ): LineComponent =
-  rememberLineComponent(
-    color,
-    thickness,
-    shape,
-    margins,
-    strokeColor,
-    strokeThickness,
-    shader,
-    shadow,
-  )
+  rememberLineComponent(fill, thickness, shape, margins, strokeColor, strokeThickness, shadow)
 
 /** A [rememberLineComponent] alias with defaults for [Axis] ticks. */
 @Composable
 public fun rememberAxisTickComponent(
-  color: Color = vicoTheme.lineColor,
+  fill: Fill = fill(vicoTheme.lineColor),
   thickness: Dp = Defaults.AXIS_LINE_WIDTH.dp,
   shape: Shape = Shape.Rectangle,
   margins: Dimensions = Dimensions.Empty,
   strokeColor: Color = Color.Transparent,
   strokeThickness: Dp = 0.dp,
-  shader: DynamicShader? = null,
   shadow: Shadow? = null,
 ): LineComponent =
-  rememberLineComponent(
-    color,
-    thickness,
-    shape,
-    margins,
-    strokeColor,
-    strokeThickness,
-    shader,
-    shadow,
-  )
+  rememberLineComponent(fill, thickness, shape, margins, strokeColor, strokeThickness, shadow)
 
 /** A [rememberLineComponent] alias with defaults for [Axis] guidelines. */
 @Composable
 public fun rememberAxisGuidelineComponent(
-  color: Color = vicoTheme.lineColor,
+  fill: Fill = fill(vicoTheme.lineColor),
   thickness: Dp = Defaults.AXIS_GUIDELINE_WIDTH.dp,
   shape: Shape = Shape.dashed(Shape.Rectangle, Defaults.DASH_LENGTH.dp, Defaults.DASH_GAP.dp),
   margins: Dimensions = Dimensions.Empty,
   strokeColor: Color = Color.Transparent,
   strokeThickness: Dp = 0.dp,
-  shader: DynamicShader? = null,
   shadow: Shadow? = null,
 ): LineComponent =
-  rememberLineComponent(
-    color,
-    thickness,
-    shape,
-    margins,
-    strokeColor,
-    strokeThickness,
-    shader,
-    shadow,
-  )
+  rememberLineComponent(fill, thickness, shape, margins, strokeColor, strokeThickness, shadow)

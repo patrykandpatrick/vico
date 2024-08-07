@@ -42,7 +42,7 @@ internal fun TypedArray.getLineComponent(
   defaultShape: Shape = Shape.Rectangle,
 ): LineComponent = use { array ->
   LineComponent(
-    color = array.getColorExtended(R.styleable.LineComponentStyle_color, defaultColor),
+    fill = Fill(array.getColorExtended(R.styleable.LineComponentStyle_color, defaultColor)),
     thicknessDp =
       array.getRawDimension(context, R.styleable.LineComponentStyle_thickness, defaultThickness),
     shape =
@@ -89,7 +89,7 @@ internal fun TypedArray.getComponent(context: Context): Component? = use { array
 
   val baseComponent =
     ShapeComponent(
-      color = array.getColorExtended(R.styleable.ComponentStyle_color),
+      fill = Fill(array.getColorExtended(R.styleable.ComponentStyle_color)),
       shape =
         getNestedTypedArray(context, R.styleable.ComponentStyle_shapeStyle, R.styleable.ShapeStyle)
           .getShape(context),

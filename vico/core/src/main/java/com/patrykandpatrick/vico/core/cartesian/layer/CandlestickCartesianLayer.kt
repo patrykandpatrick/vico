@@ -34,7 +34,9 @@ import com.patrykandpatrick.vico.core.cartesian.layer.CandlestickCartesianLayer.
 import com.patrykandpatrick.vico.core.cartesian.marker.CandlestickCartesianLayerMarkerTarget
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.core.common.Defaults
+import com.patrykandpatrick.vico.core.common.Fill
 import com.patrykandpatrick.vico.core.common.component.LineComponent
+import com.patrykandpatrick.vico.core.common.component.fillOrStrokeColor
 import com.patrykandpatrick.vico.core.common.data.CartesianLayerDrawingModelInterpolator
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.core.common.data.MutableExtraStore
@@ -216,10 +218,10 @@ public open class CandlestickCartesianLayer(
             else limitedBodyBottomCanvasY,
           lowCanvasY = lowCanvasY.coerceIn(layerBounds.top, layerBounds.bottom),
           highCanvasY = highCanvasY.coerceIn(layerBounds.top, layerBounds.bottom),
-          openingColor = candle.body.solidOrStrokeColor,
-          closingColor = candle.body.solidOrStrokeColor,
-          lowColor = candle.bottomWick.solidOrStrokeColor,
-          highColor = candle.topWick.solidOrStrokeColor,
+          openingColor = candle.body.fillOrStrokeColor,
+          closingColor = candle.body.fillOrStrokeColor,
+          lowColor = candle.bottomWick.fillOrStrokeColor,
+          highColor = candle.topWick.fillOrStrokeColor,
         )
       )
   }
@@ -384,7 +386,7 @@ public open class CandlestickCartesianLayer(
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public fun LineComponent.asWick(): LineComponent =
   copy(
-    color = solidOrStrokeColor,
+    fill = Fill(fillOrStrokeColor),
     thicknessDp = Defaults.WICK_DEFAULT_WIDTH_DP,
     shape = Shape.Rectangle,
     strokeThicknessDp = 0f,

@@ -143,7 +143,7 @@ private fun rememberStartAxisLabel() =
     color = Color.Black,
     margins = Dimensions.of(4.dp),
     padding = Dimensions.of(8.dp, 2.dp),
-    background = rememberShapeComponent(Color(0xfffab94d), Shape.rounded(4.dp)),
+    background = rememberShapeComponent(fill(Color(0xfffab94d)), Shape.rounded(4.dp)),
   )
 
 @Composable
@@ -152,7 +152,7 @@ private fun rememberLegend() =
     items =
       chartColors.mapIndexed { index, chartColor ->
         rememberLegendItem(
-          icon = rememberShapeComponent(chartColor, Shape.Pill),
+          icon = rememberShapeComponent(fill(chartColor), Shape.Pill),
           labelComponent = rememberTextComponent(vicoTheme.textColor),
           label = stringResource(R.string.series_x, index + 1),
         )

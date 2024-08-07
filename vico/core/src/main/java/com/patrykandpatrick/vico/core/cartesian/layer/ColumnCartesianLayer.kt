@@ -37,6 +37,7 @@ import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.VerticalPosition
 import com.patrykandpatrick.vico.core.common.component.LineComponent
 import com.patrykandpatrick.vico.core.common.component.TextComponent
+import com.patrykandpatrick.vico.core.common.component.fillOrStrokeColor
 import com.patrykandpatrick.vico.core.common.data.CartesianLayerDrawingModelInterpolator
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.core.common.data.MutableExtraStore
@@ -329,7 +330,7 @@ public open class ColumnCartesianLayer(
       ColumnCartesianLayerMarkerTarget.Column(
         entry,
         canvasY.coerceIn(layerBounds.top, layerBounds.bottom),
-        column.solidOrStrokeColor,
+        column.fillOrStrokeColor,
       )
     when (mergeMode) {
       is MergeMode.Grouped ->
@@ -345,7 +346,7 @@ public open class ColumnCartesianLayer(
           ColumnCartesianLayerMarkerTarget.Column(
             entry,
             canvasY.coerceIn(layerBounds.top, layerBounds.bottom),
-            column.solidOrStrokeColor,
+            column.fillOrStrokeColor,
           )
     }
   }
