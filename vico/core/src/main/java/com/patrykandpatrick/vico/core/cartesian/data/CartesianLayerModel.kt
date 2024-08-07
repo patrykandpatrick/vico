@@ -17,7 +17,7 @@
 package com.patrykandpatrick.vico.core.cartesian.data
 
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayer
-import com.patrykandpatrick.vico.core.common.data.DrawingModel
+import com.patrykandpatrick.vico.core.common.data.CartesianLayerDrawingModel
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.core.common.gcdWith
 import kotlin.math.abs
@@ -39,7 +39,7 @@ public interface CartesianLayerModel {
   /** The maximum _y_ value. */
   public val maxY: Double
 
-  /** Stores auxiliary data, including [DrawingModel]s. */
+  /** Stores auxiliary data, including [CartesianLayerDrawingModel]s. */
   public val extraStore: ExtraStore
 
   /** Returns the greatest common divisor of the _x_ values’ differences. */

@@ -16,15 +16,18 @@
 
 package com.patrykandpatrick.vico.core.common.data
 
-/** Interpolates two [DrawingModel]s. */
-public interface DrawingModelInterpolator<T : DrawingModel.DrawingInfo, R : DrawingModel<T>> {
-  /** Sets the initial and target [DrawingModel]s. */
+/** Interpolates two [CartesianLayerDrawingModel]s. */
+public interface CartesianLayerDrawingModelInterpolator<
+  T : CartesianLayerDrawingModel.DrawingInfo,
+  R : CartesianLayerDrawingModel<T>,
+> {
+  /** Sets the initial and target [CartesianLayerDrawingModel]s. */
   public fun setModels(old: R?, new: R?)
 
   /**
-   * Interpolates the two [DrawingModel]s. [fraction] is the balance between the initial and target
-   * [DrawingModel]s, with 0 corresponding to the initial [DrawingModel], and 1 corresponding to the
-   * target [DrawingModel].
+   * Interpolates the two [CartesianLayerDrawingModel]s. [fraction] is the balance between the
+   * initial and target [CartesianLayerDrawingModel]s, with 0 corresponding to the initial
+   * [CartesianLayerDrawingModel], and 1 corresponding to the target [CartesianLayerDrawingModel].
    */
   public suspend fun transform(fraction: Float): R?
 }

@@ -36,8 +36,8 @@ import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.VerticalPosition
 import com.patrykandpatrick.vico.core.common.component.LineComponent
 import com.patrykandpatrick.vico.core.common.component.TextComponent
-import com.patrykandpatrick.vico.core.common.data.DefaultDrawingModelInterpolator
-import com.patrykandpatrick.vico.core.common.data.DrawingModelInterpolator
+import com.patrykandpatrick.vico.core.common.data.CartesianLayerDrawingModelInterpolator
+import com.patrykandpatrick.vico.core.common.data.DefaultCartesianLayerDrawingModelInterpolator
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.core.common.data.MutableExtraStore
 import com.patrykandpatrick.vico.core.common.doubled
@@ -76,11 +76,11 @@ public open class ColumnCartesianLayer(
   public var dataLabelValueFormatter: CartesianValueFormatter = CartesianValueFormatter.decimal(),
   public var dataLabelRotationDegrees: Float = 0f,
   public var drawingModelInterpolator:
-    DrawingModelInterpolator<
+    CartesianLayerDrawingModelInterpolator<
       ColumnCartesianLayerDrawingModel.ColumnInfo,
       ColumnCartesianLayerDrawingModel,
     > =
-    DefaultDrawingModelInterpolator(),
+    DefaultCartesianLayerDrawingModelInterpolator(),
 ) : BaseCartesianLayer<ColumnCartesianLayerModel>() {
   private val _markerTargets =
     mutableMapOf<Double, MutableList<MutableColumnCartesianLayerMarkerTarget>>()
