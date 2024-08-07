@@ -17,12 +17,13 @@
 package com.patrykandpatrick.vico.core.common
 
 import android.graphics.RectF
+import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import kotlin.math.max
 
 /**
  * [VerticalLegend] displays legend items in a vertical list.
  *
- * @param items a [Collection] of [LegendItem]s to be displayed by this [VerticalLegend].
+ * @param items adds the [LegendItem]s.
  * @param iconSizeDp defines the size of all [LegendItem.icon]s.
  * @param iconPaddingDp defines the padding between each [LegendItem.icon] and its corresponding
  *   [LegendItem.label].
@@ -30,34 +31,33 @@ import kotlin.math.max
  * @param padding defines the padding of the content.
  */
 public open class VerticalLegend<M : MeasuringContext, D : DrawingContext>(
-  protected val items: Collection<LegendItem>,
+  protected val items: AdditionScope<LegendItem>.(ExtraStore) -> Unit,
   protected val iconSizeDp: Float,
   protected val iconPaddingDp: Float,
   protected val spacingDp: Float = 0f,
   protected val padding: Dimensions = Dimensions.Empty,
 ) : Legend<M, D> {
+  private val itemManager = LegendItemManager(items)
   private val heights: HashMap<LegendItem, Float> = HashMap()
 
   override val bounds: RectF = RectF()
 
   override fun getHeight(context: M, maxWidth: Float): Float =
     with(context) {
-      items.fold(0f) { sum, item ->
+      itemManager.addItems(this)
+      itemManager.itemList.fold(0f) { sum, item ->
         sum +
           max(iconSizeDp.pixels, item.getLabelHeight(context, maxWidth, iconPaddingDp, iconSizeDp))
             .also { height -> heights[item] = height }
-      } + (padding.verticalDp + spacingDp * (items.size - 1)).pixels
+      } + (padding.verticalDp + spacingDp * (itemManager.itemList.size - 1)).pixels
     }
 
   override fun draw(context: D) {
     with(context) {
       var currentTop = bounds.top + padding.topDp.pixels
 
-      items.forEach { item ->
-        val height =
-          heights.getOrPut(item) {
-            item.getLabelHeight(this, bounds.width(), iconPaddingDp, iconSizeDp)
-          }
+      itemManager.itemList.forEach { item ->
+        val height = heights.getValue(item)
         val centerY = currentTop + height.half
         var startX =
           if (isLtr) {

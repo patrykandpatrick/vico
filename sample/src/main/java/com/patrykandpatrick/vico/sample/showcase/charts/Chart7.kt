@@ -21,7 +21,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.patrykandpatrick.vico.R
@@ -35,9 +35,10 @@ import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
 import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
+import com.patrykandpatrick.vico.compose.common.component.shapeComponent
+import com.patrykandpatrick.vico.compose.common.data.rememberExtraLambda
 import com.patrykandpatrick.vico.compose.common.fill
 import com.patrykandpatrick.vico.compose.common.of
-import com.patrykandpatrick.vico.compose.common.rememberLegendItem
 import com.patrykandpatrick.vico.compose.common.rememberVerticalLegend
 import com.patrykandpatrick.vico.compose.common.shape.rounded
 import com.patrykandpatrick.vico.compose.common.vicoTheme
@@ -48,6 +49,8 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.common.Dimensions
+import com.patrykandpatrick.vico.core.common.Legend
+import com.patrykandpatrick.vico.core.common.LegendItem
 import com.patrykandpatrick.vico.core.common.shape.Shape
 import com.patrykandpatrick.vico.databinding.Chart7Binding
 import com.patrykandpatrick.vico.sample.showcase.Defaults
@@ -147,20 +150,27 @@ private fun rememberStartAxisLabel() =
   )
 
 @Composable
-private fun rememberLegend() =
-  rememberVerticalLegend<CartesianMeasuringContext, CartesianDrawingContext>(
+private fun rememberLegend(): Legend<CartesianMeasuringContext, CartesianDrawingContext> {
+  val labelComponent = rememberTextComponent(vicoTheme.textColor)
+  val resources = LocalContext.current.resources
+  return rememberVerticalLegend(
     items =
-      chartColors.mapIndexed { index, chartColor ->
-        rememberLegendItem(
-          icon = rememberShapeComponent(chartColor, Shape.Pill),
-          labelComponent = rememberTextComponent(vicoTheme.textColor),
-          label = stringResource(R.string.series_x, index + 1),
-        )
+      rememberExtraLambda {
+        chartColors.forEachIndexed { index, color ->
+          add(
+            LegendItem(
+              icon = shapeComponent(color, Shape.Pill),
+              labelComponent = labelComponent,
+              label = resources.getString(R.string.series_x, index + 1),
+            )
+          )
+        }
       },
     iconSize = 8.dp,
     iconPadding = 8.dp,
     spacing = 4.dp,
     padding = Dimensions.of(top = 8.dp),
   )
+}
 
 private val chartColors = listOf(Color(0xffb983ff), Color(0xff91b1fd), Color(0xff8fdaff))
