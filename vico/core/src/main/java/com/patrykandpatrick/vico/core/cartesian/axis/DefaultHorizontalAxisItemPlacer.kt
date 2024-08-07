@@ -16,8 +16,8 @@
 
 package com.patrykandpatrick.vico.core.cartesian.axis
 
-import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
-import com.patrykandpatrick.vico.core.cartesian.CartesianMeasureContext
+import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
+import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
 import com.patrykandpatrick.vico.core.cartesian.HorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
 import com.patrykandpatrick.vico.core.cartesian.data.ChartValues
@@ -32,7 +32,7 @@ internal class DefaultHorizontalAxisItemPlacer(
   private val shiftExtremeTicks: Boolean,
   private val addExtremeLabelPadding: Boolean,
 ) : HorizontalAxis.ItemPlacer {
-  private val CartesianMeasureContext.addExtremeLabelPadding
+  private val CartesianMeasuringContext.addExtremeLabelPadding
     get() =
       this@DefaultHorizontalAxisItemPlacer.addExtremeLabelPadding &&
         horizontalLayout is HorizontalLayout.FullWidth
@@ -45,14 +45,14 @@ internal class DefaultHorizontalAxisItemPlacer(
       if (xLength >= 2 * xStep) add(minX + xStep * (xLength.half / xStep).roundedToNearest)
     }
 
-  override fun getShiftExtremeLines(context: CartesianDrawContext): Boolean = shiftExtremeTicks
+  override fun getShiftExtremeLines(context: CartesianDrawingContext): Boolean = shiftExtremeTicks
 
-  override fun getFirstLabelValue(context: CartesianMeasureContext, maxLabelWidth: Float) =
+  override fun getFirstLabelValue(context: CartesianMeasuringContext, maxLabelWidth: Float) =
     if (context.addExtremeLabelPadding)
       context.chartValues.minX + offset * context.chartValues.xStep
     else null
 
-  override fun getLastLabelValue(context: CartesianMeasureContext, maxLabelWidth: Float) =
+  override fun getLastLabelValue(context: CartesianMeasuringContext, maxLabelWidth: Float) =
     if (context.addExtremeLabelPadding) {
       with(context.chartValues) { maxX - (xLength - xStep * offset) % (xStep * spacing) }
     } else {
@@ -60,7 +60,7 @@ internal class DefaultHorizontalAxisItemPlacer(
     }
 
   override fun getLabelValues(
-    context: CartesianDrawContext,
+    context: CartesianDrawingContext,
     visibleXRange: ClosedFloatingPointRange<Double>,
     fullXRange: ClosedFloatingPointRange<Double>,
     maxLabelWidth: Float,
@@ -100,20 +100,20 @@ internal class DefaultHorizontalAxisItemPlacer(
   }
 
   override fun getWidthMeasurementLabelValues(
-    context: CartesianMeasureContext,
+    context: CartesianMeasuringContext,
     horizontalDimensions: HorizontalDimensions,
     fullXRange: ClosedFloatingPointRange<Double>,
   ) = if (context.addExtremeLabelPadding) context.chartValues.measuredLabelValues else emptyList()
 
   override fun getHeightMeasurementLabelValues(
-    context: CartesianMeasureContext,
+    context: CartesianMeasuringContext,
     horizontalDimensions: HorizontalDimensions,
     fullXRange: ClosedFloatingPointRange<Double>,
     maxLabelWidth: Float,
   ) = context.chartValues.measuredLabelValues
 
   override fun getLineValues(
-    context: CartesianDrawContext,
+    context: CartesianDrawingContext,
     visibleXRange: ClosedFloatingPointRange<Double>,
     fullXRange: ClosedFloatingPointRange<Double>,
     maxLabelWidth: Float,
@@ -139,7 +139,7 @@ internal class DefaultHorizontalAxisItemPlacer(
     }
 
   override fun getStartHorizontalAxisInset(
-    context: CartesianMeasureContext,
+    context: CartesianMeasuringContext,
     horizontalDimensions: HorizontalDimensions,
     tickThickness: Float,
     maxLabelWidth: Float,
@@ -153,7 +153,7 @@ internal class DefaultHorizontalAxisItemPlacer(
   }
 
   override fun getEndHorizontalAxisInset(
-    context: CartesianMeasureContext,
+    context: CartesianMeasuringContext,
     horizontalDimensions: HorizontalDimensions,
     tickThickness: Float,
     maxLabelWidth: Float,

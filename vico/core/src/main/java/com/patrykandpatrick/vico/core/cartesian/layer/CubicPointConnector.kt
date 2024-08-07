@@ -17,7 +17,7 @@
 package com.patrykandpatrick.vico.core.cartesian.layer
 
 import android.graphics.Path
-import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
+import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
 import kotlin.math.abs
 
 internal data class CubicPointConnector(private val curvature: Float) :
@@ -27,7 +27,7 @@ internal data class CubicPointConnector(private val curvature: Float) :
   }
 
   override fun connect(
-    context: CartesianDrawContext,
+    context: CartesianDrawingContext,
     path: Path,
     x1: Float,
     y1: Float,

@@ -20,12 +20,12 @@ import android.graphics.Canvas
 import android.graphics.RectF
 import androidx.annotation.RestrictTo
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayer
-import com.patrykandpatrick.vico.core.common.DrawContext
+import com.patrykandpatrick.vico.core.common.DrawingContext
 import com.patrykandpatrick.vico.core.common.Point
 import kotlin.math.ceil
 
-/** A [DrawContext] extension with [CartesianChart]-specific data. */
-public interface CartesianDrawContext : DrawContext, CartesianMeasureContext {
+/** A [DrawingContext] extension with [CartesianChart]-specific data. */
+public interface CartesianDrawingContext : DrawingContext, CartesianMeasuringContext {
   /** The bounds of the [CartesianLayer] area. */
   public val layerBounds: RectF
 
@@ -49,7 +49,7 @@ public interface CartesianDrawContext : DrawContext, CartesianMeasureContext {
 
 /** @suppress */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public fun CartesianMeasureContext.getMaxScrollDistance(
+public fun CartesianMeasuringContext.getMaxScrollDistance(
   chartWidth: Float,
   horizontalDimensions: HorizontalDimensions,
 ): Float =
@@ -59,21 +59,21 @@ public fun CartesianMeasureContext.getMaxScrollDistance(
     }
   )
 
-internal fun CartesianDrawContext.getMaxScrollDistance() =
+internal fun CartesianDrawingContext.getMaxScrollDistance() =
   getMaxScrollDistance(layerBounds.width(), horizontalDimensions)
 
 /** @suppress */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public fun CartesianDrawContext(
+public fun CartesianDrawingContext(
+  measuringContext: CartesianMeasuringContext,
   canvas: Canvas,
-  measureContext: CartesianMeasureContext,
   markerTouchPoint: Point?,
   horizontalDimensions: HorizontalDimensions,
   layerBounds: RectF,
   scroll: Float,
   zoom: Float,
-): CartesianDrawContext =
-  object : CartesianDrawContext, CartesianMeasureContext by measureContext {
+): CartesianDrawingContext =
+  object : CartesianDrawingContext, CartesianMeasuringContext by measuringContext {
     override val layerBounds: RectF = layerBounds
 
     override var canvas: Canvas = canvas

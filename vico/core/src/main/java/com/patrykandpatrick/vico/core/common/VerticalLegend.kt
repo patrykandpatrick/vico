@@ -29,7 +29,7 @@ import kotlin.math.max
  * @param spacingDp defines the vertical spacing between each [LegendItem].
  * @param padding defines the padding of the content.
  */
-public open class VerticalLegend<M : MeasureContext, D : DrawContext>(
+public open class VerticalLegend<M : MeasuringContext, D : DrawingContext>(
   protected val items: Collection<LegendItem>,
   protected val iconSizeDp: Float,
   protected val iconPaddingDp: Float,

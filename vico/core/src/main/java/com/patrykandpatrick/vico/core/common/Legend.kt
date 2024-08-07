@@ -17,7 +17,7 @@
 package com.patrykandpatrick.vico.core.common
 
 /** Defines the functions required by the library to draw a chart legend. */
-public interface Legend<M : MeasureContext, D : DrawContext> : Bounded {
+public interface Legend<M : MeasuringContext, D : DrawingContext> : Bounded {
   /** Returns the height of the legend. */
   public fun getHeight(context: M, maxWidth: Float): Float
 

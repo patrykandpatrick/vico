@@ -27,7 +27,7 @@ import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
 public interface ChartInsetter<M> {
   /** Ensures that there are sufficient insets. */
   public fun updateInsets(
-    context: CartesianMeasureContext,
+    context: CartesianMeasuringContext,
     horizontalDimensions: HorizontalDimensions,
     model: M,
     insets: Insets,
@@ -38,7 +38,7 @@ public interface ChartInsetter<M> {
    * [CartesianLayer] area.
    */
   public fun updateHorizontalInsets(
-    context: CartesianMeasureContext,
+    context: CartesianMeasuringContext,
     freeHeight: Float,
     model: M,
     insets: HorizontalInsets,

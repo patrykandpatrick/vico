@@ -14,27 +14,31 @@
  * limitations under the License.
  */
 
-package com.patrykandpatrick.vico.core.common
+package com.patrykandpatrick.vico.core.cartesian
 
 import android.graphics.RectF
 import androidx.annotation.RestrictTo
-import com.patrykandpatrick.vico.core.common.data.CacheStore
-import com.patrykandpatrick.vico.core.common.data.MutableExtraStore
+import com.patrykandpatrick.vico.core.cartesian.data.ChartValues
+import com.patrykandpatrick.vico.core.common.MutableMeasuringContext
 
-/** A [MeasureContext] implementation that facilitates the mutation of some of its properties. */
-public open class MutableMeasureContext(
+/** @suppress */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+public class MutableCartesianMeasuringContext(
   override val canvasBounds: RectF,
   override var density: Float,
   override var isLtr: Boolean,
-  @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) public var spToPx: (Float) -> Float,
-) : MeasureContext {
-  @Deprecated(
-    "To cache drawing data, use `cacheStore`. If using `extraStore` for communication between " +
-      "functions or classes, switch to a suitable alternative."
-  )
-  override val extraStore: MutableExtraStore = MutableExtraStore()
-
-  override val cacheStore: CacheStore = CacheStore()
-
+  override var scrollEnabled: Boolean,
+  override var zoomEnabled: Boolean,
+  override var horizontalLayout: HorizontalLayout,
+  override var chartValues: ChartValues,
+  spToPx: (Float) -> Float,
+) :
+  MutableMeasuringContext(
+    canvasBounds = canvasBounds,
+    density = density,
+    isLtr = isLtr,
+    spToPx = spToPx,
+  ),
+  CartesianMeasuringContext {
   override fun spToPx(sp: Float): Float = spToPx.invoke(sp)
 }

@@ -22,31 +22,28 @@ import androidx.annotation.RestrictTo
 import com.patrykandpatrick.vico.core.common.data.CacheStore
 import com.patrykandpatrick.vico.core.common.data.MutableExtraStore
 
-/**
- * [DrawContext] is an extension of [MeasureContext] that stores a [Canvas] and other properties. It
- * also defines helpful drawing functions.
- */
-public interface DrawContext : MeasureContext {
+/** A [MeasuringContext] extension with a [Canvas] reference. */
+public interface DrawingContext : MeasuringContext {
   /** The canvas to draw the chart on. */
   public val canvas: Canvas
 
   /**
-   * Updates the value of [DrawContext.canvas] to [canvas], runs [block], and restores the previous
-   * [DrawContext.canvas] value.
+   * Updates the value of [DrawingContext.canvas] to [canvas], runs [block], and restores the
+   * previous [DrawingContext.canvas] value.
    */
   public fun withOtherCanvas(canvas: Canvas, block: () -> Unit)
 }
 
 /** @suppress */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public fun drawContext(
+public fun DrawingContext(
   canvas: Canvas,
   density: Float = 1f,
   isLtr: Boolean = true,
   canvasBounds: RectF = RectF(0f, 0f, canvas.width.toFloat(), canvas.height.toFloat()),
   spToPx: (Float) -> Float = { it },
-): DrawContext =
-  object : DrawContext {
+): DrawingContext =
+  object : DrawingContext {
     override val canvasBounds: RectF = canvasBounds
 
     override var canvas: Canvas = canvas

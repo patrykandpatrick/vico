@@ -19,7 +19,7 @@ package com.patrykandpatrick.vico.core.common.shape
 import android.graphics.Paint
 import android.graphics.Path
 import com.patrykandpatrick.vico.core.common.Defaults.MARKER_TICK_SIZE
-import com.patrykandpatrick.vico.core.common.DrawContext
+import com.patrykandpatrick.vico.core.common.DrawingContext
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.core.common.doubled
 import com.patrykandpatrick.vico.core.common.half
@@ -70,7 +70,7 @@ public open class MarkerCorneredShape(
   )
 
   override fun draw(
-    context: DrawContext,
+    context: DrawingContext,
     paint: Paint,
     path: Path,
     left: Float,
@@ -136,7 +136,7 @@ public open class MarkerCorneredShape(
     replaceWith = ReplaceWith("draw(context, paint, path, left, top, right, bottom)"),
   )
   override fun drawShape(
-    context: DrawContext,
+    context: DrawingContext,
     paint: Paint,
     path: Path,
     left: Float,

@@ -31,9 +31,9 @@ import androidx.compose.runtime.Immutable
 import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.Defaults.TEXT_COMPONENT_LINE_COUNT
 import com.patrykandpatrick.vico.core.common.Dimensions
-import com.patrykandpatrick.vico.core.common.DrawContext
+import com.patrykandpatrick.vico.core.common.DrawingContext
 import com.patrykandpatrick.vico.core.common.HorizontalPosition
-import com.patrykandpatrick.vico.core.common.MeasureContext
+import com.patrykandpatrick.vico.core.common.MeasuringContext
 import com.patrykandpatrick.vico.core.common.VerticalPosition
 import com.patrykandpatrick.vico.core.common.copy
 import com.patrykandpatrick.vico.core.common.data.CacheStore
@@ -105,7 +105,7 @@ public open class TextComponent(
    * @param rotationDegrees the rotation of the text (in degrees).
    */
   public fun draw(
-    context: DrawContext,
+    context: DrawingContext,
     text: CharSequence,
     x: Float,
     y: Float,
@@ -192,7 +192,7 @@ public open class TextComponent(
   }
 
   private fun HorizontalPosition.getTextStartPosition(
-    context: MeasureContext,
+    context: MeasuringContext,
     baseXPosition: Float,
     width: Float,
   ): Float =
@@ -208,10 +208,10 @@ public open class TextComponent(
       }
     }
 
-  private fun MeasureContext.getTextLeftPosition(baseXPosition: Float): Float =
+  private fun MeasuringContext.getTextLeftPosition(baseXPosition: Float): Float =
     baseXPosition + padding.getLeftDp(isLtr).pixels + margins.getLeftDp(isLtr).pixels
 
-  private fun MeasureContext.getTextRightPosition(baseXPosition: Float, width: Float): Float =
+  private fun MeasuringContext.getTextRightPosition(baseXPosition: Float, width: Float): Float =
     baseXPosition - padding.getRightDp(isLtr).pixels - margins.getRightDp(isLtr).pixels - width
 
   private fun getTextAlignmentCorrection(width: Float): Float {
@@ -234,7 +234,7 @@ public open class TextComponent(
 
   @JvmName("getTextTopPositionExt")
   private fun VerticalPosition.getTextTopPosition(
-    context: MeasureContext,
+    context: MeasuringContext,
     textY: Float,
     layoutHeight: Float,
   ): Float =
@@ -252,7 +252,7 @@ public open class TextComponent(
    * defines whether to extend [text] by such a number of blank lines that it has [lineCount] lines.
    */
   public fun getWidth(
-    context: MeasureContext,
+    context: MeasuringContext,
     text: CharSequence? = null,
     maxWidth: Int = DEF_LAYOUT_SIZE,
     maxHeight: Int = DEF_LAYOUT_SIZE,
@@ -274,7 +274,7 @@ public open class TextComponent(
    * defines whether to extend [text] by such a number of blank lines that it has [lineCount] lines.
    */
   public fun getHeight(
-    context: MeasureContext,
+    context: MeasuringContext,
     text: CharSequence? = null,
     maxWidth: Int = DEF_LAYOUT_SIZE,
     maxHeight: Int = DEF_LAYOUT_SIZE,
@@ -297,7 +297,7 @@ public open class TextComponent(
    * [lineCount] lines.
    */
   public fun getBounds(
-    context: MeasureContext,
+    context: MeasuringContext,
     text: CharSequence? = null,
     maxWidth: Int = DEF_LAYOUT_SIZE,
     maxHeight: Int = DEF_LAYOUT_SIZE,
@@ -361,7 +361,7 @@ public open class TextComponent(
     )
 
   private fun getLayout(
-    context: MeasureContext,
+    context: MeasuringContext,
     text: CharSequence,
     width: Int = DEF_LAYOUT_SIZE,
     height: Int = DEF_LAYOUT_SIZE,
@@ -411,7 +411,7 @@ public open class TextComponent(
       }
     }
 
-  private inline fun DrawContext.withSavedCanvas(block: Canvas.() -> Unit) {
+  private inline fun DrawingContext.withSavedCanvas(block: Canvas.() -> Unit) {
     canvas.save()
     canvas.block()
     canvas.restore()
@@ -422,7 +422,7 @@ public open class TextComponent(
   public fun interface MinWidth {
     /** Returns the minimum width. */
     public fun getValue(
-      context: MeasureContext,
+      context: MeasuringContext,
       textComponent: TextComponent,
       maxWidth: Int,
       maxHeight: Int,
@@ -433,7 +433,7 @@ public open class TextComponent(
     public companion object {
       internal class Fixed(private val valueDp: Float) : MinWidth {
         override fun getValue(
-          context: MeasureContext,
+          context: MeasuringContext,
           textComponent: TextComponent,
           maxWidth: Int,
           maxHeight: Int,
@@ -450,7 +450,7 @@ public open class TextComponent(
         private val bounds = RectF()
 
         override fun getValue(
-          context: MeasureContext,
+          context: MeasuringContext,
           textComponent: TextComponent,
           maxWidth: Int,
           maxHeight: Int,

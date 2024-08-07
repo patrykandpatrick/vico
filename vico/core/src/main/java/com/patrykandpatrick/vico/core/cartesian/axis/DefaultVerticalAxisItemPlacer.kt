@@ -16,8 +16,8 @@
 
 package com.patrykandpatrick.vico.core.cartesian.axis
 
-import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
-import com.patrykandpatrick.vico.core.cartesian.CartesianMeasureContext
+import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
+import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
 import com.patrykandpatrick.vico.core.common.data.CacheStore
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.core.common.getDivisors
@@ -33,24 +33,24 @@ internal class DefaultVerticalAxisItemPlacer(
   private val mode: Mode,
   private val shiftTopLines: Boolean,
 ) : VerticalAxis.ItemPlacer {
-  override fun getShiftTopLines(context: CartesianDrawContext): Boolean = shiftTopLines
+  override fun getShiftTopLines(context: CartesianDrawingContext): Boolean = shiftTopLines
 
   override fun getLabelValues(
-    context: CartesianDrawContext,
+    context: CartesianDrawingContext,
     axisHeight: Float,
     maxLabelHeight: Float,
     position: Axis.Position.Vertical,
   ) = getWidthMeasurementLabelValues(context, axisHeight, maxLabelHeight, position)
 
   override fun getWidthMeasurementLabelValues(
-    context: CartesianMeasureContext,
+    context: CartesianMeasuringContext,
     axisHeight: Float,
     maxLabelHeight: Float,
     position: Axis.Position.Vertical,
   ): List<Double> = mode.getLabelValues(context, axisHeight, maxLabelHeight, position)
 
   override fun getHeightMeasurementLabelValues(
-    context: CartesianMeasureContext,
+    context: CartesianMeasuringContext,
     position: Axis.Position.Vertical,
   ): List<Double> {
     val yRange = context.chartValues.getYRange(position)
@@ -58,7 +58,7 @@ internal class DefaultVerticalAxisItemPlacer(
   }
 
   override fun getTopVerticalAxisInset(
-    context: CartesianMeasureContext,
+    context: CartesianMeasuringContext,
     verticalLabelPosition: VerticalAxis.VerticalLabelPosition,
     maxLabelHeight: Float,
     maxLineThickness: Float,
@@ -75,7 +75,7 @@ internal class DefaultVerticalAxisItemPlacer(
     }
 
   override fun getBottomVerticalAxisInset(
-    context: CartesianMeasureContext,
+    context: CartesianMeasuringContext,
     verticalLabelPosition: VerticalAxis.VerticalLabelPosition,
     maxLabelHeight: Float,
     maxLineThickness: Float,
@@ -90,23 +90,23 @@ internal class DefaultVerticalAxisItemPlacer(
 
   sealed interface Mode {
     fun getSimpleLabelValues(
-      context: CartesianMeasureContext,
+      context: CartesianMeasuringContext,
       axisHeight: Float,
       maxLabelHeight: Float,
       position: Axis.Position.Vertical,
     ): List<Double>
 
     fun getMixedLabelValues(
-      context: CartesianMeasureContext,
+      context: CartesianMeasuringContext,
       axisHeight: Float,
       maxLabelHeight: Float,
       position: Axis.Position.Vertical,
     ): List<Double>
 
-    fun insetsRequired(context: CartesianMeasureContext): Boolean = true
+    fun insetsRequired(context: CartesianMeasuringContext): Boolean = true
 
     fun getLabelValues(
-      context: CartesianMeasureContext,
+      context: CartesianMeasuringContext,
       axisHeight: Float,
       maxLabelHeight: Float,
       position: Axis.Position.Vertical,
@@ -118,13 +118,13 @@ internal class DefaultVerticalAxisItemPlacer(
       }
 
     class Step(private val step: (ExtraStore) -> Double?) : Mode {
-      private fun CartesianMeasureContext.getStepOrThrow() =
+      private fun CartesianMeasuringContext.getStepOrThrow() =
         step(chartValues.model.extraStore)?.also {
           require(it > 0) { "`step` must return a positive value." }
         }
 
       private fun getPartialLabelValues(
-        context: CartesianMeasureContext,
+        context: CartesianMeasuringContext,
         minY: Double,
         maxY: Double,
         freeHeight: Float,
@@ -162,7 +162,7 @@ internal class DefaultVerticalAxisItemPlacer(
       }
 
       override fun getSimpleLabelValues(
-        context: CartesianMeasureContext,
+        context: CartesianMeasuringContext,
         axisHeight: Float,
         maxLabelHeight: Float,
         position: Axis.Position.Vertical,
@@ -183,7 +183,7 @@ internal class DefaultVerticalAxisItemPlacer(
         }
 
       override fun getMixedLabelValues(
-        context: CartesianMeasureContext,
+        context: CartesianMeasuringContext,
         axisHeight: Float,
         maxLabelHeight: Float,
         position: Axis.Position.Vertical,
@@ -215,13 +215,13 @@ internal class DefaultVerticalAxisItemPlacer(
     }
 
     class Count(private val count: (ExtraStore) -> Int?) : Mode {
-      private fun CartesianMeasureContext.getCountOrThrow() =
+      private fun CartesianMeasuringContext.getCountOrThrow() =
         count(chartValues.model.extraStore)?.also {
           require(it >= 0) { "`count` must return a nonnegative value." }
         }
 
       override fun getSimpleLabelValues(
-        context: CartesianMeasureContext,
+        context: CartesianMeasuringContext,
         axisHeight: Float,
         maxLabelHeight: Float,
         position: Axis.Position.Vertical,
@@ -245,7 +245,7 @@ internal class DefaultVerticalAxisItemPlacer(
       }
 
       override fun getMixedLabelValues(
-        context: CartesianMeasureContext,
+        context: CartesianMeasuringContext,
         axisHeight: Float,
         maxLabelHeight: Float,
         position: Axis.Position.Vertical,
@@ -300,7 +300,7 @@ internal class DefaultVerticalAxisItemPlacer(
         return values
       }
 
-      override fun insetsRequired(context: CartesianMeasureContext): Boolean =
+      override fun insetsRequired(context: CartesianMeasuringContext): Boolean =
         context.getCountOrThrow() != 0
     }
   }

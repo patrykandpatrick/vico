@@ -18,7 +18,7 @@ package com.patrykandpatrick.vico.core.cartesian.axis
 
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
-import com.patrykandpatrick.vico.core.common.MeasureContext
+import com.patrykandpatrick.vico.core.common.MeasuringContext
 import com.patrykandpatrick.vico.core.common.component.LineComponent
 import com.patrykandpatrick.vico.core.common.component.TextComponent
 import com.patrykandpatrick.vico.core.common.orZero
@@ -54,16 +54,16 @@ public abstract class BaseAxis<P : Axis.Position>(
 
   override val bounds: RectF = RectF()
 
-  protected val MeasureContext.lineThickness: Float
+  protected val MeasuringContext.lineThickness: Float
     get() = line?.thicknessDp.orZero.pixels
 
-  protected val MeasureContext.tickThickness: Float
+  protected val MeasuringContext.tickThickness: Float
     get() = tick?.thicknessDp.orZero.pixels
 
-  protected val MeasureContext.guidelineThickness: Float
+  protected val MeasuringContext.guidelineThickness: Float
     get() = guideline?.thicknessDp.orZero.pixels
 
-  protected val MeasureContext.tickLength: Float
+  protected val MeasuringContext.tickLength: Float
     get() = if (tick != null) tickLengthDp.pixels else 0f
 
   override fun setRestrictedBounds(vararg bounds: RectF?) {

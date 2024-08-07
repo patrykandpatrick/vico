@@ -23,20 +23,20 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
 import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
-import com.patrykandpatrick.vico.core.cartesian.MutableCartesianMeasureContext
+import com.patrykandpatrick.vico.core.cartesian.MutableCartesianMeasuringContext
 import com.patrykandpatrick.vico.core.cartesian.data.ChartValues
 
 @Composable
-internal fun rememberCartesianMeasureContext(
+internal fun rememberCartesianMeasuringContext(
   scrollEnabled: Boolean,
   zoomEnabled: Boolean,
   canvasBounds: RectF,
   horizontalLayout: HorizontalLayout,
   spToPx: (Float) -> Float,
   chartValues: ChartValues,
-): MutableCartesianMeasureContext =
+): MutableCartesianMeasuringContext =
   remember {
-      MutableCartesianMeasureContext(
+      MutableCartesianMeasuringContext(
         canvasBounds = canvasBounds,
         density = 0f,
         isLtr = true,

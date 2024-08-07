@@ -30,7 +30,7 @@ import kotlin.math.max
  * @param spacingDp defines the horizontal spacing between adjacent [LegendItem]s.
  * @param padding defines the padding of the content.
  */
-public open class HorizontalLegend<M : MeasureContext, D : DrawContext>(
+public open class HorizontalLegend<M : MeasuringContext, D : DrawingContext>(
   protected val items: Collection<LegendItem>,
   protected val iconSizeDp: Float,
   protected val iconPaddingDp: Float,
@@ -127,7 +127,7 @@ public open class HorizontalLegend<M : MeasureContext, D : DrawContext>(
   }
 
   protected fun buildLines(
-    context: MeasureContext,
+    context: MeasuringContext,
     availableWidth: Float,
     callback: (it: LegendItem) -> Unit = {},
   ): Unit =

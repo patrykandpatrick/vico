@@ -17,8 +17,8 @@
 package com.patrykandpatrick.vico.core.cartesian.layer
 
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
-import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
-import com.patrykandpatrick.vico.core.cartesian.CartesianMeasureContext
+import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
+import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
 import com.patrykandpatrick.vico.core.cartesian.ChartInsetter
 import com.patrykandpatrick.vico.core.cartesian.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianLayerModel
@@ -36,11 +36,11 @@ public interface CartesianLayer<M : CartesianLayerModel> : ChartInsetter<M> {
   public val markerTargets: Map<Double, List<CartesianMarker.Target>>
 
   /** Draws the [CartesianLayer]. */
-  public fun draw(context: CartesianDrawContext, model: M)
+  public fun draw(context: CartesianDrawingContext, model: M)
 
   /** Updates [horizontalDimensions] to match this [CartesianLayer]’s dimensions. */
   public fun updateHorizontalDimensions(
-    context: CartesianMeasureContext,
+    context: CartesianMeasuringContext,
     horizontalDimensions: MutableHorizontalDimensions,
     model: M,
   )

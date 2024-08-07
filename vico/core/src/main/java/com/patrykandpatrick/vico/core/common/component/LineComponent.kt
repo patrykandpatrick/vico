@@ -20,8 +20,8 @@ import android.graphics.Color
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.Dimensions
-import com.patrykandpatrick.vico.core.common.DrawContext
-import com.patrykandpatrick.vico.core.common.MeasureContext
+import com.patrykandpatrick.vico.core.common.DrawingContext
+import com.patrykandpatrick.vico.core.common.MeasuringContext
 import com.patrykandpatrick.vico.core.common.shader.DynamicShader
 import com.patrykandpatrick.vico.core.common.shape.Shape
 
@@ -47,7 +47,7 @@ public open class LineComponent(
   shader: DynamicShader? = null,
   shadow: Shadow? = null,
 ) : ShapeComponent(color, shape, margins, strokeColor, strokeThicknessDp, shader, shadow) {
-  private val MeasureContext.thickness: Float
+  private val MeasuringContext.thickness: Float
     get() = thicknessDp.pixels
 
   /** [color] if it’s not [Color.TRANSPARENT], and [strokeColor] otherwise. */
@@ -56,7 +56,7 @@ public open class LineComponent(
 
   /** A convenience function for [draw] that draws the [LineComponent] horizontally. */
   public open fun drawHorizontal(
-    context: DrawContext,
+    context: DrawingContext,
     left: Float,
     right: Float,
     centerY: Float,
@@ -77,7 +77,7 @@ public open class LineComponent(
    * current [thicknessDp].
    */
   public open fun fitsInHorizontal(
-    context: DrawContext,
+    context: DrawingContext,
     left: Float,
     right: Float,
     centerY: Float,
@@ -95,7 +95,7 @@ public open class LineComponent(
 
   /** A convenience function for [draw] that draws the [LineComponent] vertically. */
   public open fun drawVertical(
-    context: DrawContext,
+    context: DrawingContext,
     top: Float,
     bottom: Float,
     centerX: Float,
@@ -116,7 +116,7 @@ public open class LineComponent(
    * current [thicknessDp].
    */
   public open fun fitsInVertical(
-    context: DrawContext,
+    context: DrawingContext,
     top: Float,
     bottom: Float,
     centerX: Float,
@@ -137,7 +137,7 @@ public open class LineComponent(
    * current [thicknessDp].
    */
   public open fun intersectsVertical(
-    context: DrawContext,
+    context: DrawingContext,
     top: Float,
     bottom: Float,
     centerX: Float,

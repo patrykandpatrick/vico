@@ -22,8 +22,8 @@ import com.patrykandpatrick.vico.compose.cartesian.layer.rememberCandlestickCart
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
-import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
-import com.patrykandpatrick.vico.core.cartesian.CartesianMeasureContext
+import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
+import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
 import com.patrykandpatrick.vico.core.cartesian.FadingEdges
 import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
 import com.patrykandpatrick.vico.core.cartesian.axis.Axis
@@ -52,7 +52,7 @@ public fun rememberCartesianChart(
   marker: CartesianMarker? = null,
   markerVisibilityListener: CartesianMarkerVisibilityListener? = null,
   horizontalLayout: HorizontalLayout = HorizontalLayout.segmented(),
-  legend: Legend<CartesianMeasureContext, CartesianDrawContext>? = null,
+  legend: Legend<CartesianMeasuringContext, CartesianDrawingContext>? = null,
   fadingEdges: FadingEdges? = null,
   decorations: List<Decoration> = emptyList(),
   persistentMarkers: (CartesianChart.PersistentMarkerScope.(ExtraStore) -> Unit)? = null,

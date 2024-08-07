@@ -30,7 +30,7 @@ import androidx.core.view.isVisible
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
 import com.patrykandpatrick.vico.core.common.Animation
-import com.patrykandpatrick.vico.core.common.MutableMeasureContext
+import com.patrykandpatrick.vico.core.common.MutableMeasuringContext
 import com.patrykandpatrick.vico.core.common.data.MutableExtraStore
 import com.patrykandpatrick.vico.core.common.set
 import com.patrykandpatrick.vico.core.common.spToPx
@@ -49,8 +49,8 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   FrameLayout(context, attrs, defStyleAttr) {
   protected val canvasBounds: RectF = RectF()
 
-  protected open val measureContext: MutableMeasureContext =
-    MutableMeasureContext(
+  protected open val measuringContext: MutableMeasuringContext =
+    MutableMeasuringContext(
       canvasBounds = canvasBounds,
       density = context.density,
       isLtr = context.isLtr,
@@ -194,14 +194,12 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     animator.interpolator = interpolator
   }
 
-  @Suppress("UNNECESSARY_SAFE_CALL")
   override fun onRtlPropertiesChanged(layoutDirection: Int) {
-    // This function may be invoked inside of the View’s constructor, before the measureContext is
-    // initialized.
-    // In this case, we can ignore this callback, as the layout direction will be determined when
-    // the
-    // MeasureContext instance is created.
-    measureContext?.isLtr = layoutDirection == View.LAYOUT_DIRECTION_LTR
+    /* This function may be called by the `View` constructor, in which case `measuringContext` won’t
+    have been initialized yet. Such calls can be ignored, as `Context.isLtr` will be read at
+    `MutableMeasuringContext` instantiation. */
+    @Suppress("UNNECESSARY_SAFE_CALL")
+    measuringContext?.isLtr = layoutDirection == View.LAYOUT_DIRECTION_LTR
   }
 }
 

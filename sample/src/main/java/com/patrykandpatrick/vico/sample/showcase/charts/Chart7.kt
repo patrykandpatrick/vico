@@ -41,8 +41,8 @@ import com.patrykandpatrick.vico.compose.common.rememberLegendItem
 import com.patrykandpatrick.vico.compose.common.rememberVerticalLegend
 import com.patrykandpatrick.vico.compose.common.shape.rounded
 import com.patrykandpatrick.vico.compose.common.vicoTheme
-import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
-import com.patrykandpatrick.vico.core.cartesian.CartesianMeasureContext
+import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
+import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
@@ -148,7 +148,7 @@ private fun rememberStartAxisLabel() =
 
 @Composable
 private fun rememberLegend() =
-  rememberVerticalLegend<CartesianMeasureContext, CartesianDrawContext>(
+  rememberVerticalLegend<CartesianMeasuringContext, CartesianDrawingContext>(
     items =
       chartColors.mapIndexed { index, chartColor ->
         rememberLegendItem(

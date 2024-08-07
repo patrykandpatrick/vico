@@ -32,7 +32,7 @@ import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import com.patrykandpatrick.vico.core.cartesian.AutoScrollCondition
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
-import com.patrykandpatrick.vico.core.cartesian.CartesianMeasureContext
+import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
 import com.patrykandpatrick.vico.core.cartesian.HorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.Scroll
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
@@ -53,7 +53,7 @@ public class VicoScrollState {
   private val _value: MutableFloatState
   private val _maxValue = mutableFloatStateOf(0f)
   private var initialScrollHandled: Boolean
-  private var context: CartesianMeasureContext? = null
+  private var context: CartesianMeasuringContext? = null
   private var horizontalDimensions: HorizontalDimensions? = null
   private var bounds: RectF? = null
   internal val scrollEnabled: Boolean
@@ -134,7 +134,7 @@ public class VicoScrollState {
   )
 
   private inline fun withUpdated(
-    block: (CartesianMeasureContext, HorizontalDimensions, RectF) -> Unit
+    block: (CartesianMeasuringContext, HorizontalDimensions, RectF) -> Unit
   ) {
     val context = this.context
     val horizontalDimensions = this.horizontalDimensions
@@ -145,7 +145,7 @@ public class VicoScrollState {
   }
 
   internal fun update(
-    context: CartesianMeasureContext,
+    context: CartesianMeasuringContext,
     bounds: RectF,
     horizontalDimensions: HorizontalDimensions,
   ) {

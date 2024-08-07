@@ -22,7 +22,7 @@ import com.patrykandpatrick.vico.core.common.data.CacheStore
 import com.patrykandpatrick.vico.core.common.data.MutableExtraStore
 
 /** Holds data used for measuring and drawing. */
-public interface MeasureContext {
+public interface MeasuringContext {
   /** The bounds of the [Canvas]. */
   public val canvasBounds: RectF
 

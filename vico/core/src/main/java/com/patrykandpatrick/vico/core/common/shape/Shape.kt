@@ -22,7 +22,7 @@ import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.graphics.drawable.Drawable
 import android.os.Build
-import com.patrykandpatrick.vico.core.common.DrawContext
+import com.patrykandpatrick.vico.core.common.DrawingContext
 
 /** Defines a shape that can be drawn on a canvas. */
 public interface Shape {
@@ -42,7 +42,7 @@ public interface Shape {
    */
   @Suppress("DEPRECATION")
   public fun draw(
-    context: DrawContext,
+    context: DrawingContext,
     paint: Paint,
     path: Path,
     left: Float,
@@ -72,7 +72,7 @@ public interface Shape {
     replaceWith = ReplaceWith("draw(context, paint, path, left, top, right, bottom)"),
   )
   public fun drawShape(
-    context: DrawContext,
+    context: DrawingContext,
     paint: Paint,
     path: Path,
     left: Float,
@@ -86,7 +86,7 @@ public interface Shape {
     public val Rectangle: Shape =
       object : Shape {
         override fun draw(
-          context: DrawContext,
+          context: DrawingContext,
           paint: Paint,
           path: Path,
           left: Float,
@@ -107,7 +107,7 @@ public interface Shape {
           replaceWith = ReplaceWith("draw(context, paint, path, left, top, right, bottom)"),
         )
         override fun drawShape(
-          context: DrawContext,
+          context: DrawingContext,
           paint: Paint,
           path: Path,
           left: Float,
@@ -235,7 +235,7 @@ public interface Shape {
             drawable.intrinsicHeight.coerceAtLeast(1).toFloat()
 
         override fun draw(
-          context: DrawContext,
+          context: DrawingContext,
           paint: Paint,
           path: Path,
           left: Float,
@@ -297,7 +297,7 @@ public interface Shape {
           replaceWith = ReplaceWith("draw(context, paint, path, left, top, right, bottom)"),
         )
         override fun drawShape(
-          context: DrawContext,
+          context: DrawingContext,
           paint: Paint,
           path: Path,
           left: Float,

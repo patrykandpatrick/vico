@@ -20,7 +20,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapShader
 import android.graphics.Canvas
 import android.graphics.Shader
-import com.patrykandpatrick.vico.core.common.DrawContext
+import com.patrykandpatrick.vico.core.common.DrawingContext
 import com.patrykandpatrick.vico.core.common.component.Component
 import com.patrykandpatrick.vico.core.common.half
 
@@ -42,7 +42,7 @@ public class ComponentShader(
   private val tileYMode: Shader.TileMode = tileXMode,
 ) : CacheableDynamicShader() {
   override fun createShader(
-    context: DrawContext,
+    context: DrawingContext,
     left: Float,
     top: Float,
     right: Float,
@@ -70,7 +70,7 @@ public class ComponentShader(
       return BitmapShader(bitmap, tileXMode, tileYMode)
     }
 
-  private fun Component.draw(context: DrawContext, x: Float, y: Float, size: Float) {
+  private fun Component.draw(context: DrawingContext, x: Float, y: Float, size: Float) {
     draw(context, x, y, x + size, y + size)
   }
 }

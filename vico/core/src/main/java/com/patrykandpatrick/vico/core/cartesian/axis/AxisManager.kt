@@ -17,8 +17,8 @@
 package com.patrykandpatrick.vico.core.cartesian.axis
 
 import android.graphics.RectF
-import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
-import com.patrykandpatrick.vico.core.cartesian.CartesianMeasureContext
+import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
+import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
 import com.patrykandpatrick.vico.core.cartesian.Insets
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
@@ -32,20 +32,20 @@ internal class AxisManager {
   var bottomAxis: Axis<Axis.Position.Horizontal.Bottom>? by cacheInList()
 
   fun setAxesBounds(
-    measureContext: CartesianMeasureContext,
+    context: CartesianMeasuringContext,
     canvasBounds: RectF,
     layerBounds: RectF,
     insets: Insets,
   ) {
-    startAxis?.setStartAxisBounds(measureContext, canvasBounds, layerBounds, insets)
-    topAxis?.setTopAxisBounds(measureContext, canvasBounds, insets)
-    endAxis?.setEndAxisBounds(measureContext, canvasBounds, layerBounds, insets)
-    bottomAxis?.setBottomAxisBounds(measureContext, canvasBounds, layerBounds, insets)
+    startAxis?.setStartAxisBounds(context, canvasBounds, layerBounds, insets)
+    topAxis?.setTopAxisBounds(context, canvasBounds, insets)
+    endAxis?.setEndAxisBounds(context, canvasBounds, layerBounds, insets)
+    bottomAxis?.setBottomAxisBounds(context, canvasBounds, layerBounds, insets)
     setRestrictedBounds()
   }
 
   private fun Axis<Axis.Position.Vertical.Start>.setStartAxisBounds(
-    context: CartesianMeasureContext,
+    context: CartesianMeasuringContext,
     canvasBounds: RectF,
     layerBounds: RectF,
     insets: Insets,
@@ -61,7 +61,7 @@ internal class AxisManager {
   }
 
   private fun Axis<Axis.Position.Horizontal.Top>.setTopAxisBounds(
-    context: CartesianMeasureContext,
+    context: CartesianMeasuringContext,
     canvasBounds: RectF,
     insets: Insets,
   ) {
@@ -76,7 +76,7 @@ internal class AxisManager {
   }
 
   private fun Axis<Axis.Position.Vertical.End>.setEndAxisBounds(
-    context: CartesianMeasureContext,
+    context: CartesianMeasuringContext,
     canvasBounds: RectF,
     layerBounds: RectF,
     insets: Insets,
@@ -92,7 +92,7 @@ internal class AxisManager {
   }
 
   private fun Axis<Axis.Position.Horizontal.Bottom>.setBottomAxisBounds(
-    context: CartesianMeasureContext,
+    context: CartesianMeasuringContext,
     canvasBounds: RectF,
     layerBounds: RectF,
     insets: Insets,
@@ -114,11 +114,11 @@ internal class AxisManager {
     bottomAxis?.setRestrictedBounds(topAxis?.bounds, endAxis?.bounds, startAxis?.bounds)
   }
 
-  fun drawUnderLayers(context: CartesianDrawContext) {
+  fun drawUnderLayers(context: CartesianDrawingContext) {
     axisCache.forEach { axis -> axis.drawUnderLayers(context) }
   }
 
-  fun drawOverLayers(context: CartesianDrawContext) {
+  fun drawOverLayers(context: CartesianDrawingContext) {
     axisCache.forEach { axis -> axis.drawOverLayers(context) }
   }
 

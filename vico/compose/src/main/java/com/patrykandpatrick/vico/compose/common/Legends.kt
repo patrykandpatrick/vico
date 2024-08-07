@@ -21,17 +21,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.core.common.Dimensions
-import com.patrykandpatrick.vico.core.common.DrawContext
+import com.patrykandpatrick.vico.core.common.DrawingContext
 import com.patrykandpatrick.vico.core.common.HorizontalLegend
 import com.patrykandpatrick.vico.core.common.LegendItem
-import com.patrykandpatrick.vico.core.common.MeasureContext
+import com.patrykandpatrick.vico.core.common.MeasuringContext
 import com.patrykandpatrick.vico.core.common.VerticalLegend
 import com.patrykandpatrick.vico.core.common.component.Component
 import com.patrykandpatrick.vico.core.common.component.TextComponent
 
 /** Creates and remembers a [VerticalLegend]. */
 @Composable
-public fun <M : MeasureContext, D : DrawContext> rememberVerticalLegend(
+public fun <M : MeasuringContext, D : DrawingContext> rememberVerticalLegend(
   items: Collection<LegendItem>,
   iconSize: Dp,
   iconPadding: Dp,
@@ -58,7 +58,7 @@ public fun rememberLegendItem(
 
 /** Creates and remembers a [HorizontalLegend]. */
 @Composable
-public fun <M : MeasureContext, D : DrawContext> rememberHorizontalLegend(
+public fun <M : MeasuringContext, D : DrawingContext> rememberHorizontalLegend(
   items: Collection<LegendItem>,
   iconSize: Dp,
   iconPadding: Dp,

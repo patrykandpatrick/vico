@@ -17,8 +17,8 @@
 package com.patrykandpatrick.vico.core.cartesian.axis
 
 import androidx.annotation.RestrictTo
-import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
-import com.patrykandpatrick.vico.core.cartesian.CartesianMeasureContext
+import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
+import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
 import com.patrykandpatrick.vico.core.cartesian.HorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
 import com.patrykandpatrick.vico.core.cartesian.Insets
@@ -100,7 +100,7 @@ protected constructor(
     title = null,
   )
 
-  override fun drawUnderLayers(context: CartesianDrawContext) {
+  override fun drawUnderLayers(context: CartesianDrawingContext) {
     with(context) {
       val clipRestoreCount = canvas.save()
       val tickTop =
@@ -239,7 +239,7 @@ protected constructor(
   }
 
   protected open fun drawGuidelines(
-    context: CartesianDrawContext,
+    context: CartesianDrawingContext,
     baseCanvasX: Float,
     fullXRange: ClosedFloatingPointRange<Double>,
     labelValues: List<Double>,
@@ -280,7 +280,7 @@ protected constructor(
       if (clipRestoreCount >= 0) canvas.restoreToCount(clipRestoreCount)
     }
 
-  protected fun CartesianDrawContext.getLinesCorrectionX(
+  protected fun CartesianDrawingContext.getLinesCorrectionX(
     entryX: Double,
     fullXRange: ClosedFloatingPointRange<Double>,
   ): Float =
@@ -291,10 +291,10 @@ protected constructor(
       else -> 0f
     } * layoutDirectionMultiplier
 
-  override fun drawOverLayers(context: CartesianDrawContext) {}
+  override fun drawOverLayers(context: CartesianDrawingContext) {}
 
   override fun updateHorizontalDimensions(
-    context: CartesianMeasureContext,
+    context: CartesianMeasuringContext,
     horizontalDimensions: MutableHorizontalDimensions,
   ) {
     val label = label ?: return
@@ -350,7 +350,7 @@ protected constructor(
   }
 
   override fun updateInsets(
-    context: CartesianMeasureContext,
+    context: CartesianMeasuringContext,
     horizontalDimensions: HorizontalDimensions,
     model: CartesianChartModel,
     insets: Insets,
@@ -378,7 +378,7 @@ protected constructor(
     }
   }
 
-  protected fun CartesianMeasureContext.getFullXRange(
+  protected fun CartesianMeasuringContext.getFullXRange(
     horizontalDimensions: HorizontalDimensions
   ): ClosedFloatingPointRange<Double> =
     with(horizontalDimensions) {
@@ -388,7 +388,7 @@ protected constructor(
     }
 
   protected open fun getHeight(
-    context: CartesianMeasureContext,
+    context: CartesianMeasuringContext,
     horizontalDimensions: HorizontalDimensions,
     maxLabelWidth: Float,
   ): Float =
@@ -431,7 +431,7 @@ protected constructor(
       }
     }
 
-  protected fun CartesianMeasureContext.getMaxLabelWidth(
+  protected fun CartesianMeasuringContext.getMaxLabelWidth(
     horizontalDimensions: HorizontalDimensions,
     fullXRange: ClosedFloatingPointRange<Double>,
   ): Float {
@@ -455,7 +455,7 @@ protected constructor(
       .orZero
   }
 
-  protected fun CartesianMeasureContext.getMaxLabelHeight(
+  protected fun CartesianMeasuringContext.getMaxLabelHeight(
     horizontalDimensions: HorizontalDimensions,
     fullXRange: ClosedFloatingPointRange<Double>,
     maxLabelWidth: Float,
@@ -489,28 +489,32 @@ protected constructor(
      * these bounds’ end edge. On either side, if a [VerticalAxis] is present, the shifted tick is
      * aligned with it, and the shifted guideline is hidden.
      */
-    public fun getShiftExtremeLines(context: CartesianDrawContext): Boolean = true
+    public fun getShiftExtremeLines(context: CartesianDrawingContext): Boolean = true
 
     /**
      * If the [HorizontalAxis] is to reserve room for the first label, returns the first label’s _x_
      * value. Otherwise, returns `null`.
      */
-    public fun getFirstLabelValue(context: CartesianMeasureContext, maxLabelWidth: Float): Double? =
-      null
+    public fun getFirstLabelValue(
+      context: CartesianMeasuringContext,
+      maxLabelWidth: Float,
+    ): Double? = null
 
     /**
      * If the [HorizontalAxis] is to reserve room for the last label, returns the last label’s _x_
      * value. Otherwise, returns `null`.
      */
-    public fun getLastLabelValue(context: CartesianMeasureContext, maxLabelWidth: Float): Double? =
-      null
+    public fun getLastLabelValue(
+      context: CartesianMeasuringContext,
+      maxLabelWidth: Float,
+    ): Double? = null
 
     /**
      * Returns, as a list, the _x_ values for which labels are to be displayed, restricted to
      * [visibleXRange] and with two extra values on either side (if applicable).
      */
     public fun getLabelValues(
-      context: CartesianDrawContext,
+      context: CartesianDrawingContext,
       visibleXRange: ClosedFloatingPointRange<Double>,
       fullXRange: ClosedFloatingPointRange<Double>,
       maxLabelWidth: Float,
@@ -522,7 +526,7 @@ protected constructor(
      * other functions.
      */
     public fun getWidthMeasurementLabelValues(
-      context: CartesianMeasureContext,
+      context: CartesianMeasuringContext,
       horizontalDimensions: HorizontalDimensions,
       fullXRange: ClosedFloatingPointRange<Double>,
     ): List<Double>
@@ -533,7 +537,7 @@ protected constructor(
      * [HorizontalAxis] requests.
      */
     public fun getHeightMeasurementLabelValues(
-      context: CartesianMeasureContext,
+      context: CartesianMeasuringContext,
       horizontalDimensions: HorizontalDimensions,
       fullXRange: ClosedFloatingPointRange<Double>,
       maxLabelWidth: Float,
@@ -545,7 +549,7 @@ protected constructor(
      * `null` is returned, the values returned by [getLabelValues] are used.
      */
     public fun getLineValues(
-      context: CartesianDrawContext,
+      context: CartesianDrawingContext,
       visibleXRange: ClosedFloatingPointRange<Double>,
       fullXRange: ClosedFloatingPointRange<Double>,
       maxLabelWidth: Float,
@@ -553,7 +557,7 @@ protected constructor(
 
     /** Returns the start inset required by the [HorizontalAxis]. */
     public fun getStartHorizontalAxisInset(
-      context: CartesianMeasureContext,
+      context: CartesianMeasuringContext,
       horizontalDimensions: HorizontalDimensions,
       tickThickness: Float,
       maxLabelWidth: Float,
@@ -561,7 +565,7 @@ protected constructor(
 
     /** Returns the end inset required by the [HorizontalAxis]. */
     public fun getEndHorizontalAxisInset(
-      context: CartesianMeasureContext,
+      context: CartesianMeasuringContext,
       horizontalDimensions: HorizontalDimensions,
       tickThickness: Float,
       maxLabelWidth: Float,

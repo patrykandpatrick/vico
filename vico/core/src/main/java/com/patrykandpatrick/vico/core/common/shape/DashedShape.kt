@@ -19,7 +19,7 @@ package com.patrykandpatrick.vico.core.common.shape
 import android.graphics.Paint
 import android.graphics.Path
 import com.patrykandpatrick.vico.core.common.Defaults
-import com.patrykandpatrick.vico.core.common.DrawContext
+import com.patrykandpatrick.vico.core.common.DrawingContext
 import kotlin.math.ceil
 
 /**
@@ -41,7 +41,7 @@ public class DashedShape(
   private var drawGapLength = gapLengthDp
 
   override fun draw(
-    context: DrawContext,
+    context: DrawingContext,
     paint: Paint,
     path: Path,
     left: Float,
@@ -61,7 +61,7 @@ public class DashedShape(
     replaceWith = ReplaceWith("draw(context, paint, path, left, top, right, bottom)"),
   )
   override fun drawShape(
-    context: DrawContext,
+    context: DrawingContext,
     paint: Paint,
     path: Path,
     left: Float,
@@ -73,7 +73,7 @@ public class DashedShape(
   }
 
   private fun drawHorizontalDashes(
-    context: DrawContext,
+    context: DrawingContext,
     paint: Paint,
     path: Path,
     left: Float,
@@ -107,7 +107,7 @@ public class DashedShape(
   }
 
   private fun drawVerticalDashes(
-    context: DrawContext,
+    context: DrawingContext,
     paint: Paint,
     path: Path,
     left: Float,
@@ -140,7 +140,7 @@ public class DashedShape(
     }
   }
 
-  private fun calculateDrawLengths(context: DrawContext, length: Float): Unit =
+  private fun calculateDrawLengths(context: DrawingContext, length: Float): Unit =
     with(context) { calculateDrawLengths(dashLengthDp.pixels, gapLengthDp.pixels, length) }
 
   private fun calculateDrawLengths(dashLength: Float, gapLength: Float, length: Float) {

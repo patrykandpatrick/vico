@@ -18,8 +18,8 @@ package com.patrykandpatrick.vico.core.cartesian.axis
 
 import androidx.annotation.RestrictTo
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
-import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
-import com.patrykandpatrick.vico.core.cartesian.CartesianMeasureContext
+import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
+import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
 import com.patrykandpatrick.vico.core.cartesian.HorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.HorizontalInsets
 import com.patrykandpatrick.vico.core.cartesian.Insets
@@ -119,7 +119,7 @@ protected constructor(
     title = null,
   )
 
-  override fun drawUnderLayers(context: CartesianDrawContext) {
+  override fun drawUnderLayers(context: CartesianDrawingContext) {
     with(context) {
       var centerY: Float
       val yRange = chartValues.getYRange(position)
@@ -164,7 +164,7 @@ protected constructor(
     }
   }
 
-  override fun drawOverLayers(context: CartesianDrawContext) {
+  override fun drawOverLayers(context: CartesianDrawingContext) {
     with(context) {
       val label = label
       val labelValues =
@@ -223,12 +223,12 @@ protected constructor(
   }
 
   override fun updateHorizontalDimensions(
-    context: CartesianMeasureContext,
+    context: CartesianMeasuringContext,
     horizontalDimensions: MutableHorizontalDimensions,
   ): Unit = Unit
 
   protected open fun drawLabel(
-    context: CartesianDrawContext,
+    context: CartesianDrawingContext,
     labelComponent: TextComponent,
     label: CharSequence,
     labelX: Float,
@@ -262,7 +262,7 @@ protected constructor(
       }
     }
 
-  protected fun CartesianMeasureContext.getTickLeftX(): Float {
+  protected fun CartesianMeasuringContext.getTickLeftX(): Float {
     val onLeft = position.isLeft(this)
     val base = if (onLeft) bounds.right else bounds.left
     return when {
@@ -275,7 +275,7 @@ protected constructor(
   }
 
   override fun updateHorizontalInsets(
-    context: CartesianMeasureContext,
+    context: CartesianMeasuringContext,
     freeHeight: Float,
     model: CartesianChartModel,
     insets: HorizontalInsets,
@@ -288,7 +288,7 @@ protected constructor(
   }
 
   override fun updateInsets(
-    context: CartesianMeasureContext,
+    context: CartesianMeasuringContext,
     horizontalDimensions: HorizontalDimensions,
     model: CartesianChartModel,
     insets: Insets,
@@ -314,7 +314,7 @@ protected constructor(
       )
     }
 
-  protected open fun getWidth(context: CartesianMeasureContext, freeHeight: Float): Float =
+  protected open fun getWidth(context: CartesianMeasuringContext, freeHeight: Float): Float =
     with(context) {
       when (val constraint = sizeConstraint) {
         is SizeConstraint.Auto -> {
@@ -352,7 +352,7 @@ protected constructor(
       }
     }
 
-  protected fun CartesianMeasureContext.getMaxLabelHeight(): Float =
+  protected fun CartesianMeasuringContext.getMaxLabelHeight(): Float =
     label
       ?.let { label ->
         itemPlacer.getHeightMeasurementLabelValues(this, position).maxOfOrNull { value ->
@@ -365,7 +365,7 @@ protected constructor(
       }
       .orZero
 
-  protected fun CartesianMeasureContext.getMaxLabelWidth(axisHeight: Float): Float =
+  protected fun CartesianMeasuringContext.getMaxLabelWidth(axisHeight: Float): Float =
     label
       ?.let { label ->
         itemPlacer
@@ -380,7 +380,10 @@ protected constructor(
       }
       .orZero
 
-  protected fun CartesianDrawContext.getLineCanvasYCorrection(thickness: Float, y: Double): Float =
+  protected fun CartesianDrawingContext.getLineCanvasYCorrection(
+    thickness: Float,
+    y: Double,
+  ): Float =
     if (y == chartValues.getYRange(position).maxY && itemPlacer.getShiftTopLines(this)) {
       -thickness.half
     } else {
@@ -416,11 +419,11 @@ protected constructor(
      * [CartesianLayer] bounds. If the [CartesianChart] has a top axis, the shifted tick is then
      * aligned with it, and the shifted guideline is hidden.
      */
-    public fun getShiftTopLines(context: CartesianDrawContext): Boolean = true
+    public fun getShiftTopLines(context: CartesianDrawingContext): Boolean = true
 
     /** Returns, as a list, the _y_ values for which labels are to be displayed. */
     public fun getLabelValues(
-      context: CartesianDrawContext,
+      context: CartesianDrawingContext,
       axisHeight: Float,
       maxLabelHeight: Float,
       position: Axis.Position.Vertical,
@@ -432,7 +435,7 @@ protected constructor(
      * [VerticalAxis] requests.
      */
     public fun getWidthMeasurementLabelValues(
-      context: CartesianMeasureContext,
+      context: CartesianMeasuringContext,
       axisHeight: Float,
       maxLabelHeight: Float,
       position: Axis.Position.Vertical,
@@ -444,13 +447,13 @@ protected constructor(
      * to other functions.
      */
     public fun getHeightMeasurementLabelValues(
-      context: CartesianMeasureContext,
+      context: CartesianMeasuringContext,
       position: Axis.Position.Vertical,
     ): List<Double>
 
     /** Returns, as a list, the _y_ values for which ticks and guidelines are to be displayed. */
     public fun getLineValues(
-      context: CartesianDrawContext,
+      context: CartesianDrawingContext,
       axisHeight: Float,
       maxLabelHeight: Float,
       position: Axis.Position.Vertical,
@@ -458,7 +461,7 @@ protected constructor(
 
     /** Returns the top inset required by the [VerticalAxis]. */
     public fun getTopVerticalAxisInset(
-      context: CartesianMeasureContext,
+      context: CartesianMeasuringContext,
       verticalLabelPosition: VerticalLabelPosition,
       maxLabelHeight: Float,
       maxLineThickness: Float,
@@ -466,7 +469,7 @@ protected constructor(
 
     /** Returns the bottom inset required by the [VerticalAxis]. */
     public fun getBottomVerticalAxisInset(
-      context: CartesianMeasureContext,
+      context: CartesianMeasuringContext,
       verticalLabelPosition: VerticalLabelPosition,
       maxLabelHeight: Float,
       maxLineThickness: Float,

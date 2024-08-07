@@ -25,12 +25,12 @@ import android.graphics.RectF
 import android.graphics.Shader
 import android.os.Build
 import androidx.annotation.RequiresApi
-import com.patrykandpatrick.vico.core.common.DrawContext
+import com.patrykandpatrick.vico.core.common.DrawingContext
 
 /** Creates [Shader]s on demand. */
 public interface DynamicShader {
   /** Creates a [Shader] by using the provided [bounds]. */
-  public fun provideShader(context: DrawContext, bounds: RectF): Shader =
+  public fun provideShader(context: DrawingContext, bounds: RectF): Shader =
     provideShader(
       context = context,
       left = bounds.left,
@@ -41,7 +41,7 @@ public interface DynamicShader {
 
   /** Creates a [Shader] by using the provided [left], [top], [right], and [bottom] bounds. */
   public fun provideShader(
-    context: DrawContext,
+    context: DrawingContext,
     left: Float,
     top: Float,
     right: Float,
@@ -57,7 +57,7 @@ public interface DynamicShader {
     ): DynamicShader =
       object : CacheableDynamicShader() {
         override fun createShader(
-          context: DrawContext,
+          context: DrawingContext,
           left: Float,
           top: Float,
           right: Float,
@@ -77,7 +77,7 @@ public interface DynamicShader {
     ): DynamicShader =
       object : DynamicShader {
         override fun provideShader(
-          context: DrawContext,
+          context: DrawingContext,
           left: Float,
           top: Float,
           right: Float,
@@ -101,7 +101,7 @@ public interface DynamicShader {
     ): DynamicShader =
       object : DynamicShader {
         override fun provideShader(
-          context: DrawContext,
+          context: DrawingContext,
           left: Float,
           top: Float,
           right: Float,
@@ -158,7 +158,7 @@ public interface DynamicShader {
 public fun Shader.toDynamicShader(): DynamicShader =
   object : DynamicShader {
     override fun provideShader(
-      context: DrawContext,
+      context: DrawingContext,
       left: Float,
       top: Float,
       right: Float,

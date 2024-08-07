@@ -34,13 +34,12 @@ public open class LegendItem(
   /**
    * Measures the height of the label.
    *
-   * @param context the [MeasureContext] used to measure the height.
    * @param maxWidth the maximum width.
    * @param iconPaddingDp the padding between the icon and the label.
    * @param iconSizeDp the size of the icon.
    */
   public fun getLabelHeight(
-    context: MeasureContext,
+    context: MeasuringContext,
     maxWidth: Float,
     iconPaddingDp: Float,
     iconSizeDp: Float,
@@ -56,13 +55,12 @@ public open class LegendItem(
   /**
    * Measures the width of the label.
    *
-   * @param context the [MeasureContext] used to measure the height.
    * @param maxWidth the maximum width.
    * @param iconPaddingDp the padding between the icon and the label.
    * @param iconSizeDp the size of the icon.
    */
   public fun getLabelWidth(
-    context: MeasureContext,
+    context: MeasuringContext,
     maxWidth: Float,
     iconPaddingDp: Float,
     iconSizeDp: Float,
@@ -78,13 +76,12 @@ public open class LegendItem(
   /**
    * Measures the width of this [LegendItem].
    *
-   * @param context the [MeasureContext] used to measure the height.
    * @param maxWidth the maximum width.
    * @param iconPaddingDp the padding between the icon and the label.
    * @param iconSizeDp the size of the icon.
    */
   public fun getWidth(
-    context: MeasureContext,
+    context: MeasuringContext,
     maxWidth: Float,
     iconPaddingDp: Float,
     iconSizeDp: Float,
