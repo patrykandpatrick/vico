@@ -17,12 +17,13 @@
 package com.patrykandpatrick.vico.core.common
 
 import android.graphics.RectF
+import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import kotlin.math.max
 
 /**
  * [HorizontalLegend] displays legend items beside one another in lines.
  *
- * @param items a [Collection] of [LegendItem]s to be displayed by this [HorizontalLegend].
+ * @param items adds the [LegendItem]s.
  * @param iconSizeDp defines the size of all [LegendItem.icon]s.
  * @param iconPaddingDp defines the padding between each [LegendItem.icon] and its corresponding
  *   [LegendItem.label].
@@ -31,27 +32,27 @@ import kotlin.math.max
  * @param padding defines the padding of the content.
  */
 public open class HorizontalLegend<M : MeasuringContext, D : DrawingContext>(
-  protected val items: Collection<LegendItem>,
+  protected val items: AdditionScope<LegendItem>.(ExtraStore) -> Unit,
   protected val iconSizeDp: Float,
   protected val iconPaddingDp: Float,
   protected val lineSpacingDp: Float = 0f,
   protected val spacingDp: Float = 0f,
   protected val padding: Dimensions = Dimensions.Empty,
 ) : Legend<M, D> {
+  private val itemManager = LegendItemManager(items)
   private val heights = mutableListOf<Float>()
-
   private val lines = mutableListOf<MutableList<LegendItem>>(mutableListOf())
-
   override val bounds: RectF = RectF()
 
   override fun getHeight(context: M, maxWidth: Float): Float =
     with(context) {
-      if (items.isEmpty()) return@with 0f
+      itemManager.addItems(this)
+      if (itemManager.itemList.isEmpty()) return@with 0f
       lines.clear()
       lines.add(mutableListOf())
       var height =
         max(
-          items.first().getLabelHeight(context, maxWidth, iconPaddingDp, iconSizeDp),
+          itemManager.itemList.first().getLabelHeight(context, maxWidth, iconPaddingDp, iconSizeDp),
           iconSizeDp.pixels,
         )
       heights.add(height)
@@ -75,9 +76,6 @@ public open class HorizontalLegend<M : MeasuringContext, D : DrawingContext>(
           bounds.right - padding.startDp.pixels - iconSizeDp.pixels
         }
       val availableWidth = bounds.width()
-      if (lines.isEmpty()) {
-        buildLines(context, availableWidth)
-      }
 
       lines.forEachIndexed { index, item ->
         var currentStart = 0f
@@ -136,7 +134,7 @@ public open class HorizontalLegend<M : MeasuringContext, D : DrawingContext>(
       var currentLine = 0
       lines.clear()
       lines.add(mutableListOf())
-      items.forEach {
+      itemManager.itemList.forEach {
         remainWidth -=
           it.getWidth(context, availableWidth, iconPaddingDp, iconSizeDp) + spacingDp.pixels
         if (remainWidth >= 0 || remainWidth == availableWidth) {
