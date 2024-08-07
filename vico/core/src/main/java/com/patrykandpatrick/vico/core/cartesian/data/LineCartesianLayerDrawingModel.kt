@@ -17,7 +17,7 @@
 package com.patrykandpatrick.vico.core.cartesian.data
 
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
-import com.patrykandpatrick.vico.core.common.data.DrawingModel
+import com.patrykandpatrick.vico.core.common.data.CartesianLayerDrawingModel
 import com.patrykandpatrick.vico.core.common.lerp
 import com.patrykandpatrick.vico.core.common.orZero
 
@@ -25,12 +25,12 @@ import com.patrykandpatrick.vico.core.common.orZero
 public class LineCartesianLayerDrawingModel(
   private val pointInfo: List<Map<Double, PointInfo>>,
   public val opacity: Float = 1f,
-) : DrawingModel<LineCartesianLayerDrawingModel.PointInfo>(pointInfo) {
+) : CartesianLayerDrawingModel<LineCartesianLayerDrawingModel.PointInfo>(pointInfo) {
   override fun transform(
     drawingInfo: List<Map<Double, PointInfo>>,
-    from: DrawingModel<PointInfo>?,
+    from: CartesianLayerDrawingModel<PointInfo>?,
     fraction: Float,
-  ): DrawingModel<PointInfo> =
+  ): CartesianLayerDrawingModel<PointInfo> =
     LineCartesianLayerDrawingModel(
       drawingInfo,
       (from as LineCartesianLayerDrawingModel?)?.opacity.orZero.lerp(opacity, fraction),

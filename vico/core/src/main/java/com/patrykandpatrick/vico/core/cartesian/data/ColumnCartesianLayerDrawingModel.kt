@@ -17,7 +17,7 @@
 package com.patrykandpatrick.vico.core.cartesian.data
 
 import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
-import com.patrykandpatrick.vico.core.common.data.DrawingModel
+import com.patrykandpatrick.vico.core.common.data.CartesianLayerDrawingModel
 import com.patrykandpatrick.vico.core.common.lerp
 import com.patrykandpatrick.vico.core.common.orZero
 
@@ -25,12 +25,12 @@ import com.patrykandpatrick.vico.core.common.orZero
 public class ColumnCartesianLayerDrawingModel(
   private val entries: List<Map<Double, ColumnInfo>>,
   public val opacity: Float = 1f,
-) : DrawingModel<ColumnCartesianLayerDrawingModel.ColumnInfo>(entries) {
+) : CartesianLayerDrawingModel<ColumnCartesianLayerDrawingModel.ColumnInfo>(entries) {
   override fun transform(
     drawingInfo: List<Map<Double, ColumnInfo>>,
-    from: DrawingModel<ColumnInfo>?,
+    from: CartesianLayerDrawingModel<ColumnInfo>?,
     fraction: Float,
-  ): DrawingModel<ColumnInfo> {
+  ): CartesianLayerDrawingModel<ColumnInfo> {
     val oldOpacity = (from as ColumnCartesianLayerDrawingModel?)?.opacity.orZero
     return ColumnCartesianLayerDrawingModel(drawingInfo, oldOpacity.lerp(opacity, fraction))
   }

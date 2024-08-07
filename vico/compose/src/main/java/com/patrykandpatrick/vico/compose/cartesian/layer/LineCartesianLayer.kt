@@ -34,8 +34,8 @@ import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.VerticalPosition
 import com.patrykandpatrick.vico.core.common.component.Component
 import com.patrykandpatrick.vico.core.common.component.TextComponent
-import com.patrykandpatrick.vico.core.common.data.DefaultDrawingModelInterpolator
-import com.patrykandpatrick.vico.core.common.data.DrawingModelInterpolator
+import com.patrykandpatrick.vico.core.common.data.CartesianLayerDrawingModelInterpolator
+import com.patrykandpatrick.vico.core.common.data.DefaultCartesianLayerDrawingModelInterpolator
 
 /** Creates and remembers a [LineCartesianLayer]. */
 @Composable
@@ -50,12 +50,12 @@ public fun rememberLineCartesianLayer(
   axisValueOverrider: AxisValueOverrider = remember { AxisValueOverrider.auto() },
   verticalAxisPosition: Axis.Position.Vertical? = null,
   drawingModelInterpolator:
-    DrawingModelInterpolator<
+    CartesianLayerDrawingModelInterpolator<
       LineCartesianLayerDrawingModel.PointInfo,
       LineCartesianLayerDrawingModel,
     > =
     remember {
-      DefaultDrawingModelInterpolator()
+      DefaultCartesianLayerDrawingModelInterpolator()
     },
 ): LineCartesianLayer =
   remember { LineCartesianLayer(lineProvider) }

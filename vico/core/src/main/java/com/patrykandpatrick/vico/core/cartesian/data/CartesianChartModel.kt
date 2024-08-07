@@ -17,7 +17,7 @@
 package com.patrykandpatrick.vico.core.cartesian.data
 
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
-import com.patrykandpatrick.vico.core.common.data.DrawingModel
+import com.patrykandpatrick.vico.core.common.data.CartesianLayerDrawingModel
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.core.common.gcdWith
 
@@ -35,7 +35,7 @@ public class CartesianChartModel {
    */
   public val width: Double
 
-  /** Stores auxiliary data, including [DrawingModel]s. */
+  /** Stores auxiliary data, including [CartesianLayerDrawingModel]s. */
   public val extraStore: ExtraStore
 
   /** Creates a [CartesianChartModel] consisting of the given [CartesianLayerModel]s. */

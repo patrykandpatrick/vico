@@ -19,21 +19,21 @@ package com.patrykandpatrick.vico.core.common.data
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayer
 
 /** Houses drawing information for a [CartesianLayer]. */
-public abstract class DrawingModel<T : DrawingModel.DrawingInfo>(
+public abstract class CartesianLayerDrawingModel<T : CartesianLayerDrawingModel.DrawingInfo>(
   private val drawingInfo: List<Map<Double, T>>
 ) : List<Map<Double, T>> by drawingInfo {
   /**
-   * Returns an intermediate [DrawingModel] between this one and [from]. The returned drawing model
-   * includes the provided [DrawingInfo] list. [fraction] is the balance between [from] and this
-   * [DrawingModel], with 0 corresponding to [from], and 1 corresponding to this [DrawingModel]. The
-   * returned object should be an instance of the [DrawingModel] subclass to which this function
-   * belongs.
+   * Returns an intermediate [CartesianLayerDrawingModel] between this one and [from]. The returned
+   * drawing model includes the provided [DrawingInfo] list. [fraction] is the balance between
+   * [from] and this [CartesianLayerDrawingModel], with 0 corresponding to [from], and 1
+   * corresponding to this [CartesianLayerDrawingModel]. The returned object should be an instance
+   * of the [CartesianLayerDrawingModel] subclass to which this function belongs.
    */
   public abstract fun transform(
     drawingInfo: List<Map<Double, T>>,
-    from: DrawingModel<T>?,
+    from: CartesianLayerDrawingModel<T>?,
     fraction: Float,
-  ): DrawingModel<T>
+  ): CartesianLayerDrawingModel<T>
 
   abstract override fun equals(other: Any?): Boolean
 

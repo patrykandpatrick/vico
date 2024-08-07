@@ -25,8 +25,8 @@ import com.patrykandpatrick.vico.core.cartesian.data.AxisValueOverrider
 import com.patrykandpatrick.vico.core.cartesian.data.CandlestickCartesianLayerDrawingModel
 import com.patrykandpatrick.vico.core.cartesian.layer.CandlestickCartesianLayer
 import com.patrykandpatrick.vico.core.common.Defaults
-import com.patrykandpatrick.vico.core.common.data.DefaultDrawingModelInterpolator
-import com.patrykandpatrick.vico.core.common.data.DrawingModelInterpolator
+import com.patrykandpatrick.vico.core.common.data.CartesianLayerDrawingModelInterpolator
+import com.patrykandpatrick.vico.core.common.data.DefaultCartesianLayerDrawingModelInterpolator
 
 /** Creates and remembers a [CandlestickCartesianLayer]. */
 @Composable
@@ -39,11 +39,11 @@ public fun rememberCandlestickCartesianLayer(
   verticalAxisPosition: Axis.Position.Vertical? = null,
   axisValueOverrider: AxisValueOverrider = remember { AxisValueOverrider.auto() },
   drawingModelInterpolator:
-    DrawingModelInterpolator<
+    CartesianLayerDrawingModelInterpolator<
       CandlestickCartesianLayerDrawingModel.CandleInfo,
       CandlestickCartesianLayerDrawingModel,
     > =
-    DefaultDrawingModelInterpolator(),
+    DefaultCartesianLayerDrawingModelInterpolator(),
 ): CandlestickCartesianLayer =
   remember { CandlestickCartesianLayer(candles) }
     .apply {
