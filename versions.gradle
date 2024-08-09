@@ -18,7 +18,7 @@ ext {
 
     library = [
             groupId        : "com.patrykandpatrick.vico",
-            version_name   : "2.0.0-alpha.27",
+            version_name   : "2.0.0-alpha.28",
             version_code   : 1,
             target_sdk     : 34,
             min_sdk        : 19,
