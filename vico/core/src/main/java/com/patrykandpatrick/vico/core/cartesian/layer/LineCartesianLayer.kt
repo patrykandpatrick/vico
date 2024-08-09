@@ -383,7 +383,10 @@ public open class LineCartesianLayer(
       LineCartesianLayerMarkerTarget.Point(
         entry,
         limitedCanvasY,
-        lineFillBitmap.getPixel(canvasX.roundToInt(), limitedCanvasY.roundToInt()),
+        lineFillBitmap.getPixel(
+          canvasX.roundToInt().coerceIn(0, lineFillBitmap.width - 1),
+          limitedCanvasY.roundToInt(),
+        ),
       )
   }
 
