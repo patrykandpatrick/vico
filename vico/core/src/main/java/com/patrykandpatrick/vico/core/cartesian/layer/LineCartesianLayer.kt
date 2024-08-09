@@ -119,9 +119,6 @@ public open class LineCartesianLayer(
         strokeCap = cap
       }
 
-    /** The stroke cap. */
-    public var cap: Paint.Cap by linePaint::strokeCap
-
     /** Draws the line. */
     public fun draw(
       context: CartesianDrawingContext,
