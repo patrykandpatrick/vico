@@ -56,7 +56,7 @@ protected constructor(
   tick: LineComponent?,
   tickLengthDp: Float,
   guideline: LineComponent?,
-  public var itemPlacer: ItemPlacer,
+  public val itemPlacer: ItemPlacer,
   sizeConstraint: SizeConstraint,
   titleComponent: TextComponent?,
   title: CharSequence?,
@@ -84,20 +84,28 @@ protected constructor(
   @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
   public constructor(
     position: P,
+    line: LineComponent?,
+    label: TextComponent?,
+    labelRotationDegrees: Float,
+    tick: LineComponent?,
+    tickLengthDp: Float,
+    guideline: LineComponent?,
     itemPlacer: ItemPlacer,
+    titleComponent: TextComponent?,
+    title: CharSequence?,
   ) : this(
-    position = position,
-    line = null,
-    label = null,
-    labelRotationDegrees = 0f,
-    valueFormatter = CartesianValueFormatter.decimal(),
-    tick = null,
-    tickLengthDp = 0f,
-    guideline = null,
-    itemPlacer = itemPlacer,
-    sizeConstraint = SizeConstraint.Auto(),
-    titleComponent = null,
-    title = null,
+    position,
+    line,
+    label,
+    labelRotationDegrees,
+    CartesianValueFormatter.decimal(),
+    tick,
+    tickLengthDp,
+    guideline,
+    itemPlacer,
+    SizeConstraint.Auto(),
+    titleComponent,
+    title,
   )
 
   override fun drawUnderLayers(context: CartesianDrawingContext) {
@@ -478,6 +486,35 @@ protected constructor(
         )
       }
   }
+
+  /** Creates a new [HorizontalAxis] based on this one. */
+  public fun copy(
+    line: LineComponent? = this.line,
+    label: TextComponent? = this.label,
+    labelRotationDegrees: Float = this.labelRotationDegrees,
+    valueFormatter: CartesianValueFormatter = this.valueFormatter,
+    tick: LineComponent? = this.tick,
+    tickLengthDp: Float = this.tickLengthDp,
+    guideline: LineComponent? = this.guideline,
+    itemPlacer: ItemPlacer = this.itemPlacer,
+    sizeConstraint: SizeConstraint = this.sizeConstraint,
+    titleComponent: TextComponent? = this.titleComponent,
+    title: CharSequence? = this.title,
+  ): HorizontalAxis<P> =
+    HorizontalAxis(
+      position,
+      line,
+      label,
+      labelRotationDegrees,
+      valueFormatter,
+      tick,
+      tickLengthDp,
+      guideline,
+      itemPlacer,
+      sizeConstraint,
+      titleComponent,
+      title,
+    )
 
   /** Determines for what _x_ values a [HorizontalAxis] displays labels, ticks, and guidelines. */
   public interface ItemPlacer {

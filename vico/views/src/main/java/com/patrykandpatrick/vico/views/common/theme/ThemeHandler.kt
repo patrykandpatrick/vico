@@ -94,13 +94,91 @@ internal class ThemeHandler(private val context: Context, attrs: AttributeSet?) 
     }
     return getNestedTypedArray(context, styleAttributeIndex, R.styleable.AxisStyle).use { axisStyle
       ->
+      val line =
+        if (axisStyle.getBoolean(R.styleable.AxisStyle_showLine, true)) {
+          axisStyle
+            .getNestedTypedArray(
+              context,
+              R.styleable.AxisStyle_lineStyle,
+              R.styleable.LineComponentStyle,
+            )
+            .getLineComponent(context)
+        } else {
+          null
+        }
+      val label =
+        axisStyle
+          .getNestedTypedArray(
+            context,
+            R.styleable.AxisStyle_labelStyle,
+            R.styleable.TextComponentStyle,
+          )
+          .getTextComponent(context)
+      val labelRotationDegrees = axisStyle.getFloat(R.styleable.AxisStyle_labelRotationDegrees, 0f)
+      val tick =
+        if (axisStyle.getBoolean(R.styleable.AxisStyle_showTicks, true)) {
+          axisStyle
+            .getNestedTypedArray(
+              context,
+              R.styleable.AxisStyle_tickStyle,
+              R.styleable.LineComponentStyle,
+            )
+            .getLineComponent(context)
+        } else {
+          null
+        }
+      val tickLengthDp =
+        axisStyle.getRawDimension(
+          context,
+          R.styleable.AxisStyle_tickLength,
+          Defaults.AXIS_TICK_LENGTH,
+        )
+      val guideline =
+        if (axisStyle.getBoolean(R.styleable.AxisStyle_showGuidelines, true)) {
+          axisStyle
+            .getNestedTypedArray(
+              context,
+              R.styleable.AxisStyle_guidelineStyle,
+              R.styleable.LineComponentStyle,
+            )
+            .getLineComponent(context = context, defaultShape = DashedShape())
+        } else {
+          null
+        }
+      val titleComponent =
+        if (axisStyle.getBoolean(R.styleable.AxisStyle_showTitle, false)) {
+          axisStyle
+            .getNestedTypedArray(
+              context,
+              R.styleable.AxisStyle_titleStyle,
+              R.styleable.TextComponentStyle,
+            )
+            .getTextComponent(context)
+        } else {
+          null
+        }
+      val title = axisStyle.getString(R.styleable.AxisStyle_title)
       @Suppress("UNCHECKED_CAST")
       when (position) {
         is Axis.Position.Horizontal ->
-          HorizontalAxis(position, axisStyle.getHorizontalAxisItemPlacer())
+          HorizontalAxis(
+            position,
+            line,
+            label,
+            labelRotationDegrees,
+            tick,
+            tickLengthDp,
+            guideline,
+            getHorizontalAxisItemPlacer(),
+            titleComponent,
+            title,
+          )
         is Axis.Position.Vertical ->
           VerticalAxis(
             position = position,
+            line = line,
+            label = label,
+            labelRotationDegrees = labelRotationDegrees,
             horizontalLabelPosition =
               VerticalAxis.HorizontalLabelPosition.entries[
                   axisStyle.getInteger(
@@ -110,75 +188,16 @@ internal class ThemeHandler(private val context: Context, attrs: AttributeSet?) 
             verticalLabelPosition =
               VerticalAxis.VerticalLabelPosition.entries[
                   axisStyle.getInteger(R.styleable.AxisStyle_verticalAxisVerticalLabelPosition, 0)],
+            tick = tick,
+            tickLengthDp = tickLengthDp,
+            guideline = guideline,
             itemPlacer = axisStyle.getVerticalAxisItemPlacer(),
+            titleComponent = titleComponent,
+            title = title,
           )
         else -> throw IllegalArgumentException("Unexpected `Axis.Position` subclass.")
-      }.apply {
-        line =
-          if (axisStyle.getBoolean(R.styleable.AxisStyle_showLine, true)) {
-            axisStyle
-              .getNestedTypedArray(
-                context,
-                R.styleable.AxisStyle_lineStyle,
-                R.styleable.LineComponentStyle,
-              )
-              .getLineComponent(context)
-          } else {
-            null
-          }
-        label =
-          axisStyle
-            .getNestedTypedArray(
-              context,
-              R.styleable.AxisStyle_labelStyle,
-              R.styleable.TextComponentStyle,
-            )
-            .getTextComponent(context)
-        labelRotationDegrees = axisStyle.getFloat(R.styleable.AxisStyle_labelRotationDegrees, 0f)
-        tick =
-          if (axisStyle.getBoolean(R.styleable.AxisStyle_showTicks, true)) {
-            axisStyle
-              .getNestedTypedArray(
-                context,
-                R.styleable.AxisStyle_tickStyle,
-                R.styleable.LineComponentStyle,
-              )
-              .getLineComponent(context)
-          } else {
-            null
-          }
-        tickLengthDp =
-          axisStyle.getRawDimension(
-            context,
-            R.styleable.AxisStyle_tickLength,
-            Defaults.AXIS_TICK_LENGTH,
-          )
-        guideline =
-          if (axisStyle.getBoolean(R.styleable.AxisStyle_showGuidelines, true)) {
-            axisStyle
-              .getNestedTypedArray(
-                context,
-                R.styleable.AxisStyle_guidelineStyle,
-                R.styleable.LineComponentStyle,
-              )
-              .getLineComponent(context = context, defaultShape = DashedShape())
-          } else {
-            null
-          }
-        titleComponent =
-          if (axisStyle.getBoolean(R.styleable.AxisStyle_showTitle, false)) {
-            axisStyle
-              .getNestedTypedArray(
-                context,
-                R.styleable.AxisStyle_titleStyle,
-                R.styleable.TextComponentStyle,
-              )
-              .getTextComponent(context)
-          } else {
-            null
-          }
-        title = axisStyle.getString(R.styleable.AxisStyle_title)
-      } as Axis<P>
+      }
+        as Axis<P>
     }
   }
 

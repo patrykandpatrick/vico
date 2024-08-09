@@ -31,7 +31,7 @@ import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
 import com.patrykandpatrick.vico.compose.common.data.rememberExtraLambda
 import com.patrykandpatrick.vico.compose.common.fill
-import com.patrykandpatrick.vico.core.cartesian.axis.BaseAxis
+import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
@@ -91,7 +91,7 @@ private fun ViewChart1(modelProducer: CartesianChartModelProducer, modifier: Mod
         with(chartView) {
           chart?.persistentMarkers = { marker at PERSISTENT_MARKER_X }
           this.modelProducer = modelProducer
-          (chart?.bottomAxis as BaseAxis).guideline = null
+          chart?.bottomAxis = (chart?.bottomAxis as HorizontalAxis).copy(guideline = null)
           chart?.marker = marker
         }
       }

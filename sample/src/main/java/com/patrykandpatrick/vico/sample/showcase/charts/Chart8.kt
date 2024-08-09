@@ -35,7 +35,7 @@ import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.common.fill
 import com.patrykandpatrick.vico.core.cartesian.axis.Axis
-import com.patrykandpatrick.vico.core.cartesian.axis.BaseAxis
+import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
 import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
@@ -129,7 +129,7 @@ private fun ViewChart8(modelProducer: CartesianChartModelProducer, modifier: Mod
       (chart?.layers?.get(1) as LineCartesianLayer).verticalAxisPosition =
         Axis.Position.Vertical.End
       this.modelProducer = modelProducer
-      (chart?.startAxis as BaseAxis).guideline = null
+      chart?.startAxis = (chart?.startAxis as VerticalAxis).copy(guideline = null)
       chart?.marker = marker
     }
   }

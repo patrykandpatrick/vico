@@ -34,7 +34,7 @@ import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.common.of
-import com.patrykandpatrick.vico.core.cartesian.axis.BaseAxis
+import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
@@ -117,7 +117,8 @@ private fun ViewChart6(modelProducer: CartesianChartModelProducer, modifier: Mod
         with(chartView) {
           chart?.decorations = listOf(getViewHorizontalBox())
           this.modelProducer = modelProducer
-          (chart?.bottomAxis as BaseAxis<*>).valueFormatter = bottomAxisValueFormatter
+          chart?.bottomAxis =
+            (chart?.bottomAxis as HorizontalAxis).copy(valueFormatter = bottomAxisValueFormatter)
           chart?.marker = marker
         }
       }

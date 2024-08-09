@@ -46,7 +46,6 @@ import com.patrykandpatrick.vico.compose.common.shader.component
 import com.patrykandpatrick.vico.compose.common.shader.verticalGradient
 import com.patrykandpatrick.vico.compose.common.shape.dashed
 import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
-import com.patrykandpatrick.vico.core.cartesian.axis.BaseAxis
 import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
@@ -196,7 +195,7 @@ private fun ViewChart9(modelProducer: CartesianChartModelProducer, modifier: Mod
       Chart9Binding.inflate(inflater, parent, attachToParent).apply {
         with(chartView) {
           this.modelProducer = modelProducer
-          (chart?.bottomAxis as BaseAxis).guideline = null
+          chart?.bottomAxis = (chart?.bottomAxis as HorizontalAxis).copy(guideline = null)
           chart?.marker = marker
           with(chart?.layers?.get(0) as LineCartesianLayer) {
             lineProvider =

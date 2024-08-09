@@ -47,22 +47,37 @@ public fun rememberStartAxis(
   titleComponent: TextComponent? = null,
   title: CharSequence? = null,
 ): VerticalAxis<Axis.Position.Vertical.Start> =
-  remember { VerticalAxis.start() }
-    .apply {
-      this.line = line
-      this.label = label
-      this.labelRotationDegrees = labelRotationDegrees
-      this.horizontalLabelPosition = horizontalLabelPosition
-      this.verticalLabelPosition = verticalLabelPosition
-      this.valueFormatter = valueFormatter
-      this.tick = tick
-      tickLengthDp = tickLength.value
-      this.guideline = guideline
-      this.itemPlacer = itemPlacer
-      this.sizeConstraint = sizeConstraint
-      this.titleComponent = titleComponent
-      this.title = title
-    }
+  remember(
+    line,
+    label,
+    labelRotationDegrees,
+    horizontalLabelPosition,
+    verticalLabelPosition,
+    valueFormatter,
+    tick,
+    tickLength.value,
+    guideline,
+    itemPlacer,
+    sizeConstraint,
+    titleComponent,
+    title,
+  ) {
+    VerticalAxis.start(
+      line,
+      label,
+      labelRotationDegrees,
+      horizontalLabelPosition,
+      verticalLabelPosition,
+      valueFormatter,
+      tick,
+      tickLength.value,
+      guideline,
+      itemPlacer,
+      sizeConstraint,
+      titleComponent,
+      title,
+    )
+  }
 
 /** Creates and remembers an end [VerticalAxis]. */
 @Composable
@@ -83,19 +98,34 @@ public fun rememberEndAxis(
   titleComponent: TextComponent? = null,
   title: CharSequence? = null,
 ): VerticalAxis<Axis.Position.Vertical.End> =
-  remember { VerticalAxis.end() }
-    .apply {
-      this.line = line
-      this.label = label
-      this.labelRotationDegrees = labelRotationDegrees
-      this.horizontalLabelPosition = horizontalLabelPosition
-      this.verticalLabelPosition = verticalLabelPosition
-      this.valueFormatter = valueFormatter
-      this.tick = tick
-      tickLengthDp = tickLength.value
-      this.guideline = guideline
-      this.itemPlacer = itemPlacer
-      this.sizeConstraint = sizeConstraint
-      this.titleComponent = titleComponent
-      this.title = title
-    }
+  remember(
+    line,
+    label,
+    labelRotationDegrees,
+    horizontalLabelPosition,
+    verticalLabelPosition,
+    valueFormatter,
+    tick,
+    tickLength.value,
+    guideline,
+    itemPlacer,
+    sizeConstraint,
+    titleComponent,
+    title,
+  ) {
+    VerticalAxis.end(
+      line,
+      label,
+      labelRotationDegrees,
+      horizontalLabelPosition,
+      verticalLabelPosition,
+      valueFormatter,
+      tick,
+      tickLength.value,
+      guideline,
+      itemPlacer,
+      sizeConstraint,
+      titleComponent,
+      title,
+    )
+  }

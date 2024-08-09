@@ -126,7 +126,7 @@ private fun ViewChart5(modelProducer: CartesianChartModelProducer, modifier: Mod
   AndroidViewBinding(Chart5Binding::inflate, modifier) {
     with(chartView) {
       this.modelProducer = modelProducer
-      (chart?.startAxis as VerticalAxis).itemPlacer = startAxisItemPlacer
+      chart?.startAxis = (chart?.startAxis as VerticalAxis).copy(itemPlacer = startAxisItemPlacer)
       chart?.marker = marker
     }
   }

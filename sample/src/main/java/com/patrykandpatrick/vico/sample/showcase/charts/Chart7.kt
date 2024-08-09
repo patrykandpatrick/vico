@@ -131,9 +131,11 @@ private fun ViewChart7(modelProducer: CartesianChartModelProducer, modifier: Mod
   AndroidViewBinding(Chart7Binding::inflate, modifier) {
     with(chartView) {
       this.modelProducer = modelProducer
-      (chart?.startAxis as VerticalAxis).horizontalLabelPosition =
-        VerticalAxis.HorizontalLabelPosition.Inside
-      (chart?.startAxis as VerticalAxis).label = startAxisLabel
+      chart?.startAxis =
+        (chart?.startAxis as VerticalAxis).copy(
+          label = startAxisLabel,
+          horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
+        )
       chart?.marker = marker
       chart?.legend = legend
     }

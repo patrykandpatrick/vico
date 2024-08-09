@@ -43,20 +43,33 @@ public fun rememberTopAxis(
   titleComponent: TextComponent? = null,
   title: CharSequence? = null,
 ): HorizontalAxis<Axis.Position.Horizontal.Top> =
-  remember { HorizontalAxis.top() }
-    .apply {
-      this.line = line
-      this.label = label
-      this.labelRotationDegrees = labelRotationDegrees
-      this.valueFormatter = valueFormatter
-      this.tick = tick
-      tickLengthDp = tickLength.value
-      this.guideline = guideline
-      this.itemPlacer = itemPlacer
-      this.sizeConstraint = sizeConstraint
-      this.titleComponent = titleComponent
-      this.title = title
-    }
+  remember(
+    line,
+    label,
+    labelRotationDegrees,
+    valueFormatter,
+    tick,
+    tickLength.value,
+    guideline,
+    itemPlacer,
+    sizeConstraint,
+    titleComponent,
+    title,
+  ) {
+    HorizontalAxis.top(
+      line,
+      label,
+      labelRotationDegrees,
+      valueFormatter,
+      tick,
+      tickLength.value,
+      guideline,
+      itemPlacer,
+      sizeConstraint,
+      titleComponent,
+      title,
+    )
+  }
 
 /** Creates and remembers a bottom [HorizontalAxis]. */
 @Composable
@@ -73,17 +86,30 @@ public fun rememberBottomAxis(
   titleComponent: TextComponent? = null,
   title: CharSequence? = null,
 ): HorizontalAxis<Axis.Position.Horizontal.Bottom> =
-  remember { HorizontalAxis.bottom() }
-    .apply {
-      this.line = line
-      this.label = label
-      this.labelRotationDegrees = labelRotationDegrees
-      this.valueFormatter = valueFormatter
-      this.tick = tick
-      tickLengthDp = tickLength.value
-      this.guideline = guideline
-      this.itemPlacer = itemPlacer
-      this.sizeConstraint = sizeConstraint
-      this.titleComponent = titleComponent
-      this.title = title
-    }
+  remember(
+    line,
+    label,
+    labelRotationDegrees,
+    valueFormatter,
+    tick,
+    tickLength.value,
+    guideline,
+    itemPlacer,
+    sizeConstraint,
+    titleComponent,
+    title,
+  ) {
+    HorizontalAxis.bottom(
+      line,
+      label,
+      labelRotationDegrees,
+      valueFormatter,
+      tick,
+      tickLength.value,
+      guideline,
+      itemPlacer,
+      sizeConstraint,
+      titleComponent,
+      title,
+    )
+  }

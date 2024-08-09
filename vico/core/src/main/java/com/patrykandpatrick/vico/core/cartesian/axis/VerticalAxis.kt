@@ -61,13 +61,13 @@ protected constructor(
   line: LineComponent?,
   label: TextComponent?,
   labelRotationDegrees: Float,
-  public var horizontalLabelPosition: HorizontalLabelPosition = Outside,
-  public var verticalLabelPosition: VerticalLabelPosition = Center,
+  public val horizontalLabelPosition: HorizontalLabelPosition,
+  public val verticalLabelPosition: VerticalLabelPosition,
   valueFormatter: CartesianValueFormatter,
   tick: LineComponent?,
   tickLengthDp: Float,
   guideline: LineComponent?,
-  public var itemPlacer: ItemPlacer = ItemPlacer.step(),
+  public val itemPlacer: ItemPlacer,
   sizeConstraint: SizeConstraint,
   titleComponent: TextComponent?,
   title: CharSequence?,
@@ -99,24 +99,32 @@ protected constructor(
   @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
   public constructor(
     position: P,
+    line: LineComponent?,
+    label: TextComponent?,
+    labelRotationDegrees: Float,
     horizontalLabelPosition: HorizontalLabelPosition,
     verticalLabelPosition: VerticalLabelPosition,
+    tick: LineComponent?,
+    tickLengthDp: Float,
+    guideline: LineComponent?,
     itemPlacer: ItemPlacer,
+    titleComponent: TextComponent?,
+    title: CharSequence?,
   ) : this(
-    position = position,
-    line = null,
-    label = null,
-    labelRotationDegrees = 0f,
-    horizontalLabelPosition = horizontalLabelPosition,
-    verticalLabelPosition = verticalLabelPosition,
-    valueFormatter = CartesianValueFormatter.decimal(),
-    tick = null,
-    tickLengthDp = 0f,
-    guideline = null,
-    itemPlacer = itemPlacer,
-    sizeConstraint = SizeConstraint.Auto(),
-    titleComponent = null,
-    title = null,
+    position,
+    line,
+    label,
+    labelRotationDegrees,
+    horizontalLabelPosition,
+    verticalLabelPosition,
+    CartesianValueFormatter.decimal(),
+    tick,
+    tickLengthDp,
+    guideline,
+    itemPlacer,
+    SizeConstraint.Auto(),
+    titleComponent,
+    title,
   )
 
   override fun drawUnderLayers(context: CartesianDrawingContext) {
@@ -389,6 +397,39 @@ protected constructor(
     } else {
       thickness.half
     }
+
+  /** Creates a new [VerticalAxis] based on this one. */
+  public fun copy(
+    line: LineComponent? = this.line,
+    label: TextComponent? = this.label,
+    labelRotationDegrees: Float = this.labelRotationDegrees,
+    horizontalLabelPosition: HorizontalLabelPosition = this.horizontalLabelPosition,
+    verticalLabelPosition: VerticalLabelPosition = this.verticalLabelPosition,
+    valueFormatter: CartesianValueFormatter = this.valueFormatter,
+    tick: LineComponent? = this.tick,
+    tickLengthDp: Float = this.tickLengthDp,
+    guideline: LineComponent? = this.guideline,
+    itemPlacer: ItemPlacer = this.itemPlacer,
+    sizeConstraint: SizeConstraint = this.sizeConstraint,
+    titleComponent: TextComponent? = this.titleComponent,
+    title: CharSequence? = this.title,
+  ): VerticalAxis<P> =
+    VerticalAxis(
+      position,
+      line,
+      label,
+      labelRotationDegrees,
+      horizontalLabelPosition,
+      verticalLabelPosition,
+      valueFormatter,
+      tick,
+      tickLengthDp,
+      guideline,
+      itemPlacer,
+      sizeConstraint,
+      titleComponent,
+      title,
+    )
 
   /**
    * Defines the horizontal position of each of a vertical axis’s labels relative to the axis line.
