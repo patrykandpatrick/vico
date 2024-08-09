@@ -87,10 +87,11 @@ public open class ShapeComponent(
       path.rewind()
       applyShader(this, left, top, right, bottom)
       shadow?.updateShadowLayer(this, paint)
-      shape.draw(this, paint, path, adjustedLeft, adjustedTop, adjustedRight, adjustedBottom)
+      shape.outline(this, path, adjustedLeft, adjustedTop, adjustedRight, adjustedBottom)
+      canvas.drawPath(path, paint)
       if (strokeThickness == 0f || strokeColor.alpha == 0) return
       strokePaint.strokeWidth = strokeThickness
-      shape.draw(this, strokePaint, path, adjustedLeft, adjustedTop, adjustedRight, adjustedBottom)
+      canvas.drawPath(path, strokePaint)
     }
   }
 

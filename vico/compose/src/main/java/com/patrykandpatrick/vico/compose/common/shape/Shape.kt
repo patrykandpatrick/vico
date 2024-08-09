@@ -19,7 +19,6 @@
 package com.patrykandpatrick.vico.compose.common.shape
 
 import android.graphics.Matrix
-import android.graphics.Paint
 import android.graphics.Path
 import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.geometry.Size
@@ -30,7 +29,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.core.common.Defaults.MARKER_TICK_SIZE
-import com.patrykandpatrick.vico.core.common.DrawingContext
+import com.patrykandpatrick.vico.core.common.MeasuringContext
 import com.patrykandpatrick.vico.core.common.shape.Corner
 import com.patrykandpatrick.vico.core.common.shape.CorneredShape
 import com.patrykandpatrick.vico.core.common.shape.CutCornerTreatment
@@ -71,9 +70,8 @@ public fun androidx.compose.ui.graphics.Shape.toVicoShape(): Shape =
     private val radii by lazy { FloatArray(RADII_ARRAY_SIZE) }
     private val matrix: Matrix by lazy { Matrix() }
 
-    override fun draw(
-      context: DrawingContext,
-      paint: Paint,
+    override fun outline(
+      context: MeasuringContext,
       path: Path,
       left: Float,
       top: Float,
@@ -102,23 +100,6 @@ public fun androidx.compose.ui.graphics.Shape.toVicoShape(): Shape =
           path.addPath(outline.path.asAndroidPath(), matrix)
         }
       }
-      context.canvas.drawPath(path, paint)
-    }
-
-    @Deprecated(
-      "Use `draw`.",
-      replaceWith = ReplaceWith("draw(context, paint, path, left, top, right, bottom)"),
-    )
-    override fun drawShape(
-      context: DrawingContext,
-      paint: Paint,
-      path: Path,
-      left: Float,
-      top: Float,
-      right: Float,
-      bottom: Float,
-    ) {
-      draw(context, paint, path, left, top, right, bottom)
     }
   }
 
@@ -132,7 +113,7 @@ public fun CorneredShape.toComposeShape(): androidx.compose.ui.graphics.Shape =
     ): Outline {
       val path = ComposePath()
 
-      createPath(
+      outline(
         density = density.density,
         path = path.asAndroidPath(),
         left = 0f,

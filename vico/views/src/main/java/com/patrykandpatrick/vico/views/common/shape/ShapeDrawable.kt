@@ -62,7 +62,7 @@ public fun Shape.toDrawable(
     }
 
     override fun draw(canvas: Canvas) {
-      draw(
+      outline(
         DrawingContext(
           canvas = canvas,
           density = density,
@@ -73,7 +73,6 @@ public fun Shape.toDrawable(
               isLtr
             },
         ),
-        paint,
         path,
         bounds.left.toFloat(),
         bounds.top.toFloat(),

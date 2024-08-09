@@ -16,10 +16,9 @@
 
 package com.patrykandpatrick.vico.core.common.shape
 
-import android.graphics.Paint
 import android.graphics.Path
 import com.patrykandpatrick.vico.core.common.Defaults
-import com.patrykandpatrick.vico.core.common.DrawingContext
+import com.patrykandpatrick.vico.core.common.MeasuringContext
 import kotlin.math.ceil
 
 /**
@@ -40,9 +39,8 @@ public class DashedShape(
   private var drawDashLength = dashLengthDp
   private var drawGapLength = gapLengthDp
 
-  override fun draw(
-    context: DrawingContext,
-    paint: Paint,
+  override fun outline(
+    context: MeasuringContext,
     path: Path,
     left: Float,
     top: Float,
@@ -50,31 +48,14 @@ public class DashedShape(
     bottom: Float,
   ) {
     if (right - left > bottom - top) {
-      drawHorizontalDashes(context, paint, path, left, top, right, bottom)
+      drawHorizontalDashes(context, path, left, top, right, bottom)
     } else {
-      drawVerticalDashes(context, paint, path, left, top, right, bottom)
+      drawVerticalDashes(context, path, left, top, right, bottom)
     }
   }
 
-  @Deprecated(
-    "Use `draw`.",
-    replaceWith = ReplaceWith("draw(context, paint, path, left, top, right, bottom)"),
-  )
-  override fun drawShape(
-    context: DrawingContext,
-    paint: Paint,
-    path: Path,
-    left: Float,
-    top: Float,
-    right: Float,
-    bottom: Float,
-  ) {
-    draw(context, paint, path, left, top, right, bottom)
-  }
-
   private fun drawHorizontalDashes(
-    context: DrawingContext,
-    paint: Paint,
+    context: MeasuringContext,
     path: Path,
     left: Float,
     top: Float,
@@ -88,10 +69,8 @@ public class DashedShape(
     while (right - left - drawnLength > 0) {
       drawnLength +=
         if (index % 2 == 0) {
-          path.reset()
-          shape.draw(
+          shape.outline(
             context = context,
-            paint = paint,
             path = path,
             left = left + drawnLength,
             top = top,
@@ -107,8 +86,7 @@ public class DashedShape(
   }
 
   private fun drawVerticalDashes(
-    context: DrawingContext,
-    paint: Paint,
+    context: MeasuringContext,
     path: Path,
     left: Float,
     top: Float,
@@ -122,10 +100,8 @@ public class DashedShape(
     while (bottom - top - drawnLength > 0) {
       drawnLength +=
         if (index % 2 == 0) {
-          path.reset()
-          shape.draw(
+          shape.outline(
             context = context,
-            paint = paint,
             path = path,
             left = left,
             top = top + drawnLength,
@@ -140,7 +116,7 @@ public class DashedShape(
     }
   }
 
-  private fun calculateDrawLengths(context: DrawingContext, length: Float): Unit =
+  private fun calculateDrawLengths(context: MeasuringContext, length: Float): Unit =
     with(context) { calculateDrawLengths(dashLengthDp.pixels, gapLengthDp.pixels, length) }
 
   private fun calculateDrawLengths(dashLength: Float, gapLength: Float, length: Float) {

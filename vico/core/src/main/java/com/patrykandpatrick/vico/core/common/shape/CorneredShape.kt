@@ -16,9 +16,9 @@
 
 package com.patrykandpatrick.vico.core.common.shape
 
-import android.graphics.Paint
 import android.graphics.Path
-import com.patrykandpatrick.vico.core.common.DrawingContext
+import androidx.annotation.RestrictTo
+import com.patrykandpatrick.vico.core.common.MeasuringContext
 import kotlin.math.absoluteValue
 
 /**
@@ -38,15 +38,7 @@ public open class CorneredShape(
   private val Float.nonZero: Float
     get() = if (this == 0f) 1f else this
 
-  /**
-   * Returns a scale factor for the corner size, which will prevent graphical glitches in case the
-   * size of the corners is larger than the shape’s dimensions.
-   *
-   * @param width the width of the [Shape].
-   * @param height the height of the [Shape].
-   * @param density the pixel density of the screen (used in pixel size calculation).
-   */
-  public fun getCornerScale(width: Float, height: Float, density: Float): Float {
+  protected fun getCornerScale(width: Float, height: Float, density: Float): Float {
     val availableSize = minOf(width, height)
     val tL = topLeft.getCornerSize(availableSize, density)
     val tR = topRight.getCornerSize(availableSize, density)
@@ -60,64 +52,8 @@ public open class CorneredShape(
     )
   }
 
-  override fun draw(
-    context: DrawingContext,
-    paint: Paint,
-    path: Path,
-    left: Float,
-    top: Float,
-    right: Float,
-    bottom: Float,
-  ) {
-    createPath(context, path, left, top, right, bottom)
-    context.canvas.drawPath(path, paint)
-  }
-
-  @Deprecated(
-    "Use `draw`.",
-    replaceWith = ReplaceWith("draw(context, paint, path, left, top, right, bottom)"),
-  )
-  override fun drawShape(
-    context: DrawingContext,
-    paint: Paint,
-    path: Path,
-    left: Float,
-    top: Float,
-    right: Float,
-    bottom: Float,
-  ) {
-    draw(context, paint, path, left, top, right, bottom)
-  }
-
-  protected open fun createPath(
-    context: DrawingContext,
-    path: Path,
-    left: Float,
-    top: Float,
-    right: Float,
-    bottom: Float,
-  ) {
-    createPath(
-      density = context.density,
-      path = path,
-      left = left,
-      top = top,
-      right = right,
-      bottom = bottom,
-    )
-  }
-
-  /**
-   * Adds a contour of this [CorneredShape] to the provided [Path].
-   *
-   * @param density the screen density.
-   * @param path the [Path] to use.
-   * @param left the left edge of the [CorneredShape].
-   * @param top the top edge of the [CorneredShape].
-   * @param right the right edge of the [CorneredShape].
-   * @param bottom the bottom edge of the [CorneredShape].
-   */
-  public open fun createPath(
+  @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+  public fun outline(
     density: Float,
     path: Path,
     left: Float,
@@ -177,6 +113,17 @@ public open class CorneredShape(
       path,
     )
     path.close()
+  }
+
+  override fun outline(
+    context: MeasuringContext,
+    path: Path,
+    left: Float,
+    top: Float,
+    right: Float,
+    bottom: Float,
+  ) {
+    outline(context.density, path, left, top, right, bottom)
   }
 
   override fun equals(other: Any?): Boolean =

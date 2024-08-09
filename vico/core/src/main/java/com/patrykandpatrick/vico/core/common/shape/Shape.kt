@@ -16,64 +16,17 @@
 
 package com.patrykandpatrick.vico.core.common.shape
 
-import android.graphics.Paint
 import android.graphics.Path
-import android.graphics.PorterDuff
-import android.graphics.PorterDuffColorFilter
-import android.graphics.drawable.Drawable
-import android.os.Build
-import com.patrykandpatrick.vico.core.common.DrawingContext
+import com.patrykandpatrick.vico.core.common.MeasuringContext
 
-/** Defines a shape that can be drawn on a canvas. */
+/** Defines a shape. */
 public interface Shape {
   /**
-   * Draws the [Shape] on the canvas.
-   *
-   * @param context holds environment data.
-   * @param paint the [Paint] used to draw the shape.
-   * @param path the [Path] defining the shape.
-   * @param left the _x_ coordinate of the left edge of the bounds in which the shape should be
-   *   drawn.
-   * @param top the _y_ coordinate of the top edge of the bounds in which the shape should be drawn.
-   * @param right the _x_ coordinate of the right edge of the bounds in which the shape should be
-   *   drawn.
-   * @param bottom the _y_ coordinate of the bottom edge of the bounds in which the shape should be
-   *   drawn.
+   * Adds an outline of the [Shape] to [path]. [left], [top], [right], and [bottom] define the
+   * outline bounds.
    */
-  @Suppress("DEPRECATION")
-  public fun draw(
-    context: DrawingContext,
-    paint: Paint,
-    path: Path,
-    left: Float,
-    top: Float,
-    right: Float,
-    bottom: Float,
-  ) {
-    drawShape(context, paint, path, left, top, right, bottom)
-  }
-
-  /**
-   * Draws the [Shape] on the canvas.
-   *
-   * @param context holds environment data.
-   * @param paint the [Paint] used to draw the shape.
-   * @param path the [Path] defining the shape.
-   * @param left the _x_ coordinate of the left edge of the bounds in which the shape should be
-   *   drawn.
-   * @param top the _y_ coordinate of the top edge of the bounds in which the shape should be drawn.
-   * @param right the _x_ coordinate of the right edge of the bounds in which the shape should be
-   *   drawn.
-   * @param bottom the _y_ coordinate of the bottom edge of the bounds in which the shape should be
-   *   drawn.
-   */
-  @Deprecated(
-    message = "Use `draw`.",
-    replaceWith = ReplaceWith("draw(context, paint, path, left, top, right, bottom)"),
-  )
-  public fun drawShape(
-    context: DrawingContext,
-    paint: Paint,
+  public fun outline(
+    context: MeasuringContext,
     path: Path,
     left: Float,
     top: Float,
@@ -85,9 +38,8 @@ public interface Shape {
     /** A rectangle with sharp corners. */
     public val Rectangle: Shape =
       object : Shape {
-        override fun draw(
-          context: DrawingContext,
-          paint: Paint,
+        override fun outline(
+          context: MeasuringContext,
           path: Path,
           left: Float,
           top: Float,
@@ -99,23 +51,6 @@ public interface Shape {
           path.lineTo(right, bottom)
           path.lineTo(left, bottom)
           path.close()
-          context.canvas.drawPath(path, paint)
-        }
-
-        @Deprecated(
-          "Use `draw`.",
-          replaceWith = ReplaceWith("draw(context, paint, path, left, top, right, bottom)"),
-        )
-        override fun drawShape(
-          context: DrawingContext,
-          paint: Paint,
-          path: Path,
-          left: Float,
-          top: Float,
-          right: Float,
-          bottom: Float,
-        ) {
-          draw(context, paint, path, left, top, right, bottom)
         }
       }
 
@@ -213,108 +148,5 @@ public interface Shape {
         Corner.Absolute(bottomRightDp, CutCornerTreatment),
         Corner.Absolute(bottomLeftDp, CutCornerTreatment),
       )
-
-    /**
-     * Creates a [Shape] out of a [Drawable].
-     *
-     * @param drawable the [Drawable] that will be used as a shape.
-     * @param keepAspectRatio whether to keep the drawable’s aspect ratio, based on its intrinsic
-     *   size.
-     * @param otherShape used to fill the remaining space if the [drawable] doesn’t fill the entire
-     *   bounds.
-     */
-    public fun drawable(
-      drawable: Drawable,
-      tintDrawable: Boolean = true,
-      keepAspectRatio: Boolean = false,
-      otherShape: Shape? = Rectangle,
-    ): Shape =
-      object : Shape {
-        private val ratio: Float =
-          drawable.intrinsicWidth.coerceAtLeast(1) /
-            drawable.intrinsicHeight.coerceAtLeast(1).toFloat()
-
-        override fun draw(
-          context: DrawingContext,
-          paint: Paint,
-          path: Path,
-          left: Float,
-          top: Float,
-          right: Float,
-          bottom: Float,
-        ) {
-          if (bottom - top == 0f || left - right == 0f) return
-          val width = right - left
-          val height = bottom - top
-
-          var otherComponentLeft = left
-          var otherComponentTop = top
-
-          if (tintDrawable) drawable.setTintCompat(paint.color)
-
-          if (height > width) {
-            val drawableHeight = if (keepAspectRatio) width / ratio else height
-            val topWithoutClipping = minOf(top, bottom - drawableHeight)
-            drawable.setBounds(
-              left = left,
-              top = topWithoutClipping,
-              right = right,
-              bottom = topWithoutClipping + drawableHeight,
-            )
-
-            otherComponentTop = topWithoutClipping + drawableHeight
-          } else {
-            val drawableWidth = if (keepAspectRatio) height * ratio else width
-            val leftWithoutClipping = minOf(left, right - drawableWidth)
-            drawable.setBounds(
-              left = leftWithoutClipping,
-              top = top,
-              right = leftWithoutClipping + drawableWidth,
-              bottom = bottom,
-            )
-
-            otherComponentLeft = leftWithoutClipping + drawableWidth
-          }
-
-          drawable.draw(context.canvas)
-          otherShape ?: return
-
-          if (bottom - otherComponentTop > 0 && right - otherComponentLeft > 0) {
-            otherShape.draw(
-              context = context,
-              paint = paint,
-              path = path,
-              left = otherComponentLeft,
-              top = otherComponentTop,
-              right = right,
-              bottom = bottom,
-            )
-          }
-        }
-
-        @Deprecated(
-          "Use `draw`.",
-          replaceWith = ReplaceWith("draw(context, paint, path, left, top, right, bottom)"),
-        )
-        override fun drawShape(
-          context: DrawingContext,
-          paint: Paint,
-          path: Path,
-          left: Float,
-          top: Float,
-          right: Float,
-          bottom: Float,
-        ) {
-          draw(context, paint, path, left, top, right, bottom)
-        }
-      }
-  }
-}
-
-private fun Drawable.setTintCompat(tint: Int) {
-  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-    setTint(tint)
-  } else {
-    colorFilter = PorterDuffColorFilter(tint, PorterDuff.Mode.SRC_IN)
   }
 }
