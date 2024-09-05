@@ -195,8 +195,8 @@ protected constructor(
      * [dashLength] and [gapLength] control the length of the dash and gap respectively.
      */
     public class Dashed(
-      public val dashLength: Float = Defaults.DASH_LENGTH,
-      public val gapLength: Float = Defaults.DASH_GAP,
+      public val dashLength: Float = Defaults.LINE_PATTERN_DASHED_LENGTH,
+      public val gapLength: Float = Defaults.LINE_PATTERN_DASHED_GAP,
     ) : LinePattern
 
     public companion object

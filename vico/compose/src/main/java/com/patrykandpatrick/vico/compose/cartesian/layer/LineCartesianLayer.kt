@@ -162,8 +162,8 @@ public fun LineCartesianLayer.LinePattern.Companion.continuous(): LineCartesianL
 
 /** Returns a [LineCartesianLayer.LinePattern.Dashed] instance. */
 public fun LineCartesianLayer.LinePattern.Companion.dashed(
-  dashLength: Dp = Defaults.DASH_LENGTH.dp,
-  gapLength: Dp = Defaults.DASH_GAP.dp,
+  dashLength: Dp = Defaults.LINE_PATTERN_DASHED_LENGTH.dp,
+  gapLength: Dp = Defaults.LINE_PATTERN_DASHED_GAP.dp,
 ): LineCartesianLayer.LinePattern.Dashed =
   LineCartesianLayer.LinePattern.Dashed(
     dashLength.value,
