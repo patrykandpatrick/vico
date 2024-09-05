@@ -18,9 +18,9 @@ package com.patrykandpatrick.vico.core.cartesian.layer
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.DashPathEffect
 import android.graphics.Paint
 import android.graphics.Path
-import android.graphics.PorterDuff
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
@@ -91,23 +91,21 @@ protected constructor(
   /**
    * Defines the appearance of a line in a line chart.
    *
-   * @param cap the stroke cap.
    * @property fill draws the line fill.
-   * @property thicknessDp the line thickness (in dp).
+   * @property stroke defines the style of the stroke.
    * @property areaFill draws the area fill.
    * @property pointProvider provides the [Point]s.
+   * @property pointConnector connects the line’s points, thus defining its shape.
    * @property dataLabel used for the data labels.
    * @property dataLabelVerticalPosition the vertical position of the data labels relative to the
    *   points.
    * @property dataLabelValueFormatter formats the data-label values.
    * @property dataLabelRotationDegrees the data-label rotation (in degrees).
-   * @property pointConnector connects the line’s points, thus defining its shape.
    */
   public open class Line(
     protected val fill: LineFill,
-    public val thicknessDp: Float = Defaults.LINE_SPEC_THICKNESS_DP,
+    public val stroke: LineStroke = LineStroke.Continuous(),
     protected val areaFill: AreaFill? = fill.getDefaultAreaFill(),
-    cap: Paint.Cap = Paint.Cap.ROUND,
     public val pointProvider: PointProvider? = null,
     public val pointConnector: PointConnector = PointConnector.cubic(),
     public val dataLabel: TextComponent? = null,
@@ -116,10 +114,7 @@ protected constructor(
     public val dataLabelRotationDegrees: Float = 0f,
   ) {
     protected val linePaint: Paint =
-      Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        style = Paint.Style.STROKE
-        strokeCap = cap
-      }
+      Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.STROKE }
 
     /** Draws the line. */
     public fun draw(
@@ -129,9 +124,8 @@ protected constructor(
       verticalAxisPosition: Axis.Position.Vertical?,
     ) {
       with(context) {
-        val thickness = thicknessDp.pixels
-        linePaint.strokeWidth = thickness
-        val halfThickness = thickness.half
+        stroke.apply(this, linePaint)
+        val halfThickness = stroke.thicknessDp.pixels.half
         areaFill?.draw(context, path, halfThickness, verticalAxisPosition)
         fillCanvas.drawPath(path, linePaint)
         withOtherCanvas(fillCanvas) { fill.draw(context, halfThickness, verticalAxisPosition) }
@@ -164,6 +158,61 @@ protected constructor(
         splitY: (ExtraStore) -> Number = { 0 },
       ): LineFill = DoubleLineFill(topFill, bottomFill, splitY)
     }
+  }
+
+  /** Defines the style of a [LineCartesianLayer] line’s stroke. */
+  @Immutable
+  public sealed interface LineStroke {
+
+    /** The stroke thickness (in dp). */
+    public val thicknessDp: Float
+
+    /** Applies the stroke style to [paint]. */
+    public fun apply(context: CartesianDrawingContext, paint: Paint)
+
+    /**
+     * Produces a continuous stroke.
+     *
+     * @property cap the stroke cap.
+     */
+    public data class Continuous(
+      override val thicknessDp: Float = Defaults.LINE_SPEC_THICKNESS_DP,
+      public val cap: Paint.Cap = Paint.Cap.ROUND,
+    ) : LineStroke {
+      override fun apply(context: CartesianDrawingContext, paint: Paint) {
+        with(context) {
+          paint.strokeWidth = thicknessDp.pixels
+          paint.strokeCap = cap
+          paint.pathEffect = null
+        }
+      }
+    }
+
+    /**
+     * Produces a dashed stroke.
+     *
+     * @property cap the stroke cap.
+     * @property dashLengthDp the dash length (in dp).
+     * @property gapLengthDp the gap length (in dp).
+     */
+    public data class Dashed(
+      public override val thicknessDp: Float = Defaults.LINE_SPEC_THICKNESS_DP,
+      public val cap: Paint.Cap = Paint.Cap.ROUND,
+      public val dashLengthDp: Float = Defaults.LINE_PATTERN_DASHED_LENGTH,
+      public val gapLengthDp: Float = Defaults.LINE_PATTERN_DASHED_GAP,
+    ) : LineStroke {
+      override fun apply(context: CartesianDrawingContext, paint: Paint) {
+        with(context) {
+          paint.strokeWidth = thicknessDp.pixels
+          paint.strokeCap = cap
+          paint.pathEffect =
+            DashPathEffect(floatArrayOf(dashLengthDp.pixels, gapLengthDp.pixels), 0f)
+        }
+      }
+    }
+
+    /** Provides access to [LineStroke] factory functions. */
+    public companion object
   }
 
   /** Draws a [LineCartesianLayer] line’s area fill. */
@@ -354,7 +403,12 @@ protected constructor(
         val drawingStart =
           layerBounds.getStart(isLtr = isLtr) + drawingStartAlignmentCorrection - scroll
 
-        forEachPointInBounds(series, drawingStart, pointInfoMap) { _, x, y, _, _ ->
+        forEachPointInBounds(
+          series = series,
+          drawingStart = drawingStart,
+          pointInfoMap = pointInfoMap,
+          drawFullLineLength = line.stroke is LineStroke.Dashed,
+        ) { _, x, y, _, _ ->
           if (linePath.isEmpty) {
             linePath.moveTo(x, y)
           } else {
@@ -428,7 +482,7 @@ protected constructor(
             chartEntry.x == ranges.maxX && horizontalDimensions.endPadding > 0
         }
         ?.let { textComponent ->
-          val distanceFromLine = max(line.thicknessDp, point?.sizeDp.orZero).half.pixels
+          val distanceFromLine = max(line.stroke.thicknessDp, point?.sizeDp.orZero).half.pixels
 
           val text = line.dataLabelValueFormatter.format(this, chartEntry.y, verticalAxisPosition)
           val maxWidth = getMaxDataLabelWidth(chartEntry, x, previousX, nextX)
@@ -500,6 +554,7 @@ protected constructor(
     series: List<LineCartesianLayerModel.Entry>,
     drawingStart: Float,
     pointInfoMap: Map<Double, LineCartesianLayerDrawingModel.PointInfo>?,
+    drawFullLineLength: Boolean = false,
     action:
       (
         entry: LineCartesianLayerModel.Entry, x: Float, y: Float, previousX: Float?, nextX: Float?,
@@ -535,7 +590,8 @@ protected constructor(
       x = immutableX
       nextX = immutableNextX
       if (
-        immutableNextX != null &&
+        drawFullLineLength.not() &&
+          immutableNextX != null &&
           (isLtr && immutableX < boundsStart || !isLtr && immutableX > boundsStart) &&
           (isLtr && immutableNextX < boundsStart || !isLtr && immutableNextX > boundsStart)
       ) {
@@ -595,7 +651,10 @@ protected constructor(
         (0..<model.series.size)
           .mapNotNull { lineProvider.getLine(it, model.extraStore) }
           .maxOf {
-            max(it.thicknessDp, it.pointProvider?.getLargestPoint(model.extraStore)?.sizeDp.orZero)
+            max(
+              it.stroke.thicknessDp,
+              it.pointProvider?.getLargestPoint(model.extraStore)?.sizeDp.orZero,
+            )
           }
           .half
           .pixels

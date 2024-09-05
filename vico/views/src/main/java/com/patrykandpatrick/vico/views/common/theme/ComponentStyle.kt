@@ -19,6 +19,7 @@ package com.patrykandpatrick.vico.views.common.theme
 import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.Color
+import android.graphics.Paint
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.common.DefaultAlpha
 import com.patrykandpatrick.vico.core.common.Defaults
@@ -160,6 +161,12 @@ internal fun TypedArray.getLine(context: Context, defaultColor: Int): LineCartes
       ),
     )
 
+  val dashLength = getRawDimension(context, R.styleable.LineStyle_dashLength, 0f)
+  val dashGap = getRawDimension(context, R.styleable.LineStyle_gapLength, 0f)
+  val thicknessDp =
+    getRawDimension(context, R.styleable.LineStyle_thickness, Defaults.LINE_SPEC_THICKNESS_DP)
+  val cap = Paint.Cap.entries[getInteger(R.styleable.LineStyle_android_strokeLineCap, 1)]
+
   return LineCartesianLayer.Line(
     fill =
       if (positiveLineColor != negativeLineColor) {
@@ -167,8 +174,6 @@ internal fun TypedArray.getLine(context: Context, defaultColor: Int): LineCartes
       } else {
         LineCartesianLayer.LineFill.single(Fill(positiveLineColor))
       },
-    thicknessDp =
-      getRawDimension(context, R.styleable.LineStyle_thickness, Defaults.LINE_SPEC_THICKNESS_DP),
     areaFill =
       LineCartesianLayer.AreaFill.double(
         Fill(DynamicShader.verticalGradient(positiveGradientTopColor, positiveGradientBottomColor)),
@@ -203,5 +208,11 @@ internal fun TypedArray.getLine(context: Context, defaultColor: Int): LineCartes
     dataLabelVerticalPosition =
       VerticalPosition.entries[getInteger(R.styleable.LineStyle_dataLabelVerticalPosition, 0)],
     dataLabelRotationDegrees = getFloat(R.styleable.LineStyle_dataLabelRotationDegrees, 0f),
+    stroke =
+      if (dashLength > 0f && dashGap > 0f) {
+        LineCartesianLayer.LineStroke.Dashed(thicknessDp, cap, dashLength, dashGap)
+      } else {
+        LineCartesianLayer.LineStroke.Continuous(thicknessDp, cap)
+      },
   )
 }

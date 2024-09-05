@@ -28,6 +28,7 @@ import com.patrykandpatrick.vico.R
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStart
+import com.patrykandpatrick.vico.compose.cartesian.layer.dashed
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLine
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
@@ -38,6 +39,7 @@ import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.common.component.shapeComponent
 import com.patrykandpatrick.vico.compose.common.dimensions
 import com.patrykandpatrick.vico.compose.common.fill
+import com.patrykandpatrick.vico.compose.common.shader.horizontalGradient
 import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
@@ -46,6 +48,7 @@ import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
+import com.patrykandpatrick.vico.core.common.shader.DynamicShader
 import com.patrykandpatrick.vico.core.common.shape.CorneredShape
 import com.patrykandpatrick.vico.databinding.Chart3Binding
 import com.patrykandpatrick.vico.sample.showcase.Defaults
@@ -88,7 +91,15 @@ private fun ComposeChart3(modelProducer: CartesianChartModelProducer, modifier: 
           lineProvider =
             LineCartesianLayer.LineProvider.series(
               LineCartesianLayer.rememberLine(
-                remember { LineCartesianLayer.LineFill.single(fill(lineColor)) }
+                fill =
+                  LineCartesianLayer.LineFill.single(
+                    fill(
+                      DynamicShader.horizontalGradient(
+                        arrayOf(Color(LINE_COLOR_1), Color(LINE_COLOR_2))
+                      )
+                    )
+                  ),
+                stroke = LineCartesianLayer.LineStroke.dashed(),
               )
             ),
           rangeProvider = rangeProvider,
@@ -102,7 +113,7 @@ private fun ComposeChart3(modelProducer: CartesianChartModelProducer, modifier: 
                 color = Color.Black,
                 margins = dimensions(end = 4.dp),
                 padding = dimensions(8.dp, 2.dp),
-                background = rememberShapeComponent(fill(lineColor), CorneredShape.Pill),
+                background = rememberShapeComponent(fill(Color(LINE_COLOR_1)), CorneredShape.Pill),
               ),
             title = stringResource(R.string.y_axis),
           ),
@@ -136,12 +147,26 @@ private fun ViewChart3(modelProducer: CartesianChartModelProducer, modifier: Mod
   AndroidViewBinding(Chart3Binding::inflate, modifier) {
     chartView.modelProducer = modelProducer
     val chart = requireNotNull(chartView.chart)
-    val lineLayer = (chart.layers[0] as LineCartesianLayer).copy(rangeProvider = rangeProvider)
+    val lineLayer =
+      (chart.layers[0] as LineCartesianLayer).copy(
+        rangeProvider = rangeProvider,
+        lineProvider =
+          LineCartesianLayer.LineProvider.series(
+            LineCartesianLayer.Line(
+              fill =
+                LineCartesianLayer.LineFill.single(
+                  fill(DynamicShader.horizontalGradient(LINE_COLOR_1, LINE_COLOR_2))
+                ),
+              stroke = LineCartesianLayer.LineStroke.Dashed(),
+            )
+          ),
+      )
     chartView.chart = chart.copy(lineLayer, marker = marker)
   }
 }
 
-private val lineColor = Color(0xffffbb00)
+private const val LINE_COLOR_1 = 0xffffbb00.toInt()
+private const val LINE_COLOR_2 = 0xffff4888.toInt()
 private val bottomAxisLabelBackgroundColor = Color(0xff9db591)
 private val rangeProvider =
   object : CartesianLayerRangeProvider {
