@@ -18,6 +18,7 @@ package com.patrykandpatrick.vico.core.cartesian.layer
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.DashPathEffect
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.PorterDuff
@@ -91,20 +92,22 @@ protected constructor(
   /**
    * Defines the appearance of a line in a line chart.
    *
-   * @param cap the stroke cap.
    * @property fill draws the line fill.
+   * @property pattern determines the line pattern to apply to the line.
    * @property thicknessDp the line thickness (in dp).
    * @property areaFill draws the area fill.
+   * @param cap the stroke cap.
    * @property pointProvider provides the [Point]s.
+   * @property pointConnector connects the line’s points, thus defining its shape.
    * @property dataLabel used for the data labels.
    * @property dataLabelVerticalPosition the vertical position of the data labels relative to the
    *   points.
    * @property dataLabelValueFormatter formats the data-label values.
    * @property dataLabelRotationDegrees the data-label rotation (in degrees).
-   * @property pointConnector connects the line’s points, thus defining its shape.
    */
   public open class Line(
     protected val fill: LineFill,
+    protected val pattern: LinePattern = LinePattern.Continuous,
     public val thicknessDp: Float = Defaults.LINE_SPEC_THICKNESS_DP,
     protected val areaFill: AreaFill? = fill.getDefaultAreaFill(),
     cap: Paint.Cap = Paint.Cap.ROUND,
@@ -132,6 +135,13 @@ protected constructor(
         val thickness = thicknessDp.pixels
         linePaint.strokeWidth = thickness
         val halfThickness = thickness.half
+        // Apply the PathEffect based on the line pattern
+        linePaint.pathEffect = when(pattern) {
+          is LinePattern.Continuous -> null
+          is LinePattern.Dashed -> {
+            DashPathEffect(floatArrayOf(pattern.dashLength, pattern.gapLength), 0f)
+          }
+        }
         areaFill?.draw(context, path, halfThickness, verticalAxisPosition)
         fillCanvas.drawPath(path, linePaint)
         withOtherCanvas(fillCanvas) { fill.draw(context, halfThickness, verticalAxisPosition) }
@@ -164,6 +174,32 @@ protected constructor(
         splitY: (ExtraStore) -> Number = { 0 },
       ): LineFill = DoubleLineFill(topFill, bottomFill, splitY)
     }
+  }
+
+  /** Defines a [LineCartesianLayer] line’s pattern types. Depending on the pattern,
+   * appropriate [android.graphics.PathEffect] can be applied for the line.
+   * Default line pattern is [LinePattern.Continuous] which means the line is drawn as a
+   * continuous line and no special path effect is applied.
+   */
+  @Immutable
+  public sealed interface LinePattern {
+    /**
+     * When this is applied, the line is drawn as a
+     * continuous line and no special path effect is applied.
+     */
+    public data object Continuous : LinePattern
+
+    /**
+     * When this is applied, the line is drawn in a dashed pattern
+     * and [android.graphics.DashPathEffect] is applied.
+     * [dashLength] and [gapLength] control the length of the dash and gap respectively.
+     */
+    public class Dashed(
+      public val dashLength: Float = Defaults.DASH_LENGTH,
+      public val gapLength: Float = Defaults.DASH_GAP,
+    ) : LinePattern
+
+    public companion object
   }
 
   /** Draws a [LineCartesianLayer] line’s area fill. */
