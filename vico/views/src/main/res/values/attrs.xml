@@ -27,6 +27,8 @@
     <attr name="strokeColor" format="color" />
     <attr name="strokeThickness" format="dimension" />
     <attr name="thickness" format="dimension" />
+    <attr name="dashLength" format="dimension" />
+    <attr name="gapLength" format="dimension" />
 
     <declare-styleable name="AxisStyle">
         <!-- Equivalent to the `addExtremeLabel` parameter of
@@ -486,6 +488,9 @@
         line. -->
         <attr name="dataLabelVerticalPosition" />
 
+        <!-- The line stroke cap. -->
+        <attr name="android:strokeLineCap"/>
+
         <!-- The bottom color of the vertical background gradient. -->
         <attr name="gradientBottomColor" format="color" />
 
@@ -521,6 +526,12 @@
 
         <!-- The stroke thickness. -->
         <attr name="thickness" />
+
+        <!-- The dash length. 0 means no dashes. -->
+        <attr name="dashLength" />
+
+        <!-- The dash gap length. 0 means no dashes. -->
+        <attr name="gapLength" />
     </declare-styleable>
 
     <declare-styleable name="ShapeStyle">
@@ -552,10 +563,10 @@
         </attr>
 
         <!-- The dash length. 0 means no dashes. -->
-        <attr name="dashLength" format="dimension" />
+        <attr name="dashLength" />
 
         <!-- The dash gap length. 0 means no dashes. -->
-        <attr name="gapLength" format="dimension" />
+        <attr name="gapLength" />
 
         <!-- The size of the top-end corner. -->
         <attr name="topEndCornerSize" format="dimension|fraction" />
