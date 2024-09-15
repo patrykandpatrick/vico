@@ -24,17 +24,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
-import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottomAxis
-import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStartAxis
-import com.patrykandpatrick.vico.compose.cartesian.decoration.rememberHorizontalBox
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStart
+import com.patrykandpatrick.vico.compose.cartesian.cartesianLayerPadding
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
-import com.patrykandpatrick.vico.compose.common.of
+import com.patrykandpatrick.vico.compose.common.component.shapeComponent
+import com.patrykandpatrick.vico.compose.common.dimensions
 import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
+import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
@@ -44,6 +46,7 @@ import com.patrykandpatrick.vico.core.common.Dimensions
 import com.patrykandpatrick.vico.core.common.component.ShapeComponent
 import com.patrykandpatrick.vico.core.common.component.TextComponent
 import com.patrykandpatrick.vico.core.common.copyColor
+import com.patrykandpatrick.vico.core.common.shape.CorneredShape
 import com.patrykandpatrick.vico.core.common.shape.Shape
 import com.patrykandpatrick.vico.databinding.Chart6Binding
 import com.patrykandpatrick.vico.sample.showcase.Defaults
@@ -88,18 +91,26 @@ internal fun Chart6(uiFramework: UIFramework, modifier: Modifier) {
 
 @Composable
 private fun ComposeChart6(modelProducer: CartesianChartModelProducer, modifier: Modifier) {
-  val shape = remember { Shape.cut(topLeftPercent = 50) }
+  val columnShape = CorneredShape.cut(topLeftPercent = 50)
   CartesianChartHost(
     chart =
       rememberCartesianChart(
         rememberColumnCartesianLayer(
           ColumnCartesianLayer.ColumnProvider.series(
-            columnColors.map { rememberLineComponent(color = it, thickness = 8.dp, shape = shape) }
+            columnColors.map {
+              rememberLineComponent(color = it, thickness = 8.dp, shape = columnShape)
+            }
           )
         ),
-        startAxis = rememberStartAxis(),
-        bottomAxis = rememberBottomAxis(valueFormatter = bottomAxisValueFormatter),
+        startAxis = VerticalAxis.rememberStart(),
+        bottomAxis =
+          HorizontalAxis.rememberBottom(
+            valueFormatter = bottomAxisValueFormatter,
+            itemPlacer = remember { HorizontalAxis.ItemPlacer.segmented() },
+          ),
         marker = rememberMarker(),
+        layerPadding =
+          cartesianLayerPadding(scalableStartPadding = 16.dp, scalableEndPadding = 16.dp),
         decorations = listOf(rememberComposeHorizontalBox()),
       ),
     modelProducer = modelProducer,
@@ -130,20 +141,18 @@ private fun ViewChart6(modelProducer: CartesianChartModelProducer, modifier: Mod
 @Composable
 private fun rememberComposeHorizontalBox(): HorizontalBox {
   val color = Color(HORIZONTAL_BOX_COLOR)
-  return rememberHorizontalBox(
-    y = { horizontalBoxY },
-    box = rememberShapeComponent(color = color.copy(HORIZONTAL_BOX_ALPHA)),
-    labelComponent =
-      rememberTextComponent(
-        margins = Dimensions.of(HORIZONTAL_BOX_LABEL_MARGIN_DP.dp),
-        padding =
-          Dimensions.of(
-            HORIZONTAL_BOX_LABEL_HORIZONTAL_PADDING_DP.dp,
-            HORIZONTAL_BOX_LABEL_VERTICAL_PADDING_DP.dp,
-          ),
-        background = rememberShapeComponent(color, Shape.Rectangle),
-      ),
-  )
+  val box = rememberShapeComponent(color = color.copy(HORIZONTAL_BOX_ALPHA))
+  val labelComponent =
+    rememberTextComponent(
+      margins = dimensions(HORIZONTAL_BOX_LABEL_MARGIN_DP.dp),
+      padding =
+        dimensions(
+          HORIZONTAL_BOX_LABEL_HORIZONTAL_PADDING_DP.dp,
+          HORIZONTAL_BOX_LABEL_VERTICAL_PADDING_DP.dp,
+        ),
+      background = shapeComponent(color, Shape.Rectangle),
+    )
+  return remember { HorizontalBox({ horizontalBoxY }, box, labelComponent) }
 }
 
 private fun getViewHorizontalBox() =
@@ -171,6 +180,6 @@ private const val HORIZONTAL_BOX_LABEL_MARGIN_DP = 4f
 private val columnColors = listOf(Color(0xff3e6558), Color(0xff5e836a), Color(0xffa5ba8e))
 private val horizontalBoxY = 7.0..14.0
 private val daysOfWeek = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
-private val bottomAxisValueFormatter = CartesianValueFormatter { x, _, _ ->
+private val bottomAxisValueFormatter = CartesianValueFormatter { _, x, _ ->
   daysOfWeek[x.toInt() % daysOfWeek.size]
 }

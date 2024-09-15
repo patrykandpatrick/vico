@@ -26,9 +26,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.patrykandpatrick.vico.R
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
-import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottomAxis
-import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStartAxis
-import com.patrykandpatrick.vico.compose.cartesian.fullWidth
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStart
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLine
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
@@ -36,21 +35,23 @@ import com.patrykandpatrick.vico.compose.cartesian.rememberFadingEdges
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
 import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
+import com.patrykandpatrick.vico.compose.common.component.shapeComponent
+import com.patrykandpatrick.vico.compose.common.dimensions
 import com.patrykandpatrick.vico.compose.common.fill
-import com.patrykandpatrick.vico.compose.common.of
-import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
+import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
-import com.patrykandpatrick.vico.core.cartesian.data.AxisValueOverrider
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianLayerRangeProvider
 import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
-import com.patrykandpatrick.vico.core.common.Dimensions
-import com.patrykandpatrick.vico.core.common.shape.Shape
+import com.patrykandpatrick.vico.core.common.data.ExtraStore
+import com.patrykandpatrick.vico.core.common.shape.CorneredShape
 import com.patrykandpatrick.vico.databinding.Chart3Binding
 import com.patrykandpatrick.vico.sample.showcase.Defaults
 import com.patrykandpatrick.vico.sample.showcase.UIFramework
 import com.patrykandpatrick.vico.sample.showcase.rememberMarker
+import kotlin.math.ceil
 import kotlin.random.Random
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -86,36 +87,39 @@ private fun ComposeChart3(modelProducer: CartesianChartModelProducer, modifier: 
         rememberLineCartesianLayer(
           lineProvider =
             LineCartesianLayer.LineProvider.series(
-              rememberLine(remember { LineCartesianLayer.LineFill.single(fill(lineColor)) })
+              LineCartesianLayer.rememberLine(
+                remember { LineCartesianLayer.LineFill.single(fill(lineColor)) }
+              )
             ),
-          axisValueOverrider = axisValueOverrider,
+          rangeProvider = rangeProvider,
         ),
         startAxis =
-          rememberStartAxis(
+          VerticalAxis.rememberStart(
             guideline = null,
             horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
             titleComponent =
               rememberTextComponent(
                 color = Color.Black,
-                margins = Dimensions.of(end = 4.dp),
-                padding = Dimensions.of(8.dp, 2.dp),
-                background = rememberShapeComponent(lineColor, Shape.Pill),
+                margins = dimensions(end = 4.dp),
+                padding = dimensions(8.dp, 2.dp),
+                background = rememberShapeComponent(lineColor, CorneredShape.Pill),
               ),
             title = stringResource(R.string.y_axis),
           ),
         bottomAxis =
-          rememberBottomAxis(
+          HorizontalAxis.rememberBottom(
+            itemPlacer =
+              remember { HorizontalAxis.ItemPlacer.aligned(addExtremeLabelPadding = false) },
             titleComponent =
               rememberTextComponent(
                 color = Color.White,
-                margins = Dimensions.of(top = 4.dp),
-                padding = Dimensions.of(8.dp, 2.dp),
-                background = rememberShapeComponent(bottomAxisLabelBackgroundColor, Shape.Pill),
+                margins = dimensions(top = 4.dp),
+                padding = dimensions(8.dp, 2.dp),
+                background = shapeComponent(bottomAxisLabelBackgroundColor, CorneredShape.Pill),
               ),
             title = stringResource(R.string.x_axis),
           ),
         marker = rememberMarker(DefaultCartesianMarker.LabelPosition.AroundPoint),
-        horizontalLayout = HorizontalLayout.fullWidth(),
         fadingEdges = rememberFadingEdges(),
       ),
     modelProducer = modelProducer,
@@ -130,7 +134,7 @@ private fun ViewChart3(modelProducer: CartesianChartModelProducer, modifier: Mod
 
   AndroidViewBinding(Chart3Binding::inflate, modifier) {
     with(chartView) {
-      (chart?.layers?.get(0) as LineCartesianLayer?)?.axisValueOverrider = axisValueOverrider
+      (chart?.layers?.get(0) as LineCartesianLayer?)?.rangeProvider = rangeProvider
       this.modelProducer = modelProducer
       chart?.marker = marker
     }
@@ -139,4 +143,7 @@ private fun ViewChart3(modelProducer: CartesianChartModelProducer, modifier: Mod
 
 private val lineColor = Color(0xffffbb00)
 private val bottomAxisLabelBackgroundColor = Color(0xff9db591)
-private val axisValueOverrider = AxisValueOverrider.adaptiveYValues(yFraction = 1.2f, round = true)
+private val rangeProvider =
+  object : CartesianLayerRangeProvider {
+    override fun getMaxY(minY: Double, maxY: Double, extraStore: ExtraStore) = ceil(1.2 * maxY)
+  }

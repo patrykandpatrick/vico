@@ -24,17 +24,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
-import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottomAxis
-import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStartAxis
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStart
+import com.patrykandpatrick.vico.compose.cartesian.cartesianLayerPadding
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
+import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
 import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
-import com.patrykandpatrick.vico.core.common.shape.Shape
+import com.patrykandpatrick.vico.core.common.shape.CorneredShape
 import com.patrykandpatrick.vico.databinding.Chart5Binding
 import com.patrykandpatrick.vico.sample.showcase.Defaults
 import com.patrykandpatrick.vico.sample.showcase.UIFramework
@@ -88,7 +90,7 @@ private fun ComposeChart5(modelProducer: CartesianChartModelProducer, modifier: 
                 color = color1,
                 thickness = COLUMN_THICKNESS_DP.dp,
                 shape =
-                  Shape.rounded(
+                  CorneredShape.rounded(
                     bottomLeftPercent = COLUMN_ROUNDNESS_PERCENT,
                     bottomRightPercent = COLUMN_ROUNDNESS_PERCENT,
                   ),
@@ -98,7 +100,7 @@ private fun ComposeChart5(modelProducer: CartesianChartModelProducer, modifier: 
                 color = color3,
                 thickness = COLUMN_THICKNESS_DP.dp,
                 shape =
-                  Shape.rounded(
+                  CorneredShape.rounded(
                     topLeftPercent = COLUMN_ROUNDNESS_PERCENT,
                     topRightPercent = COLUMN_ROUNDNESS_PERCENT,
                   ),
@@ -107,12 +109,18 @@ private fun ComposeChart5(modelProducer: CartesianChartModelProducer, modifier: 
           mergeMode = { ColumnCartesianLayer.MergeMode.Stacked },
         ),
         startAxis =
-          rememberStartAxis(
+          VerticalAxis.rememberStart(
             itemPlacer = startAxisItemPlacer,
             labelRotationDegrees = AXIS_LABEL_ROTATION_DEGREES,
           ),
-        bottomAxis = rememberBottomAxis(labelRotationDegrees = AXIS_LABEL_ROTATION_DEGREES),
+        bottomAxis =
+          HorizontalAxis.rememberBottom(
+            labelRotationDegrees = AXIS_LABEL_ROTATION_DEGREES,
+            itemPlacer = remember { HorizontalAxis.ItemPlacer.segmented() },
+          ),
         marker = rememberMarker(),
+        layerPadding =
+          cartesianLayerPadding(scalableStartPadding = 16.dp, scalableEndPadding = 16.dp),
       ),
     modelProducer = modelProducer,
     modifier = modifier,

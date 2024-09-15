@@ -20,7 +20,6 @@ import android.graphics.Canvas
 import android.graphics.RectF
 import androidx.annotation.RestrictTo
 import com.patrykandpatrick.vico.core.common.data.CacheStore
-import com.patrykandpatrick.vico.core.common.data.MutableExtraStore
 
 /** A [MeasuringContext] extension with a [Canvas] reference. */
 public interface DrawingContext : MeasuringContext {
@@ -51,12 +50,6 @@ public fun DrawingContext(
     override val density: Float = density
 
     override val isLtr: Boolean = isLtr
-
-    @Deprecated(
-      "To cache drawing data, use `cacheStore`. If using `extraStore` for communication between " +
-        "functions or classes, switch to a suitable alternative."
-    )
-    override val extraStore: MutableExtraStore = MutableExtraStore()
 
     override val cacheStore: CacheStore = CacheStore()
 

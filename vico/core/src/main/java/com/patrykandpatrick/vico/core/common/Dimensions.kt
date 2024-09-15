@@ -29,10 +29,10 @@ import androidx.compose.runtime.Immutable
  */
 @Immutable
 public data class Dimensions(
-  public val startDp: Float,
-  public val topDp: Float,
-  public val endDp: Float,
-  public val bottomDp: Float,
+  public val startDp: Float = 0f,
+  public val topDp: Float = 0f,
+  public val endDp: Float = 0f,
+  public val bottomDp: Float = 0f,
 ) {
   /** The sum of [startDp] and [endDp]. */
   public val horizontalDp: Float
@@ -44,12 +44,12 @@ public data class Dimensions(
 
   /** Creates a [Dimensions] instance using the provided measurements. */
   public constructor(
-    horizontalDp: Float,
-    verticalDp: Float,
+    horizontalDp: Float = 0f,
+    verticalDp: Float = 0f,
   ) : this(horizontalDp, verticalDp, horizontalDp, verticalDp)
 
   /** Creates a [Dimensions] instance using the provided measurements. */
-  public constructor(allDp: Float) : this(allDp, allDp, allDp, allDp)
+  public constructor(allDp: Float = 0f) : this(allDp, allDp, allDp, allDp)
 
   /**
    * Returns the dimension of the left edge depending on the layout orientation.

@@ -64,6 +64,7 @@
     </style>
 
     <style name="Chart3BottomAxisStyle" parent="Chart3AxisStyle">
+        <item name="addExtremeHorizontalAxisLabelPadding">false</item>
         <item name="titleStyle">@style/Chart3BottomAxisTitleStyle</item>
         <item name="title">@string/x_axis</item>
     </style>

@@ -18,12 +18,12 @@ package com.patrykandpatrick.vico.core.cartesian.layer
 
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
+import com.patrykandpatrick.vico.core.cartesian.CartesianLayerInsetter
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
-import com.patrykandpatrick.vico.core.cartesian.ChartInsetter
 import com.patrykandpatrick.vico.core.cartesian.MutableHorizontalDimensions
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartRanges
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianLayerModel
-import com.patrykandpatrick.vico.core.cartesian.data.ChartValues
-import com.patrykandpatrick.vico.core.cartesian.data.MutableChartValues
+import com.patrykandpatrick.vico.core.cartesian.data.MutableCartesianChartRanges
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.core.common.data.MutableExtraStore
 
@@ -31,7 +31,7 @@ import com.patrykandpatrick.vico.core.common.data.MutableExtraStore
  * Visualizes data on a Cartesian plane. [CartesianLayer]s are combined and drawn by
  * [CartesianChart]s.
  */
-public interface CartesianLayer<M : CartesianLayerModel> : ChartInsetter<M> {
+public interface CartesianLayer<M : CartesianLayerModel> : CartesianLayerInsetter<M> {
   /** Links _x_ values to [CartesianMarker.Target]s. */
   public val markerTargets: Map<Double, List<CartesianMarker.Target>>
 
@@ -45,14 +45,14 @@ public interface CartesianLayer<M : CartesianLayerModel> : ChartInsetter<M> {
     model: M,
   )
 
-  /** Updates [chartValues] in accordance with [model]. */
-  public fun updateChartValues(chartValues: MutableChartValues, model: M)
+  /** Updates [ranges] in accordance with [model]. */
+  public fun updateRanges(ranges: MutableCartesianChartRanges, model: M)
 
   /** Prepares the [CartesianLayer] for a difference animation. */
   public fun prepareForTransformation(
     model: M?,
+    ranges: CartesianChartRanges,
     extraStore: MutableExtraStore,
-    chartValues: ChartValues,
   )
 
   /** Carries out the pending difference animation. */

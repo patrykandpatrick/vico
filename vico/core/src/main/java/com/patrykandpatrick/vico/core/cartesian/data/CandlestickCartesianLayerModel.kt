@@ -37,7 +37,7 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
 
   override val extraStore: ExtraStore
 
-  public constructor(series: List<Entry>) : this(series, ExtraStore.empty)
+  public constructor(series: List<Entry>) : this(series, ExtraStore.Empty)
 
   private constructor(series: List<Entry>, extraStore: ExtraStore) {
     require(series.isNotEmpty()) { "Series can’t be empty." }

@@ -53,7 +53,7 @@ internal class DefaultVerticalAxisItemPlacer(
     context: CartesianMeasuringContext,
     position: Axis.Position.Vertical,
   ): List<Double> {
-    val yRange = context.chartValues.getYRange(position)
+    val yRange = context.ranges.getYRange(position)
     return listOf(yRange.minY, (yRange.minY + yRange.maxY).half, yRange.maxY)
   }
 
@@ -111,7 +111,7 @@ internal class DefaultVerticalAxisItemPlacer(
       maxLabelHeight: Float,
       position: Axis.Position.Vertical,
     ) =
-      if (context.chartValues.getYRange(position).run { minY * maxY } >= 0) {
+      if (context.ranges.getYRange(position).run { minY * maxY } >= 0) {
         getSimpleLabelValues(context, axisHeight, maxLabelHeight, position)
       } else {
         getMixedLabelValues(context, axisHeight, maxLabelHeight, position)
@@ -119,9 +119,7 @@ internal class DefaultVerticalAxisItemPlacer(
 
     class Step(private val step: (ExtraStore) -> Double?) : Mode {
       private fun CartesianMeasuringContext.getStepOrThrow() =
-        step(chartValues.model.extraStore)?.also {
-          require(it > 0) { "`step` must return a positive value." }
-        }
+        step(model.extraStore)?.also { require(it > 0) { "`step` must return a positive value." } }
 
       private fun getPartialLabelValues(
         context: CartesianMeasuringContext,
@@ -167,7 +165,7 @@ internal class DefaultVerticalAxisItemPlacer(
         maxLabelHeight: Float,
         position: Axis.Position.Vertical,
       ): List<Double> =
-        context.chartValues.getYRange(position).run {
+        context.ranges.getYRange(position).run {
           if (maxY > 0) {
             getPartialLabelValues(context, minY, maxY, axisHeight, maxLabelHeight) + minY
           } else {
@@ -188,7 +186,7 @@ internal class DefaultVerticalAxisItemPlacer(
         maxLabelHeight: Float,
         position: Axis.Position.Vertical,
       ): List<Double> =
-        context.chartValues.getYRange(position).run {
+        context.ranges.getYRange(position).run {
           val topLabelValues =
             getPartialLabelValues(
               context = context,
@@ -216,7 +214,7 @@ internal class DefaultVerticalAxisItemPlacer(
 
     class Count(private val count: (ExtraStore) -> Int?) : Mode {
       private fun CartesianMeasuringContext.getCountOrThrow() =
-        count(chartValues.model.extraStore)?.also {
+        count(model.extraStore)?.also {
           require(it >= 0) { "`count` must return a nonnegative value." }
         }
 
@@ -229,7 +227,7 @@ internal class DefaultVerticalAxisItemPlacer(
         val values = mutableListOf<Double>()
         val requestedItemCount = context.getCountOrThrow()
         if (requestedItemCount == 0) return values
-        val yRange = context.chartValues.getYRange(position)
+        val yRange = context.ranges.getYRange(position)
         values += yRange.minY
         if (requestedItemCount == 1) return values
         if (maxLabelHeight == 0f) {
@@ -255,7 +253,7 @@ internal class DefaultVerticalAxisItemPlacer(
         if (requestedItemCount == 0) return values
         values += 0.0
         if (requestedItemCount == 1) return values
-        val yRange = context.chartValues.getYRange(position)
+        val yRange = context.ranges.getYRange(position)
         if (maxLabelHeight == 0f) {
           values += yRange.minY
           values += yRange.maxY

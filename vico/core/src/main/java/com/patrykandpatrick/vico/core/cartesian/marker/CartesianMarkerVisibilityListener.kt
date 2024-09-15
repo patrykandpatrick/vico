@@ -19,17 +19,11 @@ package com.patrykandpatrick.vico.core.cartesian.marker
 /** Allows for listening to [CartesianMarker] visibility changes. */
 public interface CartesianMarkerVisibilityListener {
   /** Called when the specified [CartesianMarker] is shown. */
-  public fun onShown(marker: CartesianMarker, targets: List<CartesianMarker.Target>)
+  public fun onShown(marker: CartesianMarker, targets: List<CartesianMarker.Target>) {}
 
   /** Called when the specified [CartesianMarker]’s [CartesianMarker.Target]s change. */
-  public fun onUpdated(marker: CartesianMarker, targets: List<CartesianMarker.Target>) {
-    @Suppress("DEPRECATION") onMoved(marker, targets)
-  }
-
-  /** Called when the specified [CartesianMarker]’s [CartesianMarker.Target]s change. */
-  @Deprecated("Use `onUpdated` instead.")
-  public fun onMoved(marker: CartesianMarker, targets: List<CartesianMarker.Target>) {}
+  public fun onUpdated(marker: CartesianMarker, targets: List<CartesianMarker.Target>) {}
 
   /** Called when the specified [CartesianMarker] is hidden. */
-  public fun onHidden(marker: CartesianMarker)
+  public fun onHidden(marker: CartesianMarker) {}
 }

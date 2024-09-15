@@ -21,14 +21,14 @@ import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.core.common.Dimensions
 
 /** Creates a [Dimensions] instance with a common value for each coordinate. */
-public fun Dimensions.Companion.of(all: Dp): Dimensions = Dimensions(all.value)
+public fun dimensions(all: Dp = 0.dp): Dimensions = Dimensions(all.value)
 
 /** Creates a [Dimensions] instance using the provided measurements. */
-public fun Dimensions.Companion.of(horizontal: Dp = 0.dp, vertical: Dp = 0.dp): Dimensions =
+public fun dimensions(horizontal: Dp = 0.dp, vertical: Dp = 0.dp): Dimensions =
   Dimensions(horizontal.value, vertical.value)
 
 /** Creates a [Dimensions] instance using the provided measurements. */
-public fun Dimensions.Companion.of(
+public fun dimensions(
   start: Dp = 0.dp,
   top: Dp = 0.dp,
   end: Dp = 0.dp,

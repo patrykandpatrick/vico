@@ -19,16 +19,15 @@ package com.patrykandpatrick.vico.core.cartesian.layer
 import androidx.annotation.RestrictTo
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
-import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
 import com.patrykandpatrick.vico.core.cartesian.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.axis.Axis
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
-import com.patrykandpatrick.vico.core.cartesian.data.AxisValueOverrider
 import com.patrykandpatrick.vico.core.cartesian.data.CandlestickCartesianLayerDrawingModel
 import com.patrykandpatrick.vico.core.cartesian.data.CandlestickCartesianLayerModel
 import com.patrykandpatrick.vico.core.cartesian.data.CandlestickCartesianLayerModel.Entry.Change
-import com.patrykandpatrick.vico.core.cartesian.data.ChartValues
-import com.patrykandpatrick.vico.core.cartesian.data.MutableChartValues
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartRanges
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianLayerRangeProvider
+import com.patrykandpatrick.vico.core.cartesian.data.MutableCartesianChartRanges
 import com.patrykandpatrick.vico.core.cartesian.data.forEachIn
 import com.patrykandpatrick.vico.core.cartesian.layer.CandlestickCartesianLayer.Candle
 import com.patrykandpatrick.vico.core.cartesian.marker.CandlestickCartesianLayerMarkerTarget
@@ -50,7 +49,7 @@ import kotlin.math.max
  * @property minCandleBodyHeightDp the minimum height of the candle bodies (in dp).
  * @property candleSpacingDp the spacing between neighboring candles.
  * @property scaleCandleWicks whether the candle wicks should be scaled based on the zoom factor.
- * @property axisValueOverrider overrides the _x_ and _y_ ranges.
+ * @property rangeProvider defines the _x_ and _y_ ranges.
  * @property verticalAxisPosition the position of the [VerticalAxis] with which the
  *   [CandlestickCartesianLayer] should be associated. Use this for independent [CartesianLayer]
  *   scaling.
@@ -60,7 +59,7 @@ public open class CandlestickCartesianLayer(
   public var minCandleBodyHeightDp: Float = Defaults.MIN_CANDLE_BODY_HEIGHT_DP,
   public var candleSpacingDp: Float = Defaults.CANDLE_SPACING_DP,
   public var scaleCandleWicks: Boolean = false,
-  public var axisValueOverrider: AxisValueOverrider = AxisValueOverrider.auto(),
+  public var rangeProvider: CartesianLayerRangeProvider = CartesianLayerRangeProvider.auto(),
   public var verticalAxisPosition: Axis.Position.Vertical? = null,
   public var drawingModelInterpolator:
     CartesianLayerDrawingModelInterpolator<
@@ -106,19 +105,15 @@ public open class CandlestickCartesianLayer(
   ): Unit =
     with(context) {
       _markerTargets.clear()
-      drawChartInternal(
-        chartValues = chartValues,
-        model = model,
-        drawingModel = model.extraStore.getOrNull(drawingModelKey),
-      )
+      drawChartInternal(model, ranges, model.extraStore.getOrNull(drawingModelKey))
     }
 
   private fun CartesianDrawingContext.drawChartInternal(
-    chartValues: ChartValues,
     model: CandlestickCartesianLayerModel,
+    ranges: CartesianChartRanges,
     drawingModel: CandlestickCartesianLayerDrawingModel?,
   ) {
-    val yRange = chartValues.getYRange(verticalAxisPosition)
+    val yRange = ranges.getYRange(verticalAxisPosition)
     val halfMaxCandleWidth = candles.getWidestCandle(model.extraStore).widthDp.half.pixels
 
     val drawingStart =
@@ -130,10 +125,10 @@ public open class CandlestickCartesianLayer(
     var candle: Candle
     val minBodyHeight = minCandleBodyHeightDp.pixels
 
-    model.series.forEachIn(chartValues.minX..chartValues.maxX) { entry, _ ->
+    model.series.forEachIn(ranges.minX..ranges.maxX) { entry, _ ->
       candle = candles.getCandle(entry, model.extraStore)
       val candleInfo = drawingModel?.entries?.get(entry.x) ?: entry.toCandleInfo(yRange)
-      val xSpacingMultiplier = ((entry.x - chartValues.minX) / chartValues.xStep).toFloat()
+      val xSpacingMultiplier = ((entry.x - ranges.minX) / ranges.xStep).toFloat()
       bodyCenterX =
         drawingStart +
           layoutDirectionMultiplier * horizontalDimensions.xSpacing * xSpacingMultiplier +
@@ -224,15 +219,15 @@ public open class CandlestickCartesianLayer(
       )
   }
 
-  override fun updateChartValues(
-    chartValues: MutableChartValues,
+  override fun updateRanges(
+    ranges: MutableCartesianChartRanges,
     model: CandlestickCartesianLayerModel,
   ) {
-    chartValues.tryUpdate(
-      axisValueOverrider.getMinX(model.minX, model.maxX, model.extraStore),
-      axisValueOverrider.getMaxX(model.minX, model.maxX, model.extraStore),
-      axisValueOverrider.getMinY(model.minY, model.maxY, model.extraStore),
-      axisValueOverrider.getMaxY(model.minY, model.maxY, model.extraStore),
+    ranges.tryUpdate(
+      rangeProvider.getMinX(model.minX, model.maxX, model.extraStore),
+      rangeProvider.getMaxX(model.minX, model.maxX, model.extraStore),
+      rangeProvider.getMinY(model.minY, model.maxY, model.extraStore),
+      rangeProvider.getMaxY(model.minY, model.maxY, model.extraStore),
       verticalAxisPosition,
     )
   }
@@ -245,31 +240,24 @@ public open class CandlestickCartesianLayer(
     with(context) {
       val candleWidth = candles.getWidestCandle(model.extraStore).widthDp.pixels
       val xSpacing = candleWidth + candleSpacingDp.pixels
-      when (val horizontalLayout = horizontalLayout) {
-        is HorizontalLayout.Segmented ->
-          horizontalDimensions.ensureSegmentedValues(xSpacing, chartValues)
-        is HorizontalLayout.FullWidth -> {
-          horizontalDimensions.ensureValuesAtLeast(
-            xSpacing = xSpacing,
-            scalableStartPadding =
-              candleWidth.half + horizontalLayout.scalableStartPaddingDp.pixels,
-            scalableEndPadding = candleWidth.half + horizontalLayout.scalableEndPaddingDp.pixels,
-            unscalableStartPadding = horizontalLayout.unscalableStartPaddingDp.pixels,
-            unscalableEndPadding = horizontalLayout.unscalableEndPaddingDp.pixels,
-          )
-        }
-      }
+      horizontalDimensions.ensureValuesAtLeast(
+        xSpacing = xSpacing,
+        scalableStartPadding = candleWidth.half + layerPadding.scalableStartPaddingDp.pixels,
+        scalableEndPadding = candleWidth.half + layerPadding.scalableEndPaddingDp.pixels,
+        unscalableStartPadding = layerPadding.unscalableStartPaddingDp.pixels,
+        unscalableEndPadding = layerPadding.unscalableEndPaddingDp.pixels,
+      )
     }
   }
 
   override fun prepareForTransformation(
     model: CandlestickCartesianLayerModel?,
+    ranges: CartesianChartRanges,
     extraStore: MutableExtraStore,
-    chartValues: ChartValues,
   ) {
     drawingModelInterpolator.setModels(
       old = extraStore.getOrNull(drawingModelKey),
-      new = model?.toDrawingModel(chartValues),
+      new = model?.toDrawingModel(ranges),
     )
   }
 
@@ -278,7 +266,9 @@ public open class CandlestickCartesianLayer(
       ?: extraStore.remove(drawingModelKey)
   }
 
-  private fun CandlestickCartesianLayerModel.Entry.toCandleInfo(yRange: ChartValues.YRange) =
+  private fun CandlestickCartesianLayerModel.Entry.toCandleInfo(
+    yRange: CartesianChartRanges.YRange
+  ) =
     CandlestickCartesianLayerDrawingModel.CandleInfo(
       bodyBottomY = ((minOf(opening, closing) - yRange.minY) / yRange.length).toFloat(),
       bodyTopY = ((max(opening, closing) - yRange.minY) / yRange.length).toFloat(),
@@ -287,9 +277,9 @@ public open class CandlestickCartesianLayer(
     )
 
   private fun CandlestickCartesianLayerModel.toDrawingModel(
-    chartValues: ChartValues
+    ranges: CartesianChartRanges
   ): CandlestickCartesianLayerDrawingModel {
-    val yRange = chartValues.getYRange(verticalAxisPosition)
+    val yRange = ranges.getYRange(verticalAxisPosition)
     return CandlestickCartesianLayerDrawingModel(
       series.associate { it.x to it.toCandleInfo(yRange) }
     )

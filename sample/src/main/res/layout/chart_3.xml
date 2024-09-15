@@ -24,13 +24,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:bottomAxisStyle="@style/Chart3BottomAxisStyle"
-        app:chartZoomEnabled="false"
         app:fadingEdgeVisibilityInterpolator="androidx.interpolator.view.animation.FastOutSlowInInterpolator"
         app:fadingEdgeWidth="32dp"
-        app:horizontalLayout="fullWidth"
         app:layers="line"
         app:lineLayerStyle="@style/Chart3LineLayerStyle"
         app:showBottomAxis="true"
         app:showStartAxis="true"
-        app:startAxisStyle="@style/Chart3StartAxisStyle" />
+        app:startAxisStyle="@style/Chart3StartAxisStyle"
+        app:zoomEnabled="false" />
 </FrameLayout>

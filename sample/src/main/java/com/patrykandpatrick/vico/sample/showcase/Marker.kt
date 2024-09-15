@@ -24,54 +24,50 @@ import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberAxisGuidelineComponent
 import com.patrykandpatrick.vico.compose.common.component.fixed
 import com.patrykandpatrick.vico.compose.common.component.rememberLayeredComponent
-import com.patrykandpatrick.vico.compose.common.component.rememberShadow
 import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
-import com.patrykandpatrick.vico.compose.common.of
-import com.patrykandpatrick.vico.compose.common.shape.markerCornered
+import com.patrykandpatrick.vico.compose.common.component.shadow
+import com.patrykandpatrick.vico.compose.common.dimensions
+import com.patrykandpatrick.vico.compose.common.shape.markerCorneredShape
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
 import com.patrykandpatrick.vico.core.cartesian.HorizontalDimensions
-import com.patrykandpatrick.vico.core.cartesian.Insets
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
-import com.patrykandpatrick.vico.core.common.Dimensions
+import com.patrykandpatrick.vico.core.common.Insets
 import com.patrykandpatrick.vico.core.common.LayeredComponent
 import com.patrykandpatrick.vico.core.common.component.Shadow
 import com.patrykandpatrick.vico.core.common.component.ShapeComponent
 import com.patrykandpatrick.vico.core.common.component.TextComponent
 import com.patrykandpatrick.vico.core.common.copyColor
 import com.patrykandpatrick.vico.core.common.shape.Corner
-import com.patrykandpatrick.vico.core.common.shape.Shape
+import com.patrykandpatrick.vico.core.common.shape.CorneredShape
 
 @Composable
 internal fun rememberMarker(
   labelPosition: DefaultCartesianMarker.LabelPosition = DefaultCartesianMarker.LabelPosition.Top,
   showIndicator: Boolean = true,
 ): CartesianMarker {
-  val labelBackgroundShape = Shape.markerCornered(Corner.FullyRounded)
+  val labelBackgroundShape = markerCorneredShape(Corner.FullyRounded)
   val labelBackground =
     rememberShapeComponent(
       color = MaterialTheme.colorScheme.surfaceBright,
       shape = labelBackgroundShape,
       shadow =
-        rememberShadow(
-          radius = LABEL_BACKGROUND_SHADOW_RADIUS_DP.dp,
-          dy = LABEL_BACKGROUND_SHADOW_DY_DP.dp,
-        ),
+        shadow(radius = LABEL_BACKGROUND_SHADOW_RADIUS_DP.dp, dy = LABEL_BACKGROUND_SHADOW_DY_DP.dp),
     )
   val label =
     rememberTextComponent(
       color = MaterialTheme.colorScheme.onSurface,
       textAlignment = Layout.Alignment.ALIGN_CENTER,
-      padding = Dimensions.of(8.dp, 4.dp),
+      padding = dimensions(8.dp, 4.dp),
       background = labelBackground,
       minWidth = TextComponent.MinWidth.fixed(40.dp),
     )
   val indicatorFrontComponent =
-    rememberShapeComponent(MaterialTheme.colorScheme.surface, Shape.Pill)
-  val indicatorCenterComponent = rememberShapeComponent(shape = Shape.Pill)
-  val indicatorRearComponent = rememberShapeComponent(shape = Shape.Pill)
+    rememberShapeComponent(MaterialTheme.colorScheme.surface, CorneredShape.Pill)
+  val indicatorCenterComponent = rememberShapeComponent(shape = CorneredShape.Pill)
+  val indicatorRearComponent = rememberShapeComponent(shape = CorneredShape.Pill)
   val indicator =
     rememberLayeredComponent(
       rear = indicatorRearComponent,
@@ -79,9 +75,9 @@ internal fun rememberMarker(
         rememberLayeredComponent(
           rear = indicatorCenterComponent,
           front = indicatorFrontComponent,
-          padding = Dimensions.of(5.dp),
+          padding = dimensions(5.dp),
         ),
-      padding = Dimensions.of(10.dp),
+      padding = dimensions(10.dp),
     )
   val guideline = rememberAxisGuidelineComponent()
   return remember(label, labelPosition, indicator, showIndicator, guideline) {
@@ -93,19 +89,19 @@ internal fun rememberMarker(
           if (showIndicator) {
             { color ->
               LayeredComponent(
-                rear = ShapeComponent(color.copyColor(alpha = 0.15f), Shape.Pill),
+                rear = ShapeComponent(color.copyColor(alpha = 0.15f), CorneredShape.Pill),
                 front =
                   LayeredComponent(
                     rear =
                       ShapeComponent(
                         color = color,
-                        shape = Shape.Pill,
+                        shape = CorneredShape.Pill,
                         shadow = Shadow(radiusDp = 12f, color = color),
                       ),
                     front = indicatorFrontComponent,
-                    padding = Dimensions.of(5.dp),
+                    padding = dimensions(5.dp),
                   ),
-                padding = Dimensions.of(10.dp),
+                padding = dimensions(10.dp),
               )
             }
           } else {

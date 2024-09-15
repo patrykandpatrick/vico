@@ -42,7 +42,7 @@ internal fun TypedArray.getTextComponent(context: Context): TextComponent = use 
     color =
       getColor(
         R.styleable.TextComponentStyle_android_color,
-        getColor(R.styleable.TextComponentStyle_labelColor, context.defaultColors.textColor.toInt()),
+        context.defaultColors.textColor.toInt(),
       ),
     typeface = getTypeface(context) ?: Typeface.DEFAULT,
     textSizeSp =

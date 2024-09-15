@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package com.patrykandpatrick.vico.core.cartesian
+package com.patrykandpatrick.vico.core.common
+
+import com.patrykandpatrick.vico.core.cartesian.CartesianLayerInsetter
 
 /**
- * Used to store the insets requested by [ChartInsetter]s.
+ * Used to apply insets.
  *
- * @see ChartInsetter
+ * @see CartesianLayerInsetter
  */
 public class Insets : HorizontalInsets {
   /** The start inset’s size (in pixels). */
@@ -62,29 +64,6 @@ public class Insets : HorizontalInsets {
     this.top = this.top.coerceAtLeast(top)
     this.end = this.end.coerceAtLeast(end)
     this.bottom = this.bottom.coerceAtLeast(bottom)
-  }
-
-  /** Ensures that the stored values are no smaller than the provided ones. */
-  @Deprecated(
-    "Use `ensureValuesAtLeast`.",
-    ReplaceWith("ensureValuesAtLeast(start, top, end, bottom)"),
-  )
-  public fun setAllIfGreater(
-    start: Float = this.start,
-    top: Float = this.top,
-    end: Float = this.end,
-    bottom: Float = this.bottom,
-  ) {
-    ensureValuesAtLeast(start, top, end, bottom)
-  }
-
-  /** Ensures that the stored values are no smaller than those in [other]. */
-  @Deprecated(
-    "Use `ensureValuesAtLeast`.",
-    ReplaceWith("ensureValuesAtLeast(other.start, other.top, other.end, other.bottom)"),
-  )
-  public fun setValuesIfGreater(other: Insets) {
-    ensureValuesAtLeast(other.start, other.top, other.end, other.bottom)
   }
 
   /** Clears the stored values. */

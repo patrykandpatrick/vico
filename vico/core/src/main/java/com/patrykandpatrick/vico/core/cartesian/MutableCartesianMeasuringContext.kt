@@ -18,7 +18,8 @@ package com.patrykandpatrick.vico.core.cartesian
 
 import android.graphics.RectF
 import androidx.annotation.RestrictTo
-import com.patrykandpatrick.vico.core.cartesian.data.ChartValues
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartRanges
 import com.patrykandpatrick.vico.core.common.MutableMeasuringContext
 
 /** @suppress */
@@ -27,10 +28,11 @@ public class MutableCartesianMeasuringContext(
   override val canvasBounds: RectF,
   override var density: Float,
   override var isLtr: Boolean,
+  override var model: CartesianChartModel,
+  override var ranges: CartesianChartRanges,
   override var scrollEnabled: Boolean,
   override var zoomEnabled: Boolean,
-  override var horizontalLayout: HorizontalLayout,
-  override var chartValues: ChartValues,
+  override var layerPadding: CartesianLayerPadding,
   spToPx: (Float) -> Float,
 ) :
   MutableMeasuringContext(

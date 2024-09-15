@@ -16,17 +16,18 @@
 
 package com.patrykandpatrick.vico.core.cartesian.axis
 
+import androidx.annotation.IntRange
 import androidx.annotation.RestrictTo
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
 import com.patrykandpatrick.vico.core.cartesian.HorizontalDimensions
-import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
-import com.patrykandpatrick.vico.core.cartesian.Insets
 import com.patrykandpatrick.vico.core.cartesian.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartRanges
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
-import com.patrykandpatrick.vico.core.cartesian.data.ChartValues
+import com.patrykandpatrick.vico.core.cartesian.data.formatForAxis
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayer
+import com.patrykandpatrick.vico.core.common.Insets
 import com.patrykandpatrick.vico.core.common.VerticalPosition
 import com.patrykandpatrick.vico.core.common.component.LineComponent
 import com.patrykandpatrick.vico.core.common.component.TextComponent
@@ -146,9 +147,9 @@ protected constructor(
           horizontalDimensions.startPadding * layoutDirectionMultiplier
       val firstVisibleX =
         fullXRange.start +
-          scroll / horizontalDimensions.xSpacing * chartValues.xStep * layoutDirectionMultiplier
+          scroll / horizontalDimensions.xSpacing * ranges.xStep * layoutDirectionMultiplier
       val lastVisibleX =
-        firstVisibleX + bounds.width() / horizontalDimensions.xSpacing * chartValues.xStep
+        firstVisibleX + bounds.width() / horizontalDimensions.xSpacing * ranges.xStep
       val visibleXRange = firstVisibleX..lastVisibleX
       val labelValues = itemPlacer.getLabelValues(this, visibleXRange, fullXRange, maxLabelWidth)
       val lineValues = itemPlacer.getLineValues(this, visibleXRange, fullXRange, maxLabelWidth)
@@ -156,23 +157,18 @@ protected constructor(
       labelValues.forEachIndexed { index, x ->
         val canvasX =
           baseCanvasX +
-            ((x - chartValues.minX) / chartValues.xStep).toFloat() *
+            ((x - ranges.minX) / ranges.xStep).toFloat() *
               horizontalDimensions.xSpacing *
               layoutDirectionMultiplier
         val previousX = labelValues.getOrNull(index - 1) ?: (fullXRange.start.doubled - x)
         val nextX = labelValues.getOrNull(index + 1) ?: (fullXRange.endInclusive.doubled - x)
         val maxWidth =
-          ceil(min(x - previousX, nextX - x) / chartValues.xStep * horizontalDimensions.xSpacing)
-            .toInt()
+          ceil(min(x - previousX, nextX - x) / ranges.xStep * horizontalDimensions.xSpacing).toInt()
 
         label?.draw(
-          context = context,
+          context = this,
           text =
-            valueFormatter.format(
-              value = x,
-              chartValues = chartValues,
-              verticalAxisPosition = null,
-            ),
+            valueFormatter.formatForAxis(context = this, value = x, verticalAxisPosition = null),
           x = canvasX,
           y = textY,
           verticalPosition = position.textVerticalPosition,
@@ -198,7 +194,7 @@ protected constructor(
           bottom = tickBottom,
           centerX =
             baseCanvasX +
-              ((x - chartValues.minX) / chartValues.xStep).toFloat() *
+              ((x - ranges.minX) / ranges.xStep).toFloat() *
                 horizontalDimensions.xSpacing *
                 layoutDirectionMultiplier +
               getLinesCorrectionX(x, fullXRange),
@@ -213,7 +209,7 @@ protected constructor(
         }
 
       line?.drawHorizontal(
-        context = context,
+        context = this,
         left = layerBounds.left - lineExtensionLength,
         right = layerBounds.right + lineExtensionLength,
         centerY =
@@ -226,7 +222,7 @@ protected constructor(
 
       title?.let { title ->
         titleComponent?.draw(
-          context = context,
+          context = this,
           x = bounds.centerX(),
           y = if (position == Axis.Position.Horizontal.Top) bounds.top else bounds.bottom,
           verticalPosition =
@@ -262,7 +258,7 @@ protected constructor(
         labelValues.forEach { x ->
           val canvasX =
             baseCanvasX +
-              ((x - chartValues.minX) / chartValues.xStep).toFloat() *
+              ((x - ranges.minX) / ranges.xStep).toFloat() *
                 horizontalDimensions.xSpacing *
                 layoutDirectionMultiplier
 
@@ -274,7 +270,7 @@ protected constructor(
         lineValues.forEach { x ->
           val canvasX =
             baseCanvasX +
-              ((x - chartValues.minX) / chartValues.xStep).toFloat() *
+              ((x - ranges.minX) / ranges.xStep).toFloat() *
                 horizontalDimensions.xSpacing *
                 layoutDirectionMultiplier +
               getLinesCorrectionX(x, fullXRange)
@@ -306,16 +302,16 @@ protected constructor(
     horizontalDimensions: MutableHorizontalDimensions,
   ) {
     val label = label ?: return
-    val chartValues = context.chartValues
+    val ranges = context.ranges
     val maxLabelWidth =
       context.getMaxLabelWidth(horizontalDimensions, context.getFullXRange(horizontalDimensions))
     val firstLabelValue = itemPlacer.getFirstLabelValue(context, maxLabelWidth)
     val lastLabelValue = itemPlacer.getLastLabelValue(context, maxLabelWidth)
     if (firstLabelValue != null) {
       val text =
-        valueFormatter.format(
+        valueFormatter.formatForAxis(
+          context = context,
           value = firstLabelValue,
-          chartValues = chartValues,
           verticalAxisPosition = null,
         )
       var unscalableStartPadding =
@@ -329,15 +325,15 @@ protected constructor(
           .half
       if (!context.zoomEnabled) {
         unscalableStartPadding -=
-          (firstLabelValue - chartValues.minX).toFloat() * horizontalDimensions.xSpacing
+          (firstLabelValue - ranges.minX).toFloat() * horizontalDimensions.xSpacing
       }
       horizontalDimensions.ensureValuesAtLeast(unscalableStartPadding = unscalableStartPadding)
     }
     if (lastLabelValue != null) {
       val text =
-        valueFormatter.format(
+        valueFormatter.formatForAxis(
+          context = context,
           value = lastLabelValue,
-          chartValues = chartValues,
           verticalAxisPosition = null,
         )
       var unscalableEndPadding =
@@ -351,7 +347,7 @@ protected constructor(
           .half
       if (!context.zoomEnabled) {
         unscalableEndPadding -=
-          ((chartValues.maxX - lastLabelValue) * horizontalDimensions.xSpacing).toFloat()
+          ((ranges.maxX - lastLabelValue) * horizontalDimensions.xSpacing).toFloat()
       }
       horizontalDimensions.ensureValuesAtLeast(unscalableEndPadding = unscalableEndPadding)
     }
@@ -390,8 +386,8 @@ protected constructor(
     horizontalDimensions: HorizontalDimensions
   ): ClosedFloatingPointRange<Double> =
     with(horizontalDimensions) {
-      val start = chartValues.minX - startPadding / xSpacing * chartValues.xStep
-      val end = chartValues.maxX + endPadding / xSpacing * chartValues.xStep
+      val start = ranges.minX - startPadding / xSpacing * ranges.xStep
+      val end = ranges.maxX + endPadding / xSpacing * ranges.xStep
       start..end
     }
 
@@ -448,11 +444,7 @@ protected constructor(
       .getWidthMeasurementLabelValues(this, horizontalDimensions, fullXRange)
       .maxOfOrNull { value ->
         val text =
-          valueFormatter.format(
-            value = value,
-            chartValues = chartValues,
-            verticalAxisPosition = null,
-          )
+          valueFormatter.formatForAxis(context = this, value = value, verticalAxisPosition = null)
         label.getWidth(
           context = this,
           text = text,
@@ -473,11 +465,7 @@ protected constructor(
       .getHeightMeasurementLabelValues(this, horizontalDimensions, fullXRange, maxLabelWidth)
       .maxOf { value ->
         val text =
-          valueFormatter.format(
-            value = value,
-            chartValues = chartValues,
-            verticalAxisPosition = null,
-          )
+          valueFormatter.formatForAxis(context = this, value = value, verticalAxisPosition = null)
         label.getHeight(
           context = this,
           text = text,
@@ -519,12 +507,11 @@ protected constructor(
   /** Determines for what _x_ values a [HorizontalAxis] displays labels, ticks, and guidelines. */
   public interface ItemPlacer {
     /**
-     * Returns a boolean indicating whether to shift the lines whose _x_ values are equal to
-     * [ChartValues.minX] or [ChartValues.maxX], if such lines are present, outward. The
-     * [ChartValues.minX] lines are then positioned immediately before the start edge of the
-     * [CartesianLayer] bounds, and the [ChartValues.maxX] lines are positioned immediately after
-     * these bounds’ end edge. On either side, if a [VerticalAxis] is present, the shifted tick is
-     * aligned with it, and the shifted guideline is hidden.
+     * Returns a boolean indicating whether to shift the lines whose _x_ values are bounds of the
+     * effective _x_ range, if such lines are present, such that they’re immediately outside of the
+     * [CartesianLayer] bounds. (The effective _x_ range includes the [CartesianLayer] padding.) On
+     * either side, if a [VerticalAxis] is present, the shifted tick will then be aligned with the
+     * axis line, and the shifted guideline will be hidden.
      */
     public fun getShiftExtremeLines(context: CartesianDrawingContext): Boolean = true
 
@@ -608,25 +595,33 @@ protected constructor(
       maxLabelWidth: Float,
     ): Float
 
-    /** Houses an [ItemPlacer] factory function. */
+    /** Houses [ItemPlacer] factory functions. */
     public companion object {
       /**
-       * Creates a base [ItemPlacer] implementation. [spacing] defines how often items should be
-       * drawn (relative to [ChartValues.xStep]). [offset] is the number of labels (and, for
-       * [HorizontalLayout.FullWidth], their corresponding ticks and guidelines) to skip from the
-       * start. [shiftExtremeTicks] defines whether ticks whose _x_ values are bounds of the
-       * _x_-axis value range should be shifted to the edges of the axis bounds, to be aligned with
-       * the vertical axes. [addExtremeLabelPadding] specifies whether, for
-       * [HorizontalLayout.FullWidth], padding should be added for the first and last labels,
+       * Adds a label, tick, and guideline for each _x_ value given by [CartesianChartRanges.minX] +
+       * (k × [spacing] + [offset]) × [CartesianChartRanges.xStep], where _k_ ∈ ℕ, with these
+       * components being horizontally centered relative to one another. [shiftExtremeLines] is used
+       * as the return value of [ItemPlacer.getShiftExtremeLines]. [addExtremeLabelPadding]
+       * specifies whether [CartesianLayer] padding should be added for the first and last labels,
        * ensuring their visibility.
        */
-      public fun default(
-        spacing: Int = 1,
-        offset: Int = 0,
-        shiftExtremeTicks: Boolean = true,
-        addExtremeLabelPadding: Boolean = false,
+      public fun aligned(
+        @IntRange(from = 1) spacing: Int = 1,
+        @IntRange(from = 0) offset: Int = 0,
+        shiftExtremeLines: Boolean = true,
+        addExtremeLabelPadding: Boolean = true,
       ): ItemPlacer =
-        DefaultHorizontalAxisItemPlacer(spacing, offset, shiftExtremeTicks, addExtremeLabelPadding)
+        AlignedHorizontalAxisItemPlacer(spacing, offset, shiftExtremeLines, addExtremeLabelPadding)
+
+      /**
+       * Adds a label for each major _x_ value, and adds ticks between the labels and for
+       * [CartesianChartRanges.minX] − [CartesianChartRanges.xStep] ÷ 2 and
+       * [CartesianChartRanges.maxX] + [CartesianChartRanges.xStep] ÷ 2. (Major _x_ values are given
+       * by [CartesianChartRanges.minX] + k × [CartesianChartRanges.xStep], where _k_ ∈ ℕ.)
+       * [shiftExtremeLines] is used as the return value of [ItemPlacer.getShiftExtremeLines].
+       */
+      public fun segmented(shiftExtremeLines: Boolean = true): ItemPlacer =
+        SegmentedHorizontalAxisItemPlacer(shiftExtremeLines)
     }
   }
 
@@ -643,7 +638,7 @@ protected constructor(
       tick: LineComponent? = null,
       tickLengthDp: Float = 0f,
       guideline: LineComponent? = null,
-      itemPlacer: ItemPlacer = ItemPlacer.default(),
+      itemPlacer: ItemPlacer = ItemPlacer.aligned(),
       sizeConstraint: SizeConstraint = SizeConstraint.Auto(),
       titleComponent: TextComponent? = null,
       title: CharSequence? = null,
@@ -672,7 +667,7 @@ protected constructor(
       tick: LineComponent? = null,
       tickLengthDp: Float = 0f,
       guideline: LineComponent? = null,
-      itemPlacer: ItemPlacer = ItemPlacer.default(),
+      itemPlacer: ItemPlacer = ItemPlacer.aligned(),
       sizeConstraint: SizeConstraint = SizeConstraint.Auto(),
       titleComponent: TextComponent? = null,
       title: CharSequence? = null,

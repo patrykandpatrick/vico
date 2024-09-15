@@ -26,9 +26,10 @@ import android.graphics.Shader
 import android.os.Build
 import androidx.annotation.RequiresApi
 import com.patrykandpatrick.vico.core.common.DrawingContext
+import com.patrykandpatrick.vico.core.common.component.Component
 
 /** Creates [Shader]s on demand. */
-public interface DynamicShader {
+public fun interface DynamicShader {
   /** Creates a [Shader] by using the provided [bounds]. */
   public fun provideShader(context: DrawingContext, bounds: RectF): Shader =
     provideShader(
@@ -74,21 +75,13 @@ public interface DynamicShader {
       first: DynamicShader,
       second: DynamicShader,
       mode: BlendMode,
-    ): DynamicShader =
-      object : DynamicShader {
-        override fun provideShader(
-          context: DrawingContext,
-          left: Float,
-          top: Float,
-          right: Float,
-          bottom: Float,
-        ) =
-          ComposeShader(
-            first.provideShader(context, left, top, right, bottom),
-            second.provideShader(context, left, top, right, bottom),
-            mode,
-          )
-      }
+    ): DynamicShader = DynamicShader { context, left, top, right, bottom ->
+      ComposeShader(
+        first.provideShader(context, left, top, right, bottom),
+        second.provideShader(context, left, top, right, bottom),
+        mode,
+      )
+    }
 
     /**
      * Creates a [ComposeShader] out of two [DynamicShader]s, combining [first] and [second] via
@@ -98,21 +91,13 @@ public interface DynamicShader {
       first: DynamicShader,
       second: DynamicShader,
       mode: PorterDuff.Mode,
-    ): DynamicShader =
-      object : DynamicShader {
-        override fun provideShader(
-          context: DrawingContext,
-          left: Float,
-          top: Float,
-          right: Float,
-          bottom: Float,
-        ) =
-          ComposeShader(
-            first.provideShader(context, left, top, right, bottom),
-            second.provideShader(context, left, top, right, bottom),
-            mode,
-          )
-      }
+    ): DynamicShader = DynamicShader { context, left, top, right, bottom ->
+      ComposeShader(
+        first.provideShader(context, left, top, right, bottom),
+        second.provideShader(context, left, top, right, bottom),
+        mode,
+      )
+    }
 
     /**
      * Creates a [DynamicShader] in the form of a horizontal gradient.
@@ -151,17 +136,20 @@ public interface DynamicShader {
      */
     public fun verticalGradient(colors: IntArray, positions: FloatArray? = null): DynamicShader =
       LinearGradientShader(colors, positions, false)
+
+    /**
+     * Creates a [DynamicShader] that repeatedly draws [component] in a grid or checkered pattern.
+     */
+    public fun component(
+      component: Component,
+      componentSizeDp: Float,
+      checkeredArrangement: Boolean = true,
+      tileXMode: Shader.TileMode = Shader.TileMode.REPEAT,
+      tileYMode: Shader.TileMode = tileXMode,
+    ): DynamicShader =
+      ComponentShader(component, componentSizeDp, checkeredArrangement, tileXMode, tileYMode)
   }
 }
 
 /** Converts this [Shader] to a [DynamicShader]. */
-public fun Shader.toDynamicShader(): DynamicShader =
-  object : DynamicShader {
-    override fun provideShader(
-      context: DrawingContext,
-      left: Float,
-      top: Float,
-      right: Float,
-      bottom: Float,
-    ): Shader = this@toDynamicShader
-  }
+public fun Shader.toDynamicShader(): DynamicShader = DynamicShader { _, _, _, _, _ -> this }

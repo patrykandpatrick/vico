@@ -23,9 +23,9 @@ import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesian
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
+import com.patrykandpatrick.vico.core.cartesian.CartesianLayerPadding
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
 import com.patrykandpatrick.vico.core.cartesian.FadingEdges
-import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
 import com.patrykandpatrick.vico.core.cartesian.axis.Axis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.core.cartesian.decoration.Decoration
@@ -51,7 +51,7 @@ public fun rememberCartesianChart(
   bottomAxis: Axis<Axis.Position.Horizontal.Bottom>? = null,
   marker: CartesianMarker? = null,
   markerVisibilityListener: CartesianMarkerVisibilityListener? = null,
-  horizontalLayout: HorizontalLayout = HorizontalLayout.segmented(),
+  layerPadding: CartesianLayerPadding = cartesianLayerPadding(),
   legend: Legend<CartesianMeasuringContext, CartesianDrawingContext>? = null,
   fadingEdges: FadingEdges? = null,
   decorations: List<Decoration> = emptyList(),
@@ -66,7 +66,7 @@ public fun rememberCartesianChart(
       this.bottomAxis = bottomAxis
       this.marker = marker
       this.markerVisibilityListener = markerVisibilityListener
-      this.horizontalLayout = horizontalLayout
+      this.layerPadding = layerPadding
       this.legend = legend
       this.fadingEdges = fadingEdges
       this.decorations = decorations

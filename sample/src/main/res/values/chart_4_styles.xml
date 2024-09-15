@@ -20,6 +20,10 @@
     <color name="chart_4_color_3">#f094bb</color>
     <color name="chart_4_color_4">#fdc8c4</color>
 
+    <style name="Chart4BottomAxisStyle">
+        <item name="horizontalAxisItemPlacer">segmented</item>
+    </style>
+
     <style name="Chart4ColumnShapeStyle">
         <item name="cornerSize">2dp</item>
     </style>

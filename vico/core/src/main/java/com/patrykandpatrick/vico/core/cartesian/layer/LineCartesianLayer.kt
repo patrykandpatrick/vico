@@ -25,17 +25,15 @@ import android.graphics.PorterDuff
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
 import com.patrykandpatrick.vico.core.cartesian.HorizontalDimensions
-import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
-import com.patrykandpatrick.vico.core.cartesian.Insets
 import com.patrykandpatrick.vico.core.cartesian.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.axis.Axis
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
-import com.patrykandpatrick.vico.core.cartesian.data.AxisValueOverrider
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartRanges
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianLayerRangeProvider
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
-import com.patrykandpatrick.vico.core.cartesian.data.ChartValues
 import com.patrykandpatrick.vico.core.cartesian.data.LineCartesianLayerDrawingModel
 import com.patrykandpatrick.vico.core.cartesian.data.LineCartesianLayerModel
-import com.patrykandpatrick.vico.core.cartesian.data.MutableChartValues
+import com.patrykandpatrick.vico.core.cartesian.data.MutableCartesianChartRanges
 import com.patrykandpatrick.vico.core.cartesian.data.forEachIn
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer.Line
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
@@ -44,6 +42,7 @@ import com.patrykandpatrick.vico.core.cartesian.marker.MutableLineCartesianLayer
 import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.DrawingContext
 import com.patrykandpatrick.vico.core.common.Fill
+import com.patrykandpatrick.vico.core.common.Insets
 import com.patrykandpatrick.vico.core.common.Point
 import com.patrykandpatrick.vico.core.common.VerticalPosition
 import com.patrykandpatrick.vico.core.common.component.Component
@@ -69,7 +68,7 @@ import kotlin.math.roundToInt
  *
  * @property lineProvider provides the [Line]s.
  * @property pointSpacingDp the point spacing (in dp).
- * @property axisValueOverrider overrides the _x_ and _y_ ranges.
+ * @property rangeProvider overrides the _x_ and _y_ ranges.
  * @property verticalAxisPosition the position of the [VerticalAxis] with which the
  *   [LineCartesianLayer] should be associated. Use this for independent [CartesianLayer] scaling.
  * @property drawingModelInterpolator interpolates the [LineCartesianLayerDrawingModel]s.
@@ -77,7 +76,7 @@ import kotlin.math.roundToInt
 public open class LineCartesianLayer(
   public var lineProvider: LineProvider,
   public var pointSpacingDp: Float = Defaults.POINT_SPACING,
-  public var axisValueOverrider: AxisValueOverrider = AxisValueOverrider.auto(),
+  public var rangeProvider: CartesianLayerRangeProvider = CartesianLayerRangeProvider.auto(),
   public var verticalAxisPosition: Axis.Position.Vertical? = null,
   public var drawingModelInterpolator:
     CartesianLayerDrawingModelInterpolator<
@@ -320,7 +319,7 @@ public open class LineCartesianLayer(
         val pointInfoMap = drawingModel?.getOrNull(seriesIndex)
 
         linePath.rewind()
-        val line = lineProvider.getLine(seriesIndex, chartValues.model.extraStore)
+        val line = lineProvider.getLine(seriesIndex, model.extraStore)
 
         var prevX = layerBounds.getStart(isLtr = isLtr)
         var prevY = layerBounds.bottom
@@ -402,26 +401,19 @@ public open class LineCartesianLayer(
       drawingStart = drawingStart,
       pointInfoMap = pointInfoMap,
     ) { chartEntry, x, y, previousX, nextX ->
-      val point =
-        line.pointProvider?.getPoint(chartEntry, seriesIndex, chartValues.model.extraStore)
+      val point = line.pointProvider?.getPoint(chartEntry, seriesIndex, model.extraStore)
       point?.draw(this, x, y)
 
       line.dataLabel
         .takeIf {
-          horizontalLayout is HorizontalLayout.Segmented ||
-            chartEntry.x != chartValues.minX && chartEntry.x != chartValues.maxX ||
-            chartEntry.x == chartValues.minX && horizontalDimensions.startPadding > 0 ||
-            chartEntry.x == chartValues.maxX && horizontalDimensions.endPadding > 0
+          chartEntry.x != ranges.minX && chartEntry.x != ranges.maxX ||
+            chartEntry.x == ranges.minX && horizontalDimensions.startPadding > 0 ||
+            chartEntry.x == ranges.maxX && horizontalDimensions.endPadding > 0
         }
         ?.let { textComponent ->
           val distanceFromLine = max(line.thicknessDp, point?.sizeDp.orZero).half.pixels
 
-          val text =
-            line.dataLabelValueFormatter.format(
-              value = chartEntry.y,
-              chartValues = chartValues,
-              verticalAxisPosition = verticalAxisPosition,
-            )
+          val text = line.dataLabelValueFormatter.format(this, chartEntry.y, verticalAxisPosition)
           val maxWidth = getMaxDataLabelWidth(chartEntry, x, previousX, nextX)
           val verticalPosition =
             line.dataLabelVerticalPosition.inBounds(
@@ -467,25 +459,15 @@ public open class LineCartesianLayer(
       previousX == null && nextX == null ->
         min(horizontalDimensions.startPadding, horizontalDimensions.endPadding).doubled
       nextX != null -> {
-        val extraSpace =
-          when (horizontalLayout) {
-            is HorizontalLayout.Segmented -> horizontalDimensions.xSpacing.half
-            is HorizontalLayout.FullWidth -> horizontalDimensions.startPadding
-          }
-        ((entry.x - chartValues.minX) / chartValues.xStep * horizontalDimensions.xSpacing +
-            extraSpace)
+        ((entry.x - ranges.minX) / ranges.xStep * horizontalDimensions.xSpacing +
+            horizontalDimensions.startPadding)
           .doubled
           .toFloat()
           .coerceAtMost(nextX - x)
       }
       else -> {
-        val extraSpace =
-          when (horizontalLayout) {
-            is HorizontalLayout.Segmented -> horizontalDimensions.xSpacing.half
-            is HorizontalLayout.FullWidth -> horizontalDimensions.endPadding
-          }
-        ((chartValues.maxX - entry.x) / chartValues.xStep * horizontalDimensions.xSpacing +
-            extraSpace)
+        ((ranges.maxX - entry.x) / ranges.xStep * horizontalDimensions.xSpacing +
+            horizontalDimensions.endPadding)
           .doubled
           .toFloat()
           .coerceAtMost(x - previousX!!)
@@ -506,9 +488,9 @@ public open class LineCartesianLayer(
         entry: LineCartesianLayerModel.Entry, x: Float, y: Float, previousX: Float?, nextX: Float?,
       ) -> Unit,
   ) {
-    val minX = chartValues.minX
-    val maxX = chartValues.maxX
-    val xStep = chartValues.xStep
+    val minX = ranges.minX
+    val maxX = ranges.maxX
+    val xStep = ranges.xStep
 
     var x: Float? = null
     var nextX: Float? = null
@@ -523,7 +505,7 @@ public open class LineCartesianLayer(
           ((entry.x - minX) / xStep).toFloat()
 
     fun getDrawY(entry: LineCartesianLayerModel.Entry): Float {
-      val yRange = chartValues.getYRange(verticalAxisPosition)
+      val yRange = ranges.getYRange(verticalAxisPosition)
       return layerBounds.bottom -
         (pointInfoMap?.get(entry.x)?.y ?: ((entry.y - yRange.minY) / yRange.length).toFloat()) *
           layerBounds.height()
@@ -565,30 +547,22 @@ public open class LineCartesianLayer(
           }
           .pixels
       val xSpacing = maxPointSize + pointSpacingDp.pixels
-      when (val horizontalLayout = horizontalLayout) {
-        is HorizontalLayout.Segmented ->
-          horizontalDimensions.ensureSegmentedValues(xSpacing, chartValues)
-        is HorizontalLayout.FullWidth -> {
-          horizontalDimensions.ensureValuesAtLeast(
-            xSpacing = xSpacing,
-            scalableStartPadding = horizontalLayout.scalableStartPaddingDp.pixels,
-            scalableEndPadding = horizontalLayout.scalableEndPaddingDp.pixels,
-            unscalableStartPadding =
-              maxPointSize.half + horizontalLayout.unscalableStartPaddingDp.pixels,
-            unscalableEndPadding =
-              maxPointSize.half + horizontalLayout.unscalableEndPaddingDp.pixels,
-          )
-        }
-      }
+      horizontalDimensions.ensureValuesAtLeast(
+        xSpacing = xSpacing,
+        scalableStartPadding = layerPadding.scalableStartPaddingDp.pixels,
+        scalableEndPadding = layerPadding.scalableEndPaddingDp.pixels,
+        unscalableStartPadding = maxPointSize.half + layerPadding.unscalableStartPaddingDp.pixels,
+        unscalableEndPadding = maxPointSize.half + layerPadding.unscalableEndPaddingDp.pixels,
+      )
     }
   }
 
-  override fun updateChartValues(chartValues: MutableChartValues, model: LineCartesianLayerModel) {
-    chartValues.tryUpdate(
-      axisValueOverrider.getMinX(model.minX, model.maxX, model.extraStore),
-      axisValueOverrider.getMaxX(model.minX, model.maxX, model.extraStore),
-      axisValueOverrider.getMinY(model.minY, model.maxY, model.extraStore),
-      axisValueOverrider.getMaxY(model.minY, model.maxY, model.extraStore),
+  override fun updateRanges(ranges: MutableCartesianChartRanges, model: LineCartesianLayerModel) {
+    ranges.tryUpdate(
+      rangeProvider.getMinX(model.minX, model.maxX, model.extraStore),
+      rangeProvider.getMaxX(model.minX, model.maxX, model.extraStore),
+      rangeProvider.getMinY(model.minY, model.maxY, model.extraStore),
+      rangeProvider.getMaxY(model.minY, model.maxY, model.extraStore),
       verticalAxisPosition,
     )
   }
@@ -614,12 +588,12 @@ public open class LineCartesianLayer(
 
   override fun prepareForTransformation(
     model: LineCartesianLayerModel?,
+    ranges: CartesianChartRanges,
     extraStore: MutableExtraStore,
-    chartValues: ChartValues,
   ) {
     drawingModelInterpolator.setModels(
       old = extraStore.getOrNull(drawingModelKey),
-      new = model?.toDrawingModel(chartValues),
+      new = model?.toDrawingModel(ranges),
     )
   }
 
@@ -629,9 +603,9 @@ public open class LineCartesianLayer(
   }
 
   private fun LineCartesianLayerModel.toDrawingModel(
-    chartValues: ChartValues
+    ranges: CartesianChartRanges
   ): LineCartesianLayerDrawingModel {
-    val yRange = chartValues.getYRange(verticalAxisPosition)
+    val yRange = ranges.getYRange(verticalAxisPosition)
     return LineCartesianLayerDrawingModel(
       series.map { series ->
         series.associate { entry ->
@@ -643,6 +617,9 @@ public open class LineCartesianLayer(
       }
     )
   }
+
+  /** Provides access to [Line] and [Point] factory functions. */
+  public companion object
 }
 
 internal fun CartesianDrawingContext.getCanvasSplitY(
@@ -650,10 +627,10 @@ internal fun CartesianDrawingContext.getCanvasSplitY(
   halfLineThickness: Float,
   verticalAxisPosition: Axis.Position.Vertical?,
 ): Float {
-  val yRange = chartValues.getYRange(verticalAxisPosition)
+  val yRange = ranges.getYRange(verticalAxisPosition)
   val base =
     layerBounds.bottom -
-      ((splitY(chartValues.model.extraStore).toDouble() - yRange.minY) / yRange.length).toFloat() *
+      ((splitY(model.extraStore).toDouble() - yRange.minY) / yRange.length).toFloat() *
         layerBounds.height()
   return ceil(base).coerceIn(layerBounds.top..layerBounds.bottom) + halfLineThickness
 }

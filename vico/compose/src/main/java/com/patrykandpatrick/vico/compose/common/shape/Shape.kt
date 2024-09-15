@@ -32,10 +32,8 @@ import com.patrykandpatrick.vico.core.common.Defaults.MARKER_TICK_SIZE
 import com.patrykandpatrick.vico.core.common.MeasuringContext
 import com.patrykandpatrick.vico.core.common.shape.Corner
 import com.patrykandpatrick.vico.core.common.shape.CorneredShape
-import com.patrykandpatrick.vico.core.common.shape.CutCornerTreatment
 import com.patrykandpatrick.vico.core.common.shape.DashedShape
 import com.patrykandpatrick.vico.core.common.shape.MarkerCorneredShape
-import com.patrykandpatrick.vico.core.common.shape.RoundedCornerTreatment
 import com.patrykandpatrick.vico.core.common.shape.Shape
 
 private typealias ComposePath = androidx.compose.ui.graphics.AndroidPath
@@ -125,152 +123,54 @@ public fun CorneredShape.toComposeShape(): androidx.compose.ui.graphics.Shape =
     }
   }
 
-/** Creates a [CorneredShape] with rounded corners of the provided size. */
-public fun Shape.Companion.rounded(all: Dp = 0.dp): CorneredShape =
-  CorneredShape(
-    Corner.Absolute(all.value, RoundedCornerTreatment),
-    Corner.Absolute(all.value, RoundedCornerTreatment),
-    Corner.Absolute(all.value, RoundedCornerTreatment),
-    Corner.Absolute(all.value, RoundedCornerTreatment),
-  )
-
-/** Creates a [CorneredShape] with rounded corners of the provided sizes. */
-public fun Shape.Companion.rounded(
+/** A [Dp] version of [CorneredShape.rounded]. */
+public fun CorneredShape.Companion.rounded(
   topLeft: Dp = 0.dp,
   topRight: Dp = 0.dp,
   bottomRight: Dp = 0.dp,
   bottomLeft: Dp = 0.dp,
-): CorneredShape =
-  CorneredShape(
-    Corner.Absolute(topLeft.value, RoundedCornerTreatment),
-    Corner.Absolute(topRight.value, RoundedCornerTreatment),
-    Corner.Absolute(bottomRight.value, RoundedCornerTreatment),
-    Corner.Absolute(bottomLeft.value, RoundedCornerTreatment),
-  )
+): CorneredShape = rounded(topLeft.value, topRight.value, bottomRight.value, bottomLeft.value)
 
-/** Creates a [CorneredShape] with cut corners of the provided size. */
-public fun Shape.Companion.cut(all: Dp = 0.dp): CorneredShape =
-  CorneredShape(
-    Corner.Absolute(all.value, CutCornerTreatment),
-    Corner.Absolute(all.value, CutCornerTreatment),
-    Corner.Absolute(all.value, CutCornerTreatment),
-    Corner.Absolute(all.value, CutCornerTreatment),
-  )
+/** A [Dp] version of [CorneredShape.rounded]. */
+public fun CorneredShape.Companion.rounded(all: Dp = 0.dp): CorneredShape = rounded(all.value)
 
-/** Creates a [CorneredShape] with cut corners of the provided sizes. */
-public fun Shape.Companion.cut(
+/** A [Dp] version of [CorneredShape.cut]. */
+public fun CorneredShape.Companion.cut(
   topLeft: Dp = 0.dp,
   topRight: Dp = 0.dp,
   bottomRight: Dp = 0.dp,
   bottomLeft: Dp = 0.dp,
-): CorneredShape =
-  CorneredShape(
-    Corner.Absolute(topLeft.value, CutCornerTreatment),
-    Corner.Absolute(topRight.value, CutCornerTreatment),
-    Corner.Absolute(bottomRight.value, CutCornerTreatment),
-    Corner.Absolute(bottomLeft.value, CutCornerTreatment),
-  )
+): CorneredShape = cut(topLeft.value, topRight.value, bottomRight.value, bottomLeft.value)
 
-/**
- * Creates a [MarkerCorneredShape].
- *
- * @param topLeft the size and look of the top-left corner.
- * @param topRight the size and look of the top-right corner.
- * @param bottomRight the size and look of the bottom-right corner.
- * @param bottomLeft the size and look of the bottom-left corner.
- * @param tickSizeDp the tick size.
- */
-public fun Shape.Companion.markerCornered(
+/** A [Dp] version of [CorneredShape.cut]. */
+public fun CorneredShape.Companion.cut(all: Dp = 0.dp): CorneredShape = cut(all.value)
+
+/** Creates a [MarkerCorneredShape]. */
+public fun markerCorneredShape(
   topLeft: Corner,
   topRight: Corner,
   bottomRight: Corner,
   bottomLeft: Corner,
   tickSizeDp: Dp = MARKER_TICK_SIZE.dp,
 ): MarkerCorneredShape =
-  MarkerCorneredShape(
-    topLeft = topLeft,
-    topRight = topRight,
-    bottomRight = bottomRight,
-    bottomLeft = bottomLeft,
-    tickSizeDp = tickSizeDp.value,
-  )
+  MarkerCorneredShape(topLeft, topRight, bottomRight, bottomLeft, tickSizeDp.value)
 
-/**
- * Creates a [MarkerCorneredShape].
- *
- * @param all the size and look of all corners.
- * @param tickSizeDp the tick size.
- */
-public fun Shape.Companion.markerCornered(
+/** Creates a [MarkerCorneredShape]. */
+public fun markerCorneredShape(
   all: Corner,
   tickSizeDp: Dp = MARKER_TICK_SIZE.dp,
-): MarkerCorneredShape =
-  MarkerCorneredShape(
-    topLeft = all,
-    topRight = all,
-    bottomRight = all,
-    bottomLeft = all,
-    tickSizeDp = tickSizeDp.value,
-  )
+): MarkerCorneredShape = MarkerCorneredShape(all, tickSizeDp.value)
 
-/**
- * Creates a [MarkerCorneredShape] out of a regular [CorneredShape].
- *
- * @param corneredShape the base [CorneredShape].
- * @param tickSizeDp the tick size.
- */
-public fun Shape.Companion.markerCornered(
+/** Creates a [MarkerCorneredShape]. */
+public fun markerCorneredShape(
   corneredShape: CorneredShape,
   tickSizeDp: Dp = MARKER_TICK_SIZE.dp,
-): MarkerCorneredShape =
-  MarkerCorneredShape(
-    topLeft = corneredShape.topLeft,
-    topRight = corneredShape.topRight,
-    bottomRight = corneredShape.bottomRight,
-    bottomLeft = corneredShape.bottomLeft,
-    tickSizeDp = tickSizeDp.value,
-  )
+): MarkerCorneredShape = MarkerCorneredShape(corneredShape, tickSizeDp.value)
 
-/**
- * Creates a [DashedShape].
- *
- * @param shape the [androidx.compose.ui.graphics.Shape] from which to create the [DashedShape].
- * @param dashLength the dash length.
- * @param gapLength the gap length.
- * @param fitStrategy the [DashedShape.FitStrategy] to use for the dashes.
- */
-public fun Shape.Companion.dashed(
-  shape: androidx.compose.ui.graphics.Shape,
-  dashLength: Dp,
-  gapLength: Dp,
-  fitStrategy: DashedShape.FitStrategy =
-    com.patrykandpatrick.vico.core.common.shape.DashedShape.FitStrategy.Resize,
-): DashedShape =
-  DashedShape(
-    shape = shape.toVicoShape(),
-    dashLengthDp = dashLength.value,
-    gapLengthDp = gapLength.value,
-    fitStrategy = fitStrategy,
-  )
-
-/**
- * Creates a [DashedShape].
- *
- * @param shape the [Shape] from which to create the [DashedShape].
- * @param dashLength the dash length.
- * @param gapLength the gap length.
- * @param fitStrategy the [DashedShape.FitStrategy] to use for the dashes.
- */
-public fun Shape.Companion.dashed(
+/** Creates a [DashedShape]. */
+public fun dashedShape(
   shape: Shape,
   dashLength: Dp,
   gapLength: Dp,
-  fitStrategy: DashedShape.FitStrategy =
-    com.patrykandpatrick.vico.core.common.shape.DashedShape.FitStrategy.Resize,
-): DashedShape =
-  DashedShape(
-    shape = shape,
-    dashLengthDp = dashLength.value,
-    gapLengthDp = gapLength.value,
-    fitStrategy = fitStrategy,
-  )
+  fitStrategy: DashedShape.FitStrategy = DashedShape.FitStrategy.Resize,
+): DashedShape = DashedShape(shape, dashLength.value, gapLength.value, fitStrategy)

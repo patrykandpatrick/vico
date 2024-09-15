@@ -51,7 +51,7 @@ public sealed interface Scroll {
       public fun x(x: Double, bias: Float = 0f): Absolute =
         Absolute { context, horizontalDimensions, bounds, _ ->
           horizontalDimensions.startPadding +
-            ((x - context.chartValues.minX) / context.chartValues.xStep).toFloat() *
+            ((x - context.ranges.minX) / context.ranges.xStep).toFloat() *
               horizontalDimensions.xSpacing - bias * bounds.width()
         }
     }
@@ -74,7 +74,7 @@ public sealed interface Scroll {
 
       /** Scrolls by the specified number of _x_ units. */
       public fun x(x: Double): Relative = Relative { context, horizontalDimensions, _, _ ->
-        (x / context.chartValues.xStep).toFloat() * horizontalDimensions.xSpacing
+        (x / context.ranges.xStep).toFloat() * horizontalDimensions.xSpacing
       }
     }
   }

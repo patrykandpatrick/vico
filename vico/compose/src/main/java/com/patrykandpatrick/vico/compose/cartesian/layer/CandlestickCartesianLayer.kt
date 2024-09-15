@@ -21,8 +21,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.core.cartesian.axis.Axis
-import com.patrykandpatrick.vico.core.cartesian.data.AxisValueOverrider
 import com.patrykandpatrick.vico.core.cartesian.data.CandlestickCartesianLayerDrawingModel
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianLayerRangeProvider
 import com.patrykandpatrick.vico.core.cartesian.layer.CandlestickCartesianLayer
 import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.data.CartesianLayerDrawingModelInterpolator
@@ -35,7 +35,7 @@ public fun rememberCandlestickCartesianLayer(
   minCandleBodyHeight: Dp = Defaults.MIN_CANDLE_BODY_HEIGHT_DP.dp,
   candleSpacing: Dp = Defaults.CANDLE_SPACING_DP.dp,
   scaleCandleWicks: Boolean = false,
-  axisValueOverrider: AxisValueOverrider = remember { AxisValueOverrider.auto() },
+  rangeProvider: CartesianLayerRangeProvider = remember { CartesianLayerRangeProvider.auto() },
   verticalAxisPosition: Axis.Position.Vertical? = null,
   drawingModelInterpolator:
     CartesianLayerDrawingModelInterpolator<
@@ -50,7 +50,7 @@ public fun rememberCandlestickCartesianLayer(
       minCandleBodyHeightDp = minCandleBodyHeight.value
       candleSpacingDp = candleSpacing.value
       this.scaleCandleWicks = scaleCandleWicks
-      this.axisValueOverrider = axisValueOverrider
+      this.rangeProvider = rangeProvider
       this.verticalAxisPosition = verticalAxisPosition
       this.drawingModelInterpolator = drawingModelInterpolator
     }

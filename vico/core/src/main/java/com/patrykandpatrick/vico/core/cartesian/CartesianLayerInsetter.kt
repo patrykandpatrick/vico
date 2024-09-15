@@ -16,15 +16,14 @@
 
 package com.patrykandpatrick.vico.core.cartesian
 
-import com.patrykandpatrick.vico.core.cartesian.axis.Axis
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayer
-import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
+import com.patrykandpatrick.vico.core.common.HorizontalInsets
+import com.patrykandpatrick.vico.core.common.Insets
 
 /**
- * Enables a component to add insets to [CartesianChart]s to make room for itself. This is used by
- * [Axis], [CartesianMarker], and the like.
+ * Enables a [CartesianChart] component to make room for itself around the [CartesianLayer] area.
  */
-public interface ChartInsetter<M> {
+public interface CartesianLayerInsetter<M> {
   /** Ensures that there are sufficient insets. */
   public fun updateInsets(
     context: CartesianMeasuringContext,

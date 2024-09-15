@@ -21,9 +21,9 @@ import com.patrykandpatrick.vico.core.cartesian.CartesianChart
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
 import com.patrykandpatrick.vico.core.cartesian.HorizontalDimensions
-import com.patrykandpatrick.vico.core.cartesian.Insets
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.core.common.Defaults
+import com.patrykandpatrick.vico.core.common.Insets
 import com.patrykandpatrick.vico.core.common.VerticalPosition
 import com.patrykandpatrick.vico.core.common.averageOf
 import com.patrykandpatrick.vico.core.common.component.Component
@@ -63,15 +63,6 @@ public open class DefaultCartesianMarker(
     (label.background as? ShapeComponent)?.shape as? MarkerCorneredShape
 
   protected val tickSizeDp: Float = markerCorneredShape?.tickSizeDp.orZero
-
-  @Suppress("DeprecatedCallableAddReplaceWith")
-  @Deprecated(
-    "Replace `label.tickSizeDp` with `tickSizeDp`. If using `TextComponent.tickSizeDp` with " +
-      "another `TextComponent`, check the property’s definition, and add equivalent logic to " +
-      "your code."
-  )
-  protected val TextComponent.tickSizeDp: Float
-    get() = ((background as? ShapeComponent)?.shape as? MarkerCorneredShape)?.tickSizeDp.orZero
 
   override fun draw(context: CartesianDrawingContext, targets: List<CartesianMarker.Target>) {
     with(context) {

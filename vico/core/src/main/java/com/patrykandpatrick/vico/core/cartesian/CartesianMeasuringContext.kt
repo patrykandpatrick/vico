@@ -16,13 +16,18 @@
 
 package com.patrykandpatrick.vico.core.cartesian
 
-import com.patrykandpatrick.vico.core.cartesian.data.ChartValues
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartRanges
+import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayer
 import com.patrykandpatrick.vico.core.common.MeasuringContext
 
 /** A [MeasuringContext] extension with [CartesianChart]-specific data. */
 public interface CartesianMeasuringContext : MeasuringContext {
-  /** The chart’s [ChartValues]. */
-  public val chartValues: ChartValues
+  /** Stores the [CartesianChart]’s data. */
+  public val model: CartesianChartModel
+
+  /** Stores the [CartesianChart]’s _x_ and _y_ ranges. */
+  public val ranges: CartesianChartRanges
 
   /** Whether scroll is enabled. */
   public val scrollEnabled: Boolean
@@ -30,6 +35,6 @@ public interface CartesianMeasuringContext : MeasuringContext {
   /** Whether zoom is enabled. */
   public val zoomEnabled: Boolean
 
-  /** Defines how the chart’s content is positioned horizontally. */
-  public val horizontalLayout: HorizontalLayout
+  /** Stores the [CartesianLayer] padding values. */
+  public val layerPadding: CartesianLayerPadding
 }

@@ -19,6 +19,10 @@
     <color name="chart_6_color_2">#5e836a</color>
     <color name="chart_6_color_3">#a5ba8e</color>
 
+    <style name="Chart6BottomAxisStyle">
+        <item name="horizontalAxisItemPlacer">segmented</item>
+    </style>
+
     <style name="Chart6ColumnShapeStyle">
         <item name="topStartCornerSize">50%</item>
         <item name="topStartCornerTreatment">cut</item>

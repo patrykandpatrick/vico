@@ -17,6 +17,11 @@
 <resources>
     <color name="chart_1_color_1">#a485e0</color>
 
+    <style name="Chart1BottomAxisStyle">
+        <item name="horizontalAxisItemPlacer">segmented</item>
+        <item name="showGuidelines">false</item>
+    </style>
+
     <style name="Chart1Line1Style">
         <item name="color">@color/chart_1_color_1</item>
     </style>

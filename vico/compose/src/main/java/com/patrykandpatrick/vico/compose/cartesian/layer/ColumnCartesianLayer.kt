@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.common.vicoTheme
 import com.patrykandpatrick.vico.core.cartesian.axis.Axis
-import com.patrykandpatrick.vico.core.cartesian.data.AxisValueOverrider
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianLayerRangeProvider
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.ColumnCartesianLayerDrawingModel
 import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
@@ -33,7 +33,7 @@ import com.patrykandpatrick.vico.core.common.VerticalPosition
 import com.patrykandpatrick.vico.core.common.component.TextComponent
 import com.patrykandpatrick.vico.core.common.data.CartesianLayerDrawingModelInterpolator
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
-import com.patrykandpatrick.vico.core.common.shape.Shape
+import com.patrykandpatrick.vico.core.common.shape.CorneredShape
 
 /** Creates and remembers a [ColumnCartesianLayer]. */
 @Composable
@@ -44,7 +44,7 @@ public fun rememberColumnCartesianLayer(
         rememberLineComponent(
           color,
           Defaults.COLUMN_WIDTH.dp,
-          Shape.rounded(Defaults.COLUMN_ROUNDNESS_PERCENT),
+          CorneredShape.rounded(Defaults.COLUMN_ROUNDNESS_PERCENT),
         )
       }
     ),
@@ -54,7 +54,7 @@ public fun rememberColumnCartesianLayer(
   dataLabelVerticalPosition: VerticalPosition = VerticalPosition.Top,
   dataLabelValueFormatter: CartesianValueFormatter = remember { CartesianValueFormatter.decimal() },
   dataLabelRotationDegrees: Float = 0f,
-  axisValueOverrider: AxisValueOverrider = remember { AxisValueOverrider.auto() },
+  rangeProvider: CartesianLayerRangeProvider = remember { CartesianLayerRangeProvider.auto() },
   verticalAxisPosition: Axis.Position.Vertical? = null,
   drawingModelInterpolator:
     CartesianLayerDrawingModelInterpolator<
@@ -74,7 +74,7 @@ public fun rememberColumnCartesianLayer(
       this.dataLabelVerticalPosition = dataLabelVerticalPosition
       this.dataLabelValueFormatter = dataLabelValueFormatter
       this.dataLabelRotationDegrees = dataLabelRotationDegrees
-      this.axisValueOverrider = axisValueOverrider
+      this.rangeProvider = rangeProvider
       this.verticalAxisPosition = verticalAxisPosition
       this.drawingModelInterpolator = drawingModelInterpolator
     }

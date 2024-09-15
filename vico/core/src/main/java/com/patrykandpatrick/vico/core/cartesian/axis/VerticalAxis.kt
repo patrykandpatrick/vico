@@ -17,21 +17,21 @@
 package com.patrykandpatrick.vico.core.cartesian.axis
 
 import androidx.annotation.RestrictTo
-import com.patrykandpatrick.vico.core.cartesian.CartesianChart
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
 import com.patrykandpatrick.vico.core.cartesian.HorizontalDimensions
-import com.patrykandpatrick.vico.core.cartesian.HorizontalInsets
-import com.patrykandpatrick.vico.core.cartesian.Insets
 import com.patrykandpatrick.vico.core.cartesian.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis.HorizontalLabelPosition.Inside
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis.HorizontalLabelPosition.Outside
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis.VerticalLabelPosition.Center
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartRanges
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
-import com.patrykandpatrick.vico.core.cartesian.data.ChartValues
+import com.patrykandpatrick.vico.core.cartesian.data.formatForAxis
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayer
+import com.patrykandpatrick.vico.core.common.HorizontalInsets
 import com.patrykandpatrick.vico.core.common.HorizontalPosition
+import com.patrykandpatrick.vico.core.common.Insets
 import com.patrykandpatrick.vico.core.common.VerticalPosition
 import com.patrykandpatrick.vico.core.common.component.LineComponent
 import com.patrykandpatrick.vico.core.common.component.TextComponent
@@ -130,7 +130,7 @@ protected constructor(
   override fun drawUnderLayers(context: CartesianDrawingContext) {
     with(context) {
       var centerY: Float
-      val yRange = chartValues.getYRange(position)
+      val yRange = ranges.getYRange(position)
       val maxLabelHeight = getMaxLabelHeight()
       val lineValues =
         itemPlacer.getLineValues(this, bounds.height(), maxLabelHeight, position)
@@ -181,7 +181,7 @@ protected constructor(
       val tickRightX = tickLeftX + lineThickness + tickLength
       val labelX = if (areLabelsOutsideAtStartOrInsideAtEnd == isLtr) tickLeftX else tickRightX
       var tickCenterY: Float
-      val yRange = chartValues.getYRange(position)
+      val yRange = ranges.getYRange(position)
 
       labelValues.forEach { labelValue ->
         tickCenterY =
@@ -199,7 +199,7 @@ protected constructor(
         drawLabel(
           context = this,
           labelComponent = label,
-          label = valueFormatter.format(labelValue, chartValues, position),
+          label = valueFormatter.formatForAxis(this, labelValue, position),
           labelX = labelX,
           tickCenterY = tickCenterY,
         )
@@ -366,7 +366,7 @@ protected constructor(
         itemPlacer.getHeightMeasurementLabelValues(this, position).maxOfOrNull { value ->
           label.getHeight(
             context = this,
-            text = valueFormatter.format(value, chartValues, position),
+            text = valueFormatter.formatForAxis(this, value, position),
             rotationDegrees = labelRotationDegrees,
           )
         }
@@ -381,7 +381,7 @@ protected constructor(
           .maxOfOrNull { value ->
             label.getWidth(
               context = this,
-              text = valueFormatter.format(value, chartValues, position),
+              text = valueFormatter.formatForAxis(this, value, position),
               rotationDegrees = labelRotationDegrees,
             )
           }
@@ -392,7 +392,7 @@ protected constructor(
     thickness: Float,
     y: Double,
   ): Float =
-    if (y == chartValues.getYRange(position).maxY && itemPlacer.getShiftTopLines(this)) {
+    if (y == ranges.getYRange(position).maxY && itemPlacer.getShiftTopLines(this)) {
       -thickness.half
     } else {
       thickness.half
@@ -456,9 +456,9 @@ protected constructor(
   public interface ItemPlacer {
     /**
      * Returns a boolean indicating whether to shift the lines whose _y_ values are equal to
-     * [ChartValues.YRange.maxY], if such lines are present, such that they’re immediately above the
-     * [CartesianLayer] bounds. If the [CartesianChart] has a top axis, the shifted tick is then
-     * aligned with it, and the shifted guideline is hidden.
+     * [CartesianChartRanges.YRange.maxY], if such lines are present, such that they’re immediately
+     * above the [CartesianLayer] bounds. If a top [HorizontalAxis] is present, the shifted tick
+     * will then be aligned with the axis line, and the shifted guideline will be hidden.
      */
     public fun getShiftTopLines(context: CartesianDrawingContext): Boolean = true
 
@@ -522,10 +522,8 @@ protected constructor(
        * Creates a step-based [ItemPlacer] implementation. [step] returns the difference between the
        * _y_ values of neighboring labels (and their corresponding line pairs). A multiple of this
        * may be used for overlap prevention. If `null` is returned, the step will be determined
-       * automatically. [shiftTopLines] defines whether to shift the lines whose _y_ values are
-       * equal to [ChartValues.YRange.maxY], if such lines are present, such that they’re
-       * immediately above the [CartesianChart]’s bounds. If the chart has a top axis, the shifted
-       * tick will then be aligned with this axis, and the shifted guideline will be hidden.
+       * automatically. [shiftTopLines] is used as the return value of
+       * [ItemPlacer.getShiftTopLines].
        */
       public fun step(
         step: (ExtraStore) -> Double? = { null },
@@ -537,10 +535,7 @@ protected constructor(
        * Creates a count-based [ItemPlacer] implementation. [count] returns the number of labels
        * (and their corresponding line pairs) to be displayed. This may be reduced for overlap
        * prevention. If `null` is returned, the [VerticalAxis] will display as many items as
-       * possible. [shiftTopLines] defines whether to shift the lines whose _y_ values are equal to
-       * [ChartValues.YRange.maxY], if such lines are present, such that they’re immediately above
-       * the [CartesianChart]’s bounds. If the chart has a top axis, the shifted tick will then be
-       * aligned with this axis, and the shifted guideline will be hidden.
+       * possible. [shiftTopLines] is used as the return value of [ItemPlacer.getShiftTopLines].
        */
       public fun count(
         count: (ExtraStore) -> Int? = { null },

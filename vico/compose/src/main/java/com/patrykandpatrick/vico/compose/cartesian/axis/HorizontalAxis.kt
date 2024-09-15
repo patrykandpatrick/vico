@@ -30,7 +30,7 @@ import com.patrykandpatrick.vico.core.common.component.TextComponent
 
 /** Creates and remembers a top [HorizontalAxis]. */
 @Composable
-public fun rememberTopAxis(
+public fun HorizontalAxis.Companion.rememberTop(
   line: LineComponent? = rememberAxisLineComponent(),
   label: TextComponent? = rememberAxisLabelComponent(),
   labelRotationDegrees: Float = Defaults.AXIS_LABEL_ROTATION_DEGREES,
@@ -38,7 +38,7 @@ public fun rememberTopAxis(
   tick: LineComponent? = rememberAxisTickComponent(),
   tickLength: Dp = Defaults.AXIS_TICK_LENGTH.dp,
   guideline: LineComponent? = rememberAxisGuidelineComponent(),
-  itemPlacer: HorizontalAxis.ItemPlacer = remember { HorizontalAxis.ItemPlacer.default() },
+  itemPlacer: HorizontalAxis.ItemPlacer = remember { HorizontalAxis.ItemPlacer.aligned() },
   sizeConstraint: BaseAxis.SizeConstraint = remember { BaseAxis.SizeConstraint.Auto() },
   titleComponent: TextComponent? = null,
   title: CharSequence? = null,
@@ -56,7 +56,7 @@ public fun rememberTopAxis(
     titleComponent,
     title,
   ) {
-    HorizontalAxis.top(
+    top(
       line,
       label,
       labelRotationDegrees,
@@ -73,7 +73,7 @@ public fun rememberTopAxis(
 
 /** Creates and remembers a bottom [HorizontalAxis]. */
 @Composable
-public fun rememberBottomAxis(
+public fun HorizontalAxis.Companion.rememberBottom(
   line: LineComponent? = rememberAxisLineComponent(),
   label: TextComponent? = rememberAxisLabelComponent(),
   labelRotationDegrees: Float = Defaults.AXIS_LABEL_ROTATION_DEGREES,
@@ -81,7 +81,7 @@ public fun rememberBottomAxis(
   tick: LineComponent? = rememberAxisTickComponent(),
   tickLength: Dp = Defaults.AXIS_TICK_LENGTH.dp,
   guideline: LineComponent? = rememberAxisGuidelineComponent(),
-  itemPlacer: HorizontalAxis.ItemPlacer = remember { HorizontalAxis.ItemPlacer.default() },
+  itemPlacer: HorizontalAxis.ItemPlacer = remember { HorizontalAxis.ItemPlacer.aligned() },
   sizeConstraint: BaseAxis.SizeConstraint = remember { BaseAxis.SizeConstraint.Auto() },
   titleComponent: TextComponent? = null,
   title: CharSequence? = null,
@@ -99,7 +99,7 @@ public fun rememberBottomAxis(
     titleComponent,
     title,
   ) {
-    HorizontalAxis.bottom(
+    bottom(
       line,
       label,
       labelRotationDegrees,

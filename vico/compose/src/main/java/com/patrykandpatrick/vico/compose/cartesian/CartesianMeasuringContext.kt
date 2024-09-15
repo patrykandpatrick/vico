@@ -22,37 +22,41 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
-import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
+import com.patrykandpatrick.vico.core.cartesian.CartesianLayerPadding
 import com.patrykandpatrick.vico.core.cartesian.MutableCartesianMeasuringContext
-import com.patrykandpatrick.vico.core.cartesian.data.ChartValues
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartRanges
 
 @Composable
 internal fun rememberCartesianMeasuringContext(
+  canvasBounds: RectF,
+  model: CartesianChartModel,
+  ranges: CartesianChartRanges,
   scrollEnabled: Boolean,
   zoomEnabled: Boolean,
-  canvasBounds: RectF,
-  horizontalLayout: HorizontalLayout,
+  layerPadding: CartesianLayerPadding,
   spToPx: (Float) -> Float,
-  chartValues: ChartValues,
 ): MutableCartesianMeasuringContext =
   remember {
       MutableCartesianMeasuringContext(
         canvasBounds = canvasBounds,
         density = 0f,
         isLtr = true,
+        model = model,
+        ranges = ranges,
         scrollEnabled = scrollEnabled,
         zoomEnabled = zoomEnabled,
-        horizontalLayout = horizontalLayout,
-        chartValues = chartValues,
+        layerPadding = layerPadding,
         spToPx = spToPx,
       )
     }
     .apply {
       this.density = LocalDensity.current.density
       this.isLtr = LocalLayoutDirection.current == LayoutDirection.Ltr
+      this.model = model
+      this.ranges = ranges
       this.scrollEnabled = scrollEnabled
       this.zoomEnabled = zoomEnabled
-      this.horizontalLayout = horizontalLayout
-      this.chartValues = chartValues
+      this.layerPadding = layerPadding
       this.spToPx = spToPx
     }

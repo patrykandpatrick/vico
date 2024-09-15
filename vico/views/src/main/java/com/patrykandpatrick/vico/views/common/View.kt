@@ -19,7 +19,6 @@ package com.patrykandpatrick.vico.views.common
 import android.view.MotionEvent
 import android.view.View
 import android.widget.OverScroller
-import androidx.core.view.ViewCompat
 import androidx.core.view.updatePadding
 import com.patrykandpatrick.vico.core.common.Point
 
@@ -54,6 +53,3 @@ internal fun OverScroller.fling(
 
 internal val MotionEvent.point: Point
   get() = Point(x, y)
-
-internal val View.isAttachedToWindowCompat: Boolean
-  get() = ViewCompat.isAttachedToWindow(this)

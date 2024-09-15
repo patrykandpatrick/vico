@@ -22,20 +22,20 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
-import com.patrykandpatrick.vico.core.cartesian.data.ChartValues
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartRanges
 
 @Immutable
 internal class CartesianChartModelWrapper(
   val model: CartesianChartModel? = null,
   val previousModel: CartesianChartModel? = null,
-  val chartValues: ChartValues = ChartValues.Empty,
+  val ranges: CartesianChartRanges = CartesianChartRanges.Empty,
 )
 
 internal operator fun CartesianChartModelWrapper.component1(): CartesianChartModel? = model
 
 internal operator fun CartesianChartModelWrapper.component2(): CartesianChartModel? = previousModel
 
-internal operator fun CartesianChartModelWrapper.component3(): ChartValues = chartValues
+internal operator fun CartesianChartModelWrapper.component3(): CartesianChartRanges = ranges
 
 internal class CartesianChartModelWrapperState : State<CartesianChartModelWrapper> {
   private var previousModel: CartesianChartModel? = null
@@ -43,9 +43,9 @@ internal class CartesianChartModelWrapperState : State<CartesianChartModelWrappe
   override var value by mutableStateOf(CartesianChartModelWrapper())
     private set
 
-  fun set(model: CartesianChartModel?, chartValues: ChartValues) {
+  fun set(model: CartesianChartModel?, ranges: CartesianChartRanges) {
     val currentModel = value.model
     if (model?.id != currentModel?.id) previousModel = currentModel
-    value = CartesianChartModelWrapper(model, previousModel, chartValues)
+    value = CartesianChartModelWrapper(model, previousModel, ranges)
   }
 }

@@ -19,7 +19,6 @@ package com.patrykandpatrick.vico.core.common
 import android.graphics.Canvas
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.common.data.CacheStore
-import com.patrykandpatrick.vico.core.common.data.MutableExtraStore
 
 /** Holds data used for measuring and drawing. */
 public interface MeasuringContext {
@@ -49,13 +48,6 @@ public interface MeasuringContext {
   /** Whether the layout direction is left to right. */
   public val isLtr: Boolean
 
-  /** Stores temporary auxiliary data. */
-  @Deprecated(
-    "To cache drawing data, use `cacheStore`. If using `extraStore` for communication between " +
-      "functions or classes, switch to a suitable alternative."
-  )
-  public val extraStore: MutableExtraStore
-
   /** Caches drawing data. */
   public val cacheStore: CacheStore
 
@@ -65,7 +57,6 @@ public interface MeasuringContext {
 
   /** Removes all temporary data. */
   public fun reset() {
-    @Suppress("DEPRECATION") extraStore.clear()
     cacheStore.purge()
   }
 }

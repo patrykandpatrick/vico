@@ -47,7 +47,7 @@ public abstract class ExtraStore internal constructor() {
 
   public companion object {
     /** An empty [ExtraStore]. */
-    public val empty: ExtraStore = MutableExtraStore()
+    public val Empty: ExtraStore = MutableExtraStore()
   }
 }
 

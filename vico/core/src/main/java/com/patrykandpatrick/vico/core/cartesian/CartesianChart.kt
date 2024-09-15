@@ -22,9 +22,9 @@ import com.patrykandpatrick.vico.core.cartesian.CartesianChart.PersistentMarkerS
 import com.patrykandpatrick.vico.core.cartesian.axis.Axis
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisManager
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartRanges
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianLayerModel
-import com.patrykandpatrick.vico.core.cartesian.data.ChartValues
-import com.patrykandpatrick.vico.core.cartesian.data.MutableChartValues
+import com.patrykandpatrick.vico.core.cartesian.data.MutableCartesianChartRanges
 import com.patrykandpatrick.vico.core.cartesian.decoration.Decoration
 import com.patrykandpatrick.vico.core.cartesian.layer.CandlestickCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayer
@@ -32,6 +32,8 @@ import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerVisibilityListener
+import com.patrykandpatrick.vico.core.common.HorizontalInsets
+import com.patrykandpatrick.vico.core.common.Insets
 import com.patrykandpatrick.vico.core.common.Legend
 import com.patrykandpatrick.vico.core.common.Point
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
@@ -55,14 +57,13 @@ import kotlin.math.abs
  * @property layers the [CartesianLayer]s.
  * @property marker appears when the [CartesianChart] is tapped.
  * @property markerVisibilityListener allows for listening to [marker] visibility changes.
- * @property horizontalLayout defines how the [CartesianChart]’s content is positioned horizontally.
+ * @property layerPadding stores the [CartesianLayer] padding values.
  * @property legend the legend.
  * @property fadingEdges applies a horizontal fade to the edges of the [CartesianChart], provided
  *   that it’s scrollable.
  * @property decorations the [Decoration]s.
  * @property persistentMarkers adds persistent [CartesianMarker]s.
- * @property getXStep defines the _x_ step (the difference between the _x_ values of neighboring
- *   major entries).
+ * @property getXStep defines the _x_ step (the difference between neighboring major _x_ values).
  */
 public open class CartesianChart(
   vararg layers: CartesianLayer<*>,
@@ -72,13 +73,13 @@ public open class CartesianChart(
   bottomAxis: Axis<Axis.Position.Horizontal.Bottom>? = null,
   public var marker: CartesianMarker? = null,
   public var markerVisibilityListener: CartesianMarkerVisibilityListener? = null,
-  public var horizontalLayout: HorizontalLayout = HorizontalLayout.Segmented,
+  public var layerPadding: CartesianLayerPadding = CartesianLayerPadding(),
   public var legend: Legend<CartesianMeasuringContext, CartesianDrawingContext>? = null,
   public var fadingEdges: FadingEdges? = null,
   public var decorations: List<Decoration> = emptyList(),
   public var persistentMarkers: (PersistentMarkerScope.(ExtraStore) -> Unit)? = null,
   public var getXStep: ((CartesianChartModel) -> Double) = { it.getXDeltaGcd() },
-) : ChartInsetter<CartesianChartModel> {
+) : CartesianLayerInsetter<CartesianChartModel> {
   private val persistentMarkerMap = mutableMapOf<Double, CartesianMarker>()
   private val persistentMarkerScope = PersistentMarkerScope {
     persistentMarkerMap[it.toDouble()] = this
@@ -111,12 +112,12 @@ public open class CartesianChart(
       }
     }
 
-  private val chartValueUpdateModelAndLayerConsumer =
+  private val rangeUpdateModelAndLayerConsumer =
     object : ModelAndLayerConsumer {
-      lateinit var chartValues: MutableChartValues
+      lateinit var ranges: MutableCartesianChartRanges
 
       override fun <T : CartesianLayerModel> invoke(model: T?, layer: CartesianLayer<T>) {
-        layer.updateChartValues(chartValues, model ?: return)
+        layer.updateRanges(ranges, model ?: return)
       }
     }
 
@@ -145,10 +146,10 @@ public open class CartesianChart(
   private val transformationPreparationModelAndLayerConsumer =
     object : ModelAndLayerConsumer {
       lateinit var extraStore: MutableExtraStore
-      lateinit var chartValues: ChartValues
+      lateinit var ranges: CartesianChartRanges
 
       override fun <T : CartesianLayerModel> invoke(model: T?, layer: CartesianLayer<T>) {
-        layer.prepareForTransformation(model, extraStore, chartValues)
+        layer.prepareForTransformation(model, ranges, extraStore)
       }
     }
 
@@ -189,82 +190,79 @@ public open class CartesianChart(
   /** Prepares the [CartesianChart] for drawing. */
   public fun prepare(
     context: CartesianMeasuringContext,
-    model: CartesianChartModel,
     horizontalDimensions: MutableHorizontalDimensions,
     canvasBounds: RectF,
   ) {
-    _markerTargets.clear()
-    insets.clear()
-    val persistentMarkerHashCode = Objects.hash(persistentMarkers, model.extraStore)
-    if (persistentMarkerHashCode != previousPersistentMarkerHashCode) {
-      persistentMarkerMap.clear()
-      persistentMarkers?.invoke(persistentMarkerScope, model.extraStore)
-      previousPersistentMarkerHashCode = persistentMarkerHashCode
-    }
-    model.forEachWithLayer(
-      horizontalDimensionUpdateModelAndLayerConsumer.apply {
-        this.context = context
-        this.horizontalDimensions = horizontalDimensions
+    with(context) {
+      _markerTargets.clear()
+      insets.clear()
+      val persistentMarkerHashCode = Objects.hash(persistentMarkers, model.extraStore)
+      if (persistentMarkerHashCode != previousPersistentMarkerHashCode) {
+        persistentMarkerMap.clear()
+        persistentMarkers?.invoke(persistentMarkerScope, model.extraStore)
+        previousPersistentMarkerHashCode = persistentMarkerHashCode
       }
-    )
-    startAxis?.updateHorizontalDimensions(context, horizontalDimensions)
-    topAxis?.updateHorizontalDimensions(context, horizontalDimensions)
-    endAxis?.updateHorizontalDimensions(context, horizontalDimensions)
-    bottomAxis?.updateHorizontalDimensions(context, horizontalDimensions)
-    val insetters = buildList {
-      add(this@CartesianChart)
-      addAll(axisManager.axisCache)
-      marker?.let(::add)
-      addAll(persistentMarkerMap.values)
+      model.forEachWithLayer(
+        horizontalDimensionUpdateModelAndLayerConsumer.apply {
+          this.context = context
+          this.horizontalDimensions = horizontalDimensions
+        }
+      )
+      startAxis?.updateHorizontalDimensions(context, horizontalDimensions)
+      topAxis?.updateHorizontalDimensions(context, horizontalDimensions)
+      endAxis?.updateHorizontalDimensions(context, horizontalDimensions)
+      bottomAxis?.updateHorizontalDimensions(context, horizontalDimensions)
+      val insetters = buildList {
+        add(this@CartesianChart)
+        addAll(axisManager.axisCache)
+        marker?.let(::add)
+        addAll(persistentMarkerMap.values)
+      }
+      insetters.forEach { it.updateInsets(context, horizontalDimensions, model, insets) }
+      val legendHeight = legend?.getHeight(context, canvasBounds.width()).orZero
+      val freeHeight = canvasBounds.height() - insets.vertical - legendHeight
+      insetters.forEach { it.updateHorizontalInsets(context, freeHeight, model, insets) }
+      setLayerBounds(
+        canvasBounds.left + insets.getLeft(isLtr),
+        canvasBounds.top + insets.top,
+        canvasBounds.right - insets.getRight(isLtr),
+        canvasBounds.bottom - insets.bottom - legendHeight,
+      )
+      axisManager.setAxesBounds(context, canvasBounds, layerBounds, insets)
+      legend?.setBounds(
+        left = canvasBounds.left,
+        top = layerBounds.bottom + insets.bottom,
+        right = canvasBounds.right,
+        bottom = layerBounds.bottom + insets.bottom + legendHeight,
+      )
     }
-    insetters.forEach { it.updateInsets(context, horizontalDimensions, model, insets) }
-    val legendHeight = legend?.getHeight(context, canvasBounds.width()).orZero
-    val freeHeight = canvasBounds.height() - insets.vertical - legendHeight
-    insetters.forEach { it.updateHorizontalInsets(context, freeHeight, model, insets) }
-    setLayerBounds(
-      canvasBounds.left + insets.getLeft(context.isLtr),
-      canvasBounds.top + insets.top,
-      canvasBounds.right - insets.getRight(context.isLtr),
-      canvasBounds.bottom - insets.bottom - legendHeight,
-    )
-    axisManager.setAxesBounds(context, canvasBounds, layerBounds, insets)
-    legend?.setBounds(
-      left = canvasBounds.left,
-      top = layerBounds.bottom + insets.bottom,
-      right = canvasBounds.right,
-      bottom = layerBounds.bottom + insets.bottom + legendHeight,
-    )
   }
 
   /** Draws the [CartesianChart]. */
-  public fun draw(
-    context: CartesianDrawingContext,
-    model: CartesianChartModel,
-    pointerPosition: Point?,
-  ) {
-    val canvasSaveCount = if (fadingEdges != null) context.canvas.saveLayer() else -1
-    axisManager.drawUnderLayers(context)
-    decorations.forEach { it.drawUnderLayers(context) }
-    model.forEachWithLayer(drawingModelAndLayerConsumer.apply { this.context = context })
-    fadingEdges?.run {
-      draw(context)
-      context.canvas.restoreToCount(canvasSaveCount)
+  public fun draw(context: CartesianDrawingContext, pointerPosition: Point?) {
+    with(context) {
+      val canvasSaveCount = if (fadingEdges != null) canvas.saveLayer() else -1
+      axisManager.drawUnderLayers(context)
+      decorations.forEach { it.drawUnderLayers(context) }
+      model.forEachWithLayer(drawingModelAndLayerConsumer.apply { this.context = context })
+      fadingEdges?.run {
+        draw(context)
+        canvas.restoreToCount(canvasSaveCount)
+      }
+      axisManager.drawOverLayers(context)
+      decorations.forEach { it.drawOverLayers(context) }
+      persistentMarkerMap.forEach { (x, marker) ->
+        markerTargets[x]?.let { targets -> marker.draw(context, targets) }
+      }
+      legend?.draw(context)
+      drawMarker(context, pointerPosition)
     }
-    axisManager.drawOverLayers(context)
-    decorations.forEach { it.drawOverLayers(context) }
-    persistentMarkerMap.forEach { (x, marker) ->
-      markerTargets[x]?.let { targets -> marker.draw(context, targets) }
-    }
-    legend?.draw(context)
-    drawMarker(context, pointerPosition)
   }
 
-  /** Updates [chartValues] in accordance with [model]. */
-  public fun updateChartValues(chartValues: MutableChartValues, model: CartesianChartModel) {
-    chartValues.update(getXStep(model), model)
-    model.forEachWithLayer(
-      chartValueUpdateModelAndLayerConsumer.apply { this.chartValues = chartValues }
-    )
+  /** Updates [ranges] in accordance with [model]. */
+  public fun updateRanges(ranges: MutableCartesianChartRanges, model: CartesianChartModel) {
+    ranges.xStep = getXStep(model)
+    model.forEachWithLayer(rangeUpdateModelAndLayerConsumer.apply { this.ranges = ranges })
   }
 
   override fun updateInsets(
@@ -273,7 +271,7 @@ public open class CartesianChart(
     model: CartesianChartModel,
     insets: Insets,
   ) {
-    model.forEachWithLayer(
+    context.model.forEachWithLayer(
       insetUpdateModelAndLayerConsumer.apply {
         this.context = context
         this.horizontalDimensions = horizontalDimensions
@@ -288,7 +286,7 @@ public open class CartesianChart(
     model: CartesianChartModel,
     insets: HorizontalInsets,
   ) {
-    model.forEachWithLayer(
+    context.model.forEachWithLayer(
       horizontalInsetUpdateModelAndLayerConsumer.apply {
         this.context = context
         this.freeHeight = freeHeight
@@ -301,14 +299,14 @@ public open class CartesianChart(
   public fun prepareForTransformation(
     model: CartesianChartModel?,
     extraStore: MutableExtraStore,
-    chartValues: ChartValues,
+    ranges: CartesianChartRanges,
   ) {
     model?.forEachWithLayer(
       transformationPreparationModelAndLayerConsumer.apply {
         this.extraStore = extraStore
-        this.chartValues = chartValues
+        this.ranges = ranges
       }
-    ) ?: layers.forEach { it.prepareForTransformation(null, extraStore, chartValues) }
+    ) ?: layers.forEach { it.prepareForTransformation(null, ranges, extraStore) }
   }
 
   /** Carries out the pending difference animation. */

@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package com.patrykandpatrick.vico.core.cartesian
+package com.patrykandpatrick.vico.core.common
+
+import com.patrykandpatrick.vico.core.cartesian.CartesianLayerInsetter
 
 /**
- * Used to apply horizontal insets to [CartesianChart]s.
+ * Used to apply horizontal insets.
  *
- * @see ChartInsetter
+ * @see CartesianLayerInsetter
  * @see Insets
  */
 public interface HorizontalInsets {
@@ -41,11 +43,4 @@ public interface HorizontalInsets {
 
   /** Ensures that the stored values are no smaller than the provided ones. */
   public fun ensureValuesAtLeast(start: Float = this.start, end: Float = this.end)
-
-  /** Ensures that the stored values are no smaller than the provided ones. */
-  @Suppress("DeprecatedCallableAddReplaceWith")
-  @Deprecated("Use `ensureValuesAtLeast`.")
-  public fun setValuesIfGreater(start: Float, end: Float) {
-    ensureValuesAtLeast(start, end)
-  }
 }

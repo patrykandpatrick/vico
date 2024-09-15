@@ -39,7 +39,7 @@ public class CartesianChartModel {
   public val extraStore: ExtraStore
 
   /** Creates a [CartesianChartModel] consisting of the given [CartesianLayerModel]s. */
-  public constructor(models: List<CartesianLayerModel>) : this(models, ExtraStore.empty)
+  public constructor(models: List<CartesianLayerModel>) : this(models, ExtraStore.Empty)
 
   /** Creates a [CartesianChartModel] consisting of the given [CartesianLayerModel]s. */
   public constructor(vararg models: CartesianLayerModel) : this(models.toList())
@@ -85,7 +85,7 @@ public class CartesianChartModel {
 
   public companion object {
     /** An empty [CartesianChartModel]. */
-    public val empty: CartesianChartModel =
-      CartesianChartModel(models = emptyList(), id = 0, width = 0.0, extraStore = ExtraStore.empty)
+    public val Empty: CartesianChartModel =
+      CartesianChartModel(models = emptyList(), id = 0, width = 0.0, extraStore = ExtraStore.Empty)
   }
 }

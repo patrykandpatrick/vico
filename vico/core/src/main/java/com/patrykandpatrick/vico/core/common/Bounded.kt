@@ -33,6 +33,3 @@ public interface Bounded {
     this.bounds.set(bounds)
   }
 }
-
-@Deprecated("Use `Bounded`.", ReplaceWith("Bounded"))
-public typealias BoundsAware = Bounded

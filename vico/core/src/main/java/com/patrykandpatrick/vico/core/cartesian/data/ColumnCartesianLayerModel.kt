@@ -46,7 +46,7 @@ public class ColumnCartesianLayerModel : CartesianLayerModel {
 
   override val extraStore: ExtraStore
 
-  public constructor(series: List<List<Entry>>) : this(series, ExtraStore.empty)
+  public constructor(series: List<List<Entry>>) : this(series, ExtraStore.Empty)
 
   private constructor(series: List<List<Entry>>, extraStore: ExtraStore) {
     require(series.isNotEmpty()) { "At least one series should be added." }

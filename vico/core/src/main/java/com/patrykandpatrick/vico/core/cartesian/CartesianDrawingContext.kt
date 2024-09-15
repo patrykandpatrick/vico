@@ -38,11 +38,6 @@ public interface CartesianDrawingContext : DrawingContext, CartesianMeasuringCon
   /** The scroll value (in pixels). */
   public val scroll: Float
 
-  /** The scroll value (in pixels). */
-  @Deprecated("Use `scroll`.", ReplaceWith("scroll"))
-  public val horizontalScroll: Float
-    get() = scroll
-
   /** The zoom factor. */
   public val zoom: Float
 }

@@ -30,7 +30,7 @@ import com.patrykandpatrick.vico.core.common.component.TextComponent
 
 /** Creates and remembers a start [VerticalAxis]. */
 @Composable
-public fun rememberStartAxis(
+public fun VerticalAxis.Companion.rememberStart(
   line: LineComponent? = rememberAxisLineComponent(),
   label: TextComponent? = rememberAxisLabelComponent(),
   labelRotationDegrees: Float = Defaults.AXIS_LABEL_ROTATION_DEGREES,
@@ -62,7 +62,7 @@ public fun rememberStartAxis(
     titleComponent,
     title,
   ) {
-    VerticalAxis.start(
+    start(
       line,
       label,
       labelRotationDegrees,
@@ -81,7 +81,7 @@ public fun rememberStartAxis(
 
 /** Creates and remembers an end [VerticalAxis]. */
 @Composable
-public fun rememberEndAxis(
+public fun VerticalAxis.Companion.rememberEnd(
   line: LineComponent? = rememberAxisLineComponent(),
   label: TextComponent? = rememberAxisLabelComponent(),
   labelRotationDegrees: Float = Defaults.AXIS_LABEL_ROTATION_DEGREES,
@@ -113,7 +113,7 @@ public fun rememberEndAxis(
     titleComponent,
     title,
   ) {
-    VerticalAxis.end(
+    end(
       line,
       label,
       labelRotationDegrees,

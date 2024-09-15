@@ -59,6 +59,10 @@
         <item name="labelRotationDegrees">45</item>
     </style>
 
+    <style name="Chart5BottomAxisStyle" parent="Chart5AxisStyle">
+        <item name="horizontalAxisItemPlacer">segmented</item>
+    </style>
+
     <style name="Chart5ColumnLayerStyle">
         <item name="column1Style">@style/Chart5Column1Style</item>
         <item name="column2Style">@style/Chart5Column2Style</item>

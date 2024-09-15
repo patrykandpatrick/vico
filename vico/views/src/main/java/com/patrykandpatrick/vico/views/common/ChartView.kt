@@ -43,7 +43,7 @@ import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
 
 /** Displays a [CartesianChart]. */
-public abstract class BaseChartView<Model>
+public abstract class ChartView<Model>
 @JvmOverloads
 constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) :
   FrameLayout(context, attrs, defStyleAttr) {
@@ -161,7 +161,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
               isAnimationFrameGenerationRunning = true
               animationFrameJob =
                 coroutineScope?.launch {
-                  transformModel(this@BaseChartView, fraction)
+                  transformModel(this@ChartView, fraction)
                   isAnimationFrameGenerationRunning = false
                 }
             }
@@ -169,7 +169,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
               finalAnimationFrameJob =
                 coroutineScope?.launch(Dispatchers.Default) {
                   animationFrameJob?.cancelAndJoin()
-                  transformModel(this@BaseChartView, fraction)
+                  transformModel(this@ChartView, fraction)
                   isAnimationFrameGenerationRunning = false
                 }
             }
@@ -178,7 +178,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       }
     } else {
       finalAnimationFrameJob =
-        coroutineScope?.launch { transformModel(this@BaseChartView, Animation.range.endInclusive) }
+        coroutineScope?.launch { transformModel(this@ChartView, Animation.range.endInclusive) }
     }
   }
 

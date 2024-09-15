@@ -29,33 +29,18 @@ import androidx.core.graphics.translationMatrix
 import com.patrykandpatrick.vico.core.common.DrawingContext
 import com.patrykandpatrick.vico.core.common.component.Component
 import com.patrykandpatrick.vico.core.common.shader.CacheableDynamicShader
-import com.patrykandpatrick.vico.core.common.shader.ComponentShader
 import com.patrykandpatrick.vico.core.common.shader.DynamicShader
 import com.patrykandpatrick.vico.core.common.shader.LinearGradientShader
 
-/**
- * Creates a [ComponentShader] out of the provided [component].
- *
- * @property component used as a pattern in the [Shader].
- * @property componentSize the size of the [component].
- * @property checkeredArrangement whether the [component] will be arranged in a checkered pattern.
- * @property tileXMode the horizontal tiling mode for the [component].
- * @property tileYMode the vertical tiling mode for the [component].
- */
+/** A [Dp] version of [DynamicShader.component]. */
 public fun DynamicShader.Companion.component(
   component: Component,
   componentSize: Dp,
   checkeredArrangement: Boolean = true,
   tileXMode: Shader.TileMode = Shader.TileMode.REPEAT,
   tileYMode: Shader.TileMode = tileXMode,
-): ComponentShader =
-  ComponentShader(
-    component = component,
-    componentSizeDp = componentSize.value,
-    checkeredArrangement = checkeredArrangement,
-    tileXMode = tileXMode,
-    tileYMode = tileYMode,
-  )
+): DynamicShader =
+  component(component, componentSize.value, checkeredArrangement, tileXMode, tileYMode)
 
 /**
  * Creates a [DynamicShader] with a horizontal gradient. [colors] houses the gradient colors, and

@@ -141,4 +141,80 @@ public open class CorneredShape(
     result = 31 * result + bottomLeft.hashCode()
     return result
   }
+
+  /** Houses [CorneredShape] singletons and factory functions. */
+  public companion object {
+    /** A [CorneredShape] with fully rounded corners. */
+    public val Pill: CorneredShape = rounded(allPercent = 50)
+
+    /** Creates a [CorneredShape] with rounded corners of the provided radii. */
+    public fun rounded(
+      topLeftDp: Float = 0f,
+      topRightDp: Float = 0f,
+      bottomRightDp: Float = 0f,
+      bottomLeftDp: Float = 0f,
+    ): CorneredShape =
+      CorneredShape(
+        Corner.Absolute(topLeftDp, RoundedCornerTreatment),
+        Corner.Absolute(topRightDp, RoundedCornerTreatment),
+        Corner.Absolute(bottomRightDp, RoundedCornerTreatment),
+        Corner.Absolute(bottomLeftDp, RoundedCornerTreatment),
+      )
+
+    /** Creates a [CorneredShape] with rounded corners of the provided radius. */
+    public fun rounded(allDp: Float): CorneredShape = rounded(allDp, allDp, allDp, allDp)
+
+    /** Creates a [CorneredShape] with rounded corners of the provided radii. */
+    public fun rounded(
+      topLeftPercent: Int = 0,
+      topRightPercent: Int = 0,
+      bottomRightPercent: Int = 0,
+      bottomLeftPercent: Int = 0,
+    ): CorneredShape =
+      CorneredShape(
+        Corner.Relative(topLeftPercent, RoundedCornerTreatment),
+        Corner.Relative(topRightPercent, RoundedCornerTreatment),
+        Corner.Relative(bottomRightPercent, RoundedCornerTreatment),
+        Corner.Relative(bottomLeftPercent, RoundedCornerTreatment),
+      )
+
+    /** Creates a [CorneredShape] with rounded corners of the provided radius. */
+    public fun rounded(allPercent: Int): CorneredShape =
+      rounded(allPercent, allPercent, allPercent, allPercent)
+
+    /** Creates a [CorneredShape] with cut corners of the provided sizes. */
+    public fun cut(
+      topLeftDp: Float = 0f,
+      topRightDp: Float = 0f,
+      bottomRightDp: Float = 0f,
+      bottomLeftDp: Float = 0f,
+    ): CorneredShape =
+      CorneredShape(
+        Corner.Absolute(topLeftDp, CutCornerTreatment),
+        Corner.Absolute(topRightDp, CutCornerTreatment),
+        Corner.Absolute(bottomRightDp, CutCornerTreatment),
+        Corner.Absolute(bottomLeftDp, CutCornerTreatment),
+      )
+
+    /** Creates a [CorneredShape] with cut corners of the provided size. */
+    public fun cut(allDp: Float): CorneredShape = cut(allDp, allDp, allDp, allDp)
+
+    /** Creates a [CorneredShape] with cut corners of the provided sizes. */
+    public fun cut(
+      topLeftPercent: Int = 0,
+      topRightPercent: Int = 0,
+      bottomRightPercent: Int = 0,
+      bottomLeftPercent: Int = 0,
+    ): CorneredShape =
+      CorneredShape(
+        Corner.Relative(topLeftPercent, CutCornerTreatment),
+        Corner.Relative(topRightPercent, CutCornerTreatment),
+        Corner.Relative(bottomRightPercent, CutCornerTreatment),
+        Corner.Relative(bottomLeftPercent, CutCornerTreatment),
+      )
+
+    /** Creates a [CorneredShape] with cut corners of the provided size. */
+    public fun cut(allPercent: Int): CorneredShape =
+      cut(allPercent, allPercent, allPercent, allPercent)
+  }
 }

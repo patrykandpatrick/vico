@@ -22,13 +22,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
-import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottomAxis
-import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStartAxis
-import com.patrykandpatrick.vico.compose.cartesian.fullWidth
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStart
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberCandlestickCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
-import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
 import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
+import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.RandomCartesianModelGenerator
 import com.patrykandpatrick.vico.databinding.Chart10Binding
@@ -68,17 +67,16 @@ private fun ComposeChart10(modelProducer: CartesianChartModelProducer, modifier:
     chart =
       rememberCartesianChart(
         rememberCandlestickCartesianLayer(),
-        startAxis = rememberStartAxis(),
+        startAxis = VerticalAxis.rememberStart(),
         bottomAxis =
-          rememberBottomAxis(
+          HorizontalAxis.rememberBottom(
             guideline = null,
             itemPlacer =
               remember {
-                HorizontalAxis.ItemPlacer.default(spacing = 3, addExtremeLabelPadding = true)
+                HorizontalAxis.ItemPlacer.aligned(spacing = 3, addExtremeLabelPadding = true)
               },
           ),
         marker = marker,
-        horizontalLayout = HorizontalLayout.fullWidth(),
       ),
     modelProducer = modelProducer,
     modifier = modifier,

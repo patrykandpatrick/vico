@@ -16,7 +16,7 @@
 
 package com.patrykandpatrick.vico.core.cartesian.data
 
-import com.patrykandpatrick.vico.core.cartesian.CartesianChart
+import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
 import com.patrykandpatrick.vico.core.cartesian.axis.Axis
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import java.text.DecimalFormat
@@ -24,13 +24,12 @@ import java.text.DecimalFormat
 /** Formats values for display. */
 public fun interface CartesianValueFormatter {
   /**
-   * Formats [value]. [chartValues] houses the [CartesianChart]’s [CartesianChartModel] and _x_ and
-   * _y_ ranges. [verticalAxisPosition] is the position of the [VerticalAxis] with which the caller
-   * is associated. Pass this to [ChartValues.getYRange].
+   * Formats [value]. [verticalAxisPosition] is the position of the [VerticalAxis] with which the
+   * caller is associated.
    */
   public fun format(
+    context: CartesianMeasuringContext,
     value: Double,
-    chartValues: ChartValues,
     verticalAxisPosition: Axis.Position.Vertical?,
   ): CharSequence
 
@@ -38,8 +37,8 @@ public fun interface CartesianValueFormatter {
   public companion object {
     private class Decimal(private val decimalFormat: DecimalFormat) : CartesianValueFormatter {
       override fun format(
+        context: CartesianMeasuringContext,
         value: Double,
-        chartValues: ChartValues,
         verticalAxisPosition: Axis.Position.Vertical?,
       ): CharSequence = decimalFormat.format(value)
 
@@ -51,11 +50,11 @@ public fun interface CartesianValueFormatter {
 
     private class YPercent(private val decimalFormat: DecimalFormat) : CartesianValueFormatter {
       override fun format(
+        context: CartesianMeasuringContext,
         value: Double,
-        chartValues: ChartValues,
         verticalAxisPosition: Axis.Position.Vertical?,
       ): CharSequence =
-        decimalFormat.format(value / chartValues.getYRange(verticalAxisPosition).maxY)
+        decimalFormat.format(value / context.ranges.getYRange(verticalAxisPosition).maxY)
 
       override fun equals(other: Any?) =
         this === other || other is YPercent && decimalFormat == other.decimalFormat
@@ -69,7 +68,7 @@ public fun interface CartesianValueFormatter {
     ): CartesianValueFormatter = Decimal(decimalFormat)
 
     /**
-     * Divides values by [ChartValues.YRange.maxY] and formats the resulting quotients via
+     * Divides values by [CartesianChartRanges.YRange.maxY] and formats the resulting quotients via
      * [decimalFormat].
      */
     public fun yPercent(
@@ -77,3 +76,16 @@ public fun interface CartesianValueFormatter {
     ): CartesianValueFormatter = YPercent(decimalFormat)
   }
 }
+
+internal fun CartesianValueFormatter.formatForAxis(
+  context: CartesianMeasuringContext,
+  value: Double,
+  verticalAxisPosition: Axis.Position.Vertical?,
+): CharSequence =
+  format(context, value, verticalAxisPosition).also {
+    check(it.isNotEmpty()) {
+      "`CartesianValueFormatter.format` returned an empty string. Use " +
+        "`HorizontalAxis.ItemPlacer` and `VerticalAxis.ItemPlacer`, not empty strings, to " +
+        "control which x and y values are labeled."
+    }
+  }

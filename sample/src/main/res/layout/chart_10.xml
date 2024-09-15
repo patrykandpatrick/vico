@@ -24,7 +24,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:bottomAxisStyle="@style/Chart10BottomAxisStyle"
-        app:horizontalLayout="fullWidth"
         app:layers="candlestick"
         app:showBottomAxis="true"
         app:showStartAxis="true" />

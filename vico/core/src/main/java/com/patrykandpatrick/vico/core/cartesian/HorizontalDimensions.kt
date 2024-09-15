@@ -18,7 +18,7 @@ package com.patrykandpatrick.vico.core.cartesian
 
 /** Holds information on a [CartesianChart]’s horizontal dimensions. */
 public interface HorizontalDimensions {
-  /** The distance between neighboring major entries (in pixels). This can be scaled. */
+  /** The distance between neighboring major _x_ values (in pixels). This can be scaled. */
   public val xSpacing: Float
 
   /**
@@ -67,9 +67,7 @@ public interface HorizontalDimensions {
 
   /** Calculates the width of the [CartesianChart]’s scalable content (in pixels). */
   public fun getScalableContentWidth(context: CartesianMeasuringContext): Float =
-    with(context) {
-      xSpacing * (chartValues.xLength / chartValues.xStep).toFloat() + scalablePadding
-    }
+    with(context) { xSpacing * (ranges.xLength / ranges.xStep).toFloat() + scalablePadding }
 
   /** Calculates the width of the [CartesianChart]’s content (in pixels). */
   public fun getContentWidth(context: CartesianMeasuringContext): Float =

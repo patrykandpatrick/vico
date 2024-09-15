@@ -20,6 +20,10 @@
     <color name="chart_8_color_3">#f09b7d</color>
     <color name="chart_8_color_4">#ffc3a1</color>
 
+    <style name="Chart8BottomAxisStyle">
+        <item name="horizontalAxisItemPlacer">segmented</item>
+    </style>
+
     <style name="Chart8VerticalAxisStyle">
         <item name="showGuidelines">false</item>
     </style>

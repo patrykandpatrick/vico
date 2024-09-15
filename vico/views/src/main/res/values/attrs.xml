@@ -51,24 +51,16 @@
         <attr name="showEndAxis" format="boolean" />
         <attr name="showBottomAxis" format="boolean" />
         <attr name="scrollEnabled" format="boolean" />
-        <!-- Deprecated. Use `scrollEnabled`. -->
-        <attr name="chartHorizontalScrollingEnabled" format="boolean" />
         <attr name="zoomEnabled" format="boolean" />
-        <!-- Deprecated. Use `zoomEnabled`. -->
-        <attr name="chartZoomEnabled" format="boolean" />
         <attr name="fadingEdgeWidth" format="dimension" />
         <attr name="startFadingEdgeWidth" format="dimension" />
         <attr name="endFadingEdgeWidth" format="dimension" />
         <attr name="fadingEdgeVisibilityThreshold" format="dimension" />
         <attr name="fadingEdgeVisibilityInterpolator" format="string" />
-        <attr name="horizontalLayout" format="enum">
-            <enum name="segmented" value="0" />
-            <enum name="fullWidth" value="1" />
-        </attr>
-        <attr name="scalableStartContentPadding" format="dimension" />
-        <attr name="scalableEndContentPadding" format="dimension" />
-        <attr name="unscalableStartContentPadding" format="dimension" />
-        <attr name="unscalableEndContentPadding" format="dimension" />
+        <attr name="scalableStartLayerPadding" format="dimension" />
+        <attr name="scalableEndLayerPadding" format="dimension" />
+        <attr name="unscalableStartLayerPadding" format="dimension" />
+        <attr name="unscalableEndLayerPadding" format="dimension" />
         <attr name="previewMinX" format="integer" />
         <attr name="previewMaxX" format="integer" />
         <attr name="previewMinY" format="integer" />
@@ -103,11 +95,13 @@
         <attr name="showTitle" format="boolean|reference" />
         <attr name="horizontalAxisLabelSpacing" format="integer" />
         <attr name="horizontalAxisLabelOffset" format="integer" />
-        <attr name="shiftExtremeHorizontalAxisTicks" format="boolean" />
+        <attr name="shiftExtremeHorizontalAxisLines" format="boolean" />
         <attr name="addExtremeHorizontalAxisLabelPadding" format="boolean" />
+        <attr name="horizontalAxisItemPlacer" format="enum">
+            <enum name="aligned" value="0" />
+            <enum name="segmented" value="1" />
+        </attr>
         <attr name="shiftTopVerticalAxisLines" format="boolean" />
-        <!-- Deprecated. Use `verticalAxisItemCount`. -->
-        <attr name="maxVerticalAxisItemCount" format="integer" />
         <attr name="verticalAxisItemCount" format="integer" />
     </declare-styleable>
 
@@ -121,8 +115,6 @@
 
     <declare-styleable name="TextComponentStyle">
         <attr name="android:color" />
-        <!-- Deprecated. Use `android:color`. -->
-        <attr name="labelColor" format="color" />
         <attr name="backgroundStyle" format="reference" />
         <attr name="android:padding" />
         <attr name="android:paddingStart" />
@@ -192,7 +184,5 @@
 
         <attr name="dashLength" format="dimension" />
         <attr name="gapLength" format="dimension" />
-        <!-- Deprecated. Use `gapLength`. -->
-        <attr name="dashGapLength" format="dimension" />
     </declare-styleable>
 </resources>

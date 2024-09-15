@@ -21,10 +21,12 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
-import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottomAxis
-import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStartAxis
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStart
+import com.patrykandpatrick.vico.compose.cartesian.cartesianLayerPadding
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLine
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
@@ -32,6 +34,7 @@ import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
 import com.patrykandpatrick.vico.compose.common.data.rememberExtraLambda
 import com.patrykandpatrick.vico.compose.common.fill
 import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
+import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
@@ -68,12 +71,20 @@ private fun ComposeChart1(modelProducer: CartesianChartModelProducer, modifier: 
       rememberCartesianChart(
         rememberLineCartesianLayer(
           LineCartesianLayer.LineProvider.series(
-            rememberLine(remember { LineCartesianLayer.LineFill.single(fill(Color(0xffa485e0))) })
+            LineCartesianLayer.rememberLine(
+              remember { LineCartesianLayer.LineFill.single(fill(Color(0xffa485e0))) }
+            )
           )
         ),
-        startAxis = rememberStartAxis(),
-        bottomAxis = rememberBottomAxis(guideline = null),
+        startAxis = VerticalAxis.rememberStart(),
+        bottomAxis =
+          HorizontalAxis.rememberBottom(
+            guideline = null,
+            itemPlacer = remember { HorizontalAxis.ItemPlacer.segmented() },
+          ),
         marker = marker,
+        layerPadding =
+          cartesianLayerPadding(scalableStartPadding = 16.dp, scalableEndPadding = 16.dp),
         persistentMarkers = rememberExtraLambda(marker) { marker at PERSISTENT_MARKER_X },
       ),
     modelProducer = modelProducer,
@@ -91,7 +102,6 @@ private fun ViewChart1(modelProducer: CartesianChartModelProducer, modifier: Mod
         with(chartView) {
           chart?.persistentMarkers = { marker at PERSISTENT_MARKER_X }
           this.modelProducer = modelProducer
-          chart?.bottomAxis = (chart?.bottomAxis as HorizontalAxis).copy(guideline = null)
           chart?.marker = marker
         }
       }

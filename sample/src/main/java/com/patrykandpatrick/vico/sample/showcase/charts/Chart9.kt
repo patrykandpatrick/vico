@@ -31,21 +31,19 @@ import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.patrykandpatrick.vico.R
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberAxisLabelComponent
-import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottomAxis
-import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStartAxis
-import com.patrykandpatrick.vico.compose.cartesian.fullWidth
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStart
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLine
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.common.component.shapeComponent
+import com.patrykandpatrick.vico.compose.common.dimensions
 import com.patrykandpatrick.vico.compose.common.fill
-import com.patrykandpatrick.vico.compose.common.of
 import com.patrykandpatrick.vico.compose.common.shader.component
 import com.patrykandpatrick.vico.compose.common.shader.verticalGradient
-import com.patrykandpatrick.vico.compose.common.shape.dashed
-import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
+import com.patrykandpatrick.vico.compose.common.shape.dashedShape
 import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
@@ -54,8 +52,8 @@ import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.common.Dimensions
 import com.patrykandpatrick.vico.core.common.Fill
 import com.patrykandpatrick.vico.core.common.component.ShapeComponent
-import com.patrykandpatrick.vico.core.common.shader.ComponentShader
 import com.patrykandpatrick.vico.core.common.shader.DynamicShader
+import com.patrykandpatrick.vico.core.common.shape.CorneredShape
 import com.patrykandpatrick.vico.core.common.shape.Shape
 import com.patrykandpatrick.vico.databinding.Chart9Binding
 import com.patrykandpatrick.vico.sample.showcase.Defaults
@@ -99,7 +97,7 @@ private fun ComposeChart9(modelProducer: CartesianChartModelProducer, modifier: 
         rememberLineCartesianLayer(
           lineProvider =
             LineCartesianLayer.LineProvider.series(
-              rememberLine(
+              LineCartesianLayer.rememberLine(
                 fill =
                   remember(colors) {
                     LineCartesianLayer.LineFill.double(fill(colors[0]), fill(colors[1]))
@@ -114,8 +112,8 @@ private fun ComposeChart9(modelProducer: CartesianChartModelProducer, modifier: 
                               component =
                                 shapeComponent(
                                   color = colors[0],
-                                  shape = Shape.Pill,
-                                  margins = Dimensions.of(1.dp),
+                                  shape = CorneredShape.Pill,
+                                  margins = dimensions(1.dp),
                                 ),
                               componentSize = 6.dp,
                             ),
@@ -131,7 +129,7 @@ private fun ComposeChart9(modelProducer: CartesianChartModelProducer, modifier: 
                                 shapeComponent(
                                   color = colors[1],
                                   shape = Shape.Rectangle,
-                                  margins = Dimensions.of(horizontal = 2.dp),
+                                  margins = dimensions(horizontal = 2.dp),
                                 ),
                               componentSize = 5.dp,
                               checkeredArrangement = false,
@@ -146,16 +144,16 @@ private fun ComposeChart9(modelProducer: CartesianChartModelProducer, modifier: 
             )
         ),
         startAxis =
-          rememberStartAxis(
+          VerticalAxis.rememberStart(
             label =
               rememberAxisLabelComponent(
                 color = MaterialTheme.colorScheme.onBackground,
-                margins = Dimensions.of(end = 8.dp),
-                padding = Dimensions.of(6.dp, 2.dp),
+                margins = dimensions(end = 8.dp),
+                padding = dimensions(6.dp, 2.dp),
                 background =
                   rememberShapeComponent(
                     color = Color.Transparent,
-                    shape = Shape.Pill,
+                    shape = CorneredShape.Pill,
                     strokeColor = MaterialTheme.colorScheme.outlineVariant,
                     strokeThickness = 1.dp,
                   ),
@@ -165,21 +163,19 @@ private fun ComposeChart9(modelProducer: CartesianChartModelProducer, modifier: 
             guideline =
               rememberLineComponent(
                 color = MaterialTheme.colorScheme.outlineVariant,
-                shape =
-                  remember { Shape.dashed(shape = Shape.Pill, dashLength = 4.dp, gapLength = 8.dp) },
+                shape = dashedShape(shape = CorneredShape.Pill, dashLength = 4.dp, gapLength = 8.dp),
               ),
             itemPlacer = remember { VerticalAxis.ItemPlacer.count(count = { 4 }) },
           ),
         bottomAxis =
-          rememberBottomAxis(
+          HorizontalAxis.rememberBottom(
             guideline = null,
             itemPlacer =
               remember {
-                HorizontalAxis.ItemPlacer.default(spacing = 3, addExtremeLabelPadding = true)
+                HorizontalAxis.ItemPlacer.aligned(spacing = 3, addExtremeLabelPadding = true)
               },
           ),
         marker = marker,
-        horizontalLayout = HorizontalLayout.fullWidth(),
       ),
     modelProducer = modelProducer,
     modifier = modifier,
@@ -211,11 +207,11 @@ private fun ViewChart9(modelProducer: CartesianChartModelProducer, modifier: Mod
                       topFill =
                         Fill(
                           DynamicShader.compose(
-                            ComponentShader(
+                            DynamicShader.component(
                               component =
                                 ShapeComponent(
                                   color = colors[0].toArgb(),
-                                  shape = Shape.Pill,
+                                  shape = CorneredShape.Pill,
                                   margins = Dimensions(allDp = 1f),
                                 ),
                               componentSizeDp = 6f,
@@ -230,7 +226,7 @@ private fun ViewChart9(modelProducer: CartesianChartModelProducer, modifier: Mod
                       bottomFill =
                         Fill(
                           DynamicShader.compose(
-                            ComponentShader(
+                            DynamicShader.component(
                               component =
                                 ShapeComponent(
                                   color = colors[1].toArgb(),

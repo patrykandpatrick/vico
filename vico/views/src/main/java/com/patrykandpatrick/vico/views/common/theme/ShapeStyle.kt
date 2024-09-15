@@ -66,16 +66,7 @@ internal fun TypedArray.getShape(context: Context): Shape {
   return if (dashLengthDp == 0f) {
     shape
   } else {
-    DashedShape(
-      shape = shape,
-      dashLengthDp = dashLengthDp,
-      gapLengthDp =
-        getRawDimension(
-          context,
-          R.styleable.ShapeStyle_gapLength,
-          getRawDimension(context, R.styleable.ShapeStyle_dashGapLength, 0f),
-        ),
-    )
+    DashedShape(shape, dashLengthDp, getRawDimension(context, R.styleable.ShapeStyle_gapLength, 0f))
   }
 }
 

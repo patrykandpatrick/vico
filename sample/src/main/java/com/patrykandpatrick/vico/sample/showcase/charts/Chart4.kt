@@ -24,8 +24,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
-import com.patrykandpatrick.vico.compose.cartesian.axis.rememberEndAxis
-import com.patrykandpatrick.vico.compose.cartesian.axis.rememberTopAxis
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberEnd
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberTop
+import com.patrykandpatrick.vico.compose.cartesian.cartesianLayerPadding
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLine
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
@@ -34,12 +35,14 @@ import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.common.fill
 import com.patrykandpatrick.vico.compose.common.shape.rounded
+import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
+import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
 import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
 import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
-import com.patrykandpatrick.vico.core.common.shape.Shape
+import com.patrykandpatrick.vico.core.common.shape.CorneredShape
 import com.patrykandpatrick.vico.databinding.Chart4Binding
 import com.patrykandpatrick.vico.sample.showcase.Defaults
 import com.patrykandpatrick.vico.sample.showcase.UIFramework
@@ -92,21 +95,30 @@ private fun ComposeChart4(modelProducer: CartesianChartModelProducer, modifier: 
           columnProvider =
             ColumnCartesianLayer.ColumnProvider.series(
               columnColors.map { color ->
-                rememberLineComponent(color = color, thickness = 8.dp, shape = Shape.rounded(2.dp))
+                rememberLineComponent(
+                  color = color,
+                  thickness = 8.dp,
+                  shape = CorneredShape.rounded(2.dp),
+                )
               }
             )
         ),
         rememberLineCartesianLayer(
           LineCartesianLayer.LineProvider.series(
-            rememberLine(
+            LineCartesianLayer.rememberLine(
               fill = remember { LineCartesianLayer.LineFill.single(fill(lineColor)) },
               pointConnector = remember { LineCartesianLayer.PointConnector.cubic(curvature = 0f) },
             )
           )
         ),
-        topAxis = rememberTopAxis(),
-        endAxis = rememberEndAxis(),
+        topAxis =
+          HorizontalAxis.rememberTop(
+            itemPlacer = remember { HorizontalAxis.ItemPlacer.segmented() }
+          ),
+        endAxis = VerticalAxis.rememberEnd(),
         marker = rememberMarker(),
+        layerPadding =
+          cartesianLayerPadding(scalableStartPadding = 16.dp, scalableEndPadding = 16.dp),
       ),
     modelProducer = modelProducer,
     modifier = modifier,

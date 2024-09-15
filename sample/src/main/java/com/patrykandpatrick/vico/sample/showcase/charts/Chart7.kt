@@ -27,8 +27,9 @@ import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.patrykandpatrick.vico.R
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberAxisLabelComponent
-import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottomAxis
-import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStartAxis
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStart
+import com.patrykandpatrick.vico.compose.cartesian.cartesianLayerPadding
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLine
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
@@ -37,21 +38,21 @@ import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.common.component.shapeComponent
 import com.patrykandpatrick.vico.compose.common.data.rememberExtraLambda
+import com.patrykandpatrick.vico.compose.common.dimensions
 import com.patrykandpatrick.vico.compose.common.fill
-import com.patrykandpatrick.vico.compose.common.of
 import com.patrykandpatrick.vico.compose.common.rememberVerticalLegend
 import com.patrykandpatrick.vico.compose.common.shape.rounded
 import com.patrykandpatrick.vico.compose.common.vicoTheme
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
+import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
-import com.patrykandpatrick.vico.core.common.Dimensions
 import com.patrykandpatrick.vico.core.common.Legend
 import com.patrykandpatrick.vico.core.common.LegendItem
-import com.patrykandpatrick.vico.core.common.shape.Shape
+import com.patrykandpatrick.vico.core.common.shape.CorneredShape
 import com.patrykandpatrick.vico.databinding.Chart7Binding
 import com.patrykandpatrick.vico.sample.showcase.Defaults
 import com.patrykandpatrick.vico.sample.showcase.UIFramework
@@ -101,7 +102,7 @@ private fun ComposeChart7(modelProducer: CartesianChartModelProducer, modifier: 
         rememberLineCartesianLayer(
           LineCartesianLayer.LineProvider.series(
             chartColors.map { color ->
-              rememberLine(
+              LineCartesianLayer.rememberLine(
                 fill = remember { LineCartesianLayer.LineFill.single(fill(color)) },
                 areaFill = null,
               )
@@ -109,12 +110,15 @@ private fun ComposeChart7(modelProducer: CartesianChartModelProducer, modifier: 
           )
         ),
         startAxis =
-          rememberStartAxis(
+          VerticalAxis.rememberStart(
             label = rememberStartAxisLabel(),
             horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
           ),
-        bottomAxis = rememberBottomAxis(),
+        bottomAxis =
+          HorizontalAxis.rememberBottom(itemPlacer = HorizontalAxis.ItemPlacer.segmented()),
         marker = rememberMarker(),
+        layerPadding =
+          cartesianLayerPadding(scalableStartPadding = 16.dp, scalableEndPadding = 16.dp),
         legend = rememberLegend(),
       ),
     modelProducer = modelProducer,
@@ -146,9 +150,9 @@ private fun ViewChart7(modelProducer: CartesianChartModelProducer, modifier: Mod
 private fun rememberStartAxisLabel() =
   rememberAxisLabelComponent(
     color = Color.Black,
-    margins = Dimensions.of(4.dp),
-    padding = Dimensions.of(8.dp, 2.dp),
-    background = rememberShapeComponent(Color(0xfffab94d), Shape.rounded(4.dp)),
+    margins = dimensions(4.dp),
+    padding = dimensions(8.dp, 2.dp),
+    background = rememberShapeComponent(Color(0xfffab94d), CorneredShape.rounded(4.dp)),
   )
 
 @Composable
@@ -161,7 +165,7 @@ private fun rememberLegend(): Legend<CartesianMeasuringContext, CartesianDrawing
         chartColors.forEachIndexed { index, color ->
           add(
             LegendItem(
-              icon = shapeComponent(color, Shape.Pill),
+              icon = shapeComponent(color, CorneredShape.Pill),
               labelComponent = labelComponent,
               label = resources.getString(R.string.series_x, index + 1),
             )
@@ -171,7 +175,7 @@ private fun rememberLegend(): Legend<CartesianMeasuringContext, CartesianDrawing
     iconSize = 8.dp,
     iconPadding = 8.dp,
     spacing = 4.dp,
-    padding = Dimensions.of(top = 8.dp),
+    padding = dimensions(top = 8.dp),
   )
 }
 

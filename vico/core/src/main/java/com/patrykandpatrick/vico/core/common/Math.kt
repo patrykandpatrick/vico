@@ -21,6 +21,7 @@ import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.pow
+import kotlin.math.sign
 import kotlin.math.sqrt
 import kotlin.random.Random
 
@@ -92,7 +93,10 @@ internal inline val Int?.orZero: Int
   get() = this ?: 0
 
 internal inline val Double.roundedToNearest: Double
-  get() = if (this % 1 >= 0.5) ceil(this) else floor(this)
+  get() {
+    val absoluteValue = abs(this)
+    return sign * if (absoluteValue % 1 >= 0.5) ceil(absoluteValue) else floor(absoluteValue)
+  }
 
 internal inline val Float.piRad: Float
   get() = this * PI_RAD

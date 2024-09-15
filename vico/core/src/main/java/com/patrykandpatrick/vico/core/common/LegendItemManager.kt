@@ -30,10 +30,10 @@ internal class LegendItemManager(
   fun addItems(context: MeasuringContext) {
     with(context) {
       require(this is CartesianMeasuringContext) { "Unexpected `MeasuringContext` implementation." }
-      val extraStoreHashCode = chartValues.model.extraStore.hashCode()
+      val extraStoreHashCode = model.extraStore.hashCode()
       if (extraStoreHashCode != previousExtraStoreHashCode) {
         _itemList.clear()
-        items(itemScope, chartValues.model.extraStore)
+        items(itemScope, model.extraStore)
         previousExtraStoreHashCode = extraStoreHashCode
       }
     }

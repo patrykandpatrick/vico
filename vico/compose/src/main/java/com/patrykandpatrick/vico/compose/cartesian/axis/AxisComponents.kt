@@ -29,8 +29,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
-import com.patrykandpatrick.vico.compose.common.of
-import com.patrykandpatrick.vico.compose.common.shape.dashed
+import com.patrykandpatrick.vico.compose.common.dimensions
+import com.patrykandpatrick.vico.compose.common.shape.dashedShape
 import com.patrykandpatrick.vico.compose.common.vicoTheme
 import com.patrykandpatrick.vico.core.cartesian.axis.Axis
 import com.patrykandpatrick.vico.core.common.Defaults
@@ -52,12 +52,9 @@ public fun rememberAxisLabelComponent(
   lineCount: Int = Defaults.AXIS_LABEL_MAX_LINES,
   truncateAt: TextUtils.TruncateAt = TextUtils.TruncateAt.END,
   margins: Dimensions =
-    Dimensions.of(Defaults.AXIS_LABEL_HORIZONTAL_MARGIN.dp, Defaults.AXIS_LABEL_VERTICAL_MARGIN.dp),
+    dimensions(Defaults.AXIS_LABEL_HORIZONTAL_MARGIN.dp, Defaults.AXIS_LABEL_VERTICAL_MARGIN.dp),
   padding: Dimensions =
-    Dimensions.of(
-      Defaults.AXIS_LABEL_HORIZONTAL_PADDING.dp,
-      Defaults.AXIS_LABEL_VERTICAL_PADDING.dp,
-    ),
+    dimensions(Defaults.AXIS_LABEL_HORIZONTAL_PADDING.dp, Defaults.AXIS_LABEL_VERTICAL_PADDING.dp),
   background: Component? = null,
   minWidth: TextComponent.MinWidth = TextComponent.MinWidth.fixed(),
 ): TextComponent =
@@ -125,7 +122,7 @@ public fun rememberAxisTickComponent(
 public fun rememberAxisGuidelineComponent(
   color: Color = vicoTheme.lineColor,
   thickness: Dp = Defaults.AXIS_GUIDELINE_WIDTH.dp,
-  shape: Shape = Shape.dashed(Shape.Rectangle, Defaults.DASH_LENGTH.dp, Defaults.DASH_GAP.dp),
+  shape: Shape = dashedShape(Shape.Rectangle, Defaults.DASH_LENGTH.dp, Defaults.DASH_GAP.dp),
   margins: Dimensions = Dimensions.Empty,
   strokeColor: Color = Color.Transparent,
   strokeThickness: Dp = 0.dp,

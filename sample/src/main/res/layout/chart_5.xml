@@ -23,10 +23,13 @@
         android:id="@+id/chart_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:axisStyle="@style/Chart5AxisStyle"
-        app:chartZoomEnabled="false"
+        app:bottomAxisStyle="@style/Chart5BottomAxisStyle"
         app:columnLayerStyle="@style/Chart5ColumnLayerStyle"
         app:layers="column"
+        app:scalableEndLayerPadding="16dp"
+        app:scalableStartLayerPadding="16dp"
         app:showBottomAxis="true"
-        app:showStartAxis="true" />
+        app:showStartAxis="true"
+        app:startAxisStyle="@style/Chart5AxisStyle"
+        app:zoomEnabled="false" />
 </FrameLayout>

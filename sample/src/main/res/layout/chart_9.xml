@@ -25,7 +25,6 @@
         android:layout_height="wrap_content"
         android:theme="@style/Chart9ThemeOverlay"
         app:bottomAxisStyle="@style/Chart9BottomAxisStyle"
-        app:horizontalLayout="fullWidth"
         app:layers="line"
         app:lineLayerStyle="@style/Chart9LineLayerStyle"
         app:previewMaxX="8"

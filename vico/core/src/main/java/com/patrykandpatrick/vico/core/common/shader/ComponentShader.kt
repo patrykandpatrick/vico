@@ -24,17 +24,7 @@ import com.patrykandpatrick.vico.core.common.DrawingContext
 import com.patrykandpatrick.vico.core.common.component.Component
 import com.patrykandpatrick.vico.core.common.half
 
-/**
- * [ComponentShader] creates a [Shader] out of the provided [component].
- *
- * @property component used as a pattern in the [Shader].
- * @property componentSizeDp the size of the [component] (in dp).
- * @property checkeredArrangement whether the [component] should be arranged in a checkered pattern
- *   in the [Shader].
- * @property tileXMode the horizontal tiling mode for the [component].
- * @property tileYMode the vertical tiling mode for the [component].
- */
-public class ComponentShader(
+internal class ComponentShader(
   private val component: Component,
   private val componentSizeDp: Float,
   private val checkeredArrangement: Boolean = true,

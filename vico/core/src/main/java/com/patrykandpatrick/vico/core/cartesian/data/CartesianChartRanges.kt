@@ -19,19 +19,16 @@ package com.patrykandpatrick.vico.core.cartesian.data
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
 import com.patrykandpatrick.vico.core.cartesian.axis.Axis
 
-/** Houses a [CartesianChart]’s [CartesianChartModel] and _x_ and _y_ ranges. */
-public interface ChartValues {
+/** Stores a [CartesianChart]’s _x_ and _y_ ranges. */
+public interface CartesianChartRanges {
   /** The minimum _x_ value. */
   public val minX: Double
 
   /** The maximum _x_ value. */
   public val maxX: Double
 
-  /** The difference between the _x_ values of neighboring major entries. */
+  /** The difference between neighboring major _x_ values. */
   public val xStep: Double
-
-  /** The [CartesianChart]’s [CartesianChartModel]. */
-  public val model: CartesianChartModel
 
   /**
    * Returns the [YRange] associated with the given [Axis.Position.Vertical] subclass. If
@@ -55,9 +52,9 @@ public interface ChartValues {
     public val length: Double
   }
 
-  /** An empty [ChartValues] implementation. */
-  public object Empty : ChartValues {
-    private const val ERROR_MESSAGE = "`ChartValues.Empty` shouldn’t be used."
+  /** An empty [CartesianChartRanges] implementation. */
+  public object Empty : CartesianChartRanges {
+    private const val ERROR_MESSAGE = "`CartesianRanges.Empty` shouldn’t be used."
 
     override val minX: Double
       get() {
@@ -73,8 +70,6 @@ public interface ChartValues {
       get() {
         error(ERROR_MESSAGE)
       }
-
-    override val model: CartesianChartModel = CartesianChartModel.empty
 
     override fun getYRange(axisPosition: Axis.Position.Vertical?): YRange {
       error(ERROR_MESSAGE)

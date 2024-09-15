@@ -17,11 +17,8 @@
 package com.patrykandpatrick.vico.core.cartesian.layer
 
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
-import com.patrykandpatrick.vico.core.cartesian.Insets
-import com.patrykandpatrick.vico.core.cartesian.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianLayerModel
-import com.patrykandpatrick.vico.core.cartesian.data.ChartValues
-import com.patrykandpatrick.vico.core.common.half
+import com.patrykandpatrick.vico.core.common.Insets
 import com.patrykandpatrick.vico.core.common.inClip
 
 /** A base [CartesianLayer] implementation. */
@@ -29,18 +26,6 @@ public abstract class BaseCartesianLayer<T : CartesianLayerModel> : CartesianLay
   private val insets: Insets = Insets()
 
   protected abstract fun drawInternal(context: CartesianDrawingContext, model: T)
-
-  protected fun MutableHorizontalDimensions.ensureSegmentedValues(
-    xSpacing: Float,
-    chartValues: ChartValues,
-  ) {
-    ensureValuesAtLeast(
-      xSpacing = xSpacing,
-      scalableStartPadding = xSpacing.half,
-      scalableEndPadding =
-        (((-chartValues.xLength / chartValues.xStep - 0.5) % 1 + 1) % 1).toFloat() * xSpacing,
-    )
-  }
 
   override fun draw(context: CartesianDrawingContext, model: T) {
     with(context) {

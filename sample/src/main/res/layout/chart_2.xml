@@ -25,7 +25,6 @@
         android:layout_height="wrap_content"
         app:bottomAxisStyle="@style/Chart2BottomAxisStyle"
         app:columnLayerStyle="@style/Chart2ColumnLayerStyle"
-        app:horizontalLayout="fullWidth"
         app:layers="column"
         app:showBottomAxis="true"
         app:showStartAxis="true" />

@@ -18,20 +18,16 @@ package com.patrykandpatrick.vico.compose.cartesian
 
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
+import com.patrykandpatrick.vico.core.cartesian.CartesianLayerPadding
 
-/** Returns a [HorizontalLayout.Segmented] instance. */
-public fun HorizontalLayout.Companion.segmented(): HorizontalLayout.Segmented =
-  HorizontalLayout.Segmented
-
-/** Creates a [HorizontalLayout.FullWidth] instance. */
-public fun HorizontalLayout.Companion.fullWidth(
+/** Creates a [CartesianLayerPadding] instance. */
+public fun cartesianLayerPadding(
   scalableStartPadding: Dp = 0.dp,
   scalableEndPadding: Dp = 0.dp,
   unscalableStartPadding: Dp = 0.dp,
   unscalableEndPadding: Dp = 0.dp,
-): HorizontalLayout.FullWidth =
-  HorizontalLayout.FullWidth(
+): CartesianLayerPadding =
+  CartesianLayerPadding(
     scalableStartPadding.value,
     scalableEndPadding.value,
     unscalableStartPadding.value,

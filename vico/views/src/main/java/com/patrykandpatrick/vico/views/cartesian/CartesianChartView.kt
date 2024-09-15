@@ -25,14 +25,14 @@ import android.view.View
 import android.widget.OverScroller
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
-import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
+import com.patrykandpatrick.vico.core.cartesian.CartesianLayerPadding
 import com.patrykandpatrick.vico.core.cartesian.MutableCartesianMeasuringContext
 import com.patrykandpatrick.vico.core.cartesian.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.Scroll
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
-import com.patrykandpatrick.vico.core.cartesian.data.ChartValues
-import com.patrykandpatrick.vico.core.cartesian.data.MutableChartValues
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartRanges
+import com.patrykandpatrick.vico.core.cartesian.data.MutableCartesianChartRanges
 import com.patrykandpatrick.vico.core.cartesian.data.RandomCartesianModelGenerator
 import com.patrykandpatrick.vico.core.cartesian.data.toImmutable
 import com.patrykandpatrick.vico.core.common.Defaults
@@ -40,12 +40,11 @@ import com.patrykandpatrick.vico.core.common.NEW_PRODUCER_ERROR_MESSAGE
 import com.patrykandpatrick.vico.core.common.Point
 import com.patrykandpatrick.vico.core.common.spToPx
 import com.patrykandpatrick.vico.views.R
-import com.patrykandpatrick.vico.views.common.BaseChartView
+import com.patrykandpatrick.vico.views.common.ChartView
 import com.patrykandpatrick.vico.views.common.density
 import com.patrykandpatrick.vico.views.common.dpInt
 import com.patrykandpatrick.vico.views.common.gesture.ChartScaleGestureListener
 import com.patrykandpatrick.vico.views.common.gesture.MotionEventHandler
-import com.patrykandpatrick.vico.views.common.isAttachedToWindowCompat
 import com.patrykandpatrick.vico.views.common.isLtr
 import com.patrykandpatrick.vico.views.common.theme.ThemeHandler
 import kotlin.math.abs
@@ -58,22 +57,23 @@ import kotlinx.coroutines.launch
 public open class CartesianChartView
 @JvmOverloads
 constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) :
-  BaseChartView<CartesianChartModel>(context, attrs, defStyleAttr) {
+  ChartView<CartesianChartModel>(context, attrs, defStyleAttr) {
   private val themeHandler: ThemeHandler = ThemeHandler(context, attrs)
 
   private val scroller = OverScroller(context)
 
-  private val mutableChartValues = MutableChartValues()
+  private val ranges = MutableCartesianChartRanges()
 
   override val measuringContext: MutableCartesianMeasuringContext =
     MutableCartesianMeasuringContext(
       canvasBounds = canvasBounds,
       density = context.density,
       isLtr = context.isLtr,
+      model = CartesianChartModel.Empty,
+      ranges = CartesianChartRanges.Empty,
       scrollEnabled = false,
       zoomEnabled = false,
-      horizontalLayout = themeHandler.chart?.horizontalLayout ?: HorizontalLayout.Segmented,
-      chartValues = ChartValues.Empty,
+      layerPadding = themeHandler.chart?.layerPadding ?: CartesianLayerPadding(),
       spToPx = context::spToPx,
     )
 
@@ -104,7 +104,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   /** Houses information on the [CartesianChart]’s zoom factor. Allows for zoom customization. */
   public var zoomHandler: ZoomHandler by
     invalidatingObservable(
-      ZoomHandler.default(themeHandler.isChartZoomEnabled, scrollHandler.scrollEnabled)
+      ZoomHandler.default(themeHandler.zoomEnabled, scrollHandler.scrollEnabled)
     ) { _, newValue ->
       measuringContext.zoomEnabled = newValue.zoomEnabled && measuringContext.scrollEnabled
     }
@@ -120,8 +120,8 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   /** The [CartesianChart] displayed by this [View]. */
   public var chart: CartesianChart? by
     observable(themeHandler.chart) { _, _, newValue ->
-      if (newValue != null) measuringContext.horizontalLayout = newValue.horizontalLayout
-      tryInvalidate(chart = newValue, model = model, updateChartValues = true)
+      if (newValue != null) measuringContext.layerPadding = newValue.layerPadding
+      tryInvalidate(chart = newValue, model = model, updateRanges = true)
     }
 
   /** Creates and updates the [CartesianChartModel]. */
@@ -130,7 +130,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       if (field === value) return
       check(field == null) { NEW_PRODUCER_ERROR_MESSAGE }
       field = value
-      if (isAttachedToWindowCompat) registerForUpdates()
+      if (isAttachedToWindow) registerForUpdates()
     }
 
   private fun registerForUpdates() {
@@ -145,24 +145,24 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
           isAnimationFrameGenerationRunning = false
         },
         startAnimation = ::startAnimation,
-        prepareForTransformation = { model, extraStore, chartValues ->
-          chart?.prepareForTransformation(model, extraStore, chartValues)
+        prepareForTransformation = { model, extraStore, ranges ->
+          chart?.prepareForTransformation(model, extraStore, ranges)
         },
         transform = { extraStore, fraction -> chart?.transform(extraStore, fraction) },
         extraStore = extraStore,
-        updateChartValues = { model ->
-          mutableChartValues.reset()
+        updateRanges = { model ->
+          ranges.reset()
           if (model != null) {
-            chart?.updateChartValues(mutableChartValues, model)
-            mutableChartValues.toImmutable()
+            chart?.updateRanges(ranges, model)
+            ranges.toImmutable()
           } else {
-            ChartValues.Empty
+            CartesianChartRanges.Empty
           }
         },
-      ) { model, chartValues ->
+      ) { model, ranges ->
         post {
-          setModel(model = model, updateChartValues = false)
-          measuringContext.chartValues = chartValues
+          setModel(model = model, updateRanges = false)
+          measuringContext.ranges = ranges
           postInvalidateOnAnimation()
         }
       }
@@ -219,17 +219,17 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   }
 
   /** Sets the [CartesianChartModel]. */
-  public fun setModel(model: CartesianChartModel?) {
-    setModel(model = model, updateChartValues = true)
+  public fun setModel(model: CartesianChartModel) {
+    setModel(model = model, updateRanges = true)
   }
 
   override fun shouldShowPlaceholder(): Boolean = model == null
 
-  private fun setModel(model: CartesianChartModel?, updateChartValues: Boolean) {
+  private fun setModel(model: CartesianChartModel?, updateRanges: Boolean) {
     val oldModel = this.model
     this.model = model
     updatePlaceholderVisibility()
-    tryInvalidate(chart, model, updateChartValues)
+    tryInvalidate(chart, model, updateRanges)
     if (model != null && oldModel?.id != model.id && isInEditMode.not()) {
       handler?.post { scrollHandler.autoScroll(model, oldModel) }
     }
@@ -238,15 +238,15 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   protected fun tryInvalidate(
     chart: CartesianChart?,
     model: CartesianChartModel?,
-    updateChartValues: Boolean,
+    updateRanges: Boolean,
   ) {
-    if (chart == null || model == null) return
-    if (updateChartValues) {
-      mutableChartValues.reset()
-      chart.updateChartValues(mutableChartValues, model)
-      measuringContext.chartValues = mutableChartValues.toImmutable()
+    measuringContext.model = model ?: return
+    if (chart != null && updateRanges) {
+      ranges.reset()
+      chart.updateRanges(ranges, model)
+      measuringContext.ranges = ranges.toImmutable()
     }
-    if (isAttachedToWindowCompat) invalidate()
+    if (isAttachedToWindow) invalidate()
   }
 
   protected inline fun <T> invalidatingObservable(
@@ -255,7 +255,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   ): ReadWriteProperty<Any?, T> {
     onChange(null, initialValue)
     return observable(initialValue) { _, oldValue, newValue ->
-      tryInvalidate(chart = chart, model = model, updateChartValues = false)
+      tryInvalidate(chart = chart, model = model, updateRanges = false)
       onChange(oldValue, newValue)
     }
   }
@@ -304,7 +304,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     withChartAndModel { chart, model ->
       measuringContext.reset()
       horizontalDimensions.clear()
-      chart.prepare(measuringContext, model, horizontalDimensions, canvasBounds)
+      chart.prepare(measuringContext, horizontalDimensions, canvasBounds)
 
       if (chart.layerBounds.isEmpty) return@withChartAndModel
 
@@ -328,7 +328,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
           zoom = zoomHandler.value,
         )
 
-      chart.draw(drawingContext, model, markerTouchPoint)
+      chart.draw(drawingContext, markerTouchPoint)
       measuringContext.reset()
     }
   }

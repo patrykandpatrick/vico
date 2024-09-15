@@ -18,13 +18,15 @@ package com.patrykandpatrick.vico.sample.previews.composables.column
 
 import androidx.compose.runtime.Composable
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
-import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottomAxis
-import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStartAxis
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStart
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoScrollState
 import com.patrykandpatrick.vico.core.cartesian.AutoScrollCondition
 import com.patrykandpatrick.vico.core.cartesian.Scroll
+import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
+import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.sample.previews.annotation.ChartPreview
 import com.patrykandpatrick.vico.sample.previews.resource.PreviewSurface
@@ -44,8 +46,8 @@ public fun DefaultColumnChart(
       chart =
         rememberCartesianChart(
           rememberColumnCartesianLayer(),
-          startAxis = rememberStartAxis(),
-          bottomAxis = rememberBottomAxis(),
+          startAxis = VerticalAxis.rememberStart(),
+          bottomAxis = HorizontalAxis.rememberBottom(),
         ),
       model = model,
       scrollState =

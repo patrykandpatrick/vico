@@ -23,8 +23,8 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.animation.AccelerateInterpolator
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
+import com.patrykandpatrick.vico.core.cartesian.CartesianLayerPadding
 import com.patrykandpatrick.vico.core.cartesian.FadingEdges
-import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
 import com.patrykandpatrick.vico.core.cartesian.axis.Axis
 import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
@@ -38,7 +38,7 @@ internal class ThemeHandler(private val context: Context, attrs: AttributeSet?) 
   var scrollEnabled: Boolean = false
     private set
 
-  var isChartZoomEnabled: Boolean = false
+  var zoomEnabled: Boolean = false
     private set
 
   var chart: CartesianChart? = null
@@ -46,19 +46,8 @@ internal class ThemeHandler(private val context: Context, attrs: AttributeSet?) 
 
   init {
     context.obtainStyledAttributes(attrs, R.styleable.CartesianChartView).use { typedArray ->
-      scrollEnabled =
-        typedArray.getBoolean(
-          R.styleable.CartesianChartView_scrollEnabled,
-          typedArray.getBoolean(
-            R.styleable.CartesianChartView_chartHorizontalScrollingEnabled,
-            true,
-          ),
-        )
-      isChartZoomEnabled =
-        typedArray.getBoolean(
-          R.styleable.CartesianChartView_zoomEnabled,
-          typedArray.getBoolean(R.styleable.CartesianChartView_chartZoomEnabled, true),
-        )
+      scrollEnabled = typedArray.getBoolean(R.styleable.CartesianChartView_scrollEnabled, true)
+      zoomEnabled = typedArray.getBoolean(R.styleable.CartesianChartView_zoomEnabled, true)
 
       context.obtainStyledAttributes(attrs, R.styleable.CartesianChartView).use {
         chart = getChart(it, typedArray)
@@ -169,7 +158,7 @@ internal class ThemeHandler(private val context: Context, attrs: AttributeSet?) 
             tick,
             tickLengthDp,
             guideline,
-            getHorizontalAxisItemPlacer(),
+            axisStyle.getHorizontalAxisItemPlacer(),
             titleComponent,
             title,
           )
@@ -201,21 +190,13 @@ internal class ThemeHandler(private val context: Context, attrs: AttributeSet?) 
     }
   }
 
-  private fun TypedArray.getHorizontalLayout(): HorizontalLayout =
-    when (getInt(R.styleable.CartesianChartView_horizontalLayout, 0)) {
-      0 -> HorizontalLayout.Segmented
-      else ->
-        HorizontalLayout.FullWidth(
-          getRawDimension(context, R.styleable.CartesianChartView_scalableStartContentPadding, 0f),
-          getRawDimension(context, R.styleable.CartesianChartView_scalableEndContentPadding, 0f),
-          getRawDimension(
-            context,
-            R.styleable.CartesianChartView_unscalableStartContentPadding,
-            0f,
-          ),
-          getRawDimension(context, R.styleable.CartesianChartView_unscalableEndContentPadding, 0f),
-        )
-    }
+  private fun TypedArray.getLayerPadding(): CartesianLayerPadding =
+    CartesianLayerPadding(
+      getRawDimension(context, R.styleable.CartesianChartView_scalableStartLayerPadding, 0f),
+      getRawDimension(context, R.styleable.CartesianChartView_scalableEndLayerPadding, 0f),
+      getRawDimension(context, R.styleable.CartesianChartView_unscalableStartLayerPadding, 0f),
+      getRawDimension(context, R.styleable.CartesianChartView_unscalableEndLayerPadding, 0f),
+    )
 
   private fun getChart(
     cartesianChartViewTypedArray: TypedArray,
@@ -246,7 +227,7 @@ internal class ThemeHandler(private val context: Context, attrs: AttributeSet?) 
       endAxis = baseTypedArray.getAxis(Axis.Position.Vertical.End),
       bottomAxis = baseTypedArray.getAxis(Axis.Position.Horizontal.Bottom),
       fadingEdges = baseTypedArray.getFadingEdges(),
-      horizontalLayout = baseTypedArray.getHorizontalLayout(),
+      layerPadding = baseTypedArray.getLayerPadding(),
     )
   }
 
@@ -297,25 +278,25 @@ internal class ThemeHandler(private val context: Context, attrs: AttributeSet?) 
     }
   }
 
-  private fun TypedArray.getHorizontalAxisItemPlacer(): HorizontalAxis.ItemPlacer =
-    HorizontalAxis.ItemPlacer.default(
-      getInteger(R.styleable.AxisStyle_horizontalAxisLabelSpacing, 1),
-      getInteger(R.styleable.AxisStyle_horizontalAxisLabelOffset, 0),
-      getBoolean(R.styleable.AxisStyle_shiftExtremeHorizontalAxisTicks, true),
-      getBoolean(R.styleable.AxisStyle_addExtremeHorizontalAxisLabelPadding, false),
-    )
+  private fun TypedArray.getHorizontalAxisItemPlacer(): HorizontalAxis.ItemPlacer {
+    val shiftExtremeLines = getBoolean(R.styleable.AxisStyle_shiftExtremeHorizontalAxisLines, true)
+    return when (getInteger(R.styleable.AxisStyle_horizontalAxisItemPlacer, 0)) {
+      0 ->
+        HorizontalAxis.ItemPlacer.aligned(
+          getInteger(R.styleable.AxisStyle_horizontalAxisLabelSpacing, 1),
+          getInteger(R.styleable.AxisStyle_horizontalAxisLabelOffset, 0),
+          shiftExtremeLines,
+          getBoolean(R.styleable.AxisStyle_addExtremeHorizontalAxisLabelPadding, true),
+        )
+      1 -> HorizontalAxis.ItemPlacer.segmented(shiftExtremeLines)
+      else -> throw IllegalArgumentException("Unexpected `horizontalAxisItemPlacer` value.")
+    }
+  }
 
   private fun TypedArray.getVerticalAxisItemPlacer(): VerticalAxis.ItemPlacer {
     val shiftTopLines = getBoolean(R.styleable.AxisStyle_shiftTopVerticalAxisLines, true)
-    return if (
-      hasValue(R.styleable.AxisStyle_verticalAxisItemCount) ||
-        hasValue(R.styleable.AxisStyle_maxVerticalAxisItemCount)
-    ) {
-      val itemCount =
-        getInteger(
-          R.styleable.AxisStyle_verticalAxisItemCount,
-          getInteger(R.styleable.AxisStyle_maxVerticalAxisItemCount, -1),
-        )
+    return if (hasValue(R.styleable.AxisStyle_verticalAxisItemCount)) {
+      val itemCount = getInteger(R.styleable.AxisStyle_verticalAxisItemCount, -1)
       VerticalAxis.ItemPlacer.count({ itemCount }, shiftTopLines)
     } else {
       VerticalAxis.ItemPlacer.step(shiftTopLines = shiftTopLines)

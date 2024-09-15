@@ -29,8 +29,8 @@ import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModelWrapp
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModelWrapperState
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
-import com.patrykandpatrick.vico.core.cartesian.data.ChartValues
-import com.patrykandpatrick.vico.core.cartesian.data.MutableChartValues
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartRanges
+import com.patrykandpatrick.vico.core.cartesian.data.MutableCartesianChartRanges
 import com.patrykandpatrick.vico.core.cartesian.data.toImmutable
 import com.patrykandpatrick.vico.core.common.Animation
 import com.patrykandpatrick.vico.core.common.NEW_PRODUCER_ERROR_MESSAGE
@@ -51,7 +51,7 @@ internal fun CartesianChartModelProducer.collectAsState(
   chart: CartesianChart,
   animationSpec: AnimationSpec<Float>?,
   runInitialAnimation: Boolean,
-  mutableChartValues: MutableChartValues,
+  ranges: MutableCartesianChartRanges,
 ): State<CartesianChartModelWrapper> {
   var previousHashCode by remember { ValueWrapper<Int?>(null) }
   val hashCode = hashCode()
@@ -122,17 +122,17 @@ internal fun CartesianChartModelProducer.collectAsState(
         prepareForTransformation = chart::prepareForTransformation,
         transform = chart::transform,
         extraStore = extraStore,
-        updateChartValues = { model ->
-          mutableChartValues.reset()
+        updateRanges = { model ->
+          ranges.reset()
           if (model != null) {
-            chart.updateChartValues(mutableChartValues, model)
-            mutableChartValues.toImmutable()
+            chart.updateRanges(ranges, model)
+            ranges.toImmutable()
           } else {
-            ChartValues.Empty
+            CartesianChartRanges.Empty
           }
         },
-      ) { model, chartValues ->
-        modelWrapperState.set(model, chartValues)
+      ) { model, ranges ->
+        modelWrapperState.set(model, ranges)
       }
     }
     onDispose {

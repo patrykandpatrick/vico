@@ -19,7 +19,7 @@ package com.patrykandpatrick.vico.core.cartesian.axis
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
-import com.patrykandpatrick.vico.core.cartesian.Insets
+import com.patrykandpatrick.vico.core.common.Insets
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 

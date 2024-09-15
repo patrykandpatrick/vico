@@ -22,13 +22,11 @@ import com.patrykandpatrick.vico.core.common.orZero
 import kotlin.math.max
 import kotlin.math.min
 
-/** An implementation of [ChartValues] whose every property is mutable. */
-public class MutableChartValues : ChartValues {
+/** A [CartesianChartRanges] implementation whose every property is mutable. */
+public class MutableCartesianChartRanges : CartesianChartRanges {
   private var _minX: Double? = null
 
   private var _maxX: Double? = null
-
-  private var _xStep: Double? = null
 
   internal var yRanges: MutableMap<Axis.Position.Vertical?, MutableYRange> = mutableMapOf()
 
@@ -38,19 +36,10 @@ public class MutableChartValues : ChartValues {
   override val maxX: Double
     get() = _maxX.orZero
 
-  override val xStep: Double
-    get() = _xStep ?: 1.0
+  override var xStep: Double = 1.0
 
-  override fun getYRange(axisPosition: Axis.Position.Vertical?): ChartValues.YRange =
+  override fun getYRange(axisPosition: Axis.Position.Vertical?): CartesianChartRanges.YRange =
     yRanges[axisPosition] ?: yRanges.getValue(null)
-
-  override var model: CartesianChartModel = CartesianChartModel.empty
-
-  /** Updates [MutableChartValues.xStep] and [MutableChartValues.model]. */
-  public fun update(xStep: Double, model: CartesianChartModel) {
-    _xStep = xStep
-    this.model = model
-  }
 
   /**
    * Tries to update the stored values. A minimum value can only be decreased. A maximum value can
@@ -77,13 +66,12 @@ public class MutableChartValues : ChartValues {
     _minX = null
     _maxX = null
     yRanges = mutableMapOf()
-    _xStep = null
-    model = CartesianChartModel.empty
+    xStep = 1.0
   }
 
-  /** A mutable implementation of [ChartValues.YRange]. */
+  /** A mutable implementation of [CartesianChartRanges.YRange]. */
   public class MutableYRange(override var minY: Double, override var maxY: Double) :
-    ChartValues.YRange {
+    CartesianChartRanges.YRange {
     override val length: Double
       get() = maxY - minY
 
@@ -100,14 +88,13 @@ public class MutableChartValues : ChartValues {
 
 /** @suppress */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public fun MutableChartValues.toImmutable(): ChartValues =
-  object : ChartValues {
+public fun MutableCartesianChartRanges.toImmutable(): CartesianChartRanges =
+  object : CartesianChartRanges {
     private val yRanges = this@toImmutable.yRanges
     override val minX: Double = this@toImmutable.minX
     override val maxX: Double = this@toImmutable.maxX
     override val xStep: Double = this@toImmutable.xStep
-    override val model: CartesianChartModel = this@toImmutable.model.toImmutable()
 
-    override fun getYRange(axisPosition: Axis.Position.Vertical?): ChartValues.YRange =
+    override fun getYRange(axisPosition: Axis.Position.Vertical?): CartesianChartRanges.YRange =
       yRanges[axisPosition] ?: yRanges.getValue(null)
   }

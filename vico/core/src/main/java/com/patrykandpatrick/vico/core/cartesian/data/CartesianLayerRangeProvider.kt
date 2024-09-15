@@ -18,7 +18,6 @@ package com.patrykandpatrick.vico.core.cartesian.data
 
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayer
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
-import com.patrykandpatrick.vico.core.common.roundedToNearest
 import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.floor
@@ -27,8 +26,8 @@ import kotlin.math.max
 import kotlin.math.pow
 import kotlin.math.sign
 
-/** Overrides a [CartesianLayer]’s _x_ and _y_ ranges. */
-public interface AxisValueOverrider {
+/** Defines a [CartesianLayer]’s _x_ and _y_ ranges. */
+public interface CartesianLayerRangeProvider {
   /** Returns the minimum _x_ value. */
   public fun getMinX(minX: Double, maxX: Double, extraStore: ExtraStore): Double = minX
 
@@ -45,8 +44,8 @@ public interface AxisValueOverrider {
 
   public companion object {
     /** Uses dynamic rounding. */
-    public fun auto(): AxisValueOverrider =
-      object : AxisValueOverrider {
+    public fun auto(): CartesianLayerRangeProvider =
+      object : CartesianLayerRangeProvider {
         override fun getMinY(minY: Double, maxY: Double, extraStore: ExtraStore) =
           if (minY == 0.0 && maxY == 0.0 || minY >= 0.0) 0.0 else minY.round(maxY)
 
@@ -70,12 +69,12 @@ public interface AxisValueOverrider {
       maxX: Double? = null,
       minY: Double? = null,
       maxY: Double? = null,
-    ): AxisValueOverrider {
+    ): CartesianLayerRangeProvider {
       val newMinX = minX
       val newMaxX = maxX
       val newMinY = minY
       val newMaxY = maxY
-      return object : AxisValueOverrider {
+      return object : CartesianLayerRangeProvider {
         override fun getMinX(minX: Double, maxX: Double, extraStore: ExtraStore) =
           newMinX ?: super.getMinX(minX, maxX, extraStore)
 
@@ -89,28 +88,5 @@ public interface AxisValueOverrider {
           newMaxY ?: super.getMaxY(getMinY(minY, maxY, extraStore), maxY, extraStore)
       }
     }
-
-    /**
-     * Sets the maximum _y_ value to [yFraction] times the default. Sets the minimum _y_ value to
-     * the default minus the difference between the new maximum _y_ value and the default maximum
-     * _y_ value.
-     */
-    public fun adaptiveYValues(yFraction: Float, round: Boolean = false): AxisValueOverrider =
-      object : AxisValueOverrider {
-        private val Double.conditionallyRoundedToNearest
-          get() = if (round) roundedToNearest else this
-
-        init {
-          require(yFraction > 0f)
-        }
-
-        override fun getMinY(minY: Double, maxY: Double, extraStore: ExtraStore): Double {
-          val difference = abs(getMaxY(minY, maxY, extraStore) - maxY)
-          return (minY - difference).conditionallyRoundedToNearest.coerceAtLeast(0.0)
-        }
-
-        override fun getMaxY(minY: Double, maxY: Double, extraStore: ExtraStore): Double =
-          if (minY == 0.0 && maxY == 0.0) 1.0 else (yFraction * maxY).conditionallyRoundedToNearest
-      }
   }
 }

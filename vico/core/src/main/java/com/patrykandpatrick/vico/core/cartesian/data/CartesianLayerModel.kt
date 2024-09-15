@@ -68,7 +68,7 @@ public interface CartesianLayerModel {
    */
   public interface Partial {
     /** Creates a full [CartesianLayerModel] with the given [ExtraStore] from this [Partial]. */
-    public fun complete(extraStore: ExtraStore = ExtraStore.empty): CartesianLayerModel
+    public fun complete(extraStore: ExtraStore = ExtraStore.Empty): CartesianLayerModel
   }
 }
 

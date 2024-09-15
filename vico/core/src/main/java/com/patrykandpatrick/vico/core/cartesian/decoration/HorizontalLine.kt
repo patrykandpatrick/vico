@@ -57,10 +57,9 @@ public class HorizontalLine(
 ) : Decoration {
   override fun drawOverLayers(context: CartesianDrawingContext) {
     with(context) {
-      val yRange = chartValues.getYRange(verticalAxisPosition)
-      val extraStore = chartValues.model.extraStore
-      val y = y(extraStore)
-      val label = label(extraStore)
+      val yRange = ranges.getYRange(verticalAxisPosition)
+      val y = y(model.extraStore)
+      val label = label(model.extraStore)
       val canvasY =
         layerBounds.bottom - ((y - yRange.minY) / yRange.length).toFloat() * layerBounds.height()
       line.drawHorizontal(context, layerBounds.left, layerBounds.right, canvasY)

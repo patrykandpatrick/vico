@@ -18,7 +18,6 @@ package com.patrykandpatrick.vico.compose.cartesian.layer
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
@@ -29,7 +28,6 @@ import com.patrykandpatrick.vico.core.cartesian.layer.CandlestickCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.layer.CandlestickCartesianLayer.Candle
 import com.patrykandpatrick.vico.core.cartesian.layer.absolute
 import com.patrykandpatrick.vico.core.cartesian.layer.absoluteRelative
-import com.patrykandpatrick.vico.core.cartesian.layer.asWick
 import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.component.LineComponent
 
@@ -37,7 +35,7 @@ import com.patrykandpatrick.vico.core.common.component.LineComponent
 private fun Candle.Companion.sharpFilledCandle(
   color: Color,
   thickness: Dp = Defaults.CANDLE_BODY_WIDTH_DP.dp,
-) = rememberCandle(rememberLineComponent(color, thickness))
+) = Candle(rememberLineComponent(color, thickness))
 
 @Composable
 private fun Candle.Companion.sharpHollowCandle(
@@ -45,7 +43,7 @@ private fun Candle.Companion.sharpHollowCandle(
   thickness: Dp = Defaults.CANDLE_BODY_WIDTH_DP.dp,
   strokeThickness: Dp = Defaults.HOLLOW_CANDLE_STROKE_THICKNESS_DP.dp,
 ) =
-  rememberCandle(
+  Candle(
     rememberLineComponent(
       color = Color.Transparent,
       thickness = thickness,
@@ -54,13 +52,8 @@ private fun Candle.Companion.sharpHollowCandle(
     )
   )
 
-@Composable
 private fun Candle.copyWithColor(color: Color) =
-  rememberCandle(
-    body.copyWithColor(color),
-    topWick.copyWithColor(color),
-    bottomWick.copyWithColor(color),
-  )
+  Candle(body.copyWithColor(color), topWick.copyWithColor(color), bottomWick.copyWithColor(color))
 
 private fun LineComponent.copyWithColor(color: Color) =
   copy(
@@ -68,14 +61,6 @@ private fun LineComponent.copyWithColor(color: Color) =
     strokeColor =
       if (this.strokeColor == android.graphics.Color.TRANSPARENT) this.color else color.toArgb(),
   )
-
-/** Creates and remembers a [CandlestickCartesianLayer.Candle]. */
-@Composable
-public fun rememberCandle(
-  body: LineComponent,
-  topWick: LineComponent = remember(body) { body.asWick() },
-  bottomWick: LineComponent = topWick,
-): Candle = remember(body, topWick, bottomWick) { Candle(body, topWick, bottomWick) }
 
 /**
  * An alias for [CandlestickCartesianLayer.CandleProvider.Companion.absolute] with default

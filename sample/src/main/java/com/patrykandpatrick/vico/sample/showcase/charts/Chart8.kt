@@ -24,9 +24,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
-import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottomAxis
-import com.patrykandpatrick.vico.compose.cartesian.axis.rememberEndAxis
-import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStartAxis
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberEnd
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStart
+import com.patrykandpatrick.vico.compose.cartesian.cartesianLayerPadding
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLine
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
@@ -35,13 +36,14 @@ import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.common.fill
 import com.patrykandpatrick.vico.core.cartesian.axis.Axis
+import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
 import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
 import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
-import com.patrykandpatrick.vico.core.common.shape.Shape
+import com.patrykandpatrick.vico.core.common.shape.CorneredShape
 import com.patrykandpatrick.vico.databinding.Chart8Binding
 import com.patrykandpatrick.vico.sample.showcase.Defaults
 import com.patrykandpatrick.vico.sample.showcase.UIFramework
@@ -95,7 +97,11 @@ private fun ComposeChart8(modelProducer: CartesianChartModelProducer, modifier: 
           columnProvider =
             ColumnCartesianLayer.ColumnProvider.series(
               columnChartColors.map { color ->
-                rememberLineComponent(color = color, thickness = 8.dp, shape = Shape.rounded(40))
+                rememberLineComponent(
+                  color = color,
+                  thickness = 8.dp,
+                  shape = CorneredShape.rounded(allPercent = 40),
+                )
               }
             ),
           mergeMode = { ColumnCartesianLayer.MergeMode.Stacked },
@@ -104,14 +110,21 @@ private fun ComposeChart8(modelProducer: CartesianChartModelProducer, modifier: 
         rememberLineCartesianLayer(
           lineProvider =
             LineCartesianLayer.LineProvider.series(
-              rememberLine(remember { LineCartesianLayer.LineFill.single(fill(color4)) })
+              LineCartesianLayer.rememberLine(
+                remember { LineCartesianLayer.LineFill.single(fill(color4)) }
+              )
             ),
           verticalAxisPosition = Axis.Position.Vertical.End,
         ),
-        startAxis = rememberStartAxis(guideline = null),
-        endAxis = rememberEndAxis(guideline = null),
-        bottomAxis = rememberBottomAxis(),
+        startAxis = VerticalAxis.rememberStart(guideline = null),
+        endAxis = VerticalAxis.rememberEnd(guideline = null),
+        bottomAxis =
+          HorizontalAxis.rememberBottom(
+            itemPlacer = remember { HorizontalAxis.ItemPlacer.segmented() }
+          ),
         marker = rememberMarker(),
+        layerPadding =
+          cartesianLayerPadding(scalableStartPadding = 16.dp, scalableEndPadding = 16.dp),
       ),
     modelProducer = modelProducer,
     modifier = modifier,

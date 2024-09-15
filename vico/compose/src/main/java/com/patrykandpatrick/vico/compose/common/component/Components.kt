@@ -154,11 +154,6 @@ public fun rememberTextComponent(
 public fun shadow(radius: Dp, dx: Dp = 0.dp, dy: Dp = 0.dp, color: Color? = null): Shadow =
   Shadow(radius.value, dx.value, dy.value, color?.toArgb() ?: Defaults.SHADOW_COLOR)
 
-/** Creates and remembers a [Shadow]. */
-@Composable
-public fun rememberShadow(radius: Dp, dx: Dp = 0.dp, dy: Dp = 0.dp, color: Color? = null): Shadow =
-  remember(radius, dx, dy, color) { shadow(radius, dx, dy, color) }
-
 /** A [Dp] version of [TextComponent.MinWidth.fixed]. */
 public fun TextComponent.MinWidth.Companion.fixed(value: Dp = 0.dp): TextComponent.MinWidth =
   fixed(value.value)
