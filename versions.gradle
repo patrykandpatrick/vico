@@ -21,7 +21,6 @@ ext {
             version_name   : "2.0.0-beta.1",
             version_code   : 1,
             target_sdk     : 34,
-            min_sdk        : 19,
-            compose_min_sdk: 21,
+            min_sdk        : 21,
     ]
 }
