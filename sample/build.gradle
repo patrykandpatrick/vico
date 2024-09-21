@@ -71,7 +71,6 @@ dependencies {
     implementation libs.kotlinStdLib
     implementation libs.lifecycleRuntime
     implementation libs.material
-    implementation libs.systemUIController
     implementation libs.viewModelCompose
     testImplementation libs.JUnit
     testImplementation libs.JUnitExt

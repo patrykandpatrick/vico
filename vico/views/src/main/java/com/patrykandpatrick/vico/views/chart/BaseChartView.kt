@@ -28,7 +28,6 @@ import android.view.ViewGroup
 import android.view.animation.Interpolator
 import android.widget.FrameLayout
 import android.widget.OverScroller
-import androidx.core.view.ViewCompat
 import androidx.core.view.isVisible
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import com.patrykandpatrick.vico.core.Animation
@@ -125,7 +124,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     private val measureContext = MutableMeasureContext(
         canvasBounds = contentBounds,
         density = context.density,
-        isLtr = context.isLtr,
+        isLtr = isLtr,
         isHorizontalScrollEnabled = false,
         spToPx = context::spToPx,
         chartValuesProvider = ChartValuesProvider.Empty,
@@ -272,7 +271,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         set(value) {
             field?.unregisterFromUpdates(key = this)
             field = value
-            if (ViewCompat.isAttachedToWindow(this)) registerForUpdates()
+            if (isAttachedToWindow) registerForUpdates()
         }
 
     private fun registerForUpdates() {
@@ -396,7 +395,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
             chart.updateChartValues(chartValuesManager, model, getXStep?.invoke(model))
             measureContext.chartValuesProvider = chartValuesManager.toChartValuesProvider()
         }
-        if (ViewCompat.isAttachedToWindow(this)) invalidate()
+        if (isAttachedToWindow) invalidate()
     }
 
     protected inline fun <T> invalidatingObservable(
@@ -480,7 +479,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
             motionEventHandler.isHorizontalScrollEnabled = chartScrollSpec.isScrollEnabled
             if (scroller.computeScrollOffset()) {
                 scrollHandler.handleScroll(scroller.currX.toFloat())
-                ViewCompat.postInvalidateOnAnimation(this)
+                postInvalidateOnAnimation()
             }
 
             var finalZoom = zoom
@@ -688,6 +687,6 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         // This function may be invoked inside of the View’s constructor, before the measureContext is initialized.
         // In this case, we can ignore this callback, as the layout direction will be determined when the MeasureContext
         // instance is created.
-        measureContext?.isLtr = layoutDirection == ViewCompat.LAYOUT_DIRECTION_LTR
+        measureContext?.isLtr = layoutDirection == LAYOUT_DIRECTION_LTR
     }
 }

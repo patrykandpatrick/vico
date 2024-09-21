@@ -1,5 +1,4 @@
 [versions]
-accompanist = "0.36.0"
 activity = "1.9.2"
 agp = "8.6.1"
 androidXAnnotation = "1.8.2"
@@ -42,7 +41,6 @@ lifecycleRuntime = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 mockK = { group = "io.mockk", name = "mockk", version.ref = "mockK" }
 paparazziGradlePlugin = { module = "app.cash.paparazzi:paparazzi-gradle-plugin", version.ref = "paparazziGradlePlugin" }
-systemUIController = { group = "com.google.accompanist", name = "accompanist-systemuicontroller", version.ref = "accompanist" }
 testCore = { group = "androidx.test", name = "core-ktx", version.ref = "testCore" }
 viewModelCompose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycle" }
 

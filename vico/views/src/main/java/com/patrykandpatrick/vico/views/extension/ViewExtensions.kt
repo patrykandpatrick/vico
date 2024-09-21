@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,9 @@ package com.patrykandpatrick.vico.views.extension
 
 import android.view.MotionEvent
 import android.view.View
+import android.view.View.LAYOUT_DIRECTION_LTR
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.OverScroller
-import androidx.core.view.ViewCompat
 import androidx.core.view.updatePadding
 import com.patrykandpatrick.vico.core.model.Point
 import kotlin.math.min
@@ -60,7 +60,7 @@ internal var View.verticalPadding: Int
     }
 
 internal val View.isLtr: Boolean
-    get() = ViewCompat.getLayoutDirection(this) == ViewCompat.LAYOUT_DIRECTION_LTR
+    get() = layoutDirection == LAYOUT_DIRECTION_LTR
 
 internal fun OverScroller.fling(
     startX: Int = 0,
