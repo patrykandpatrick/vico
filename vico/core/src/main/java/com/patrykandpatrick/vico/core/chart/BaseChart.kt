@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,9 +41,9 @@ public abstract class BaseChart<in Model : ChartEntryModel> : Chart<Model>, Boun
     private val insets: Insets = Insets()
 
     /**
-     * A [HashMap] that links x-axis values to [Marker]s.
+     * A [LinkedHashMap] that links x-axis values to [Marker]s.
      */
-    protected val persistentMarkers: HashMap<Float, Marker> = HashMap()
+    protected val persistentMarkers: LinkedHashMap<Float, Marker> = LinkedHashMap()
 
     override val bounds: RectF = RectF()
 
