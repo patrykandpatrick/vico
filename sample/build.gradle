@@ -23,7 +23,7 @@ plugins {
 
 android {
     defaultConfig {
-        minSdk library.compose_min_sdk
+        minSdk library.min_sdk
         targetSdk library.target_sdk
         compileSdk library.target_sdk
         versionCode library.version_code
