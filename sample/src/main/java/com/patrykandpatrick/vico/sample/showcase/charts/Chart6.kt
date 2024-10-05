@@ -122,20 +122,17 @@ private fun ComposeChart6(modelProducer: CartesianChartModelProducer, modifier: 
 @Composable
 private fun ViewChart6(modelProducer: CartesianChartModelProducer, modifier: Modifier) {
   val marker = rememberMarker()
-  AndroidViewBinding(
-    { inflater, parent, attachToParent ->
-      Chart6Binding.inflate(inflater, parent, attachToParent).apply {
-        with(chartView) {
-          chart?.decorations = listOf(getViewHorizontalBox())
-          this.modelProducer = modelProducer
-          chart?.bottomAxis =
-            (chart?.bottomAxis as HorizontalAxis).copy(valueFormatter = bottomAxisValueFormatter)
-          chart?.marker = marker
-        }
-      }
-    },
-    modifier,
-  )
+  AndroidViewBinding(Chart6Binding::inflate, modifier) {
+    chartView.modelProducer = modelProducer
+    val chart = chartView.chart!!
+    chartView.chart =
+      chart.copy(
+        bottomAxis =
+          (chart.bottomAxis as HorizontalAxis).copy(valueFormatter = bottomAxisValueFormatter),
+        decorations = listOf(getViewHorizontalBox()),
+        marker = marker,
+      )
+  }
 }
 
 @Composable

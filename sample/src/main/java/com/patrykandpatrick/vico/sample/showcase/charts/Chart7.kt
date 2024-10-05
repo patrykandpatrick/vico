@@ -133,16 +133,18 @@ private fun ViewChart7(modelProducer: CartesianChartModelProducer, modifier: Mod
   val marker = rememberMarker()
   val legend = rememberLegend()
   AndroidViewBinding(Chart7Binding::inflate, modifier) {
-    with(chartView) {
-      this.modelProducer = modelProducer
-      chart?.startAxis =
-        (chart?.startAxis as VerticalAxis).copy(
-          label = startAxisLabel,
-          horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
-        )
-      chart?.marker = marker
-      chart?.legend = legend
-    }
+    chartView.modelProducer = modelProducer
+    val chart = chartView.chart!!
+    chartView.chart =
+      chart.copy(
+        startAxis =
+          (chart.startAxis as VerticalAxis).copy(
+            label = startAxisLabel,
+            horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
+          ),
+        marker = marker,
+        legend = legend,
+      )
   }
 }
 

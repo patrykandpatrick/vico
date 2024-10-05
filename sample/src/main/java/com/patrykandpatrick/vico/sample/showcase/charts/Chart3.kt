@@ -133,11 +133,10 @@ private fun ViewChart3(modelProducer: CartesianChartModelProducer, modifier: Mod
   val marker = rememberMarker(DefaultCartesianMarker.LabelPosition.AroundPoint)
 
   AndroidViewBinding(Chart3Binding::inflate, modifier) {
-    with(chartView) {
-      (chart?.layers?.get(0) as LineCartesianLayer?)?.rangeProvider = rangeProvider
-      this.modelProducer = modelProducer
-      chart?.marker = marker
-    }
+    chartView.modelProducer = modelProducer
+    val chart = requireNotNull(chartView.chart)
+    (chart.layers[0] as LineCartesianLayer).rangeProvider = rangeProvider
+    chartView.chart = chart.copy(marker = marker)
   }
 }
 

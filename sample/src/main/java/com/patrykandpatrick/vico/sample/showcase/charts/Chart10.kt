@@ -88,6 +88,6 @@ private fun ViewChart10(modelProducer: CartesianChartModelProducer, modifier: Mo
   val marker = rememberMarker(showIndicator = false)
   AndroidViewBinding(Chart10Binding::inflate, modifier = modifier) {
     chartView.modelProducer = modelProducer
-    chartView.chart?.marker = marker
+    chartView.chart = chartView.chart?.copy(marker = marker)
   }
 }

@@ -100,9 +100,9 @@ private fun ViewChart1(modelProducer: CartesianChartModelProducer, modifier: Mod
     { inflater, parent, attachToParent ->
       Chart1Binding.inflate(inflater, parent, attachToParent).apply {
         with(chartView) {
-          chart?.persistentMarkers = { marker at PERSISTENT_MARKER_X }
+          chart =
+            chart?.copy(persistentMarkers = { marker at PERSISTENT_MARKER_X }, marker = marker)
           this.modelProducer = modelProducer
-          chart?.marker = marker
         }
       }
     },

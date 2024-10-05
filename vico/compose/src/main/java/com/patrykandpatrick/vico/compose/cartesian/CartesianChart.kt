@@ -33,6 +33,7 @@ import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerVisibilityListener
 import com.patrykandpatrick.vico.core.common.Legend
+import com.patrykandpatrick.vico.core.common.ValueWrapper
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
 
 /**
@@ -58,19 +59,54 @@ public fun rememberCartesianChart(
   persistentMarkers: (CartesianChart.PersistentMarkerScope.(ExtraStore) -> Unit)? = null,
   getXStep: ((CartesianChartModel) -> Double) = { it.getXDeltaGcd() },
 ): CartesianChart {
-  return remember(*layers) { CartesianChart(*layers) }
-    .apply {
-      this.startAxis = startAxis
-      this.topAxis = topAxis
-      this.endAxis = endAxis
-      this.bottomAxis = bottomAxis
-      this.marker = marker
-      this.markerVisibilityListener = markerVisibilityListener
-      this.layerPadding = layerPadding
-      this.legend = legend
-      this.fadingEdges = fadingEdges
-      this.decorations = decorations
-      this.persistentMarkers = persistentMarkers
-      this.getXStep = getXStep
-    }
+  val wrapper = remember { ValueWrapper<CartesianChart?>(null) }
+  return remember(
+    *layers,
+    startAxis,
+    topAxis,
+    endAxis,
+    bottomAxis,
+    marker,
+    markerVisibilityListener,
+    layerPadding,
+    legend,
+    fadingEdges,
+    decorations,
+    persistentMarkers,
+    getXStep,
+  ) {
+    val cartesianChart =
+      wrapper.value?.copy(
+        *layers,
+        startAxis = startAxis,
+        topAxis = topAxis,
+        endAxis = endAxis,
+        bottomAxis = bottomAxis,
+        marker = marker,
+        markerVisibilityListener = markerVisibilityListener,
+        layerPadding = layerPadding,
+        legend = legend,
+        fadingEdges = fadingEdges,
+        decorations = decorations,
+        persistentMarkers = persistentMarkers,
+        getXStep = getXStep,
+      )
+        ?: CartesianChart(
+          *layers,
+          startAxis = startAxis,
+          topAxis = topAxis,
+          endAxis = endAxis,
+          bottomAxis = bottomAxis,
+          marker = marker,
+          markerVisibilityListener = markerVisibilityListener,
+          layerPadding = layerPadding,
+          legend = legend,
+          fadingEdges = fadingEdges,
+          decorations = decorations,
+          persistentMarkers = persistentMarkers,
+          getXStep = getXStep,
+        )
+    wrapper.value = cartesianChart
+    cartesianChart
+  }
 }

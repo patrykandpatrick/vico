@@ -132,11 +132,13 @@ private fun ComposeChart5(modelProducer: CartesianChartModelProducer, modifier: 
 private fun ViewChart5(modelProducer: CartesianChartModelProducer, modifier: Modifier) {
   val marker = rememberMarker()
   AndroidViewBinding(Chart5Binding::inflate, modifier) {
-    with(chartView) {
-      this.modelProducer = modelProducer
-      chart?.startAxis = (chart?.startAxis as VerticalAxis).copy(itemPlacer = startAxisItemPlacer)
-      chart?.marker = marker
-    }
+    chartView.modelProducer = modelProducer
+    val chart = chartView.chart!!
+    chartView.chart =
+      chart.copy(
+        startAxis = (chart.startAxis as VerticalAxis).copy(itemPlacer = startAxisItemPlacer),
+        marker = marker,
+      )
   }
 }
 

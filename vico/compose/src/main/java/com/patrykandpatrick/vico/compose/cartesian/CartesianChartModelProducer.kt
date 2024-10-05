@@ -57,11 +57,11 @@ internal fun CartesianChartModelProducer.collectAsState(
   val hashCode = hashCode()
   check(previousHashCode == null || hashCode == previousHashCode) { NEW_PRODUCER_ERROR_MESSAGE }
   previousHashCode = hashCode
-  val modelWrapperState = remember(chart) { CartesianChartModelWrapperState() }
-  val extraStore = remember(chart) { MutableExtraStore() }
+  val modelWrapperState = remember(chart.id) { CartesianChartModelWrapperState() }
+  val extraStore = remember(chart.id) { MutableExtraStore() }
   val scope = rememberCoroutineScope()
   val isInPreview = LocalInspectionMode.current
-  DisposableEffect(chart, runInitialAnimation, isInPreview) {
+  DisposableEffect(chart.id, runInitialAnimation, isInPreview) {
     var mainAnimationJob: Job? = null
     var animationFrameJob: Job? = null
     var finalAnimationFrameJob: Job? = null
@@ -88,7 +88,7 @@ internal fun CartesianChartModelProducer.collectAsState(
                     isAnimationFrameGenerationRunning = true
                     animationFrameJob =
                       scope.launch {
-                        transformModel(chart, fraction)
+                        transformModel(chart.id, fraction)
                         isAnimationFrameGenerationRunning = false
                       }
                   }
@@ -96,7 +96,7 @@ internal fun CartesianChartModelProducer.collectAsState(
                     finalAnimationFrameJob =
                       scope.launch(Dispatchers.Default) {
                         animationFrameJob?.cancelAndJoin()
-                        transformModel(chart, fraction)
+                        transformModel(chart.id, fraction)
                         isAnimationFrameGenerationRunning = false
                       }
                   }
@@ -105,12 +105,12 @@ internal fun CartesianChartModelProducer.collectAsState(
             }
         } else {
           finalAnimationFrameJob =
-            scope.launch { transformModel(chart, Animation.range.endInclusive) }
+            scope.launch { transformModel(chart.id, Animation.range.endInclusive) }
         }
       }
     scope.launch {
       registerForUpdates(
-        key = chart,
+        key = chart.id,
         cancelAnimation = {
           mainAnimationJob?.cancelAndJoin()
           animationFrameJob?.cancelAndJoin()
@@ -139,7 +139,7 @@ internal fun CartesianChartModelProducer.collectAsState(
       mainAnimationJob?.cancel()
       animationFrameJob?.cancel()
       finalAnimationFrameJob?.cancel()
-      unregisterFromUpdates(chart)
+      unregisterFromUpdates(chart.id)
     }
   }
   return modelWrapperState

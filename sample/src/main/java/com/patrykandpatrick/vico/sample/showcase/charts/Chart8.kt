@@ -136,15 +136,15 @@ private fun ComposeChart8(modelProducer: CartesianChartModelProducer, modifier: 
 private fun ViewChart8(modelProducer: CartesianChartModelProducer, modifier: Modifier) {
   val marker = rememberMarker()
   AndroidViewBinding(Chart8Binding::inflate, modifier) {
-    with(chartView) {
-      (chart?.layers?.get(0) as ColumnCartesianLayer).verticalAxisPosition =
-        Axis.Position.Vertical.Start
-      (chart?.layers?.get(1) as LineCartesianLayer).verticalAxisPosition =
-        Axis.Position.Vertical.End
-      this.modelProducer = modelProducer
-      chart?.startAxis = (chart?.startAxis as VerticalAxis).copy(guideline = null)
-      chart?.marker = marker
-    }
+    chartView.modelProducer = modelProducer
+    val chart = chartView.chart!!
+    chartView.chart =
+      chart
+        .copy(startAxis = (chart.startAxis as VerticalAxis).copy(guideline = null), marker = marker)
+        .apply {
+          (layers[0] as ColumnCartesianLayer).verticalAxisPosition = Axis.Position.Vertical.Start
+          (layers[1] as LineCartesianLayer).verticalAxisPosition = Axis.Position.Vertical.End
+        }
   }
 }
 

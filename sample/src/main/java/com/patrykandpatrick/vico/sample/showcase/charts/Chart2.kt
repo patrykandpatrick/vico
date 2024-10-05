@@ -115,11 +115,16 @@ private fun ViewChart2(modelProducer: CartesianChartModelProducer, modifier: Mod
     { inflater, parent, attachToParent ->
       Chart2Binding.inflate(inflater, parent, attachToParent).apply {
         with(chartView) {
-          chart?.decorations = listOf(getViewHorizontalLine())
+          chart =
+            chart?.copy(
+              decorations = listOf(getViewHorizontalLine()),
+              bottomAxis =
+                (chart?.bottomAxis as HorizontalAxis).copy(
+                  valueFormatter = bottomAxisValueFormatter
+                ),
+              marker = marker,
+            )
           this.modelProducer = modelProducer
-          chart?.bottomAxis =
-            (chart?.bottomAxis as HorizontalAxis).copy(valueFormatter = bottomAxisValueFormatter)
-          chart?.marker = marker
         }
       }
     },

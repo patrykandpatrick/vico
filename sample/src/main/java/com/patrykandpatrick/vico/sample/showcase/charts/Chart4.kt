@@ -132,7 +132,7 @@ private fun ViewChart4(modelProducer: CartesianChartModelProducer, modifier: Mod
   AndroidViewBinding(Chart4Binding::inflate, modifier) {
     with(chartView) {
       this.modelProducer = modelProducer
-      chart?.marker = marker
+      chart = chart?.copy(marker = marker)
     }
   }
 }
