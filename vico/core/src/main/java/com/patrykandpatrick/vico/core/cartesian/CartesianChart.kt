@@ -179,10 +179,8 @@ public open class CartesianChart(
   /** The bottom [Axis]. */
   public val bottomAxis: Axis<Axis.Position.Horizontal.Bottom>? by axisManager::bottomAxis
 
-  /**
-   * The unique identifier of this [CartesianChart]. It remains unchanged when this [CartesianChart]
-   * is copied.
-   */
+  /** @suppress */
+  @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
   public var id: UUID = UUID.randomUUID()
     private set
 
