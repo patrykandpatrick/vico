@@ -21,7 +21,7 @@ import com.patrykandpatrick.vico.core.cartesian.data.getXDeltaGcd
 import io.mockk.every
 import io.mockk.mockk
 import kotlin.test.assertEquals
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 public class XDeltaGcdTest {
   private fun getEntries(vararg x: Number) =

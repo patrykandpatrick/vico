@@ -10,7 +10,6 @@ composeNavigation = "2.8.2"
 composeStableMarker = "1.0.5"
 coroutines = "1.9.0"
 dokka = "1.9.20"
-jUnit = "4.13.2"
 jupiter = "5.10.3"
 kotlin = "2.0.20"
 lifecycle = "2.8.6"
@@ -36,7 +35,6 @@ composeUI = { group = "androidx.compose.ui", name = "ui" }
 composeUITooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 composeViewBinding = { group = "androidx.compose.ui", name = "ui-viewbinding" }
 coroutinesCore = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
-jUnit = { module = "junit:junit", version.ref = "jUnit" }
 jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "jupiter" }
 jupiterParams = { module = "org.junit.jupiter:junit-jupiter-params", version.ref = "jupiter" }
 kotlinGradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }

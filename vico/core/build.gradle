@@ -63,7 +63,6 @@ dependencies {
     implementation libs.coroutinesCore
     implementation libs.kotlinStdLib
     compileOnly libs.composeStableMarker
-    testImplementation libs.JUnit
     testImplementation libs.jupiter
     testImplementation libs.jupiterParams
     testImplementation libs.kotlinTest
