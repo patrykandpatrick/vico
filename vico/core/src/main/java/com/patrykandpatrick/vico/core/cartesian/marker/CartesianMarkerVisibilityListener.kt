@@ -24,6 +24,9 @@ public interface CartesianMarkerVisibilityListener {
   /** Called when the specified [CartesianMarker]’s [CartesianMarker.Target]s change. */
   public fun onUpdated(marker: CartesianMarker, targets: List<CartesianMarker.Target>) {}
 
+  /** Called when a tap on [CartesianMarker.Target]s is registered. */
+  public fun onTap(marker: CartesianMarker, targets: List<CartesianMarker.Target>) {}
+
   /** Called when the specified [CartesianMarker] is hidden. */
   public fun onHidden(marker: CartesianMarker) {}
 }

@@ -85,7 +85,7 @@ public fun CartesianChartHost(
 ) {
   val mutableRanges = remember(chart) { MutableCartesianChartRanges() }
   val modelWrapper by
-    modelProducer.collectAsState(chart, animationSpec, runInitialAnimation, mutableRanges)
+  modelProducer.collectAsState(chart, animationSpec, runInitialAnimation, mutableRanges)
   val (model, previousModel, ranges) = modelWrapper
 
   CartesianChartHostBox(modifier) {
@@ -139,6 +139,8 @@ internal fun CartesianChartHostImpl(
 ) {
   val canvasBounds = remember { RectF() }
   val markerTouchPoint = remember { mutableStateOf<Point?>(null) }
+  val displayMarkerOnTap = remember { mutableStateOf(chart.marker?.displayOnTap ?: false) }
+
   val measuringContext =
     rememberCartesianMeasuringContext(
       canvasBounds = canvasBounds,
@@ -164,28 +166,40 @@ internal fun CartesianChartHostImpl(
 
   Canvas(
     modifier =
-      Modifier.fillMaxSize()
-        .chartTouchEvent(
-          setTouchPoint =
-            remember(chart.marker == null) {
-              if (chart.marker != null) markerTouchPoint.component2() else null
-            },
-          isScrollEnabled = scrollState.scrollEnabled,
-          scrollState = scrollState,
-          onZoom =
-            remember(zoomState, scrollState, chart, coroutineScope) {
-              if (zoomState.zoomEnabled) {
-                { factor, centroid ->
-                  zoomState.zoom(factor, centroid.x, scrollState.value, chart.layerBounds).let {
-                    scroll ->
-                    coroutineScope.launch { scrollState.scroll(scroll) }
-                  }
+    Modifier
+      .fillMaxSize()
+      .chartTouchEvent(
+        setTouchPoint = if (!displayMarkerOnTap.value) {
+          remember(chart.marker == null) {
+            if (chart.marker != null) markerTouchPoint.component2() else null
+          }
+        } else {
+          null
+        },
+        setTapPoint = if (displayMarkerOnTap.value) {
+          remember(chart.marker == null) {
+            if (chart.marker != null) markerTouchPoint.component2() else null
+          }
+        } else {
+          null
+        },
+        isScrollEnabled = scrollState.scrollEnabled,
+        scrollState = scrollState,
+        onZoom =
+        remember(zoomState, scrollState, chart, coroutineScope) {
+          if (zoomState.zoomEnabled) {
+            { factor, centroid ->
+              zoomState
+                .zoom(factor, centroid.x, scrollState.value, chart.layerBounds)
+                .let { scroll ->
+                  coroutineScope.launch { scrollState.scroll(scroll) }
                 }
-              } else {
-                null
-              }
-            },
-        )
+            }
+          } else {
+            null
+          }
+        },
+      ),
   ) {
     val canvas = drawContext.canvas.nativeCanvas
     if (canvas.width == 0 || canvas.height == 0) return@Canvas
@@ -215,12 +229,18 @@ internal fun CartesianChartHostImpl(
         zoom = zoomState.value,
       )
 
-    chart.draw(drawingContext, markerTouchPoint.value)
+    chart.draw(drawingContext, markerTouchPoint.value, displayMarkerOnTap.value)
+    if (displayMarkerOnTap.value) {
+      markerTouchPoint.value = null
+    }
+
     measuringContext.reset()
   }
 }
 
 @Composable
 private fun CartesianChartHostBox(modifier: Modifier, content: @Composable BoxScope.() -> Unit) {
-  Box(modifier = modifier.height(CHART_HEIGHT.dp).fillMaxWidth(), content = content)
+  Box(modifier = modifier
+    .height(CHART_HEIGHT.dp)
+    .fillMaxWidth(), content = content)
 }

@@ -93,21 +93,21 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
    * programmatic scrolling.
    */
   public var scrollHandler: ScrollHandler by
-    invalidatingObservable(ScrollHandler(themeHandler.scrollEnabled)) { oldValue, newValue ->
-      oldValue?.clearUpdated()
-      newValue.postInvalidate = ::postInvalidate
-      newValue.postInvalidateOnAnimation = ::postInvalidateOnAnimation
-      measuringContext.scrollEnabled = newValue.scrollEnabled
-      measuringContext.zoomEnabled = measuringContext.zoomEnabled && newValue.scrollEnabled
-    }
+  invalidatingObservable(ScrollHandler(themeHandler.scrollEnabled)) { oldValue, newValue ->
+    oldValue?.clearUpdated()
+    newValue.postInvalidate = ::postInvalidate
+    newValue.postInvalidateOnAnimation = ::postInvalidateOnAnimation
+    measuringContext.scrollEnabled = newValue.scrollEnabled
+    measuringContext.zoomEnabled = measuringContext.zoomEnabled && newValue.scrollEnabled
+  }
 
   /** Houses information on the [CartesianChart]’s zoom factor. Allows for zoom customization. */
   public var zoomHandler: ZoomHandler by
-    invalidatingObservable(
-      ZoomHandler.default(themeHandler.zoomEnabled, scrollHandler.scrollEnabled)
-    ) { _, newValue ->
-      measuringContext.zoomEnabled = newValue.zoomEnabled && measuringContext.scrollEnabled
-    }
+  invalidatingObservable(
+    ZoomHandler.default(themeHandler.zoomEnabled, scrollHandler.scrollEnabled),
+  ) { _, newValue ->
+    measuringContext.zoomEnabled = newValue.zoomEnabled && measuringContext.scrollEnabled
+  }
 
   private val motionEventHandler =
     MotionEventHandler(
@@ -119,10 +119,10 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 
   /** The [CartesianChart] displayed by this [View]. */
   public var chart: CartesianChart? by
-    observable(themeHandler.chart) { _, _, newValue ->
-      if (newValue != null) measuringContext.layerPadding = newValue.layerPadding
-      tryInvalidate(chart = newValue, model = model, updateRanges = true)
-    }
+  observable(themeHandler.chart) { _, _, newValue ->
+    if (newValue != null) measuringContext.layerPadding = newValue.layerPadding
+    tryInvalidate(chart = newValue, model = model, updateRanges = true)
+  }
 
   /** Creates and updates the [CartesianChartModel]. */
   public var modelProducer: CartesianChartModelProducer? = null
@@ -182,39 +182,39 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 
   init {
     if (isInEditMode && attrs != null) {
-      context.obtainStyledAttributes(attrs, R.styleable.CartesianChartView, defStyleAttr, 0).use {
-        typedArray ->
-        val minX =
-          typedArray.getInteger(
-            R.styleable.CartesianChartView_previewMinX,
-            RandomCartesianModelGenerator.defaultX.first,
+      context.obtainStyledAttributes(attrs, R.styleable.CartesianChartView, defStyleAttr, 0)
+        .use { typedArray ->
+          val minX =
+            typedArray.getInteger(
+              R.styleable.CartesianChartView_previewMinX,
+              RandomCartesianModelGenerator.defaultX.first,
+            )
+          val maxX =
+            typedArray.getInteger(
+              R.styleable.CartesianChartView_previewMaxX,
+              RandomCartesianModelGenerator.defaultX.last,
+            )
+          val minY =
+            if (typedArray.hasValue(R.styleable.CartesianChartView_previewMinY)) {
+              typedArray.getFloat(R.styleable.CartesianChartView_previewMinY, 0f).toDouble()
+            } else {
+              RandomCartesianModelGenerator.defaultY.start
+            }
+          val maxY =
+            if (typedArray.hasValue(R.styleable.CartesianChartView_previewMaxY)) {
+              typedArray.getFloat(R.styleable.CartesianChartView_previewMaxY, 0f).toDouble()
+            } else {
+              RandomCartesianModelGenerator.defaultY.endInclusive
+            }
+          setModel(
+            RandomCartesianModelGenerator.getRandomModel(
+              typedArray.getInt(R.styleable.CartesianChartView_previewColumnSeriesCount, 1),
+              typedArray.getInt(R.styleable.CartesianChartView_previewLineSeriesCount, 1),
+              minX..maxX,
+              minY..maxY,
+            ),
           )
-        val maxX =
-          typedArray.getInteger(
-            R.styleable.CartesianChartView_previewMaxX,
-            RandomCartesianModelGenerator.defaultX.last,
-          )
-        val minY =
-          if (typedArray.hasValue(R.styleable.CartesianChartView_previewMinY)) {
-            typedArray.getFloat(R.styleable.CartesianChartView_previewMinY, 0f).toDouble()
-          } else {
-            RandomCartesianModelGenerator.defaultY.start
-          }
-        val maxY =
-          if (typedArray.hasValue(R.styleable.CartesianChartView_previewMaxY)) {
-            typedArray.getFloat(R.styleable.CartesianChartView_previewMaxY, 0f).toDouble()
-          } else {
-            RandomCartesianModelGenerator.defaultY.endInclusive
-          }
-        setModel(
-          RandomCartesianModelGenerator.getRandomModel(
-            typedArray.getInt(R.styleable.CartesianChartView_previewColumnSeriesCount, 1),
-            typedArray.getInt(R.styleable.CartesianChartView_previewLineSeriesCount, 1),
-            minX..maxX,
-            minY..maxY,
-          )
-        )
-      }
+        }
     }
   }
 
@@ -269,12 +269,16 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       } else {
         false
       }
-    val touchHandled = motionEventHandler.handleMotionEvent(event, scrollHandler)
+    val touchHandled = motionEventHandler.handleMotionEvent(
+      event,
+      scrollHandler,
+      chart?.marker?.displayOnTap ?: false,
+    )
 
     if (scrollDirectionResolved.not() && event.historySize > 0) {
       scrollDirectionResolved = true
       parent.requestDisallowInterceptTouchEvent(
-        event.movedXDistance > event.movedYDistance || event.pointerCount > 1
+        event.movedXDistance > event.movedYDistance || event.pointerCount > 1,
       )
     } else if (
       event.actionMasked == MotionEvent.ACTION_UP || event.actionMasked == MotionEvent.ACTION_CANCEL
@@ -288,7 +292,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   private fun handleZoom(focusX: Float, zoomChange: Float) {
     val chart = chart ?: return
     scrollHandler.scroll(
-      zoomHandler.zoom(zoomChange, focusX, scrollHandler.value, chart.layerBounds)
+      zoomHandler.zoom(zoomChange, focusX, scrollHandler.value, chart.layerBounds),
     )
     handleTouchEvent(null)
     invalidate()
@@ -328,7 +332,11 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
           zoom = zoomHandler.value,
         )
 
-      chart.draw(drawingContext, markerTouchPoint)
+      chart.draw(drawingContext, markerTouchPoint, chart.marker?.displayOnTap ?: false)
+      if (chart.marker?.displayOnTap == true) {
+        markerTouchPoint = null
+      }
+
       measuringContext.reset()
     }
   }
@@ -337,7 +345,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     Defaults.CHART_HEIGHT.dpInt
 
   private inline fun withChartAndModel(
-    block: (chart: CartesianChart, model: CartesianChartModel) -> Unit
+    block: (chart: CartesianChart, model: CartesianChartModel) -> Unit,
   ) {
     val chart = chart ?: return
     val model = model ?: return

@@ -57,6 +57,9 @@ public open class DefaultCartesianMarker(
   protected val indicatorSizeDp: Float = Defaults.MARKER_INDICATOR_SIZE,
   protected val guideline: LineComponent? = null,
 ) : CartesianMarker {
+  override val displayOnTap: Boolean
+    get() = false
+
   protected val tempBounds: RectF = RectF()
 
   protected val markerCorneredShape: MarkerCorneredShape? =
@@ -87,11 +90,13 @@ public open class DefaultCartesianMarker(
             drawIndicator(target.canvasX, target.lowCanvasY, target.lowColor, halfIndicatorSize)
             drawIndicator(target.canvasX, target.highCanvasY, target.highColor, halfIndicatorSize)
           }
+
           is ColumnCartesianLayerMarkerTarget -> {
             target.columns.forEach { column ->
               drawIndicator(target.canvasX, column.canvasY, column.color, halfIndicatorSize)
             }
           }
+
           is LineCartesianLayerMarkerTarget -> {
             target.points.forEach { point ->
               drawIndicator(target.canvasX, point.canvasY, point.color, halfIndicatorSize)
@@ -147,27 +152,32 @@ public open class DefaultCartesianMarker(
           y = context.layerBounds.top - tickSizeDp.pixels
           verticalPosition = VerticalPosition.Top
         }
+
         LabelPosition.Bottom -> {
           tickPosition = MarkerCorneredShape.TickPosition.Top
           y = context.layerBounds.bottom + tickSizeDp.pixels
           verticalPosition = VerticalPosition.Bottom
         }
+
         LabelPosition.AroundPoint,
-        LabelPosition.AbovePoint -> {
+        LabelPosition.AbovePoint,
+        -> {
           val topPointY =
             targets.minOf { target ->
               when (target) {
                 is CandlestickCartesianLayerMarkerTarget -> target.highCanvasY
                 is ColumnCartesianLayerMarkerTarget ->
                   target.columns.minOf(ColumnCartesianLayerMarkerTarget.Column::canvasY)
+
                 is LineCartesianLayerMarkerTarget ->
                   target.points.minOf(LineCartesianLayerMarkerTarget.Point::canvasY)
+
                 else -> error("Unexpected `CartesianMarker.Target` implementation.")
               }
             }
           val flip =
             labelPosition == LabelPosition.AroundPoint &&
-              topPointY - labelBounds.height() - tickSizeDp.pixels < context.layerBounds.top
+                topPointY - labelBounds.height() - tickSizeDp.pixels < context.layerBounds.top
           tickPosition =
             if (flip) MarkerCorneredShape.TickPosition.Top
             else MarkerCorneredShape.TickPosition.Bottom
@@ -214,10 +224,13 @@ public open class DefaultCartesianMarker(
     with(context) {
       when (labelPosition) {
         LabelPosition.Top,
-        LabelPosition.AbovePoint ->
+        LabelPosition.AbovePoint,
+        ->
           insets.ensureValuesAtLeast(top = label.getHeight(context) + tickSizeDp.pixels)
+
         LabelPosition.Bottom ->
           insets.ensureValuesAtLeast(bottom = label.getHeight(context) + tickSizeDp.pixels)
+
         LabelPosition.AroundPoint -> Unit // Will be inside the chart
       }
     }

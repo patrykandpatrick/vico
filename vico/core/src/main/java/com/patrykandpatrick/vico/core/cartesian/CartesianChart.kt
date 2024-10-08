@@ -157,7 +157,8 @@ public open class CartesianChart(
     }
 
   /** @suppress */
-  @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) public val layerBounds: RectF = RectF()
+  @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+  public val layerBounds: RectF = RectF()
 
   /** The [CartesianLayer]s of which this [CartesianChart] is composed. */
   public val layers: List<CartesianLayer<*>> = layers.toList()
@@ -214,7 +215,7 @@ public open class CartesianChart(
         horizontalDimensionUpdateModelAndLayerConsumer.apply {
           this.context = context
           this.horizontalDimensions = horizontalDimensions
-        }
+        },
       )
       startAxis?.updateHorizontalDimensions(context, horizontalDimensions)
       topAxis?.updateHorizontalDimensions(context, horizontalDimensions)
@@ -247,7 +248,11 @@ public open class CartesianChart(
   }
 
   /** Draws the [CartesianChart]. */
-  public fun draw(context: CartesianDrawingContext, pointerPosition: Point?) {
+  public fun draw(
+    context: CartesianDrawingContext,
+    pointerPosition: Point?,
+    displayMarkerOnTap: Boolean,
+  ) {
     with(context) {
       val canvasSaveCount = if (fadingEdges != null) canvas.saveLayer() else -1
       axisManager.drawUnderLayers(context)
@@ -263,7 +268,7 @@ public open class CartesianChart(
         markerTargets[x]?.let { targets -> marker.draw(context, targets) }
       }
       legend?.draw(context)
-      drawMarker(context, pointerPosition)
+      drawMarker(context, pointerPosition, displayMarkerOnTap)
     }
   }
 
@@ -284,7 +289,7 @@ public open class CartesianChart(
         this.context = context
         this.horizontalDimensions = horizontalDimensions
         this.insets = insets
-      }
+      },
     )
   }
 
@@ -299,7 +304,7 @@ public open class CartesianChart(
         this.context = context
         this.freeHeight = freeHeight
         this.insets = insets
-      }
+      },
     )
   }
 
@@ -313,7 +318,7 @@ public open class CartesianChart(
       transformationPreparationModelAndLayerConsumer.apply {
         this.extraStore = extraStore
         this.ranges = ranges
-      }
+      },
     ) ?: layers.forEach { it.prepareForTransformation(null, ranges, extraStore) }
   }
 
@@ -334,7 +339,11 @@ public open class CartesianChart(
     }
   }
 
-  protected open fun drawMarker(context: CartesianDrawingContext, pointerPosition: Point?) {
+  protected open fun drawMarker(
+    context: CartesianDrawingContext,
+    pointerPosition: Point?,
+    displayMarkerOnTap: Boolean,
+  ) {
     val marker = marker ?: return
     if (pointerPosition == null || markerTargets.isEmpty()) {
       if (previousMarkerTargetHashCode != null) markerVisibilityListener?.onHidden(marker)
@@ -351,13 +360,17 @@ public open class CartesianChart(
       previousDistance = distance
     }
     marker.draw(context, targets)
-    val targetHashCode = targets.hashCode()
-    if (previousMarkerTargetHashCode == null) {
-      markerVisibilityListener?.onShown(marker, targets)
-    } else if (targetHashCode != previousMarkerTargetHashCode) {
-      markerVisibilityListener?.onUpdated(marker, targets)
+    if (displayMarkerOnTap) {
+      markerVisibilityListener?.onTap(marker, targets)
+    } else {
+      val targetHashCode = targets.hashCode()
+      if (previousMarkerTargetHashCode == null) {
+        markerVisibilityListener?.onShown(marker, targets)
+      } else if (targetHashCode != previousMarkerTargetHashCode) {
+        markerVisibilityListener?.onUpdated(marker, targets)
+      }
+      previousMarkerTargetHashCode = targetHashCode
     }
-    previousMarkerTargetHashCode = targetHashCode
   }
 
   protected inline fun <reified T : CartesianLayerModel> MutableList<CartesianLayerModel>.consume(
@@ -390,38 +403,38 @@ public open class CartesianChart(
     getXStep: ((CartesianChartModel) -> Double) = this.getXStep,
   ): CartesianChart =
     CartesianChart(
-        *layers,
-        startAxis = startAxis,
-        topAxis = topAxis,
-        endAxis = endAxis,
-        bottomAxis = bottomAxis,
-        marker = marker,
-        markerVisibilityListener = markerVisibilityListener,
-        layerPadding = layerPadding,
-        legend = legend,
-        fadingEdges = fadingEdges,
-        decorations = decorations,
-        persistentMarkers = persistentMarkers,
-        getXStep = getXStep,
-      )
+      *layers,
+      startAxis = startAxis,
+      topAxis = topAxis,
+      endAxis = endAxis,
+      bottomAxis = bottomAxis,
+      marker = marker,
+      markerVisibilityListener = markerVisibilityListener,
+      layerPadding = layerPadding,
+      legend = legend,
+      fadingEdges = fadingEdges,
+      decorations = decorations,
+      persistentMarkers = persistentMarkers,
+      getXStep = getXStep,
+    )
       .also { it.id = id }
 
   override fun equals(other: Any?): Boolean =
     this === other ||
       other is CartesianChart &&
-        id == other.id &&
-        marker == other.marker &&
-        markerVisibilityListener == other.markerVisibilityListener &&
-        layerPadding == other.layerPadding &&
-        legend == other.legend &&
-        fadingEdges == other.fadingEdges &&
-        decorations == other.decorations &&
-        persistentMarkers == other.persistentMarkers &&
-        getXStep == other.getXStep &&
-        persistentMarkerMap == other.persistentMarkerMap &&
-        layerBounds == other.layerBounds &&
-        layers == other.layers &&
-        markerTargets == other.markerTargets
+      id == other.id &&
+      marker == other.marker &&
+      markerVisibilityListener == other.markerVisibilityListener &&
+      layerPadding == other.layerPadding &&
+      legend == other.legend &&
+      fadingEdges == other.fadingEdges &&
+      decorations == other.decorations &&
+      persistentMarkers == other.persistentMarkers &&
+      getXStep == other.getXStep &&
+      persistentMarkerMap == other.persistentMarkerMap &&
+      layerBounds == other.layerBounds &&
+      layers == other.layers &&
+      markerTargets == other.markerTargets
 
   override fun hashCode(): Int =
     Objects.hash(

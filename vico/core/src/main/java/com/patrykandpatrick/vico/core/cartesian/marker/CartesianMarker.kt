@@ -23,6 +23,8 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
 
 /** Marks [CartesianChart] objects. */
 public interface CartesianMarker : CartesianLayerInsetter<CartesianChartModel> {
+  public val displayOnTap: Boolean
+
   /** Draws the [CartesianMarker] for the specified [Target]s. */
   public fun draw(context: CartesianDrawingContext, targets: List<Target>)
 

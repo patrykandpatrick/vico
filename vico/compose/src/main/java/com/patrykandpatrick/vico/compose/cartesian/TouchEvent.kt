@@ -18,6 +18,7 @@ package com.patrykandpatrick.vico.compose.cartesian
 
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -28,16 +29,17 @@ import com.patrykandpatrick.vico.core.common.Point
 
 internal fun Modifier.chartTouchEvent(
   setTouchPoint: ((Point?) -> Unit)?,
+  setTapPoint: ((Point?) -> Unit)?,
   isScrollEnabled: Boolean,
   scrollState: VicoScrollState,
   onZoom: ((Float, Offset) -> Unit)?,
 ): Modifier =
   scrollable(
-      state = scrollState.scrollableState,
-      orientation = Orientation.Horizontal,
-      reverseDirection = true,
-      enabled = isScrollEnabled,
-    )
+    state = scrollState.scrollableState,
+    orientation = Orientation.Horizontal,
+    reverseDirection = true,
+    enabled = isScrollEnabled,
+  )
     .then(
       if (setTouchPoint != null) {
         pointerInput(setTouchPoint) {
@@ -51,9 +53,17 @@ internal fun Modifier.chartTouchEvent(
             }
           }
         }
+      } else if (setTapPoint != null) {
+        pointerInput(setTapPoint) {
+          detectTapGestures(
+            onTap = { offset ->
+              setTapPoint(offset.point)
+            },
+          )
+        }
       } else {
         Modifier
-      }
+      },
     )
     .then(
       if (!isScrollEnabled && setTouchPoint != null) {
@@ -68,7 +78,7 @@ internal fun Modifier.chartTouchEvent(
         }
       } else {
         Modifier
-      }
+      },
     )
     .then(
       if (isScrollEnabled && onZoom != null) {
@@ -80,7 +90,7 @@ internal fun Modifier.chartTouchEvent(
         }
       } else {
         Modifier
-      }
+      },
     )
 
 private val Offset.point: Point

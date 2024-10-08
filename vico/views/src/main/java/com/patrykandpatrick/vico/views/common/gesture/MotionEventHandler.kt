@@ -43,7 +43,11 @@ internal class MotionEventHandler(
   private var lastEventPointerCount = 0
   private var totalDragAmount: Float = 0f
 
-  fun handleMotionEvent(motionEvent: MotionEvent, scrollHandler: ScrollHandler): Boolean {
+  fun handleMotionEvent(
+    motionEvent: MotionEvent,
+    scrollHandler: ScrollHandler,
+    displayMarkerOnTap: Boolean,
+  ): Boolean {
     val ignoreEvent =
       motionEvent.pointerCount > 1 || lastEventPointerCount > motionEvent.pointerCount
     lastEventPointerCount = motionEvent.pointerCount
@@ -52,13 +56,16 @@ internal class MotionEventHandler(
       MotionEvent.ACTION_DOWN -> {
         scroller.abortAnimation()
         initialX = motionEvent.x
-        onTouchPoint(motionEvent.point)
+        if (!displayMarkerOnTap) {
+          onTouchPoint(motionEvent.point)
+        }
         lastX = initialX
         currentX = initialX
         velocityTracker.get().addMovement(motionEvent)
         requestInvalidate()
         true
       }
+
       MotionEvent.ACTION_MOVE -> {
         var scrollHandled = false
         if (scrollEnabled) {
@@ -68,22 +75,34 @@ internal class MotionEventHandler(
           if (shouldPerformScroll && !ignoreEvent) {
             velocityTracker.get().addMovement(motionEvent)
             scrollHandler.scroll(Scroll.Relative.pixels(lastX - currentX))
-            onTouchPoint(motionEvent.point)
+            if (!displayMarkerOnTap) {
+              onTouchPoint(motionEvent.point)
+            }
+
             requestInvalidate()
             initialX = -dragThreshold
           }
           scrollHandled = shouldPerformScroll.not() || scrollHandler.canScroll(lastX - currentX)
           lastX = motionEvent.x
         } else {
-          onTouchPoint(motionEvent.point)
+          if (!displayMarkerOnTap) {
+            onTouchPoint(motionEvent.point)
+          }
           requestInvalidate()
         }
         scrollHandled
       }
+
       MotionEvent.ACTION_CANCEL,
-      MotionEvent.ACTION_UP -> {
+      MotionEvent.ACTION_UP,
+      -> {
+        if (totalDragAmount < 15f) {
+          onTouchPoint(motionEvent.point)
+        }
         totalDragAmount = 0f
-        onTouchPoint(null)
+        if (!displayMarkerOnTap) {
+          onTouchPoint(null)
+        }
         velocityTracker.get().apply {
           computeCurrentVelocity(velocityUnits)
           val currentX = scrollHandler.value.toInt()
@@ -97,6 +116,7 @@ internal class MotionEventHandler(
         velocityTracker.clear()
         true
       }
+
       else -> false
     }
   }
