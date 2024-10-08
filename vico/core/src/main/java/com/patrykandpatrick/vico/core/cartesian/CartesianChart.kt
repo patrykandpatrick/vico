@@ -88,6 +88,8 @@ public open class CartesianChart(
     persistentMarkerMap[it.toDouble()] = this
   }
   private var previousPersistentMarkerHashCode: Int? = null
+  private var lastTapPosition: Point? = null
+  private var lastScroll: Float? = null
   private val insets = Insets()
   private val axisManager = AxisManager()
   private val _markerTargets = sortedMapOf<Double, MutableList<CartesianMarker.Target>>()
@@ -354,15 +356,21 @@ public open class CartesianChart(
     var previousDistance = Float.POSITIVE_INFINITY
     for (xTargets in markerTargets.values) {
       val (distance, canvasXTargets) =
-        xTargets.groupBy { abs(pointerPosition.x - it.canvasX) }.minBy { it.key }
+        xTargets.groupBy {
+          abs(pointerPosition.x - it.canvasX)
+        }.minBy { it.key }
       if (distance > previousDistance) break
       targets = canvasXTargets
       previousDistance = distance
     }
-    marker.draw(context, targets)
     if (displayMarkerOnTap) {
+      if (lastTapPosition == pointerPosition) return
+      marker.draw(context, targets)
       markerVisibilityListener?.onTap(marker, targets)
+      lastTapPosition = pointerPosition
+      lastScroll = context.scroll
     } else {
+      marker.draw(context, targets)
       val targetHashCode = targets.hashCode()
       if (previousMarkerTargetHashCode == null) {
         markerVisibilityListener?.onShown(marker, targets)

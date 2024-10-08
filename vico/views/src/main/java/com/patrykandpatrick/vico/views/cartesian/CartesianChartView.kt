@@ -83,6 +83,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   private val scaleGestureDetector = ScaleGestureDetector(context, scaleGestureListener)
 
   private var markerTouchPoint: Point? = null
+  private var markerTapPoint: Point? = null
 
   private var scrollDirectionResolved = false
 
@@ -114,6 +115,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       scroller = scroller,
       density = resources.displayMetrics.density,
       onTouchPoint = ::handleTouchEvent,
+      onTapPoint = ::handelTapEvent,
       requestInvalidate = ::invalidate,
     )
 
@@ -298,6 +300,10 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     invalidate()
   }
 
+  private fun handelTapEvent(point: Point?) {
+    markerTapPoint = point
+  }
+
   private fun handleTouchEvent(point: Point?) {
     markerTouchPoint = point
   }
@@ -332,9 +338,10 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
           zoom = zoomHandler.value,
         )
 
-      chart.draw(drawingContext, markerTouchPoint, chart.marker?.displayOnTap ?: false)
       if (chart.marker?.displayOnTap == true) {
-        markerTouchPoint = null
+        chart.draw(drawingContext, markerTapPoint, chart.marker?.displayOnTap ?: false)
+      } else {
+        chart.draw(drawingContext, markerTouchPoint, chart.marker?.displayOnTap ?: false)
       }
 
       measuringContext.reset()

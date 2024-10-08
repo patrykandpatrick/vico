@@ -32,6 +32,7 @@ internal class MotionEventHandler(
   density: Float,
   var scrollEnabled: Boolean = false,
   private val onTouchPoint: (Point?) -> Unit,
+  private val onTapPoint: (Point?) -> Unit,
   private val requestInvalidate: () -> Unit,
 ) {
   private val velocityUnits = (VELOCITY_PIXELS * density).toInt()
@@ -78,7 +79,6 @@ internal class MotionEventHandler(
             if (!displayMarkerOnTap) {
               onTouchPoint(motionEvent.point)
             }
-
             requestInvalidate()
             initialX = -dragThreshold
           }
@@ -96,8 +96,8 @@ internal class MotionEventHandler(
       MotionEvent.ACTION_CANCEL,
       MotionEvent.ACTION_UP,
       -> {
-        if (totalDragAmount < 15f) {
-          onTouchPoint(motionEvent.point)
+        if (displayMarkerOnTap && totalDragAmount < 15f) {
+          onTapPoint(motionEvent.point)
         }
         totalDragAmount = 0f
         if (!displayMarkerOnTap) {

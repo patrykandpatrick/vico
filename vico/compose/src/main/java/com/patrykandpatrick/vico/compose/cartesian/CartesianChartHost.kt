@@ -139,6 +139,7 @@ internal fun CartesianChartHostImpl(
 ) {
   val canvasBounds = remember { RectF() }
   val markerTouchPoint = remember { mutableStateOf<Point?>(null) }
+  val markerTapPoint = remember { mutableStateOf<Point?>(null) }
   val displayMarkerOnTap = remember { mutableStateOf(chart.marker?.displayOnTap ?: false) }
 
   val measuringContext =
@@ -178,7 +179,7 @@ internal fun CartesianChartHostImpl(
         },
         setTapPoint = if (displayMarkerOnTap.value) {
           remember(chart.marker == null) {
-            if (chart.marker != null) markerTouchPoint.component2() else null
+            if (chart.marker != null) markerTapPoint.component2() else null
           }
         } else {
           null
@@ -229,9 +230,10 @@ internal fun CartesianChartHostImpl(
         zoom = zoomState.value,
       )
 
-    chart.draw(drawingContext, markerTouchPoint.value, displayMarkerOnTap.value)
     if (displayMarkerOnTap.value) {
-      markerTouchPoint.value = null
+      chart.draw(drawingContext, markerTapPoint.value, displayMarkerOnTap.value)
+    } else{
+      chart.draw(drawingContext, markerTouchPoint.value, displayMarkerOnTap.value)
     }
 
     measuringContext.reset()

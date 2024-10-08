@@ -33,6 +33,7 @@ package com.patrykandpatrick.vico.sample.showcase.charts
  */
 
 
+import android.graphics.Paint
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableIntStateOf
@@ -55,11 +56,16 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.ColumnCartesianLayerModel
 import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
+import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
+import com.patrykandpatrick.vico.core.cartesian.marker.CandlestickCartesianLayerMarkerTarget
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerVisibilityListener
+import com.patrykandpatrick.vico.core.cartesian.marker.ColumnCartesianLayerMarkerTarget
+import com.patrykandpatrick.vico.core.cartesian.marker.LineCartesianLayerMarkerTarget
 import com.patrykandpatrick.vico.core.common.component.LineComponent
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
+import com.patrykandpatrick.vico.core.common.half
 import com.patrykandpatrick.vico.databinding.Chart2Binding
 import com.patrykandpatrick.vico.sample.showcase.UIFramework
 import com.patrykandpatrick.vico.sample.showcase.rememberMarker
@@ -78,7 +84,7 @@ internal fun Chart11(uiFramework: UIFramework, modifier: Modifier) {
   }
   when (uiFramework) {
     UIFramework.Compose -> ComposeChart11(modelProducer, modifier, series)
-    UIFramework.Views -> ViewChart11(modelProducer, modifier)
+    UIFramework.Views -> ViewChart11(modelProducer, modifier, series)
   }
 }
 
@@ -126,7 +132,17 @@ private fun ComposeChart11(
       override val displayOnTap: Boolean
         get() = true
 
-      override fun draw(context: CartesianDrawingContext, targets: List<CartesianMarker.Target>) {}
+      override fun draw(context: CartesianDrawingContext, targets: List<CartesianMarker.Target>) {
+        context.canvas.drawRoundRect(
+          targets.first().canvasX - 25,
+          0f,
+          targets.first().canvasX + 25,
+          50f,
+          3f,
+          5f,
+          Paint(),
+        )
+      }
     }
   }
 
@@ -171,8 +187,82 @@ private fun ComposeChart11(
 }
 
 @Composable
-private fun ViewChart11(modelProducer: CartesianChartModelProducer, modifier: Modifier) {
-  val marker = rememberMarker()
+private fun ViewChart11(
+  modelProducer: CartesianChartModelProducer,
+  modifier: Modifier,
+  series: List<Float>,
+) {
+  val currentSelectedIndex = remember { mutableIntStateOf(series.lastIndex) }
+  val color = remember { Color.Blue }
+  val selectedColor = remember { Color.Green }
+  val barThickness = remember { 10f }
+
+  val marker = remember {
+    object : CartesianMarker {
+      override val displayOnTap: Boolean
+        get() = true
+
+      override fun draw(context: CartesianDrawingContext, targets: List<CartesianMarker.Target>) {
+        context.canvas.drawRoundRect(
+          targets.first().canvasX - 25,
+          0f,
+          targets.first().canvasX + 25,
+          50f,
+          3f,
+          5f,
+          Paint(),
+        )
+      }
+    }
+  }
+
+  val selectedBarListener = remember(series.size) {
+    object : CartesianMarkerVisibilityListener {
+      override fun onTap(marker: CartesianMarker, targets: List<CartesianMarker.Target>) {
+        currentSelectedIndex.intValue = targets.first().x.toInt()
+      }
+    }
+  }
+
+  val columnProvider = remember {
+    object : ColumnCartesianLayer.ColumnProvider {
+      override fun getColumn(
+        entry: ColumnCartesianLayerModel.Entry,
+        seriesIndex: Int,
+        extraStore: ExtraStore,
+      ): LineComponent {
+        val barColor = if (entry.x.toInt() == currentSelectedIndex.intValue) {
+          selectedColor
+        } else {
+          color
+        }
+        return LineComponent(
+          color = barColor.toArgb(),
+          thicknessDp = barThickness,
+        )
+      }
+
+      override fun getWidestSeriesColumn(seriesIndex: Int, extraStore: ExtraStore): LineComponent {
+        return LineComponent(
+          color = color.toArgb(),
+          thicknessDp = barThickness,
+        )
+      }
+    }
+  }
+
+  val layer = rememberColumnCartesianLayer(
+    columnProvider = columnProvider,
+  )
+
+  val persistentMarkers = remember(currentSelectedIndex.intValue) {
+    mutableStateOf<(CartesianChart.PersistentMarkerScope.(ExtraStore) -> Unit)>(
+      {
+        marker at currentSelectedIndex.intValue
+      },
+    )
+  }
+
   AndroidViewBinding(
     { inflater, parent, attachToParent ->
       Chart2Binding.inflate(inflater, parent, attachToParent).apply {
@@ -184,6 +274,9 @@ private fun ViewChart11(modelProducer: CartesianChartModelProducer, modifier: Mo
               valueFormatter = bottomAxisValueFormatter,
             ),
             marker = marker,
+            persistentMarkers = persistentMarkers.value,
+            markerVisibilityListener = selectedBarListener,
+            layers = arrayOf(layer),
           )
         }
       }
