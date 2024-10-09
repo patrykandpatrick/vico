@@ -89,7 +89,15 @@ private fun ComposeChart11(
   series: List<Float>,
 ) {
   val currentSelectedIndex = remember { mutableIntStateOf(series.lastIndex) }
+  val marker = remember { CustomMarker() }
 
+  val selectedBarListener = remember(series.size) {
+    object : CartesianMarkerVisibilityListener {
+      override fun onTap(marker: CartesianMarker, targets: List<CartesianMarker.Target>) {
+        currentSelectedIndex.intValue = targets.first().x.toInt()
+      }
+    }
+  }
 
   val columnProvider = remember {
     object : ColumnCartesianLayer.ColumnProvider {
@@ -118,7 +126,9 @@ private fun ComposeChart11(
     }
   }
 
-  val marker = remember { CustomMarker() }
+  val cartesianLayer = rememberColumnCartesianLayer(
+    columnProvider = columnProvider,
+  )
 
   val persistentMarkers = rememberExtraLambda<PersistentMarkerScope>(
     currentSelectedIndex.intValue,
@@ -126,20 +136,10 @@ private fun ComposeChart11(
     marker at currentSelectedIndex.intValue
   }
 
-  val selectedBarListener = remember(series.size) {
-    object : CartesianMarkerVisibilityListener {
-      override fun onTap(marker: CartesianMarker, targets: List<CartesianMarker.Target>) {
-        currentSelectedIndex.intValue = targets.first().x.toInt()
-      }
-    }
-  }
-
   CartesianChartHost(
     chart =
     rememberCartesianChart(
-      rememberColumnCartesianLayer(
-        columnProvider = columnProvider,
-      ),
+      cartesianLayer,
       startAxis = VerticalAxis.rememberStart(),
       bottomAxis =
       HorizontalAxis.rememberBottom(
@@ -202,7 +202,7 @@ private fun ViewChart11(
     }
   }
 
-  val layer = rememberColumnCartesianLayer(
+  val cartesianLayer = rememberColumnCartesianLayer(
     columnProvider = columnProvider,
   )
 
@@ -225,7 +225,7 @@ private fun ViewChart11(
             marker = marker,
             persistentMarkers = persistentMarkers,
             markerVisibilityListener = selectedBarListener,
-            layers = arrayOf(layer),
+            layers = arrayOf(cartesianLayer),
           )
         }
       }
