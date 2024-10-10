@@ -418,10 +418,7 @@ public open class CartesianChart(
         decorations == other.decorations &&
         persistentMarkers == other.persistentMarkers &&
         getXStep == other.getXStep &&
-        persistentMarkerMap == other.persistentMarkerMap &&
-        layerBounds == other.layerBounds &&
-        layers == other.layers &&
-        markerTargets == other.markerTargets
+        layers == other.layers
 
   override fun hashCode(): Int =
     Objects.hash(
@@ -434,10 +431,7 @@ public open class CartesianChart(
       decorations,
       persistentMarkers,
       getXStep,
-      persistentMarkerMap,
-      layerBounds,
       layers,
-      markerTargets,
     )
 
   /** Facilitates adding persistent [CartesianMarker]s to [CartesianChart]s. */
