@@ -31,10 +31,13 @@ import com.patrykandpatrick.vico.core.cartesian.data.LineCartesianLayerDrawingMo
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.layer.getDefaultAreaFill
 import com.patrykandpatrick.vico.core.common.Defaults
+import com.patrykandpatrick.vico.core.common.ValueWrapper
 import com.patrykandpatrick.vico.core.common.VerticalPosition
 import com.patrykandpatrick.vico.core.common.component.Component
 import com.patrykandpatrick.vico.core.common.component.TextComponent
 import com.patrykandpatrick.vico.core.common.data.CartesianLayerDrawingModelInterpolator
+import com.patrykandpatrick.vico.core.common.getValue
+import com.patrykandpatrick.vico.core.common.setValue
 
 /** Creates and remembers a [LineCartesianLayer]. */
 @Composable
@@ -56,15 +59,34 @@ public fun rememberLineCartesianLayer(
     remember {
       CartesianLayerDrawingModelInterpolator.default()
     },
-): LineCartesianLayer =
-  remember { LineCartesianLayer(lineProvider) }
-    .apply {
-      this.lineProvider = lineProvider
-      this.pointSpacingDp = pointSpacing.value
-      this.rangeProvider = rangeProvider
-      this.verticalAxisPosition = verticalAxisPosition
-      this.drawingModelInterpolator = drawingModelInterpolator
-    }
+): LineCartesianLayer {
+  var lineCartesianLayerWrapper by remember { ValueWrapper<LineCartesianLayer?>(null) }
+  return remember(
+    lineProvider,
+    pointSpacing,
+    rangeProvider,
+    verticalAxisPosition,
+    drawingModelInterpolator,
+  ) {
+    val lineCartesianLayer =
+      lineCartesianLayerWrapper?.copy(
+        lineProvider,
+        pointSpacing.value,
+        rangeProvider,
+        verticalAxisPosition,
+        drawingModelInterpolator,
+      )
+        ?: LineCartesianLayer(
+          lineProvider,
+          pointSpacing.value,
+          rangeProvider,
+          verticalAxisPosition,
+          drawingModelInterpolator,
+        )
+    lineCartesianLayerWrapper = lineCartesianLayer
+    lineCartesianLayer
+  }
+}
 
 /** Creates and remembers a [LineCartesianLayer.Line]. */
 @Composable

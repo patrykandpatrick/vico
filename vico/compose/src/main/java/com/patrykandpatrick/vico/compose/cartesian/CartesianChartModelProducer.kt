@@ -27,6 +27,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalInspectionMode
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModelWrapper
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModelWrapperState
+import com.patrykandpatrick.vico.compose.common.rememberWrappedValue
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartRanges
@@ -61,6 +62,7 @@ internal fun CartesianChartModelProducer.collectAsState(
   val extraStore = remember(chart.id) { MutableExtraStore() }
   val scope = rememberCoroutineScope()
   val isInPreview = LocalInspectionMode.current
+  val chartState = rememberWrappedValue(chart)
   DisposableEffect(chart.id, runInitialAnimation, isInPreview) {
     var mainAnimationJob: Job? = null
     var animationFrameJob: Job? = null
@@ -88,7 +90,7 @@ internal fun CartesianChartModelProducer.collectAsState(
                     isAnimationFrameGenerationRunning = true
                     animationFrameJob =
                       scope.launch {
-                        transformModel(chart.id, fraction)
+                        transformModel(chartState.value.id, fraction)
                         isAnimationFrameGenerationRunning = false
                       }
                   }
@@ -96,7 +98,7 @@ internal fun CartesianChartModelProducer.collectAsState(
                     finalAnimationFrameJob =
                       scope.launch(Dispatchers.Default) {
                         animationFrameJob?.cancelAndJoin()
-                        transformModel(chart.id, fraction)
+                        transformModel(chartState.value.id, fraction)
                         isAnimationFrameGenerationRunning = false
                       }
                   }
@@ -105,12 +107,12 @@ internal fun CartesianChartModelProducer.collectAsState(
             }
         } else {
           finalAnimationFrameJob =
-            scope.launch { transformModel(chart.id, Animation.range.endInclusive) }
+            scope.launch { transformModel(chartState.value.id, Animation.range.endInclusive) }
         }
       }
     scope.launch {
       registerForUpdates(
-        key = chart.id,
+        key = chartState.value.id,
         cancelAnimation = {
           mainAnimationJob?.cancelAndJoin()
           animationFrameJob?.cancelAndJoin()
@@ -119,13 +121,15 @@ internal fun CartesianChartModelProducer.collectAsState(
           isAnimationFrameGenerationRunning = false
         },
         startAnimation = startAnimation,
-        prepareForTransformation = chart::prepareForTransformation,
-        transform = chart::transform,
+        prepareForTransformation = { model, extraStore, ranges ->
+          chartState.value.prepareForTransformation(model, extraStore, ranges)
+        },
+        transform = { extraStore, fraction -> chartState.value.transform(extraStore, fraction) },
         extraStore = extraStore,
         updateRanges = { model ->
           ranges.reset()
           if (model != null) {
-            chart.updateRanges(ranges, model)
+            chartState.value.updateRanges(ranges, model)
             ranges.toImmutable()
           } else {
             CartesianChartRanges.Empty
@@ -139,7 +143,7 @@ internal fun CartesianChartModelProducer.collectAsState(
       mainAnimationJob?.cancel()
       animationFrameJob?.cancel()
       finalAnimationFrameJob?.cancel()
-      unregisterFromUpdates(chart.id)
+      unregisterFromUpdates(chartState.value.id)
     }
   }
   return modelWrapperState

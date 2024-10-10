@@ -21,7 +21,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
-import android.graphics.PorterDuff
+import androidx.compose.runtime.Stable
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
 import com.patrykandpatrick.vico.core.cartesian.HorizontalDimensions
@@ -43,7 +43,6 @@ import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.DrawingContext
 import com.patrykandpatrick.vico.core.common.Fill
 import com.patrykandpatrick.vico.core.common.Insets
-import com.patrykandpatrick.vico.core.common.Point
 import com.patrykandpatrick.vico.core.common.VerticalPosition
 import com.patrykandpatrick.vico.core.common.component.Component
 import com.patrykandpatrick.vico.core.common.component.TextComponent
@@ -58,32 +57,27 @@ import com.patrykandpatrick.vico.core.common.half
 import com.patrykandpatrick.vico.core.common.inBounds
 import com.patrykandpatrick.vico.core.common.orZero
 import com.patrykandpatrick.vico.core.common.saveLayer
+import java.util.Objects
 import kotlin.math.ceil
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
 
-/**
- * Draws the content of line charts.
- *
- * @property lineProvider provides the [Line]s.
- * @property pointSpacingDp the point spacing (in dp).
- * @property rangeProvider overrides the _x_ and _y_ ranges.
- * @property verticalAxisPosition the position of the [VerticalAxis] with which the
- *   [LineCartesianLayer] should be associated. Use this for independent [CartesianLayer] scaling.
- * @property drawingModelInterpolator interpolates the [LineCartesianLayerDrawingModel]s.
- */
-public open class LineCartesianLayer(
-  public var lineProvider: LineProvider,
-  public var pointSpacingDp: Float = Defaults.POINT_SPACING,
-  public var rangeProvider: CartesianLayerRangeProvider = CartesianLayerRangeProvider.auto(),
-  public var verticalAxisPosition: Axis.Position.Vertical? = null,
-  public var drawingModelInterpolator:
+/** Draws the content of line charts. */
+@Stable
+public open class LineCartesianLayer
+protected constructor(
+  protected val lineProvider: LineProvider,
+  protected val pointSpacingDp: Float = Defaults.POINT_SPACING,
+  protected val rangeProvider: CartesianLayerRangeProvider = CartesianLayerRangeProvider.auto(),
+  protected val verticalAxisPosition: Axis.Position.Vertical? = null,
+  protected val drawingModelInterpolator:
     CartesianLayerDrawingModelInterpolator<
       LineCartesianLayerDrawingModel.PointInfo,
       LineCartesianLayerDrawingModel,
     > =
     CartesianLayerDrawingModelInterpolator.default(),
+  protected val drawingModelKey: ExtraStore.Key<LineCartesianLayerDrawingModel>,
 ) : BaseCartesianLayer<LineCartesianLayerModel>() {
   /**
    * Defines the appearance of a line in a line chart.
@@ -303,11 +297,37 @@ public open class LineCartesianLayer(
 
   protected val lineFillCanvas: Canvas = Canvas()
 
-  protected val drawingModelKey: ExtraStore.Key<LineCartesianLayerDrawingModel> = ExtraStore.Key()
-
   protected val cacheKeyNamespace: CacheStore.KeyNamespace = CacheStore.KeyNamespace()
 
   override val markerTargets: Map<Double, List<CartesianMarker.Target>> = _markerTargets
+
+  /**
+   * @property lineProvider provides the [Line]s.
+   * @property pointSpacingDp the point spacing (in dp).
+   * @property rangeProvider overrides the _x_ and _y_ ranges.
+   * @property verticalAxisPosition the position of the [VerticalAxis] with which the
+   *   [LineCartesianLayer] should be associated. Use this for independent [CartesianLayer] scaling.
+   * @property drawingModelInterpolator interpolates the [LineCartesianLayerDrawingModel]s.
+   */
+  public constructor(
+    lineProvider: LineProvider,
+    pointSpacingDp: Float = Defaults.POINT_SPACING,
+    rangeProvider: CartesianLayerRangeProvider = CartesianLayerRangeProvider.auto(),
+    verticalAxisPosition: Axis.Position.Vertical? = null,
+    drawingModelInterpolator:
+      CartesianLayerDrawingModelInterpolator<
+        LineCartesianLayerDrawingModel.PointInfo,
+        LineCartesianLayerDrawingModel,
+      > =
+      CartesianLayerDrawingModelInterpolator.default(),
+  ) : this(
+    lineProvider,
+    pointSpacingDp,
+    rangeProvider,
+    verticalAxisPosition,
+    drawingModelInterpolator,
+    ExtraStore.Key(),
+  )
 
   override fun drawInternal(context: CartesianDrawingContext, model: LineCartesianLayerModel) {
     with(context) {
@@ -617,6 +637,46 @@ public open class LineCartesianLayer(
       }
     )
   }
+
+  /** Creates a new [LineCartesianLayer] based on this one. */
+  public fun copy(
+    lineProvider: LineProvider = this.lineProvider,
+    pointSpacingDp: Float = this.pointSpacingDp,
+    rangeProvider: CartesianLayerRangeProvider = this.rangeProvider,
+    verticalAxisPosition: Axis.Position.Vertical? = this.verticalAxisPosition,
+    drawingModelInterpolator:
+      CartesianLayerDrawingModelInterpolator<
+        LineCartesianLayerDrawingModel.PointInfo,
+        LineCartesianLayerDrawingModel,
+      > =
+      this.drawingModelInterpolator,
+  ): LineCartesianLayer =
+    LineCartesianLayer(
+      lineProvider,
+      pointSpacingDp,
+      rangeProvider,
+      verticalAxisPosition,
+      drawingModelInterpolator,
+      drawingModelKey,
+    )
+
+  override fun equals(other: Any?): Boolean =
+    this === other ||
+      other is LineCartesianLayer &&
+        lineProvider == other.lineProvider &&
+        pointSpacingDp == other.pointSpacingDp &&
+        rangeProvider == other.rangeProvider &&
+        verticalAxisPosition == other.verticalAxisPosition &&
+        drawingModelInterpolator == other.drawingModelInterpolator
+
+  override fun hashCode(): Int =
+    Objects.hash(
+      lineProvider,
+      pointSpacingDp,
+      rangeProvider,
+      verticalAxisPosition,
+      drawingModelInterpolator,
+    )
 
   /** Provides access to [Line] and [Point] factory functions. */
   public companion object

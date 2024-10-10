@@ -135,8 +135,8 @@ private fun ViewChart3(modelProducer: CartesianChartModelProducer, modifier: Mod
   AndroidViewBinding(Chart3Binding::inflate, modifier) {
     chartView.modelProducer = modelProducer
     val chart = requireNotNull(chartView.chart)
-    (chart.layers[0] as LineCartesianLayer).rangeProvider = rangeProvider
-    chartView.chart = chart.copy(marker = marker)
+    val lineLayer = (chart.layers[0] as LineCartesianLayer).copy(rangeProvider = rangeProvider)
+    chartView.chart = chart.copy(lineLayer, marker = marker)
   }
 }
 
