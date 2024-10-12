@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -122,13 +122,16 @@ public interface AxisItemPlacer {
 
         public companion object {
             /**
-             * Creates a base [AxisItemPlacer.Horizontal] implementation. [spacing] defines how often items should be
-             * drawn (relative to [ChartValues.xStep]). [offset] is the number of labels (and, for
-             * [HorizontalLayout.FullWidth], their corresponding ticks and guidelines) to skip from the start.
-             * [shiftExtremeTicks] defines whether ticks whose _x_ values are bounds of the _x_-axis value range should
-             * be shifted to the edges of the axis bounds, to be aligned with the vertical axes.
-             * [addExtremeLabelPadding] specifies whether, for [HorizontalLayout.FullWidth], padding should be added for
-             * the first and last labels, ensuring their visibility.
+             * Instantiates a base [AxisItemPlacer.Horizontal] implementation.
+             *
+             * @param spacing how often labels—and, for [HorizontalLayout.FullWidth], their corresponding lines—should
+             * be drawn (relative to [ChartValues.xStep]).
+             * @param offset the number of labels—and, for [HorizontalLayout.FullWidth], their corresponding lines—to
+             * skip from the start.
+             * @param shiftExtremeTicks used as the return value of [AxisItemPlacer.Horizontal.getShiftExtremeTicks].
+             * @param addExtremeLabelPadding whether padding should be added for the [ChartValues.minX] and
+             * [ChartValues.maxX] labels, if such labels are present, to ensure their visibility. This requires
+             * [HorizontalLayout.FullWidth].
              */
             public fun default(
                 spacing: Int = 1,
