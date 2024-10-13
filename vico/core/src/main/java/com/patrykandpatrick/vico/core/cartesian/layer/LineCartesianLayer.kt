@@ -58,6 +58,7 @@ import com.patrykandpatrick.vico.core.common.half
 import com.patrykandpatrick.vico.core.common.inBounds
 import com.patrykandpatrick.vico.core.common.orZero
 import com.patrykandpatrick.vico.core.common.saveLayer
+import com.patrykandpatrick.vico.core.wahoo.setNaNto0
 import kotlin.math.ceil
 import kotlin.math.max
 import kotlin.math.min
@@ -383,8 +384,8 @@ public open class LineCartesianLayer(
         entry,
         limitedCanvasY,
         lineFillBitmap.getPixel(
-          canvasX.roundToInt().coerceIn(0, lineFillBitmap.width - 1),
-          limitedCanvasY.roundToInt(),
+          canvasX.setNaNto0().roundToInt().coerceIn(0, lineFillBitmap.width - 1),
+          limitedCanvasY.setNaNto0().roundToInt(),
         ),
       )
   }
