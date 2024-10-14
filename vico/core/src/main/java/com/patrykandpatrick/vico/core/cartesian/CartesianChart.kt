@@ -207,8 +207,7 @@ public open class CartesianChart(
       insets.clear()
       val persistentMarkerHashCode = Objects.hash(persistentMarkers, model.extraStore)
       if (persistentMarkerHashCode != previousPersistentMarkerHashCode) {
-        persistentMarkerMap.clear()
-        persistentMarkers?.invoke(persistentMarkerScope, model.extraStore)
+        updatePersistentMarkers(model.extraStore)
         previousPersistentMarkerHashCode = persistentMarkerHashCode
       }
       model.forEachWithLayer(
@@ -245,6 +244,11 @@ public open class CartesianChart(
         bottom = layerBounds.bottom + insets.bottom + legendHeight,
       )
     }
+  }
+
+  private fun updatePersistentMarkers(extraStore: ExtraStore) {
+    persistentMarkerMap.clear()
+    persistentMarkers?.invoke(persistentMarkerScope, extraStore)
   }
 
   /** Draws the [CartesianChart]. */
