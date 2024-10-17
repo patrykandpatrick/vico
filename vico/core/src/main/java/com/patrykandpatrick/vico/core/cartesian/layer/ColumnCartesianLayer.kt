@@ -398,11 +398,10 @@ protected constructor(
       val xSpacing = columnCollectionWidth + columnCollectionSpacingDp.pixels
       horizontalDimensions.ensureValuesAtLeast(
         xSpacing = xSpacing,
-        scalableStartPadding =
-          columnCollectionWidth.half + layerPadding.scalableStartPaddingDp.pixels,
-        scalableEndPadding = columnCollectionWidth.half + layerPadding.scalableEndPaddingDp.pixels,
-        unscalableStartPadding = layerPadding.unscalableStartPaddingDp.pixels,
-        unscalableEndPadding = layerPadding.unscalableEndPaddingDp.pixels,
+        scalableStartPadding = columnCollectionWidth.half + layerPadding.scalableStartDp.pixels,
+        scalableEndPadding = columnCollectionWidth.half + layerPadding.scalableEndDp.pixels,
+        unscalableStartPadding = layerPadding.unscalableStartDp.pixels,
+        unscalableEndPadding = layerPadding.unscalableEndDp.pixels,
       )
     }
   }
@@ -591,6 +590,7 @@ protected constructor(
   }
 
   /** Provides column [LineComponent]s to [ColumnCartesianLayer]s. */
+  @Immutable
   public interface ColumnProvider {
     /** Returns the [LineComponent] for the column with the given properties. */
     public fun getColumn(

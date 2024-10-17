@@ -106,4 +106,26 @@ public open class ShapeComponent(
     shadow: Shadow? = this.shadow,
   ): ShapeComponent =
     ShapeComponent(color, shape, margins, strokeColor, strokeThicknessDp, shader, shadow)
+
+  override fun equals(other: Any?): Boolean =
+    this === other ||
+      other is ShapeComponent &&
+        color == other.color &&
+        shape == other.shape &&
+        margins == other.margins &&
+        strokeColor == other.strokeColor &&
+        strokeThicknessDp == other.strokeThicknessDp &&
+        shader == other.shader &&
+        shadow == other.shadow
+
+  override fun hashCode(): Int {
+    var result = color
+    result = 31 * result + shape.hashCode()
+    result = 31 * result + margins.hashCode()
+    result = 31 * result + strokeColor
+    result = 31 * result + strokeThicknessDp.hashCode()
+    result = 31 * result + shader.hashCode()
+    result = 31 * result + shadow.hashCode()
+    return result
+  }
 }

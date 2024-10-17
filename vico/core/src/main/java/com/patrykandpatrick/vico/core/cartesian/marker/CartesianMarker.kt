@@ -16,12 +16,14 @@
 
 package com.patrykandpatrick.vico.core.cartesian.marker
 
+import androidx.compose.runtime.Immutable
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.core.cartesian.CartesianLayerInsetter
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
 
 /** Marks [CartesianChart] objects. */
+@Immutable
 public interface CartesianMarker : CartesianLayerInsetter<CartesianChartModel> {
   /** Draws the [CartesianMarker] for the specified [Target]s. */
   public fun draw(context: CartesianDrawingContext, targets: List<Target>)

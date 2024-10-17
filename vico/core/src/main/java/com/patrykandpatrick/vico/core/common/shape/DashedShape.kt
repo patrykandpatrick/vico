@@ -145,6 +145,22 @@ public class DashedShape(
     }
   }
 
+  override fun equals(other: Any?): Boolean =
+    this === other ||
+      other is DashedShape &&
+        shape == other.shape &&
+        dashLengthDp == other.dashLengthDp &&
+        gapLengthDp == other.gapLengthDp &&
+        fitStrategy == other.fitStrategy
+
+  override fun hashCode(): Int {
+    var result = shape.hashCode()
+    result = 31 * result + dashLengthDp.hashCode()
+    result = 31 * result + gapLengthDp.hashCode()
+    result = 31 * result + fitStrategy.hashCode()
+    return result
+  }
+
   /** Defines how a [DashedShape] is to be rendered. */
   public enum class FitStrategy {
     /**

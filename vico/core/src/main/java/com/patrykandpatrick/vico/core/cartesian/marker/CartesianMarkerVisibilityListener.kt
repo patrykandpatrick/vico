@@ -16,7 +16,10 @@
 
 package com.patrykandpatrick.vico.core.cartesian.marker
 
+import androidx.compose.runtime.Immutable
+
 /** Allows for listening to [CartesianMarker] visibility changes. */
+@Immutable
 public interface CartesianMarkerVisibilityListener {
   /** Called when the specified [CartesianMarker] is shown. */
   public fun onShown(marker: CartesianMarker, targets: List<CartesianMarker.Target>) {}

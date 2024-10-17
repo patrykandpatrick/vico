@@ -101,6 +101,28 @@ public class HorizontalBox(
     }
   }
 
+  override fun equals(other: Any?): Boolean =
+    this === other ||
+      other is HorizontalBox &&
+        box == other.box &&
+        labelComponent == other.labelComponent &&
+        horizontalLabelPosition == other.horizontalLabelPosition &&
+        verticalLabelPosition == other.verticalLabelPosition &&
+        labelRotationDegrees == other.labelRotationDegrees &&
+        verticalAxisPosition == other.verticalAxisPosition
+
+  override fun hashCode(): Int {
+    var result = y.hashCode()
+    result = 31 * result + box.hashCode()
+    result = 31 * result + labelComponent.hashCode()
+    result = 31 * result + label.hashCode()
+    result = 31 * result + horizontalLabelPosition.hashCode()
+    result = 31 * result + verticalLabelPosition.hashCode()
+    result = 31 * result + labelRotationDegrees.hashCode()
+    result = 31 * result + verticalAxisPosition.hashCode()
+    return result
+  }
+
   /** @suppress */
   @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
   public companion object {

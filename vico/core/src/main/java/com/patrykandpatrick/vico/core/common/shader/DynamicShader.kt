@@ -17,7 +17,6 @@
 package com.patrykandpatrick.vico.core.common.shader
 
 import android.graphics.Bitmap
-import android.graphics.BitmapShader
 import android.graphics.BlendMode
 import android.graphics.ComposeShader
 import android.graphics.PorterDuff
@@ -25,10 +24,12 @@ import android.graphics.RectF
 import android.graphics.Shader
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.runtime.Immutable
 import com.patrykandpatrick.vico.core.common.DrawingContext
 import com.patrykandpatrick.vico.core.common.component.Component
 
 /** Creates [Shader]s on demand. */
+@Immutable
 public fun interface DynamicShader {
   /** Creates a [Shader] by using the provided [bounds]. */
   public fun provideShader(context: DrawingContext, bounds: RectF): Shader =
@@ -53,18 +54,9 @@ public fun interface DynamicShader {
     /** Creates a [DynamicShader] out of the given [bitmap]. */
     public fun bitmap(
       bitmap: Bitmap,
-      tileXMode: Shader.TileMode = Shader.TileMode.REPEAT,
-      tileYMode: Shader.TileMode = tileXMode,
-    ): DynamicShader =
-      object : CacheableDynamicShader() {
-        override fun createShader(
-          context: DrawingContext,
-          left: Float,
-          top: Float,
-          right: Float,
-          bottom: Float,
-        ): Shader = BitmapShader(bitmap, tileXMode, tileYMode)
-      }
+      xTileMode: Shader.TileMode = Shader.TileMode.REPEAT,
+      yTileMode: Shader.TileMode = xTileMode,
+    ): DynamicShader = VicoBitmapShader(bitmap, xTileMode, yTileMode)
 
     /**
      * Creates a [ComposeShader] out of two [DynamicShader]s, combining [first] and [second] via
@@ -75,13 +67,7 @@ public fun interface DynamicShader {
       first: DynamicShader,
       second: DynamicShader,
       mode: BlendMode,
-    ): DynamicShader = DynamicShader { context, left, top, right, bottom ->
-      ComposeShader(
-        first.provideShader(context, left, top, right, bottom),
-        second.provideShader(context, left, top, right, bottom),
-        mode,
-      )
-    }
+    ): DynamicShader = VicoComposeShader(first, second, VicoComposeShader.Mode.Blend(mode))
 
     /**
      * Creates a [ComposeShader] out of two [DynamicShader]s, combining [first] and [second] via
@@ -91,13 +77,7 @@ public fun interface DynamicShader {
       first: DynamicShader,
       second: DynamicShader,
       mode: PorterDuff.Mode,
-    ): DynamicShader = DynamicShader { context, left, top, right, bottom ->
-      ComposeShader(
-        first.provideShader(context, left, top, right, bottom),
-        second.provideShader(context, left, top, right, bottom),
-        mode,
-      )
-    }
+    ): DynamicShader = VicoComposeShader(first, second, VicoComposeShader.Mode.PorterDuff(mode))
 
     /**
      * Creates a [DynamicShader] in the form of a horizontal gradient.

@@ -58,7 +58,7 @@ protected constructor(
   tickLengthDp: Float,
   guideline: LineComponent?,
   public val itemPlacer: ItemPlacer,
-  sizeConstraint: SizeConstraint,
+  size: Size,
   titleComponent: TextComponent?,
   title: CharSequence?,
 ) :
@@ -70,7 +70,7 @@ protected constructor(
     tick,
     tickLengthDp,
     guideline,
-    sizeConstraint,
+    size,
     titleComponent,
     title,
   ) {
@@ -104,7 +104,7 @@ protected constructor(
     tickLengthDp,
     guideline,
     itemPlacer,
-    SizeConstraint.Auto(),
+    Size.Auto(),
     titleComponent,
     title,
   )
@@ -399,8 +399,8 @@ protected constructor(
     with(context) {
       val fullXRange = getFullXRange(horizontalDimensions)
 
-      when (val constraint = sizeConstraint) {
-        is SizeConstraint.Auto -> {
+      when (size) {
+        is Size.Auto -> {
           val labelHeight = getMaxLabelHeight(horizontalDimensions, fullXRange, maxLabelWidth)
           val titleComponentHeight =
             title
@@ -416,21 +416,14 @@ protected constructor(
               titleComponentHeight +
               (if (position == Axis.Position.Horizontal.Bottom) lineThickness else 0f) +
               tickLength)
-            .coerceAtMost(maximumValue = canvasBounds.height() / MAX_HEIGHT_DIVISOR)
-            .coerceIn(
-              minimumValue = constraint.minSizeDp.pixels,
-              maximumValue = constraint.maxSizeDp.pixels,
-            )
+            .coerceAtMost(canvasBounds.height() / MAX_HEIGHT_DIVISOR)
+            .coerceIn(size.minSizeDp.pixels, size.maxSizeDp.pixels)
         }
-        is SizeConstraint.Exact -> constraint.sizeDp.pixels
-        is SizeConstraint.Fraction -> canvasBounds.height() * constraint.fraction
-        is SizeConstraint.TextWidth ->
+        is Size.Exact -> size.sizeDp.pixels
+        is Size.Fraction -> canvasBounds.height() * size.fraction
+        is Size.TextWidth ->
           label
-            ?.getHeight(
-              context = this,
-              text = constraint.text,
-              rotationDegrees = labelRotationDegrees,
-            )
+            ?.getHeight(context = this, text = size.text, rotationDegrees = labelRotationDegrees)
             .orZero
       }
     }
@@ -485,7 +478,7 @@ protected constructor(
     tickLengthDp: Float = this.tickLengthDp,
     guideline: LineComponent? = this.guideline,
     itemPlacer: ItemPlacer = this.itemPlacer,
-    sizeConstraint: SizeConstraint = this.sizeConstraint,
+    size: Size = this.size,
     titleComponent: TextComponent? = this.titleComponent,
     title: CharSequence? = this.title,
   ): HorizontalAxis<P> =
@@ -499,10 +492,15 @@ protected constructor(
       tickLengthDp,
       guideline,
       itemPlacer,
-      sizeConstraint,
+      size,
       titleComponent,
       title,
     )
+
+  override fun equals(other: Any?): Boolean =
+    super.equals(other) && other is HorizontalAxis<*> && itemPlacer == other.itemPlacer
+
+  override fun hashCode(): Int = 31 * super.hashCode() + itemPlacer.hashCode()
 
   /** Determines for what _x_ values a [HorizontalAxis] displays labels, ticks, and guidelines. */
   public interface ItemPlacer {
@@ -639,7 +637,7 @@ protected constructor(
       tickLengthDp: Float = 0f,
       guideline: LineComponent? = null,
       itemPlacer: ItemPlacer = ItemPlacer.aligned(),
-      sizeConstraint: SizeConstraint = SizeConstraint.Auto(),
+      size: Size = Size.Auto(),
       titleComponent: TextComponent? = null,
       title: CharSequence? = null,
     ): HorizontalAxis<Axis.Position.Horizontal.Top> =
@@ -653,7 +651,7 @@ protected constructor(
         tickLengthDp,
         guideline,
         itemPlacer,
-        sizeConstraint,
+        size,
         titleComponent,
         title,
       )
@@ -668,7 +666,7 @@ protected constructor(
       tickLengthDp: Float = 0f,
       guideline: LineComponent? = null,
       itemPlacer: ItemPlacer = ItemPlacer.aligned(),
-      sizeConstraint: SizeConstraint = SizeConstraint.Auto(),
+      size: Size = Size.Auto(),
       titleComponent: TextComponent? = null,
       title: CharSequence? = null,
     ): HorizontalAxis<Axis.Position.Horizontal.Bottom> =
@@ -682,7 +680,7 @@ protected constructor(
         tickLengthDp,
         guideline,
         itemPlacer,
-        sizeConstraint,
+        size,
         titleComponent,
         title,
       )

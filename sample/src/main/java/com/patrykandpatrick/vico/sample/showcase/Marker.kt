@@ -21,6 +21,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.dp
+import androidx.core.graphics.ColorUtils
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberAxisGuidelineComponent
 import com.patrykandpatrick.vico.compose.common.component.fixed
 import com.patrykandpatrick.vico.compose.common.component.rememberLayeredComponent
@@ -39,7 +40,6 @@ import com.patrykandpatrick.vico.core.common.LayeredComponent
 import com.patrykandpatrick.vico.core.common.component.Shadow
 import com.patrykandpatrick.vico.core.common.component.ShapeComponent
 import com.patrykandpatrick.vico.core.common.component.TextComponent
-import com.patrykandpatrick.vico.core.common.copyColor
 import com.patrykandpatrick.vico.core.common.shape.Corner
 import com.patrykandpatrick.vico.core.common.shape.CorneredShape
 
@@ -89,7 +89,7 @@ internal fun rememberMarker(
           if (showIndicator) {
             { color ->
               LayeredComponent(
-                rear = ShapeComponent(color.copyColor(alpha = 0.15f), CorneredShape.Pill),
+                rear = ShapeComponent(ColorUtils.setAlphaComponent(color, 38), CorneredShape.Pill),
                 front =
                   LayeredComponent(
                     rear =

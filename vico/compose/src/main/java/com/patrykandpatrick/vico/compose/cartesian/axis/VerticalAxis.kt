@@ -43,7 +43,7 @@ public fun VerticalAxis.Companion.rememberStart(
   tickLength: Dp = Defaults.AXIS_TICK_LENGTH.dp,
   guideline: LineComponent? = rememberAxisGuidelineComponent(),
   itemPlacer: VerticalAxis.ItemPlacer = remember { VerticalAxis.ItemPlacer.step() },
-  sizeConstraint: BaseAxis.SizeConstraint = remember { BaseAxis.SizeConstraint.Auto() },
+  size: BaseAxis.Size = remember { BaseAxis.Size.Auto() },
   titleComponent: TextComponent? = null,
   title: CharSequence? = null,
 ): VerticalAxis<Axis.Position.Vertical.Start> =
@@ -58,7 +58,7 @@ public fun VerticalAxis.Companion.rememberStart(
     tickLength.value,
     guideline,
     itemPlacer,
-    sizeConstraint,
+    size,
     titleComponent,
     title,
   ) {
@@ -73,7 +73,7 @@ public fun VerticalAxis.Companion.rememberStart(
       tickLength.value,
       guideline,
       itemPlacer,
-      sizeConstraint,
+      size,
       titleComponent,
       title,
     )
@@ -94,7 +94,7 @@ public fun VerticalAxis.Companion.rememberEnd(
   tickLength: Dp = Defaults.AXIS_TICK_LENGTH.dp,
   guideline: LineComponent? = rememberAxisGuidelineComponent(),
   itemPlacer: VerticalAxis.ItemPlacer = remember { VerticalAxis.ItemPlacer.step() },
-  sizeConstraint: BaseAxis.SizeConstraint = remember { BaseAxis.SizeConstraint.Auto() },
+  size: BaseAxis.Size = remember { BaseAxis.Size.Auto() },
   titleComponent: TextComponent? = null,
   title: CharSequence? = null,
 ): VerticalAxis<Axis.Position.Vertical.End> =
@@ -109,7 +109,7 @@ public fun VerticalAxis.Companion.rememberEnd(
     tickLength.value,
     guideline,
     itemPlacer,
-    sizeConstraint,
+    size,
     titleComponent,
     title,
   ) {
@@ -124,7 +124,7 @@ public fun VerticalAxis.Companion.rememberEnd(
       tickLength.value,
       guideline,
       itemPlacer,
-      sizeConstraint,
+      size,
       titleComponent,
       title,
     )

@@ -21,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.core.common.AdditionScope
+import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.Dimensions
 import com.patrykandpatrick.vico.core.common.DrawingContext
 import com.patrykandpatrick.vico.core.common.HorizontalLegend
@@ -33,38 +34,32 @@ import com.patrykandpatrick.vico.core.common.data.ExtraStore
 @Composable
 public fun <M : MeasuringContext, D : DrawingContext> rememberVerticalLegend(
   items: AdditionScope<LegendItem>.(ExtraStore) -> Unit,
-  iconSize: Dp,
-  iconPadding: Dp,
-  spacing: Dp = 0.dp,
+  iconSize: Dp = Defaults.LEGEND_ICON_SIZE.dp,
+  iconLabelSpacing: Dp = Defaults.LEGEND_ICON_LABEL_SPACING.dp,
+  rowSpacing: Dp = Defaults.LEGEND_ROW_SPACING.dp,
   padding: Dimensions = Dimensions.Empty,
 ): VerticalLegend<M, D> =
-  remember(items, iconSize, iconPadding, spacing, padding) {
-    VerticalLegend(
-      items = items,
-      iconSizeDp = iconSize.value,
-      iconPaddingDp = iconPadding.value,
-      spacingDp = spacing.value,
-      padding = padding,
-    )
+  remember(items, iconSize, iconLabelSpacing, rowSpacing, padding) {
+    VerticalLegend(items, iconSize.value, iconLabelSpacing.value, rowSpacing.value, padding)
   }
 
 /** Creates and remembers a [HorizontalLegend]. */
 @Composable
 public fun <M : MeasuringContext, D : DrawingContext> rememberHorizontalLegend(
   items: AdditionScope<LegendItem>.(ExtraStore) -> Unit,
-  iconSize: Dp,
-  iconPadding: Dp,
-  lineSpacing: Dp = 0.dp,
-  spacing: Dp = 0.dp,
+  iconSize: Dp = Defaults.LEGEND_ICON_SIZE.dp,
+  iconLabelSpacing: Dp = Defaults.LEGEND_ICON_LABEL_SPACING.dp,
+  rowSpacing: Dp = Defaults.LEGEND_ROW_SPACING.dp,
+  columnSpacing: Dp = Defaults.LEGEND_COLUMN_SPACING.dp,
   padding: Dimensions = Dimensions.Empty,
 ): HorizontalLegend<M, D> =
-  remember(items, iconSize, iconPadding, lineSpacing, spacing, padding) {
+  remember(items, iconSize, iconLabelSpacing, rowSpacing, columnSpacing, padding) {
     HorizontalLegend(
-      items = items,
-      iconSizeDp = iconSize.value,
-      iconPaddingDp = iconPadding.value,
-      lineSpacingDp = lineSpacing.value,
-      spacingDp = spacing.value,
-      padding = padding,
+      items,
+      iconSize.value,
+      iconLabelSpacing.value,
+      rowSpacing.value,
+      columnSpacing.value,
+      padding,
     )
   }

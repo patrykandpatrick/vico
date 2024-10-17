@@ -117,8 +117,7 @@ private fun ComposeChart4(modelProducer: CartesianChartModelProducer, modifier: 
           ),
         endAxis = VerticalAxis.rememberEnd(),
         marker = rememberMarker(),
-        layerPadding =
-          cartesianLayerPadding(scalableStartPadding = 16.dp, scalableEndPadding = 16.dp),
+        layerPadding = cartesianLayerPadding(scalableStart = 16.dp, scalableEnd = 16.dp),
       ),
     modelProducer = modelProducer,
     modifier = modifier,

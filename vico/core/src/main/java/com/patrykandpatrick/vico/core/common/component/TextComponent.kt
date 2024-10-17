@@ -71,6 +71,7 @@ private const val DEF_LAYOUT_SIZE = 100000
  * @property background drawn behind the text.
  * @property minWidth defines the minimum width.
  */
+@Immutable
 public open class TextComponent(
   protected val color: Int = Color.BLACK,
   protected val typeface: Typeface = Typeface.DEFAULT,
@@ -415,6 +416,34 @@ public open class TextComponent(
     canvas.save()
     canvas.block()
     canvas.restore()
+  }
+
+  override fun equals(other: Any?): Boolean =
+    this === other ||
+      other is TextComponent &&
+        color == other.color &&
+        typeface == other.typeface &&
+        textSizeSp == other.textSizeSp &&
+        textAlignment == other.textAlignment &&
+        lineCount == other.lineCount &&
+        truncateAt == other.truncateAt &&
+        margins == other.margins &&
+        padding == other.padding &&
+        background == other.background &&
+        minWidth == other.minWidth
+
+  override fun hashCode(): Int {
+    var result = color
+    result = 31 * result + typeface.hashCode()
+    result = 31 * result + textSizeSp.hashCode()
+    result = 31 * result + textAlignment.hashCode()
+    result = 31 * result + lineCount
+    result = 31 * result + truncateAt.hashCode()
+    result = 31 * result + margins.hashCode()
+    result = 31 * result + padding.hashCode()
+    result = 31 * result + background.hashCode()
+    result = 31 * result + minWidth.hashCode()
+    return result
   }
 
   /** Defines a [TextComponent]’s minimum width. */

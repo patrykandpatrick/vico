@@ -16,6 +16,7 @@
 
 package com.patrykandpatrick.vico.core.cartesian.decoration
 
+import androidx.compose.runtime.Immutable
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayer
@@ -26,6 +27,7 @@ import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayer
  * @see [HorizontalBox]
  * @see [HorizontalLine]
  */
+@Immutable
 public interface Decoration {
   /** Draws content under the [CartesianLayer]s. */
   public fun drawUnderLayers(context: CartesianDrawingContext) {}

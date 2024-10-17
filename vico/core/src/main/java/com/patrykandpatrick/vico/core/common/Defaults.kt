@@ -67,6 +67,10 @@ public object Defaults {
   public const val THRESHOLD_LINE_THICKNESS: Float = 2f
   public const val SHADOW_COLOR: Int = 0x8A000000.toInt()
   public const val CHART_HEIGHT: Float = 200f
+  public const val LEGEND_COLUMN_SPACING: Float = 16f
+  public const val LEGEND_ICON_LABEL_SPACING: Float = 8f
+  public const val LEGEND_ICON_SIZE: Float = 8f
+  public const val LEGEND_ROW_SPACING: Float = 8f
 }
 
 /** @suppress */

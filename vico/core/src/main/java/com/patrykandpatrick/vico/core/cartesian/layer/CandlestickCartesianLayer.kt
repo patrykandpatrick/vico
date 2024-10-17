@@ -268,10 +268,10 @@ protected constructor(
       val xSpacing = candleWidth + candleSpacingDp.pixels
       horizontalDimensions.ensureValuesAtLeast(
         xSpacing = xSpacing,
-        scalableStartPadding = candleWidth.half + layerPadding.scalableStartPaddingDp.pixels,
-        scalableEndPadding = candleWidth.half + layerPadding.scalableEndPaddingDp.pixels,
-        unscalableStartPadding = layerPadding.unscalableStartPaddingDp.pixels,
-        unscalableEndPadding = layerPadding.unscalableEndPaddingDp.pixels,
+        scalableStartPadding = candleWidth.half + layerPadding.scalableStartDp.pixels,
+        scalableEndPadding = candleWidth.half + layerPadding.scalableEndDp.pixels,
+        unscalableStartPadding = layerPadding.unscalableStartDp.pixels,
+        unscalableEndPadding = layerPadding.unscalableEndDp.pixels,
       )
     }
   }

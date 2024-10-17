@@ -83,8 +83,7 @@ private fun ComposeChart1(modelProducer: CartesianChartModelProducer, modifier: 
             itemPlacer = remember { HorizontalAxis.ItemPlacer.segmented() },
           ),
         marker = marker,
-        layerPadding =
-          cartesianLayerPadding(scalableStartPadding = 16.dp, scalableEndPadding = 16.dp),
+        layerPadding = cartesianLayerPadding(scalableStart = 16.dp, scalableEnd = 16.dp),
         persistentMarkers = rememberExtraLambda(marker) { marker at PERSISTENT_MARKER_X },
       ),
     modelProducer = modelProducer,

@@ -22,14 +22,14 @@ import com.patrykandpatrick.vico.core.cartesian.CartesianLayerPadding
 
 /** Creates a [CartesianLayerPadding] instance. */
 public fun cartesianLayerPadding(
-  scalableStartPadding: Dp = 0.dp,
-  scalableEndPadding: Dp = 0.dp,
-  unscalableStartPadding: Dp = 0.dp,
-  unscalableEndPadding: Dp = 0.dp,
+  scalableStart: Dp = 0.dp,
+  scalableEnd: Dp = 0.dp,
+  unscalableStart: Dp = 0.dp,
+  unscalableEnd: Dp = 0.dp,
 ): CartesianLayerPadding =
   CartesianLayerPadding(
-    scalableStartPadding.value,
-    scalableEndPadding.value,
-    unscalableStartPadding.value,
-    unscalableEndPadding.value,
+    scalableStart.value,
+    scalableEnd.value,
+    unscalableStart.value,
+    unscalableEnd.value,
   )

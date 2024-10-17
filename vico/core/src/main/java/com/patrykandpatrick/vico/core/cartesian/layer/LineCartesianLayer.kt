@@ -21,6 +21,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
@@ -35,7 +36,6 @@ import com.patrykandpatrick.vico.core.cartesian.data.LineCartesianLayerDrawingMo
 import com.patrykandpatrick.vico.core.cartesian.data.LineCartesianLayerModel
 import com.patrykandpatrick.vico.core.cartesian.data.MutableCartesianChartRanges
 import com.patrykandpatrick.vico.core.cartesian.data.forEachIn
-import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer.Line
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.core.cartesian.marker.LineCartesianLayerMarkerTarget
 import com.patrykandpatrick.vico.core.cartesian.marker.MutableLineCartesianLayerMarkerTarget
@@ -254,6 +254,7 @@ protected constructor(
    * @param component the point [Component].
    * @property sizeDp the point size (in dp).
    */
+  @Immutable
   public data class Point(
     private val component: Component,
     public val sizeDp: Float = Defaults.POINT_SIZE,
@@ -272,6 +273,7 @@ protected constructor(
   }
 
   /** Provides [Point]s to [LineCartesianLayer]s. */
+  @Immutable
   public interface PointProvider {
     /** Returns the [Point] for the point with the given properties. */
     public fun getPoint(
@@ -571,10 +573,10 @@ protected constructor(
       val xSpacing = maxPointSize + pointSpacingDp.pixels
       horizontalDimensions.ensureValuesAtLeast(
         xSpacing = xSpacing,
-        scalableStartPadding = layerPadding.scalableStartPaddingDp.pixels,
-        scalableEndPadding = layerPadding.scalableEndPaddingDp.pixels,
-        unscalableStartPadding = maxPointSize.half + layerPadding.unscalableStartPaddingDp.pixels,
-        unscalableEndPadding = maxPointSize.half + layerPadding.unscalableEndPaddingDp.pixels,
+        scalableStartPadding = layerPadding.scalableStartDp.pixels,
+        scalableEndPadding = layerPadding.scalableEndDp.pixels,
+        unscalableStartPadding = maxPointSize.half + layerPadding.unscalableStartDp.pixels,
+        unscalableEndPadding = maxPointSize.half + layerPadding.unscalableEndDp.pixels,
       )
     }
   }

@@ -24,17 +24,16 @@ import kotlin.math.max
  * [VerticalLegend] displays legend items in a vertical list.
  *
  * @param items adds the [LegendItem]s.
- * @param iconSizeDp defines the size of all [LegendItem.icon]s.
- * @param iconPaddingDp defines the padding between each [LegendItem.icon] and its corresponding
- *   [LegendItem.label].
- * @param spacingDp defines the vertical spacing between each [LegendItem].
- * @param padding defines the padding of the content.
+ * @param iconSizeDp the [LegendItem.icon] size (in dp).
+ * @param iconLabelSpacingDp the spacing between [LegendItem.icon] and [LegendItem.label] (in dp).
+ * @param rowSpacingDp the row spacing (in dp).
+ * @param padding the content padding.
  */
 public open class VerticalLegend<M : MeasuringContext, D : DrawingContext>(
   protected val items: AdditionScope<LegendItem>.(ExtraStore) -> Unit,
-  protected val iconSizeDp: Float,
-  protected val iconPaddingDp: Float,
-  protected val spacingDp: Float = 0f,
+  protected val iconSizeDp: Float = Defaults.LEGEND_ICON_SIZE,
+  protected val iconLabelSpacingDp: Float = Defaults.LEGEND_ICON_LABEL_SPACING,
+  protected val rowSpacingDp: Float = Defaults.LEGEND_ROW_SPACING,
   protected val padding: Dimensions = Dimensions.Empty,
 ) : Legend<M, D> {
   private val itemManager = LegendItemManager(items)
@@ -47,9 +46,12 @@ public open class VerticalLegend<M : MeasuringContext, D : DrawingContext>(
       itemManager.addItems(this)
       itemManager.itemList.fold(0f) { sum, item ->
         sum +
-          max(iconSizeDp.pixels, item.getLabelHeight(context, maxWidth, iconPaddingDp, iconSizeDp))
+          max(
+              iconSizeDp.pixels,
+              item.getLabelHeight(context, maxWidth, iconLabelSpacingDp, iconSizeDp),
+            )
             .also { height -> heights[item] = height }
-      } + (padding.verticalDp + spacingDp * (itemManager.itemList.size - 1)).pixels
+      } + (padding.verticalDp + rowSpacingDp * (itemManager.itemList.size - 1)).pixels
     }
 
   override fun draw(context: D) {
@@ -76,9 +78,9 @@ public open class VerticalLegend<M : MeasuringContext, D : DrawingContext>(
 
         startX +=
           if (isLtr) {
-            (iconSizeDp + iconPaddingDp).pixels
+            (iconSizeDp + iconLabelSpacingDp).pixels
           } else {
-            -iconPaddingDp.pixels
+            -iconLabelSpacingDp.pixels
           }
 
         item.labelComponent.draw(
@@ -88,11 +90,30 @@ public open class VerticalLegend<M : MeasuringContext, D : DrawingContext>(
           y = centerY,
           horizontalPosition = HorizontalPosition.End,
           maxWidth =
-            (bounds.width() - (iconSizeDp + iconPaddingDp + padding.horizontalDp).pixels).toInt(),
+            (bounds.width() - (iconSizeDp + iconLabelSpacingDp + padding.horizontalDp).pixels)
+              .toInt(),
         )
 
-        currentTop += height + spacingDp.pixels
+        currentTop += height + rowSpacingDp.pixels
       }
     }
+  }
+
+  override fun equals(other: Any?): Boolean =
+    this === other ||
+      other is VerticalLegend<*, *> &&
+        items == other.items &&
+        iconSizeDp == other.iconSizeDp &&
+        iconLabelSpacingDp == other.iconLabelSpacingDp &&
+        rowSpacingDp == other.rowSpacingDp &&
+        padding == other.padding
+
+  override fun hashCode(): Int {
+    var result = items.hashCode()
+    result = 31 * result + iconSizeDp.hashCode()
+    result = 31 * result + iconLabelSpacingDp.hashCode()
+    result = 31 * result + rowSpacingDp.hashCode()
+    result = 31 * result + padding.hashCode()
+    return result
   }
 }
