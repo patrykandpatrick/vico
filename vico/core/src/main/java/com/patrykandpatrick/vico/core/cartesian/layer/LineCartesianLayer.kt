@@ -63,7 +63,16 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
 
-/** Draws the content of line charts. */
+/**
+ * Draws the content of line charts.
+ *
+ * @property lineProvider provides the [Line]s.
+ * @property pointSpacingDp the point spacing (in dp).
+ * @property rangeProvider overrides the _x_ and _y_ ranges.
+ * @property verticalAxisPosition the position of the [VerticalAxis] with which the
+ *   [LineCartesianLayer] should be associated. Use this for independent [CartesianLayer] scaling.
+ * @property drawingModelInterpolator interpolates the [LineCartesianLayerDrawingModel]s.
+ */
 @Stable
 public open class LineCartesianLayer
 protected constructor(
@@ -301,14 +310,7 @@ protected constructor(
 
   override val markerTargets: Map<Double, List<CartesianMarker.Target>> = _markerTargets
 
-  /**
-   * @property lineProvider provides the [Line]s.
-   * @property pointSpacingDp the point spacing (in dp).
-   * @property rangeProvider overrides the _x_ and _y_ ranges.
-   * @property verticalAxisPosition the position of the [VerticalAxis] with which the
-   *   [LineCartesianLayer] should be associated. Use this for independent [CartesianLayer] scaling.
-   * @property drawingModelInterpolator interpolates the [LineCartesianLayerDrawingModel]s.
-   */
+  /** Creates a [LineCartesianLayer]. */
   public constructor(
     lineProvider: LineProvider,
     pointSpacingDp: Float = Defaults.POINT_SPACING,
