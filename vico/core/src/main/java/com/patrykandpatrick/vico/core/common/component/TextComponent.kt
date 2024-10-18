@@ -76,6 +76,7 @@ public open class TextComponent(
   protected val color: Int = Color.BLACK,
   protected val typeface: Typeface = Typeface.DEFAULT,
   protected val textSizeSp: Float = Defaults.TEXT_COMPONENT_TEXT_SIZE,
+  protected val lineHeightSp: Float? = null,
   protected val textAlignment: Layout.Alignment = Layout.Alignment.ALIGN_NORMAL,
   protected val lineCount: Int = TEXT_COMPONENT_LINE_COUNT,
   protected val truncateAt: TextUtils.TruncateAt? = TextUtils.TruncateAt.END,
@@ -340,6 +341,7 @@ public open class TextComponent(
     color: Int = this.color,
     typeface: Typeface = this.typeface,
     textSizeSp: Float = this.textSizeSp,
+    lineHeightSp: Float? = this.lineHeightSp,
     textAlignment: Layout.Alignment = this.textAlignment,
     lineCount: Int = this.lineCount,
     truncateAt: TextUtils.TruncateAt? = this.truncateAt,
@@ -352,6 +354,7 @@ public open class TextComponent(
       color,
       typeface,
       textSizeSp,
+      lineHeightSp,
       textAlignment,
       lineCount,
       truncateAt,
@@ -371,6 +374,7 @@ public open class TextComponent(
     context.run {
       val widthWithoutMargins = width - margins.horizontalDp.wholePixels
       val heightWithoutMargins = height - margins.verticalDp.wholePixels
+      val spacingAddition = computeSpacingAddition(context)
 
       val correctedWidth =
         (when {
@@ -378,7 +382,7 @@ public open class TextComponent(
             rotationDegrees % 0.5f.piRad == 0f -> heightWithoutMargins
             else -> {
               val cumulatedHeight =
-                lineCount * textPaint.lineHeight + padding.verticalDp.wholePixels
+                lineCount * textPaint.defaultLineHeight + spacingAddition + padding.verticalDp.wholePixels
               val alpha = Math.toRadians(rotationDegrees.toDouble())
               val absSinAlpha = sin(alpha).absoluteValue
               val absCosAlpha = cos(alpha).absoluteValue
@@ -395,6 +399,7 @@ public open class TextComponent(
         text.hashCode(),
         textPaint.hashCode(),
         textSizeSp,
+        spacingAddition,
         correctedWidth,
         lineCount,
         truncateAt,
@@ -404,6 +409,7 @@ public open class TextComponent(
         staticLayout(
           source = text,
           paint = textPaint,
+          spacingAddition = spacingAddition,
           width = correctedWidth,
           maxLines = lineCount,
           ellipsize = truncateAt,
@@ -416,6 +422,14 @@ public open class TextComponent(
     canvas.save()
     canvas.block()
     canvas.restore()
+  }
+
+  private fun computeSpacingAddition(context: MeasuringContext): Float {
+    return with(context) {
+      lineHeightSp?.let {
+        spToPx(lineHeightSp) - textPaint.defaultLineHeight
+      } ?: 0f
+    }
   }
 
   override fun equals(other: Any?): Boolean =
@@ -512,7 +526,7 @@ public open class TextComponent(
 
 private val fm: Paint.FontMetrics = Paint.FontMetrics()
 
-internal val Paint.lineHeight: Float
+internal val Paint.defaultLineHeight: Float
   get() {
     getFontMetrics(fm)
     return fm.bottom - fm.top + fm.leading
