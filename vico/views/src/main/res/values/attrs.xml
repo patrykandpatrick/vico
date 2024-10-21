@@ -171,6 +171,7 @@
         <attr name="android:paddingVertical" />
         <attr name="android:textFontWeight" />
         <attr name="android:textSize" />
+        <attr name="android:lineHeight" />
         <attr name="backgroundStyle" format="reference" />
         <attr name="fontFamily" />
         <attr name="fontStyle" />
