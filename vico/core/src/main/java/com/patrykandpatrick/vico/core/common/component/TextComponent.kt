@@ -63,6 +63,7 @@ private const val DEF_LAYOUT_SIZE = 100000
  * @property color the text color.
  * @property typeface the [Typeface].
  * @property textSizeSp the text size (in sp).
+ * @property lineHeightSp the line height (in sp).
  * @property textAlignment the text alignment.
  * @property lineCount the line count.
  * @property truncateAt the truncation type.
