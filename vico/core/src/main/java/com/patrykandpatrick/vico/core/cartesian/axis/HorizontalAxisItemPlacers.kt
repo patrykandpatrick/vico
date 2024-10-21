@@ -109,7 +109,7 @@ internal class AlignedHorizontalAxisItemPlacer(
       offset = offset,
       spacing =
         spacing *
-          if (addExtremeLabelPadding) {
+          if (addExtremeLabelPadding && maxLabelWidth != 0f) {
             ceil(maxLabelWidth / (context.horizontalDimensions.xSpacing * spacing)).toInt()
           } else {
             1

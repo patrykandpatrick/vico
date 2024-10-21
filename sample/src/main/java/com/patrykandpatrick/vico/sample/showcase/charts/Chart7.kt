@@ -117,8 +117,7 @@ private fun ComposeChart7(modelProducer: CartesianChartModelProducer, modifier: 
         bottomAxis =
           HorizontalAxis.rememberBottom(itemPlacer = HorizontalAxis.ItemPlacer.segmented()),
         marker = rememberMarker(),
-        layerPadding =
-          cartesianLayerPadding(scalableStartPadding = 16.dp, scalableEndPadding = 16.dp),
+        layerPadding = cartesianLayerPadding(scalableStart = 16.dp, scalableEnd = 16.dp),
         legend = rememberLegend(),
       ),
     modelProducer = modelProducer,
@@ -174,9 +173,6 @@ private fun rememberLegend(): Legend<CartesianMeasuringContext, CartesianDrawing
           )
         }
       },
-    iconSize = 8.dp,
-    iconPadding = 8.dp,
-    spacing = 4.dp,
     padding = dimensions(top = 8.dp),
   )
 }

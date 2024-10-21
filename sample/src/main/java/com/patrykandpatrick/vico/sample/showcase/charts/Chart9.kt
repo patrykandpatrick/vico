@@ -189,61 +189,62 @@ private fun ViewChart9(modelProducer: CartesianChartModelProducer, modifier: Mod
   AndroidViewBinding(Chart9Binding::inflate, modifier) {
     chartView.modelProducer = modelProducer
     val chart = chartView.chart!!
-    chartView.chart = chart.copy(marker = marker)
-    with(chart.layers[0] as LineCartesianLayer) {
-      lineProvider =
-        LineCartesianLayer.LineProvider.series(
-          LineCartesianLayer.Line(
-            fill =
-              LineCartesianLayer.LineFill.double(
-                topFill = Fill(colors[0].toArgb()),
-                bottomFill = Fill(colors[1].toArgb()),
-              ),
-            areaFill =
-              LineCartesianLayer.AreaFill.double(
-                topFill =
-                  Fill(
-                    DynamicShader.compose(
-                      DynamicShader.component(
-                        component =
-                          ShapeComponent(
-                            color = colors[0].toArgb(),
-                            shape = CorneredShape.Pill,
-                            margins = Dimensions(allDp = 1f),
-                          ),
-                        componentSizeDp = 6f,
-                      ),
-                      DynamicShader.verticalGradient(
-                        android.graphics.Color.BLACK,
-                        android.graphics.Color.TRANSPARENT,
-                      ),
-                      PorterDuff.Mode.DST_IN,
-                    )
-                  ),
-                bottomFill =
-                  Fill(
-                    DynamicShader.compose(
-                      DynamicShader.component(
-                        component =
-                          ShapeComponent(
-                            color = colors[1].toArgb(),
-                            shape = Shape.Rectangle,
-                            margins = Dimensions(horizontalDp = 2f, verticalDp = 0f),
-                          ),
-                        componentSizeDp = 5f,
-                        checkeredArrangement = false,
-                      ),
-                      DynamicShader.verticalGradient(
-                        android.graphics.Color.TRANSPARENT,
-                        android.graphics.Color.BLACK,
-                      ),
-                      PorterDuff.Mode.DST_IN,
-                    )
-                  ),
-              ),
+    val lineCartesianLayer =
+      (chart.layers[0] as LineCartesianLayer).copy(
+        lineProvider =
+          LineCartesianLayer.LineProvider.series(
+            LineCartesianLayer.Line(
+              fill =
+                LineCartesianLayer.LineFill.double(
+                  topFill = Fill(colors[0].toArgb()),
+                  bottomFill = Fill(colors[1].toArgb()),
+                ),
+              areaFill =
+                LineCartesianLayer.AreaFill.double(
+                  topFill =
+                    Fill(
+                      DynamicShader.compose(
+                        DynamicShader.component(
+                          component =
+                            ShapeComponent(
+                              color = colors[0].toArgb(),
+                              shape = CorneredShape.Pill,
+                              margins = Dimensions(allDp = 1f),
+                            ),
+                          componentSizeDp = 6f,
+                        ),
+                        DynamicShader.verticalGradient(
+                          android.graphics.Color.BLACK,
+                          android.graphics.Color.TRANSPARENT,
+                        ),
+                        PorterDuff.Mode.DST_IN,
+                      )
+                    ),
+                  bottomFill =
+                    Fill(
+                      DynamicShader.compose(
+                        DynamicShader.component(
+                          component =
+                            ShapeComponent(
+                              color = colors[1].toArgb(),
+                              shape = Shape.Rectangle,
+                              margins = Dimensions(horizontalDp = 2f, verticalDp = 0f),
+                            ),
+                          componentSizeDp = 5f,
+                          checkeredArrangement = false,
+                        ),
+                        DynamicShader.verticalGradient(
+                          android.graphics.Color.TRANSPARENT,
+                          android.graphics.Color.BLACK,
+                        ),
+                        PorterDuff.Mode.DST_IN,
+                      )
+                    ),
+                ),
+            )
           )
-        )
-    }
+      )
+    chartView.chart = chart.copy(lineCartesianLayer, marker = marker)
   }
 }
 

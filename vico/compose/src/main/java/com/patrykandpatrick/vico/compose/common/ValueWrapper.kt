@@ -14,16 +14,12 @@
  * limitations under the License.
  */
 
-package com.patrykandpatrick.vico.core.common
+package com.patrykandpatrick.vico.compose.common
 
-import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import com.patrykandpatrick.vico.core.common.ValueWrapper
 
-/** Defines the functions required by the library to draw a chart legend. */
-@Immutable
-public interface Legend<M : MeasuringContext, D : DrawingContext> : Bounded {
-  /** Returns the height of the legend. */
-  public fun getHeight(context: M, maxWidth: Float): Float
-
-  /** Draws the legend. */
-  public fun draw(context: D)
-}
+@Composable
+internal fun <T> rememberWrappedValue(value: T): ValueWrapper<T> =
+  remember { ValueWrapper(value) }.also { it.value = value }

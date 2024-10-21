@@ -17,6 +17,7 @@
 package com.patrykandpatrick.vico.core.cartesian.layer
 
 import androidx.annotation.RestrictTo
+import androidx.compose.runtime.Stable
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
 import com.patrykandpatrick.vico.core.cartesian.MutableHorizontalDimensions
@@ -40,6 +41,7 @@ import com.patrykandpatrick.vico.core.common.data.MutableExtraStore
 import com.patrykandpatrick.vico.core.common.getStart
 import com.patrykandpatrick.vico.core.common.half
 import com.patrykandpatrick.vico.core.common.shape.Shape
+import java.util.Objects
 import kotlin.math.max
 
 /**
@@ -54,19 +56,21 @@ import kotlin.math.max
  *   [CandlestickCartesianLayer] should be associated. Use this for independent [CartesianLayer]
  *   scaling.
  */
-public open class CandlestickCartesianLayer(
-  public var candles: CandleProvider,
-  public var minCandleBodyHeightDp: Float = Defaults.MIN_CANDLE_BODY_HEIGHT_DP,
-  public var candleSpacingDp: Float = Defaults.CANDLE_SPACING_DP,
-  public var scaleCandleWicks: Boolean = false,
-  public var rangeProvider: CartesianLayerRangeProvider = CartesianLayerRangeProvider.auto(),
-  public var verticalAxisPosition: Axis.Position.Vertical? = null,
-  public var drawingModelInterpolator:
+@Stable
+public open class CandlestickCartesianLayer
+protected constructor(
+  protected val candles: CandleProvider,
+  protected val minCandleBodyHeightDp: Float,
+  protected val candleSpacingDp: Float,
+  protected val scaleCandleWicks: Boolean,
+  protected val rangeProvider: CartesianLayerRangeProvider,
+  protected val verticalAxisPosition: Axis.Position.Vertical?,
+  protected val drawingModelInterpolator:
     CartesianLayerDrawingModelInterpolator<
       CandlestickCartesianLayerDrawingModel.CandleInfo,
       CandlestickCartesianLayerDrawingModel,
-    > =
-    CartesianLayerDrawingModelInterpolator.default(),
+    >,
+  protected val drawingModelKey: ExtraStore.Key<CandlestickCartesianLayerDrawingModel>,
 ) : BaseCartesianLayer<CandlestickCartesianLayerModel>() {
   /**
    * Defines a candle style.
@@ -94,10 +98,32 @@ public open class CandlestickCartesianLayer(
   /** Holds information on the [CandlestickCartesianLayer]’s horizontal dimensions. */
   protected val horizontalDimensions: MutableHorizontalDimensions = MutableHorizontalDimensions()
 
-  protected val drawingModelKey: ExtraStore.Key<CandlestickCartesianLayerDrawingModel> =
-    ExtraStore.Key()
-
   override val markerTargets: Map<Double, List<CartesianMarker.Target>> = _markerTargets
+
+  /** Creates a [CandlestickCartesianLayer]. */
+  public constructor(
+    candles: CandleProvider,
+    minCandleBodyHeightDp: Float = Defaults.MIN_CANDLE_BODY_HEIGHT_DP,
+    candleSpacingDp: Float = Defaults.CANDLE_SPACING_DP,
+    scaleCandleWicks: Boolean = false,
+    rangeProvider: CartesianLayerRangeProvider = CartesianLayerRangeProvider.auto(),
+    verticalAxisPosition: Axis.Position.Vertical? = null,
+    drawingModelInterpolator:
+      CartesianLayerDrawingModelInterpolator<
+        CandlestickCartesianLayerDrawingModel.CandleInfo,
+        CandlestickCartesianLayerDrawingModel,
+      > =
+      CartesianLayerDrawingModelInterpolator.default(),
+  ) : this(
+    candles,
+    minCandleBodyHeightDp,
+    candleSpacingDp,
+    scaleCandleWicks,
+    rangeProvider,
+    verticalAxisPosition,
+    drawingModelInterpolator,
+    ExtraStore.Key(),
+  )
 
   override fun drawInternal(
     context: CartesianDrawingContext,
@@ -242,10 +268,10 @@ public open class CandlestickCartesianLayer(
       val xSpacing = candleWidth + candleSpacingDp.pixels
       horizontalDimensions.ensureValuesAtLeast(
         xSpacing = xSpacing,
-        scalableStartPadding = candleWidth.half + layerPadding.scalableStartPaddingDp.pixels,
-        scalableEndPadding = candleWidth.half + layerPadding.scalableEndPaddingDp.pixels,
-        unscalableStartPadding = layerPadding.unscalableStartPaddingDp.pixels,
-        unscalableEndPadding = layerPadding.unscalableEndPaddingDp.pixels,
+        scalableStartPadding = candleWidth.half + layerPadding.scalableStartDp.pixels,
+        scalableEndPadding = candleWidth.half + layerPadding.scalableEndDp.pixels,
+        unscalableStartPadding = layerPadding.unscalableStartDp.pixels,
+        unscalableEndPadding = layerPadding.unscalableEndDp.pixels,
       )
     }
   }
@@ -284,6 +310,53 @@ public open class CandlestickCartesianLayer(
       series.associate { it.x to it.toCandleInfo(yRange) }
     )
   }
+
+  /** Creates a new [CandlestickCartesianLayer] based on this one. */
+  public fun copy(
+    candles: CandleProvider = this.candles,
+    minCandleBodyHeightDp: Float = this.minCandleBodyHeightDp,
+    candleSpacingDp: Float = this.candleSpacingDp,
+    scaleCandleWicks: Boolean = this.scaleCandleWicks,
+    rangeProvider: CartesianLayerRangeProvider = this.rangeProvider,
+    verticalAxisPosition: Axis.Position.Vertical? = this.verticalAxisPosition,
+    drawingModelInterpolator:
+      CartesianLayerDrawingModelInterpolator<
+        CandlestickCartesianLayerDrawingModel.CandleInfo,
+        CandlestickCartesianLayerDrawingModel,
+      > =
+      this.drawingModelInterpolator,
+  ): CandlestickCartesianLayer =
+    CandlestickCartesianLayer(
+      candles,
+      minCandleBodyHeightDp,
+      candleSpacingDp,
+      scaleCandleWicks,
+      rangeProvider,
+      verticalAxisPosition,
+      drawingModelInterpolator,
+      drawingModelKey,
+    )
+
+  override fun equals(other: Any?): Boolean =
+    other is CandlestickCartesianLayer &&
+      candles == other.candles &&
+      minCandleBodyHeightDp == other.minCandleBodyHeightDp &&
+      candleSpacingDp == other.candleSpacingDp &&
+      scaleCandleWicks == other.scaleCandleWicks &&
+      rangeProvider == other.rangeProvider &&
+      verticalAxisPosition == other.verticalAxisPosition &&
+      drawingModelInterpolator == other.drawingModelInterpolator
+
+  override fun hashCode(): Int =
+    Objects.hash(
+      candles,
+      minCandleBodyHeightDp,
+      candleSpacingDp,
+      scaleCandleWicks,
+      rangeProvider,
+      verticalAxisPosition,
+      drawingModelInterpolator,
+    )
 
   /** Provides [Candle]s to [CandlestickCartesianLayer]s. */
   public interface CandleProvider {

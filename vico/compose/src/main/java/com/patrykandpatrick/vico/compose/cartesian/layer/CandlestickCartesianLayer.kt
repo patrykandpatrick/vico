@@ -25,7 +25,10 @@ import com.patrykandpatrick.vico.core.cartesian.data.CandlestickCartesianLayerDr
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianLayerRangeProvider
 import com.patrykandpatrick.vico.core.cartesian.layer.CandlestickCartesianLayer
 import com.patrykandpatrick.vico.core.common.Defaults
+import com.patrykandpatrick.vico.core.common.ValueWrapper
 import com.patrykandpatrick.vico.core.common.data.CartesianLayerDrawingModelInterpolator
+import com.patrykandpatrick.vico.core.common.getValue
+import com.patrykandpatrick.vico.core.common.setValue
 
 /** Creates and remembers a [CandlestickCartesianLayer]. */
 @Composable
@@ -43,14 +46,39 @@ public fun rememberCandlestickCartesianLayer(
       CandlestickCartesianLayerDrawingModel,
     > =
     CartesianLayerDrawingModelInterpolator.default(),
-): CandlestickCartesianLayer =
-  remember { CandlestickCartesianLayer(candles) }
-    .apply {
-      this.candles = candles
-      minCandleBodyHeightDp = minCandleBodyHeight.value
-      candleSpacingDp = candleSpacing.value
-      this.scaleCandleWicks = scaleCandleWicks
-      this.rangeProvider = rangeProvider
-      this.verticalAxisPosition = verticalAxisPosition
-      this.drawingModelInterpolator = drawingModelInterpolator
-    }
+): CandlestickCartesianLayer {
+  var candlestickCartesianLayerWrapper by remember {
+    ValueWrapper<CandlestickCartesianLayer?>(null)
+  }
+  return remember(
+    candles,
+    minCandleBodyHeight,
+    candleSpacing,
+    scaleCandleWicks,
+    rangeProvider,
+    verticalAxisPosition,
+    drawingModelInterpolator,
+  ) {
+    val candlestickCartesianLayer =
+      candlestickCartesianLayerWrapper?.copy(
+        candles,
+        minCandleBodyHeight.value,
+        candleSpacing.value,
+        scaleCandleWicks,
+        rangeProvider,
+        verticalAxisPosition,
+        drawingModelInterpolator,
+      )
+        ?: CandlestickCartesianLayer(
+          candles,
+          minCandleBodyHeight.value,
+          candleSpacing.value,
+          scaleCandleWicks,
+          rangeProvider,
+          verticalAxisPosition,
+          drawingModelInterpolator,
+        )
+    candlestickCartesianLayerWrapper = candlestickCartesianLayer
+    candlestickCartesianLayer
+  }
+}

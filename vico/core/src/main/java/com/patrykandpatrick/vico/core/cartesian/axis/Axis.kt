@@ -17,6 +17,7 @@
 package com.patrykandpatrick.vico.core.cartesian.axis
 
 import android.graphics.RectF
+import androidx.compose.runtime.Immutable
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.core.cartesian.CartesianLayerInsetter
@@ -28,6 +29,7 @@ import com.patrykandpatrick.vico.core.common.Bounded
 import com.patrykandpatrick.vico.core.common.MeasuringContext
 
 /** Draws an axis. */
+@Immutable
 public interface Axis<P : Axis.Position> : Bounded, CartesianLayerInsetter<CartesianChartModel> {
   /** The position of the [Axis]. */
   public val position: P

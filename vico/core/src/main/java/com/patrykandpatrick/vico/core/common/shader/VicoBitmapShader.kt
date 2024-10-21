@@ -14,16 +14,23 @@
  * limitations under the License.
  */
 
-package com.patrykandpatrick.vico.core.common
+package com.patrykandpatrick.vico.core.common.shader
 
-import androidx.compose.runtime.Immutable
+import android.graphics.Bitmap
+import android.graphics.BitmapShader
+import android.graphics.Shader
+import com.patrykandpatrick.vico.core.common.DrawingContext
 
-/** Defines the functions required by the library to draw a chart legend. */
-@Immutable
-public interface Legend<M : MeasuringContext, D : DrawingContext> : Bounded {
-  /** Returns the height of the legend. */
-  public fun getHeight(context: M, maxWidth: Float): Float
-
-  /** Draws the legend. */
-  public fun draw(context: D)
+internal data class VicoBitmapShader(
+  private val bitmap: Bitmap,
+  private val xTileMode: Shader.TileMode,
+  private val yTileMode: Shader.TileMode,
+) : DynamicShader {
+  override fun provideShader(
+    context: DrawingContext,
+    left: Float,
+    top: Float,
+    right: Float,
+    bottom: Float,
+  ) = BitmapShader(bitmap, xTileMode, yTileMode)
 }

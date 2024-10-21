@@ -223,6 +223,26 @@ public open class DefaultCartesianMarker(
     }
   }
 
+  override fun equals(other: Any?): Boolean =
+    this === other ||
+      other is DefaultCartesianMarker &&
+        label == other.label &&
+        valueFormatter == other.valueFormatter &&
+        labelPosition == other.labelPosition &&
+        indicator == other.indicator &&
+        indicatorSizeDp == other.indicatorSizeDp &&
+        guideline == other.guideline
+
+  override fun hashCode(): Int {
+    var result = label.hashCode()
+    result = 31 * result + valueFormatter.hashCode()
+    result = 31 * result + labelPosition.hashCode()
+    result = 31 * result + indicator.hashCode()
+    result = 31 * result + indicatorSizeDp.hashCode()
+    result = 31 * result + guideline.hashCode()
+    return result
+  }
+
   /** Specifies the position of a [DefaultCartesianMarker]’s label. */
   public enum class LabelPosition {
     /** Positions the label at the top of the [CartesianChart]. Sufficient room is made. */

@@ -17,9 +17,11 @@
 package com.patrykandpatrick.vico.core.common.shape
 
 import android.graphics.Path
+import androidx.compose.runtime.Immutable
 import com.patrykandpatrick.vico.core.common.MeasuringContext
 
 /** Defines a shape. */
+@Immutable
 public fun interface Shape {
   /**
    * Adds an outline of the [Shape] to [path]. [left], [top], [right], and [bottom] define the

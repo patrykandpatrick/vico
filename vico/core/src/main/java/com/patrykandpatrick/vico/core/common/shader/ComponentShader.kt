@@ -24,7 +24,7 @@ import com.patrykandpatrick.vico.core.common.DrawingContext
 import com.patrykandpatrick.vico.core.common.component.Component
 import com.patrykandpatrick.vico.core.common.half
 
-internal class ComponentShader(
+internal data class ComponentShader(
   private val component: Component,
   private val componentSizeDp: Float,
   private val checkeredArrangement: Boolean = true,

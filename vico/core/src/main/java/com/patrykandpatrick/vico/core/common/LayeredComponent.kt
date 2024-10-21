@@ -50,4 +50,20 @@ public open class LayeredComponent(
         bottomWithMargin - padding.bottomDp.pixels,
       )
     }
+
+  override fun equals(other: Any?): Boolean =
+    this === other ||
+      other is LayeredComponent &&
+        rear == other.rear &&
+        front == other.front &&
+        padding == other.padding &&
+        margins == other.margins
+
+  override fun hashCode(): Int {
+    var result = rear.hashCode()
+    result = 31 * result + front.hashCode()
+    result = 31 * result + padding.hashCode()
+    result = 31 * result + margins.hashCode()
+    return result
+  }
 }

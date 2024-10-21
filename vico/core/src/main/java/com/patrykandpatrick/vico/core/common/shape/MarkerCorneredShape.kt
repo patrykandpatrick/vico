@@ -106,6 +106,11 @@ public open class MarkerCorneredShape(
     }
   }
 
+  override fun equals(other: Any?): Boolean =
+    super.equals(other) && other is MarkerCorneredShape && tickSizeDp == other.tickSizeDp
+
+  override fun hashCode(): Int = super.hashCode() * 31 + tickSizeDp.hashCode()
+
   /** Specifies the position of a [MarkerCorneredShape]’s tick. */
   public enum class TickPosition {
     /** Positions the tick at the top of the [MarkerCorneredShape]. */

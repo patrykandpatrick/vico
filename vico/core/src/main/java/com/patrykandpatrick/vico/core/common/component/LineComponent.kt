@@ -192,4 +192,9 @@ public open class LineComponent(
       shader,
       shadow,
     )
+
+  override fun equals(other: Any?): Boolean =
+    super.equals(other) && other is LineComponent && thicknessDp == other.thicknessDp
+
+  override fun hashCode(): Int = 31 * super.hashCode() + thicknessDp.hashCode()
 }

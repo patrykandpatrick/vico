@@ -74,14 +74,15 @@ public open class CartesianChart(
   topAxis: Axis<Axis.Position.Horizontal.Top>? = null,
   endAxis: Axis<Axis.Position.Vertical.End>? = null,
   bottomAxis: Axis<Axis.Position.Horizontal.Bottom>? = null,
-  public val marker: CartesianMarker? = null,
-  public val markerVisibilityListener: CartesianMarkerVisibilityListener? = null,
+  @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) public val marker: CartesianMarker? = null,
+  protected val markerVisibilityListener: CartesianMarkerVisibilityListener? = null,
+  @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
   public val layerPadding: CartesianLayerPadding = CartesianLayerPadding(),
-  public val legend: Legend<CartesianMeasuringContext, CartesianDrawingContext>? = null,
-  public val fadingEdges: FadingEdges? = null,
-  public val decorations: List<Decoration> = emptyList(),
-  public val persistentMarkers: (PersistentMarkerScope.(ExtraStore) -> Unit)? = null,
-  public val getXStep: ((CartesianChartModel) -> Double) = { it.getXDeltaGcd() },
+  protected val legend: Legend<CartesianMeasuringContext, CartesianDrawingContext>? = null,
+  protected val fadingEdges: FadingEdges? = null,
+  protected val decorations: List<Decoration> = emptyList(),
+  protected val persistentMarkers: (PersistentMarkerScope.(ExtraStore) -> Unit)? = null,
+  protected val getXStep: ((CartesianChartModel) -> Double) = { it.getXDeltaGcd() },
 ) : CartesianLayerInsetter<CartesianChartModel> {
   private val persistentMarkerMap = mutableMapOf<Double, CartesianMarker>()
   private val persistentMarkerScope = PersistentMarkerScope {
@@ -164,7 +165,7 @@ public open class CartesianChart(
 
   /** Links _x_ values to [CartesianMarker.Target]s. */
   @Suppress("UNCHECKED_CAST")
-  public val markerTargets: SortedMap<Double, List<CartesianMarker.Target>> =
+  protected val markerTargets: SortedMap<Double, List<CartesianMarker.Target>> =
     _markerTargets as SortedMap<Double, List<CartesianMarker.Target>>
 
   /** The start [Axis]. */
@@ -206,8 +207,7 @@ public open class CartesianChart(
       insets.clear()
       val persistentMarkerHashCode = Objects.hash(persistentMarkers, model.extraStore)
       if (persistentMarkerHashCode != previousPersistentMarkerHashCode) {
-        persistentMarkerMap.clear()
-        persistentMarkers?.invoke(persistentMarkerScope, model.extraStore)
+        updatePersistentMarkers(model.extraStore)
         previousPersistentMarkerHashCode = persistentMarkerHashCode
       }
       model.forEachWithLayer(
@@ -244,6 +244,11 @@ public open class CartesianChart(
         bottom = layerBounds.bottom + insets.bottom + legendHeight,
       )
     }
+  }
+
+  private fun updatePersistentMarkers(extraStore: ExtraStore) {
+    persistentMarkerMap.clear()
+    persistentMarkers?.invoke(persistentMarkerScope, extraStore)
   }
 
   /** Draws the [CartesianChart]. */
@@ -418,10 +423,7 @@ public open class CartesianChart(
         decorations == other.decorations &&
         persistentMarkers == other.persistentMarkers &&
         getXStep == other.getXStep &&
-        persistentMarkerMap == other.persistentMarkerMap &&
-        layerBounds == other.layerBounds &&
-        layers == other.layers &&
-        markerTargets == other.markerTargets
+        layers == other.layers
 
   override fun hashCode(): Int =
     Objects.hash(
@@ -434,10 +436,7 @@ public open class CartesianChart(
       decorations,
       persistentMarkers,
       getXStep,
-      persistentMarkerMap,
-      layerBounds,
       layers,
-      markerTargets,
     )
 
   /** Facilitates adding persistent [CartesianMarker]s to [CartesianChart]s. */

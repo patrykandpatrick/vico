@@ -39,7 +39,7 @@ public fun HorizontalAxis.Companion.rememberTop(
   tickLength: Dp = Defaults.AXIS_TICK_LENGTH.dp,
   guideline: LineComponent? = rememberAxisGuidelineComponent(),
   itemPlacer: HorizontalAxis.ItemPlacer = remember { HorizontalAxis.ItemPlacer.aligned() },
-  sizeConstraint: BaseAxis.SizeConstraint = remember { BaseAxis.SizeConstraint.Auto() },
+  size: BaseAxis.Size = remember { BaseAxis.Size.Auto() },
   titleComponent: TextComponent? = null,
   title: CharSequence? = null,
 ): HorizontalAxis<Axis.Position.Horizontal.Top> =
@@ -52,7 +52,7 @@ public fun HorizontalAxis.Companion.rememberTop(
     tickLength.value,
     guideline,
     itemPlacer,
-    sizeConstraint,
+    size,
     titleComponent,
     title,
   ) {
@@ -65,7 +65,7 @@ public fun HorizontalAxis.Companion.rememberTop(
       tickLength.value,
       guideline,
       itemPlacer,
-      sizeConstraint,
+      size,
       titleComponent,
       title,
     )
@@ -82,7 +82,7 @@ public fun HorizontalAxis.Companion.rememberBottom(
   tickLength: Dp = Defaults.AXIS_TICK_LENGTH.dp,
   guideline: LineComponent? = rememberAxisGuidelineComponent(),
   itemPlacer: HorizontalAxis.ItemPlacer = remember { HorizontalAxis.ItemPlacer.aligned() },
-  sizeConstraint: BaseAxis.SizeConstraint = remember { BaseAxis.SizeConstraint.Auto() },
+  size: BaseAxis.Size = remember { BaseAxis.Size.Auto() },
   titleComponent: TextComponent? = null,
   title: CharSequence? = null,
 ): HorizontalAxis<Axis.Position.Horizontal.Bottom> =
@@ -95,7 +95,7 @@ public fun HorizontalAxis.Companion.rememberBottom(
     tickLength.value,
     guideline,
     itemPlacer,
-    sizeConstraint,
+    size,
     titleComponent,
     title,
   ) {
@@ -108,7 +108,7 @@ public fun HorizontalAxis.Companion.rememberBottom(
       tickLength.value,
       guideline,
       itemPlacer,
-      sizeConstraint,
+      size,
       titleComponent,
       title,
     )

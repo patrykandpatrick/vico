@@ -23,20 +23,20 @@ import kotlin.math.max
 /**
  * [HorizontalLegend] displays legend items beside one another in lines.
  *
- * @param items adds the [LegendItem]s.
- * @param iconSizeDp defines the size of all [LegendItem.icon]s.
- * @param iconPaddingDp defines the padding between each [LegendItem.icon] and its corresponding
- *   [LegendItem.label].
- * @param lineSpacingDp defines the spacing between adjacent lines.
- * @param spacingDp defines the horizontal spacing between adjacent [LegendItem]s.
- * @param padding defines the padding of the content.
+ * @property items adds the [LegendItem]s.
+ * @property iconSizeDp the [LegendItem.icon] size (in dp).
+ * @property iconLabelSpacingDp the spacing between [LegendItem.icon] and
+ *   [LegendItem.labelComponent] (in dp).
+ * @property rowSpacingDp the row spacing (in dp).
+ * @property columnSpacingDp the column spacing (in dp).
+ * @property padding the content padding.
  */
 public open class HorizontalLegend<M : MeasuringContext, D : DrawingContext>(
   protected val items: AdditionScope<LegendItem>.(ExtraStore) -> Unit,
-  protected val iconSizeDp: Float,
-  protected val iconPaddingDp: Float,
-  protected val lineSpacingDp: Float = 0f,
-  protected val spacingDp: Float = 0f,
+  protected val iconSizeDp: Float = Defaults.LEGEND_ICON_SIZE,
+  protected val iconLabelSpacingDp: Float = Defaults.LEGEND_ICON_LABEL_SPACING,
+  protected val rowSpacingDp: Float = Defaults.LEGEND_ROW_SPACING,
+  protected val columnSpacingDp: Float = Defaults.LEGEND_COLUMN_SPACING,
   protected val padding: Dimensions = Dimensions.Empty,
 ) : Legend<M, D> {
   private val itemManager = LegendItemManager(items)
@@ -52,17 +52,22 @@ public open class HorizontalLegend<M : MeasuringContext, D : DrawingContext>(
       lines.add(mutableListOf())
       var height =
         max(
-          itemManager.itemList.first().getLabelHeight(context, maxWidth, iconPaddingDp, iconSizeDp),
+          itemManager.itemList
+            .first()
+            .getLabelHeight(context, maxWidth, iconLabelSpacingDp, iconSizeDp),
           iconSizeDp.pixels,
         )
       heights.add(height)
-      buildLines(context, maxWidth) {
+      buildLines(context, maxWidth) { item ->
         val currentHeight =
-          max(it.getLabelHeight(context, maxWidth, iconPaddingDp, iconSizeDp), iconSizeDp.pixels)
+          max(
+            item.getLabelHeight(context, maxWidth, iconLabelSpacingDp, iconSizeDp),
+            iconSizeDp.pixels,
+          )
         heights.add(currentHeight)
         height += currentHeight
       }
-      height + (lines.size - 1) * lineSpacingDp.pixels + padding.verticalDp.pixels
+      height + (lines.size - 1) * rowSpacingDp.pixels + padding.verticalDp.pixels
     }
 
   override fun draw(context: D) {
@@ -81,7 +86,7 @@ public open class HorizontalLegend<M : MeasuringContext, D : DrawingContext>(
         var currentStart = 0f
         val currentLineHeight =
           heights.getOrElse(index) {
-            item.first().getLabelHeight(context, availableWidth, iconPaddingDp, iconSizeDp)
+            item.first().getLabelHeight(context, availableWidth, iconLabelSpacingDp, iconSizeDp)
           }
         val centerY = currentTop + currentLineHeight.half
 
@@ -95,9 +100,9 @@ public open class HorizontalLegend<M : MeasuringContext, D : DrawingContext>(
           )
           currentStart +=
             if (isLtr) {
-              (iconSizeDp + iconPaddingDp).pixels
+              (iconSizeDp + iconLabelSpacingDp).pixels
             } else {
-              -iconPaddingDp.pixels
+              -iconLabelSpacingDp.pixels
             }
           it.labelComponent.draw(
             context = context,
@@ -107,19 +112,20 @@ public open class HorizontalLegend<M : MeasuringContext, D : DrawingContext>(
             horizontalPosition = HorizontalPosition.End,
             verticalPosition = VerticalPosition.Center,
             maxWidth =
-              (bounds.width() - (iconSizeDp + iconPaddingDp + padding.horizontalDp).pixels).toInt(),
+              (bounds.width() - (iconSizeDp + iconLabelSpacingDp + padding.horizontalDp).pixels)
+                .toInt(),
           )
           currentStart +=
             if (isLtr) {
-              it.getLabelWidth(context, availableWidth, iconPaddingDp, iconSizeDp) +
-                spacingDp.pixels
+              it.getLabelWidth(context, availableWidth, iconLabelSpacingDp, iconSizeDp) +
+                columnSpacingDp.pixels
             } else {
-              -(it.getLabelWidth(context, availableWidth, iconPaddingDp, iconSizeDp) +
-                spacingDp.pixels +
+              -(it.getLabelWidth(context, availableWidth, iconLabelSpacingDp, iconSizeDp) +
+                columnSpacingDp.pixels +
                 iconSizeDp.pixels)
             }
         }
-        currentTop += currentLineHeight + lineSpacingDp.pixels
+        currentTop += currentLineHeight + rowSpacingDp.pixels
       }
     }
   }
@@ -136,7 +142,8 @@ public open class HorizontalLegend<M : MeasuringContext, D : DrawingContext>(
       lines.add(mutableListOf())
       itemManager.itemList.forEach {
         remainWidth -=
-          it.getWidth(context, availableWidth, iconPaddingDp, iconSizeDp) + spacingDp.pixels
+          it.getWidth(context, availableWidth, iconLabelSpacingDp, iconSizeDp) +
+            columnSpacingDp.pixels
         if (remainWidth >= 0 || remainWidth == availableWidth) {
           lines[currentLine].add(it)
           return@forEach
@@ -145,10 +152,30 @@ public open class HorizontalLegend<M : MeasuringContext, D : DrawingContext>(
         currentLine++
         remainWidth =
           availableWidth -
-            it.getWidth(context, availableWidth, iconPaddingDp, iconSizeDp) -
-            spacingDp.pixels
+            it.getWidth(context, availableWidth, iconLabelSpacingDp, iconSizeDp) -
+            columnSpacingDp.pixels
         lines.add(mutableListOf(it))
         callback(it)
       }
     }
+
+  override fun equals(other: Any?): Boolean =
+    this === other ||
+      other is HorizontalLegend<*, *> &&
+        items == other.items &&
+        iconSizeDp == iconSizeDp &&
+        iconLabelSpacingDp == iconLabelSpacingDp &&
+        rowSpacingDp == other.rowSpacingDp &&
+        columnSpacingDp == other.columnSpacingDp &&
+        padding == other.padding
+
+  override fun hashCode(): Int {
+    var result = items.hashCode()
+    result = 31 * result + iconSizeDp.hashCode()
+    result = 31 * result + iconLabelSpacingDp.hashCode()
+    result = 31 * result + rowSpacingDp.hashCode()
+    result = 31 * result + columnSpacingDp.hashCode()
+    result = 31 * result + padding.hashCode()
+    return result
+  }
 }

@@ -20,29 +20,29 @@ import androidx.compose.runtime.Immutable
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayer
 
 /**
- * Stores [CartesianLayer] padding values. [scalableStartPaddingDp] and [scalableEndPaddingDp] are
- * multiplied by the zoom factor, unlike [unscalableStartPaddingDp] and [unscalableEndPaddingDp].
+ * Stores [CartesianLayer] padding values. [scalableStartDp] and [scalableEndDp] are multiplied by
+ * the zoom factor, unlike [unscalableStartDp] and [unscalableEndDp].
  */
 @Immutable
 public class CartesianLayerPadding(
-  internal val scalableStartPaddingDp: Float = 0f,
-  internal val scalableEndPaddingDp: Float = 0f,
-  internal val unscalableStartPaddingDp: Float = 0f,
-  internal val unscalableEndPaddingDp: Float = 0f,
+  internal val scalableStartDp: Float = 0f,
+  internal val scalableEndDp: Float = 0f,
+  internal val unscalableStartDp: Float = 0f,
+  internal val unscalableEndDp: Float = 0f,
 ) {
   override fun equals(other: Any?): Boolean =
     this === other ||
       other is CartesianLayerPadding &&
-        scalableStartPaddingDp == other.scalableStartPaddingDp &&
-        scalableEndPaddingDp == other.scalableEndPaddingDp &&
-        unscalableStartPaddingDp == other.unscalableStartPaddingDp &&
-        unscalableEndPaddingDp == other.unscalableEndPaddingDp
+        scalableStartDp == other.scalableStartDp &&
+        scalableEndDp == other.scalableEndDp &&
+        unscalableStartDp == other.unscalableStartDp &&
+        unscalableEndDp == other.unscalableEndDp
 
   override fun hashCode(): Int {
-    var result = scalableStartPaddingDp.hashCode()
-    result = 31 * result + scalableEndPaddingDp.hashCode()
-    result = 31 * result + unscalableStartPaddingDp.hashCode()
-    result = 31 * result + unscalableEndPaddingDp.hashCode()
+    var result = scalableStartDp.hashCode()
+    result = 31 * result + scalableEndDp.hashCode()
+    result = 31 * result + unscalableStartDp.hashCode()
+    result = 31 * result + unscalableEndDp.hashCode()
     return result
   }
 }

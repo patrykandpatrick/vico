@@ -29,10 +29,13 @@ import com.patrykandpatrick.vico.core.cartesian.data.ColumnCartesianLayerDrawing
 import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer.MergeMode
 import com.patrykandpatrick.vico.core.common.Defaults
+import com.patrykandpatrick.vico.core.common.ValueWrapper
 import com.patrykandpatrick.vico.core.common.VerticalPosition
 import com.patrykandpatrick.vico.core.common.component.TextComponent
 import com.patrykandpatrick.vico.core.common.data.CartesianLayerDrawingModelInterpolator
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
+import com.patrykandpatrick.vico.core.common.getValue
+import com.patrykandpatrick.vico.core.common.setValue
 import com.patrykandpatrick.vico.core.common.shape.CorneredShape
 
 /** Creates and remembers a [ColumnCartesianLayer]. */
@@ -64,20 +67,49 @@ public fun rememberColumnCartesianLayer(
     remember {
       CartesianLayerDrawingModelInterpolator.default()
     },
-): ColumnCartesianLayer =
-  remember { ColumnCartesianLayer(columnProvider) }
-    .apply {
-      this.columnProvider = columnProvider
-      this.columnCollectionSpacingDp = columnCollectionSpacing.value
-      this.mergeMode = mergeMode
-      this.dataLabel = dataLabel
-      this.dataLabelVerticalPosition = dataLabelVerticalPosition
-      this.dataLabelValueFormatter = dataLabelValueFormatter
-      this.dataLabelRotationDegrees = dataLabelRotationDegrees
-      this.rangeProvider = rangeProvider
-      this.verticalAxisPosition = verticalAxisPosition
-      this.drawingModelInterpolator = drawingModelInterpolator
-    }
+): ColumnCartesianLayer {
+  var columnCartesianLayerWrapper by remember { ValueWrapper<ColumnCartesianLayer?>(null) }
+  return remember(
+    columnProvider,
+    columnCollectionSpacing,
+    mergeMode,
+    dataLabel,
+    dataLabelVerticalPosition,
+    dataLabelValueFormatter,
+    dataLabelRotationDegrees,
+    rangeProvider,
+    verticalAxisPosition,
+    drawingModelInterpolator,
+  ) {
+    val columnCartesianLayer =
+      columnCartesianLayerWrapper?.copy(
+        columnProvider,
+        columnCollectionSpacing.value,
+        mergeMode,
+        dataLabel,
+        dataLabelVerticalPosition,
+        dataLabelValueFormatter,
+        dataLabelRotationDegrees,
+        rangeProvider,
+        verticalAxisPosition,
+        drawingModelInterpolator,
+      )
+        ?: ColumnCartesianLayer(
+          columnProvider,
+          columnCollectionSpacing.value,
+          mergeMode,
+          dataLabel,
+          dataLabelVerticalPosition,
+          dataLabelValueFormatter,
+          dataLabelRotationDegrees,
+          rangeProvider,
+          verticalAxisPosition,
+          drawingModelInterpolator,
+        )
+    columnCartesianLayerWrapper = columnCartesianLayer
+    columnCartesianLayer
+  }
+}
 
 /** Creates a [MergeMode.Grouped] instance. */
 public fun MergeMode.Companion.grouped(

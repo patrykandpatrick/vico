@@ -73,7 +73,6 @@ dependencies {
     implementation libs.lifecycleRuntime
     implementation libs.lifecycleRuntimeCompose
     implementation libs.material
-    implementation libs.systemUIController
     implementation libs.viewModelCompose
     debugImplementation libs.composeUITooling
     testImplementation libs.kotlinTest

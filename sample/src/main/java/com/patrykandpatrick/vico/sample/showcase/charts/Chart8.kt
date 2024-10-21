@@ -123,8 +123,7 @@ private fun ComposeChart8(modelProducer: CartesianChartModelProducer, modifier: 
             itemPlacer = remember { HorizontalAxis.ItemPlacer.segmented() }
           ),
         marker = rememberMarker(),
-        layerPadding =
-          cartesianLayerPadding(scalableStartPadding = 16.dp, scalableEndPadding = 16.dp),
+        layerPadding = cartesianLayerPadding(scalableStart = 16.dp, scalableEnd = 16.dp),
       ),
     modelProducer = modelProducer,
     modifier = modifier,
@@ -138,13 +137,21 @@ private fun ViewChart8(modelProducer: CartesianChartModelProducer, modifier: Mod
   AndroidViewBinding(Chart8Binding::inflate, modifier) {
     chartView.modelProducer = modelProducer
     val chart = chartView.chart!!
+    val columnLayer =
+      (chart.layers[0] as ColumnCartesianLayer).copy(
+        verticalAxisPosition = Axis.Position.Vertical.Start
+      )
+    val lineLayer =
+      (chart.layers[1] as LineCartesianLayer).copy(
+        verticalAxisPosition = Axis.Position.Vertical.End
+      )
     chartView.chart =
-      chart
-        .copy(startAxis = (chart.startAxis as VerticalAxis).copy(guideline = null), marker = marker)
-        .apply {
-          (layers[0] as ColumnCartesianLayer).verticalAxisPosition = Axis.Position.Vertical.Start
-          (layers[1] as LineCartesianLayer).verticalAxisPosition = Axis.Position.Vertical.End
-        }
+      chart.copy(
+        columnLayer,
+        lineLayer,
+        startAxis = (chart.startAxis as VerticalAxis).copy(guideline = null),
+        marker = marker,
+      )
   }
 }
 

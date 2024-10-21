@@ -142,4 +142,20 @@ public open class FadingEdges(
       )
     canvas.drawRect(rect, paint)
   }
+
+  override fun equals(other: Any?): Boolean =
+    this === other ||
+      other is FadingEdges &&
+        startEdgeWidthDp == other.startEdgeWidthDp &&
+        endEdgeWidthDp == other.endEdgeWidthDp &&
+        visibilityThresholdDp == other.visibilityThresholdDp &&
+        visibilityInterpolator == other.visibilityInterpolator
+
+  override fun hashCode(): Int {
+    var result = startEdgeWidthDp.hashCode()
+    result = 31 * result + endEdgeWidthDp.hashCode()
+    result = 31 * result + visibilityThresholdDp.hashCode()
+    result = 31 * result + visibilityInterpolator.hashCode()
+    return result
+  }
 }
