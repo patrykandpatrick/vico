@@ -49,17 +49,16 @@ internal fun TypedArray.getRawDimension(
     }
   }
 
-internal fun TypedArray.getRawDimension(
+internal fun TypedArray.getRawDimensionOrNull(
   context: Context,
   @StyleableRes index: Int,
-  defaultValue: Float?,
 ): Float? =
   synchronized(lock) {
     if (getValue(index, rawValueTypedValue)) {
       rawValueTypedValue.getDimension(context.resources.displayMetrics) / context.density
       TypedValue.complexToFloat(rawValueTypedValue.data)
     } else {
-      defaultValue
+      null
     }
   }
 
