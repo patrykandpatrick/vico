@@ -375,7 +375,7 @@ public open class TextComponent(
     context.run {
       val widthWithoutMargins = width - margins.horizontalDp.wholePixels
       val heightWithoutMargins = height - margins.verticalDp.wholePixels
-      val spacingAddition = computeSpacingAddition(context)
+      val spacingAddition = computeSpacingAddition()
 
       val correctedWidth =
         (when {
@@ -383,7 +383,7 @@ public open class TextComponent(
             rotationDegrees % 0.5f.piRad == 0f -> heightWithoutMargins
             else -> {
               val cumulatedHeight =
-                lineCount * textPaint.defaultLineHeight + spacingAddition + padding.verticalDp.wholePixels
+                lineCount * (textPaint.defaultLineHeight + spacingAddition) + padding.verticalDp.wholePixels
               val alpha = Math.toRadians(rotationDegrees.toDouble())
               val absSinAlpha = sin(alpha).absoluteValue
               val absCosAlpha = cos(alpha).absoluteValue
@@ -425,14 +425,6 @@ public open class TextComponent(
     canvas.restore()
   }
 
-  private fun computeSpacingAddition(context: MeasuringContext): Float {
-    return with(context) {
-      lineHeightSp?.let {
-        spToPx(lineHeightSp) - textPaint.defaultLineHeight
-      } ?: 0f
-    }
-  }
-
   override fun equals(other: Any?): Boolean =
     this === other ||
       other is TextComponent &&
@@ -460,6 +452,13 @@ public open class TextComponent(
     result = 31 * result + minWidth.hashCode()
     return result
   }
+
+  private fun MeasuringContext.computeSpacingAddition(): Float =
+    if (lineHeightSp != null) {
+      spToPx(lineHeightSp) - textPaint.defaultLineHeight
+    } else {
+      0f
+    }
 
   /** Defines a [TextComponent]’s minimum width. */
   @Immutable
