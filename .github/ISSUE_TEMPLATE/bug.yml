@@ -24,7 +24,8 @@ body:
       description: If you’re using an outdated version, please try updating Vico first.
       multiple: true
       options:
-        - 2.0.0-beta.1
+        - 2.0.0-beta.2
+        - 1.16.0-alpha.1
         - 1.15.0
     validations:
       required: true
