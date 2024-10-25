@@ -42,4 +42,5 @@ dependencies {
     api project(":vico:compose")
     implementation platform(libs.composeBom)
     implementation libs.composeMaterial3
+    implementation project(':vico:core')
 }
