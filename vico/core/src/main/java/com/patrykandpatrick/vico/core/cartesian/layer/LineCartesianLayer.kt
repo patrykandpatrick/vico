@@ -35,7 +35,7 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.LineCartesianLayerDrawingModel
 import com.patrykandpatrick.vico.core.cartesian.data.LineCartesianLayerModel
 import com.patrykandpatrick.vico.core.cartesian.data.MutableCartesianChartRanges
-import com.patrykandpatrick.vico.core.cartesian.data.forEachIn
+import com.patrykandpatrick.vico.core.cartesian.data.forEachInIndexed
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.core.cartesian.marker.LineCartesianLayerMarkerTarget
 import com.patrykandpatrick.vico.core.cartesian.marker.MutableLineCartesianLayerMarkerTarget
@@ -277,6 +277,7 @@ protected constructor(
   public interface PointProvider {
     /** Returns the [Point] for the point with the given properties. */
     public fun getPoint(
+      entryIndex: Int,
       entry: LineCartesianLayerModel.Entry,
       seriesIndex: Int,
       extraStore: ExtraStore,
@@ -289,6 +290,7 @@ protected constructor(
     public companion object {
       private data class Single(private val point: Point) : PointProvider {
         override fun getPoint(
+          entryIndex: Int,
           entry: LineCartesianLayerModel.Entry,
           seriesIndex: Int,
           extraStore: ExtraStore,
@@ -354,7 +356,7 @@ protected constructor(
         val drawingStart =
           layerBounds.getStart(isLtr = isLtr) + drawingStartAlignmentCorrection - scroll
 
-        forEachPointInBounds(series, drawingStart, pointInfoMap) { _, x, y, _, _ ->
+        forEachPointInBounds(series, drawingStart, pointInfoMap) { _, _, x, y, _, _ ->
           if (linePath.isEmpty) {
             linePath.moveTo(x, y)
           } else {
@@ -371,7 +373,7 @@ protected constructor(
         line.draw(context, linePath, lineFillCanvas, verticalAxisPosition)
         canvas.drawBitmap(lineFillBitmap, 0f, 0f, null)
 
-        forEachPointInBounds(series, drawingStart, pointInfoMap) { entry, x, y, _, _ ->
+        forEachPointInBounds(series, drawingStart, pointInfoMap) { _, entry, x, y, _, _ ->
           updateMarkerTargets(entry, x, y, lineFillBitmap)
         }
 
@@ -424,8 +426,8 @@ protected constructor(
       series = series,
       drawingStart = drawingStart,
       pointInfoMap = pointInfoMap,
-    ) { chartEntry, x, y, previousX, nextX ->
-      val point = line.pointProvider?.getPoint(chartEntry, seriesIndex, model.extraStore)
+    ) { chartEntryIndex, chartEntry, x, y, previousX, nextX ->
+      val point = line.pointProvider?.getPoint(chartEntryIndex, chartEntry, seriesIndex, model.extraStore)
       point?.draw(this, x, y)
 
       line.dataLabel
@@ -509,7 +511,7 @@ protected constructor(
     pointInfoMap: Map<Double, LineCartesianLayerDrawingModel.PointInfo>?,
     action:
       (
-        entry: LineCartesianLayerModel.Entry, x: Float, y: Float, previousX: Float?, nextX: Float?,
+      entryIndex: Int, entry: LineCartesianLayerModel.Entry, x: Float, y: Float, previousX: Float?, nextX: Float?,
       ) -> Unit,
   ) {
     val minX = ranges.minX
@@ -535,7 +537,7 @@ protected constructor(
           layerBounds.height()
     }
 
-    series.forEachIn(range = minX..maxX, padding = 1) { entry, next ->
+    series.forEachInIndexed(range = minX..maxX, padding = 1) { entryIndex, entry, next ->
       val previousX = x
       val immutableX = nextX ?: getDrawX(entry)
       val immutableNextX = next?.let(::getDrawX)
@@ -546,9 +548,9 @@ protected constructor(
           (isLtr && immutableX < boundsStart || !isLtr && immutableX > boundsStart) &&
           (isLtr && immutableNextX < boundsStart || !isLtr && immutableNextX > boundsStart)
       ) {
-        return@forEachIn
+        return@forEachInIndexed
       }
-      action(entry, immutableX, getDrawY(entry), previousX, nextX)
+      action(entryIndex, entry, immutableX, getDrawY(entry), previousX, nextX)
       if (isLtr && immutableX > boundsEnd || isLtr.not() && immutableX < boundsEnd) return
     }
   }

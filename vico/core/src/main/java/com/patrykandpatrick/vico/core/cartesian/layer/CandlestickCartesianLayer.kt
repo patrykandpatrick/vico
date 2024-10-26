@@ -29,7 +29,7 @@ import com.patrykandpatrick.vico.core.cartesian.data.CandlestickCartesianLayerMo
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartRanges
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianLayerRangeProvider
 import com.patrykandpatrick.vico.core.cartesian.data.MutableCartesianChartRanges
-import com.patrykandpatrick.vico.core.cartesian.data.forEachIn
+import com.patrykandpatrick.vico.core.cartesian.data.forEachInIndexed
 import com.patrykandpatrick.vico.core.cartesian.layer.CandlestickCartesianLayer.Candle
 import com.patrykandpatrick.vico.core.cartesian.marker.CandlestickCartesianLayerMarkerTarget
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
@@ -151,7 +151,7 @@ protected constructor(
     var candle: Candle
     val minBodyHeight = minCandleBodyHeightDp.pixels
 
-    model.series.forEachIn(ranges.minX..ranges.maxX) { entry, _ ->
+    model.series.forEachInIndexed(ranges.minX..ranges.maxX) { _, entry, _ ->
       candle = candles.getCandle(entry, model.extraStore)
       val candleInfo = drawingModel?.entries?.get(entry.x) ?: entry.toCandleInfo(yRange)
       val xSpacingMultiplier = ((entry.x - ranges.minX) / ranges.xStep).toFloat()

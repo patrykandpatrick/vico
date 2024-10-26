@@ -29,7 +29,7 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.ColumnCartesianLayerDrawingModel
 import com.patrykandpatrick.vico.core.cartesian.data.ColumnCartesianLayerModel
 import com.patrykandpatrick.vico.core.cartesian.data.MutableCartesianChartRanges
-import com.patrykandpatrick.vico.core.cartesian.data.forEachIn
+import com.patrykandpatrick.vico.core.cartesian.data.forEachInIndexed
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.core.cartesian.marker.ColumnCartesianLayerMarkerTarget
 import com.patrykandpatrick.vico.core.cartesian.marker.MutableColumnCartesianLayerMarkerTarget
@@ -160,7 +160,7 @@ protected constructor(
     model.series.forEachIndexed { index, entryCollection ->
       drawingStart = getDrawingStart(index, model.series.size, mergeMode) - scroll
 
-      entryCollection.forEachIn(ranges.minX..ranges.maxX) { entry, _ ->
+      entryCollection.forEachInIndexed(ranges.minX..ranges.maxX) { _, entry, _ ->
         val columnInfo = drawingModel?.getOrNull(index)?.get(entry.x)
         height =
           (columnInfo?.height ?: (abs(entry.y) / yRange.length)).toFloat() * layerBounds.height()
