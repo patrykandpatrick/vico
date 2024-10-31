@@ -77,7 +77,7 @@ public open class CartesianChart(
   @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) public val marker: CartesianMarker? = null,
   protected val markerVisibilityListener: CartesianMarkerVisibilityListener? = null,
   @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-  public val layerPadding: CartesianLayerPadding = CartesianLayerPadding(),
+  public val layerPaddingProvider: PaddingProvider = PaddingProvider.fixed(),
   protected val legend: Legend<CartesianMeasuringContext, CartesianDrawingContext>? = null,
   protected val fadingEdges: FadingEdges? = null,
   protected val decorations: List<Decoration> = emptyList(),
@@ -387,7 +387,7 @@ public open class CartesianChart(
     bottomAxis: Axis<Axis.Position.Horizontal.Bottom>? = this.bottomAxis,
     marker: CartesianMarker? = this.marker,
     markerVisibilityListener: CartesianMarkerVisibilityListener? = this.markerVisibilityListener,
-    layerPadding: CartesianLayerPadding = this.layerPadding,
+    paddingProvider: PaddingProvider = this.layerPaddingProvider,
     legend: Legend<CartesianMeasuringContext, CartesianDrawingContext>? = this.legend,
     fadingEdges: FadingEdges? = this.fadingEdges,
     decorations: List<Decoration> = this.decorations,
@@ -402,7 +402,7 @@ public open class CartesianChart(
         bottomAxis = bottomAxis,
         marker = marker,
         markerVisibilityListener = markerVisibilityListener,
-        layerPadding = layerPadding,
+        layerPaddingProvider = paddingProvider,
         legend = legend,
         fadingEdges = fadingEdges,
         decorations = decorations,
@@ -417,7 +417,7 @@ public open class CartesianChart(
         id == other.id &&
         marker == other.marker &&
         markerVisibilityListener == other.markerVisibilityListener &&
-        layerPadding == other.layerPadding &&
+        layerPaddingProvider == other.layerPaddingProvider &&
         legend == other.legend &&
         fadingEdges == other.fadingEdges &&
         decorations == other.decorations &&
@@ -430,7 +430,7 @@ public open class CartesianChart(
       id,
       marker,
       markerVisibilityListener,
-      layerPadding,
+      layerPaddingProvider,
       legend,
       fadingEdges,
       decorations,

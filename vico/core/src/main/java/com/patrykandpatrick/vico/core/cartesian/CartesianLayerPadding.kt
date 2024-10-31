@@ -18,6 +18,35 @@ package com.patrykandpatrick.vico.core.cartesian
 
 import androidx.compose.runtime.Immutable
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayer
+import com.patrykandpatrick.vico.core.common.data.ExtraStore
+
+
+@Immutable
+public fun interface PaddingProvider {
+  public fun getCartesianLayerPadding(
+    extraStore: ExtraStore,
+  ): CartesianLayerPadding
+
+  public companion object {
+    public fun fixed(
+      scalableStartDp: Float = 0f,
+      scalableEndDp: Float = 0f,
+      unscalableStartDp: Float = 0f,
+      unscalableEndDp: Float = 0f,
+      unscalableTopDp: Float = 0f,
+      unscalableBottomDp: Float = 0f,
+    ): PaddingProvider = PaddingProvider { _ ->
+      CartesianLayerPadding(
+        scalableStartDp = scalableStartDp,
+        scalableEndDp = scalableEndDp,
+        unscalableStartDp = unscalableStartDp,
+        unscalableEndDp = unscalableEndDp,
+        unscalableTopDp = unscalableTopDp,
+        unscalableBottomDp = unscalableBottomDp,
+      )
+    }
+  }
+}
 
 /**
  * Stores [CartesianLayer] padding values. [scalableStartDp] and [scalableEndDp] are multiplied by
@@ -29,14 +58,16 @@ public class CartesianLayerPadding(
   internal val scalableEndDp: Float = 0f,
   internal val unscalableStartDp: Float = 0f,
   internal val unscalableEndDp: Float = 0f,
+  internal val unscalableTopDp: Float = 0f,
+  internal val unscalableBottomDp: Float = 0f,
 ) {
   override fun equals(other: Any?): Boolean =
     this === other ||
       other is CartesianLayerPadding &&
-        scalableStartDp == other.scalableStartDp &&
-        scalableEndDp == other.scalableEndDp &&
-        unscalableStartDp == other.unscalableStartDp &&
-        unscalableEndDp == other.unscalableEndDp
+      scalableStartDp == other.scalableStartDp &&
+      scalableEndDp == other.scalableEndDp &&
+      unscalableStartDp == other.unscalableStartDp &&
+      unscalableEndDp == other.unscalableEndDp
 
   override fun hashCode(): Int {
     var result = scalableStartDp.hashCode()

@@ -31,14 +31,13 @@ import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLine
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
-import com.patrykandpatrick.vico.compose.common.data.rememberExtraLambda
 import com.patrykandpatrick.vico.compose.common.fill
 import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
-import com.patrykandpatrick.vico.core.common.Defaults
+import com.patrykandpatrick.vico.core.common.component.ShapeComponent
 import com.patrykandpatrick.vico.databinding.Chart1Binding
 import com.patrykandpatrick.vico.sample.showcase.UIFramework
 import com.patrykandpatrick.vico.sample.showcase.rememberMarker
@@ -47,7 +46,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 @Composable
-internal fun Chart1(uiFramework: UIFramework, modifier: Modifier) {
+internal fun Chart11(uiFramework: UIFramework, modifier: Modifier) {
   val modelProducer = remember { CartesianChartModelProducer() }
   LaunchedEffect(Unit) {
     withContext(Dispatchers.Default) {
@@ -59,16 +58,19 @@ internal fun Chart1(uiFramework: UIFramework, modifier: Modifier) {
     }
   }
   when (uiFramework) {
-    UIFramework.Compose -> ComposeChart1(modelProducer, modifier)
-    UIFramework.Views -> ViewChart1(modelProducer, modifier)
+    UIFramework.Compose -> ComposeChart11(modelProducer, modifier)
+    UIFramework.Views -> ViewChart11(modelProducer, modifier)
   }
 }
 
 @Composable
-private fun ComposeChart1(modelProducer: CartesianChartModelProducer, modifier: Modifier) {
+private fun ComposeChart11(modelProducer: CartesianChartModelProducer, modifier: Modifier) {
   val marker = rememberMarker()
-  val lineThickness = Defaults.LINE_SPEC_THICKNESS_DP.dp
-  val requiredPaddingForLine = lineThickness.div(other = 2F)
+  val lineThickness = 16F
+  val requiredPaddingForLine = lineThickness / 2F
+  val pointSize = 32F
+  val requiredPaddingForPoint = pointSize / 2F
+  val requiredUnscalableLayerPadding = maxOf(requiredPaddingForPoint, requiredPaddingForLine).dp
 
   CartesianChartHost(
     chart =
@@ -77,6 +79,12 @@ private fun ComposeChart1(modelProducer: CartesianChartModelProducer, modifier: 
         LineCartesianLayer.LineProvider.series(
           LineCartesianLayer.rememberLine(
             remember { LineCartesianLayer.LineFill.single(fill(Color(0xffa485e0))) },
+            pointProvider = LineCartesianLayer.PointProvider.single(
+              point = LineCartesianLayer.Point(
+                component = ShapeComponent(),
+                sizeDp = pointSize,
+              )
+            )
           ),
         ),
       ),
@@ -88,12 +96,11 @@ private fun ComposeChart1(modelProducer: CartesianChartModelProducer, modifier: 
       ),
       marker = marker,
       layerPadding = cartesianLayerPadding(
-        unscalableStart = requiredPaddingForLine,
-        unscalableEnd = requiredPaddingForLine,
-        unscalableTop = requiredPaddingForLine,
-        unscalableBottom = requiredPaddingForLine,
+        unscalableStart = requiredUnscalableLayerPadding,
+        unscalableEnd = requiredUnscalableLayerPadding,
+        unscalableTop = requiredUnscalableLayerPadding,
+        unscalableBottom = requiredUnscalableLayerPadding,
       ),
-      persistentMarkers = rememberExtraLambda(marker) { marker at PERSISTENT_MARKER_X },
     ),
     modelProducer = modelProducer,
     modifier = modifier,
@@ -102,14 +109,12 @@ private fun ComposeChart1(modelProducer: CartesianChartModelProducer, modifier: 
 }
 
 @Composable
-private fun ViewChart1(modelProducer: CartesianChartModelProducer, modifier: Modifier) {
+private fun ViewChart11(modelProducer: CartesianChartModelProducer, modifier: Modifier) {
   val marker = rememberMarker()
   AndroidViewBinding(
     { inflater, parent, attachToParent ->
       Chart1Binding.inflate(inflater, parent, attachToParent).apply {
         with(chartView) {
-          chart =
-            chart?.copy(persistentMarkers = { marker at PERSISTENT_MARKER_X }, marker = marker)
           this.modelProducer = modelProducer
         }
       }
@@ -118,6 +123,4 @@ private fun ViewChart1(modelProducer: CartesianChartModelProducer, modifier: Mod
   )
 }
 
-private const val PERSISTENT_MARKER_X = 7f
-
-private val x = (1..50).toList()
+private val x = (1..10).toList()
