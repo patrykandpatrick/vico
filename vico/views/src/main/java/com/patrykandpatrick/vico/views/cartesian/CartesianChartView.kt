@@ -38,6 +38,7 @@ import com.patrykandpatrick.vico.core.cartesian.data.toImmutable
 import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.NEW_PRODUCER_ERROR_MESSAGE
 import com.patrykandpatrick.vico.core.common.Point
+import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.core.common.spToPx
 import com.patrykandpatrick.vico.views.R
 import com.patrykandpatrick.vico.views.common.ChartView
@@ -73,7 +74,8 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       ranges = CartesianChartRanges.Empty,
       scrollEnabled = false,
       zoomEnabled = false,
-      layerPadding = themeHandler.chart?.layerPadding ?: CartesianLayerPadding(),
+      layerPadding = themeHandler.chart?.layerPaddingProvider?.getPadding(extraStore = extraStore)
+        ?: CartesianLayerPadding(),
       spToPx = context::spToPx,
     )
 
@@ -120,7 +122,8 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   /** The [CartesianChart] displayed by this [View]. */
   public var chart: CartesianChart? by
     observable(themeHandler.chart) { _, _, newValue ->
-      if (newValue != null) measuringContext.layerPadding = newValue.layerPadding
+      if (newValue != null) measuringContext.layerPadding =
+        newValue.layerPaddingProvider.getPadding(extraStore)
       tryInvalidate(chart = newValue, model = model, updateRanges = true)
     }
 
@@ -350,3 +353,7 @@ internal val MotionEvent.movedXDistance: Float
 
 internal val MotionEvent.movedYDistance: Float
   get() = if (historySize > 0) abs(y - getHistoricalY(historySize - 1)) else 0f
+
+private fun CartesianChart.getLayerPadding(extraStore: ExtraStore?) = extraStore?.let {
+  layerPaddingProvider.getPadding(extraStore = it)
+}  ?: CartesianLayerPadding()

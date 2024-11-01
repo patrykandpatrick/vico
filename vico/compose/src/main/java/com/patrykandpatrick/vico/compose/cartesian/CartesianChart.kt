@@ -24,6 +24,7 @@ import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLa
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.core.cartesian.CartesianLayerPadding
+import com.patrykandpatrick.vico.core.cartesian.CartesianLayerPaddingProvider
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
 import com.patrykandpatrick.vico.core.cartesian.FadingEdges
 import com.patrykandpatrick.vico.core.cartesian.axis.Axis
@@ -52,7 +53,7 @@ public fun rememberCartesianChart(
   bottomAxis: Axis<Axis.Position.Horizontal.Bottom>? = null,
   marker: CartesianMarker? = null,
   markerVisibilityListener: CartesianMarkerVisibilityListener? = null,
-  layerPadding: CartesianLayerPadding = cartesianLayerPadding(),
+  layerPaddingProvider: CartesianLayerPaddingProvider = CartesianLayerPaddingProvider.fixed(),
   legend: Legend<CartesianMeasuringContext, CartesianDrawingContext>? = null,
   fadingEdges: FadingEdges? = null,
   decorations: List<Decoration> = emptyList(),
@@ -68,7 +69,7 @@ public fun rememberCartesianChart(
     bottomAxis,
     marker,
     markerVisibilityListener,
-    layerPadding,
+    layerPaddingProvider,
     legend,
     fadingEdges,
     decorations,
@@ -84,7 +85,7 @@ public fun rememberCartesianChart(
         bottomAxis = bottomAxis,
         marker = marker,
         markerVisibilityListener = markerVisibilityListener,
-        layerPadding = layerPadding,
+        layerPaddingProvider = layerPaddingProvider,
         legend = legend,
         fadingEdges = fadingEdges,
         decorations = decorations,
@@ -99,7 +100,7 @@ public fun rememberCartesianChart(
           bottomAxis = bottomAxis,
           marker = marker,
           markerVisibilityListener = markerVisibilityListener,
-          layerPadding = layerPadding,
+          layerPaddingProvider = layerPaddingProvider,
           legend = legend,
           fadingEdges = fadingEdges,
           decorations = decorations,
