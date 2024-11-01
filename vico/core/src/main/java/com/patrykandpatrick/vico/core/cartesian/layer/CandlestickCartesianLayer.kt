@@ -266,12 +266,15 @@ protected constructor(
     with(context) {
       val candleWidth = candles.getWidestCandle(model.extraStore).widthDp.pixels
       val xSpacing = candleWidth + candleSpacingDp.pixels
+
+      val padding = paddingProvider.getCartesianLayerPadding(extraStore = model.extraStore)
+
       horizontalDimensions.ensureValuesAtLeast(
         xSpacing = xSpacing,
-        scalableStartPadding = candleWidth.half + layerPadding.scalableStartDp.pixels,
-        scalableEndPadding = candleWidth.half + layerPadding.scalableEndDp.pixels,
-        unscalableStartPadding = layerPadding.unscalableStartDp.pixels,
-        unscalableEndPadding = layerPadding.unscalableEndDp.pixels,
+        scalableStartPadding = padding.scalableStartDp.pixels,
+        scalableEndPadding = padding.scalableEndDp.pixels,
+        unscalableStartPadding = padding.unscalableStartDp.pixels,
+        unscalableEndPadding =  padding.unscalableEndDp.pixels,
       )
     }
   }

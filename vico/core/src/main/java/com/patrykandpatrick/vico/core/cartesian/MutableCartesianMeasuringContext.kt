@@ -32,7 +32,7 @@ public class MutableCartesianMeasuringContext(
   override var ranges: CartesianChartRanges,
   override var scrollEnabled: Boolean,
   override var zoomEnabled: Boolean,
-  override var layerPadding: CartesianLayerPadding,
+  override var paddingProvider: PaddingProvider,
   spToPx: (Float) -> Float,
 ) :
   MutableMeasuringContext(

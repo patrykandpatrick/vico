@@ -33,6 +33,7 @@ import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
 import com.patrykandpatrick.vico.compose.common.data.rememberExtraLambda
 import com.patrykandpatrick.vico.compose.common.fill
+import com.patrykandpatrick.vico.core.cartesian.PaddingProvider
 import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
@@ -87,12 +88,12 @@ private fun ComposeChart1(modelProducer: CartesianChartModelProducer, modifier: 
         itemPlacer = remember { HorizontalAxis.ItemPlacer.segmented() },
       ),
       marker = marker,
-      layerPadding = cartesianLayerPadding(
+      paddingProvider = PaddingProvider.fixed(cartesianLayerPadding(
         unscalableStart = requiredPaddingForLine,
         unscalableEnd = requiredPaddingForLine,
         unscalableTop = requiredPaddingForLine,
         unscalableBottom = requiredPaddingForLine,
-      ),
+      )),
       persistentMarkers = rememberExtraLambda(marker) { marker at PERSISTENT_MARKER_X },
     ),
     modelProducer = modelProducer,

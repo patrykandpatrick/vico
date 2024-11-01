@@ -35,6 +35,7 @@ import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.common.fill
 import com.patrykandpatrick.vico.compose.common.shape.rounded
+import com.patrykandpatrick.vico.core.cartesian.PaddingProvider
 import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
@@ -117,8 +118,8 @@ private fun ComposeChart4(modelProducer: CartesianChartModelProducer, modifier: 
           ),
         endAxis = VerticalAxis.rememberEnd(),
         marker = rememberMarker(),
-        layerPadding = cartesianLayerPadding(scalableStart = 16.dp, scalableEnd = 16.dp),
-      ),
+        paddingProvider = PaddingProvider.fixed(cartesianLayerPadding(scalableStart = 16.dp, scalableEnd = 16.dp),
+        )),
     modelProducer = modelProducer,
     modifier = modifier,
     zoomState = rememberVicoZoomState(zoomEnabled = false),

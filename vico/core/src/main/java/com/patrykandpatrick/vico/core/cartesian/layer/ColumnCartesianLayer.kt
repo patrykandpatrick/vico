@@ -396,12 +396,15 @@ protected constructor(
           mergeMode(model.extraStore),
         )
       val xSpacing = columnCollectionWidth + columnCollectionSpacingDp.pixels
+
+      val padding = paddingProvider.getCartesianLayerPadding(extraStore = model.extraStore)
+
       horizontalDimensions.ensureValuesAtLeast(
         xSpacing = xSpacing,
-        scalableStartPadding = columnCollectionWidth.half + layerPadding.scalableStartDp.pixels,
-        scalableEndPadding = columnCollectionWidth.half + layerPadding.scalableEndDp.pixels,
-        unscalableStartPadding = layerPadding.unscalableStartDp.pixels,
-        unscalableEndPadding = layerPadding.unscalableEndDp.pixels,
+        scalableStartPadding = padding.scalableStartDp.pixels,
+        scalableEndPadding = padding.scalableEndDp.pixels,
+        unscalableStartPadding = padding.unscalableStartDp.pixels,
+        unscalableEndPadding = padding.unscalableEndDp.pixels,
       )
     }
   }

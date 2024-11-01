@@ -16,6 +16,7 @@
 
 package com.patrykandpatrick.vico.core.cartesian
 
+import androidx.annotation.Dimension
 import androidx.compose.runtime.Immutable
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayer
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
@@ -28,6 +29,10 @@ public fun interface PaddingProvider {
   ): CartesianLayerPadding
 
   public companion object {
+    public fun fixed(layerPadding: CartesianLayerPadding): PaddingProvider = PaddingProvider {
+      layerPadding
+    }
+
     public fun fixed(
       scalableStartDp: Float = 0f,
       scalableEndDp: Float = 0f,
