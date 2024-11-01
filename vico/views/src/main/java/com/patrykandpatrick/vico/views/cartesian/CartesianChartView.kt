@@ -47,6 +47,7 @@ import com.patrykandpatrick.vico.views.common.gesture.ChartScaleGestureListener
 import com.patrykandpatrick.vico.views.common.gesture.MotionEventHandler
 import com.patrykandpatrick.vico.views.common.isLtr
 import com.patrykandpatrick.vico.views.common.theme.ThemeHandler
+import java.util.Objects
 import kotlin.math.abs
 import kotlin.properties.Delegates.observable
 import kotlin.properties.ReadWriteProperty
@@ -81,7 +82,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       ranges = CartesianChartRanges.Empty,
       scrollEnabled = false,
       zoomEnabled = false,
-      layerPadding = themeHandler.chart?.layerPadding ?: CartesianLayerPadding(),
+      layerPadding = CartesianLayerPadding(),
       spToPx = context::spToPx,
     )
 
@@ -95,6 +96,8 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   private var scrollDirectionResolved = false
 
   private var horizontalDimensions = MutableHorizontalDimensions()
+
+  private var previousLayerPaddingHashCode: Int? = null
 
   /**
    * Houses information on the [CartesianChart]’s scroll value. Allows for scroll customization and
@@ -128,7 +131,6 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   /** The [CartesianChart] displayed by this [View]. */
   public var chart: CartesianChart? by
     observable(themeHandler.chart) { _, _, newValue ->
-      if (newValue != null) measuringContext.layerPadding = newValue.layerPadding
       tryInvalidate(chart = newValue, model = model, updateRanges = true)
     }
 
@@ -243,10 +245,17 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     updateRanges: Boolean,
   ) {
     measuringContext.model = model ?: return
-    if (chart != null && updateRanges) {
-      ranges.reset()
-      chart.updateRanges(ranges, model)
-      measuringContext.ranges = ranges.toImmutable()
+    if (chart != null) {
+      val layerPaddingHashCode = Objects.hash(chart.layerPadding, model.extraStore)
+      if (layerPaddingHashCode != previousLayerPaddingHashCode) {
+        measuringContext.layerPadding = chart.layerPadding(model.extraStore)
+        previousLayerPaddingHashCode = layerPaddingHashCode
+      }
+      if (updateRanges) {
+        ranges.reset()
+        chart.updateRanges(ranges, model)
+        measuringContext.ranges = ranges.toImmutable()
+      }
     }
     if (isAttachedToWindow) invalidate()
   }

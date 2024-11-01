@@ -62,7 +62,7 @@ import kotlin.math.abs
  * @property layers the [CartesianLayer]s.
  * @property marker appears when the [CartesianChart] is tapped.
  * @property markerVisibilityListener allows for listening to [marker] visibility changes.
- * @property layerPadding stores the [CartesianLayer] padding values.
+ * @property layerPadding returns the [CartesianLayerPadding].
  * @property legend the legend.
  * @property fadingEdges applies a horizontal fade to the edges of the [CartesianChart], provided
  *   that it’s scrollable.
@@ -80,7 +80,7 @@ public open class CartesianChart(
   @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) public val marker: CartesianMarker? = null,
   protected val markerVisibilityListener: CartesianMarkerVisibilityListener? = null,
   @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-  public val layerPadding: CartesianLayerPadding = CartesianLayerPadding(),
+  public val layerPadding: ((ExtraStore) -> CartesianLayerPadding) = { CartesianLayerPadding() },
   protected val legend: Legend<CartesianMeasuringContext, CartesianDrawingContext>? = null,
   protected val fadingEdges: FadingEdges? = null,
   protected val decorations: List<Decoration> = emptyList(),
@@ -408,7 +408,7 @@ public open class CartesianChart(
     bottomAxis: Axis<Axis.Position.Horizontal.Bottom>? = this.bottomAxis,
     marker: CartesianMarker? = this.marker,
     markerVisibilityListener: CartesianMarkerVisibilityListener? = this.markerVisibilityListener,
-    layerPadding: CartesianLayerPadding = this.layerPadding,
+    layerPadding: ((ExtraStore) -> CartesianLayerPadding) = this.layerPadding,
     legend: Legend<CartesianMeasuringContext, CartesianDrawingContext>? = this.legend,
     fadingEdges: FadingEdges? = this.fadingEdges,
     decorations: List<Decoration> = this.decorations,

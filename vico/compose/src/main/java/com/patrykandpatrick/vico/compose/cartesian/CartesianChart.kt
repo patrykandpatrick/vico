@@ -52,7 +52,7 @@ public fun rememberCartesianChart(
   bottomAxis: Axis<Axis.Position.Horizontal.Bottom>? = null,
   marker: CartesianMarker? = null,
   markerVisibilityListener: CartesianMarkerVisibilityListener? = null,
-  layerPadding: CartesianLayerPadding = cartesianLayerPadding(),
+  layerPadding: ((ExtraStore) -> CartesianLayerPadding) = { cartesianLayerPadding() },
   legend: Legend<CartesianMeasuringContext, CartesianDrawingContext>? = null,
   fadingEdges: FadingEdges? = null,
   decorations: List<Decoration> = emptyList(),
