@@ -51,10 +51,11 @@ internal fun TypedArray.getTextComponent(context: Context): TextComponent = use 
         index = R.styleable.TextComponentStyle_android_textSize,
         defaultValue = TEXT_COMPONENT_TEXT_SIZE,
       ),
-    lineHeightSp = getRawDimensionOrNull(
-      context = context,
-      index = R.styleable.TextComponentStyle_android_lineHeight,
-    ),
+    lineHeightSp =
+      getRawDimensionOrNull(
+        context = context,
+        index = R.styleable.TextComponentStyle_android_lineHeight,
+      ),
     textAlignment = getTextAlignment(),
     lineCount =
       getInteger(R.styleable.TextComponentStyle_android_maxLines, TEXT_COMPONENT_LINE_COUNT),
