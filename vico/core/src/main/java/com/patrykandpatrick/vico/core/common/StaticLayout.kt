@@ -75,8 +75,11 @@ internal fun Layout.getBounds(outBounds: RectF): RectF =
     left = 0f
     top = 0f
     right = widestLineWidth
-    bottom = this@getBounds.height.toFloat()
+    bottom = heightWithSpacingAddition
   }
 
 internal val Layout.widestLineWidth: Float
   get() = (0..<lineCount).maxOf { lineIndex -> getLineWidth(lineIndex) }
+
+internal val Layout.heightWithSpacingAddition: Float
+  get() = height.toFloat() + spacingAdd

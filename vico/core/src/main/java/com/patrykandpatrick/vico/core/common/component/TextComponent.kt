@@ -39,6 +39,7 @@ import com.patrykandpatrick.vico.core.common.copy
 import com.patrykandpatrick.vico.core.common.data.CacheStore
 import com.patrykandpatrick.vico.core.common.getBounds
 import com.patrykandpatrick.vico.core.common.half
+import com.patrykandpatrick.vico.core.common.heightWithSpacingAddition
 import com.patrykandpatrick.vico.core.common.piRad
 import com.patrykandpatrick.vico.core.common.rotate
 import com.patrykandpatrick.vico.core.common.staticLayout
@@ -90,8 +91,10 @@ public open class TextComponent(
     TextPaint(Paint.ANTI_ALIAS_FLAG).also { textPaint ->
       textPaint.color = color
       textPaint.typeface = typeface
+      textPaint.textSize = 0f
     }
-  private var layout: Layout = staticLayout("", textPaint, 0)
+  private lateinit var layout: Layout
+  private lateinit var measuringLayout: Layout
   private val tempMeasureBounds = RectF()
 
   /**
@@ -125,7 +128,8 @@ public open class TextComponent(
       val shouldRotate = rotationDegrees % 2f.piRad != 0f
       val textStartPosition =
         horizontalPosition.getTextStartPosition(context, x, layout.widestLineWidth)
-      val textTopPosition = verticalPosition.getTextTopPosition(context, y, layout.height.toFloat())
+      val textTopPosition =
+        verticalPosition.getTextTopPosition(context, y, layout.heightWithSpacingAddition)
 
       context.withSavedCanvas {
         val bounds = layout.getBounds(tempMeasureBounds)
@@ -186,7 +190,7 @@ public open class TextComponent(
 
         translate(
           bounds.left + paddingLeft + textAlignmentCorrection,
-          bounds.top + padding.topDp.pixels,
+          bounds.top + padding.topDp.pixels + layout.spacingAdd.half,
         )
 
         layout.draw(this)
@@ -310,11 +314,13 @@ public open class TextComponent(
     pad: Boolean = text == null,
   ): RectF =
     with(context) {
-      val measuredText = SpannableStringBuilder(text ?: "")
-      if (pad)
+      var measuredText = text ?: ""
+      if (pad) {
+        measuredText = SpannableStringBuilder(measuredText)
         repeat((lineCount - measuredText.lines().size).coerceAtLeast(0)) {
           measuredText.append('\n')
         }
+      }
       val layout = getLayout(this, measuredText, maxWidth, maxHeight, rotationDegrees)
       layout
         .getBounds(outRect)
@@ -373,9 +379,14 @@ public open class TextComponent(
     rotationDegrees: Float = 0f,
   ) =
     context.run {
+      textPaint.textSize = spToPx(textSizeSp)
+      measuringLayout =
+        cacheStore.getOrSet(cacheKeyNamespace, textPaint.typeface.hashCode(), textPaint.textSize) {
+          staticLayout("", textPaint, DEF_LAYOUT_SIZE)
+        }
       val widthWithoutMargins = width - margins.horizontalDp.wholePixels
       val heightWithoutMargins = height - margins.verticalDp.wholePixels
-      val spacingAddition = computeSpacingAddition()
+      val extraLineHeight = getExtraLineHeight()
 
       val correctedWidth =
         (when {
@@ -383,7 +394,8 @@ public open class TextComponent(
             rotationDegrees % 0.5f.piRad == 0f -> heightWithoutMargins
             else -> {
               val cumulatedHeight =
-                lineCount * (textPaint.defaultLineHeight + spacingAddition) + padding.verticalDp.wholePixels
+                lineCount * (measuringLayout.height + extraLineHeight) +
+                  padding.verticalDp.wholePixels
               val alpha = Math.toRadians(rotationDegrees.toDouble())
               val absSinAlpha = sin(alpha).absoluteValue
               val absCosAlpha = cos(alpha).absoluteValue
@@ -398,19 +410,19 @@ public open class TextComponent(
       cacheStore.getOrSet(
         cacheKeyNamespace,
         text.hashCode(),
-        textPaint.hashCode(),
-        textSizeSp,
-        spacingAddition,
+        textPaint.color,
+        textPaint.typeface.hashCode(),
+        textPaint.textSize,
+        extraLineHeight,
         correctedWidth,
         lineCount,
         truncateAt,
         textAlignment,
       ) {
-        textPaint.textSize = spToPx(textSizeSp)
         staticLayout(
           source = text,
           paint = textPaint,
-          spacingAddition = spacingAddition,
+          spacingAddition = extraLineHeight,
           width = correctedWidth,
           maxLines = lineCount,
           ellipsize = truncateAt,
@@ -431,6 +443,7 @@ public open class TextComponent(
         color == other.color &&
         typeface == other.typeface &&
         textSizeSp == other.textSizeSp &&
+        lineHeightSp == other.lineHeightSp &&
         textAlignment == other.textAlignment &&
         lineCount == other.lineCount &&
         truncateAt == other.truncateAt &&
@@ -443,6 +456,7 @@ public open class TextComponent(
     var result = color
     result = 31 * result + typeface.hashCode()
     result = 31 * result + textSizeSp.hashCode()
+    result = 31 * result + lineHeightSp.hashCode()
     result = 31 * result + textAlignment.hashCode()
     result = 31 * result + lineCount
     result = 31 * result + truncateAt.hashCode()
@@ -453,9 +467,12 @@ public open class TextComponent(
     return result
   }
 
-  private fun MeasuringContext.computeSpacingAddition(): Float =
+  private fun MeasuringContext.getExtraLineHeight(): Float =
     if (lineHeightSp != null) {
-      spToPx(lineHeightSp) - textPaint.defaultLineHeight
+      spToPx(lineHeightSp) -
+        measuringLayout.height -
+        measuringLayout.topPadding -
+        measuringLayout.bottomPadding
     } else {
       0f
     }
@@ -523,11 +540,3 @@ public open class TextComponent(
     public val cacheKeyNamespace: CacheStore.KeyNamespace = CacheStore.KeyNamespace()
   }
 }
-
-private val fm: Paint.FontMetrics = Paint.FontMetrics()
-
-internal val Paint.defaultLineHeight: Float
-  get() {
-    getFontMetrics(fm)
-    return fm.bottom - fm.top + fm.leading
-  }
