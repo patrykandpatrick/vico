@@ -49,8 +49,8 @@ public class CacheStore {
     vararg keyComponents: Any?,
     value: () -> T,
   ): T =
-    getOrNull(keyNamespace, keyComponents)
-      ?: value().also { this[keyNamespace, keyComponents] = it }
+    getOrNull(keyNamespace, *keyComponents)
+      ?: value().also { set(keyNamespace, *keyComponents, value = it) }
 
   /**
    * Removes all values that were added before the last call to this function and haven’t been read
