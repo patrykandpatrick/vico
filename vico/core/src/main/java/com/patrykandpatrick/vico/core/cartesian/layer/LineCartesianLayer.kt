@@ -348,9 +348,11 @@ public open class LineCartesianLayer(
         line.draw(context, linePath, lineFillCanvas, verticalAxisPosition)
         canvas.drawBitmap(lineFillBitmap, 0f, 0f, null)
 
-        forEachPointInBounds(series, drawingStart, pointInfoMap) { entry, x, y, _, _ ->
+        // ----------------------- WAHOO START --------------------------
+        /*forEachPointInBounds(series, drawingStart, pointInfoMap) { entry, x, y, _, _ ->
           updateMarkerTargets(entry, x, y, lineFillBitmap)
-        }
+        }*/
+        // ----------------------- WAHOO END --------------------------
 
         drawPointsAndDataLabels(line, series, seriesIndex, drawingStart, pointInfoMap)
 
@@ -363,7 +365,9 @@ public open class LineCartesianLayer(
     cacheStore
       .getOrNull<Bitmap>(cacheKeyNamespace, seriesIndex)
       ?.takeIf { it.width == canvas.width && it.height == canvas.height }
-      ?.apply { eraseColor(Color.TRANSPARENT) }
+    // ----------------------- WAHOO START --------------------------
+      //?.apply { eraseColor(Color.TRANSPARENT) }
+    // ----------------------- WAHOO END --------------------------
       ?: Bitmap.createBitmap(canvas.width, canvas.height, Bitmap.Config.ARGB_8888).also {
         cacheStore[cacheKeyNamespace, seriesIndex] = it
       }
