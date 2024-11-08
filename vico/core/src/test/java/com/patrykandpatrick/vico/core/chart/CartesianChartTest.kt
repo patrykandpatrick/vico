@@ -30,8 +30,10 @@ public class CartesianChartTest {
 
   private val marker =
     object : CartesianMarker {
-      override fun draw(context: CartesianDrawingContext, targets: List<CartesianMarker.Target>) =
-        Unit
+      override fun drawOverLayers(
+        context: CartesianDrawingContext,
+        targets: List<CartesianMarker.Target>,
+      ) {}
     }
 
   @Suppress("UNCHECKED_CAST")

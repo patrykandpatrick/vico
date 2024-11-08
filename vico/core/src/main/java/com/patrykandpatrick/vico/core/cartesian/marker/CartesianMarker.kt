@@ -21,12 +21,16 @@ import com.patrykandpatrick.vico.core.cartesian.CartesianChart
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.core.cartesian.CartesianLayerInsetter
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
+import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayer
 
 /** Marks [CartesianChart] objects. */
 @Immutable
 public interface CartesianMarker : CartesianLayerInsetter<CartesianChartModel> {
-  /** Draws the [CartesianMarker] for the specified [Target]s. */
-  public fun draw(context: CartesianDrawingContext, targets: List<Target>)
+  /** Draws content under the [CartesianLayer]s. */
+  public fun drawUnderLayers(context: CartesianDrawingContext, targets: List<Target>) {}
+
+  /** Draws content over the [CartesianLayer]s. */
+  public fun drawOverLayers(context: CartesianDrawingContext, targets: List<Target>) {}
 
   /** Houses information on an object to be marked. */
   public interface Target {

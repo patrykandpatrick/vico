@@ -64,7 +64,10 @@ public open class DefaultCartesianMarker(
 
   protected val tickSizeDp: Float = markerCorneredShape?.tickSizeDp.orZero
 
-  override fun draw(context: CartesianDrawingContext, targets: List<CartesianMarker.Target>) {
+  override fun drawOverLayers(
+    context: CartesianDrawingContext,
+    targets: List<CartesianMarker.Target>,
+  ) {
     with(context) {
       drawGuideline(targets)
       val halfIndicatorSize = indicatorSizeDp.half.pixels

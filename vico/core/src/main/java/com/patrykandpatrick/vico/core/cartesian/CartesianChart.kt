@@ -16,6 +16,9 @@
 
 package com.patrykandpatrick.vico.core.cartesian
 
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.RectF
 import androidx.annotation.RestrictTo
 import androidx.compose.runtime.Stable
@@ -37,6 +40,7 @@ import com.patrykandpatrick.vico.core.common.HorizontalInsets
 import com.patrykandpatrick.vico.core.common.Insets
 import com.patrykandpatrick.vico.core.common.Legend
 import com.patrykandpatrick.vico.core.common.Point
+import com.patrykandpatrick.vico.core.common.data.CacheStore
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.core.common.data.MutableExtraStore
 import com.patrykandpatrick.vico.core.common.orZero
@@ -257,20 +261,36 @@ public open class CartesianChart(
       val canvasSaveCount = if (fadingEdges != null) canvas.saveLayer() else -1
       axisManager.drawUnderLayers(context)
       decorations.forEach { it.drawUnderLayers(context) }
-      model.forEachWithLayer(drawingModelAndLayerConsumer.apply { this.context = context })
+      val (layerBitmap, layerCanvas) = getLayerBitmapAndCanvas()
+      withOtherCanvas(layerCanvas) {
+        model.forEachWithLayer(drawingModelAndLayerConsumer.apply { this.context = context })
+      }
+      forEachPersistentMarker { marker, targets -> marker.drawUnderLayers(context, targets) }
+      val markerTargets = getMarkerTargets(context, pointerPosition)
+      if (markerTargets.isNotEmpty()) marker?.drawUnderLayers(context, markerTargets)
+      canvas.drawBitmap(layerBitmap, 0f, 0f, null)
       fadingEdges?.run {
         draw(context)
         canvas.restoreToCount(canvasSaveCount)
       }
       axisManager.drawOverLayers(context)
       decorations.forEach { it.drawOverLayers(context) }
-      persistentMarkerMap.forEach { (x, marker) ->
-        markerTargets[x]?.let { targets -> marker.draw(context, targets) }
-      }
+      forEachPersistentMarker { marker, targets -> marker.drawOverLayers(context, targets) }
       legend?.draw(context)
-      drawMarker(context, pointerPosition)
+      if (markerTargets.isNotEmpty()) marker?.drawOverLayers(context, markerTargets)
     }
   }
+
+  private fun CartesianDrawingContext.getLayerBitmapAndCanvas() =
+    cacheStore
+      .getOrNull<Pair<Bitmap, Canvas>>(cacheKeyNamespace, canvas.width, canvas.height)
+      ?.also { (bitmap, _) -> bitmap.eraseColor(Color.TRANSPARENT) }
+      ?: run {
+        val bitmap = Bitmap.createBitmap(canvas.width, canvas.height, Bitmap.Config.ARGB_8888)
+        (bitmap to Canvas(bitmap)).also { bitmapWithCanvas ->
+          cacheStore.set(cacheKeyNamespace, canvas.width, canvas.height, value = bitmapWithCanvas)
+        }
+      }
 
   /** Updates [ranges] in accordance with [model]. */
   public fun updateRanges(ranges: MutableCartesianChartRanges, model: CartesianChartModel) {
@@ -339,12 +359,23 @@ public open class CartesianChart(
     }
   }
 
-  protected open fun drawMarker(context: CartesianDrawingContext, pointerPosition: Point?) {
-    val marker = marker ?: return
+  private inline fun CartesianDrawingContext.forEachPersistentMarker(
+    block: (CartesianMarker, List<CartesianMarker.Target>) -> Unit
+  ) {
+    persistentMarkerMap.forEach { (x, marker) ->
+      markerTargets[x]?.also { targets -> block(marker, targets) }
+    }
+  }
+
+  protected open fun getMarkerTargets(
+    context: CartesianDrawingContext,
+    pointerPosition: Point?,
+  ): List<CartesianMarker.Target> {
+    val marker = marker ?: return emptyList()
     if (pointerPosition == null || markerTargets.isEmpty()) {
       if (previousMarkerTargetHashCode != null) markerVisibilityListener?.onHidden(marker)
       previousMarkerTargetHashCode = null
-      return
+      return emptyList()
     }
     var targets = emptyList<CartesianMarker.Target>()
     var previousDistance = Float.POSITIVE_INFINITY
@@ -355,7 +386,6 @@ public open class CartesianChart(
       targets = canvasXTargets
       previousDistance = distance
     }
-    marker.draw(context, targets)
     val targetHashCode = targets.hashCode()
     if (previousMarkerTargetHashCode == null) {
       markerVisibilityListener?.onShown(marker, targets)
@@ -363,6 +393,7 @@ public open class CartesianChart(
       markerVisibilityListener?.onUpdated(marker, targets)
     }
     previousMarkerTargetHashCode = targetHashCode
+    return targets
   }
 
   protected inline fun <reified T : CartesianLayerModel> MutableList<CartesianLayerModel>.consume(
@@ -443,5 +474,9 @@ public open class CartesianChart(
   public fun interface PersistentMarkerScope {
     /** Adds this [CartesianMarker] at [x]. */
     public infix fun CartesianMarker.at(x: Number)
+  }
+
+  protected companion object {
+    public val cacheKeyNamespace: CacheStore.KeyNamespace = CacheStore.KeyNamespace()
   }
 }
