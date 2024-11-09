@@ -51,7 +51,7 @@
     </style>
 
     <style name="Chart9StartAxisLabelBackgroundStyle">
-        <item name="color">@android:color/transparent</item>
+        <item name="android:color">@android:color/transparent</item>
         <item name="shapeStyle">@style/Chart9StartAxisLabelBackgroundShapeStyle</item>
         <item name="strokeThickness">1dp</item>
         <item name="strokeColor">?colorOutlineVariant</item>
@@ -63,7 +63,7 @@
 
     <style name="Chart9AxisGuidelineStyle">
         <item name="shapeStyle">@style/Chart9AxisGuidelineShapeStyle</item>
-        <item name="color">?colorOutlineVariant</item>
+        <item name="android:color">?colorOutlineVariant</item>
     </style>
 
     <style name="Chart9AxisGuidelineShapeStyle">

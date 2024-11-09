@@ -29,15 +29,15 @@
     </style>
 
     <style name="Chart7Line1Style" parent="@style/Chart7LineStyle">
-        <item name="color">@color/chart_7_color_1</item>
+        <item name="android:color">@color/chart_7_color_1</item>
     </style>
 
     <style name="Chart7Line2Style" parent="@style/Chart7LineStyle">
-        <item name="color">@color/chart_7_color_2</item>
+        <item name="android:color">@color/chart_7_color_2</item>
     </style>
 
     <style name="Chart7Line3Style" parent="@style/Chart7LineStyle">
-        <item name="color">@color/chart_7_color_3</item>
+        <item name="android:color">@color/chart_7_color_3</item>
     </style>
 
     <style name="Chart7LineLayerStyle">

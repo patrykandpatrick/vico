@@ -23,7 +23,7 @@
     </style>
 
     <style name="Chart2Column1Style">
-        <item name="color">@color/chart_2_color_1</item>
+        <item name="android:color">@color/chart_2_color_1</item>
         <item name="thickness">16dp</item>
     </style>
 

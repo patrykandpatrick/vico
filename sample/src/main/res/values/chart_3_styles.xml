@@ -40,7 +40,7 @@
     </style>
 
     <style name="Chart3BottomAxisTitleBackgroundStyle" parent="Chart3AxisTitleBackgroundStyle">
-        <item name="color">@color/chart_3_color_2</item>
+        <item name="android:color">@color/chart_3_color_2</item>
     </style>
 
     <style name="Chart3BottomAxisTitleStyle" parent="Chart3AxisTitleStyle">
@@ -50,11 +50,11 @@
     </style>
 
     <style name="Chart3Line1Style">
-        <item name="color">@color/chart_3_color_1</item>
+        <item name="android:color">@color/chart_3_color_1</item>
     </style>
 
     <style name="Chart3StartAxisTitleBackgroundStyle" parent="Chart3AxisTitleBackgroundStyle">
-        <item name="color">@color/chart_3_color_1</item>
+        <item name="android:color">@color/chart_3_color_1</item>
     </style>
 
     <style name="Chart3StartAxisTitleStyle" parent="Chart3AxisTitleStyle">

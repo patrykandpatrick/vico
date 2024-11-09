@@ -29,19 +29,19 @@
     </style>
 
     <style name="Chart8Column1Style">
-        <item name="color">@color/chart_8_color_1</item>
+        <item name="android:color">@color/chart_8_color_1</item>
     </style>
 
     <style name="Chart8Column2Style">
-        <item name="color">@color/chart_8_color_2</item>
+        <item name="android:color">@color/chart_8_color_2</item>
     </style>
 
     <style name="Chart8Column3Style">
-        <item name="color">@color/chart_8_color_3</item>
+        <item name="android:color">@color/chart_8_color_3</item>
     </style>
 
     <style name="Chart8Line1Style">
-        <item name="color">@color/chart_8_color_4</item>
+        <item name="android:color">@color/chart_8_color_4</item>
     </style>
 
     <style name="Chart8ColumnLayerStyle">

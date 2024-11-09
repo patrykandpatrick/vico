@@ -38,19 +38,19 @@
     </style>
 
     <style name="Chart5Column1Style">
-        <item name="color">@color/chart_5_color_1</item>
+        <item name="android:color">@color/chart_5_color_1</item>
         <item name="shapeStyle">@style/Chart5Column1ShapeStyle</item>
         <item name="thickness">10dp</item>
     </style>
 
     <style name="Chart5Column2Style">
-        <item name="color">@color/chart_5_color_2</item>
+        <item name="android:color">@color/chart_5_color_2</item>
         <item name="shapeStyle">@style/Chart5Column2ShapeStyle</item>
         <item name="thickness">10dp</item>
     </style>
 
     <style name="Chart5Column3Style">
-        <item name="color">@color/chart_5_color_3</item>
+        <item name="android:color">@color/chart_5_color_3</item>
         <item name="shapeStyle">@style/Chart5Column3ShapeStyle</item>
         <item name="thickness">10dp</item>
     </style>

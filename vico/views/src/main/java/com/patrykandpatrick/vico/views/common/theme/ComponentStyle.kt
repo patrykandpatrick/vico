@@ -42,7 +42,7 @@ internal fun TypedArray.getLineComponent(
   defaultShape: Shape = Shape.Rectangle,
 ): LineComponent = use { array ->
   LineComponent(
-    color = array.getColorExtended(R.styleable.LineComponentStyle_color, defaultColor),
+    color = array.getColorExtended(R.styleable.LineComponentStyle_android_color, defaultColor),
     thicknessDp =
       array.getRawDimension(context, R.styleable.LineComponentStyle_thickness, defaultThickness),
     shape =
@@ -64,7 +64,7 @@ internal fun TypedArray.getLineComponent(
 }
 
 internal fun TypedArray.getComponent(context: Context): Component? = use { array ->
-  if (!hasValue(R.styleable.ComponentStyle_color)) {
+  if (!hasValue(R.styleable.ComponentStyle_android_color)) {
     return@use null
   }
 
@@ -89,7 +89,7 @@ internal fun TypedArray.getComponent(context: Context): Component? = use { array
 
   val baseComponent =
     ShapeComponent(
-      color = array.getColorExtended(R.styleable.ComponentStyle_color),
+      color = array.getColorExtended(R.styleable.ComponentStyle_android_color),
       shape =
         getNestedTypedArray(context, R.styleable.ComponentStyle_shapeStyle, R.styleable.ShapeStyle)
           .getShape(context),
@@ -127,13 +127,13 @@ internal fun TypedArray.getLine(context: Context, defaultColor: Int): LineCartes
   val positiveLineColor =
     getColor(
       R.styleable.LineStyle_positiveColor,
-      getColor(R.styleable.LineStyle_color, defaultColor),
+      getColor(R.styleable.LineStyle_android_color, defaultColor),
     )
 
   val negativeLineColor =
     getColor(
       R.styleable.LineStyle_negativeColor,
-      getColor(R.styleable.LineStyle_color, defaultColor),
+      getColor(R.styleable.LineStyle_android_color, defaultColor),
     )
 
   val positiveGradientTopColor =
