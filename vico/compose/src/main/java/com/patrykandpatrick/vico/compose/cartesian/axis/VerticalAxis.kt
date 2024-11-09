@@ -43,7 +43,7 @@ public fun VerticalAxis.Companion.rememberStart(
   tickLength: Dp = Defaults.AXIS_TICK_LENGTH.dp,
   guideline: LineComponent? = rememberAxisGuidelineComponent(),
   itemPlacer: VerticalAxis.ItemPlacer = remember { VerticalAxis.ItemPlacer.step() },
-  size: BaseAxis.Size = remember { BaseAxis.Size.Auto() },
+  size: BaseAxis.Size = BaseAxis.Size.auto(),
   titleComponent: TextComponent? = null,
   title: CharSequence? = null,
 ): VerticalAxis<Axis.Position.Vertical.Start> =
@@ -94,7 +94,7 @@ public fun VerticalAxis.Companion.rememberEnd(
   tickLength: Dp = Defaults.AXIS_TICK_LENGTH.dp,
   guideline: LineComponent? = rememberAxisGuidelineComponent(),
   itemPlacer: VerticalAxis.ItemPlacer = remember { VerticalAxis.ItemPlacer.step() },
-  size: BaseAxis.Size = remember { BaseAxis.Size.Auto() },
+  size: BaseAxis.Size = BaseAxis.Size.auto(),
   titleComponent: TextComponent? = null,
   title: CharSequence? = null,
 ): VerticalAxis<Axis.Position.Vertical.End> =

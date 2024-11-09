@@ -175,5 +175,8 @@ public abstract class BaseAxis<P : Axis.Position>(
 
       override fun hashCode(): Int = text.hashCode()
     }
+
+    /** Provides access to [BaseAxis.Size] factory functions. */
+    public companion object
   }
 }
