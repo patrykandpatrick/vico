@@ -45,6 +45,10 @@ android {
     }
 }
 
+composeCompiler {
+    reportsDestination = layout.buildDirectory.dir("reports")
+}
+
 afterEvaluate {
 
     publishing {
