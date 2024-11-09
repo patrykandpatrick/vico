@@ -39,7 +39,7 @@ public fun HorizontalAxis.Companion.rememberTop(
   tickLength: Dp = Defaults.AXIS_TICK_LENGTH.dp,
   guideline: LineComponent? = rememberAxisGuidelineComponent(),
   itemPlacer: HorizontalAxis.ItemPlacer = remember { HorizontalAxis.ItemPlacer.aligned() },
-  size: BaseAxis.Size = remember { BaseAxis.Size.Auto() },
+  size: BaseAxis.Size = BaseAxis.Size.auto(),
   titleComponent: TextComponent? = null,
   title: CharSequence? = null,
 ): HorizontalAxis<Axis.Position.Horizontal.Top> =
@@ -82,7 +82,7 @@ public fun HorizontalAxis.Companion.rememberBottom(
   tickLength: Dp = Defaults.AXIS_TICK_LENGTH.dp,
   guideline: LineComponent? = rememberAxisGuidelineComponent(),
   itemPlacer: HorizontalAxis.ItemPlacer = remember { HorizontalAxis.ItemPlacer.aligned() },
-  size: BaseAxis.Size = remember { BaseAxis.Size.Auto() },
+  size: BaseAxis.Size = BaseAxis.Size.auto(),
   titleComponent: TextComponent? = null,
   title: CharSequence? = null,
 ): HorizontalAxis<Axis.Position.Horizontal.Bottom> =
