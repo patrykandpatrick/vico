@@ -25,7 +25,6 @@ import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis.HorizontalLabe
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis.HorizontalLabelPosition.Outside
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis.VerticalLabelPosition.Center
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
-import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartRanges
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.formatForAxis
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayer
@@ -349,7 +348,7 @@ protected constructor(
         }
         is Size.Exact -> size.sizeDp.pixels
         is Size.Fraction -> canvasBounds.width() * size.fraction
-        is Size.TextWidth ->
+        is Size.Text ->
           label
             ?.getWidth(context = this, text = size.text, rotationDegrees = labelRotationDegrees)
             .orZero + tickLength + lineThickness.half

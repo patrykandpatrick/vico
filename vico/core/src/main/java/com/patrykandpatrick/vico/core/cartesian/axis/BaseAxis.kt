@@ -165,13 +165,13 @@ public abstract class BaseAxis<P : Axis.Position>(
     }
 
     /**
-     * The axis will measure the width of its label component ([label]) for the given [String]
-     * ([text]), and it will use this width as its size. In the case of [VerticalAxis], the width of
-     * the axis line and the tick length will also be considered.
+     * The axis will measure the size of its label component ([label]) for the given [String]
+     * ([text]), and it will use this size. In the case of [VerticalAxis], the width of the axis
+     * line and the tick length will also be considered.
      */
-    public class TextWidth(public val text: String) : Size() {
+    public class Text(public val text: CharSequence) : Size() {
       override fun equals(other: Any?): Boolean =
-        this === other || other is TextWidth && text == other.text
+        this === other || other is Text && text == other.text
 
       override fun hashCode(): Int = text.hashCode()
     }

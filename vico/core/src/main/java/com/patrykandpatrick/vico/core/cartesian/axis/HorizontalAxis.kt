@@ -421,7 +421,7 @@ protected constructor(
         }
         is Size.Exact -> size.sizeDp.pixels
         is Size.Fraction -> canvasBounds.height() * size.fraction
-        is Size.TextWidth ->
+        is Size.Text ->
           label
             ?.getHeight(context = this, text = size.text, rotationDegrees = labelRotationDegrees)
             .orZero
