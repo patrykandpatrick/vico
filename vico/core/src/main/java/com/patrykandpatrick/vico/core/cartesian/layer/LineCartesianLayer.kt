@@ -571,12 +571,14 @@ protected constructor(
           }
           .pixels
       val xSpacing = maxPointSize + pointSpacingDp.pixels
+
+      val padding = paddingProvider.getCartesianLayerPadding(model.extraStore)
       horizontalDimensions.ensureValuesAtLeast(
         xSpacing = xSpacing,
-        scalableStartPadding = layerPadding.scalableStartDp.pixels,
-        scalableEndPadding = layerPadding.scalableEndDp.pixels,
-        unscalableStartPadding = maxPointSize.half + layerPadding.unscalableStartDp.pixels,
-        unscalableEndPadding = maxPointSize.half + layerPadding.unscalableEndDp.pixels,
+        scalableStartPadding = padding.scalableStartDp.pixels,
+        scalableEndPadding = padding.scalableEndDp.pixels,
+        unscalableStartPadding = padding.unscalableStartDp.pixels,
+        unscalableEndPadding = padding.unscalableEndDp.pixels,
       )
     }
   }
@@ -598,15 +600,11 @@ protected constructor(
     insets: Insets,
   ) {
     with(context) {
-      val verticalInset =
-        (0..<model.series.size)
-          .mapNotNull { lineProvider.getLine(it, model.extraStore) }
-          .maxOf {
-            max(it.thicknessDp, it.pointProvider?.getLargestPoint(model.extraStore)?.sizeDp.orZero)
-          }
-          .half
-          .pixels
-      insets.ensureValuesAtLeast(top = verticalInset, bottom = verticalInset)
+      val padding = paddingProvider.getCartesianLayerPadding(model.extraStore)
+      insets.ensureValuesAtLeast(
+        top = padding.unscalableTopDp,
+        bottom = padding.unscalableBottomDp,
+      )
     }
   }
 

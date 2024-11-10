@@ -28,6 +28,7 @@ import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.core.cartesian.CartesianLayerPadding
 import com.patrykandpatrick.vico.core.cartesian.MutableCartesianMeasuringContext
 import com.patrykandpatrick.vico.core.cartesian.MutableHorizontalDimensions
+import com.patrykandpatrick.vico.core.cartesian.PaddingProvider
 import com.patrykandpatrick.vico.core.cartesian.Scroll
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
@@ -73,7 +74,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       ranges = CartesianChartRanges.Empty,
       scrollEnabled = false,
       zoomEnabled = false,
-      layerPadding = themeHandler.chart?.layerPadding ?: CartesianLayerPadding(),
+      paddingProvider = themeHandler.chart?.layerPaddingProvider ?: PaddingProvider.fixed(),
       spToPx = context::spToPx,
     )
 
@@ -120,7 +121,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   /** The [CartesianChart] displayed by this [View]. */
   public var chart: CartesianChart? by
     observable(themeHandler.chart) { _, _, newValue ->
-      if (newValue != null) measuringContext.layerPadding = newValue.layerPadding
+      if (newValue != null) measuringContext.paddingProvider = newValue.layerPaddingProvider
       tryInvalidate(chart = newValue, model = model, updateRanges = true)
     }
 

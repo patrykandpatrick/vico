@@ -25,6 +25,7 @@ import android.view.animation.AccelerateInterpolator
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
 import com.patrykandpatrick.vico.core.cartesian.CartesianLayerPadding
 import com.patrykandpatrick.vico.core.cartesian.FadingEdges
+import com.patrykandpatrick.vico.core.cartesian.PaddingProvider
 import com.patrykandpatrick.vico.core.cartesian.axis.Axis
 import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
@@ -227,7 +228,7 @@ internal class ThemeHandler(private val context: Context, attrs: AttributeSet?) 
       endAxis = baseTypedArray.getAxis(Axis.Position.Vertical.End),
       bottomAxis = baseTypedArray.getAxis(Axis.Position.Horizontal.Bottom),
       fadingEdges = baseTypedArray.getFadingEdges(),
-      layerPadding = baseTypedArray.getLayerPadding(),
+      layerPaddingProvider = PaddingProvider.fixed(baseTypedArray.getLayerPadding()),
     )
   }
 

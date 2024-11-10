@@ -24,6 +24,7 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
 import com.patrykandpatrick.vico.core.cartesian.CartesianLayerPadding
 import com.patrykandpatrick.vico.core.cartesian.MutableCartesianMeasuringContext
+import com.patrykandpatrick.vico.core.cartesian.PaddingProvider
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartRanges
 
@@ -34,7 +35,7 @@ internal fun rememberCartesianMeasuringContext(
   ranges: CartesianChartRanges,
   scrollEnabled: Boolean,
   zoomEnabled: Boolean,
-  layerPadding: CartesianLayerPadding,
+  paddingProvider: PaddingProvider,
   spToPx: (Float) -> Float,
 ): MutableCartesianMeasuringContext =
   remember {
@@ -46,7 +47,7 @@ internal fun rememberCartesianMeasuringContext(
         ranges = ranges,
         scrollEnabled = scrollEnabled,
         zoomEnabled = zoomEnabled,
-        layerPadding = layerPadding,
+        paddingProvider = paddingProvider,
         spToPx = spToPx,
       )
     }
@@ -57,6 +58,6 @@ internal fun rememberCartesianMeasuringContext(
       this.ranges = ranges
       this.scrollEnabled = scrollEnabled
       this.zoomEnabled = zoomEnabled
-      this.layerPadding = layerPadding
+      this.paddingProvider = paddingProvider
       this.spToPx = spToPx
     }

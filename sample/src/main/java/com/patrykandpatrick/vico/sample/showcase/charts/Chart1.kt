@@ -33,11 +33,13 @@ import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
 import com.patrykandpatrick.vico.compose.common.data.rememberExtraLambda
 import com.patrykandpatrick.vico.compose.common.fill
+import com.patrykandpatrick.vico.core.cartesian.PaddingProvider
 import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
+import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.databinding.Chart1Binding
 import com.patrykandpatrick.vico.sample.showcase.UIFramework
 import com.patrykandpatrick.vico.sample.showcase.rememberMarker
@@ -66,26 +68,34 @@ internal fun Chart1(uiFramework: UIFramework, modifier: Modifier) {
 @Composable
 private fun ComposeChart1(modelProducer: CartesianChartModelProducer, modifier: Modifier) {
   val marker = rememberMarker()
+  val lineThickness = Defaults.LINE_SPEC_THICKNESS_DP.dp
+  val requiredPaddingForLine = lineThickness.div(other = 2F)
+
   CartesianChartHost(
     chart =
-      rememberCartesianChart(
-        rememberLineCartesianLayer(
-          LineCartesianLayer.LineProvider.series(
-            LineCartesianLayer.rememberLine(
-              remember { LineCartesianLayer.LineFill.single(fill(Color(0xffa485e0))) }
-            )
-          )
-        ),
-        startAxis = VerticalAxis.rememberStart(),
-        bottomAxis =
-          HorizontalAxis.rememberBottom(
-            guideline = null,
-            itemPlacer = remember { HorizontalAxis.ItemPlacer.segmented() },
+    rememberCartesianChart(
+      rememberLineCartesianLayer(
+        LineCartesianLayer.LineProvider.series(
+          LineCartesianLayer.rememberLine(
+            remember { LineCartesianLayer.LineFill.single(fill(Color(0xffa485e0))) },
           ),
-        marker = marker,
-        layerPadding = cartesianLayerPadding(scalableStart = 16.dp, scalableEnd = 16.dp),
-        persistentMarkers = rememberExtraLambda(marker) { marker at PERSISTENT_MARKER_X },
+        ),
       ),
+      startAxis = VerticalAxis.rememberStart(),
+      bottomAxis =
+      HorizontalAxis.rememberBottom(
+        guideline = null,
+        itemPlacer = remember { HorizontalAxis.ItemPlacer.segmented() },
+      ),
+      marker = marker,
+      paddingProvider = PaddingProvider.fixed(cartesianLayerPadding(
+        unscalableStart = requiredPaddingForLine,
+        unscalableEnd = requiredPaddingForLine,
+        unscalableTop = requiredPaddingForLine,
+        unscalableBottom = requiredPaddingForLine,
+      )),
+      persistentMarkers = rememberExtraLambda(marker) { marker at PERSISTENT_MARKER_X },
+    ),
     modelProducer = modelProducer,
     modifier = modifier,
     zoomState = rememberVicoZoomState(zoomEnabled = false),

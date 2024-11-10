@@ -26,10 +26,14 @@ public fun cartesianLayerPadding(
   scalableEnd: Dp = 0.dp,
   unscalableStart: Dp = 0.dp,
   unscalableEnd: Dp = 0.dp,
+  unscalableTop: Dp = 0.dp,
+  unscalableBottom: Dp = 0.dp,
 ): CartesianLayerPadding =
   CartesianLayerPadding(
-    scalableStart.value,
-    scalableEnd.value,
-    unscalableStart.value,
-    unscalableEnd.value,
+    scalableStartDp = scalableStart.value,
+    scalableEndDp = scalableEnd.value,
+    unscalableStartDp = unscalableStart.value,
+    unscalableEndDp = unscalableEnd.value,
+    unscalableTopDp = unscalableTop.value,
+    unscalableBottomDp = unscalableBottom.value,
   )
