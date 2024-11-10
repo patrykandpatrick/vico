@@ -18,6 +18,40 @@ package com.patrykandpatrick.vico.core.cartesian
 
 import androidx.compose.runtime.Immutable
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayer
+import com.patrykandpatrick.vico.core.common.data.ExtraStore
+
+/** Provides [CartesianLayerPadding] to a [CartesianChart]. */
+@Immutable
+public fun interface CartesianLayerPaddingProvider {
+  /** Returns the [CartesianLayerPadding] for the specified [ExtraStore]. */
+  public fun getPadding(extraStore: ExtraStore): CartesianLayerPadding
+
+  public companion object {
+    /** Constructs a [CartesianLayerPaddingProvider] which always provides the same
+     * [CartesianLayerPadding] regardless of the stored values in the [ExtraStore]. */
+    public fun fixed(
+      scalableStartDp: Float = 0f,
+      scalableEndDp: Float = 0f,
+      unscalableStartDp: Float = 0f,
+      unscalableEndDp: Float = 0f,
+    ): CartesianLayerPaddingProvider = object : CartesianLayerPaddingProvider {
+      val padding = CartesianLayerPadding(
+        scalableStartDp = scalableStartDp,
+        scalableEndDp = scalableEndDp,
+        unscalableStartDp = unscalableStartDp,
+        unscalableEndDp = unscalableEndDp,
+      )
+
+      override fun getPadding(extraStore: ExtraStore): CartesianLayerPadding = padding
+    }
+
+    /** Constructs a [CartesianLayerPaddingProvider] which always provides the same
+     * [CartesianLayerPadding] regardless of the stored values in the [ExtraStore]. */
+    public fun fixed(
+      layerPadding: CartesianLayerPadding,
+    ): CartesianLayerPaddingProvider = CartesianLayerPaddingProvider { layerPadding }
+  }
+}
 
 /**
  * Stores [CartesianLayer] padding values. [scalableStartDp] and [scalableEndDp] are multiplied by
