@@ -42,7 +42,7 @@ internal fun TypedArray.getLineComponent(
   defaultShape: Shape = Shape.Rectangle,
 ): LineComponent = use { array ->
   LineComponent(
-    color = array.getColorExtended(R.styleable.LineComponentStyle_android_color, defaultColor),
+    fill = Fill(array.getColorExtended(R.styleable.LineComponentStyle_android_color, defaultColor)),
     thicknessDp =
       array.getRawDimension(context, R.styleable.LineComponentStyle_thickness, defaultThickness),
     shape =
@@ -56,8 +56,8 @@ internal fun TypedArray.getLineComponent(
       } else {
         defaultShape
       },
-    strokeColor =
-      array.getColorExtended(R.styleable.LineComponentStyle_strokeColor, Color.TRANSPARENT),
+    strokeFill =
+      Fill(array.getColorExtended(R.styleable.LineComponentStyle_strokeColor, Color.TRANSPARENT)),
     strokeThicknessDp =
       array.getRawDimension(context, R.styleable.LineComponentStyle_strokeThickness, 0f),
   )
@@ -89,12 +89,12 @@ internal fun TypedArray.getComponent(context: Context): Component? = use { array
 
   val baseComponent =
     ShapeComponent(
-      color = array.getColorExtended(R.styleable.ComponentStyle_android_color),
+      fill = Fill(array.getColorExtended(R.styleable.ComponentStyle_android_color)),
       shape =
         getNestedTypedArray(context, R.styleable.ComponentStyle_shapeStyle, R.styleable.ShapeStyle)
           .getShape(context),
-      strokeColor =
-        array.getColorExtended(R.styleable.ComponentStyle_strokeColor, Color.TRANSPARENT),
+      strokeFill =
+        Fill(array.getColorExtended(R.styleable.ComponentStyle_strokeColor, Color.TRANSPARENT)),
       strokeThicknessDp =
         array.getRawDimension(context, R.styleable.ComponentStyle_strokeThickness, 0f),
     )

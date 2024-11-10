@@ -16,44 +16,44 @@
 
 package com.patrykandpatrick.vico.core.common.component
 
-import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
 import com.patrykandpatrick.vico.core.common.Dimensions
 import com.patrykandpatrick.vico.core.common.DrawingContext
+import com.patrykandpatrick.vico.core.common.Fill
 import com.patrykandpatrick.vico.core.common.alpha
 import com.patrykandpatrick.vico.core.common.half
-import com.patrykandpatrick.vico.core.common.shader.DynamicShader
 import com.patrykandpatrick.vico.core.common.shape.Shape
 
 /**
  * Draws [Shape]s.
  *
- * @property color the fill color.
+ * @property fill the fill.
  * @property shape the [Shape].
  * @property margins the margins.
- * @property strokeColor the stroke color.
+ * @property strokeFill the stroke fill.
  * @property strokeThicknessDp the stroke thickness (in dp).
- * @property shader applied to the fill.
  * @property shadow stores the shadow properties.
  */
 public open class ShapeComponent(
-  public val color: Int = Color.BLACK,
+  public val fill: Fill = Fill.Black,
   public val shape: Shape = Shape.Rectangle,
   protected val margins: Dimensions = Dimensions.Empty,
-  public val strokeColor: Int = Color.TRANSPARENT,
+  public val strokeFill: Fill = Fill.Transparent,
   protected val strokeThicknessDp: Float = 0f,
-  protected val shader: DynamicShader? = null,
   protected val shadow: Shadow? = null,
 ) : Component {
-  private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = this@ShapeComponent.color }
+  private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = fill.color }
   private val strokePaint =
     Paint(Paint.ANTI_ALIAS_FLAG).apply {
-      this.color = strokeColor
+      this.color = strokeFill.color
       style = Paint.Style.STROKE
     }
 
   protected val path: Path = Path()
+
+  internal val effectiveStrokeFill: Fill
+    get() = if (strokeFill.color.alpha == 0) fill else strokeFill
 
   init {
     require(strokeThicknessDp >= 0) { "`strokeThicknessDp` must be nonnegative." }
@@ -66,7 +66,8 @@ public open class ShapeComponent(
     right: Float,
     bottom: Float,
   ) {
-    shader?.provideShader(context, left, top, right, bottom)?.let(paint::setShader)
+    fill.shader?.provideShader(context, left, top, right, bottom)?.let(paint::setShader)
+    strokeFill.shader?.provideShader(context, left, top, right, bottom)?.let(strokePaint::setShader)
   }
 
   override fun draw(context: DrawingContext, left: Float, top: Float, right: Float, bottom: Float) {
@@ -89,7 +90,7 @@ public open class ShapeComponent(
       shadow?.updateShadowLayer(this, paint)
       shape.outline(this, path, adjustedLeft, adjustedTop, adjustedRight, adjustedBottom)
       canvas.drawPath(path, paint)
-      if (strokeThickness == 0f || strokeColor.alpha == 0) return
+      if (strokeThickness == 0f || strokeFill.color.alpha == 0) return
       strokePaint.strokeWidth = strokeThickness
       canvas.drawPath(path, strokePaint)
     }
@@ -97,34 +98,30 @@ public open class ShapeComponent(
 
   /** Creates a new [ShapeComponent] based on this one. */
   public open fun copy(
-    color: Int = this.color,
+    fill: Fill = this.fill,
     shape: Shape = this.shape,
     margins: Dimensions = this.margins,
-    strokeColor: Int = this.strokeColor,
+    strokeFill: Fill = this.strokeFill,
     strokeThicknessDp: Float = this.strokeThicknessDp,
-    shader: DynamicShader? = this.shader,
     shadow: Shadow? = this.shadow,
-  ): ShapeComponent =
-    ShapeComponent(color, shape, margins, strokeColor, strokeThicknessDp, shader, shadow)
+  ): ShapeComponent = ShapeComponent(fill, shape, margins, strokeFill, strokeThicknessDp, shadow)
 
   override fun equals(other: Any?): Boolean =
     this === other ||
       other is ShapeComponent &&
-        color == other.color &&
+        fill == other.fill &&
         shape == other.shape &&
         margins == other.margins &&
-        strokeColor == other.strokeColor &&
+        strokeFill == other.strokeFill &&
         strokeThicknessDp == other.strokeThicknessDp &&
-        shader == other.shader &&
         shadow == other.shadow
 
   override fun hashCode(): Int {
-    var result = color
+    var result = fill.hashCode()
     result = 31 * result + shape.hashCode()
     result = 31 * result + margins.hashCode()
-    result = 31 * result + strokeColor
+    result = 31 * result + strokeFill.hashCode()
     result = 31 * result + strokeThicknessDp.hashCode()
-    result = 31 * result + shader.hashCode()
     result = 31 * result + shadow.hashCode()
     return result
   }

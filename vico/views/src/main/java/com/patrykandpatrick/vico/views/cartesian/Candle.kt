@@ -16,22 +16,23 @@
 
 package com.patrykandpatrick.vico.views.cartesian
 
-import android.graphics.Color
+import androidx.core.graphics.alpha
 import com.patrykandpatrick.vico.core.cartesian.layer.CandlestickCartesianLayer.Candle
 import com.patrykandpatrick.vico.core.common.Defaults
+import com.patrykandpatrick.vico.core.common.Fill
 import com.patrykandpatrick.vico.core.common.component.LineComponent
 
 private fun LineComponent.copyWithColor(color: Int) =
   copy(
-    color = if (this.color == Color.TRANSPARENT) this.color else color,
-    strokeColor = if (this.strokeColor == Color.TRANSPARENT) this.color else color,
+    fill = if (fill.color.alpha == 0) fill else Fill(color),
+    strokeFill = if (strokeFill.color.alpha == 0) strokeFill else Fill(color),
   )
 
 internal fun Candle.Companion.sharpFilledCandle(
   color: Int,
   thicknessDp: Float = Defaults.CANDLE_BODY_WIDTH_DP,
 ): Candle {
-  val filledBody = LineComponent(color, thicknessDp)
+  val filledBody = LineComponent(Fill(color), thicknessDp)
   return Candle(body = filledBody)
 }
 
@@ -42,9 +43,9 @@ internal fun Candle.Companion.sharpHollowCandle(
 ): Candle {
   val hollowBody =
     LineComponent(
-      color = Color.TRANSPARENT,
+      fill = Fill.Transparent,
       thicknessDp = thicknessDp,
-      strokeColor = color,
+      strokeFill = Fill(color),
       strokeThicknessDp = strokeThicknessDp,
     )
 

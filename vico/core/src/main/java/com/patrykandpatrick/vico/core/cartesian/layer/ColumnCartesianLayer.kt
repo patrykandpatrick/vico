@@ -41,6 +41,7 @@ import com.patrykandpatrick.vico.core.common.data.CartesianLayerDrawingModelInte
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.core.common.data.MutableExtraStore
 import com.patrykandpatrick.vico.core.common.doubled
+import com.patrykandpatrick.vico.core.common.extractColor
 import com.patrykandpatrick.vico.core.common.getRepeating
 import com.patrykandpatrick.vico.core.common.getStart
 import com.patrykandpatrick.vico.core.common.half
@@ -205,7 +206,14 @@ protected constructor(
             thicknessScale = zoom,
           )
         ) {
-          updateMarkerTargets(entry, columnCenterX, columnSignificantY, column, mergeMode)
+          updateMarkerTargets(
+            entry = entry,
+            canvasX = columnCenterX,
+            canvasY = columnSignificantY,
+            columnHeight = columnBottom - columnTop,
+            column = column,
+            mergeMode = mergeMode,
+          )
           column.drawVertical(this, columnTop, columnBottom, columnCenterX, zoom)
         }
 
@@ -342,16 +350,20 @@ protected constructor(
     entry: ColumnCartesianLayerModel.Entry,
     canvasX: Float,
     canvasY: Float,
+    columnHeight: Float,
     column: LineComponent,
     mergeMode: MergeMode,
   ) {
     if (canvasX <= layerBounds.left - 1 || canvasX >= layerBounds.right + 1) return
-    val targetColumn =
-      ColumnCartesianLayerMarkerTarget.Column(
-        entry,
-        canvasY.coerceIn(layerBounds.top, layerBounds.bottom),
-        column.solidOrStrokeColor,
+    val limitedCanvasY = canvasY.coerceIn(layerBounds.top, layerBounds.bottom)
+    val markerColor =
+      column.effectiveStrokeFill.extractColor(
+        context = this,
+        width = column.thicknessDp.pixels,
+        height = columnHeight,
+        side = if (entry.y < 0) -1 else 1,
       )
+    val targetColumn = ColumnCartesianLayerMarkerTarget.Column(entry, limitedCanvasY, markerColor)
     when (mergeMode) {
       is MergeMode.Grouped ->
         _markerTargets.getOrPut(entry.x) { mutableListOf() } +=
@@ -362,12 +374,7 @@ protected constructor(
             mutableListOf(MutableColumnCartesianLayerMarkerTarget(entry.x, canvasX))
           }
           .first()
-          .columns +=
-          ColumnCartesianLayerMarkerTarget.Column(
-            entry,
-            canvasY.coerceIn(layerBounds.top, layerBounds.bottom),
-            column.solidOrStrokeColor,
-          )
+          .columns += targetColumn
     }
   }
 

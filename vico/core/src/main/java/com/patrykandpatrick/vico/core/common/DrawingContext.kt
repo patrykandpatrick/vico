@@ -73,5 +73,11 @@ internal fun DrawingContext.getBitmap(
     .getOrNull<Bitmap>(cacheKeyNamespace, *cacheKeyComponents, canvas.width, canvas.height)
     ?.apply { eraseColor(Color.TRANSPARENT) }
     ?: Bitmap.createBitmap(canvas.width, canvas.height, Bitmap.Config.ARGB_8888).also {
-      cacheStore.set(cacheKeyNamespace, *cacheKeyComponents, canvas.width, canvas.height, value = it)
+      cacheStore.set(
+        cacheKeyNamespace,
+        *cacheKeyComponents,
+        canvas.width,
+        canvas.height,
+        value = it,
+      )
     }

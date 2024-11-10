@@ -16,7 +16,10 @@
 
 package com.patrykandpatrick.vico.core.common
 
+import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.Paint
+import com.patrykandpatrick.vico.core.common.data.CacheStore
 import com.patrykandpatrick.vico.core.common.shader.DynamicShader
 
 /**
@@ -46,3 +49,28 @@ public class Fill private constructor(public val color: Int, public val shader: 
     public val Transparent: Fill = Fill(Color.TRANSPARENT)
   }
 }
+
+private val canvas = Canvas()
+private val paint = Paint()
+private val cacheKeyNamespace = CacheStore.KeyNamespace()
+
+internal fun Fill.extractColor(
+  context: DrawingContext,
+  width: Float,
+  height: Float,
+  side: Int = 1,
+): Int =
+  if (shader != null) {
+    val bitmap = context.getBitmap(cacheKeyNamespace)
+    canvas.setBitmap(bitmap)
+    val correctedHeight = if (height <= 0f) canvas.height.toFloat() else height.coerceAtLeast(1f)
+    val correctedWidth = if (width <= 0f) canvas.width.toFloat() else width.coerceAtLeast(1f)
+    paint.shader = shader.provideShader(context, 0f, 0f, correctedWidth, correctedHeight)
+    canvas.drawRect(0f, 0f, correctedWidth, correctedHeight, paint)
+    bitmap.getPixel(
+      correctedWidth.half.toInt(),
+      if (side == 1) 0 else (correctedHeight - 1).toInt(),
+    )
+  } else {
+    color
+  }

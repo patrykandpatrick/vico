@@ -21,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
+import com.patrykandpatrick.vico.compose.common.fill
 import com.patrykandpatrick.vico.compose.common.vicoTheme
 import com.patrykandpatrick.vico.core.cartesian.axis.Axis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianLayerRangeProvider
@@ -45,7 +46,7 @@ public fun rememberColumnCartesianLayer(
     ColumnCartesianLayer.ColumnProvider.series(
       vicoTheme.columnCartesianLayerColors.map { color ->
         rememberLineComponent(
-          color,
+          fill(color),
           Defaults.COLUMN_WIDTH.dp,
           CorneredShape.rounded(Defaults.COLUMN_ROUNDNESS_PERCENT),
         )

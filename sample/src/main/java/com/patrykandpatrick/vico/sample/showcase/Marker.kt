@@ -29,12 +29,14 @@ import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.common.component.shadow
 import com.patrykandpatrick.vico.compose.common.dimensions
+import com.patrykandpatrick.vico.compose.common.fill
 import com.patrykandpatrick.vico.compose.common.shape.markerCorneredShape
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
 import com.patrykandpatrick.vico.core.cartesian.HorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
+import com.patrykandpatrick.vico.core.common.Fill
 import com.patrykandpatrick.vico.core.common.Insets
 import com.patrykandpatrick.vico.core.common.LayeredComponent
 import com.patrykandpatrick.vico.core.common.component.Shadow
@@ -51,7 +53,7 @@ internal fun rememberMarker(
   val labelBackgroundShape = markerCorneredShape(Corner.FullyRounded)
   val labelBackground =
     rememberShapeComponent(
-      color = MaterialTheme.colorScheme.surfaceBright,
+      fill = fill(MaterialTheme.colorScheme.surfaceBright),
       shape = labelBackgroundShape,
       shadow =
         shadow(radius = LABEL_BACKGROUND_SHADOW_RADIUS_DP.dp, dy = LABEL_BACKGROUND_SHADOW_DY_DP.dp),
@@ -65,7 +67,7 @@ internal fun rememberMarker(
       minWidth = TextComponent.MinWidth.fixed(40.dp),
     )
   val indicatorFrontComponent =
-    rememberShapeComponent(MaterialTheme.colorScheme.surface, CorneredShape.Pill)
+    rememberShapeComponent(fill(MaterialTheme.colorScheme.surface), CorneredShape.Pill)
   val indicatorCenterComponent = rememberShapeComponent(shape = CorneredShape.Pill)
   val indicatorRearComponent = rememberShapeComponent(shape = CorneredShape.Pill)
   val indicator =
@@ -89,12 +91,13 @@ internal fun rememberMarker(
           if (showIndicator) {
             { color ->
               LayeredComponent(
-                rear = ShapeComponent(ColorUtils.setAlphaComponent(color, 38), CorneredShape.Pill),
+                rear =
+                  ShapeComponent(Fill(ColorUtils.setAlphaComponent(color, 38)), CorneredShape.Pill),
                 front =
                   LayeredComponent(
                     rear =
                       ShapeComponent(
-                        color = color,
+                        fill = Fill(color),
                         shape = CorneredShape.Pill,
                         shadow = Shadow(radiusDp = 12f, color = color),
                       ),

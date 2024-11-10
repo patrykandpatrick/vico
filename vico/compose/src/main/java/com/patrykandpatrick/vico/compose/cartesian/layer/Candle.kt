@@ -19,23 +19,25 @@ package com.patrykandpatrick.vico.compose.cartesian.layer
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.core.graphics.alpha
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
+import com.patrykandpatrick.vico.compose.common.fill
 import com.patrykandpatrick.vico.compose.common.vicoTheme
 import com.patrykandpatrick.vico.core.cartesian.layer.CandlestickCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.layer.CandlestickCartesianLayer.Candle
 import com.patrykandpatrick.vico.core.cartesian.layer.absolute
 import com.patrykandpatrick.vico.core.cartesian.layer.absoluteRelative
 import com.patrykandpatrick.vico.core.common.Defaults
+import com.patrykandpatrick.vico.core.common.Fill
 import com.patrykandpatrick.vico.core.common.component.LineComponent
 
 @Composable
 private fun Candle.Companion.sharpFilledCandle(
   color: Color,
   thickness: Dp = Defaults.CANDLE_BODY_WIDTH_DP.dp,
-) = Candle(rememberLineComponent(color, thickness))
+) = Candle(rememberLineComponent(fill(color), thickness))
 
 @Composable
 private fun Candle.Companion.sharpHollowCandle(
@@ -45,9 +47,9 @@ private fun Candle.Companion.sharpHollowCandle(
 ) =
   Candle(
     rememberLineComponent(
-      color = Color.Transparent,
+      fill = Fill.Transparent,
       thickness = thickness,
-      strokeColor = color,
+      strokeFill = fill(color),
       strokeThickness = strokeThickness,
     )
   )
@@ -57,9 +59,8 @@ private fun Candle.copyWithColor(color: Color) =
 
 private fun LineComponent.copyWithColor(color: Color) =
   copy(
-    color = if (this.color == android.graphics.Color.TRANSPARENT) this.color else color.toArgb(),
-    strokeColor =
-      if (this.strokeColor == android.graphics.Color.TRANSPARENT) this.color else color.toArgb(),
+    fill = if (fill.color.alpha == 0) fill else fill(color),
+    strokeFill = if (strokeFill.color.alpha == 0) strokeFill else fill(color),
   )
 
 /**

@@ -98,7 +98,7 @@ private fun ComposeChart8(modelProducer: CartesianChartModelProducer, modifier: 
             ColumnCartesianLayer.ColumnProvider.series(
               columnChartColors.map { color ->
                 rememberLineComponent(
-                  color = color,
+                  fill = fill(color),
                   thickness = 8.dp,
                   shape = CorneredShape.rounded(allPercent = 40),
                 )

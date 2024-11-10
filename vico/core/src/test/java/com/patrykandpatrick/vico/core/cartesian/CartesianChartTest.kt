@@ -16,7 +16,6 @@
 
 package com.patrykandpatrick.vico.core.cartesian
 
-import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
 import android.graphics.Xfermode
@@ -88,10 +87,10 @@ public class CartesianChartTest {
             )
         ),
         ColumnCartesianLayer(
-          columnProvider = ColumnCartesianLayer.ColumnProvider.series(LineComponent(Color.BLACK))
+          columnProvider = ColumnCartesianLayer.ColumnProvider.series(LineComponent(Fill.Black))
         ),
-        startAxis = VerticalAxis.start(LineComponent(Color.BLACK)),
-        bottomAxis = HorizontalAxis.bottom(LineComponent(Color.BLACK)),
+        startAxis = VerticalAxis.start(LineComponent(Fill.Black)),
+        bottomAxis = HorizontalAxis.bottom(LineComponent(Fill.Black)),
         markerVisibilityListener = object : CartesianMarkerVisibilityListener {},
         fadingEdges = FadingEdges(),
       )

@@ -35,6 +35,7 @@ import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.common.component.shapeComponent
 import com.patrykandpatrick.vico.compose.common.dimensions
+import com.patrykandpatrick.vico.compose.common.fill
 import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
@@ -45,7 +46,6 @@ import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.core.common.Dimensions
 import com.patrykandpatrick.vico.core.common.component.ShapeComponent
 import com.patrykandpatrick.vico.core.common.component.TextComponent
-import com.patrykandpatrick.vico.core.common.copyColor
 import com.patrykandpatrick.vico.core.common.shape.CorneredShape
 import com.patrykandpatrick.vico.core.common.shape.Shape
 import com.patrykandpatrick.vico.databinding.Chart6Binding
@@ -98,7 +98,7 @@ private fun ComposeChart6(modelProducer: CartesianChartModelProducer, modifier: 
         rememberColumnCartesianLayer(
           ColumnCartesianLayer.ColumnProvider.series(
             columnColors.map {
-              rememberLineComponent(color = it, thickness = 8.dp, shape = columnShape)
+              rememberLineComponent(fill = fill(it), thickness = 8.dp, shape = columnShape)
             }
           )
         ),
@@ -137,7 +137,7 @@ private fun ViewChart6(modelProducer: CartesianChartModelProducer, modifier: Mod
 @Composable
 private fun rememberComposeHorizontalBox(): HorizontalBox {
   val color = Color(HORIZONTAL_BOX_COLOR)
-  val box = rememberShapeComponent(color = color.copy(HORIZONTAL_BOX_ALPHA))
+  val box = rememberShapeComponent(fill(color.copy(HORIZONTAL_BOX_ALPHA)))
   val labelComponent =
     rememberTextComponent(
       margins = dimensions(HORIZONTAL_BOX_LABEL_MARGIN_DP.dp),
@@ -146,15 +146,16 @@ private fun rememberComposeHorizontalBox(): HorizontalBox {
           HORIZONTAL_BOX_LABEL_HORIZONTAL_PADDING_DP.dp,
           HORIZONTAL_BOX_LABEL_VERTICAL_PADDING_DP.dp,
         ),
-      background = shapeComponent(color, Shape.Rectangle),
+      background = shapeComponent(fill(color), Shape.Rectangle),
     )
   return remember { HorizontalBox({ horizontalBoxY }, box, labelComponent) }
 }
 
-private fun getViewHorizontalBox() =
-  HorizontalBox(
+private fun getViewHorizontalBox(): HorizontalBox {
+  val color = Color(HORIZONTAL_BOX_COLOR)
+  return HorizontalBox(
     y = { horizontalBoxY },
-    box = ShapeComponent(color = HORIZONTAL_BOX_COLOR.copyColor(HORIZONTAL_BOX_ALPHA)),
+    box = ShapeComponent(fill(color.copy(HORIZONTAL_BOX_ALPHA))),
     labelComponent =
       TextComponent(
         margins = Dimensions(HORIZONTAL_BOX_LABEL_MARGIN_DP),
@@ -163,9 +164,10 @@ private fun getViewHorizontalBox() =
             HORIZONTAL_BOX_LABEL_HORIZONTAL_PADDING_DP,
             HORIZONTAL_BOX_LABEL_VERTICAL_PADDING_DP,
           ),
-        background = ShapeComponent(HORIZONTAL_BOX_COLOR, Shape.Rectangle),
+        background = ShapeComponent(fill(color), Shape.Rectangle),
       ),
   )
+}
 
 private const val HORIZONTAL_BOX_COLOR = -1448529
 private const val HORIZONTAL_BOX_ALPHA = 0.36f

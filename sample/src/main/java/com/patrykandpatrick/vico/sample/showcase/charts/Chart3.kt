@@ -102,7 +102,7 @@ private fun ComposeChart3(modelProducer: CartesianChartModelProducer, modifier: 
                 color = Color.Black,
                 margins = dimensions(end = 4.dp),
                 padding = dimensions(8.dp, 2.dp),
-                background = rememberShapeComponent(lineColor, CorneredShape.Pill),
+                background = rememberShapeComponent(fill(lineColor), CorneredShape.Pill),
               ),
             title = stringResource(R.string.y_axis),
           ),
@@ -115,7 +115,8 @@ private fun ComposeChart3(modelProducer: CartesianChartModelProducer, modifier: 
                 color = Color.White,
                 margins = dimensions(top = 4.dp),
                 padding = dimensions(8.dp, 2.dp),
-                background = shapeComponent(bottomAxisLabelBackgroundColor, CorneredShape.Pill),
+                background =
+                  shapeComponent(fill(bottomAxisLabelBackgroundColor), CorneredShape.Pill),
               ),
             title = stringResource(R.string.x_axis),
           ),

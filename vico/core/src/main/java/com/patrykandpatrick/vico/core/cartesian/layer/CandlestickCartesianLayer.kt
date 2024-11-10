@@ -38,6 +38,7 @@ import com.patrykandpatrick.vico.core.common.component.LineComponent
 import com.patrykandpatrick.vico.core.common.data.CartesianLayerDrawingModelInterpolator
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.core.common.data.MutableExtraStore
+import com.patrykandpatrick.vico.core.common.extractColor
 import com.patrykandpatrick.vico.core.common.getStart
 import com.patrykandpatrick.vico.core.common.half
 import com.patrykandpatrick.vico.core.common.shape.Shape
@@ -237,10 +238,33 @@ protected constructor(
             else limitedBodyBottomCanvasY,
           lowCanvasY = lowCanvasY.coerceIn(layerBounds.top, layerBounds.bottom),
           highCanvasY = highCanvasY.coerceIn(layerBounds.top, layerBounds.bottom),
-          openingColor = candle.body.solidOrStrokeColor,
-          closingColor = candle.body.solidOrStrokeColor,
-          lowColor = candle.bottomWick.solidOrStrokeColor,
-          highColor = candle.topWick.solidOrStrokeColor,
+          openingColor =
+            candle.body.effectiveStrokeFill.extractColor(
+              context = this,
+              width = candle.body.thicknessDp.pixels,
+              height = limitedBodyBottomCanvasY - limitedBodyTopCanvasY,
+              side = if (entry.absoluteChange == Change.Bearish) 1 else -1,
+            ),
+          closingColor =
+            candle.body.effectiveStrokeFill.extractColor(
+              context = this,
+              width = candle.body.thicknessDp.pixels,
+              height = limitedBodyBottomCanvasY - limitedBodyTopCanvasY,
+              side = if (entry.absoluteChange == Change.Bearish) -1 else 1,
+            ),
+          lowColor =
+            candle.bottomWick.effectiveStrokeFill.extractColor(
+              context = this,
+              width = candle.bottomWick.thicknessDp.pixels,
+              height = lowCanvasY - limitedBodyBottomCanvasY,
+              side = -1,
+            ),
+          highColor =
+            candle.topWick.effectiveStrokeFill.extractColor(
+              context = this,
+              width = candle.topWick.thicknessDp.pixels,
+              height = highCanvasY - limitedBodyTopCanvasY,
+            ),
         )
       )
   }
@@ -447,7 +471,7 @@ protected constructor(
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public fun LineComponent.asWick(): LineComponent =
   copy(
-    color = solidOrStrokeColor,
+    fill = effectiveStrokeFill,
     thicknessDp = Defaults.WICK_DEFAULT_WIDTH_DP,
     shape = Shape.Rectangle,
     strokeThicknessDp = 0f,

@@ -31,73 +31,52 @@ import androidx.compose.ui.unit.sp
 import com.patrykandpatrick.vico.compose.common.pixelSize
 import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.Dimensions
+import com.patrykandpatrick.vico.core.common.Fill
 import com.patrykandpatrick.vico.core.common.LayeredComponent
 import com.patrykandpatrick.vico.core.common.component.Component
 import com.patrykandpatrick.vico.core.common.component.LineComponent
 import com.patrykandpatrick.vico.core.common.component.Shadow
 import com.patrykandpatrick.vico.core.common.component.ShapeComponent
 import com.patrykandpatrick.vico.core.common.component.TextComponent
-import com.patrykandpatrick.vico.core.common.shader.DynamicShader
 import com.patrykandpatrick.vico.core.common.shape.Shape
 
 /** Creates and remembers a [LineComponent]. */
 @Composable
 public fun rememberLineComponent(
-  color: Color = Color.Black,
+  fill: Fill = Fill.Black,
   thickness: Dp = Defaults.LINE_COMPONENT_THICKNESS_DP.dp,
   shape: Shape = Shape.Rectangle,
   margins: Dimensions = Dimensions.Empty,
-  strokeColor: Color = Color.Transparent,
+  strokeFill: Fill = Fill.Transparent,
   strokeThickness: Dp = 0.dp,
-  shader: DynamicShader? = null,
   shadow: Shadow? = null,
 ): LineComponent =
-  remember(color, shape, thickness, margins, strokeColor, strokeThickness, shader, shadow) {
-    LineComponent(
-      color.toArgb(),
-      thickness.value,
-      shape,
-      margins,
-      strokeColor.toArgb(),
-      strokeThickness.value,
-      shader,
-      shadow,
-    )
+  remember(fill, shape, thickness, margins, strokeFill, strokeThickness, shadow) {
+    LineComponent(fill, thickness.value, shape, margins, strokeFill, strokeThickness.value, shadow)
   }
 
 /** Creates a [ShapeComponent]. */
 public fun shapeComponent(
-  color: Color = Color.Black,
+  fill: Fill = Fill.Black,
   shape: Shape = Shape.Rectangle,
   margins: Dimensions = Dimensions.Empty,
-  strokeColor: Color = Color.Transparent,
+  strokeFill: Fill = Fill.Transparent,
   strokeThickness: Dp = 0.dp,
-  shader: DynamicShader? = null,
   shadow: Shadow? = null,
-): ShapeComponent =
-  ShapeComponent(
-    color.toArgb(),
-    shape,
-    margins,
-    strokeColor.toArgb(),
-    strokeThickness.value,
-    shader,
-    shadow,
-  )
+): ShapeComponent = ShapeComponent(fill, shape, margins, strokeFill, strokeThickness.value, shadow)
 
 /** Creates and remembers a [ShapeComponent]. */
 @Composable
 public fun rememberShapeComponent(
-  color: Color = Color.Black,
+  fill: Fill = Fill.Black,
   shape: Shape = Shape.Rectangle,
   margins: Dimensions = Dimensions.Empty,
-  strokeColor: Color = Color.Transparent,
+  strokeFill: Fill = Fill.Transparent,
   strokeThickness: Dp = 0.dp,
-  shader: DynamicShader? = null,
   shadow: Shadow? = null,
 ): ShapeComponent =
-  remember(color, shape, margins, strokeColor, strokeThickness, shader, shadow) {
-    shapeComponent(color, shape, margins, strokeColor, strokeThickness, shader, shadow)
+  remember(fill, shape, margins, strokeFill, strokeThickness, shadow) {
+    shapeComponent(fill, shape, margins, strokeFill, strokeThickness, shadow)
   }
 
 /** Creates and remembers a [LayeredComponent]. */

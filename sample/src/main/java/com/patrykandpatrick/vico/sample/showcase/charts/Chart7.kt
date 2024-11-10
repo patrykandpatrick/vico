@@ -153,7 +153,7 @@ private fun rememberStartAxisLabel() =
     color = Color.Black,
     margins = dimensions(4.dp),
     padding = dimensions(8.dp, 2.dp),
-    background = rememberShapeComponent(Color(0xfffab94d), CorneredShape.rounded(4.dp)),
+    background = rememberShapeComponent(fill(Color(0xfffab94d)), CorneredShape.rounded(4.dp)),
   )
 
 @Composable
@@ -166,7 +166,7 @@ private fun rememberLegend(): Legend<CartesianMeasuringContext, CartesianDrawing
         chartColors.forEachIndexed { index, color ->
           add(
             LegendItem(
-              icon = shapeComponent(color, CorneredShape.Pill),
+              icon = shapeComponent(fill(color), CorneredShape.Pill),
               labelComponent = labelComponent,
               label = resources.getString(R.string.series_x, index + 1),
             )

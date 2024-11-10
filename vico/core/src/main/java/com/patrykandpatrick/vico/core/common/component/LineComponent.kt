@@ -16,43 +16,36 @@
 
 package com.patrykandpatrick.vico.core.common.component
 
-import android.graphics.Color
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.Dimensions
 import com.patrykandpatrick.vico.core.common.DrawingContext
+import com.patrykandpatrick.vico.core.common.Fill
 import com.patrykandpatrick.vico.core.common.MeasuringContext
-import com.patrykandpatrick.vico.core.common.shader.DynamicShader
 import com.patrykandpatrick.vico.core.common.shape.Shape
 
 /**
  * Draws lines.
  *
- * @param color the fill color.
+ * @param fill the fill.
  * @param shape the [Shape].
  * @param margins the margins.
- * @param strokeColor the stroke color.
+ * @param strokeFill the stroke fill.
  * @param strokeThicknessDp the stroke thickness (in dp).
- * @param shader applied to the fill.
  * @param shadow stores the shadow properties.
  * @property thicknessDp the line thickness (in dp).
  */
 public open class LineComponent(
-  color: Int,
+  fill: Fill,
   public val thicknessDp: Float = Defaults.LINE_COMPONENT_THICKNESS_DP,
   shape: Shape = Shape.Rectangle,
   margins: Dimensions = Dimensions.Empty,
-  strokeColor: Int = Color.TRANSPARENT,
+  strokeFill: Fill = Fill.Transparent,
   strokeThicknessDp: Float = 0f,
-  shader: DynamicShader? = null,
   shadow: Shadow? = null,
-) : ShapeComponent(color, shape, margins, strokeColor, strokeThicknessDp, shader, shadow) {
+) : ShapeComponent(fill, shape, margins, strokeFill, strokeThicknessDp, shadow) {
   private val MeasuringContext.thickness: Float
     get() = thicknessDp.pixels
-
-  /** [color] if it’s not [Color.TRANSPARENT], and [strokeColor] otherwise. */
-  public val solidOrStrokeColor: Int
-    get() = if (color == Color.TRANSPARENT) strokeColor else color
 
   /** A convenience function for [draw] that draws the [LineComponent] horizontally. */
   public open fun drawHorizontal(
@@ -152,46 +145,26 @@ public open class LineComponent(
 
   /** Creates a new [LineComponent] based on this one. */
   override fun copy(
-    color: Int,
+    fill: Fill,
     shape: Shape,
     margins: Dimensions,
-    strokeColor: Int,
+    strokeFill: Fill,
     strokeThicknessDp: Float,
-    shader: DynamicShader?,
     shadow: Shadow?,
   ): LineComponent =
-    LineComponent(
-      color,
-      thicknessDp,
-      shape,
-      margins,
-      strokeColor,
-      strokeThicknessDp,
-      shader,
-      shadow,
-    )
+    LineComponent(fill, thicknessDp, shape, margins, strokeFill, strokeThicknessDp, shadow)
 
   /** Creates a new [LineComponent] based on this one. */
   public open fun copy(
-    color: Int = this.color,
+    fill: Fill = this.fill,
     thicknessDp: Float = this.thicknessDp,
     shape: Shape = this.shape,
     margins: Dimensions = this.margins,
-    strokeColor: Int = this.strokeColor,
+    strokeFill: Fill = this.strokeFill,
     strokeThicknessDp: Float = this.strokeThicknessDp,
-    shader: DynamicShader? = this.shader,
     shadow: Shadow? = this.shadow,
   ): LineComponent =
-    LineComponent(
-      color,
-      thicknessDp,
-      shape,
-      margins,
-      strokeColor,
-      strokeThicknessDp,
-      shader,
-      shadow,
-    )
+    LineComponent(fill, thicknessDp, shape, margins, strokeFill, strokeThicknessDp, shadow)
 
   override fun equals(other: Any?): Boolean =
     super.equals(other) && other is LineComponent && thicknessDp == other.thicknessDp
