@@ -16,9 +16,7 @@
 
 package com.patrykandpatrick.vico.core.cartesian
 
-import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.RectF
 import androidx.annotation.RestrictTo
 import androidx.compose.runtime.Stable
@@ -43,6 +41,7 @@ import com.patrykandpatrick.vico.core.common.Point
 import com.patrykandpatrick.vico.core.common.data.CacheStore
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.core.common.data.MutableExtraStore
+import com.patrykandpatrick.vico.core.common.getBitmap
 import com.patrykandpatrick.vico.core.common.orZero
 import com.patrykandpatrick.vico.core.common.saveLayer
 import java.util.Objects
@@ -97,6 +96,7 @@ public open class CartesianChart(
   private val axisManager = AxisManager()
   private val _markerTargets = sortedMapOf<Double, MutableList<CartesianMarker.Target>>()
   private var previousMarkerTargetHashCode: Int? = null
+  protected val layerCanvas: Canvas = Canvas()
 
   private val drawingModelAndLayerConsumer =
     object : ModelAndLayerConsumer {
@@ -261,7 +261,8 @@ public open class CartesianChart(
       val canvasSaveCount = if (fadingEdges != null) canvas.saveLayer() else -1
       axisManager.drawUnderLayers(context)
       decorations.forEach { it.drawUnderLayers(context) }
-      val (layerBitmap, layerCanvas) = getLayerBitmapAndCanvas()
+      val layerBitmap = getBitmap(cacheKeyNamespace)
+      layerCanvas.setBitmap(layerBitmap)
       withOtherCanvas(layerCanvas) {
         model.forEachWithLayer(drawingModelAndLayerConsumer.apply { this.context = context })
       }
@@ -280,17 +281,6 @@ public open class CartesianChart(
       if (markerTargets.isNotEmpty()) marker?.drawOverLayers(context, markerTargets)
     }
   }
-
-  private fun CartesianDrawingContext.getLayerBitmapAndCanvas() =
-    cacheStore
-      .getOrNull<Pair<Bitmap, Canvas>>(cacheKeyNamespace, canvas.width, canvas.height)
-      ?.also { (bitmap, _) -> bitmap.eraseColor(Color.TRANSPARENT) }
-      ?: run {
-        val bitmap = Bitmap.createBitmap(canvas.width, canvas.height, Bitmap.Config.ARGB_8888)
-        (bitmap to Canvas(bitmap)).also { bitmapWithCanvas ->
-          cacheStore.set(cacheKeyNamespace, canvas.width, canvas.height, value = bitmapWithCanvas)
-        }
-      }
 
   /** Updates [ranges] in accordance with [model]. */
   public fun updateRanges(ranges: MutableCartesianChartRanges, model: CartesianChartModel) {

@@ -16,7 +16,9 @@
 
 package com.patrykandpatrick.vico.core.common
 
+import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.RectF
 import androidx.annotation.RestrictTo
 import com.patrykandpatrick.vico.core.common.data.CacheStore
@@ -62,3 +64,14 @@ public fun DrawingContext(
 
     override fun spToPx(sp: Float): Float = spToPx(sp)
   }
+
+internal fun DrawingContext.getBitmap(
+  cacheKeyNamespace: CacheStore.KeyNamespace,
+  vararg cacheKeyComponents: Any,
+) =
+  cacheStore
+    .getOrNull<Bitmap>(cacheKeyNamespace, *cacheKeyComponents, canvas.width, canvas.height)
+    ?.apply { eraseColor(Color.TRANSPARENT) }
+    ?: Bitmap.createBitmap(canvas.width, canvas.height, Bitmap.Config.ARGB_8888).also {
+      cacheStore.set(cacheKeyNamespace, *cacheKeyComponents, canvas.width, canvas.height, value = it)
+    }
