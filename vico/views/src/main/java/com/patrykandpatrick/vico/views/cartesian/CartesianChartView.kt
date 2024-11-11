@@ -64,6 +64,14 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 
   private val ranges = MutableCartesianChartRanges()
 
+  private var _model: CartesianChartModel? = null
+
+  override var model: CartesianChartModel?
+    get() = _model
+    set(value) {
+      setModel(value)
+    }
+
   override val measuringContext: MutableCartesianMeasuringContext =
     MutableCartesianMeasuringContext(
       canvasBounds = canvasBounds,
@@ -206,28 +214,22 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
           } else {
             RandomCartesianModelGenerator.defaultY.endInclusive
           }
-        setModel(
+        model =
           RandomCartesianModelGenerator.getRandomModel(
             typedArray.getInt(R.styleable.CartesianChartView_previewColumnSeriesCount, 1),
             typedArray.getInt(R.styleable.CartesianChartView_previewLineSeriesCount, 1),
             minX..maxX,
             minY..maxY,
           )
-        )
       }
     }
   }
 
-  /** Sets the [CartesianChartModel]. */
-  public fun setModel(model: CartesianChartModel) {
-    setModel(model = model, updateRanges = true)
-  }
-
   override fun shouldShowPlaceholder(): Boolean = model == null
 
-  private fun setModel(model: CartesianChartModel?, updateRanges: Boolean) {
-    val oldModel = this.model
-    this.model = model
+  private fun setModel(model: CartesianChartModel?, updateRanges: Boolean = true) {
+    val oldModel = _model
+    _model = model
     updatePlaceholderVisibility()
     tryInvalidate(chart, model, updateRanges)
     if (model != null && oldModel?.id != model.id && isInEditMode.not()) {

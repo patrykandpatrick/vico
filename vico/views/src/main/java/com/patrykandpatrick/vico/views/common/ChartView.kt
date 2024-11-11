@@ -58,8 +58,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     )
 
   /** Houses the chart data. */
-  public var model: Model? = null
-    protected set
+  public abstract var model: Model?
 
   protected val animator: ValueAnimator =
     ValueAnimator.ofFloat(Animation.range.start, Animation.range.endInclusive).apply {
