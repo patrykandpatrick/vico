@@ -70,13 +70,6 @@ internal fun TypedArray.getComponent(context: Context): Component? = use { array
 
   val layeredComponent =
     when {
-      hasValue(R.styleable.ComponentStyle_overlayingComponentStyle) ->
-        getNestedTypedArray(
-            context = context,
-            resourceId = R.styleable.ComponentStyle_overlayingComponentStyle,
-            styleableResourceId = R.styleable.ComponentStyle,
-          )
-          .getComponent(context)
       hasValue(R.styleable.ComponentStyle_layeredComponentStyle) ->
         getNestedTypedArray(
             context = context,
@@ -109,12 +102,7 @@ internal fun TypedArray.getComponent(context: Context): Component? = use { array
             getRawDimension(
               context = context,
               index = R.styleable.ComponentStyle_layeredComponentPadding,
-              defaultValue =
-                getRawDimension(
-                  context = context,
-                  index = R.styleable.ComponentStyle_overlayingComponentPadding,
-                  defaultValue = 0f,
-                ),
+              defaultValue = 0f,
             )
         ),
     )

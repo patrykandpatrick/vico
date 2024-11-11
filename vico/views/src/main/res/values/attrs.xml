@@ -29,33 +29,75 @@
     <attr name="thickness" format="dimension" />
 
     <declare-styleable name="AxisStyle">
+        <!-- Equivalent to the `addExtremeLabel` parameter of
+        `AxisItemPlacer.Horizontal.default`. -->
         <attr name="addExtremeHorizontalAxisLabelPadding" format="boolean" />
+
+        <!-- The style of the axis guidelines. -->
         <attr name="guidelineStyle" format="reference" />
+
+        <!-- The `HorizontalAxis.ItemPlacer`. -->
         <attr name="horizontalAxisItemPlacer" format="enum">
             <enum name="aligned" value="0" />
             <enum name="segmented" value="1" />
         </attr>
+
+        <!-- The label offset for this axis if it is horizontal. -->
         <attr name="horizontalAxisLabelOffset" format="integer" />
+
+        <!-- The label spacing for this axis if it is horizontal. -->
         <attr name="horizontalAxisLabelSpacing" format="integer" />
-        <attr name="labelBackground" format="color|reference" />
+
+        <!-- The rotation of the axis labels (in degrees). -->
         <attr name="labelRotationDegrees" format="float" />
+
+        <!-- The style of the axis labels. -->
         <attr name="labelStyle" format="reference" />
+
+        <!-- The style of the axis line. -->
         <attr name="lineStyle" format="reference" />
+
+        <!-- Equivalent to the `shiftExtremeLines` parameters of `AxisItemPlacer.Horizontal.aligned`
+        and `AxisItemPlacer.Horizontal.segmented`. -->
         <attr name="shiftExtremeHorizontalAxisLines" format="boolean" />
+
+        <!-- Equivalent to the `shiftTopLines` parameter of `AxisItemPlacer.Vertical.count`. -->
         <attr name="shiftTopVerticalAxisLines" format="boolean" />
+
+        <!-- Whether to show guidelines. -->
         <attr name="showGuidelines" format="boolean" />
+
+        <!-- Whether to show an axis line. -->
         <attr name="showLine" format="boolean" />
+
+        <!-- Whether to show ticks. -->
         <attr name="showTicks" format="boolean" />
+
+        <!-- Whether to show an axis title. -->
         <attr name="showTitle" format="boolean|reference" />
+
+        <!-- The length of the axis ticks. -->
         <attr name="tickLength" format="dimension" />
+
+        <!-- The style of the axis ticks. -->
         <attr name="tickStyle" format="reference" />
+
+        <!-- The axis title. -->
         <attr name="title" format="string|reference" />
+
+        <!-- The style of the axis title. -->
         <attr name="titleStyle" format="reference" />
+
+        <!-- The horizontal position of the labels on this axis if it is vertical. -->
         <attr name="verticalAxisHorizontalLabelPosition" format="enum">
             <enum name="outside" value="0" />
             <enum name="inside" value="1" />
         </attr>
+
+        <!-- Equivalent to the `itemCount` parameter of `AxisItemPlacer.Vertical.count`. -->
         <attr name="verticalAxisItemCount" format="integer" />
+
+        <!-- The vertical position of the labels on this axis if it is vertical. -->
         <attr name="verticalAxisVerticalLabelPosition" format="enum">
             <enum name="center" value="0" />
             <enum name="top" value="1" />
@@ -64,132 +106,327 @@
     </declare-styleable>
 
     <declare-styleable name="CandlestickCartesianLayerStyle">
+        <!-- Equivalent to the `absolutelyBearishRelativelyBearish` parameter of
+        `CandlestickCartesianLayer.CandleProvider.absoluteRelative`. -->
         <attr name="absolutelyBearishRelativelyBearishCandleStyle" format="reference" />
+
+        <!-- Equivalent to the `absolutelyBearishRelativelyBullish` parameter of
+        `CandlestickCartesianLayer.CandleProvider.absoluteRelative`. -->
         <attr name="absolutelyBearishRelativelyBullishCandleStyle" format="reference" />
+
+        <!-- Equivalent to the `absolutelyBearishRelativelyNeutral` parameter of
+        `CandlestickCartesianLayer.CandleProvider.absoluteRelative`. -->
         <attr name="absolutelyBearishRelativelyNeutralCandleStyle" format="reference" />
+
+        <!-- Equivalent to the `absolutelyBullishRelativelyBearish` parameter of
+        `CandlestickCartesianLayer.CandleProvider.absoluteRelative`. -->
         <attr name="absolutelyBullishRelativelyBearishCandleStyle" format="reference" />
+
+        <!-- Equivalent to the `absolutelyBullishRelativelyBullish` parameter of
+        `CandlestickCartesianLayer.CandleProvider.absoluteRelative`. -->
         <attr name="absolutelyBullishRelativelyBullishCandleStyle" format="reference" />
+
+        <!-- Equivalent to the `absolutelyBullishRelativelyNeutral` parameter of
+        `CandlestickCartesianLayer.CandleProvider.absoluteRelative`. -->
         <attr name="absolutelyBullishRelativelyNeutralCandleStyle" format="reference" />
+
+        <!-- Equivalent to the `absolutelyNeutralRelativelyBearish` parameter of
+        `CandlestickCartesianLayer.CandleProvider.absoluteRelative`. -->
         <attr name="absolutelyNeutralRelativelyBearishCandleStyle" format="reference" />
+
+        <!-- Equivalent to the `absolutelyNeutralRelativelyBullish` parameter of
+        `CandlestickCartesianLayer.CandleProvider.absoluteRelative`. -->
         <attr name="absolutelyNeutralRelativelyBullishCandleStyle" format="reference" />
+
+        <!-- Equivalent to the `absolutelyNeutralRelativelyNeutral` parameter of
+        `CandlestickCartesianLayer.CandleProvider.absoluteRelative`. -->
         <attr name="absolutelyNeutralRelativelyNeutralCandleStyle" format="reference" />
+
+        <!-- Equivalent to the `bearish` parameter of
+        `CandlestickCartesianLayer.CandleProvider.absolute`. -->
         <attr name="bearishCandleStyle" format="reference" />
+
+        <!-- Equivalent to the `bullish` parameter of
+        `CandlestickCartesianLayer.CandleProvider.absolute`. -->
         <attr name="bullishCandleStyle" format="reference" />
+
+        <!-- Equivalent to `CandlestickCartesianLayer.candleSpacingDp`. -->
         <attr name="candleSpacing" format="dimension" />
+
+        <!-- Whether to use `CandlestickCartesianLayer.CandleProvider.absolute` or
+        `CandlestickCartesianLayer.CandleProvider.absoluteRelative`. -->
         <attr name="candleStyle" format="enum">
             <enum name="absolute" value="0" />
             <enum name="absoluteRelative" value="1" />
         </attr>
+
+        <!-- Equivalent to `CandlestickCartesianLayer.minCandleBodyHeightDp`. -->
         <attr name="minCandleBodyHeight" format="dimension" />
+
+        <!-- Equivalent to the `neutral` parameter of
+        `CandlestickCartesianLayer.CandleProvider.absolute`. -->
         <attr name="neutralCandleStyle" format="reference" />
+
+        <!-- Equivalent to `CandlestickCartesianLayer.scaleCandleWicks`. -->
         <attr name="scaleCandleWicks" format="boolean" />
     </declare-styleable>
 
     <declare-styleable name="CandleStyle">
+        <!-- Used for the body. -->
         <attr name="bodyStyle" format="reference" />
+
+        <!-- Used for the top wick. -->
         <attr name="topWickStyle" format="reference" />
+
+        <!-- Used for the bottom wick. -->
         <attr name="bottomWickStyle" format="reference" />
     </declare-styleable>
 
     <declare-styleable name="CartesianChartView">
+        <!-- The `CartesianChart` style. -->
         <attr name="chartStyle" format="reference" />
+
+        <!-- The number of column series for the XML preview. -->
         <attr name="previewColumnSeriesCount" format="integer" />
+
+        <!-- The number of line series for the XML preview. -->
         <attr name="previewLineSeriesCount" format="integer" />
+
+        <!-- The maximum x value for the XML preview. -->
         <attr name="previewMaxX" format="integer" />
+
+        <!-- The maximum y value for the XML preview. -->
         <attr name="previewMaxY" format="integer" />
+
+        <!-- The minimum x value for the XML preview. -->
         <attr name="previewMinX" format="integer" />
+
+        <!-- The minimum y value for the XML preview. -->
         <attr name="previewMinY" format="integer" />
+
+        <!-- Whether to enable scrolling. -->
         <attr name="scrollEnabled" format="boolean" />
+
+        <!-- Whether to enable zooming. -->
         <attr name="zoomEnabled" format="boolean" />
     </declare-styleable>
 
     <declare-styleable name="CartesianChartStyle">
+        <!-- The style of the axes. -->
         <attr name="axisStyle" format="reference" />
+
+        <!-- The style of the bottom axis. -->
         <attr name="bottomAxisStyle" format="reference" />
+
+        <!-- The style of the `CandlestickCartesianLayer`. -->
         <attr name="candlestickLayerStyle" format="reference" />
+
+        <!-- The style of the `ColumnCartesianLayer`. -->
         <attr name="columnLayerStyle" format="reference" />
+
+        <!-- The style of the end axis. -->
         <attr name="endAxisStyle" format="reference" />
+
+        <!-- Equivalent to the `endEdgeWidthDp` parameter of the `FadingEdges` constructor. -->
         <attr name="endFadingEdgeWidth" format="dimension" />
+
+        <!-- The visibility interpolator for the fading edges. -->
         <attr name="fadingEdgeVisibilityInterpolator" format="string" />
+
+        <!-- The visibility threshold for the fading edges. -->
         <attr name="fadingEdgeVisibilityThreshold" format="dimension" />
+
+        <!-- Equivalent to the `edgeWidthDp` parameter of the `FadingEdges` constructor. -->
         <attr name="fadingEdgeWidth" format="dimension" />
+
+        <!-- The `CartesianLayer`s. -->
         <attr name="layers" format="integer">
             <flag name="column" value="1" />
             <flag name="line" value="2" />
             <flag name="candlestick" value="4" />
         </attr>
+
+        <!-- The style of the `CandlestickCartesianLayer`. -->
         <attr name="lineLayerStyle" format="reference" />
+
+        <!-- Equivalent to the `scalableEndPaddingDp` parameter of the `CartesianLayerPadding`
+        constructor. -->
         <attr name="scalableEndLayerPadding" format="dimension" />
+
+        <!-- Equivalent to the `scalableStartPaddingDp` parameter of the `CartesianLayerPadding`
+        constructor. -->
         <attr name="scalableStartLayerPadding" format="dimension" />
+
+        <!-- Whether to show a bottom axis. -->
         <attr name="showBottomAxis" format="boolean" />
+
+        <!-- Whether to show an end axis. -->
         <attr name="showEndAxis" format="boolean" />
+
+        <!-- Whether to show a start axis. -->
         <attr name="showStartAxis" format="boolean" />
+
+        <!-- Whether to show a top axis. -->
         <attr name="showTopAxis" format="boolean" />
+
+        <!-- The style of the start axis. -->
         <attr name="startAxisStyle" format="reference" />
+
+        <!-- Equivalent to the `startEdgeWidthDp` parameter of the `FadingEdges` constructor. -->
         <attr name="startFadingEdgeWidth" format="dimension" />
+
+        <!-- The style of the top axis. -->
         <attr name="topAxisStyle" format="reference" />
+
+        <!-- Equivalent to the `unscalableEndPaddingDp` parameter of the `CartesianLayerPadding`
+        constructor. -->
         <attr name="unscalableEndLayerPadding" format="dimension" />
+
+        <!-- Equivalent to the `unscalableStartPaddingDp` parameter of the `CartesianLayerPadding`
+        constructor. -->
         <attr name="unscalableStartLayerPadding" format="dimension" />
     </declare-styleable>
 
     <declare-styleable name="ColumnCartesianLayerStyle">
+        <!-- The style for columns whose index in a column collection is 3k (k ∈ N). -->
         <attr name="column1Style" format="reference" />
+
+        <!-- The style for columns whose index in a column collection is 1 + 3k (k ∈ N). -->
         <attr name="column2Style" format="reference" />
+
+        <!-- The style for columns whose index in a column collection is 2 + 3k (k ∈ N). -->
         <attr name="column3Style" format="reference" />
+
+        <!-- The distance between neighboring column collections. -->
         <attr name="columnCollectionSpacing" format="dimension" />
+
+        <!-- The rotation of the data labels (in degrees). -->
         <attr name="dataLabelRotationDegrees" />
+
+        <!-- The style of the data labels. -->
         <attr name="dataLabelStyle" />
+
+        <!-- The vertical position of each data label relative to the top edge of its respective
+        column. -->
         <attr name="dataLabelVerticalPosition" />
+
+        <!-- The distance between neighboring grouped columns. -->
         <attr name="groupedColumnSpacing" format="dimension" />
+
+        <!-- The `ColumnCartesianLayer.MergeMode`. -->
         <attr name="mergeMode" format="enum">
             <enum name="grouped" value="0" />
             <enum name="stacked" value="1" />
         </attr>
+
+        <!-- Whether to show data labels. -->
         <attr name="showDataLabels" />
     </declare-styleable>
 
     <declare-styleable name="ComponentStyle">
+        <!-- The background color. -->
         <attr name="android:color" />
+
+        <!-- The padding between this component and the component with which it is overlaid. -->
         <attr name="layeredComponentPadding" format="dimension" />
+
+        <!-- A component with which to overlay this component. -->
         <attr name="layeredComponentStyle" format="reference" />
-        <attr name="overlayingComponentPadding" format="dimension" />
-        <attr name="overlayingComponentStyle" format="reference" />
+
+        <!-- The shape style. -->
         <attr name="shapeStyle" />
+
+        <!-- The stroke color. -->
         <attr name="strokeColor" />
+
+        <!-- The stroke thickness. -->
         <attr name="strokeThickness" />
     </declare-styleable>
 
     <declare-styleable name="TextComponentStyle">
+        <!-- The text color. -->
         <attr name="android:color" />
+
+        <!-- The text truncation behavior. -->
         <attr name="android:ellipsize" />
+
+        <!-- The font family. -->
         <attr name="android:fontFamily" />
+
+        <!-- The font style. -->
         <attr name="android:fontStyle" />
+
+        <!-- The line count. -->
         <attr name="android:maxLines" />
+
+        <!-- The padding for each edge. -->
         <attr name="android:padding" />
+
+        <!-- The padding for the bottom edge. -->
         <attr name="android:paddingBottom" />
+
+        <!-- The padding for the end edge. -->
         <attr name="android:paddingEnd" />
+
+        <!-- The padding for the horizontal edges. -->
         <attr name="android:paddingHorizontal" />
+
+        <!-- The padding for the start edge. -->
         <attr name="android:paddingStart" />
+
+        <!-- The padding for the top edge. -->
         <attr name="android:paddingTop" />
+
+        <!-- The padding for the vertical edges. -->
         <attr name="android:paddingVertical" />
+
+        <!-- The font weight. -->
         <attr name="android:textFontWeight" />
+
+        <!-- The text size. -->
         <attr name="android:textSize" />
+
+        <!-- The line height. -->
         <attr name="android:lineHeight" />
+
+        <!-- The background for the `TextComponent`. -->
         <attr name="backgroundStyle" format="reference" />
+
+        <!-- The font family. -->
         <attr name="fontFamily" />
+
+        <!-- The font style. -->
         <attr name="fontStyle" />
+
+        <!-- The size of all four margins. -->
         <attr name="margin" format="dimension" />
+
+        <!-- The size of the bottom margin. -->
         <attr name="marginBottom" format="dimension" />
+
+        <!-- The size of the end margin. -->
         <attr name="marginEnd" format="dimension" />
+
+        <!-- The size of the horizontal margins. -->
         <attr name="marginHorizontal" format="dimension" />
+
+        <!-- The size of the start margin. -->
         <attr name="marginStart" format="dimension" />
+
+        <!-- The size of the top margin. -->
         <attr name="marginTop" format="dimension" />
+
+        <!-- The size of the vertical margins. -->
         <attr name="marginVertical" format="dimension" />
+
+        <!-- The text alignment. -->
         <attr name="textAlignment" format="enum">
             <enum name="normal" value="0" />
             <enum name="opposite" value="1" />
             <enum name="center" value="2" />
         </attr>
+
+        <!-- The typeface. -->
         <attr name="typeface">
             <enum name="normal" value="0" />
             <enum name="sans" value="1" />
@@ -199,64 +436,140 @@
     </declare-styleable>
 
     <declare-styleable name="LineCartesianLayerStyle">
+        <!-- The style for lines whose index in a `LineCartesianLayer`’s line list is 3k
+        (k ∈ N). -->
         <attr name="line1Style" format="reference" />
+
+        <!-- The style for lines whose index in a `LineCartesianLayer`’s line list is 1 + 3k
+        (k ∈ N). -->
         <attr name="line2Style" format="reference" />
+
+        <!-- The style for lines whose index in a `LineCartesianLayer`’s line list is 2 + 3k
+        (k ∈ N). -->
         <attr name="line3Style" format="reference" />
+
+        <!-- The point spacing. -->
         <attr name="pointSpacing" format="dimension" />
     </declare-styleable>
 
     <declare-styleable name="LineComponentStyle">
+        <!-- The background color. -->
         <attr name="android:color" />
+
+        <!-- The shape of the line. -->
         <attr name="shapeStyle" />
+
+        <!-- The stroke color. -->
         <attr name="strokeColor" />
+
+        <!-- The stroke thickness. -->
         <attr name="strokeThickness" />
+
+        <!-- The line thickness. -->
         <attr name="thickness" />
     </declare-styleable>
 
     <declare-styleable name="LineStyle">
+        <!-- The line color. -->
         <attr name="android:color" />
+
+        <!-- The strength of the cubic Bézier curve between each key point on the line. -->
         <attr name="curvature" format="fraction" />
+
+        <!-- The rotation of data labels in degrees. -->
         <attr name="dataLabelRotationDegrees" />
+
+        <!-- The style of the data labels. -->
         <attr name="dataLabelStyle" />
+
+        <!-- The vertical position of each data label relative to its respective point on the
+        line. -->
         <attr name="dataLabelVerticalPosition" />
+
+        <!-- The bottom color of the vertical background gradient. -->
         <attr name="gradientBottomColor" format="color" />
+
+        <!-- The top color of the vertical background gradient. -->
         <attr name="gradientTopColor" format="color" />
+
+        <!-- The color for negative values. -->
         <attr name="negativeColor" format="color" />
+
+        <!-- The bottom color of the gradient for negative values. -->
         <attr name="negativeGradientBottomColor" format="color" />
+
+        <!-- The top color of the gradient for negative values. -->
         <attr name="negativeGradientTopColor" format="color" />
+
+        <!-- The size of the points on the line. -->
         <attr name="pointSize" format="dimension" />
+
+        <!-- The style of the points. -->
         <attr name="pointStyle" format="reference" />
+
+        <!-- The color for positive values. -->
         <attr name="positiveColor" format="color" />
+
+        <!-- The bottom color of the gradient for positive values. -->
         <attr name="positiveGradientBottomColor" format="color" />
+
+        <!-- The top color of the gradient for positive values. -->
         <attr name="positiveGradientTopColor" format="color" />
+
+        <!-- Whether to show data labels. -->
         <attr name="showDataLabels" />
+
+        <!-- The stroke thickness. -->
         <attr name="thickness" />
     </declare-styleable>
 
     <declare-styleable name="ShapeStyle">
+        <!-- The corner size. -->
         <attr name="cornerSize" format="dimension|fraction" />
+
+        <!-- The corner style. -->
         <attr name="cornerTreatment" format="enum">
             <enum name="rounded" value="0" />
             <enum name="cut" value="1" />
         </attr>
+
+        <!-- The size of the bottom-end corner. -->
         <attr name="bottomEndCornerSize" format="dimension|fraction" />
+
+        <!-- The corner style for the bottom-end corner. -->
         <attr name="bottomEndCornerTreatment" format="enum">
             <enum name="rounded" value="0" />
             <enum name="cut" value="1" />
         </attr>
+
+        <!-- The size of the bottom-start corner. -->
         <attr name="bottomStartCornerSize" format="dimension|fraction" />
+
+        <!-- The corner style for the bottom-start corner. -->
         <attr name="bottomStartCornerTreatment" format="enum">
             <enum name="rounded" value="0" />
             <enum name="cut" value="1" />
         </attr>
+
+        <!-- The dash length. 0 means no dashes. -->
         <attr name="dashLength" format="dimension" />
+
+        <!-- The dash gap length. 0 means no dashes. -->
         <attr name="gapLength" format="dimension" />
+
+        <!-- The size of the top-end corner. -->
         <attr name="topEndCornerSize" format="dimension|fraction" />
+
+        <!-- The corner style for the top-end corner. -->
         <attr name="topEndCornerTreatment" format="enum">
             <enum name="rounded" value="0" />
             <enum name="cut" value="1" />
         </attr>
+
+        <!-- The size of the top-start corner. -->
         <attr name="topStartCornerSize" format="dimension|fraction" />
+
+        <!-- The corner style for the top-start corner. -->
         <attr name="topStartCornerTreatment" format="enum">
             <enum name="rounded" value="0" />
             <enum name="cut" value="1" />
