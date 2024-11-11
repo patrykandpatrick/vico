@@ -117,6 +117,9 @@ public open class LineCartesianLayer(
       Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.STROKE
         strokeCap = cap
+        // ----------------------- WAHOO START --------------------------
+        color = (fill as SingleLineFill).fill.color
+        // ----------------------- WAHOO END --------------------------
       }
 
     /** Draws the line. */
@@ -132,7 +135,9 @@ public open class LineCartesianLayer(
         val halfThickness = thickness.half
         areaFill?.draw(context, path, halfThickness, verticalAxisPosition)
         fillCanvas.drawPath(path, linePaint)
-        withOtherCanvas(fillCanvas) { fill.draw(context, halfThickness, verticalAxisPosition) }
+        // ----------------------- WAHOO START --------------------------
+        //withOtherCanvas(fillCanvas) { fill.draw(context, halfThickness, verticalAxisPosition) }
+        // ----------------------- WAHOO END --------------------------
       }
     }
   }
