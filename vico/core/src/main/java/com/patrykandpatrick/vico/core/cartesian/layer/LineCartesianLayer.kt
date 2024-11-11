@@ -327,16 +327,15 @@ public open class LineCartesianLayer(
         linePath.rewind()
         val line = lineProvider.getLine(seriesIndex, model.extraStore)
 
-        var prevX = layerBounds.getStart(isLtr = isLtr)
-        var prevY = layerBounds.bottom
+        // ----------------------- WAHOO START --------------------------
+        //var prevX = layerBounds.getStart(isLtr = isLtr)
+        //var prevY = layerBounds.bottom
 
-        val drawingStartAlignmentCorrection =
-          layoutDirectionMultiplier * horizontalDimensions.startPadding
+        val drawingStartAlignmentCorrection = layoutDirectionMultiplier * horizontalDimensions.startPadding
 
-        val drawingStart =
-          layerBounds.getStart(isLtr = isLtr) + drawingStartAlignmentCorrection - scroll
+        val drawingStart = layerBounds.getStart(isLtr = isLtr) + drawingStartAlignmentCorrection - scroll
 
-        forEachPointInBounds(series, drawingStart, pointInfoMap) { _, x, y, _, _ ->
+        /*forEachPointInBounds(series, drawingStart, pointInfoMap) { _, x, y, _, _ ->
           if (linePath.isEmpty) {
             linePath.moveTo(x, y)
           } else {
@@ -344,7 +343,10 @@ public open class LineCartesianLayer(
           }
           prevX = x
           prevY = y
-        }
+        } */
+
+        drawPointsAndDataLabels(line, series, seriesIndex, drawingStart, pointInfoMap)
+        // ----------------------- WAHOO END --------------------------
 
         canvas.saveLayer(opacity = drawingModel?.opacity ?: 1f)
 
@@ -356,10 +358,11 @@ public open class LineCartesianLayer(
         // ----------------------- WAHOO START --------------------------
         /*forEachPointInBounds(series, drawingStart, pointInfoMap) { entry, x, y, _, _ ->
           updateMarkerTargets(entry, x, y, lineFillBitmap)
-        }*/
-        // ----------------------- WAHOO END --------------------------
+        }
 
         drawPointsAndDataLabels(line, series, seriesIndex, drawingStart, pointInfoMap)
+        */
+        // ----------------------- WAHOO END --------------------------
 
         canvas.restore()
       }
@@ -406,11 +409,24 @@ public open class LineCartesianLayer(
     drawingStart: Float,
     pointInfoMap: Map<Double, LineCartesianLayerDrawingModel.PointInfo>?,
   ) {
+    // ----------------------- WAHOO START --------------------------
+    var prevX = layerBounds.getStart(isLtr = isLtr)
+    var prevY = layerBounds.bottom
+
     forEachPointInBounds(
       series = series,
       drawingStart = drawingStart,
       pointInfoMap = pointInfoMap,
     ) { chartEntry, x, y, previousX, nextX ->
+
+      if (linePath.isEmpty) {
+        linePath.moveTo(x, y)
+      } else {
+        line.pointConnector.connect(this, linePath, prevX, prevY, x, y)
+      }
+      prevX = x
+      prevY = y
+      // ----------------------- WAHOO END --------------------------
       val point = line.pointProvider?.getPoint(chartEntry, seriesIndex, model.extraStore)
       point?.draw(this, x, y)
 
