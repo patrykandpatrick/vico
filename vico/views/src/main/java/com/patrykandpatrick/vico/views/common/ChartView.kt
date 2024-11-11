@@ -198,7 +198,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     have been initialized yet. Such calls can be ignored, as `Context.isLtr` will be read at
     `MutableMeasuringContext` instantiation. */
     @Suppress("UNNECESSARY_SAFE_CALL")
-    measuringContext?.isLtr = layoutDirection == View.LAYOUT_DIRECTION_LTR
+    measuringContext?.isLtr = layoutDirection == LAYOUT_DIRECTION_LTR
   }
 }
 

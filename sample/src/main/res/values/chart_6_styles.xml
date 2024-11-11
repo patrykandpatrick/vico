@@ -19,6 +19,17 @@
     <color name="chart_6_color_2">#5e836a</color>
     <color name="chart_6_color_3">#a5ba8e</color>
 
+    <style name="Chart6CartesianChartStyle">
+        <item name="bottomAxisStyle">@style/Chart6BottomAxisStyle</item>
+        <item name="columnLayerStyle">@style/Chart6ColumnLayerStyle</item>
+        <item name="layers">column</item>
+        <item name="previewColumnSeriesCount">3</item>
+        <item name="scalableEndLayerPadding">16dp</item>
+        <item name="scalableStartLayerPadding">16dp</item>
+        <item name="showBottomAxis">true</item>
+        <item name="showStartAxis">true</item>
+    </style>
+
     <style name="Chart6BottomAxisStyle">
         <item name="horizontalAxisItemPlacer">segmented</item>
     </style>

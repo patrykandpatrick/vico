@@ -23,12 +23,6 @@
         android:id="@+id/chart_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:bottomAxisStyle="@style/Chart1BottomAxisStyle"
-        app:layers="line"
-        app:lineLayerStyle="@style/Chart1LineLayerStyle"
-        app:scalableEndLayerPadding="16dp"
-        app:scalableStartLayerPadding="16dp"
-        app:showBottomAxis="true"
-        app:showStartAxis="true"
+        app:chartStyle="@style/Chart1CartesianChartStyle"
         app:zoomEnabled="false" />
 </FrameLayout>

@@ -23,8 +23,5 @@
         android:id="@+id/chart_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:bottomAxisStyle="@style/Chart10BottomAxisStyle"
-        app:layers="candlestick"
-        app:showBottomAxis="true"
-        app:showStartAxis="true" />
+        app:chartStyle="@style/Chart10CartesianChartStyle" />
 </FrameLayout>

@@ -92,6 +92,18 @@
     </declare-styleable>
 
     <declare-styleable name="CartesianChartView">
+        <attr name="chartStyle" format="reference" />
+        <attr name="previewColumnSeriesCount" format="integer" />
+        <attr name="previewLineSeriesCount" format="integer" />
+        <attr name="previewMaxX" format="integer" />
+        <attr name="previewMaxY" format="integer" />
+        <attr name="previewMinX" format="integer" />
+        <attr name="previewMinY" format="integer" />
+        <attr name="scrollEnabled" format="boolean" />
+        <attr name="zoomEnabled" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="CartesianChartStyle">
         <attr name="axisStyle" format="reference" />
         <attr name="bottomAxisStyle" format="reference" />
         <attr name="candlestickLayerStyle" format="reference" />
@@ -107,15 +119,8 @@
             <flag name="candlestick" value="4" />
         </attr>
         <attr name="lineLayerStyle" format="reference" />
-        <attr name="previewColumnSeriesCount" format="integer" />
-        <attr name="previewLineSeriesCount" format="integer" />
-        <attr name="previewMaxX" format="integer" />
-        <attr name="previewMaxY" format="integer" />
-        <attr name="previewMinX" format="integer" />
-        <attr name="previewMinY" format="integer" />
         <attr name="scalableEndLayerPadding" format="dimension" />
         <attr name="scalableStartLayerPadding" format="dimension" />
-        <attr name="scrollEnabled" format="boolean" />
         <attr name="showBottomAxis" format="boolean" />
         <attr name="showEndAxis" format="boolean" />
         <attr name="showStartAxis" format="boolean" />
@@ -125,7 +130,6 @@
         <attr name="topAxisStyle" format="reference" />
         <attr name="unscalableEndLayerPadding" format="dimension" />
         <attr name="unscalableStartLayerPadding" format="dimension" />
-        <attr name="zoomEnabled" format="boolean" />
     </declare-styleable>
 
     <declare-styleable name="ColumnCartesianLayerStyle">

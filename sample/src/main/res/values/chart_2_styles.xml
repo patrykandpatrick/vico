@@ -17,6 +17,14 @@
 <resources>
     <color name="chart_2_color_1">#ff5500</color>
 
+    <style name="Chart2CartesianChartStyle">
+        <item name="bottomAxisStyle">@style/Chart2BottomAxisStyle</item>
+        <item name="columnLayerStyle">@style/Chart2ColumnLayerStyle</item>
+        <item name="layers">column</item>
+        <item name="showBottomAxis">true</item>
+        <item name="showStartAxis">true</item>
+    </style>
+
     <style name="Chart2BottomAxisStyle">
         <item name="addExtremeHorizontalAxisLabelPadding">true</item>
         <item name="horizontalAxisLabelSpacing">3</item>

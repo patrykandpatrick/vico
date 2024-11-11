@@ -48,10 +48,13 @@ internal class ThemeHandler(private val context: Context, attrs: AttributeSet?) 
     context.obtainStyledAttributes(attrs, R.styleable.CartesianChartView).use { typedArray ->
       scrollEnabled = typedArray.getBoolean(R.styleable.CartesianChartView_scrollEnabled, true)
       zoomEnabled = typedArray.getBoolean(R.styleable.CartesianChartView_zoomEnabled, true)
-
-      context.obtainStyledAttributes(attrs, R.styleable.CartesianChartView).use {
-        chart = getChart(it, typedArray)
-      }
+      typedArray
+        .getNestedTypedArray(
+          context,
+          R.styleable.CartesianChartView_chartStyle,
+          R.styleable.CartesianChartStyle,
+        )
+        .use { chart = getChart(it) }
     }
   }
 
@@ -60,26 +63,26 @@ internal class ThemeHandler(private val context: Context, attrs: AttributeSet?) 
     var styleAttributeIndex: Int
     when (position) {
       Axis.Position.Vertical.Start -> {
-        visibilityAttributeIndex = R.styleable.CartesianChartView_showStartAxis
-        styleAttributeIndex = R.styleable.CartesianChartView_startAxisStyle
+        visibilityAttributeIndex = R.styleable.CartesianChartStyle_showStartAxis
+        styleAttributeIndex = R.styleable.CartesianChartStyle_startAxisStyle
       }
       Axis.Position.Horizontal.Top -> {
-        visibilityAttributeIndex = R.styleable.CartesianChartView_showTopAxis
-        styleAttributeIndex = R.styleable.CartesianChartView_topAxisStyle
+        visibilityAttributeIndex = R.styleable.CartesianChartStyle_showTopAxis
+        styleAttributeIndex = R.styleable.CartesianChartStyle_topAxisStyle
       }
       Axis.Position.Vertical.End -> {
-        visibilityAttributeIndex = R.styleable.CartesianChartView_showEndAxis
-        styleAttributeIndex = R.styleable.CartesianChartView_endAxisStyle
+        visibilityAttributeIndex = R.styleable.CartesianChartStyle_showEndAxis
+        styleAttributeIndex = R.styleable.CartesianChartStyle_endAxisStyle
       }
       Axis.Position.Horizontal.Bottom -> {
-        visibilityAttributeIndex = R.styleable.CartesianChartView_showBottomAxis
-        styleAttributeIndex = R.styleable.CartesianChartView_bottomAxisStyle
+        visibilityAttributeIndex = R.styleable.CartesianChartStyle_showBottomAxis
+        styleAttributeIndex = R.styleable.CartesianChartStyle_bottomAxisStyle
       }
       else -> throw IllegalArgumentException("Unexpected `Axis.Position` subclass.")
     }
     if (!getBoolean(visibilityAttributeIndex, false)) return null
     if (!hasValue(styleAttributeIndex)) {
-      styleAttributeIndex = R.styleable.CartesianChartView_axisStyle
+      styleAttributeIndex = R.styleable.CartesianChartStyle_axisStyle
     }
     return getNestedTypedArray(context, styleAttributeIndex, R.styleable.AxisStyle).use { axisStyle
       ->
@@ -192,26 +195,21 @@ internal class ThemeHandler(private val context: Context, attrs: AttributeSet?) 
 
   private fun TypedArray.getLayerPadding(): CartesianLayerPadding =
     CartesianLayerPadding(
-      getRawDimension(context, R.styleable.CartesianChartView_scalableStartLayerPadding, 0f),
-      getRawDimension(context, R.styleable.CartesianChartView_scalableEndLayerPadding, 0f),
-      getRawDimension(context, R.styleable.CartesianChartView_unscalableStartLayerPadding, 0f),
-      getRawDimension(context, R.styleable.CartesianChartView_unscalableEndLayerPadding, 0f),
+      getRawDimension(context, R.styleable.CartesianChartStyle_scalableStartLayerPadding, 0f),
+      getRawDimension(context, R.styleable.CartesianChartStyle_scalableEndLayerPadding, 0f),
+      getRawDimension(context, R.styleable.CartesianChartStyle_unscalableStartLayerPadding, 0f),
+      getRawDimension(context, R.styleable.CartesianChartStyle_unscalableEndLayerPadding, 0f),
     )
 
-  private fun getChart(
-    cartesianChartViewTypedArray: TypedArray,
-    baseTypedArray: TypedArray,
-  ): CartesianChart {
-    val layerFlags = cartesianChartViewTypedArray.getInt(R.styleable.CartesianChartView_layers, 0)
+  private fun getChart(typedArray: TypedArray): CartesianChart {
+    val layerFlags = typedArray.getInt(R.styleable.CartesianChartStyle_layers, 0)
 
     val columnLayer =
-      if (layerFlags.hasFlag(COLUMN_LAYER)) baseTypedArray.getColumnCartesianLayer(context)
-      else null
+      if (layerFlags.hasFlag(COLUMN_LAYER)) typedArray.getColumnCartesianLayer(context) else null
     val lineLayer =
-      if (layerFlags.hasFlag(LINE_LAYER)) baseTypedArray.getLineCartesianLayer(context) else null
+      if (layerFlags.hasFlag(LINE_LAYER)) typedArray.getLineCartesianLayer(context) else null
     val candlestickLayer =
-      if (layerFlags.hasFlag(CANDLESTICK_LAYER))
-        baseTypedArray.getCandlestickCartesianLayer(context)
+      if (layerFlags.hasFlag(CANDLESTICK_LAYER)) typedArray.getCandlestickCartesianLayer(context)
       else null
 
     return CartesianChart(
@@ -222,31 +220,31 @@ internal class ThemeHandler(private val context: Context, attrs: AttributeSet?) 
             if (candlestickLayer != null) add(candlestickLayer)
           }
           .toTypedArray(),
-      startAxis = baseTypedArray.getAxis(Axis.Position.Vertical.Start),
-      topAxis = baseTypedArray.getAxis(Axis.Position.Horizontal.Top),
-      endAxis = baseTypedArray.getAxis(Axis.Position.Vertical.End),
-      bottomAxis = baseTypedArray.getAxis(Axis.Position.Horizontal.Bottom),
-      fadingEdges = baseTypedArray.getFadingEdges(),
-      layerPadding = baseTypedArray.getLayerPadding(),
+      startAxis = typedArray.getAxis(Axis.Position.Vertical.Start),
+      topAxis = typedArray.getAxis(Axis.Position.Horizontal.Top),
+      endAxis = typedArray.getAxis(Axis.Position.Vertical.End),
+      bottomAxis = typedArray.getAxis(Axis.Position.Horizontal.Bottom),
+      fadingEdges = typedArray.getFadingEdges(),
+      layerPadding = typedArray.getLayerPadding(),
     )
   }
 
   private fun TypedArray.getFadingEdges(): FadingEdges? {
-    val edgesLength = getRawDimension(context, R.styleable.CartesianChartView_fadingEdgeWidth, 0f)
+    val edgesLength = getRawDimension(context, R.styleable.CartesianChartStyle_fadingEdgeWidth, 0f)
     val startLength =
-      getRawDimension(context, R.styleable.CartesianChartView_startFadingEdgeWidth, edgesLength)
+      getRawDimension(context, R.styleable.CartesianChartStyle_startFadingEdgeWidth, edgesLength)
     val endLength =
-      getRawDimension(context, R.styleable.CartesianChartView_endFadingEdgeWidth, edgesLength)
+      getRawDimension(context, R.styleable.CartesianChartStyle_endFadingEdgeWidth, edgesLength)
     val threshold =
       getRawDimension(
         context,
-        R.styleable.CartesianChartView_fadingEdgeVisibilityThreshold,
+        R.styleable.CartesianChartStyle_fadingEdgeVisibilityThreshold,
         FADING_EDGE_VISIBILITY_THRESHOLD_DP,
       )
 
     return if (startLength > 0f || endLength > 0f) {
       val interpolatorClassName =
-        getString(R.styleable.CartesianChartView_fadingEdgeVisibilityInterpolator)
+        getString(R.styleable.CartesianChartStyle_fadingEdgeVisibilityInterpolator)
 
       val interpolator =
         if (interpolatorClassName != null) {

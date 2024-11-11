@@ -23,9 +23,5 @@
         android:id="@+id/chart_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:bottomAxisStyle="@style/Chart2BottomAxisStyle"
-        app:columnLayerStyle="@style/Chart2ColumnLayerStyle"
-        app:layers="column"
-        app:showBottomAxis="true"
-        app:showStartAxis="true" />
+        app:chartStyle="@style/Chart2CartesianChartStyle" />
 </FrameLayout>

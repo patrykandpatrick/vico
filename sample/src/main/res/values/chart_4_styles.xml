@@ -20,6 +20,17 @@
     <color name="chart_4_color_3">#f094bb</color>
     <color name="chart_4_color_4">#fdc8c4</color>
 
+    <style name="Chart4CartesianChartStyle">
+        <item name="bottomAxisStyle">@style/Chart4BottomAxisStyle</item>
+        <item name="columnLayerStyle">@style/Chart4ColumnLayerStyle</item>
+        <item name="layers">line|column</item>
+        <item name="lineLayerStyle">@style/Chart4LineLayerStyle</item>
+        <item name="scalableEndLayerPadding">16dp</item>
+        <item name="scalableStartLayerPadding">16dp</item>
+        <item name="showEndAxis">true</item>
+        <item name="showTopAxis">true</item>
+    </style>
+
     <style name="Chart4BottomAxisStyle">
         <item name="horizontalAxisItemPlacer">segmented</item>
     </style>

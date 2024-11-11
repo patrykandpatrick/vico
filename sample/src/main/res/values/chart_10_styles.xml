@@ -20,4 +20,11 @@
         <item name="horizontalAxisLabelSpacing">3</item>
         <item name="showGuidelines">false</item>
     </style>
+
+    <style name="Chart10CartesianChartStyle">
+        <item name="bottomAxisStyle">@style/Chart10BottomAxisStyle</item>
+        <item name="layers">candlestick</item>
+        <item name="showBottomAxis">true</item>
+        <item name="showStartAxis">true</item>
+    </style>
 </resources>

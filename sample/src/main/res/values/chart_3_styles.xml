@@ -18,6 +18,17 @@
     <color name="chart_3_color_1">#ffbb00</color>
     <color name="chart_3_color_2">#9db591</color>
 
+    <style name="Chart3CartesianChartStyle">
+        <item name="bottomAxisStyle">@style/Chart3BottomAxisStyle</item>
+        <item name="fadingEdgeVisibilityInterpolator">androidx.interpolator.view.animation.FastOutSlowInInterpolator</item>
+        <item name="fadingEdgeWidth">32dp</item>
+        <item name="layers">line</item>
+        <item name="lineLayerStyle">@style/Chart3LineLayerStyle</item>
+        <item name="showBottomAxis">true</item>
+        <item name="showStartAxis">true</item>
+        <item name="startAxisStyle">@style/Chart3StartAxisStyle</item>
+    </style>
+
     <style name="Chart3AxisStyle">
         <item name="showTitle">true</item>
     </style>

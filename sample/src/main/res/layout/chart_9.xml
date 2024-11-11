@@ -24,13 +24,5 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/Chart9ThemeOverlay"
-        app:bottomAxisStyle="@style/Chart9BottomAxisStyle"
-        app:layers="line"
-        app:lineLayerStyle="@style/Chart9LineLayerStyle"
-        app:previewMaxX="8"
-        app:previewMaxY="10"
-        app:previewMinY="-7"
-        app:showBottomAxis="true"
-        app:showStartAxis="true"
-        app:startAxisStyle="@style/Chart9StartAxisStyle" />
+        app:chartStyle="@style/Chart9CartesianChartStyle" />
 </FrameLayout>

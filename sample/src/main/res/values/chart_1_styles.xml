@@ -17,6 +17,16 @@
 <resources>
     <color name="chart_1_color_1">#a485e0</color>
 
+    <style name="Chart1CartesianChartStyle">
+        <item name="bottomAxisStyle">@style/Chart1BottomAxisStyle</item>
+        <item name="layers">line</item>
+        <item name="lineLayerStyle">@style/Chart1LineLayerStyle</item>
+        <item name="scalableEndLayerPadding">16dp</item>
+        <item name="scalableStartLayerPadding">16dp</item>
+        <item name="showBottomAxis">true</item>
+        <item name="showStartAxis">true</item>
+    </style>
+
     <style name="Chart1BottomAxisStyle">
         <item name="horizontalAxisItemPlacer">segmented</item>
         <item name="showGuidelines">false</item>

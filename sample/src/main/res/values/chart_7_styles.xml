@@ -19,6 +19,16 @@
     <color name="chart_7_color_2">#91b1fd</color>
     <color name="chart_7_color_3">#8fdaff</color>
 
+    <style name="Chart7CartesianChartStyle">
+        <item name="bottomAxisStyle">@style/Chart7BottomAxisStyle</item>
+        <item name="layers">line</item>
+        <item name="lineLayerStyle">@style/Chart7LineLayerStyle</item>
+        <item name="scalableEndLayerPadding">16dp</item>
+        <item name="scalableStartLayerPadding">16dp</item>
+        <item name="showBottomAxis">true</item>
+        <item name="showStartAxis">true</item>
+    </style>
+
     <style name="Chart7BottomAxisStyle">
         <item name="horizontalAxisItemPlacer">segmented</item>
     </style>

@@ -18,6 +18,18 @@
     <color name="chart_9_color_positive">#FF3716FF</color>
     <color name="chart_9_color_negative">#FFFF166A</color>
 
+    <style name="Chart9CartesianChartStyle">
+        <item name="bottomAxisStyle">@style/Chart9BottomAxisStyle</item>
+        <item name="layers">line</item>
+        <item name="lineLayerStyle">@style/Chart9LineLayerStyle</item>
+        <item name="previewMaxX">8</item>
+        <item name="previewMaxY">10</item>
+        <item name="previewMinY">-7</item>
+        <item name="showBottomAxis">true</item>
+        <item name="showStartAxis">true</item>
+        <item name="startAxisStyle">@style/Chart9StartAxisStyle</item>
+    </style>
+
     <style name="Chart9Line1Style">
         <item name="positiveColor">?colorPrimary</item>
         <item name="negativeColor">?colorSecondary</item>

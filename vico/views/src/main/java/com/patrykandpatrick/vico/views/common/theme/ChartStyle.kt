@@ -37,7 +37,7 @@ import com.patrykandpatrick.vico.views.common.defaultColors
 
 internal fun TypedArray.getColumnCartesianLayer(
   context: Context,
-  @StyleableRes resourceId: Int = R.styleable.CartesianChartView_columnLayerStyle,
+  @StyleableRes resourceId: Int = R.styleable.CartesianChartStyle_columnLayerStyle,
   @StyleableRes styleableResourceId: IntArray = R.styleable.ColumnCartesianLayerStyle,
 ): ColumnCartesianLayer =
   getNestedTypedArray(context, resourceId, styleableResourceId).run {
@@ -120,7 +120,7 @@ internal fun TypedArray.getColumnCartesianLayer(
 
 internal fun TypedArray.getLineCartesianLayer(
   context: Context,
-  @StyleableRes resourceId: Int = R.styleable.CartesianChartView_lineLayerStyle,
+  @StyleableRes resourceId: Int = R.styleable.CartesianChartStyle_lineLayerStyle,
   @StyleableRes styleableResourceId: IntArray = R.styleable.LineCartesianLayerStyle,
 ): LineCartesianLayer =
   getNestedTypedArray(context, resourceId, styleableResourceId).run {
@@ -170,7 +170,7 @@ internal fun TypedArray.getCandlestickCartesianLayer(context: Context): Candlest
   val bearishColor = context.defaultColors.bearishCandleColor.toInt()
   return getNestedTypedArray(
       context,
-      R.styleable.CartesianChartView_candlestickLayerStyle,
+      R.styleable.CartesianChartStyle_candlestickLayerStyle,
       R.styleable.CandlestickCartesianLayerStyle,
     )
     .use { typedArray ->
