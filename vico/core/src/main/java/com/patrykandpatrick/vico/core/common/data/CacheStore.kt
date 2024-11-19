@@ -28,8 +28,6 @@ public class CacheStore {
    * the given components. If there’s no such value, `null` is returned.
    */
   public fun <T : Any> getOrNull(keyNamespace: KeyNamespace, vararg keyComponents: Any?): T? {
-    Log.e("JBIRD", "keySize: " + keyComponents.size.toString())
-    Log.e("JBIRD", "keyComponents: $keyComponents")
     val key = keyNamespace.getKey(*keyComponents)
     val value = map[key]
     if (value != null) purgedMap[key] = value
