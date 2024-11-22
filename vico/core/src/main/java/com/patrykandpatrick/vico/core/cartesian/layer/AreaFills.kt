@@ -52,7 +52,7 @@ internal abstract class BaseAreaFill(open val splitY: (ExtraStore) -> Number) :
     verticalAxisPosition: Axis.Position.Vertical?,
   ) {
     reset()
-    linePath.computeBounds(areaBounds, false)
+    @Suppress("DEPRECATION") linePath.computeBounds(areaBounds, false)
     with(context) {
       val canvasSplitY = getCanvasSplitY(splitY, halfLineThickness, verticalAxisPosition)
       if (canvasSplitY > layerBounds.top) {

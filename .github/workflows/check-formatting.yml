@@ -12,5 +12,5 @@ jobs:
           java-version: 21
           distribution: zulu
       - run: |
-          curl -sSL -o ktfmt.jar https://github.com/facebook/ktfmt/releases/download/v0.49/ktfmt-0.49-jar-with-dependencies.jar
+          curl -sSL -o ktfmt.jar https://github.com/facebook/ktfmt/releases/download/v0.53/ktfmt-0.53-jar-with-dependencies.jar
           java -jar ktfmt.jar --dry-run --google-style --set-exit-if-changed .

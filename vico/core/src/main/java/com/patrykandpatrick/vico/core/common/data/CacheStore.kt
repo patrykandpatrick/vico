@@ -29,7 +29,8 @@ public class CacheStore {
     val key = keyNamespace.getKey(*keyComponents)
     val value = map[key]
     if (value != null) purgedMap[key] = value
-    @Suppress("UNCHECKED_CAST") return value as T?
+    @Suppress("UNCHECKED_CAST")
+    return value as T?
   }
 
   /** Caches [value]. */
