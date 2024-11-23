@@ -30,7 +30,6 @@ jobs:
           ./gradlew assembleDebug
       - uses: softprops/action-gh-release@v2
         with:
-          body: "[Read the release notes.](https://patrykandpatrick.com/vico/releases/${{ env.VERSION_NAME }})"
           draft: true
           files: ${{ github.workspace }}/vico/sample/build/outputs/apk/debug/*.apk
           prerelease: ${{ env.IS_PRERELEASE }}
