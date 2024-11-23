@@ -398,7 +398,9 @@ protected constructor(
         entry,
         limitedCanvasY,
         lineFillBitmap.getPixel(
-          canvasX.roundToInt().coerceIn(0, lineFillBitmap.width - 1),
+          canvasX
+            .roundToInt()
+            .coerceIn(ceil(layerBounds.left).toInt(), layerBounds.right.toInt() - 1),
           limitedCanvasY.roundToInt(),
         ),
       )
