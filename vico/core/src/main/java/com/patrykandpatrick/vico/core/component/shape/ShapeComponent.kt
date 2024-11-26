@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -111,7 +111,10 @@ public open class ShapeComponent(
         }
 
         paint.withOpacity(opacity, ::drawShape)
-        if (strokeWidth > 0f && strokeColor.alpha > 0) strokePaint.withOpacity(opacity, ::drawShape)
+        if (strokeWidth > 0f && strokeColor.alpha > 0) {
+            if (!path.isEmpty) path.rewind()
+            strokePaint.withOpacity(opacity, ::drawShape)
+        }
 
         DebugHelper.drawDebugBounds(
             context = context,
