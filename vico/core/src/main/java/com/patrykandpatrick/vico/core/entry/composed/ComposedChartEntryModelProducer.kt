@@ -32,6 +32,7 @@ import com.patrykandpatrick.vico.core.entry.yRange
 import com.patrykandpatrick.vico.core.extension.copy
 import com.patrykandpatrick.vico.core.extension.gcdWith
 import com.patrykandpatrick.vico.core.extension.setAll
+import java.util.concurrent.ConcurrentHashMap
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -42,7 +43,9 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 /**
  * A [ChartModelProducer] implementation that generates [ComposedChartEntryModel] instances.
@@ -57,8 +60,9 @@ public class ComposedChartEntryModelProducer private constructor(dispatcher: Cor
     private var cachedInternalComposedModel: InternalComposedModel? = null
     private val mutex = Mutex()
     private val coroutineScope = CoroutineScope(dispatcher)
-    private val updateReceivers = mutableMapOf<Any, UpdateReceiver>()
+    private val updateReceivers = ConcurrentHashMap<Any, UpdateReceiver>()
     private val extraStore = MutableExtraStore()
+    private val registrationLock = Mutex()
 
     private fun setDataSets(dataSets: List<List<List<ChartEntry>>>): Boolean {
         if (!mutex.tryLock()) return false
@@ -76,12 +80,14 @@ public class ComposedChartEntryModelProducer private constructor(dispatcher: Cor
 
     private suspend fun setDataSetsSuspending(dataSets: List<List<List<ChartEntry>>>): Deferred<Unit> {
         mutex.lock()
+        registrationLock.lock()
         this.dataSets = dataSets.copy()
         cachedInternalComposedModel = null
         val completableDeferred = CompletableDeferred<Unit>()
         val deferredUpdates = updateReceivers.values.map { updateReceiver ->
             coroutineScope.async { updateReceiver.handleUpdate() }
         }
+        registrationLock.unlock()
         coroutineScope.launch {
             deferredUpdates.awaitAll()
             mutex.unlock()
@@ -176,7 +182,7 @@ public class ComposedChartEntryModelProducer private constructor(dispatcher: Cor
         updateChartValues: (ComposedChartEntryModel<ChartEntryModel>?) -> ChartValuesProvider,
         onModelCreated: (ComposedChartEntryModel<ChartEntryModel>?, ChartValuesProvider) -> Unit,
     ) {
-        UpdateReceiver(
+        val receiver = UpdateReceiver(
             cancelAnimation,
             startAnimation,
             onModelCreated,
@@ -184,9 +190,12 @@ public class ComposedChartEntryModelProducer private constructor(dispatcher: Cor
             modelTransformerProvider?.getModelTransformer(),
             getOldModel,
             updateChartValues,
-        ).run {
-            updateReceivers[key] = this
-            handleUpdate()
+        )
+        runBlocking {
+            registrationLock.withLock {
+                updateReceivers[key] = receiver
+                receiver.handleUpdate()
+            }
         }
     }
 

@@ -69,3 +69,5 @@ formatting:
     active: true
   TrailingCommaOnDeclarationSite:
     active: true
+  ImportOrdering:
+    active: false
