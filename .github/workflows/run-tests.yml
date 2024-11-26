@@ -12,7 +12,7 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           java-version: 17
-          distribution: adopt
+          distribution: zulu
       - run: chmod +x gradlew
       - id: unit-tests
         run: ./gradlew vico:core:testDebug
