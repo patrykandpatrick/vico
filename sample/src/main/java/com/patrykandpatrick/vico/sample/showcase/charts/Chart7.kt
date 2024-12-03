@@ -44,7 +44,6 @@ import com.patrykandpatrick.vico.compose.common.rememberVerticalLegend
 import com.patrykandpatrick.vico.compose.common.shape.rounded
 import com.patrykandpatrick.vico.compose.common.vicoTheme
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
-import com.patrykandpatrick.vico.core.cartesian.CartesianLayerPaddingProvider
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
 import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
@@ -118,9 +117,7 @@ private fun ComposeChart7(modelProducer: CartesianChartModelProducer, modifier: 
         bottomAxis =
           HorizontalAxis.rememberBottom(itemPlacer = HorizontalAxis.ItemPlacer.segmented()),
         marker = rememberMarker(),
-        layerPaddingProvider = CartesianLayerPaddingProvider.fixed(
-          cartesianLayerPadding(scalableStart = 16.dp, scalableEnd = 16.dp),
-        ),
+        layerPadding = cartesianLayerPadding(scalableStart = 16.dp, scalableEnd = 16.dp),
         legend = rememberLegend(),
       ),
     modelProducer = modelProducer,

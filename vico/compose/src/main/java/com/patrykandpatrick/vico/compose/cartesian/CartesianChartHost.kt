@@ -146,7 +146,7 @@ internal fun CartesianChartHostImpl(
       ranges = ranges,
       scrollEnabled = scrollState.scrollEnabled,
       zoomEnabled = scrollState.scrollEnabled && zoomState.zoomEnabled,
-      layerPadding = chart.layerPaddingProvider.getPadding(extraStore = model.extraStore),
+      layerPadding = chart.layerPadding,
       spToPx = with(LocalContext.current) { ::spToPx },
     )
 
