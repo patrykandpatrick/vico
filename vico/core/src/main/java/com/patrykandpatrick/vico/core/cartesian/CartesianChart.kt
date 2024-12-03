@@ -59,7 +59,7 @@ import kotlin.math.abs
  * @property layers the [CartesianLayer]s.
  * @property marker appears when the [CartesianChart] is tapped.
  * @property markerVisibilityListener allows for listening to [marker] visibility changes.
- * @property layerPadding stores the [CartesianLayer] padding values.
+ * @property getLayerPadding retrieves the [CartesianLayer] padding values given the [ExtraStore].
  * @property legend the legend.
  * @property fadingEdges applies a horizontal fade to the edges of the [CartesianChart], provided
  *   that it’s scrollable.
@@ -77,7 +77,7 @@ public open class CartesianChart(
   @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) public val marker: CartesianMarker? = null,
   protected val markerVisibilityListener: CartesianMarkerVisibilityListener? = null,
   @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-  public val layerPadding: CartesianLayerPadding = CartesianLayerPadding(),
+  public val getLayerPadding: ((ExtraStore) -> CartesianLayerPadding) = { CartesianLayerPadding() },
   protected val legend: Legend<CartesianMeasuringContext, CartesianDrawingContext>? = null,
   protected val fadingEdges: FadingEdges? = null,
   protected val decorations: List<Decoration> = emptyList(),
@@ -387,7 +387,7 @@ public open class CartesianChart(
     bottomAxis: Axis<Axis.Position.Horizontal.Bottom>? = this.bottomAxis,
     marker: CartesianMarker? = this.marker,
     markerVisibilityListener: CartesianMarkerVisibilityListener? = this.markerVisibilityListener,
-    layerPadding: CartesianLayerPadding = this.layerPadding,
+    getLayerPadding: ((ExtraStore) -> CartesianLayerPadding) = this.getLayerPadding,
     legend: Legend<CartesianMeasuringContext, CartesianDrawingContext>? = this.legend,
     fadingEdges: FadingEdges? = this.fadingEdges,
     decorations: List<Decoration> = this.decorations,
@@ -402,7 +402,7 @@ public open class CartesianChart(
         bottomAxis = bottomAxis,
         marker = marker,
         markerVisibilityListener = markerVisibilityListener,
-        layerPadding = layerPadding,
+        getLayerPadding = getLayerPadding,
         legend = legend,
         fadingEdges = fadingEdges,
         decorations = decorations,
@@ -417,7 +417,7 @@ public open class CartesianChart(
         id == other.id &&
         marker == other.marker &&
         markerVisibilityListener == other.markerVisibilityListener &&
-        layerPadding == other.layerPadding &&
+        getLayerPadding == other.getLayerPadding &&
         legend == other.legend &&
         fadingEdges == other.fadingEdges &&
         decorations == other.decorations &&
@@ -430,7 +430,7 @@ public open class CartesianChart(
       id,
       marker,
       markerVisibilityListener,
-      layerPadding,
+      getLayerPadding,
       legend,
       fadingEdges,
       decorations,

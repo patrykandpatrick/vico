@@ -73,7 +73,8 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       ranges = CartesianChartRanges.Empty,
       scrollEnabled = false,
       zoomEnabled = false,
-      layerPadding = themeHandler.chart?.layerPadding ?: CartesianLayerPadding(),
+      layerPadding = themeHandler.chart?.getLayerPadding?.invoke(extraStore)
+        ?: CartesianLayerPadding(),
       spToPx = context::spToPx,
     )
 
@@ -120,7 +121,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   /** The [CartesianChart] displayed by this [View]. */
   public var chart: CartesianChart? by
     observable(themeHandler.chart) { _, _, newValue ->
-      if (newValue != null) measuringContext.layerPadding = newValue.layerPadding
+      if (newValue != null) measuringContext.layerPadding = newValue.getLayerPadding(extraStore)
       tryInvalidate(chart = newValue, model = model, updateRanges = true)
     }
 

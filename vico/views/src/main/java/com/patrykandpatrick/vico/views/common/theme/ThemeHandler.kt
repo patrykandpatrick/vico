@@ -227,7 +227,7 @@ internal class ThemeHandler(private val context: Context, attrs: AttributeSet?) 
       endAxis = baseTypedArray.getAxis(Axis.Position.Vertical.End),
       bottomAxis = baseTypedArray.getAxis(Axis.Position.Horizontal.Bottom),
       fadingEdges = baseTypedArray.getFadingEdges(),
-      layerPadding = baseTypedArray.getLayerPadding(),
+      getLayerPadding = { baseTypedArray.getLayerPadding() },
     )
   }
 
