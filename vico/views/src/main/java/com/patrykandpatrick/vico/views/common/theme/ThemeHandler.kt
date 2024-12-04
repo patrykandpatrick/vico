@@ -213,6 +213,7 @@ internal class ThemeHandler(private val context: Context, attrs: AttributeSet?) 
       if (layerFlags.hasFlag(CANDLESTICK_LAYER))
         baseTypedArray.getCandlestickCartesianLayer(context)
       else null
+    val layerPadding = baseTypedArray.getLayerPadding()
 
     return CartesianChart(
       layers =
@@ -227,7 +228,7 @@ internal class ThemeHandler(private val context: Context, attrs: AttributeSet?) 
       endAxis = baseTypedArray.getAxis(Axis.Position.Vertical.End),
       bottomAxis = baseTypedArray.getAxis(Axis.Position.Horizontal.Bottom),
       fadingEdges = baseTypedArray.getFadingEdges(),
-      getLayerPadding = { baseTypedArray.getLayerPadding() },
+      layerPadding = { layerPadding },
     )
   }
 
