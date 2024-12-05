@@ -147,7 +147,6 @@ internal fun CartesianChartHostImpl(
       scrollEnabled = scrollState.scrollEnabled,
       zoomEnabled = scrollState.scrollEnabled && zoomState.zoomEnabled,
       layerPadding = remember(
-        chart,
         chart.layerPadding,
         model.extraStore,
       ) {
