@@ -18,9 +18,11 @@ package com.patrykandpatrick.vico.core.cartesian.layer
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.DashPathEffect
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.PorterDuff
+import android.graphics.PorterDuffXfermode
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
@@ -94,18 +96,20 @@ protected constructor(
    * @param cap the stroke cap.
    * @property fill draws the line fill.
    * @property thicknessDp the line thickness (in dp).
+   * @property pattern determines the line pattern to apply to the line.
    * @property areaFill draws the area fill.
    * @property pointProvider provides the [Point]s.
+   * @property pointConnector connects the line’s points, thus defining its shape.
    * @property dataLabel used for the data labels.
    * @property dataLabelVerticalPosition the vertical position of the data labels relative to the
    *   points.
    * @property dataLabelValueFormatter formats the data-label values.
    * @property dataLabelRotationDegrees the data-label rotation (in degrees).
-   * @property pointConnector connects the line’s points, thus defining its shape.
    */
   public open class Line(
     protected val fill: LineFill,
     public val thicknessDp: Float = Defaults.LINE_SPEC_THICKNESS_DP,
+    protected val pattern: LinePattern = LinePattern.Continuous,
     protected val areaFill: AreaFill? = fill.getDefaultAreaFill(),
     cap: Paint.Cap = Paint.Cap.ROUND,
     public val pointProvider: PointProvider? = null,
@@ -121,10 +125,13 @@ protected constructor(
         strokeCap = cap
       }
 
+    public val requiresFullLineLength: Boolean = pattern is LinePattern.Dashed
+
     /** Draws the line. */
     public fun draw(
       context: CartesianDrawingContext,
       path: Path,
+      canvas: Canvas,
       fillCanvas: Canvas,
       verticalAxisPosition: Axis.Position.Vertical?,
     ) {
@@ -132,8 +139,18 @@ protected constructor(
         val thickness = thicknessDp.pixels
         linePaint.strokeWidth = thickness
         val halfThickness = thickness.half
+        linePaint.pathEffect =
+          when (pattern) {
+            is LinePattern.Continuous -> null
+            is LinePattern.Dashed -> {
+              DashPathEffect(
+                floatArrayOf(pattern.dashLengthDp.pixels, pattern.gapLengthDp.pixels),
+                0f,
+              )
+            }
+          }
         areaFill?.draw(context, path, halfThickness, verticalAxisPosition)
-        fillCanvas.drawPath(path, linePaint)
+        canvas.drawPath(path, linePaint)
         withOtherCanvas(fillCanvas) { fill.draw(context, halfThickness, verticalAxisPosition) }
       }
     }
@@ -141,7 +158,7 @@ protected constructor(
 
   /** Draws a [LineCartesianLayer] line’s fill. */
   public interface LineFill {
-    /** Draws the line fill. [PorterDuff.Mode.SRC_IN] should be used. */
+    /** Draws the line fill. */
     public fun draw(
       context: CartesianDrawingContext,
       halfLineThickness: Float,
@@ -164,6 +181,33 @@ protected constructor(
         splitY: (ExtraStore) -> Number = { 0 },
       ): LineFill = DoubleLineFill(topFill, bottomFill, splitY)
     }
+  }
+
+  /**
+   * Defines a [LineCartesianLayer] line’s pattern types. Depending on the pattern, appropriate
+   * [android.graphics.PathEffect] can be applied for the line. Default line pattern is
+   * [LinePattern.Continuous] which means the line is drawn as a continuous line and no special path
+   * effect is applied.
+   */
+  @Immutable
+  public sealed interface LinePattern {
+    /**
+     * When this is applied, the line is drawn as a continuous line and no special path effect is
+     * applied.
+     */
+    public data object Continuous : LinePattern
+
+    /**
+     * When this is applied, the line is drawn in a dashed pattern and
+     * [android.graphics.DashPathEffect] is applied. [dashLengthDp] and [gapLengthDp] control the
+     * length of the dash and gap respectively.
+     */
+    public data class Dashed(
+      public val dashLengthDp: Float = Defaults.LINE_PATTERN_DASHED_LENGTH,
+      public val gapLengthDp: Float = Defaults.LINE_PATTERN_DASHED_GAP,
+    ) : LinePattern
+
+    public companion object
   }
 
   /** Draws a [LineCartesianLayer] line’s area fill. */
@@ -306,9 +350,13 @@ protected constructor(
 
   protected val linePath: Path = Path()
 
+  protected val lineCanvas: Canvas = Canvas()
+
   protected val lineFillCanvas: Canvas = Canvas()
 
   protected val cacheKeyNamespace: CacheStore.KeyNamespace = CacheStore.KeyNamespace()
+
+  private val maskPaint = Paint().apply { xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN) }
 
   override val markerTargets: Map<Double, List<CartesianMarker.Target>> = _markerTargets
 
@@ -354,7 +402,12 @@ protected constructor(
         val drawingStart =
           layerBounds.getStart(isLtr = isLtr) + drawingStartAlignmentCorrection - scroll
 
-        forEachPointInBounds(series, drawingStart, pointInfoMap) { _, x, y, _, _ ->
+        forEachPointInBounds(
+          series = series,
+          drawingStart = drawingStart,
+          pointInfoMap = pointInfoMap,
+          drawFullLineLength = line.requiresFullLineLength,
+        ) { _, x, y, _, _ ->
           if (linePath.isEmpty) {
             linePath.moveTo(x, y)
           } else {
@@ -366,10 +419,13 @@ protected constructor(
 
         canvas.saveLayer(opacity = drawingModel?.opacity ?: 1f)
 
-        val lineFillBitmap = getBitmap(cacheKeyNamespace, seriesIndex)
+        val lineBitmap = getBitmap(cacheKeyNamespace, seriesIndex, 0)
+        val lineFillBitmap = getBitmap(cacheKeyNamespace, seriesIndex, 1)
+        lineCanvas.setBitmap(lineBitmap)
         lineFillCanvas.setBitmap(lineFillBitmap)
-        line.draw(context, linePath, lineFillCanvas, verticalAxisPosition)
-        canvas.drawBitmap(lineFillBitmap, 0f, 0f, null)
+        line.draw(context, linePath, lineCanvas, lineFillCanvas, verticalAxisPosition)
+        lineCanvas.drawBitmap(lineFillBitmap, 0f, 0f, maskPaint)
+        canvas.drawBitmap(lineBitmap, 0f, 0f, null)
 
         forEachPointInBounds(series, drawingStart, pointInfoMap) { entry, x, y, _, _ ->
           updateMarkerTargets(entry, x, y, lineFillBitmap)
@@ -500,6 +556,7 @@ protected constructor(
     series: List<LineCartesianLayerModel.Entry>,
     drawingStart: Float,
     pointInfoMap: Map<Double, LineCartesianLayerDrawingModel.PointInfo>?,
+    drawFullLineLength: Boolean = false,
     action:
       (
         entry: LineCartesianLayerModel.Entry, x: Float, y: Float, previousX: Float?, nextX: Float?,
@@ -535,7 +592,8 @@ protected constructor(
       x = immutableX
       nextX = immutableNextX
       if (
-        immutableNextX != null &&
+        drawFullLineLength.not() &&
+          immutableNextX != null &&
           (isLtr && immutableX < boundsStart || !isLtr && immutableX > boundsStart) &&
           (isLtr && immutableNextX < boundsStart || !isLtr && immutableNextX > boundsStart)
       ) {
