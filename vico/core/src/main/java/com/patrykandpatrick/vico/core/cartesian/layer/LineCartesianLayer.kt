@@ -18,10 +18,11 @@ package com.patrykandpatrick.vico.core.cartesian.layer
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.DashPathEffect
 import android.graphics.Paint
 import android.graphics.Path
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffXfermode
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
@@ -130,6 +131,7 @@ protected constructor(
     public fun draw(
       context: CartesianDrawingContext,
       path: Path,
+      canvas: Canvas,
       fillCanvas: Canvas,
       verticalAxisPosition: Axis.Position.Vertical?,
     ) {
@@ -148,7 +150,7 @@ protected constructor(
             }
           }
         areaFill?.draw(context, path, halfThickness, verticalAxisPosition)
-        fillCanvas.drawPath(path, linePaint)
+        canvas.drawPath(path, linePaint)
         withOtherCanvas(fillCanvas) { fill.draw(context, halfThickness, verticalAxisPosition) }
       }
     }
@@ -156,7 +158,7 @@ protected constructor(
 
   /** Draws a [LineCartesianLayer] line’s fill. */
   public interface LineFill {
-    /** Draws the line fill. [PorterDuff.Mode.SRC_IN] should be used. */
+    /** Draws the line fill. */
     public fun draw(
       context: CartesianDrawingContext,
       halfLineThickness: Float,
@@ -348,9 +350,13 @@ protected constructor(
 
   protected val linePath: Path = Path()
 
+  protected val lineCanvas: Canvas = Canvas()
+
   protected val lineFillCanvas: Canvas = Canvas()
 
   protected val cacheKeyNamespace: CacheStore.KeyNamespace = CacheStore.KeyNamespace()
+
+  private val maskPaint = Paint().apply { xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN) }
 
   override val markerTargets: Map<Double, List<CartesianMarker.Target>> = _markerTargets
 
@@ -413,10 +419,13 @@ protected constructor(
 
         canvas.saveLayer(opacity = drawingModel?.opacity ?: 1f)
 
-        val lineFillBitmap = getBitmap(cacheKeyNamespace, seriesIndex)
+        val lineBitmap = getBitmap(cacheKeyNamespace, seriesIndex, 0)
+        val lineFillBitmap = getBitmap(cacheKeyNamespace, seriesIndex, 1)
+        lineCanvas.setBitmap(lineBitmap)
         lineFillCanvas.setBitmap(lineFillBitmap)
-        line.draw(context, linePath, lineFillCanvas, verticalAxisPosition)
-        canvas.drawBitmap(lineFillBitmap, 0f, 0f, null)
+        line.draw(context, linePath, lineCanvas, lineFillCanvas, verticalAxisPosition)
+        lineCanvas.drawBitmap(lineFillBitmap, 0f, 0f, maskPaint)
+        canvas.drawBitmap(lineBitmap, 0f, 0f, null)
 
         forEachPointInBounds(series, drawingStart, pointInfoMap) { entry, x, y, _, _ ->
           updateMarkerTargets(entry, x, y, lineFillBitmap)
