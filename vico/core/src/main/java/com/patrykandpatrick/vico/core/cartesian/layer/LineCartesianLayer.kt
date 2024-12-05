@@ -94,8 +94,8 @@ protected constructor(
    *
    * @param cap the stroke cap.
    * @property fill draws the line fill.
-   * @property pattern determines the line pattern to apply to the line.
    * @property thicknessDp the line thickness (in dp).
+   * @property pattern determines the line pattern to apply to the line.
    * @property areaFill draws the area fill.
    * @property pointProvider provides the [Point]s.
    * @property pointConnector connects the line’s points, thus defining its shape.
@@ -107,8 +107,8 @@ protected constructor(
    */
   public open class Line(
     protected val fill: LineFill,
-    protected val pattern: LinePattern = LinePattern.Continuous,
     public val thicknessDp: Float = Defaults.LINE_SPEC_THICKNESS_DP,
+    protected val pattern: LinePattern = LinePattern.Continuous,
     protected val areaFill: AreaFill? = fill.getDefaultAreaFill(),
     cap: Paint.Cap = Paint.Cap.ROUND,
     public val pointProvider: PointProvider? = null,

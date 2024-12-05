@@ -95,8 +95,8 @@ public fun LineCartesianLayer.Companion.rememberLine(
     vicoTheme.lineCartesianLayerColors.first().let { color ->
       remember(color) { LineCartesianLayer.LineFill.single(fill(color)) }
     },
-  pattern: LineCartesianLayer.LinePattern = LineCartesianLayer.LinePattern.continuous(),
   thickness: Dp = Defaults.LINE_SPEC_THICKNESS_DP.dp,
+  pattern: LineCartesianLayer.LinePattern = LineCartesianLayer.LinePattern.continuous(),
   areaFill: LineCartesianLayer.AreaFill? = remember(fill) { fill.getDefaultAreaFill() },
   cap: StrokeCap = StrokeCap.Round,
   pointProvider: LineCartesianLayer.PointProvider? = null,
@@ -110,8 +110,8 @@ public fun LineCartesianLayer.Companion.rememberLine(
 ): LineCartesianLayer.Line =
   remember(
     fill,
-    pattern,
     thickness,
+    pattern,
     areaFill,
     cap,
     pointProvider,
@@ -123,8 +123,8 @@ public fun LineCartesianLayer.Companion.rememberLine(
   ) {
     LineCartesianLayer.Line(
       fill,
-      pattern,
       thickness.value,
+      pattern,
       areaFill,
       cap.paintCap,
       pointProvider,
