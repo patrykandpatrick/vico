@@ -18,10 +18,10 @@ package com.patrykandpatrick.vico.core.cartesian.layer
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.DashPathEffect
 import android.graphics.Paint
 import android.graphics.Path
-import android.graphics.PorterDuff
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
@@ -92,11 +92,11 @@ protected constructor(
   /**
    * Defines the appearance of a line in a line chart.
    *
+   * @param cap the stroke cap.
    * @property fill draws the line fill.
    * @property pattern determines the line pattern to apply to the line.
    * @property thicknessDp the line thickness (in dp).
    * @property areaFill draws the area fill.
-   * @param cap the stroke cap.
    * @property pointProvider provides the [Point]s.
    * @property pointConnector connects the line’s points, thus defining its shape.
    * @property dataLabel used for the data labels.
@@ -137,13 +137,16 @@ protected constructor(
         val thickness = thicknessDp.pixels
         linePaint.strokeWidth = thickness
         val halfThickness = thickness.half
-        // Apply the PathEffect based on the line pattern
-        linePaint.pathEffect = when(pattern) {
-          is LinePattern.Continuous -> null
-          is LinePattern.Dashed -> {
-            DashPathEffect(floatArrayOf(pattern.dashLength, pattern.gapLength), 0f)
+        linePaint.pathEffect =
+          when (pattern) {
+            is LinePattern.Continuous -> null
+            is LinePattern.Dashed -> {
+              DashPathEffect(
+                floatArrayOf(pattern.dashLengthDp.pixels, pattern.gapLengthDp.pixels),
+                0f,
+              )
+            }
           }
-        }
         areaFill?.draw(context, path, halfThickness, verticalAxisPosition)
         fillCanvas.drawPath(path, linePaint)
         withOtherCanvas(fillCanvas) { fill.draw(context, halfThickness, verticalAxisPosition) }
@@ -178,27 +181,28 @@ protected constructor(
     }
   }
 
-  /** Defines a [LineCartesianLayer] line’s pattern types. Depending on the pattern,
-   * appropriate [android.graphics.PathEffect] can be applied for the line.
-   * Default line pattern is [LinePattern.Continuous] which means the line is drawn as a
-   * continuous line and no special path effect is applied.
+  /**
+   * Defines a [LineCartesianLayer] line’s pattern types. Depending on the pattern, appropriate
+   * [android.graphics.PathEffect] can be applied for the line. Default line pattern is
+   * [LinePattern.Continuous] which means the line is drawn as a continuous line and no special path
+   * effect is applied.
    */
   @Immutable
   public sealed interface LinePattern {
     /**
-     * When this is applied, the line is drawn as a
-     * continuous line and no special path effect is applied.
+     * When this is applied, the line is drawn as a continuous line and no special path effect is
+     * applied.
      */
     public data object Continuous : LinePattern
 
     /**
-     * When this is applied, the line is drawn in a dashed pattern
-     * and [android.graphics.DashPathEffect] is applied.
-     * [dashLength] and [gapLength] control the length of the dash and gap respectively.
+     * When this is applied, the line is drawn in a dashed pattern and
+     * [android.graphics.DashPathEffect] is applied. [dashLengthDp] and [gapLengthDp] control the
+     * length of the dash and gap respectively.
      */
-    public class Dashed(
-      public val dashLength: Float = Defaults.LINE_PATTERN_DASHED_LENGTH,
-      public val gapLength: Float = Defaults.LINE_PATTERN_DASHED_GAP,
+    public data class Dashed(
+      public val dashLengthDp: Float = Defaults.LINE_PATTERN_DASHED_LENGTH,
+      public val gapLengthDp: Float = Defaults.LINE_PATTERN_DASHED_GAP,
     ) : LinePattern
 
     public companion object
@@ -396,7 +400,7 @@ protected constructor(
           series = series,
           drawingStart = drawingStart,
           pointInfoMap = pointInfoMap,
-          drawFullLineLength = line.requiresFullLineLength
+          drawFullLineLength = line.requiresFullLineLength,
         ) { _, x, y, _, _ ->
           if (linePath.isEmpty) {
             linePath.moveTo(x, y)
@@ -580,7 +584,7 @@ protected constructor(
       nextX = immutableNextX
       if (
         drawFullLineLength.not() &&
-        immutableNextX != null &&
+          immutableNextX != null &&
           (isLtr && immutableX < boundsStart || !isLtr && immutableX > boundsStart) &&
           (isLtr && immutableNextX < boundsStart || !isLtr && immutableNextX > boundsStart)
       ) {
