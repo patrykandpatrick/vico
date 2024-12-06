@@ -246,6 +246,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       ranges.reset()
       chart.updateRanges(ranges, model)
       measuringContext.ranges = ranges.toImmutable()
+      measuringContext.layerPadding = chart.layerPadding(extraStore)
     }
     if (isAttachedToWindow) invalidate()
   }
