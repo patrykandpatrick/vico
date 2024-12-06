@@ -119,8 +119,13 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 
   /** The [CartesianChart] displayed by this [View]. */
   public var chart: CartesianChart? by
-    observable(themeHandler.chart) { _, _, newValue ->
-      tryInvalidate(chart = newValue, model = model, updateRanges = true)
+    observable(themeHandler.chart) { _, oldValue, newValue ->
+      tryInvalidate(
+        chart = newValue,
+        model = model,
+        updateLayerPadding = oldValue?.layerPadding != newValue?.layerPadding,
+        updateRanges = true,
+        )
     }
 
   /** Creates and updates the [CartesianChartModel]. */
@@ -160,7 +165,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
         },
       ) { model, ranges ->
         post {
-          setModel(model = model, updateRanges = false)
+          setModel(model = model, updateRanges = false, updateLayerPadding = false)
           measuringContext.ranges = ranges
           postInvalidateOnAnimation()
         }
@@ -219,16 +224,25 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 
   /** Sets the [CartesianChartModel]. */
   public fun setModel(model: CartesianChartModel) {
-    setModel(model = model, updateRanges = true)
+    setModel(model = model, updateRanges = true, updateLayerPadding = true)
   }
 
   override fun shouldShowPlaceholder(): Boolean = model == null
 
-  private fun setModel(model: CartesianChartModel?, updateRanges: Boolean) {
+  private fun setModel(
+    model: CartesianChartModel?,
+    updateLayerPadding: Boolean,
+    updateRanges: Boolean,
+  ) {
     val oldModel = this.model
     this.model = model
     updatePlaceholderVisibility()
-    tryInvalidate(chart, model, updateRanges)
+    tryInvalidate(
+      chart,
+      model,
+      updateLayerPadding = updateLayerPadding,
+      updateRanges = updateRanges,
+      )
     if (model != null && oldModel?.id != model.id && isInEditMode.not()) {
       handler?.post { scrollHandler.autoScroll(model, oldModel) }
     }
@@ -237,9 +251,12 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   protected fun tryInvalidate(
     chart: CartesianChart?,
     model: CartesianChartModel?,
+    updateLayerPadding: Boolean,
     updateRanges: Boolean,
   ) {
-    measuringContext.layerPadding = chart.layerPadding()
+    if (updateLayerPadding) {
+      measuringContext.layerPadding = chart.layerPadding()
+    }
     measuringContext.model = model ?: return
     if (chart != null && updateRanges) {
       ranges.reset()
@@ -255,7 +272,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   ): ReadWriteProperty<Any?, T> {
     onChange(null, initialValue)
     return observable(initialValue) { _, oldValue, newValue ->
-      tryInvalidate(chart = chart, model = model, updateRanges = false)
+      tryInvalidate(chart = chart, model = model, updateLayerPadding = false, updateRanges = false)
       onChange(oldValue, newValue)
     }
   }
