@@ -38,6 +38,7 @@ import com.patrykandpatrick.vico.core.cartesian.data.toImmutable
 import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.NEW_PRODUCER_ERROR_MESSAGE
 import com.patrykandpatrick.vico.core.common.Point
+import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.core.common.spToPx
 import com.patrykandpatrick.vico.views.R
 import com.patrykandpatrick.vico.views.common.ChartView
@@ -88,6 +89,9 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 
   private var horizontalDimensions = MutableHorizontalDimensions()
 
+  private var lastDrawnExtraStore: ExtraStore? = null
+  private var lastDrawnLayerPadding: ((ExtraStore) -> CartesianLayerPadding)? = null
+
   /**
    * Houses information on the [CartesianChart]’s scroll value. Allows for scroll customization and
    * programmatic scrolling.
@@ -119,13 +123,8 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 
   /** The [CartesianChart] displayed by this [View]. */
   public var chart: CartesianChart? by
-    observable(themeHandler.chart) { _, oldValue, newValue ->
-      tryInvalidate(
-        chart = newValue,
-        model = model,
-        updateLayerPadding = oldValue?.layerPadding != newValue?.layerPadding,
-        updateRanges = true,
-        )
+    observable(themeHandler.chart) { _, _, newValue ->
+      tryInvalidate(chart = newValue, model = model, updateRanges = true)
     }
 
   /** Creates and updates the [CartesianChartModel]. */
@@ -229,19 +228,11 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 
   override fun shouldShowPlaceholder(): Boolean = model == null
 
-  private fun setModel(
-    model: CartesianChartModel?,
-    updateRanges: Boolean,
-  ) {
+  private fun setModel(model: CartesianChartModel?, updateRanges: Boolean) {
     val oldModel = this.model
     this.model = model
     updatePlaceholderVisibility()
-    tryInvalidate(
-      chart,
-      model,
-      updateLayerPadding = true,
-      updateRanges = updateRanges,
-    )
+    tryInvalidate(chart, model, updateRanges)
     if (model != null && oldModel?.id != model.id && isInEditMode.not()) {
       handler?.post { scrollHandler.autoScroll(model, oldModel) }
     }
@@ -250,18 +241,24 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   protected fun tryInvalidate(
     chart: CartesianChart?,
     model: CartesianChartModel?,
-    updateLayerPadding: Boolean,
     updateRanges: Boolean,
   ) {
-    if (chart != null && updateLayerPadding) {
-      measuringContext.layerPadding = chart.layerPadding(extraStore)
+    if (chart != null) {
+      if (lastDrawnExtraStore != extraStore || lastDrawnLayerPadding != chart.layerPadding) {
+        measuringContext.layerPadding = chart.layerPadding(extraStore)
+      }
     }
+
     measuringContext.model = model ?: return
     if (chart != null && updateRanges) {
       ranges.reset()
       chart.updateRanges(ranges, model)
       measuringContext.ranges = ranges.toImmutable()
     }
+
+    lastDrawnExtraStore = extraStore
+    lastDrawnLayerPadding = chart?.layerPadding
+
     if (isAttachedToWindow) invalidate()
   }
 
@@ -271,7 +268,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   ): ReadWriteProperty<Any?, T> {
     onChange(null, initialValue)
     return observable(initialValue) { _, oldValue, newValue ->
-      tryInvalidate(chart = chart, model = model, updateLayerPadding = false, updateRanges = false)
+      tryInvalidate(chart = chart, model = model, updateRanges = false)
       onChange(oldValue, newValue)
     }
   }
