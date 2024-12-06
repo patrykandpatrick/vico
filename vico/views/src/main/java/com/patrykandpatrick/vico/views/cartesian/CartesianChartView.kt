@@ -73,7 +73,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       ranges = CartesianChartRanges.Empty,
       scrollEnabled = false,
       zoomEnabled = false,
-      layerPadding = themeHandler.chart.layerPadding(),
+      layerPadding = themeHandler.chart?.layerPadding?.invoke(extraStore) ?: CartesianLayerPadding(),
       spToPx = context::spToPx,
     )
 
@@ -165,7 +165,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
         },
       ) { model, ranges ->
         post {
-          setModel(model = model, updateRanges = false, updateLayerPadding = false)
+          setModel(model = model, updateRanges = false)
           measuringContext.ranges = ranges
           postInvalidateOnAnimation()
         }
@@ -224,14 +224,13 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 
   /** Sets the [CartesianChartModel]. */
   public fun setModel(model: CartesianChartModel) {
-    setModel(model = model, updateRanges = true, updateLayerPadding = true)
+    setModel(model = model, updateRanges = true)
   }
 
   override fun shouldShowPlaceholder(): Boolean = model == null
 
   private fun setModel(
     model: CartesianChartModel?,
-    updateLayerPadding: Boolean,
     updateRanges: Boolean,
   ) {
     val oldModel = this.model
@@ -240,9 +239,9 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     tryInvalidate(
       chart,
       model,
-      updateLayerPadding = updateLayerPadding,
+      updateLayerPadding = true,
       updateRanges = updateRanges,
-      )
+    )
     if (model != null && oldModel?.id != model.id && isInEditMode.not()) {
       handler?.post { scrollHandler.autoScroll(model, oldModel) }
     }
@@ -254,8 +253,8 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     updateLayerPadding: Boolean,
     updateRanges: Boolean,
   ) {
-    if (updateLayerPadding) {
-      measuringContext.layerPadding = chart.layerPadding()
+    if (chart != null && updateLayerPadding) {
+      measuringContext.layerPadding = chart.layerPadding(extraStore)
     }
     measuringContext.model = model ?: return
     if (chart != null && updateRanges) {
@@ -359,12 +358,6 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     val chart = chart ?: return
     val model = model ?: return
     block(chart, model)
-  }
-
-  /** Returns the [CartesianLayerPadding] of the [CartesianChart].
-   * If the chart is null, returns a default. */
-  private fun CartesianChart?.layerPadding(): CartesianLayerPadding {
-    return this?.layerPadding?.invoke(extraStore) ?: CartesianLayerPadding()
   }
 }
 
