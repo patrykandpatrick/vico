@@ -73,8 +73,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       ranges = CartesianChartRanges.Empty,
       scrollEnabled = false,
       zoomEnabled = false,
-      layerPadding = themeHandler.chart?.layerPadding?.invoke(extraStore)
-        ?: CartesianLayerPadding(),
+      layerPadding = themeHandler.chart.layerPadding(),
       spToPx = context::spToPx,
     )
 
@@ -121,7 +120,6 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   /** The [CartesianChart] displayed by this [View]. */
   public var chart: CartesianChart? by
     observable(themeHandler.chart) { _, _, newValue ->
-      if (newValue != null) measuringContext.layerPadding = newValue.layerPadding(extraStore)
       tryInvalidate(chart = newValue, model = model, updateRanges = true)
     }
 
@@ -241,12 +239,12 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     model: CartesianChartModel?,
     updateRanges: Boolean,
   ) {
+    measuringContext.layerPadding = chart.layerPadding()
     measuringContext.model = model ?: return
     if (chart != null && updateRanges) {
       ranges.reset()
       chart.updateRanges(ranges, model)
       measuringContext.ranges = ranges.toImmutable()
-      measuringContext.layerPadding = chart.layerPadding(extraStore)
     }
     if (isAttachedToWindow) invalidate()
   }
@@ -344,6 +342,12 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     val chart = chart ?: return
     val model = model ?: return
     block(chart, model)
+  }
+
+  /** Returns the [CartesianLayerPadding] of the [CartesianChart].
+   * If the chart is null, returns a default. */
+  private fun CartesianChart?.layerPadding(): CartesianLayerPadding {
+    return this?.layerPadding?.invoke(extraStore) ?: CartesianLayerPadding()
   }
 }
 
