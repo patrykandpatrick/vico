@@ -15,6 +15,7 @@
 /.idea/codeStyles/Project.xml
 /.idea/inspectionProfiles/Project_Default.xml
 /.idea/studiobot.xml
+/.idea/runConfigurations.xml
 
 *.iml
 .gradle
