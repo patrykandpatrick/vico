@@ -38,7 +38,6 @@ import com.patrykandpatrick.vico.core.cartesian.data.toImmutable
 import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.NEW_PRODUCER_ERROR_MESSAGE
 import com.patrykandpatrick.vico.core.common.Point
-import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.core.common.spToPx
 import com.patrykandpatrick.vico.views.R
 import com.patrykandpatrick.vico.views.common.ChartView
@@ -48,6 +47,7 @@ import com.patrykandpatrick.vico.views.common.gesture.ChartScaleGestureListener
 import com.patrykandpatrick.vico.views.common.gesture.MotionEventHandler
 import com.patrykandpatrick.vico.views.common.isLtr
 import com.patrykandpatrick.vico.views.common.theme.ThemeHandler
+import java.util.Objects
 import kotlin.math.abs
 import kotlin.properties.Delegates.observable
 import kotlin.properties.ReadWriteProperty
@@ -74,7 +74,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       ranges = CartesianChartRanges.Empty,
       scrollEnabled = false,
       zoomEnabled = false,
-      layerPadding = themeHandler.chart?.layerPadding?.invoke(extraStore) ?: CartesianLayerPadding(),
+      layerPadding = CartesianLayerPadding(),
       spToPx = context::spToPx,
     )
 
@@ -89,8 +89,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 
   private var horizontalDimensions = MutableHorizontalDimensions()
 
-  private var lastDrawnExtraStore: ExtraStore? = null
-  private var lastDrawnLayerPadding: ((ExtraStore) -> CartesianLayerPadding)? = null
+  private var previousLayerPaddingHashCode: Int? = null
 
   /**
    * Houses information on the [CartesianChart]’s scroll value. Allows for scroll customization and
@@ -243,23 +242,19 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     model: CartesianChartModel?,
     updateRanges: Boolean,
   ) {
+    measuringContext.model = model ?: return
     if (chart != null) {
-      if (lastDrawnExtraStore != extraStore || lastDrawnLayerPadding != chart.layerPadding) {
-        measuringContext.layerPadding = chart.layerPadding(extraStore)
+      val layerPaddingHashCode = Objects.hash(chart.layerPadding, model.extraStore)
+      if (layerPaddingHashCode != previousLayerPaddingHashCode) {
+        measuringContext.layerPadding = chart.layerPadding(model.extraStore)
+        previousLayerPaddingHashCode = layerPaddingHashCode
+      }
+      if (updateRanges) {
+        ranges.reset()
+        chart.updateRanges(ranges, model)
+        measuringContext.ranges = ranges.toImmutable()
       }
     }
-
-    measuringContext.model = model ?: return
-    if (chart != null && updateRanges) {
-      ranges.reset()
-      chart.updateRanges(ranges, model)
-      measuringContext.ranges = ranges.toImmutable()
-    }
-
-    lastDrawnExtraStore = extraStore
-    lastDrawnLayerPadding = chart?.layerPadding
-
-    if (isAttachedToWindow) invalidate()
   }
 
   protected inline fun <T> invalidatingObservable(
