@@ -49,6 +49,8 @@ public object Defaults {
   public const val HOLLOW_CANDLE_STROKE_THICKNESS_DP: Float = 1f
   public const val CANDLE_SPACING_DP: Float = 4f
   public const val LINE_CURVATURE: Float = 0.5f
+  public const val LINE_PATTERN_DASHED_LENGTH: Float = 4f
+  public const val LINE_PATTERN_DASHED_GAP: Float = 8f
   public const val DASH_LENGTH: Float = 4f
   public const val DASH_GAP: Float = 2f
   public const val FADING_EDGE_VISIBILITY_THRESHOLD_DP: Float = 16f

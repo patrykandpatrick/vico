@@ -96,6 +96,7 @@ public fun LineCartesianLayer.Companion.rememberLine(
       remember(color) { LineCartesianLayer.LineFill.single(fill(color)) }
     },
   thickness: Dp = Defaults.LINE_SPEC_THICKNESS_DP.dp,
+  pattern: LineCartesianLayer.LinePattern = LineCartesianLayer.LinePattern.continuous(),
   areaFill: LineCartesianLayer.AreaFill? = remember(fill) { fill.getDefaultAreaFill() },
   cap: StrokeCap = StrokeCap.Round,
   pointProvider: LineCartesianLayer.PointProvider? = null,
@@ -110,6 +111,7 @@ public fun LineCartesianLayer.Companion.rememberLine(
   remember(
     fill,
     thickness,
+    pattern,
     areaFill,
     cap,
     pointProvider,
@@ -122,6 +124,7 @@ public fun LineCartesianLayer.Companion.rememberLine(
     LineCartesianLayer.Line(
       fill,
       thickness.value,
+      pattern,
       areaFill,
       cap.paintCap,
       pointProvider,
@@ -150,3 +153,14 @@ private val StrokeCap.paintCap: Paint.Cap
           "Not `StrokeCap.Butt`, `StrokeCap.Round`, or `StrokeCap.Square`."
         )
     }
+
+/** Returns a [LineCartesianLayer.LinePattern.Continuous] instance. */
+public fun LineCartesianLayer.LinePattern.Companion.continuous(): LineCartesianLayer.LinePattern =
+  LineCartesianLayer.LinePattern.Continuous
+
+/** Returns a [LineCartesianLayer.LinePattern.Dashed] instance. */
+public fun LineCartesianLayer.LinePattern.Companion.dashed(
+  dashLength: Dp = Defaults.LINE_PATTERN_DASHED_LENGTH.dp,
+  gapLength: Dp = Defaults.LINE_PATTERN_DASHED_GAP.dp,
+): LineCartesianLayer.LinePattern.Dashed =
+  LineCartesianLayer.LinePattern.Dashed(dashLength.value, gapLength.value)

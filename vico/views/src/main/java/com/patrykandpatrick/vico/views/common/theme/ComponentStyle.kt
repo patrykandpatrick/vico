@@ -160,6 +160,10 @@ internal fun TypedArray.getLine(context: Context, defaultColor: Int): LineCartes
       ),
     )
 
+  val dashLength = getRawDimension(context, R.styleable.LineStyle_dashLength, 0f)
+
+  val dashGap = getRawDimension(context, R.styleable.LineStyle_gapLength, 0f)
+
   return LineCartesianLayer.Line(
     fill =
       if (positiveLineColor != negativeLineColor) {
@@ -203,5 +207,11 @@ internal fun TypedArray.getLine(context: Context, defaultColor: Int): LineCartes
     dataLabelVerticalPosition =
       VerticalPosition.entries[getInteger(R.styleable.LineStyle_dataLabelVerticalPosition, 0)],
     dataLabelRotationDegrees = getFloat(R.styleable.LineStyle_dataLabelRotationDegrees, 0f),
+    pattern =
+      if (dashLength > 0f && dashGap > 0f) {
+        LineCartesianLayer.LinePattern.Dashed(dashLength, dashGap)
+      } else {
+        LineCartesianLayer.LinePattern.Continuous
+      },
   )
 }
