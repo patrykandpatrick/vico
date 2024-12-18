@@ -17,7 +17,6 @@
 package com.patrykandpatrick.vico.compose.cartesian
 
 import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -47,23 +46,10 @@ internal fun Modifier.chartTouchEvent(
               when (event.type) {
                 PointerEventType.Press -> setTouchPoint(event.changes.first().position.point)
                 PointerEventType.Release -> setTouchPoint(null)
+                PointerEventType.Move ->
+                  if (!isScrollEnabled) setTouchPoint(event.changes.first().position.point)
               }
             }
-          }
-        }
-      } else {
-        Modifier
-      }
-    )
-    .then(
-      if (!isScrollEnabled && setTouchPoint != null) {
-        pointerInput(setTouchPoint) {
-          detectHorizontalDragGestures(
-            onDragStart = { setTouchPoint(it.point) },
-            onDragEnd = { setTouchPoint(null) },
-            onDragCancel = { setTouchPoint(null) },
-          ) { change, _ ->
-            setTouchPoint(change.position.point)
           }
         }
       } else {
