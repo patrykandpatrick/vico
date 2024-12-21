@@ -748,5 +748,5 @@ internal fun CartesianDrawingContext.getCanvasSplitY(
     layerBounds.bottom -
       ((splitY(model.extraStore).toDouble() - yRange.minY) / yRange.length).toFloat() *
         layerBounds.height()
-  return ceil(base).coerceIn(layerBounds.top..layerBounds.bottom) + halfLineThickness
+  return ceil(base).coerceIn(layerBounds.top..layerBounds.bottom) + ceil(halfLineThickness)
 }
