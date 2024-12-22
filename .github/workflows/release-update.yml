@@ -19,7 +19,7 @@ jobs:
       - run: |
           git config --global user.email "96002241+patrykandpatrickbot@users.noreply.github.com"
           git config --global user.name "Patryk & Patrick Bot"
-          git clone https://${{ secrets.BOT_PAT }}@github.com/patrykandpatrick/patrykandpatrick.com
+          git clone https://${{ secrets.BOT_PAT }}@github.com/patrykandpatrick/vico-api-reference
           cd ${{ github.workspace }}/vico
           VERSION_NAME=$(grep -oP "(?<=version_name).*(?=\",)" versions.gradle | grep -oP "(?<=\").*")
           echo "VERSION_NAME=$VERSION_NAME" >> $GITHUB_ENV
@@ -37,15 +37,15 @@ jobs:
           token: ${{ secrets.BOT_PAT }}
       - run: |
           cd ${{ github.workspace }}/vico
-          git remote set-url origin https://patrykandpatrickbot:${{ secrets.BOT_PAT }}@github.com/patrykandpatrick/vico.git
+          git remote set-url origin https://patrykandpatrickbot:${{ secrets.BOT_PAT }}@github.com/patrykandpatrick/vico
           ./gradlew dokkaHtmlMultiModule
-          API_REFERENCE_DESTINATION=${{ github.workspace }}/patrykandpatrick.com/src/vico/static/api/$(if $IS_PRERELEASE; then echo $VERSION_NAME; else echo main; fi)
+          API_REFERENCE_DESTINATION=${{ github.workspace }}/vico-api-reference/latest
           rm -fr $API_REFERENCE_DESTINATION/*
           cp -R ${{ github.workspace }}/vico/vico/build/dokka/htmlMultiModule/. $API_REFERENCE_DESTINATION
-          cd ${{ github.workspace }}/patrykandpatrick.com
-          git remote set-url origin https://patrykandpatrickbot:${{ secrets.BOT_PAT }}@github.com/patrykandpatrick/patrykandpatrick.com.git
-          git add src/vico/static/api
-          git diff --staged --quiet HEAD || git commit -m "Update Vico API reference"
+          cd ${{ github.workspace }}/vico-api-reference
+          git remote set-url origin https://patrykandpatrickbot:${{ secrets.BOT_PAT }}@github.com/patrykandpatrick/vico-api-reference
+          git add -A
+          git diff --staged --quiet HEAD || git commit -m "Update API reference"
           git push origin
           cd ${{ github.workspace }}/vico
           git push origin
