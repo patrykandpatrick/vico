@@ -20,6 +20,7 @@ import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
 import com.patrykandpatrick.vico.core.cartesian.HorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartRanges
+import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.core.common.half
 import com.patrykandpatrick.vico.core.common.roundedToNearest
 import kotlin.math.ceil
@@ -77,22 +78,31 @@ internal abstract class BaseHorizontalAxisItemPlacer(private val shiftExtremeLin
 }
 
 internal class AlignedHorizontalAxisItemPlacer(
-  private val spacing: Int,
-  private val offset: Int,
+  private val spacing: (ExtraStore) -> Int,
+  private val offset: (ExtraStore) -> Int,
   private val shiftExtremeLines: Boolean,
   private val addExtremeLabelPadding: Boolean,
 ) : BaseHorizontalAxisItemPlacer(shiftExtremeLines) {
-  init {
-    require(spacing > 0) { "`spacing` must be positive." }
-    require(offset >= 0) { "`offset` must be nonnegative." }
-  }
+  private fun CartesianMeasuringContext.getSpacingOrThrow() =
+    spacing(model.extraStore).also { require(it > 0) { "`spacing` must return a positive value." } }
+
+  private fun CartesianMeasuringContext.getOffsetOrThrow() =
+    offset(model.extraStore).also {
+      require(it >= 0) { "`offset` must return a nonnegative value." }
+    }
 
   override fun getFirstLabelValue(context: CartesianMeasuringContext, maxLabelWidth: Float) =
-    if (addExtremeLabelPadding) context.ranges.minX + offset * context.ranges.xStep else null
+    context.run {
+      if (addExtremeLabelPadding) ranges.minX + getOffsetOrThrow() * ranges.xStep else null
+    }
 
   override fun getLastLabelValue(context: CartesianMeasuringContext, maxLabelWidth: Float) =
     if (addExtremeLabelPadding) {
-      with(context.ranges) { maxX - (xLength - xStep * offset) % (xStep * spacing) }
+      context.run {
+        ranges.maxX -
+          (ranges.xLength - ranges.xStep * getOffsetOrThrow()) %
+            (ranges.xStep * getSpacingOrThrow())
+      }
     } else {
       null
     }
@@ -103,18 +113,21 @@ internal class AlignedHorizontalAxisItemPlacer(
     fullXRange: ClosedFloatingPointRange<Double>,
     maxLabelWidth: Float,
   ) =
-    context.getLabelValues(
-      visibleXRange = visibleXRange,
-      fullXRange = fullXRange,
-      offset = offset,
-      spacing =
-        spacing *
-          if (addExtremeLabelPadding && maxLabelWidth != 0f) {
-            ceil(maxLabelWidth / (context.horizontalDimensions.xSpacing * spacing)).toInt()
-          } else {
-            1
-          },
-    )
+    context.run {
+      val spacing = getSpacingOrThrow()
+      getLabelValues(
+        visibleXRange = visibleXRange,
+        fullXRange = fullXRange,
+        offset = getOffsetOrThrow(),
+        spacing =
+          spacing *
+            if (addExtremeLabelPadding && maxLabelWidth != 0f) {
+              ceil(maxLabelWidth / (context.horizontalDimensions.xSpacing * spacing)).toInt()
+            } else {
+              1
+            },
+      )
+    }
 
   override fun getWidthMeasurementLabelValues(
     context: CartesianMeasuringContext,

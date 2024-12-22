@@ -16,7 +16,6 @@
 
 package com.patrykandpatrick.vico.core.cartesian.axis
 
-import androidx.annotation.IntRange
 import androidx.annotation.RestrictTo
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
@@ -31,6 +30,7 @@ import com.patrykandpatrick.vico.core.common.Insets
 import com.patrykandpatrick.vico.core.common.VerticalPosition
 import com.patrykandpatrick.vico.core.common.component.LineComponent
 import com.patrykandpatrick.vico.core.common.component.TextComponent
+import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.core.common.doubled
 import com.patrykandpatrick.vico.core.common.getStart
 import com.patrykandpatrick.vico.core.common.half
@@ -597,15 +597,15 @@ protected constructor(
     public companion object {
       /**
        * Adds a label, tick, and guideline for each _x_ value given by [CartesianChartRanges.minX] +
-       * (k × [spacing] + [offset]) × [CartesianChartRanges.xStep], where _k_ ∈ ℕ, with these
+       * (_k_ × spacing + offset) × [CartesianChartRanges.xStep], where _k_ ∈ ℕ, with these
        * components being horizontally centered relative to one another. [shiftExtremeLines] is used
        * as the return value of [ItemPlacer.getShiftExtremeLines]. [addExtremeLabelPadding]
        * specifies whether [CartesianLayer] padding should be added for the first and last labels,
        * ensuring their visibility.
        */
       public fun aligned(
-        @IntRange(from = 1) spacing: Int = 1,
-        @IntRange(from = 0) offset: Int = 0,
+        spacing: (ExtraStore) -> Int = { 1 },
+        offset: (ExtraStore) -> Int = { 0 },
         shiftExtremeLines: Boolean = true,
         addExtremeLabelPadding: Boolean = true,
       ): ItemPlacer =
@@ -615,7 +615,7 @@ protected constructor(
        * Adds a label for each major _x_ value, and adds ticks between the labels and for
        * [CartesianChartRanges.minX] − [CartesianChartRanges.xStep] ÷ 2 and
        * [CartesianChartRanges.maxX] + [CartesianChartRanges.xStep] ÷ 2. (Major _x_ values are given
-       * by [CartesianChartRanges.minX] + k × [CartesianChartRanges.xStep], where _k_ ∈ ℕ.)
+       * by [CartesianChartRanges.minX] + _k_ × [CartesianChartRanges.xStep], where _k_ ∈ ℕ.)
        * [shiftExtremeLines] is used as the return value of [ItemPlacer.getShiftExtremeLines].
        */
       public fun segmented(shiftExtremeLines: Boolean = true): ItemPlacer =

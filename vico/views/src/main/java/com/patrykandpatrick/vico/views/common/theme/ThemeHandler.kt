@@ -279,11 +279,13 @@ internal class ThemeHandler(private val context: Context, attrs: AttributeSet?) 
 
   private fun TypedArray.getHorizontalAxisItemPlacer(): HorizontalAxis.ItemPlacer {
     val shiftExtremeLines = getBoolean(R.styleable.AxisStyle_shiftExtremeHorizontalAxisLines, true)
+    val spacing = getInteger(R.styleable.AxisStyle_horizontalAxisLabelSpacing, 1)
+    val offset = getInteger(R.styleable.AxisStyle_horizontalAxisLabelOffset, 0)
     return when (getInteger(R.styleable.AxisStyle_horizontalAxisItemPlacer, 0)) {
       0 ->
         HorizontalAxis.ItemPlacer.aligned(
-          getInteger(R.styleable.AxisStyle_horizontalAxisLabelSpacing, 1),
-          getInteger(R.styleable.AxisStyle_horizontalAxisLabelOffset, 0),
+          { spacing },
+          { offset },
           shiftExtremeLines,
           getBoolean(R.styleable.AxisStyle_addExtremeHorizontalAxisLabelPadding, true),
         )

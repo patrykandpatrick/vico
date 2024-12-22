@@ -172,7 +172,7 @@ private fun ComposeChart9(modelProducer: CartesianChartModelProducer, modifier: 
             guideline = null,
             itemPlacer =
               remember {
-                HorizontalAxis.ItemPlacer.aligned(spacing = 3, addExtremeLabelPadding = true)
+                HorizontalAxis.ItemPlacer.aligned(spacing = { 3 }, addExtremeLabelPadding = true)
               },
           ),
         marker = marker,
