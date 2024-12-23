@@ -171,7 +171,7 @@ public fun markerCorneredShape(
 /** Creates a [DashedShape]. */
 public fun dashedShape(
   shape: Shape = Shape.Rectangle,
-  dashLength: Dp = Defaults.DASH_LENGTH.dp,
-  gapLength: Dp = Defaults.DASH_GAP.dp,
+  dashLength: Dp = Defaults.DASHED_SHAPE_DASH_LENGTH.dp,
+  gapLength: Dp = Defaults.DASHED_SHAPE_GAP_LENGTH.dp,
   fitStrategy: DashedShape.FitStrategy = DashedShape.FitStrategy.Resize,
 ): DashedShape = DashedShape(shape, dashLength.value, gapLength.value, fitStrategy)

@@ -32,8 +32,8 @@ import kotlin.math.ceil
  */
 public class DashedShape(
   public val shape: Shape = Shape.Rectangle,
-  public val dashLengthDp: Float = Defaults.DASH_LENGTH,
-  public val gapLengthDp: Float = Defaults.DASH_GAP,
+  public val dashLengthDp: Float = Defaults.DASHED_SHAPE_DASH_LENGTH,
+  public val gapLengthDp: Float = Defaults.DASHED_SHAPE_GAP_LENGTH,
   public val fitStrategy: FitStrategy = FitStrategy.Resize,
 ) : Shape {
   private var drawDashLength = dashLengthDp

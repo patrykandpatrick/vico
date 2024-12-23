@@ -159,8 +159,8 @@ public fun LineCartesianLayer.LineStroke.Companion.continuous(
 public fun LineCartesianLayer.LineStroke.Companion.dashed(
   thickness: Dp = Defaults.LINE_SPEC_THICKNESS_DP.dp,
   cap: StrokeCap = StrokeCap.Round,
-  dashLength: Dp = Defaults.LINE_PATTERN_DASHED_LENGTH.dp,
-  gapLength: Dp = Defaults.LINE_PATTERN_DASHED_GAP.dp,
+  dashLength: Dp = Defaults.LINE_DASH_LENGTH.dp,
+  gapLength: Dp = Defaults.LINE_GAP_LENGTH.dp,
 ): LineCartesianLayer.LineStroke.Dashed =
   LineCartesianLayer.LineStroke.Dashed(
     thickness.value,

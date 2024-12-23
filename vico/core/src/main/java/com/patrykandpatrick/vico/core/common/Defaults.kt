@@ -49,10 +49,10 @@ public object Defaults {
   public const val HOLLOW_CANDLE_STROKE_THICKNESS_DP: Float = 1f
   public const val CANDLE_SPACING_DP: Float = 4f
   public const val LINE_CURVATURE: Float = 0.5f
-  public const val LINE_PATTERN_DASHED_LENGTH: Float = 4f
-  public const val LINE_PATTERN_DASHED_GAP: Float = 8f
-  public const val DASH_LENGTH: Float = 4f
-  public const val DASH_GAP: Float = 2f
+  public const val LINE_DASH_LENGTH: Float = 6f
+  public const val LINE_GAP_LENGTH: Float = 6f
+  public const val DASHED_SHAPE_DASH_LENGTH: Float = 4f
+  public const val DASHED_SHAPE_GAP_LENGTH: Float = 2f
   public const val FADING_EDGE_VISIBILITY_THRESHOLD_DP: Float = 16f
   public const val FADING_EDGE_WIDTH_DP: Float = 32f
   public const val TEXT_COMPONENT_LINE_COUNT: Int = 1

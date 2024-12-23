@@ -23,7 +23,6 @@
         <item name="fadingEdgeVisibilityInterpolator">androidx.interpolator.view.animation.FastOutSlowInInterpolator</item>
         <item name="fadingEdgeWidth">32dp</item>
         <item name="layers">line</item>
-        <item name="lineLayerStyle">@style/Chart3LineLayerStyle</item>
         <item name="showBottomAxis">true</item>
         <item name="showStartAxis">true</item>
         <item name="startAxisStyle">@style/Chart3StartAxisStyle</item>
@@ -60,12 +59,6 @@
         <item name="marginTop">4dp</item>
     </style>
 
-    <style name="Chart3Line1Style">
-        <item name="android:color">@color/chart_3_color_1</item>
-        <item name="dashLength">4dp</item>
-        <item name="gapLength">8dp</item>
-    </style>
-
     <style name="Chart3StartAxisTitleBackgroundStyle" parent="Chart3AxisTitleBackgroundStyle">
         <item name="android:color">@color/chart_3_color_1</item>
     </style>
@@ -80,10 +73,6 @@
         <item name="addExtremeHorizontalAxisLabelPadding">false</item>
         <item name="titleStyle">@style/Chart3BottomAxisTitleStyle</item>
         <item name="title">@string/x_axis</item>
-    </style>
-
-    <style name="Chart3LineLayerStyle">
-        <item name="line1Style">@style/Chart3Line1Style</item>
     </style>
 
     <style name="Chart3StartAxisStyle" parent="Chart3AxisStyle">

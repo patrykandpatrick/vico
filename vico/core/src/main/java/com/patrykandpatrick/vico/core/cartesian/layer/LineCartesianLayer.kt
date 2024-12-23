@@ -21,6 +21,8 @@ import android.graphics.Canvas
 import android.graphics.DashPathEffect
 import android.graphics.Paint
 import android.graphics.Path
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffXfermode
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
@@ -36,6 +38,7 @@ import com.patrykandpatrick.vico.core.cartesian.data.LineCartesianLayerDrawingMo
 import com.patrykandpatrick.vico.core.cartesian.data.LineCartesianLayerModel
 import com.patrykandpatrick.vico.core.cartesian.data.MutableCartesianChartRanges
 import com.patrykandpatrick.vico.core.cartesian.data.forEachIn
+import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer.Line
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.core.cartesian.marker.LineCartesianLayerMarkerTarget
 import com.patrykandpatrick.vico.core.cartesian.marker.MutableLineCartesianLayerMarkerTarget
@@ -120,6 +123,7 @@ protected constructor(
     public fun draw(
       context: CartesianDrawingContext,
       path: Path,
+      lineCanvas: Canvas,
       fillCanvas: Canvas,
       verticalAxisPosition: Axis.Position.Vertical?,
     ) {
@@ -127,7 +131,7 @@ protected constructor(
         stroke.apply(this, linePaint)
         val halfThickness = stroke.thicknessDp.pixels.half
         areaFill?.draw(context, path, halfThickness, verticalAxisPosition)
-        fillCanvas.drawPath(path, linePaint)
+        lineCanvas.drawPath(path, linePaint)
         withOtherCanvas(fillCanvas) { fill.draw(context, halfThickness, verticalAxisPosition) }
       }
     }
@@ -135,7 +139,7 @@ protected constructor(
 
   /** Draws a [LineCartesianLayer] line’s fill. */
   public interface LineFill {
-    /** Draws the line fill. [PorterDuff.Mode.SRC_IN] should be used. */
+    /** Draws the line fill. */
     public fun draw(
       context: CartesianDrawingContext,
       halfLineThickness: Float,
@@ -198,8 +202,8 @@ protected constructor(
     public data class Dashed(
       public override val thicknessDp: Float = Defaults.LINE_SPEC_THICKNESS_DP,
       public val cap: Paint.Cap = Paint.Cap.ROUND,
-      public val dashLengthDp: Float = Defaults.LINE_PATTERN_DASHED_LENGTH,
-      public val gapLengthDp: Float = Defaults.LINE_PATTERN_DASHED_GAP,
+      public val dashLengthDp: Float = Defaults.LINE_DASH_LENGTH,
+      public val gapLengthDp: Float = Defaults.LINE_GAP_LENGTH,
     ) : LineStroke {
       override fun apply(context: CartesianDrawingContext, paint: Paint) {
         with(context) {
@@ -355,7 +359,11 @@ protected constructor(
 
   protected val linePath: Path = Path()
 
+  protected val lineCanvas: Canvas = Canvas()
+
   protected val lineFillCanvas: Canvas = Canvas()
+
+  private val srcInPaint = Paint().apply { xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN) }
 
   protected val cacheKeyNamespace: CacheStore.KeyNamespace = CacheStore.KeyNamespace()
 
@@ -420,10 +428,13 @@ protected constructor(
 
         canvas.saveLayer(opacity = drawingModel?.opacity ?: 1f)
 
-        val lineFillBitmap = getBitmap(cacheKeyNamespace, seriesIndex)
+        val lineBitmap = getBitmap(cacheKeyNamespace, seriesIndex, "line")
+        lineCanvas.setBitmap(lineBitmap)
+        val lineFillBitmap = getBitmap(cacheKeyNamespace, seriesIndex, "lineFill")
         lineFillCanvas.setBitmap(lineFillBitmap)
-        line.draw(context, linePath, lineFillCanvas, verticalAxisPosition)
-        canvas.drawBitmap(lineFillBitmap, 0f, 0f, null)
+        line.draw(context, linePath, lineCanvas, lineFillCanvas, verticalAxisPosition)
+        lineCanvas.drawBitmap(lineFillBitmap, 0f, 0f, srcInPaint)
+        canvas.drawBitmap(lineBitmap, 0f, 0f, null)
 
         forEachPointInBounds(series, drawingStart, pointInfoMap) { entry, x, y, _, _ ->
           updateMarkerTargets(entry, x, y, lineFillBitmap)
