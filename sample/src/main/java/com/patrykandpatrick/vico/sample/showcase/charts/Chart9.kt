@@ -163,7 +163,7 @@ private fun ComposeChart9(modelProducer: CartesianChartModelProducer, modifier: 
             guideline =
               rememberLineComponent(
                 fill = fill(MaterialTheme.colorScheme.outlineVariant),
-                shape = dashedShape(shape = CorneredShape.Pill, dashLength = 4.dp, gapLength = 8.dp),
+                shape = dashedShape(shape = CorneredShape.Pill, gapLength = 8.dp),
               ),
             itemPlacer = remember { VerticalAxis.ItemPlacer.count(count = { 4 }) },
           ),

@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.Defaults.MARKER_TICK_SIZE
 import com.patrykandpatrick.vico.core.common.MeasuringContext
 import com.patrykandpatrick.vico.core.common.shape.Corner
@@ -169,8 +170,8 @@ public fun markerCorneredShape(
 
 /** Creates a [DashedShape]. */
 public fun dashedShape(
-  shape: Shape,
-  dashLength: Dp,
-  gapLength: Dp,
+  shape: Shape = Shape.Rectangle,
+  dashLength: Dp = Defaults.DASH_LENGTH.dp,
+  gapLength: Dp = Defaults.DASH_GAP.dp,
   fitStrategy: DashedShape.FitStrategy = DashedShape.FitStrategy.Resize,
 ): DashedShape = DashedShape(shape, dashLength.value, gapLength.value, fitStrategy)

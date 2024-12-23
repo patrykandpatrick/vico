@@ -105,7 +105,7 @@ public fun rememberAxisTickComponent(
 public fun rememberAxisGuidelineComponent(
   fill: Fill = fill(vicoTheme.lineColor),
   thickness: Dp = Defaults.AXIS_GUIDELINE_WIDTH.dp,
-  shape: Shape = dashedShape(Shape.Rectangle, Defaults.DASH_LENGTH.dp, Defaults.DASH_GAP.dp),
+  shape: Shape = dashedShape(),
   margins: Dimensions = Dimensions.Empty,
   strokeFill: Fill = Fill.Transparent,
   strokeThickness: Dp = 0.dp,
