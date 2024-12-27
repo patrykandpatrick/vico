@@ -31,8 +31,8 @@ import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.common.component.shapeComponent
-import com.patrykandpatrick.vico.compose.common.dimensions
 import com.patrykandpatrick.vico.compose.common.fill
+import com.patrykandpatrick.vico.compose.common.insets
 import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
@@ -40,8 +40,8 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
 import com.patrykandpatrick.vico.core.cartesian.decoration.HorizontalLine
 import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
-import com.patrykandpatrick.vico.core.common.Dimensions
 import com.patrykandpatrick.vico.core.common.Fill
+import com.patrykandpatrick.vico.core.common.Insets
 import com.patrykandpatrick.vico.core.common.component.LineComponent
 import com.patrykandpatrick.vico.core.common.component.ShapeComponent
 import com.patrykandpatrick.vico.core.common.component.TextComponent
@@ -140,9 +140,9 @@ private fun rememberComposeHorizontalLine(): HorizontalLine {
   val line = rememberLineComponent(fill, HORIZONTAL_LINE_THICKNESS_DP.dp)
   val labelComponent =
     rememberTextComponent(
-      margins = dimensions(HORIZONTAL_LINE_LABEL_MARGIN_DP.dp),
+      margins = insets(HORIZONTAL_LINE_LABEL_MARGIN_DP.dp),
       padding =
-        dimensions(
+        insets(
           HORIZONTAL_LINE_LABEL_HORIZONTAL_PADDING_DP.dp,
           HORIZONTAL_LINE_LABEL_VERTICAL_PADDING_DP.dp,
         ),
@@ -157,9 +157,9 @@ private fun getViewHorizontalLine() =
     line = LineComponent(Fill(HORIZONTAL_LINE_COLOR), HORIZONTAL_LINE_THICKNESS_DP),
     labelComponent =
       TextComponent(
-        margins = Dimensions(HORIZONTAL_LINE_LABEL_MARGIN_DP),
+        margins = Insets(HORIZONTAL_LINE_LABEL_MARGIN_DP),
         padding =
-          Dimensions(
+          Insets(
             HORIZONTAL_LINE_LABEL_HORIZONTAL_PADDING_DP,
             HORIZONTAL_LINE_LABEL_VERTICAL_PADDING_DP,
           ),

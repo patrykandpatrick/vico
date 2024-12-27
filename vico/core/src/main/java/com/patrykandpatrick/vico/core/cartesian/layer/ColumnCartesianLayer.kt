@@ -20,7 +20,6 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
-import com.patrykandpatrick.vico.core.cartesian.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.axis.Axis
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartRanges
@@ -34,9 +33,10 @@ import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.core.cartesian.marker.ColumnCartesianLayerMarkerTarget
 import com.patrykandpatrick.vico.core.cartesian.marker.MutableColumnCartesianLayerMarkerTarget
 import com.patrykandpatrick.vico.core.common.Defaults
-import com.patrykandpatrick.vico.core.common.VerticalPosition
+import com.patrykandpatrick.vico.core.common.Position
 import com.patrykandpatrick.vico.core.common.component.LineComponent
 import com.patrykandpatrick.vico.core.common.component.TextComponent
+import com.patrykandpatrick.vico.core.common.component.intersectsVertical
 import com.patrykandpatrick.vico.core.common.data.CartesianLayerDrawingModelInterpolator
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.core.common.data.MutableExtraStore
@@ -59,8 +59,9 @@ import kotlin.math.min
  * @property columnCollectionSpacingDp the spacing between neighboring column collections (in dp).
  * @property mergeMode defines how columns should be drawn in column collections.
  * @property dataLabel the [TextComponent] for the data labels. Use `null` for no data labels.
- * @property dataLabelVerticalPosition the vertical position of each data label relative to its
- *   column’s top edge.
+ * @property dataLabelPosition the vertical position of positive-column data labels relative to the
+ *   top edges of the columns. For negative columns, this is inverted and interpreted relative to
+ *   the bottom edges of the columns.
  * @property dataLabelValueFormatter the [CartesianValueFormatter] for the data labels.
  * @property dataLabelRotationDegrees the rotation of the data labels (in degrees).
  * @property rangeProvider defines the _x_ and _y_ ranges.
@@ -76,7 +77,7 @@ protected constructor(
   protected val columnCollectionSpacingDp: Float = Defaults.COLUMN_COLLECTION_SPACING,
   protected val mergeMode: (ExtraStore) -> MergeMode = { MergeMode.Grouped() },
   protected val dataLabel: TextComponent? = null,
-  protected val dataLabelVerticalPosition: VerticalPosition = VerticalPosition.Top,
+  protected val dataLabelPosition: Position.Vertical = Position.Vertical.Top,
   protected val dataLabelValueFormatter: CartesianValueFormatter =
     CartesianValueFormatter.decimal(),
   protected val dataLabelRotationDegrees: Float = 0f,
@@ -84,7 +85,7 @@ protected constructor(
   protected val verticalAxisPosition: Axis.Position.Vertical? = null,
   protected val drawingModelInterpolator:
     CartesianLayerDrawingModelInterpolator<
-      ColumnCartesianLayerDrawingModel.ColumnInfo,
+      ColumnCartesianLayerDrawingModel.Entry,
       ColumnCartesianLayerDrawingModel,
     > =
     CartesianLayerDrawingModelInterpolator.default(),
@@ -95,9 +96,6 @@ protected constructor(
 
   protected val stackInfo: MutableMap<Double, StackInfo> = mutableMapOf()
 
-  /** Holds information on the [ColumnCartesianLayer]’s horizontal dimensions. */
-  protected val horizontalDimensions: MutableHorizontalDimensions = MutableHorizontalDimensions()
-
   override val markerTargets: Map<Double, List<CartesianMarker.Target>> = _markerTargets
 
   /** Creates a [ColumnCartesianLayer]. */
@@ -106,14 +104,14 @@ protected constructor(
     columnCollectionSpacingDp: Float = Defaults.COLUMN_COLLECTION_SPACING,
     mergeMode: (ExtraStore) -> MergeMode = { MergeMode.Grouped() },
     dataLabel: TextComponent? = null,
-    dataLabelVerticalPosition: VerticalPosition = VerticalPosition.Top,
+    dataLabelPosition: Position.Vertical = Position.Vertical.Top,
     dataLabelValueFormatter: CartesianValueFormatter = CartesianValueFormatter.decimal(),
     dataLabelRotationDegrees: Float = 0f,
     rangeProvider: CartesianLayerRangeProvider = CartesianLayerRangeProvider.auto(),
     verticalAxisPosition: Axis.Position.Vertical? = null,
     drawingModelInterpolator:
       CartesianLayerDrawingModelInterpolator<
-        ColumnCartesianLayerDrawingModel.ColumnInfo,
+        ColumnCartesianLayerDrawingModel.Entry,
         ColumnCartesianLayerDrawingModel,
       > =
       CartesianLayerDrawingModelInterpolator.default(),
@@ -122,7 +120,7 @@ protected constructor(
     columnCollectionSpacingDp,
     mergeMode,
     dataLabel,
-    dataLabelVerticalPosition,
+    dataLabelPosition,
     dataLabelValueFormatter,
     dataLabelRotationDegrees,
     rangeProvider,
@@ -169,7 +167,7 @@ protected constructor(
         val column = columnProvider.getColumn(entry, index, model.extraStore)
         columnCenterX =
           drawingStart +
-            (horizontalDimensions.xSpacing * xSpacingMultiplier +
+            (layerDimensions.xSpacing * xSpacingMultiplier +
               columnProvider
                 .getWidestSeriesColumn(index, model.extraStore)
                 .thicknessDp
@@ -199,11 +197,9 @@ protected constructor(
         if (
           column.intersectsVertical(
             context = this,
-            top = columnTop,
-            bottom = columnBottom,
-            centerX = columnCenterX,
-            boundingBox = layerBounds,
-            thicknessScale = zoom,
+            x = columnCenterX,
+            bounds = layerBounds,
+            thicknessFactor = zoom,
           )
         ) {
           updateMarkerTargets(
@@ -214,7 +210,7 @@ protected constructor(
             column = column,
             mergeMode = mergeMode,
           )
-          column.drawVertical(this, columnTop, columnBottom, columnCenterX, zoom)
+          column.drawVertical(this, columnCenterX, columnTop, columnBottom, zoom)
         }
 
         if (mergeMode is MergeMode.Grouped) {
@@ -299,14 +295,14 @@ protected constructor(
         mergeMode == MergeMode.Stacked || mergeMode is MergeMode.Grouped && modelEntriesSize == 1
       var maxWidth =
         when {
-          canUseXSpacing -> horizontalDimensions.xSpacing
+          canUseXSpacing -> layerDimensions.xSpacing
           mergeMode is MergeMode.Grouped ->
             (columnThicknessDp + min(columnCollectionSpacingDp, mergeMode.columnSpacingDp).half)
               .pixels * zoom
           else -> error(message = "Encountered an unexpected `MergeMode`.")
         }
-      if (isFirst) maxWidth = maxWidth.coerceAtMost(horizontalDimensions.startPadding.doubled)
-      if (isLast) maxWidth = maxWidth.coerceAtMost(horizontalDimensions.endPadding.doubled)
+      if (isFirst) maxWidth = maxWidth.coerceAtMost(layerDimensions.startPadding.doubled)
+      if (isLast) maxWidth = maxWidth.coerceAtMost(layerDimensions.endPadding.doubled)
       val text = dataLabelValueFormatter.format(this, dataLabelValue, verticalAxisPosition)
       val dataLabelWidth =
         textComponent
@@ -319,12 +315,10 @@ protected constructor(
         return
       }
 
-      val labelVerticalPosition =
-        if (dataLabelValue < 0f) -dataLabelVerticalPosition else dataLabelVerticalPosition
+      val labelVerticalPosition = if (dataLabelValue < 0f) -dataLabelPosition else dataLabelPosition
 
       val verticalPosition =
         labelVerticalPosition.inBounds(
-          y = y,
           bounds = layerBounds,
           componentHeight =
             textComponent.getHeight(
@@ -333,6 +327,7 @@ protected constructor(
               maxWidth = maxWidth.toInt(),
               rotationDegrees = dataLabelRotationDegrees,
             ),
+          referenceY = y,
         )
       textComponent.draw(
         context = this,
@@ -378,11 +373,14 @@ protected constructor(
     }
   }
 
-  override fun updateRanges(ranges: MutableCartesianChartRanges, model: ColumnCartesianLayerModel) {
+  override fun updateChartRanges(
+    chartRanges: MutableCartesianChartRanges,
+    model: ColumnCartesianLayerModel,
+  ) {
     val mergeMode = mergeMode(model.extraStore)
     val minY = mergeMode.getMinY(model)
     val maxY = mergeMode.getMaxY(model)
-    ranges.tryUpdate(
+    chartRanges.tryUpdate(
       rangeProvider.getMinX(model.minX, model.maxX, model.extraStore),
       rangeProvider.getMaxX(model.minX, model.maxX, model.extraStore),
       rangeProvider.getMinY(minY, maxY, model.extraStore),
@@ -391,9 +389,9 @@ protected constructor(
     )
   }
 
-  override fun updateHorizontalDimensions(
+  override fun updateDimensions(
     context: CartesianMeasuringContext,
-    horizontalDimensions: MutableHorizontalDimensions,
+    dimensions: MutableCartesianLayerDimensions,
     model: ColumnCartesianLayerModel,
   ) {
     with(context) {
@@ -403,7 +401,7 @@ protected constructor(
           mergeMode(model.extraStore),
         )
       val xSpacing = columnCollectionWidth + columnCollectionSpacingDp.pixels
-      horizontalDimensions.ensureValuesAtLeast(
+      dimensions.ensureValuesAtLeast(
         xSpacing = xSpacing,
         scalableStartPadding = columnCollectionWidth.half + layerPadding.scalableStartDp.pixels,
         scalableEndPadding = columnCollectionWidth.half + layerPadding.scalableEndDp.pixels,
@@ -442,7 +440,7 @@ protected constructor(
         MergeMode.Stacked -> 0f
       }
     return layerBounds.getStart(isLtr) +
-      (horizontalDimensions.startPadding +
+      (layerDimensions.startPadding +
         (mergeModeComponent - getColumnCollectionWidth(entryCollectionCount, mergeMode).half) *
           zoom) * layoutDirectionMultiplier
   }
@@ -512,7 +510,7 @@ protected constructor(
       .map { series ->
         series.associate { entry ->
           entry.x to
-            ColumnCartesianLayerDrawingModel.ColumnInfo(
+            ColumnCartesianLayerDrawingModel.Entry(
               height = (abs(entry.y) / ranges.getYRange(verticalAxisPosition).length).toFloat()
             )
         }
@@ -525,14 +523,14 @@ protected constructor(
     columnCollectionSpacingDp: Float = this.columnCollectionSpacingDp,
     mergeMode: (ExtraStore) -> MergeMode = this.mergeMode,
     dataLabel: TextComponent? = this.dataLabel,
-    dataLabelVerticalPosition: VerticalPosition = this.dataLabelVerticalPosition,
+    dataLabelPosition: Position.Vertical = this.dataLabelPosition,
     dataLabelValueFormatter: CartesianValueFormatter = this.dataLabelValueFormatter,
     dataLabelRotationDegrees: Float = this.dataLabelRotationDegrees,
     rangeProvider: CartesianLayerRangeProvider = this.rangeProvider,
     verticalAxisPosition: Axis.Position.Vertical? = this.verticalAxisPosition,
     drawingModelInterpolator:
       CartesianLayerDrawingModelInterpolator<
-        ColumnCartesianLayerDrawingModel.ColumnInfo,
+        ColumnCartesianLayerDrawingModel.Entry,
         ColumnCartesianLayerDrawingModel,
       > =
       this.drawingModelInterpolator,
@@ -542,7 +540,7 @@ protected constructor(
       columnCollectionSpacingDp,
       mergeMode,
       dataLabel,
-      dataLabelVerticalPosition,
+      dataLabelPosition,
       dataLabelValueFormatter,
       dataLabelRotationDegrees,
       rangeProvider,
@@ -558,7 +556,7 @@ protected constructor(
         columnCollectionSpacingDp == other.columnCollectionSpacingDp &&
         mergeMode == other.mergeMode &&
         dataLabel == other.dataLabel &&
-        dataLabelVerticalPosition == other.dataLabelVerticalPosition &&
+        dataLabelPosition == other.dataLabelPosition &&
         dataLabelValueFormatter == other.dataLabelValueFormatter &&
         dataLabelRotationDegrees == other.dataLabelRotationDegrees &&
         rangeProvider == other.rangeProvider &&
@@ -571,7 +569,7 @@ protected constructor(
       columnCollectionSpacingDp,
       mergeMode,
       dataLabel,
-      dataLabelVerticalPosition,
+      dataLabelPosition,
       dataLabelValueFormatter,
       dataLabelRotationDegrees,
       rangeProvider,

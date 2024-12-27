@@ -18,9 +18,7 @@ package com.patrykandpatrick.vico.core.cartesian.layer
 
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
-import com.patrykandpatrick.vico.core.cartesian.CartesianLayerInsetter
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
-import com.patrykandpatrick.vico.core.cartesian.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartRanges
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianLayerModel
 import com.patrykandpatrick.vico.core.cartesian.data.MutableCartesianChartRanges
@@ -31,22 +29,22 @@ import com.patrykandpatrick.vico.core.common.data.MutableExtraStore
  * Visualizes data on a Cartesian plane. [CartesianLayer]s are combined and drawn by
  * [CartesianChart]s.
  */
-public interface CartesianLayer<M : CartesianLayerModel> : CartesianLayerInsetter<M> {
+public interface CartesianLayer<M : CartesianLayerModel> : CartesianLayerMarginUpdater<M> {
   /** Links _x_ values to [CartesianMarker.Target]s. */
   public val markerTargets: Map<Double, List<CartesianMarker.Target>>
 
   /** Draws the [CartesianLayer]. */
   public fun draw(context: CartesianDrawingContext, model: M)
 
-  /** Updates [horizontalDimensions] to match this [CartesianLayer]’s dimensions. */
-  public fun updateHorizontalDimensions(
+  /** Updates [dimensions] to match this [CartesianLayer]’s dimensions. */
+  public fun updateDimensions(
     context: CartesianMeasuringContext,
-    horizontalDimensions: MutableHorizontalDimensions,
+    dimensions: MutableCartesianLayerDimensions,
     model: M,
   )
 
-  /** Updates [ranges] in accordance with [model]. */
-  public fun updateRanges(ranges: MutableCartesianChartRanges, model: M)
+  /** Updates [chartRanges] in accordance with [model]. */
+  public fun updateChartRanges(chartRanges: MutableCartesianChartRanges, model: M)
 
   /** Prepares the [CartesianLayer] for a difference animation. */
   public fun prepareForTransformation(

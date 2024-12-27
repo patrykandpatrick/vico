@@ -133,7 +133,7 @@ public class LineCartesianLayerModel : CartesianLayerModel {
   }
 
   /** Facilitates the creation of [LineCartesianLayerModel]s and [Partial]s. */
-  public class BuilderScope {
+  public class BuilderScope internal constructor() {
     internal val series = mutableListOf<List<Entry>>()
 
     /**

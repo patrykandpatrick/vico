@@ -37,7 +37,7 @@ public open class HorizontalLegend<M : MeasuringContext, D : DrawingContext>(
   protected val iconLabelSpacingDp: Float = Defaults.LEGEND_ICON_LABEL_SPACING,
   protected val rowSpacingDp: Float = Defaults.LEGEND_ROW_SPACING,
   protected val columnSpacingDp: Float = Defaults.LEGEND_COLUMN_SPACING,
-  protected val padding: Dimensions = Dimensions.Empty,
+  protected val padding: Insets = Insets.Zero,
 ) : Legend<M, D> {
   private val itemManager = LegendItemManager(items)
   private val heights = mutableListOf<Float>()
@@ -54,14 +54,14 @@ public open class HorizontalLegend<M : MeasuringContext, D : DrawingContext>(
         max(
           itemManager.itemList
             .first()
-            .getLabelHeight(context, maxWidth, iconLabelSpacingDp, iconSizeDp),
+            .getLabelHeight(context, iconSizeDp, iconLabelSpacingDp, maxWidth),
           iconSizeDp.pixels,
         )
       heights.add(height)
       buildLines(context, maxWidth) { item ->
         val currentHeight =
           max(
-            item.getLabelHeight(context, maxWidth, iconLabelSpacingDp, iconSizeDp),
+            item.getLabelHeight(context, iconSizeDp, iconLabelSpacingDp, maxWidth),
             iconSizeDp.pixels,
           )
         heights.add(currentHeight)
@@ -86,7 +86,7 @@ public open class HorizontalLegend<M : MeasuringContext, D : DrawingContext>(
         var currentStart = 0f
         val currentLineHeight =
           heights.getOrElse(index) {
-            item.first().getLabelHeight(context, availableWidth, iconLabelSpacingDp, iconSizeDp)
+            item.first().getLabelHeight(context, iconSizeDp, iconLabelSpacingDp, availableWidth)
           }
         val centerY = currentTop + currentLineHeight.half
 
@@ -109,18 +109,18 @@ public open class HorizontalLegend<M : MeasuringContext, D : DrawingContext>(
             text = it.label,
             x = startX + currentStart,
             y = centerY,
-            horizontalPosition = HorizontalPosition.End,
-            verticalPosition = VerticalPosition.Center,
+            horizontalPosition = Position.Horizontal.End,
+            verticalPosition = Position.Vertical.Center,
             maxWidth =
               (bounds.width() - (iconSizeDp + iconLabelSpacingDp + padding.horizontalDp).pixels)
                 .toInt(),
           )
           currentStart +=
             if (isLtr) {
-              it.getLabelWidth(context, availableWidth, iconLabelSpacingDp, iconSizeDp) +
+              it.getLabelWidth(context, iconSizeDp, iconLabelSpacingDp, availableWidth) +
                 columnSpacingDp.pixels
             } else {
-              -(it.getLabelWidth(context, availableWidth, iconLabelSpacingDp, iconSizeDp) +
+              -(it.getLabelWidth(context, iconSizeDp, iconLabelSpacingDp, availableWidth) +
                 columnSpacingDp.pixels +
                 iconSizeDp.pixels)
             }
@@ -142,7 +142,7 @@ public open class HorizontalLegend<M : MeasuringContext, D : DrawingContext>(
       lines.add(mutableListOf())
       itemManager.itemList.forEach {
         remainWidth -=
-          it.getWidth(context, availableWidth, iconLabelSpacingDp, iconSizeDp) +
+          it.getWidth(context, iconSizeDp, iconLabelSpacingDp, availableWidth) +
             columnSpacingDp.pixels
         if (remainWidth >= 0 || remainWidth == availableWidth) {
           lines[currentLine].add(it)
@@ -152,7 +152,7 @@ public open class HorizontalLegend<M : MeasuringContext, D : DrawingContext>(
         currentLine++
         remainWidth =
           availableWidth -
-            it.getWidth(context, availableWidth, iconLabelSpacingDp, iconSizeDp) -
+            it.getWidth(context, iconSizeDp, iconLabelSpacingDp, availableWidth) -
             columnSpacingDp.pixels
         lines.add(mutableListOf(it))
         callback(it)

@@ -24,13 +24,13 @@ import com.patrykandpatrick.vico.core.common.DrawingContext
 import com.patrykandpatrick.vico.core.common.component.Component
 import com.patrykandpatrick.vico.core.common.half
 
-internal data class ComponentShader(
+internal data class ComponentShaderProvider(
   private val component: Component,
   private val componentSizeDp: Float,
-  private val checkeredArrangement: Boolean = true,
-  private val tileXMode: Shader.TileMode = Shader.TileMode.REPEAT,
-  private val tileYMode: Shader.TileMode = tileXMode,
-) : CacheableDynamicShader() {
+  private val checker: Boolean = true,
+  private val xTileMode: Shader.TileMode = Shader.TileMode.REPEAT,
+  private val yTileMode: Shader.TileMode = xTileMode,
+) : CachingShaderProvider() {
   override fun createShader(
     context: DrawingContext,
     left: Float,
@@ -39,12 +39,11 @@ internal data class ComponentShader(
     bottom: Float,
   ): Shader =
     with(context) {
-      val size = componentSizeDp.pixels.toInt() * if (checkeredArrangement) 2 else 1
+      val size = componentSizeDp.pixels.toInt() * if (checker) 2 else 1
       val bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
 
-      val canvas = Canvas(bitmap)
-      context.withOtherCanvas(canvas) {
-        if (checkeredArrangement) {
+      withCanvas(Canvas(bitmap)) {
+        if (checker) {
           val halfSize = componentSizeDp.pixels.half
           with(component) {
             draw(context, -halfSize, -halfSize, componentSizeDp.pixels)
@@ -57,7 +56,7 @@ internal data class ComponentShader(
           component.draw(context, 0f, 0f, componentSizeDp.pixels, componentSizeDp.pixels)
         }
       }
-      return BitmapShader(bitmap, tileXMode, tileYMode)
+      return BitmapShader(bitmap, xTileMode, yTileMode)
     }
 
   private fun Component.draw(context: DrawingContext, x: Float, y: Float, size: Float) {

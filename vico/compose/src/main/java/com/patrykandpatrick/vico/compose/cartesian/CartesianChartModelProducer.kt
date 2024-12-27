@@ -51,7 +51,7 @@ internal val defaultCartesianDiffAnimationSpec: AnimationSpec<Float> =
 internal fun CartesianChartModelProducer.collectAsState(
   chart: CartesianChart,
   animationSpec: AnimationSpec<Float>?,
-  runInitialAnimation: Boolean,
+  animateIn: Boolean,
   ranges: MutableCartesianChartRanges,
 ): State<CartesianChartModelWrapper> {
   var previousHashCode by remember { ValueWrapper<Int?>(null) }
@@ -63,7 +63,7 @@ internal fun CartesianChartModelProducer.collectAsState(
   val scope = rememberCoroutineScope()
   val isInPreview = LocalInspectionMode.current
   val chartState = rememberWrappedValue(chart)
-  DisposableEffect(chart.id, runInitialAnimation, isInPreview) {
+  DisposableEffect(chart.id, animateIn, isInPreview) {
     var mainAnimationJob: Job? = null
     var animationFrameJob: Job? = null
     var finalAnimationFrameJob: Job? = null
@@ -74,7 +74,7 @@ internal fun CartesianChartModelProducer.collectAsState(
         if (
           animationSpec != null &&
             !isInPreview &&
-            (modelWrapperState.value.model != null || runInitialAnimation)
+            (modelWrapperState.value.model != null || animateIn)
         ) {
           isAnimationRunning = true
           mainAnimationJob =
@@ -125,7 +125,7 @@ internal fun CartesianChartModelProducer.collectAsState(
           chartState.value.prepareForTransformation(model, extraStore, ranges)
         },
         transform = { extraStore, fraction -> chartState.value.transform(extraStore, fraction) },
-        extraStore = extraStore,
+        hostExtraStore = extraStore,
         updateRanges = { model ->
           ranges.reset()
           if (model != null) {

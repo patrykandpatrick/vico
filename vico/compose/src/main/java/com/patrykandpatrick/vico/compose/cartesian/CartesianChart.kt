@@ -23,13 +23,13 @@ import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesian
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
-import com.patrykandpatrick.vico.core.cartesian.CartesianLayerPadding
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
 import com.patrykandpatrick.vico.core.cartesian.FadingEdges
 import com.patrykandpatrick.vico.core.cartesian.axis.Axis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.core.cartesian.decoration.Decoration
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayer
+import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayerPadding
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerVisibilityListener
 import com.patrykandpatrick.vico.core.common.Legend

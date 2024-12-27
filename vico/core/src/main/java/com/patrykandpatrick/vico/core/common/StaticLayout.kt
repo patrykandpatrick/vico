@@ -70,13 +70,8 @@ internal fun StaticLayout.setLineCount(count: Int) = apply {
   setFieldValue(LINE_COUNT_FIELD, count)
 }
 
-internal fun Layout.getBounds(outBounds: RectF): RectF =
-  outBounds.apply {
-    left = 0f
-    top = 0f
-    right = widestLineWidth
-    bottom = heightWithSpacingAddition
-  }
+internal val Layout.bounds
+  get() = RectF(0f, 0f, widestLineWidth, heightWithSpacingAddition)
 
 internal val Layout.widestLineWidth: Float
   get() = (0..<lineCount).maxOf { lineIndex -> getLineWidth(lineIndex) }

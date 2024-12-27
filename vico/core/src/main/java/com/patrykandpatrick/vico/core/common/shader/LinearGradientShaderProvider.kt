@@ -24,11 +24,11 @@ import java.util.Objects
 
 /** @suppress */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public class LinearGradientShader(
+public class LinearGradientShaderProvider(
   private val colors: IntArray,
   private val positions: FloatArray?,
   private val isHorizontal: Boolean,
-) : CacheableDynamicShader() {
+) : CachingShaderProvider() {
   override fun createShader(
     context: DrawingContext,
     left: Float,
@@ -47,7 +47,7 @@ public class LinearGradientShader(
 
   override fun equals(other: Any?): Boolean =
     this === other ||
-      other is LinearGradientShader &&
+      other is LinearGradientShaderProvider &&
         colors.contentEquals(other.colors) &&
         positions.contentEquals(other.positions)
 

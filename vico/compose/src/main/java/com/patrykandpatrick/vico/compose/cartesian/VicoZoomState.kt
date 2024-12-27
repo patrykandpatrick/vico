@@ -26,10 +26,10 @@ import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
-import com.patrykandpatrick.vico.core.cartesian.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.Scroll
 import com.patrykandpatrick.vico.core.cartesian.Zoom
-import com.patrykandpatrick.vico.core.cartesian.scale
+import com.patrykandpatrick.vico.core.cartesian.layer.MutableCartesianLayerDimensions
+import com.patrykandpatrick.vico.core.cartesian.layer.scale
 import com.patrykandpatrick.vico.core.common.Defaults
 
 /** Houses information on a [CartesianChart]’s zoom factor. Allows for zoom customization. */
@@ -98,14 +98,14 @@ public class VicoZoomState {
 
   internal fun update(
     context: CartesianMeasuringContext,
-    horizontalDimensions: MutableHorizontalDimensions,
+    layerDimensions: MutableCartesianLayerDimensions,
     bounds: RectF,
   ) {
-    val minValue = minZoom.getValue(context, horizontalDimensions, bounds)
-    val maxValue = maxZoom.getValue(context, horizontalDimensions, bounds)
+    val minValue = minZoom.getValue(context, layerDimensions, bounds)
+    val maxValue = maxZoom.getValue(context, layerDimensions, bounds)
     valueRange = minValue..maxValue
-    if (!overridden) value = initialZoom.getValue(context, horizontalDimensions, bounds)
-    horizontalDimensions.scale(value)
+    if (!overridden) value = initialZoom.getValue(context, layerDimensions, bounds)
+    layerDimensions.scale(value)
   }
 
   internal fun zoom(factor: Float, centroidX: Float, scroll: Float, bounds: RectF): Scroll {
@@ -133,9 +133,9 @@ public class VicoZoomState {
 @Composable
 public fun rememberVicoZoomState(
   zoomEnabled: Boolean = true,
-  initialZoom: Zoom = remember { Zoom.max(Zoom.static(), Zoom.Content) },
+  initialZoom: Zoom = remember { Zoom.max(Zoom.fixed(), Zoom.Content) },
   minZoom: Zoom = Zoom.Content,
-  maxZoom: Zoom = remember { Zoom.max(Zoom.static(Defaults.MAX_ZOOM), Zoom.Content) },
+  maxZoom: Zoom = remember { Zoom.max(Zoom.fixed(Defaults.MAX_ZOOM), Zoom.Content) },
 ): VicoZoomState =
   rememberSaveable(
     zoomEnabled,
@@ -154,5 +154,5 @@ public fun rememberVicoZoomState(
 internal fun rememberDefaultVicoZoomState(scrollEnabled: Boolean) =
   rememberVicoZoomState(
     initialZoom =
-      if (scrollEnabled) remember { Zoom.max(Zoom.static(), Zoom.Content) } else Zoom.Content
+      if (scrollEnabled) remember { Zoom.max(Zoom.fixed(), Zoom.Content) } else Zoom.Content
   )

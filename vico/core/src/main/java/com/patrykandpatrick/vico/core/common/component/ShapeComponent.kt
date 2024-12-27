@@ -18,9 +18,9 @@ package com.patrykandpatrick.vico.core.common.component
 
 import android.graphics.Paint
 import android.graphics.Path
-import com.patrykandpatrick.vico.core.common.Dimensions
 import com.patrykandpatrick.vico.core.common.DrawingContext
 import com.patrykandpatrick.vico.core.common.Fill
+import com.patrykandpatrick.vico.core.common.Insets
 import com.patrykandpatrick.vico.core.common.alpha
 import com.patrykandpatrick.vico.core.common.half
 import com.patrykandpatrick.vico.core.common.shape.Shape
@@ -38,7 +38,7 @@ import com.patrykandpatrick.vico.core.common.shape.Shape
 public open class ShapeComponent(
   public val fill: Fill = Fill.Black,
   public val shape: Shape = Shape.Rectangle,
-  protected val margins: Dimensions = Dimensions.Empty,
+  protected val margins: Insets = Insets.Zero,
   public val strokeFill: Fill = Fill.Transparent,
   protected val strokeThicknessDp: Float = 0f,
   protected val shadow: Shadow? = null,
@@ -66,15 +66,17 @@ public open class ShapeComponent(
     right: Float,
     bottom: Float,
   ) {
-    fill.shader?.provideShader(context, left, top, right, bottom)?.let(paint::setShader)
-    strokeFill.shader?.provideShader(context, left, top, right, bottom)?.let(strokePaint::setShader)
+    fill.shaderProvider?.getShader(context, left, top, right, bottom)?.let(paint::setShader)
+    strokeFill.shaderProvider
+      ?.getShader(context, left, top, right, bottom)
+      ?.let(strokePaint::setShader)
   }
 
   override fun draw(context: DrawingContext, left: Float, top: Float, right: Float, bottom: Float) {
     with(context) {
-      var adjustedLeft = left + margins.getLeftDp(isLtr).pixels
+      var adjustedLeft = left + margins.getLeft(context)
       var adjustedTop = top + margins.topDp.pixels
-      var adjustedRight = right - margins.getRightDp(isLtr).pixels
+      var adjustedRight = right - margins.getRight(context)
       var adjustedBottom = bottom - margins.bottomDp.pixels
       if (adjustedLeft >= adjustedRight || adjustedTop >= adjustedBottom) return
       val strokeThickness = strokeThicknessDp.pixels
@@ -100,7 +102,7 @@ public open class ShapeComponent(
   public open fun copy(
     fill: Fill = this.fill,
     shape: Shape = this.shape,
-    margins: Dimensions = this.margins,
+    margins: Insets = this.margins,
     strokeFill: Fill = this.strokeFill,
     strokeThicknessDp: Float = this.strokeThicknessDp,
     shadow: Shadow? = this.shadow,

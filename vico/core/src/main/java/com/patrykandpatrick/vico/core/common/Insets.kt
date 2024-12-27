@@ -16,61 +16,67 @@
 
 package com.patrykandpatrick.vico.core.common
 
-import com.patrykandpatrick.vico.core.cartesian.CartesianLayerInsetter
+import androidx.compose.runtime.Immutable
 
 /**
- * Used to apply insets.
+ * Stores inset sizes for the sides of a rectangle. Used for margins and padding.
  *
- * @see CartesianLayerInsetter
+ * @param startDp the start inset’s size (in dp).
+ * @param topDp the top inset’s size (in dp).
+ * @param endDp the end inset’s size (in dp).
+ * @param bottomDp the bottom inset’s size (in dp).
  */
-public class Insets : HorizontalInsets {
-  /** The start inset’s size (in pixels). */
-  public override var start: Float = 0f
-    private set
+@Immutable
+public class Insets(
+  public val startDp: Float = 0f,
+  public val topDp: Float = 0f,
+  public val endDp: Float = 0f,
+  public val bottomDp: Float = 0f,
+) {
+  /** The sum of [startDp] and [endDp]. */
+  public val horizontalDp: Float
+    get() = startDp + endDp
 
-  /** The top inset’s size (in pixels). */
-  public var top: Float = 0f
-    private set
+  /** The sum of [topDp] and [bottomDp]. */
+  public val verticalDp: Float
+    get() = topDp + bottomDp
 
-  /** The end inset’s size (in pixels). */
-  public override var end: Float = 0f
-    private set
+  /** Creates an [Insets] instance with [startDp] = [endDp] and [topDp] = [bottomDp]. */
+  public constructor(
+    horizontalDp: Float = 0f,
+    verticalDp: Float = 0f,
+  ) : this(horizontalDp, verticalDp, horizontalDp, verticalDp)
 
-  /** The bottom inset’s size (in pixels). */
-  public var bottom: Float = 0f
-    private set
+  /** Creates an [Insets] instance with a common size for all four insets. */
+  public constructor(allDp: Float = 0f) : this(allDp, allDp, allDp, allDp)
 
-  /** The sum of [top] and [bottom]. */
-  public val vertical: Float
-    get() = top + bottom
+  /** Returns the left inset’s size. */
+  public fun getLeft(context: MeasuringContext): Float =
+    with(context) { (if (isLtr) startDp else endDp).pixels }
 
-  /** The largest of [start], [top], [end], and [bottom]. */
-  public val max: Float
-    get() = maxOf(start, top, end, bottom)
+  /** Returns the right inset’s size. */
+  public fun getRight(context: MeasuringContext): Float =
+    with(context) { (if (isLtr) endDp else startDp).pixels }
 
-  override fun ensureValuesAtLeast(start: Float, end: Float) {
-    this.start = this.start.coerceAtLeast(start)
-    this.end = this.end.coerceAtLeast(end)
+  override fun equals(other: Any?): Boolean =
+    this === other ||
+      other is Insets &&
+        startDp == other.startDp &&
+        topDp == other.topDp &&
+        endDp == other.endDp &&
+        bottomDp == other.bottomDp
+
+  override fun hashCode(): Int {
+    var result = startDp.hashCode()
+    result = 31 * result + topDp.hashCode()
+    result = 31 * result + endDp.hashCode()
+    result = 31 * result + bottomDp.hashCode()
+    return result
   }
 
-  /** Ensures that the stored values are no smaller than the provided ones. */
-  public fun ensureValuesAtLeast(
-    start: Float = this.start,
-    top: Float = this.top,
-    end: Float = this.end,
-    bottom: Float = this.bottom,
-  ) {
-    this.start = this.start.coerceAtLeast(start)
-    this.top = this.top.coerceAtLeast(top)
-    this.end = this.end.coerceAtLeast(end)
-    this.bottom = this.bottom.coerceAtLeast(bottom)
-  }
-
-  /** Clears the stored values. */
-  public fun clear() {
-    start = 0f
-    top = 0f
-    end = 0f
-    bottom = 0f
+  /** Houses an [Insets] singleton. */
+  public companion object {
+    /** An [Insets] instance with a size of zero for all four insets. */
+    public val Zero: Insets = Insets(0f, 0f, 0f, 0f)
   }
 }

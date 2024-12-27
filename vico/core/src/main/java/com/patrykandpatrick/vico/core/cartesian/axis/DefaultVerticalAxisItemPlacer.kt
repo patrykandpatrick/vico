@@ -18,6 +18,7 @@ package com.patrykandpatrick.vico.core.cartesian.axis
 
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
+import com.patrykandpatrick.vico.core.common.Position
 import com.patrykandpatrick.vico.core.common.data.CacheStore
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.core.common.getDivisors
@@ -57,33 +58,33 @@ internal class DefaultVerticalAxisItemPlacer(
     return listOf(yRange.minY, (yRange.minY + yRange.maxY).half, yRange.maxY)
   }
 
-  override fun getTopVerticalAxisInset(
+  override fun getTopLayerMargin(
     context: CartesianMeasuringContext,
-    verticalLabelPosition: VerticalAxis.VerticalLabelPosition,
+    verticalLabelPosition: Position.Vertical,
     maxLabelHeight: Float,
     maxLineThickness: Float,
   ) =
     when {
       !mode.insetsRequired(context) -> 0f
-      verticalLabelPosition == VerticalAxis.VerticalLabelPosition.Top ->
+      verticalLabelPosition == Position.Vertical.Top ->
         maxLabelHeight + (if (shiftTopLines) maxLineThickness else -maxLineThickness).half
-      verticalLabelPosition == VerticalAxis.VerticalLabelPosition.Center ->
+      verticalLabelPosition == Position.Vertical.Center ->
         (max(maxLabelHeight, maxLineThickness) +
             if (shiftTopLines) maxLineThickness else -maxLineThickness)
           .half
       else -> if (shiftTopLines) maxLineThickness else 0f
     }
 
-  override fun getBottomVerticalAxisInset(
+  override fun getBottomLayerMargin(
     context: CartesianMeasuringContext,
-    verticalLabelPosition: VerticalAxis.VerticalLabelPosition,
+    verticalLabelPosition: Position.Vertical,
     maxLabelHeight: Float,
     maxLineThickness: Float,
   ): Float =
     when {
       !mode.insetsRequired(context) -> 0f
-      verticalLabelPosition == VerticalAxis.VerticalLabelPosition.Top -> maxLineThickness
-      verticalLabelPosition == VerticalAxis.VerticalLabelPosition.Center ->
+      verticalLabelPosition == Position.Vertical.Top -> maxLineThickness
+      verticalLabelPosition == Position.Vertical.Center ->
         (max(maxLabelHeight, maxLineThickness) + maxLineThickness).half
       else -> maxLabelHeight + maxLineThickness.half
     }

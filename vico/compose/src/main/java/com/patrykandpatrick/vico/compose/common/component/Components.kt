@@ -30,8 +30,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.patrykandpatrick.vico.compose.common.pixelSize
 import com.patrykandpatrick.vico.core.common.Defaults
-import com.patrykandpatrick.vico.core.common.Dimensions
 import com.patrykandpatrick.vico.core.common.Fill
+import com.patrykandpatrick.vico.core.common.Insets
 import com.patrykandpatrick.vico.core.common.LayeredComponent
 import com.patrykandpatrick.vico.core.common.component.Component
 import com.patrykandpatrick.vico.core.common.component.LineComponent
@@ -46,7 +46,7 @@ public fun rememberLineComponent(
   fill: Fill = Fill.Black,
   thickness: Dp = Defaults.LINE_COMPONENT_THICKNESS_DP.dp,
   shape: Shape = Shape.Rectangle,
-  margins: Dimensions = Dimensions.Empty,
+  margins: Insets = Insets.Zero,
   strokeFill: Fill = Fill.Transparent,
   strokeThickness: Dp = 0.dp,
   shadow: Shadow? = null,
@@ -59,7 +59,7 @@ public fun rememberLineComponent(
 public fun shapeComponent(
   fill: Fill = Fill.Black,
   shape: Shape = Shape.Rectangle,
-  margins: Dimensions = Dimensions.Empty,
+  margins: Insets = Insets.Zero,
   strokeFill: Fill = Fill.Transparent,
   strokeThickness: Dp = 0.dp,
   shadow: Shadow? = null,
@@ -70,7 +70,7 @@ public fun shapeComponent(
 public fun rememberShapeComponent(
   fill: Fill = Fill.Black,
   shape: Shape = Shape.Rectangle,
-  margins: Dimensions = Dimensions.Empty,
+  margins: Insets = Insets.Zero,
   strokeFill: Fill = Fill.Transparent,
   strokeThickness: Dp = 0.dp,
   shadow: Shadow? = null,
@@ -82,12 +82,12 @@ public fun rememberShapeComponent(
 /** Creates and remembers a [LayeredComponent]. */
 @Composable
 public fun rememberLayeredComponent(
-  rear: Component,
+  back: Component,
   front: Component,
-  padding: Dimensions = Dimensions.Empty,
-  margins: Dimensions = Dimensions.Empty,
+  padding: Insets = Insets.Zero,
+  margins: Insets = Insets.Zero,
 ): LayeredComponent =
-  remember(rear, front, padding, margins) { LayeredComponent(rear, front, padding, margins) }
+  remember(back, front, padding, margins) { LayeredComponent(back, front, padding, margins) }
 
 /** Creates and remembers a [TextComponent]. */
 @Composable
@@ -99,8 +99,8 @@ public fun rememberTextComponent(
   lineHeight: TextUnit? = null,
   lineCount: Int = Defaults.TEXT_COMPONENT_LINE_COUNT,
   truncateAt: TextUtils.TruncateAt = TextUtils.TruncateAt.END,
-  margins: Dimensions = Dimensions.Empty,
-  padding: Dimensions = Dimensions.Empty,
+  margins: Insets = Insets.Zero,
+  padding: Insets = Insets.Zero,
   background: Component? = null,
   minWidth: TextComponent.MinWidth = TextComponent.MinWidth.fixed(),
 ): TextComponent =
@@ -133,8 +133,8 @@ public fun rememberTextComponent(
   }
 
 /** Creates a [Shadow]. */
-public fun shadow(radius: Dp, dx: Dp = 0.dp, dy: Dp = 0.dp, color: Color? = null): Shadow =
-  Shadow(radius.value, dx.value, dy.value, color?.toArgb() ?: Defaults.SHADOW_COLOR)
+public fun shadow(radius: Dp, x: Dp = 0.dp, y: Dp = 0.dp, color: Color? = null): Shadow =
+  Shadow(radius.value, x.value, y.value, color?.toArgb() ?: Defaults.SHADOW_COLOR)
 
 /** A [Dp] version of [TextComponent.MinWidth.fixed]. */
 public fun TextComponent.MinWidth.Companion.fixed(value: Dp = 0.dp): TextComponent.MinWidth =

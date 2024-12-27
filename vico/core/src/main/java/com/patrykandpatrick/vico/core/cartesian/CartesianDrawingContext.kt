@@ -20,8 +20,8 @@ import android.graphics.Canvas
 import android.graphics.RectF
 import androidx.annotation.RestrictTo
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayer
+import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayerDimensions
 import com.patrykandpatrick.vico.core.common.DrawingContext
-import com.patrykandpatrick.vico.core.common.Point
 import kotlin.math.ceil
 
 /** A [DrawingContext] extension with [CartesianChart]-specific data. */
@@ -29,11 +29,8 @@ public interface CartesianDrawingContext : DrawingContext, CartesianMeasuringCon
   /** The bounds of the [CartesianLayer] area. */
   public val layerBounds: RectF
 
-  /** Holds information on the [CartesianChart]’s horizontal dimensions. */
-  public val horizontalDimensions: HorizontalDimensions
-
-  /** The point inside the chart’s coordinates where physical touch is occurring. */
-  public val markerTouchPoint: Point?
+  /** Stores shared [CartesianLayer] dimensions. */
+  public val layerDimensions: CartesianLayerDimensions
 
   /** The scroll value (in pixels). */
   public val scroll: Float
@@ -46,24 +43,23 @@ public interface CartesianDrawingContext : DrawingContext, CartesianMeasuringCon
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public fun CartesianMeasuringContext.getMaxScrollDistance(
   chartWidth: Float,
-  horizontalDimensions: HorizontalDimensions,
+  layerDimensions: CartesianLayerDimensions,
 ): Float =
   ceil(
-    (layoutDirectionMultiplier * (horizontalDimensions.getContentWidth(this) - chartWidth)).run {
+    (layoutDirectionMultiplier * (layerDimensions.getContentWidth(this) - chartWidth)).run {
       if (isLtr) coerceAtLeast(0f) else coerceAtMost(0f)
     }
   )
 
 internal fun CartesianDrawingContext.getMaxScrollDistance() =
-  getMaxScrollDistance(layerBounds.width(), horizontalDimensions)
+  getMaxScrollDistance(layerBounds.width(), layerDimensions)
 
 /** @suppress */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public fun CartesianDrawingContext(
   measuringContext: CartesianMeasuringContext,
   canvas: Canvas,
-  markerTouchPoint: Point?,
-  horizontalDimensions: HorizontalDimensions,
+  layerDimensions: CartesianLayerDimensions,
   layerBounds: RectF,
   scroll: Float,
   zoom: Float,
@@ -73,15 +69,13 @@ public fun CartesianDrawingContext(
 
     override var canvas: Canvas = canvas
 
-    override val markerTouchPoint: Point? = markerTouchPoint
-
-    override val horizontalDimensions: HorizontalDimensions = horizontalDimensions
+    override val layerDimensions: CartesianLayerDimensions = layerDimensions
 
     override val scroll: Float = scroll
 
     override val zoom: Float = zoom
 
-    override fun withOtherCanvas(canvas: Canvas, block: () -> Unit) {
+    override fun withCanvas(canvas: Canvas, block: () -> Unit) {
       val originalCanvas = this.canvas
       this.canvas = canvas
       block()

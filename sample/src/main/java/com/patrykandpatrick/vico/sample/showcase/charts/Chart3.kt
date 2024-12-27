@@ -37,8 +37,8 @@ import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
 import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.common.component.shapeComponent
-import com.patrykandpatrick.vico.compose.common.dimensions
 import com.patrykandpatrick.vico.compose.common.fill
+import com.patrykandpatrick.vico.compose.common.insets
 import com.patrykandpatrick.vico.compose.common.shader.horizontalGradient
 import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
@@ -48,7 +48,7 @@ import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
-import com.patrykandpatrick.vico.core.common.shader.DynamicShader
+import com.patrykandpatrick.vico.core.common.shader.ShaderProvider
 import com.patrykandpatrick.vico.core.common.shape.CorneredShape
 import com.patrykandpatrick.vico.databinding.Chart3Binding
 import com.patrykandpatrick.vico.sample.showcase.Defaults
@@ -94,7 +94,7 @@ private fun ComposeChart3(modelProducer: CartesianChartModelProducer, modifier: 
                 fill =
                   LineCartesianLayer.LineFill.single(
                     fill(
-                      DynamicShader.horizontalGradient(
+                      ShaderProvider.horizontalGradient(
                         arrayOf(Color(LINE_COLOR_1), Color(LINE_COLOR_2))
                       )
                     )
@@ -111,8 +111,8 @@ private fun ComposeChart3(modelProducer: CartesianChartModelProducer, modifier: 
             titleComponent =
               rememberTextComponent(
                 color = Color.Black,
-                margins = dimensions(end = 4.dp),
-                padding = dimensions(8.dp, 2.dp),
+                margins = insets(end = 4.dp),
+                padding = insets(8.dp, 2.dp),
                 background = rememberShapeComponent(fill(Color(LINE_COLOR_1)), CorneredShape.Pill),
               ),
             title = stringResource(R.string.y_axis),
@@ -124,8 +124,8 @@ private fun ComposeChart3(modelProducer: CartesianChartModelProducer, modifier: 
             titleComponent =
               rememberTextComponent(
                 color = Color.White,
-                margins = dimensions(top = 4.dp),
-                padding = dimensions(8.dp, 2.dp),
+                margins = insets(top = 4.dp),
+                padding = insets(8.dp, 2.dp),
                 background =
                   shapeComponent(fill(bottomAxisLabelBackgroundColor), CorneredShape.Pill),
               ),
@@ -155,7 +155,7 @@ private fun ViewChart3(modelProducer: CartesianChartModelProducer, modifier: Mod
             LineCartesianLayer.Line(
               fill =
                 LineCartesianLayer.LineFill.single(
-                  fill(DynamicShader.horizontalGradient(LINE_COLOR_1, LINE_COLOR_2))
+                  fill(ShaderProvider.horizontalGradient(LINE_COLOR_1, LINE_COLOR_2))
                 ),
               stroke = LineCartesianLayer.LineStroke.Dashed(),
             )

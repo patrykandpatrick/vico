@@ -20,8 +20,7 @@ import androidx.annotation.RestrictTo
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.core.cartesian.axis.Axis
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
-import com.patrykandpatrick.vico.core.common.HorizontalPosition
-import com.patrykandpatrick.vico.core.common.VerticalPosition
+import com.patrykandpatrick.vico.core.common.Position
 import com.patrykandpatrick.vico.core.common.component.ShapeComponent
 import com.patrykandpatrick.vico.core.common.component.TextComponent
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
@@ -50,8 +49,8 @@ public class HorizontalBox(
   private val box: ShapeComponent,
   private val labelComponent: TextComponent? = null,
   private val label: (ExtraStore) -> CharSequence = { getLabel(y(it)) },
-  private val horizontalLabelPosition: HorizontalPosition = HorizontalPosition.Start,
-  private val verticalLabelPosition: VerticalPosition = VerticalPosition.Top,
+  private val horizontalLabelPosition: Position.Horizontal = Position.Horizontal.Start,
+  private val verticalLabelPosition: Position.Vertical = Position.Vertical.Top,
   private val labelRotationDegrees: Float = 0f,
   private val verticalAxisPosition: Axis.Position.Vertical? = null,
 ) : Decoration {
@@ -68,9 +67,9 @@ public class HorizontalBox(
           .toFloat()
       val labelY =
         when (verticalLabelPosition) {
-          VerticalPosition.Top -> topY
-          VerticalPosition.Center -> (topY + bottomY).half
-          VerticalPosition.Bottom -> bottomY
+          Position.Vertical.Top -> topY
+          Position.Vertical.Center -> (topY + bottomY).half
+          Position.Vertical.Bottom -> bottomY
         }
       box.draw(context, layerBounds.left, topY, layerBounds.right, bottomY)
       labelComponent?.draw(
@@ -78,9 +77,9 @@ public class HorizontalBox(
         text = label,
         x =
           when (horizontalLabelPosition) {
-            HorizontalPosition.Start -> layerBounds.getStart(isLtr)
-            HorizontalPosition.Center -> layerBounds.centerX()
-            HorizontalPosition.End -> layerBounds.getEnd(isLtr)
+            Position.Horizontal.Start -> layerBounds.getStart(isLtr)
+            Position.Horizontal.Center -> layerBounds.centerX()
+            Position.Horizontal.End -> layerBounds.getEnd(isLtr)
           },
         y = labelY,
         horizontalPosition = -horizontalLabelPosition,
@@ -93,7 +92,7 @@ public class HorizontalBox(
                 text = label,
                 rotationDegrees = labelRotationDegrees,
               ),
-            y = labelY,
+            referenceY = labelY,
           ),
         maxWidth = layerBounds.width().toInt(),
         rotationDegrees = labelRotationDegrees,

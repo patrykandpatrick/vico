@@ -19,7 +19,7 @@ package com.patrykandpatrick.vico.core.cartesian.axis
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
-import com.patrykandpatrick.vico.core.common.Insets
+import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayerMargins
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -35,12 +35,12 @@ internal class AxisManager {
     context: CartesianMeasuringContext,
     canvasBounds: RectF,
     layerBounds: RectF,
-    insets: Insets,
+    layerMargins: CartesianLayerMargins,
   ) {
-    startAxis?.setStartAxisBounds(context, canvasBounds, layerBounds, insets)
-    topAxis?.setTopAxisBounds(context, canvasBounds, insets)
-    endAxis?.setEndAxisBounds(context, canvasBounds, layerBounds, insets)
-    bottomAxis?.setBottomAxisBounds(context, canvasBounds, layerBounds, insets)
+    startAxis?.setStartAxisBounds(context, canvasBounds, layerBounds, layerMargins)
+    topAxis?.setTopAxisBounds(context, canvasBounds, layerMargins)
+    endAxis?.setEndAxisBounds(context, canvasBounds, layerBounds, layerMargins)
+    bottomAxis?.setBottomAxisBounds(context, canvasBounds, layerBounds, layerMargins)
     setRestrictedBounds()
   }
 
@@ -48,13 +48,13 @@ internal class AxisManager {
     context: CartesianMeasuringContext,
     canvasBounds: RectF,
     layerBounds: RectF,
-    insets: Insets,
+    layerMargins: CartesianLayerMargins,
   ) {
     with(context) {
       setBounds(
-        left = if (isLtr) canvasBounds.left else canvasBounds.right - insets.start,
+        left = if (isLtr) canvasBounds.left else canvasBounds.right - layerMargins.start,
         top = layerBounds.top,
-        right = if (isLtr) canvasBounds.left + insets.start else canvasBounds.right,
+        right = if (isLtr) canvasBounds.left + layerMargins.start else canvasBounds.right,
         bottom = layerBounds.bottom,
       )
     }
@@ -63,14 +63,14 @@ internal class AxisManager {
   private fun Axis<Axis.Position.Horizontal.Top>.setTopAxisBounds(
     context: CartesianMeasuringContext,
     canvasBounds: RectF,
-    insets: Insets,
+    layerMargins: CartesianLayerMargins,
   ) {
     with(context) {
       setBounds(
-        left = canvasBounds.left + if (isLtr) insets.start else insets.end,
+        left = canvasBounds.left + if (isLtr) layerMargins.start else layerMargins.end,
         top = canvasBounds.top,
-        right = canvasBounds.right - if (isLtr) insets.end else insets.start,
-        bottom = canvasBounds.top + insets.top,
+        right = canvasBounds.right - if (isLtr) layerMargins.end else layerMargins.start,
+        bottom = canvasBounds.top + layerMargins.top,
       )
     }
   }
@@ -79,13 +79,13 @@ internal class AxisManager {
     context: CartesianMeasuringContext,
     canvasBounds: RectF,
     layerBounds: RectF,
-    insets: Insets,
+    layerMargins: CartesianLayerMargins,
   ) {
     with(context) {
       setBounds(
-        left = if (isLtr) canvasBounds.right - insets.end else canvasBounds.left,
+        left = if (isLtr) canvasBounds.right - layerMargins.end else canvasBounds.left,
         top = layerBounds.top,
-        right = if (isLtr) canvasBounds.right else canvasBounds.left + insets.end,
+        right = if (isLtr) canvasBounds.right else canvasBounds.left + layerMargins.end,
         bottom = layerBounds.bottom,
       )
     }
@@ -95,14 +95,14 @@ internal class AxisManager {
     context: CartesianMeasuringContext,
     canvasBounds: RectF,
     layerBounds: RectF,
-    insets: Insets,
+    layerMargins: CartesianLayerMargins,
   ) {
     with(context) {
       setBounds(
-        left = canvasBounds.left + if (isLtr) insets.start else insets.end,
+        left = canvasBounds.left + if (isLtr) layerMargins.start else layerMargins.end,
         top = layerBounds.bottom,
-        right = canvasBounds.right - if (isLtr) insets.end else insets.start,
-        bottom = layerBounds.bottom + insets.bottom,
+        right = canvasBounds.right - if (isLtr) layerMargins.end else layerMargins.start,
+        bottom = layerBounds.bottom + layerMargins.bottom,
       )
     }
   }

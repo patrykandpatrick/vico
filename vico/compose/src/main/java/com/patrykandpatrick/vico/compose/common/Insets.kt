@@ -18,19 +18,15 @@ package com.patrykandpatrick.vico.compose.common
 
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.patrykandpatrick.vico.core.common.Dimensions
+import com.patrykandpatrick.vico.core.common.Insets
 
-/** Creates a [Dimensions] instance with a common value for each coordinate. */
-public fun dimensions(all: Dp = 0.dp): Dimensions = Dimensions(all.value)
+/** Creates an [Insets] instance. */
+public fun insets(all: Dp = 0.dp): Insets = Insets(all.value)
 
-/** Creates a [Dimensions] instance using the provided measurements. */
-public fun dimensions(horizontal: Dp = 0.dp, vertical: Dp = 0.dp): Dimensions =
-  Dimensions(horizontal.value, vertical.value)
+/** Creates an [Insets] instance. */
+public fun insets(horizontal: Dp = 0.dp, vertical: Dp = 0.dp): Insets =
+  Insets(horizontal.value, vertical.value)
 
-/** Creates a [Dimensions] instance using the provided measurements. */
-public fun dimensions(
-  start: Dp = 0.dp,
-  top: Dp = 0.dp,
-  end: Dp = 0.dp,
-  bottom: Dp = 0.dp,
-): Dimensions = Dimensions(start.value, top.value, end.value, bottom.value)
+/** Creates an [Insets] instance. */
+public fun insets(start: Dp = 0.dp, top: Dp = 0.dp, end: Dp = 0.dp, bottom: Dp = 0.dp): Insets =
+  Insets(start.value, top.value, end.value, bottom.value)

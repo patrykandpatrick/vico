@@ -17,7 +17,7 @@
 <resources>
     <attr name="dataLabelRotationDegrees" format="float" />
     <attr name="dataLabelStyle" format="reference" />
-    <attr name="dataLabelVerticalPosition" format="enum">
+    <attr name="dataLabelPosition" format="enum">
         <enum name="top" value="0" />
         <enum name="center" value="1" />
         <enum name="bottom" value="2" />
@@ -310,7 +310,7 @@
 
         <!-- The vertical position of each data label relative to the top edge of its respective
         column. -->
-        <attr name="dataLabelVerticalPosition" />
+        <attr name="dataLabelPosition" />
 
         <!-- The distance between neighboring grouped columns. -->
         <attr name="groupedColumnSpacing" format="dimension" />
@@ -486,7 +486,7 @@
 
         <!-- The vertical position of each data label relative to its respective point on the
         line. -->
-        <attr name="dataLabelVerticalPosition" />
+        <attr name="dataLabelPosition" />
 
         <!-- The line stroke cap. -->
         <attr name="android:strokeLineCap"/>

@@ -16,6 +16,7 @@
 
 package com.patrykandpatrick.vico.core.cartesian.data
 
+import androidx.annotation.RestrictTo
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
 import com.patrykandpatrick.vico.core.cartesian.axis.Axis
 
@@ -52,7 +53,8 @@ public interface CartesianChartRanges {
     public val length: Double
   }
 
-  /** An empty [CartesianChartRanges] implementation. */
+  /** @suppress */
+  @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
   public object Empty : CartesianChartRanges {
     private const val ERROR_MESSAGE = "`CartesianRanges.Empty` shouldn’t be used."
 

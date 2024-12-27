@@ -14,21 +14,24 @@
  * limitations under the License.
  */
 
-package com.patrykandpatrick.vico.core.cartesian
+package com.patrykandpatrick.vico.core.cartesian.layer
 
 import androidx.compose.runtime.Immutable
-import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayer
 
 /**
- * Stores [CartesianLayer] padding values. [scalableStartDp] and [scalableEndDp] are multiplied by
- * the zoom factor, unlike [unscalableStartDp] and [unscalableEndDp].
+ * Stores [CartesianLayer] padding sizes. Scalable padding depends on the zoom factor.
+ *
+ * @property scalableStartDp the size of the scalable start padding (in dp).
+ * @property scalableEndDp the size of the scalable end padding (in dp).
+ * @property unscalableStartDp the size of the unscalable start padding (in dp).
+ * @property unscalableEndDp the size of the unscalable end padding (in dp).
  */
 @Immutable
 public class CartesianLayerPadding(
-  internal val scalableStartDp: Float = 0f,
-  internal val scalableEndDp: Float = 0f,
-  internal val unscalableStartDp: Float = 0f,
-  internal val unscalableEndDp: Float = 0f,
+  public val scalableStartDp: Float = 0f,
+  public val scalableEndDp: Float = 0f,
+  public val unscalableStartDp: Float = 0f,
+  public val unscalableEndDp: Float = 0f,
 ) {
   override fun equals(other: Any?): Boolean =
     this === other ||

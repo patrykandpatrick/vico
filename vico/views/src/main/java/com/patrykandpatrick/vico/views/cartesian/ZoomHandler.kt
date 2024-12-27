@@ -20,10 +20,10 @@ import android.graphics.RectF
 import android.os.Bundle
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
-import com.patrykandpatrick.vico.core.cartesian.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.Scroll
 import com.patrykandpatrick.vico.core.cartesian.Zoom
-import com.patrykandpatrick.vico.core.cartesian.scale
+import com.patrykandpatrick.vico.core.cartesian.layer.MutableCartesianLayerDimensions
+import com.patrykandpatrick.vico.core.cartesian.layer.scale
 import com.patrykandpatrick.vico.core.common.Defaults
 
 /**
@@ -36,9 +36,9 @@ import com.patrykandpatrick.vico.core.common.Defaults
  */
 public class ZoomHandler(
   internal val zoomEnabled: Boolean = true,
-  private val initialZoom: Zoom = Zoom.max(Zoom.static(), Zoom.Content),
+  private val initialZoom: Zoom = Zoom.max(Zoom.fixed(), Zoom.Content),
   private val minZoom: Zoom = Zoom.Content,
-  private val maxZoom: Zoom = Zoom.max(Zoom.static(Defaults.MAX_ZOOM), Zoom.Content),
+  private val maxZoom: Zoom = Zoom.max(Zoom.fixed(Defaults.MAX_ZOOM), Zoom.Content),
 ) {
   private var overridden = false
   private val listeners = mutableSetOf<Listener>()
@@ -63,14 +63,14 @@ public class ZoomHandler(
 
   internal fun update(
     context: CartesianMeasuringContext,
-    horizontalDimensions: MutableHorizontalDimensions,
+    layerDimensions: MutableCartesianLayerDimensions,
     bounds: RectF,
   ) {
-    val minValue = minZoom.getValue(context, horizontalDimensions, bounds)
-    val maxValue = maxZoom.getValue(context, horizontalDimensions, bounds)
+    val minValue = minZoom.getValue(context, layerDimensions, bounds)
+    val maxValue = maxZoom.getValue(context, layerDimensions, bounds)
     valueRange = minValue..maxValue
-    if (!overridden) value = initialZoom.getValue(context, horizontalDimensions, bounds)
-    horizontalDimensions.scale(value)
+    if (!overridden) value = initialZoom.getValue(context, layerDimensions, bounds)
+    layerDimensions.scale(value)
   }
 
   internal fun zoom(factor: Float, centroidX: Float, scroll: Float, bounds: RectF): Scroll {
@@ -107,12 +107,12 @@ public class ZoomHandler(
   /** Facilitates listening for zoom events. */
   public interface Listener {
     /** Called when the zoom factor changes. */
-    public fun onValueChanged(oldValue: Float, newValue: Float) {}
+    public fun onValueChanged(old: Float, new: Float) {}
 
     /** Called when the range of zoom factors changes. */
     public fun onValueRangeChanged(
-      oldValueRange: ClosedFloatingPointRange<Float>,
-      newValueRange: ClosedFloatingPointRange<Float>,
+      old: ClosedFloatingPointRange<Float>,
+      new: ClosedFloatingPointRange<Float>,
     ) {}
   }
 
@@ -123,7 +123,7 @@ public class ZoomHandler(
     fun default(zoomEnabled: Boolean, scrollEnabled: Boolean) =
       ZoomHandler(
         zoomEnabled = zoomEnabled,
-        initialZoom = if (scrollEnabled) Zoom.max(Zoom.static(), Zoom.Content) else Zoom.Content,
+        initialZoom = if (scrollEnabled) Zoom.max(Zoom.fixed(), Zoom.Content) else Zoom.Content,
       )
   }
 }

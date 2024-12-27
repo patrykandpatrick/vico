@@ -161,7 +161,7 @@ public class ColumnCartesianLayerModel : CartesianLayerModel {
   }
 
   /** Facilitates the creation of [ColumnCartesianLayerModel]s and [Partial]s. */
-  public class BuilderScope {
+  public class BuilderScope internal constructor() {
     internal val series = mutableListOf<List<Entry>>()
 
     /**

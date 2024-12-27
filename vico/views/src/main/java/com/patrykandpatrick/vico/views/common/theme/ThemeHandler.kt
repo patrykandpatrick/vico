@@ -23,13 +23,14 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.animation.AccelerateInterpolator
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
-import com.patrykandpatrick.vico.core.cartesian.CartesianLayerPadding
 import com.patrykandpatrick.vico.core.cartesian.FadingEdges
 import com.patrykandpatrick.vico.core.cartesian.axis.Axis
 import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
+import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayerPadding
 import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.Defaults.FADING_EDGE_VISIBILITY_THRESHOLD_DP
+import com.patrykandpatrick.vico.core.common.Position
 import com.patrykandpatrick.vico.core.common.hasFlag
 import com.patrykandpatrick.vico.core.common.shape.DashedShape
 import com.patrykandpatrick.vico.views.R
@@ -178,7 +179,7 @@ internal class ThemeHandler(private val context: Context, attrs: AttributeSet?) 
                     0,
                   )],
             verticalLabelPosition =
-              VerticalAxis.VerticalLabelPosition.entries[
+              Position.Vertical.entries[
                   axisStyle.getInteger(R.styleable.AxisStyle_verticalAxisVerticalLabelPosition, 0)],
             tick = tick,
             tickLengthDp = tickLengthDp,
@@ -267,8 +268,8 @@ internal class ThemeHandler(private val context: Context, attrs: AttributeSet?) 
         }
 
       FadingEdges(
-        startEdgeWidthDp = startLength,
-        endEdgeWidthDp = endLength,
+        startWidthDp = startLength,
+        endWidthDp = endLength,
         visibilityThresholdDp = threshold,
         visibilityInterpolator = interpolator ?: AccelerateInterpolator(),
       )

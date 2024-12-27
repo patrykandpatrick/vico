@@ -22,9 +22,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.core.common.AdditionScope
 import com.patrykandpatrick.vico.core.common.Defaults
-import com.patrykandpatrick.vico.core.common.Dimensions
 import com.patrykandpatrick.vico.core.common.DrawingContext
 import com.patrykandpatrick.vico.core.common.HorizontalLegend
+import com.patrykandpatrick.vico.core.common.Insets
 import com.patrykandpatrick.vico.core.common.LegendItem
 import com.patrykandpatrick.vico.core.common.MeasuringContext
 import com.patrykandpatrick.vico.core.common.VerticalLegend
@@ -37,7 +37,7 @@ public fun <M : MeasuringContext, D : DrawingContext> rememberVerticalLegend(
   iconSize: Dp = Defaults.LEGEND_ICON_SIZE.dp,
   iconLabelSpacing: Dp = Defaults.LEGEND_ICON_LABEL_SPACING.dp,
   rowSpacing: Dp = Defaults.LEGEND_ROW_SPACING.dp,
-  padding: Dimensions = Dimensions.Empty,
+  padding: Insets = Insets.Zero,
 ): VerticalLegend<M, D> =
   remember(items, iconSize, iconLabelSpacing, rowSpacing, padding) {
     VerticalLegend(items, iconSize.value, iconLabelSpacing.value, rowSpacing.value, padding)
@@ -51,7 +51,7 @@ public fun <M : MeasuringContext, D : DrawingContext> rememberHorizontalLegend(
   iconLabelSpacing: Dp = Defaults.LEGEND_ICON_LABEL_SPACING.dp,
   rowSpacing: Dp = Defaults.LEGEND_ROW_SPACING.dp,
   columnSpacing: Dp = Defaults.LEGEND_COLUMN_SPACING.dp,
-  padding: Dimensions = Dimensions.Empty,
+  padding: Insets = Insets.Zero,
 ): HorizontalLegend<M, D> =
   remember(items, iconSize, iconLabelSpacing, rowSpacing, columnSpacing, padding) {
     HorizontalLegend(

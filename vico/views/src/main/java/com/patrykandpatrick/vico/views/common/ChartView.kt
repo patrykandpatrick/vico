@@ -43,7 +43,7 @@ import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
 
 /** Displays a [CartesianChart]. */
-public abstract class ChartView<Model>
+public abstract class ChartView<M>
 @JvmOverloads
 constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) :
   FrameLayout(context, attrs, defStyleAttr) {
@@ -58,7 +58,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     )
 
   /** Houses the chart data. */
-  public abstract var model: Model?
+  public abstract var model: M?
 
   protected val animator: ValueAnimator =
     ValueAnimator.ofFloat(Animation.range.start, Animation.range.endInclusive).apply {
@@ -80,11 +80,8 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 
   protected var placeholder: View? = null
 
-  /**
-   * Whether to display an animation when the chart is created. In this animation, the value of each
-   * chart entry is animated from zero to the actual value.
-   */
-  public var runInitialAnimation: Boolean = true
+  /** Whether to run an initial animation when the [ChartView] is created. */
+  public var animateIn: Boolean = true
 
   override fun onAttachedToWindow() {
     super.onAttachedToWindow()
@@ -150,7 +147,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   }
 
   protected fun startAnimation(transformModel: suspend (key: Any, fraction: Float) -> Unit) {
-    if (model != null || runInitialAnimation) {
+    if (model != null || animateIn) {
       handler?.post {
         isAnimationRunning = true
         animator.start { fraction ->

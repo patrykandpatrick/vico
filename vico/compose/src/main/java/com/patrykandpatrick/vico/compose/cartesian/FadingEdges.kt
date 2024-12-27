@@ -27,52 +27,33 @@ import com.patrykandpatrick.vico.core.cartesian.FadingEdges
 import com.patrykandpatrick.vico.core.common.Defaults.FADING_EDGE_VISIBILITY_THRESHOLD_DP
 import com.patrykandpatrick.vico.core.common.Defaults.FADING_EDGE_WIDTH_DP
 
-/**
- * Creates and remembers a [FadingEdges] instance.
- *
- * @param startEdgeWidth the width of the fade overlay for the start edge (in dp).
- * @param endEdgeWidth the width of the fade overlay for the end edge (in dp).
- * @param visibilityThreshold the scroll distance over which the overlays fade in and out (in dp).
- * @param visibilityEasing used for the fading edges’ fade-in and fade-out animations. This is a
- *   mapping of the degree to which [visibilityThreshold] has been satisfied to the opacity of the
- *   fading edges.
- * @see FadingEdges
- */
+/** Creates and remembers a [FadingEdges] instance. */
 @Composable
 public fun rememberFadingEdges(
-  startEdgeWidth: Dp = FadingEdgesDefaults.edgeWidth,
-  endEdgeWidth: Dp = FadingEdgesDefaults.edgeWidth,
+  startWidth: Dp = FadingEdgesDefaults.edgeWidth,
+  endWidth: Dp = FadingEdgesDefaults.edgeWidth,
   visibilityThreshold: Dp = FadingEdgesDefaults.visibilityThreshold,
   visibilityEasing: Easing = FadingEdgesDefaults.visibilityEasing,
 ): FadingEdges =
-  remember(startEdgeWidth, endEdgeWidth, visibilityThreshold, visibilityEasing) {
+  remember(startWidth, endWidth, visibilityThreshold, visibilityEasing) {
     FadingEdges(
-      startEdgeWidth.value,
-      endEdgeWidth.value,
+      startWidth.value,
+      endWidth.value,
       visibilityThreshold.value,
       TimeInterpolator(visibilityEasing::transform),
     )
   }
 
-/**
- * Creates and remembers a [FadingEdges] instance.
- *
- * @param edgeWidth the width of the fade overlay.
- * @param visibilityThreshold the scroll distance over which the overlays fade in and out (in dp).
- * @param visibilityEasing used for the fading edges’ fade-in and fade-out animations. This is a
- *   mapping of the degree to which [visibilityThreshold] has been satisfied to the opacity of the
- *   fading edges.
- * @see FadingEdges
- */
+/** Creates and remembers a [FadingEdges] instance. */
 @Composable
 public fun rememberFadingEdges(
-  edgeWidth: Dp = FadingEdgesDefaults.edgeWidth,
+  width: Dp = FadingEdgesDefaults.edgeWidth,
   visibilityThreshold: Dp = FadingEdgesDefaults.visibilityThreshold,
   visibilityEasing: Easing = FadingEdgesDefaults.visibilityEasing,
 ): FadingEdges =
   rememberFadingEdges(
-    startEdgeWidth = edgeWidth,
-    endEdgeWidth = edgeWidth,
+    startWidth = width,
+    endWidth = width,
     visibilityThreshold = visibilityThreshold,
     visibilityEasing = visibilityEasing,
   )

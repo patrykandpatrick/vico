@@ -34,60 +34,57 @@ public open class LegendItem(
   /**
    * Measures the height of the label.
    *
-   * @param maxWidth the maximum width.
-   * @param iconPaddingDp the padding between the icon and the label.
-   * @param iconSizeDp the size of the icon.
+   * @param iconSizeDp the [LegendItem.icon] size (in dp).
+   * @param iconLabelSpacingDp the spacing between [LegendItem.icon] and [LegendItem.labelComponent]
+   *   (in dp).
+   * @param maxWidth the maximum [LegendItem] width.
    */
   public fun getLabelHeight(
     context: MeasuringContext,
-    maxWidth: Float,
-    iconPaddingDp: Float,
     iconSizeDp: Float,
+    iconLabelSpacingDp: Float,
+    maxWidth: Float,
   ): Float =
-    with(context) {
-      labelComponent.getHeight(
-        context = context,
-        text = label,
-        maxWidth = (maxWidth - iconSizeDp.pixels - iconPaddingDp.pixels).toInt(),
-      )
-    }
+    labelComponent.getHeight(
+      context = context,
+      text = label,
+      maxWidth = (maxWidth - context.run { iconSizeDp.pixels + iconLabelSpacingDp.pixels }).toInt(),
+    )
 
   /**
    * Measures the width of the label.
    *
-   * @param maxWidth the maximum width.
-   * @param iconPaddingDp the padding between the icon and the label.
-   * @param iconSizeDp the size of the icon.
+   * @param iconSizeDp the [LegendItem.icon] size (in dp).
+   * @param iconLabelSpacingDp the spacing between [LegendItem.icon] and [LegendItem.labelComponent]
+   *   (in dp).
+   * @param maxWidth the maximum [LegendItem] width.
    */
   public fun getLabelWidth(
     context: MeasuringContext,
-    maxWidth: Float,
-    iconPaddingDp: Float,
     iconSizeDp: Float,
+    iconLabelSpacingDp: Float,
+    maxWidth: Float,
   ): Float =
-    with(context) {
-      labelComponent.getWidth(
-        context = context,
-        text = label,
-        maxWidth = (maxWidth - iconSizeDp.pixels - iconPaddingDp.pixels).toInt(),
-      )
-    }
+    labelComponent.getWidth(
+      context = context,
+      text = label,
+      maxWidth = (maxWidth - context.run { iconSizeDp.pixels + iconLabelSpacingDp.pixels }).toInt(),
+    )
 
   /**
    * Measures the width of this [LegendItem].
    *
-   * @param maxWidth the maximum width.
-   * @param iconPaddingDp the padding between the icon and the label.
-   * @param iconSizeDp the size of the icon.
+   * @param iconSizeDp the [LegendItem.icon] size (in dp).
+   * @param iconLabelSpacingDp the spacing between [LegendItem.icon] and [LegendItem.labelComponent]
+   *   (in dp).
+   * @param maxWidth the maximum [LegendItem] width.
    */
   public fun getWidth(
     context: MeasuringContext,
-    maxWidth: Float,
-    iconPaddingDp: Float,
     iconSizeDp: Float,
+    iconLabelSpacingDp: Float,
+    maxWidth: Float,
   ): Float =
-    with(context) {
-      getLabelWidth(context, maxWidth, iconPaddingDp, iconSizeDp) +
-        (iconSizeDp + iconPaddingDp).pixels
-    }
+    getLabelWidth(context, iconSizeDp, iconLabelSpacingDp, maxWidth) +
+      context.run { (iconSizeDp + iconLabelSpacingDp).pixels }
 }

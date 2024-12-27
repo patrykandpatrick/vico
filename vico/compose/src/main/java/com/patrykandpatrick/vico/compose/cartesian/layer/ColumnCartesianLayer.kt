@@ -30,8 +30,8 @@ import com.patrykandpatrick.vico.core.cartesian.data.ColumnCartesianLayerDrawing
 import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer.MergeMode
 import com.patrykandpatrick.vico.core.common.Defaults
+import com.patrykandpatrick.vico.core.common.Position
 import com.patrykandpatrick.vico.core.common.ValueWrapper
-import com.patrykandpatrick.vico.core.common.VerticalPosition
 import com.patrykandpatrick.vico.core.common.component.TextComponent
 import com.patrykandpatrick.vico.core.common.data.CartesianLayerDrawingModelInterpolator
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
@@ -55,14 +55,14 @@ public fun rememberColumnCartesianLayer(
   columnCollectionSpacing: Dp = Defaults.COLUMN_COLLECTION_SPACING.dp,
   mergeMode: (ExtraStore) -> MergeMode = { MergeMode.grouped() },
   dataLabel: TextComponent? = null,
-  dataLabelVerticalPosition: VerticalPosition = VerticalPosition.Top,
+  dataLabelPosition: Position.Vertical = Position.Vertical.Top,
   dataLabelValueFormatter: CartesianValueFormatter = remember { CartesianValueFormatter.decimal() },
   dataLabelRotationDegrees: Float = 0f,
   rangeProvider: CartesianLayerRangeProvider = remember { CartesianLayerRangeProvider.auto() },
   verticalAxisPosition: Axis.Position.Vertical? = null,
   drawingModelInterpolator:
     CartesianLayerDrawingModelInterpolator<
-      ColumnCartesianLayerDrawingModel.ColumnInfo,
+      ColumnCartesianLayerDrawingModel.Entry,
       ColumnCartesianLayerDrawingModel,
     > =
     remember {
@@ -75,7 +75,7 @@ public fun rememberColumnCartesianLayer(
     columnCollectionSpacing,
     mergeMode,
     dataLabel,
-    dataLabelVerticalPosition,
+    dataLabelPosition,
     dataLabelValueFormatter,
     dataLabelRotationDegrees,
     rangeProvider,
@@ -88,7 +88,7 @@ public fun rememberColumnCartesianLayer(
         columnCollectionSpacing.value,
         mergeMode,
         dataLabel,
-        dataLabelVerticalPosition,
+        dataLabelPosition,
         dataLabelValueFormatter,
         dataLabelRotationDegrees,
         rangeProvider,
@@ -100,7 +100,7 @@ public fun rememberColumnCartesianLayer(
           columnCollectionSpacing.value,
           mergeMode,
           dataLabel,
-          dataLabelVerticalPosition,
+          dataLabelPosition,
           dataLabelValueFormatter,
           dataLabelRotationDegrees,
           rangeProvider,

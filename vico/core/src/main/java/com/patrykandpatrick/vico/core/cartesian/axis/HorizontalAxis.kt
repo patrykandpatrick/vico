@@ -19,15 +19,15 @@ package com.patrykandpatrick.vico.core.cartesian.axis
 import androidx.annotation.RestrictTo
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
-import com.patrykandpatrick.vico.core.cartesian.HorizontalDimensions
-import com.patrykandpatrick.vico.core.cartesian.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartRanges
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.formatForAxis
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayer
-import com.patrykandpatrick.vico.core.common.Insets
-import com.patrykandpatrick.vico.core.common.VerticalPosition
+import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayerDimensions
+import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayerMargins
+import com.patrykandpatrick.vico.core.cartesian.layer.MutableCartesianLayerDimensions
+import com.patrykandpatrick.vico.core.common.Position
 import com.patrykandpatrick.vico.core.common.component.LineComponent
 import com.patrykandpatrick.vico.core.common.component.TextComponent
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
@@ -74,11 +74,11 @@ protected constructor(
     titleComponent,
     title,
   ) {
-  protected val Axis.Position.Horizontal.textVerticalPosition: VerticalPosition
+  protected val Axis.Position.Horizontal.textVerticalPosition: Position.Vertical
     get() =
       when (this) {
-        Axis.Position.Horizontal.Top -> VerticalPosition.Top
-        Axis.Position.Horizontal.Bottom -> VerticalPosition.Bottom
+        Axis.Position.Horizontal.Top -> Position.Vertical.Top
+        Axis.Position.Horizontal.Bottom -> Position.Vertical.Bottom
       }
 
   /** @suppress */
@@ -119,37 +119,25 @@ protected constructor(
           bounds.top
         }
       val tickBottom = tickTop + lineThickness + tickLength
-      val fullXRange = getFullXRange(horizontalDimensions)
-      val maxLabelWidth = getMaxLabelWidth(horizontalDimensions, fullXRange)
+      val fullXRange = getFullXRange(layerDimensions)
+      val maxLabelWidth = getMaxLabelWidth(layerDimensions, fullXRange)
 
       canvas.clipRect(
         bounds.left -
-          itemPlacer.getStartHorizontalAxisInset(
-            this,
-            horizontalDimensions,
-            tickThickness,
-            maxLabelWidth,
-          ),
+          itemPlacer.getStartLayerMargin(this, layerDimensions, tickThickness, maxLabelWidth),
         min(bounds.top, layerBounds.top),
         bounds.right +
-          itemPlacer.getEndHorizontalAxisInset(
-            this,
-            horizontalDimensions,
-            tickThickness,
-            maxLabelWidth,
-          ),
+          itemPlacer.getEndLayerMargin(this, layerDimensions, tickThickness, maxLabelWidth),
         max(bounds.bottom, layerBounds.bottom),
       )
 
       val textY = if (position == Axis.Position.Horizontal.Top) tickTop else tickBottom
       val baseCanvasX =
-        bounds.getStart(isLtr) - scroll +
-          horizontalDimensions.startPadding * layoutDirectionMultiplier
+        bounds.getStart(isLtr) - scroll + layerDimensions.startPadding * layoutDirectionMultiplier
       val firstVisibleX =
         fullXRange.start +
-          scroll / horizontalDimensions.xSpacing * ranges.xStep * layoutDirectionMultiplier
-      val lastVisibleX =
-        firstVisibleX + bounds.width() / horizontalDimensions.xSpacing * ranges.xStep
+          scroll / layerDimensions.xSpacing * ranges.xStep * layoutDirectionMultiplier
+      val lastVisibleX = firstVisibleX + bounds.width() / layerDimensions.xSpacing * ranges.xStep
       val visibleXRange = firstVisibleX..lastVisibleX
       val labelValues = itemPlacer.getLabelValues(this, visibleXRange, fullXRange, maxLabelWidth)
       val lineValues = itemPlacer.getLineValues(this, visibleXRange, fullXRange, maxLabelWidth)
@@ -158,12 +146,12 @@ protected constructor(
         val canvasX =
           baseCanvasX +
             ((x - ranges.minX) / ranges.xStep).toFloat() *
-              horizontalDimensions.xSpacing *
+              layerDimensions.xSpacing *
               layoutDirectionMultiplier
         val previousX = labelValues.getOrNull(index - 1) ?: (fullXRange.start.doubled - x)
         val nextX = labelValues.getOrNull(index + 1) ?: (fullXRange.endInclusive.doubled - x)
         val maxWidth =
-          ceil(min(x - previousX, nextX - x) / ranges.xStep * horizontalDimensions.xSpacing).toInt()
+          ceil(min(x - previousX, nextX - x) / ranges.xStep * layerDimensions.xSpacing).toInt()
 
         label?.draw(
           context = this,
@@ -180,9 +168,9 @@ protected constructor(
         if (lineValues == null) {
           tick?.drawVertical(
             context = this,
+            x = canvasX + getLinesCorrectionX(x, fullXRange),
             top = tickTop,
             bottom = tickBottom,
-            centerX = canvasX + getLinesCorrectionX(x, fullXRange),
           )
         }
       }
@@ -190,14 +178,14 @@ protected constructor(
       lineValues?.forEach { x ->
         tick?.drawVertical(
           context = this,
-          top = tickTop,
-          bottom = tickBottom,
-          centerX =
+          x =
             baseCanvasX +
               ((x - ranges.minX) / ranges.xStep).toFloat() *
-                horizontalDimensions.xSpacing *
+                layerDimensions.xSpacing *
                 layoutDirectionMultiplier +
               getLinesCorrectionX(x, fullXRange),
+          top = tickTop,
+          bottom = tickBottom,
         )
       }
 
@@ -212,7 +200,7 @@ protected constructor(
         context = this,
         left = layerBounds.left - lineExtensionLength,
         right = layerBounds.right + lineExtensionLength,
-        centerY =
+        y =
           if (position == Axis.Position.Horizontal.Top) {
             bounds.bottom - lineThickness.half
           } else {
@@ -227,9 +215,9 @@ protected constructor(
           y = if (position == Axis.Position.Horizontal.Top) bounds.top else bounds.bottom,
           verticalPosition =
             if (position == Axis.Position.Horizontal.Top) {
-              VerticalPosition.Bottom
+              Position.Vertical.Bottom
             } else {
-              VerticalPosition.Top
+              Position.Vertical.Top
             },
           maxWidth = bounds.width().toInt(),
           text = title,
@@ -259,25 +247,25 @@ protected constructor(
           val canvasX =
             baseCanvasX +
               ((x - ranges.minX) / ranges.xStep).toFloat() *
-                horizontalDimensions.xSpacing *
+                layerDimensions.xSpacing *
                 layoutDirectionMultiplier
 
           guideline
             .takeUnless { x.isBoundOf(fullXRange) }
-            ?.drawVertical(this, layerBounds.top, layerBounds.bottom, canvasX)
+            ?.drawVertical(this, canvasX, layerBounds.top, layerBounds.bottom)
         }
       } else {
         lineValues.forEach { x ->
           val canvasX =
             baseCanvasX +
               ((x - ranges.minX) / ranges.xStep).toFloat() *
-                horizontalDimensions.xSpacing *
+                layerDimensions.xSpacing *
                 layoutDirectionMultiplier +
               getLinesCorrectionX(x, fullXRange)
 
           guideline
             .takeUnless { x.isBoundOf(fullXRange) }
-            ?.drawVertical(this, layerBounds.top, layerBounds.bottom, canvasX)
+            ?.drawVertical(this, canvasX, layerBounds.top, layerBounds.bottom)
         }
       }
 
@@ -297,14 +285,14 @@ protected constructor(
 
   override fun drawOverLayers(context: CartesianDrawingContext) {}
 
-  override fun updateHorizontalDimensions(
+  override fun updateLayerDimensions(
     context: CartesianMeasuringContext,
-    horizontalDimensions: MutableHorizontalDimensions,
+    layerDimensions: MutableCartesianLayerDimensions,
   ) {
     val label = label ?: return
     val ranges = context.ranges
     val maxLabelWidth =
-      context.getMaxLabelWidth(horizontalDimensions, context.getFullXRange(horizontalDimensions))
+      context.getMaxLabelWidth(layerDimensions, context.getFullXRange(layerDimensions))
     val firstLabelValue = itemPlacer.getFirstLabelValue(context, maxLabelWidth)
     val lastLabelValue = itemPlacer.getLastLabelValue(context, maxLabelWidth)
     if (firstLabelValue != null) {
@@ -325,9 +313,9 @@ protected constructor(
           .half
       if (!context.zoomEnabled) {
         unscalableStartPadding -=
-          (firstLabelValue - ranges.minX).toFloat() * horizontalDimensions.xSpacing
+          (firstLabelValue - ranges.minX).toFloat() * layerDimensions.xSpacing
       }
-      horizontalDimensions.ensureValuesAtLeast(unscalableStartPadding = unscalableStartPadding)
+      layerDimensions.ensureValuesAtLeast(unscalableStartPadding = unscalableStartPadding)
     }
     if (lastLabelValue != null) {
       val text =
@@ -347,45 +335,40 @@ protected constructor(
           .half
       if (!context.zoomEnabled) {
         unscalableEndPadding -=
-          ((ranges.maxX - lastLabelValue) * horizontalDimensions.xSpacing).toFloat()
+          ((ranges.maxX - lastLabelValue) * layerDimensions.xSpacing).toFloat()
       }
-      horizontalDimensions.ensureValuesAtLeast(unscalableEndPadding = unscalableEndPadding)
+      layerDimensions.ensureValuesAtLeast(unscalableEndPadding = unscalableEndPadding)
     }
   }
 
-  override fun updateInsets(
+  override fun updateLayerMargins(
     context: CartesianMeasuringContext,
-    horizontalDimensions: HorizontalDimensions,
+    layerMargins: CartesianLayerMargins,
+    layerDimensions: CartesianLayerDimensions,
     model: CartesianChartModel,
-    insets: Insets,
   ) {
     val maxLabelWidth =
-      context.getMaxLabelWidth(horizontalDimensions, context.getFullXRange(horizontalDimensions))
-    val height = getHeight(context, horizontalDimensions, maxLabelWidth)
-    insets.ensureValuesAtLeast(
-      itemPlacer.getStartHorizontalAxisInset(
+      context.getMaxLabelWidth(layerDimensions, context.getFullXRange(layerDimensions))
+    val height = getHeight(context, layerDimensions, maxLabelWidth)
+    layerMargins.ensureValuesAtLeast(
+      itemPlacer.getStartLayerMargin(
         context,
-        horizontalDimensions,
+        layerDimensions,
         context.tickThickness,
         maxLabelWidth,
       ),
-      itemPlacer.getEndHorizontalAxisInset(
-        context,
-        horizontalDimensions,
-        context.tickThickness,
-        maxLabelWidth,
-      ),
+      itemPlacer.getEndLayerMargin(context, layerDimensions, context.tickThickness, maxLabelWidth),
     )
     when (position) {
-      Axis.Position.Horizontal.Top -> insets.ensureValuesAtLeast(top = height)
-      Axis.Position.Horizontal.Bottom -> insets.ensureValuesAtLeast(bottom = height)
+      Axis.Position.Horizontal.Top -> layerMargins.ensureValuesAtLeast(top = height)
+      Axis.Position.Horizontal.Bottom -> layerMargins.ensureValuesAtLeast(bottom = height)
     }
   }
 
   protected fun CartesianMeasuringContext.getFullXRange(
-    horizontalDimensions: HorizontalDimensions
+    layerDimensions: CartesianLayerDimensions
   ): ClosedFloatingPointRange<Double> =
-    with(horizontalDimensions) {
+    with(layerDimensions) {
       val start = ranges.minX - startPadding / xSpacing * ranges.xStep
       val end = ranges.maxX + endPadding / xSpacing * ranges.xStep
       start..end
@@ -393,15 +376,15 @@ protected constructor(
 
   protected open fun getHeight(
     context: CartesianMeasuringContext,
-    horizontalDimensions: HorizontalDimensions,
+    layerDimensions: CartesianLayerDimensions,
     maxLabelWidth: Float,
   ): Float =
     with(context) {
-      val fullXRange = getFullXRange(horizontalDimensions)
+      val fullXRange = getFullXRange(layerDimensions)
 
       when (size) {
         is Size.Auto -> {
-          val labelHeight = getMaxLabelHeight(horizontalDimensions, fullXRange, maxLabelWidth)
+          val labelHeight = getMaxLabelHeight(layerDimensions, fullXRange, maxLabelWidth)
           val titleComponentHeight =
             title
               ?.let { title ->
@@ -417,9 +400,9 @@ protected constructor(
               (if (position == Axis.Position.Horizontal.Bottom) lineThickness else 0f) +
               tickLength)
             .coerceAtMost(canvasBounds.height() / MAX_HEIGHT_DIVISOR)
-            .coerceIn(size.minSizeDp.pixels, size.maxSizeDp.pixels)
+            .coerceIn(size.minDp.pixels, size.maxDp.pixels)
         }
-        is Size.Exact -> size.sizeDp.pixels
+        is Size.Fixed -> size.valueDp.pixels
         is Size.Fraction -> canvasBounds.height() * size.fraction
         is Size.Text ->
           label
@@ -429,12 +412,12 @@ protected constructor(
     }
 
   protected fun CartesianMeasuringContext.getMaxLabelWidth(
-    horizontalDimensions: HorizontalDimensions,
+    layerDimensions: CartesianLayerDimensions,
     fullXRange: ClosedFloatingPointRange<Double>,
   ): Float {
     val label = label ?: return 0f
     return itemPlacer
-      .getWidthMeasurementLabelValues(this, horizontalDimensions, fullXRange)
+      .getWidthMeasurementLabelValues(this, layerDimensions, fullXRange)
       .maxOfOrNull { value ->
         val text =
           valueFormatter.formatForAxis(context = this, value = value, verticalAxisPosition = null)
@@ -449,13 +432,13 @@ protected constructor(
   }
 
   protected fun CartesianMeasuringContext.getMaxLabelHeight(
-    horizontalDimensions: HorizontalDimensions,
+    layerDimensions: CartesianLayerDimensions,
     fullXRange: ClosedFloatingPointRange<Double>,
     maxLabelWidth: Float,
   ): Float {
     val label = label ?: return 0f
     return itemPlacer
-      .getHeightMeasurementLabelValues(this, horizontalDimensions, fullXRange, maxLabelWidth)
+      .getHeightMeasurementLabelValues(this, layerDimensions, fullXRange, maxLabelWidth)
       .maxOf { value ->
         val text =
           valueFormatter.formatForAxis(context = this, value = value, verticalAxisPosition = null)
@@ -549,7 +532,7 @@ protected constructor(
      */
     public fun getWidthMeasurementLabelValues(
       context: CartesianMeasuringContext,
-      horizontalDimensions: HorizontalDimensions,
+      layerDimensions: CartesianLayerDimensions,
       fullXRange: ClosedFloatingPointRange<Double>,
     ): List<Double>
 
@@ -560,7 +543,7 @@ protected constructor(
      */
     public fun getHeightMeasurementLabelValues(
       context: CartesianMeasuringContext,
-      horizontalDimensions: HorizontalDimensions,
+      layerDimensions: CartesianLayerDimensions,
       fullXRange: ClosedFloatingPointRange<Double>,
       maxLabelWidth: Float,
     ): List<Double>
@@ -577,18 +560,18 @@ protected constructor(
       maxLabelWidth: Float,
     ): List<Double>? = null
 
-    /** Returns the start inset required by the [HorizontalAxis]. */
-    public fun getStartHorizontalAxisInset(
+    /** Returns the start [CartesianLayer]-area margin required by the [HorizontalAxis]. */
+    public fun getStartLayerMargin(
       context: CartesianMeasuringContext,
-      horizontalDimensions: HorizontalDimensions,
+      layerDimensions: CartesianLayerDimensions,
       tickThickness: Float,
       maxLabelWidth: Float,
     ): Float
 
-    /** Returns the end inset required by the [HorizontalAxis]. */
-    public fun getEndHorizontalAxisInset(
+    /** Returns the end [CartesianLayer]-area margin required by the [HorizontalAxis]. */
+    public fun getEndLayerMargin(
       context: CartesianMeasuringContext,
-      horizontalDimensions: HorizontalDimensions,
+      layerDimensions: CartesianLayerDimensions,
       tickThickness: Float,
       maxLabelWidth: Float,
     ): Float

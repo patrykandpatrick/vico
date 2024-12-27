@@ -22,10 +22,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
-import com.patrykandpatrick.vico.core.cartesian.CartesianLayerPadding
+import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
 import com.patrykandpatrick.vico.core.cartesian.MutableCartesianMeasuringContext
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartRanges
+import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayerPadding
+import com.patrykandpatrick.vico.core.common.Point
 
 @Composable
 internal fun rememberCartesianMeasuringContext(
@@ -36,27 +38,31 @@ internal fun rememberCartesianMeasuringContext(
   zoomEnabled: Boolean,
   layerPadding: CartesianLayerPadding,
   spToPx: (Float) -> Float,
-): MutableCartesianMeasuringContext =
-  remember {
-      MutableCartesianMeasuringContext(
-        canvasBounds = canvasBounds,
-        density = 0f,
-        isLtr = true,
-        model = model,
-        ranges = ranges,
-        scrollEnabled = scrollEnabled,
-        zoomEnabled = zoomEnabled,
-        layerPadding = layerPadding,
-        spToPx = spToPx,
-      )
-    }
-    .apply {
-      this.density = LocalDensity.current.density
-      this.isLtr = LocalLayoutDirection.current == LayoutDirection.Ltr
-      this.model = model
-      this.ranges = ranges
-      this.scrollEnabled = scrollEnabled
-      this.zoomEnabled = zoomEnabled
-      this.layerPadding = layerPadding
-      this.spToPx = spToPx
-    }
+  pointerPosition: Point?,
+): CartesianMeasuringContext {
+  val density = LocalDensity.current.density
+  val isLtr = LocalLayoutDirection.current == LayoutDirection.Ltr
+  return remember(
+    canvasBounds,
+    model,
+    ranges,
+    scrollEnabled,
+    zoomEnabled,
+    layerPadding,
+    spToPx,
+    pointerPosition,
+  ) {
+    MutableCartesianMeasuringContext(
+      canvasBounds,
+      density,
+      isLtr,
+      model,
+      ranges,
+      scrollEnabled,
+      zoomEnabled,
+      layerPadding,
+      pointerPosition,
+      spToPx,
+    )
+  }
+}

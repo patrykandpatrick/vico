@@ -27,9 +27,4 @@ public interface Bounded {
   public fun setBounds(left: Number, top: Number, right: Number, bottom: Number) {
     bounds.set(left, top, right, bottom)
   }
-
-  /** Sets the coordinates of the bounds to the provided bounds. */
-  public fun setBounds(bounds: RectF) {
-    this.bounds.set(bounds)
-  }
 }

@@ -21,12 +21,12 @@ import android.graphics.BitmapShader
 import android.graphics.Shader
 import com.patrykandpatrick.vico.core.common.DrawingContext
 
-internal data class VicoBitmapShader(
+internal data class BitmapShaderProvider(
   private val bitmap: Bitmap,
   private val xTileMode: Shader.TileMode,
   private val yTileMode: Shader.TileMode,
-) : DynamicShader {
-  override fun provideShader(
+) : ShaderProvider {
+  override fun getShader(
     context: DrawingContext,
     left: Float,
     top: Float,

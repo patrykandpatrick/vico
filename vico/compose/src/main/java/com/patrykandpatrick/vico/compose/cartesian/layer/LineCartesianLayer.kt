@@ -31,8 +31,8 @@ import com.patrykandpatrick.vico.core.cartesian.data.LineCartesianLayerDrawingMo
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.layer.getDefaultAreaFill
 import com.patrykandpatrick.vico.core.common.Defaults
+import com.patrykandpatrick.vico.core.common.Position
 import com.patrykandpatrick.vico.core.common.ValueWrapper
-import com.patrykandpatrick.vico.core.common.VerticalPosition
 import com.patrykandpatrick.vico.core.common.component.Component
 import com.patrykandpatrick.vico.core.common.component.TextComponent
 import com.patrykandpatrick.vico.core.common.data.CartesianLayerDrawingModelInterpolator
@@ -53,7 +53,7 @@ public fun rememberLineCartesianLayer(
   verticalAxisPosition: Axis.Position.Vertical? = null,
   drawingModelInterpolator:
     CartesianLayerDrawingModelInterpolator<
-      LineCartesianLayerDrawingModel.PointInfo,
+      LineCartesianLayerDrawingModel.Entry,
       LineCartesianLayerDrawingModel,
     > =
     remember {
@@ -102,7 +102,7 @@ public fun LineCartesianLayer.Companion.rememberLine(
     LineCartesianLayer.PointConnector.cubic()
   },
   dataLabel: TextComponent? = null,
-  dataLabelVerticalPosition: VerticalPosition = VerticalPosition.Top,
+  dataLabelPosition: Position.Vertical = Position.Vertical.Top,
   dataLabelValueFormatter: CartesianValueFormatter = remember { CartesianValueFormatter.decimal() },
   dataLabelRotationDegrees: Float = 0f,
 ): LineCartesianLayer.Line =
@@ -113,7 +113,7 @@ public fun LineCartesianLayer.Companion.rememberLine(
     pointProvider,
     pointConnector,
     dataLabel,
-    dataLabelVerticalPosition,
+    dataLabelPosition,
     dataLabelRotationDegrees,
     dataLabelRotationDegrees,
   ) {
@@ -124,7 +124,7 @@ public fun LineCartesianLayer.Companion.rememberLine(
       pointProvider,
       pointConnector,
       dataLabel,
-      dataLabelVerticalPosition,
+      dataLabelPosition,
       dataLabelValueFormatter,
       dataLabelRotationDegrees,
     )

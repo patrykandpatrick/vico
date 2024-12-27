@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package com.patrykandpatrick.vico.core.cartesian
+package com.patrykandpatrick.vico.core.cartesian.layer
 
-/** Holds information on a [CartesianChart]’s horizontal dimensions. */
-public interface HorizontalDimensions {
+import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
+
+/** Stores shared [CartesianLayer] dimensions. */
+public interface CartesianLayerDimensions {
   /** The distance between neighboring major _x_ values (in pixels). This can be scaled. */
   public val xSpacing: Float
 

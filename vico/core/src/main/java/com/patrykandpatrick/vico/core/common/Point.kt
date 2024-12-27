@@ -16,12 +16,6 @@
 
 package com.patrykandpatrick.vico.core.common
 
-/** Creates a new [Point] with the provided coordinates. */
-public fun Point(x: Float, y: Float): Point = Point(packFloats(x, y))
-
-/** Creates a new [Point] with the provided coordinates. */
-public fun Point(x: Int, y: Int): Point = Point(packInts(x, y))
-
 /** Represents a point in a coordinate system. */
 @JvmInline
 public value class Point internal constructor(private val packedValue: Long) {
@@ -33,11 +27,7 @@ public value class Point internal constructor(private val packedValue: Long) {
   public val y: Float
     get() = unpackFloat2(packedValue)
 
-  /** @see x */
-  public operator fun component1(): Float = x
-
-  /** @see y */
-  public operator fun component2(): Float = y
+  public constructor(x: Float, y: Float) : this(packFloats(x, y))
 
   /**
    * Copies this [Point], updating one or both of the coordinates. If providing new values for both

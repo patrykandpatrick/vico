@@ -41,12 +41,12 @@ import com.patrykandpatrick.vico.compose.cartesian.data.component2
 import com.patrykandpatrick.vico.compose.cartesian.data.component3
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
-import com.patrykandpatrick.vico.core.cartesian.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartRanges
 import com.patrykandpatrick.vico.core.cartesian.data.MutableCartesianChartRanges
 import com.patrykandpatrick.vico.core.cartesian.data.toImmutable
+import com.patrykandpatrick.vico.core.cartesian.layer.MutableCartesianLayerDimensions
 import com.patrykandpatrick.vico.core.common.Defaults.CHART_HEIGHT
 import com.patrykandpatrick.vico.core.common.Point
 import com.patrykandpatrick.vico.core.common.ValueWrapper
@@ -67,9 +67,8 @@ import kotlinx.coroutines.launch
  * @param zoomState houses information on the [CartesianChart]’s zoom factor. Allows for zoom
  *   customization.
  * @param animationSpec the [AnimationSpec] for difference animations.
- * @param runInitialAnimation whether to display an animation when the chart is created. In this
- *   animation, the value of each chart entry is animated from zero to the actual value. This
- *   animation isn’t run in previews.
+ * @param animateIn whether to run an initial animation when the [CartesianChartHost] enters
+ *   composition. The animation is skipped for previews.
  * @param placeholder shown when no [CartesianChartModel] is available.
  */
 @Composable
@@ -80,12 +79,11 @@ public fun CartesianChartHost(
   scrollState: VicoScrollState = rememberVicoScrollState(),
   zoomState: VicoZoomState = rememberDefaultVicoZoomState(scrollState.scrollEnabled),
   animationSpec: AnimationSpec<Float>? = defaultCartesianDiffAnimationSpec,
-  runInitialAnimation: Boolean = true,
+  animateIn: Boolean = true,
   placeholder: @Composable BoxScope.() -> Unit = {},
 ) {
   val mutableRanges = remember(chart) { MutableCartesianChartRanges() }
-  val modelWrapper by
-    modelProducer.collectAsState(chart, animationSpec, runInitialAnimation, mutableRanges)
+  val modelWrapper by modelProducer.collectAsState(chart, animationSpec, animateIn, mutableRanges)
   val (model, previousModel, ranges) = modelWrapper
 
   CartesianChartHostBox(modifier) {
@@ -138,7 +136,7 @@ internal fun CartesianChartHostImpl(
   previousModel: CartesianChartModel? = null,
 ) {
   val canvasBounds = remember { RectF() }
-  val markerTouchPoint = remember { mutableStateOf<Point?>(null) }
+  val pointerPosition = remember { mutableStateOf<Point?>(null) }
   val measuringContext =
     rememberCartesianMeasuringContext(
       canvasBounds = canvasBounds,
@@ -149,15 +147,16 @@ internal fun CartesianChartHostImpl(
       layerPadding =
         remember(chart.layerPadding, model.extraStore) { chart.layerPadding(model.extraStore) },
       spToPx = with(LocalContext.current) { ::spToPx },
+      pointerPosition = pointerPosition.value,
     )
 
   val coroutineScope = rememberCoroutineScope()
   var previousModelID by remember { ValueWrapper(model.id) }
-  val horizontalDimensions = remember { MutableHorizontalDimensions() }
+  val layerDimensions = remember { MutableCartesianLayerDimensions() }
 
   LaunchedEffect(scrollState.pointerXDeltas) {
     scrollState.pointerXDeltas.collect { delta ->
-      markerTouchPoint.value?.let { point -> markerTouchPoint.value = point.copy(point.x + delta) }
+      pointerPosition.value?.let { point -> pointerPosition.value = point.copy(point.x + delta) }
     }
   }
 
@@ -169,7 +168,7 @@ internal fun CartesianChartHostImpl(
         .chartTouchEvent(
           setTouchPoint =
             remember(chart.marker == null) {
-              if (chart.marker != null) markerTouchPoint.component2() else null
+              if (chart.marker != null) pointerPosition.component2() else null
             },
           isScrollEnabled = scrollState.scrollEnabled,
           scrollState = scrollState,
@@ -192,13 +191,13 @@ internal fun CartesianChartHostImpl(
     if (canvas.width == 0 || canvas.height == 0) return@Canvas
     canvasBounds.set(left = 0, top = 0, right = size.width, bottom = size.height)
 
-    horizontalDimensions.clear()
-    chart.prepare(measuringContext, horizontalDimensions, canvasBounds)
+    layerDimensions.clear()
+    chart.prepare(measuringContext, layerDimensions)
 
     if (chart.layerBounds.isEmpty) return@Canvas
 
-    zoomState.update(measuringContext, horizontalDimensions, chart.layerBounds)
-    scrollState.update(measuringContext, chart.layerBounds, horizontalDimensions)
+    zoomState.update(measuringContext, layerDimensions, chart.layerBounds)
+    scrollState.update(measuringContext, chart.layerBounds, layerDimensions)
 
     if (model.id != previousModelID) {
       coroutineScope.launch { scrollState.autoScroll(model, previousModel) }
@@ -207,16 +206,15 @@ internal fun CartesianChartHostImpl(
 
     val drawingContext =
       CartesianDrawingContext(
-        measuringContext = measuringContext,
-        canvas = canvas,
-        markerTouchPoint = markerTouchPoint.value,
-        horizontalDimensions = horizontalDimensions,
-        layerBounds = chart.layerBounds,
-        scroll = scrollState.value,
-        zoom = zoomState.value,
+        measuringContext,
+        canvas,
+        layerDimensions,
+        chart.layerBounds,
+        scrollState.value,
+        zoomState.value,
       )
 
-    chart.draw(drawingContext, markerTouchPoint.value)
+    chart.draw(drawingContext)
     measuringContext.reset()
   }
 }

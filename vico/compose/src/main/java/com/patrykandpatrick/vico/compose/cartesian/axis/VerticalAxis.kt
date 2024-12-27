@@ -25,6 +25,7 @@ import com.patrykandpatrick.vico.core.cartesian.axis.BaseAxis
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.common.Defaults
+import com.patrykandpatrick.vico.core.common.Position
 import com.patrykandpatrick.vico.core.common.component.LineComponent
 import com.patrykandpatrick.vico.core.common.component.TextComponent
 
@@ -36,8 +37,7 @@ public fun VerticalAxis.Companion.rememberStart(
   labelRotationDegrees: Float = Defaults.AXIS_LABEL_ROTATION_DEGREES,
   horizontalLabelPosition: VerticalAxis.HorizontalLabelPosition =
     VerticalAxis.HorizontalLabelPosition.Outside,
-  verticalLabelPosition: VerticalAxis.VerticalLabelPosition =
-    VerticalAxis.VerticalLabelPosition.Center,
+  verticalLabelPosition: Position.Vertical = Position.Vertical.Center,
   valueFormatter: CartesianValueFormatter = remember { CartesianValueFormatter.decimal() },
   tick: LineComponent? = rememberAxisTickComponent(),
   tickLength: Dp = Defaults.AXIS_TICK_LENGTH.dp,
@@ -87,8 +87,7 @@ public fun VerticalAxis.Companion.rememberEnd(
   labelRotationDegrees: Float = Defaults.AXIS_LABEL_ROTATION_DEGREES,
   horizontalLabelPosition: VerticalAxis.HorizontalLabelPosition =
     VerticalAxis.HorizontalLabelPosition.Outside,
-  verticalLabelPosition: VerticalAxis.VerticalLabelPosition =
-    VerticalAxis.VerticalLabelPosition.Center,
+  verticalLabelPosition: Position.Vertical = Position.Vertical.Center,
   valueFormatter: CartesianValueFormatter = remember { CartesianValueFormatter.decimal() },
   tick: LineComponent? = rememberAxisTickComponent(),
   tickLength: Dp = Defaults.AXIS_TICK_LENGTH.dp,

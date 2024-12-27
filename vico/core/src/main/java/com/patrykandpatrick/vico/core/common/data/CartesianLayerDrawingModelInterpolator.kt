@@ -18,7 +18,7 @@ package com.patrykandpatrick.vico.core.common.data
 
 /** Interpolates two [CartesianLayerDrawingModel]s. */
 public interface CartesianLayerDrawingModelInterpolator<
-  T : CartesianLayerDrawingModel.DrawingInfo,
+  T : CartesianLayerDrawingModel.Entry,
   R : CartesianLayerDrawingModel<T>,
 > {
   /** Sets the initial and target [CartesianLayerDrawingModel]s. */
@@ -36,10 +36,7 @@ public interface CartesianLayerDrawingModelInterpolator<
     /**
      * Creates an instance of the default [CartesianLayerDrawingModelInterpolator] implementation.
      */
-    public fun <
-      T : CartesianLayerDrawingModel.DrawingInfo,
-      R : CartesianLayerDrawingModel<T>,
-    > default(): CartesianLayerDrawingModelInterpolator<T, R> =
-      DefaultCartesianLayerDrawingModelInterpolator()
+    public fun <T : CartesianLayerDrawingModel.Entry, R : CartesianLayerDrawingModel<T>> default():
+      CartesianLayerDrawingModelInterpolator<T, R> = DefaultCartesianLayerDrawingModelInterpolator()
   }
 }

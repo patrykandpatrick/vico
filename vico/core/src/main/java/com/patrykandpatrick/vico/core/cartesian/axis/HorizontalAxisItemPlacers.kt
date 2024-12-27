@@ -18,8 +18,8 @@ package com.patrykandpatrick.vico.core.cartesian.axis
 
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
-import com.patrykandpatrick.vico.core.cartesian.HorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartRanges
+import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayerDimensions
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.core.common.half
 import com.patrykandpatrick.vico.core.common.roundedToNearest
@@ -71,7 +71,7 @@ internal abstract class BaseHorizontalAxisItemPlacer(private val shiftExtremeLin
 
   override fun getHeightMeasurementLabelValues(
     context: CartesianMeasuringContext,
-    horizontalDimensions: HorizontalDimensions,
+    layerDimensions: CartesianLayerDimensions,
     fullXRange: ClosedFloatingPointRange<Double>,
     maxLabelWidth: Float,
   ) = context.ranges.measuredLabelValues
@@ -122,7 +122,7 @@ internal class AlignedHorizontalAxisItemPlacer(
         spacing =
           spacing *
             if (addExtremeLabelPadding && maxLabelWidth != 0f) {
-              ceil(maxLabelWidth / (context.horizontalDimensions.xSpacing * spacing)).toInt()
+              ceil(maxLabelWidth / (context.layerDimensions.xSpacing * spacing)).toInt()
             } else {
               1
             },
@@ -131,28 +131,28 @@ internal class AlignedHorizontalAxisItemPlacer(
 
   override fun getWidthMeasurementLabelValues(
     context: CartesianMeasuringContext,
-    horizontalDimensions: HorizontalDimensions,
+    layerDimensions: CartesianLayerDimensions,
     fullXRange: ClosedFloatingPointRange<Double>,
   ) = if (addExtremeLabelPadding) context.ranges.measuredLabelValues else emptyList()
 
-  override fun getStartHorizontalAxisInset(
+  override fun getStartLayerMargin(
     context: CartesianMeasuringContext,
-    horizontalDimensions: HorizontalDimensions,
+    layerDimensions: CartesianLayerDimensions,
     tickThickness: Float,
     maxLabelWidth: Float,
   ): Float {
     val tickSpace = if (shiftExtremeLines) tickThickness else tickThickness.half
-    return (tickSpace - horizontalDimensions.unscalableStartPadding).coerceAtLeast(0f)
+    return (tickSpace - layerDimensions.unscalableStartPadding).coerceAtLeast(0f)
   }
 
-  override fun getEndHorizontalAxisInset(
+  override fun getEndLayerMargin(
     context: CartesianMeasuringContext,
-    horizontalDimensions: HorizontalDimensions,
+    layerDimensions: CartesianLayerDimensions,
     tickThickness: Float,
     maxLabelWidth: Float,
   ): Float {
     val tickSpace = if (shiftExtremeLines) tickThickness else tickThickness.half
-    return (tickSpace - horizontalDimensions.unscalableEndPadding).coerceAtLeast(0f)
+    return (tickSpace - layerDimensions.unscalableEndPadding).coerceAtLeast(0f)
   }
 }
 
@@ -167,7 +167,7 @@ internal class SegmentedHorizontalAxisItemPlacer(private val shiftExtremeLines: 
 
   override fun getWidthMeasurementLabelValues(
     context: CartesianMeasuringContext,
-    horizontalDimensions: HorizontalDimensions,
+    layerDimensions: CartesianLayerDimensions,
     fullXRange: ClosedFloatingPointRange<Double>,
   ) = emptyList<Double>()
 
@@ -192,16 +192,16 @@ internal class SegmentedHorizontalAxisItemPlacer(private val shiftExtremeLines: 
       values
     }
 
-  override fun getStartHorizontalAxisInset(
+  override fun getStartLayerMargin(
     context: CartesianMeasuringContext,
-    horizontalDimensions: HorizontalDimensions,
+    layerDimensions: CartesianLayerDimensions,
     tickThickness: Float,
     maxLabelWidth: Float,
   ) = if (shiftExtremeLines) tickThickness else tickThickness.half
 
-  override fun getEndHorizontalAxisInset(
+  override fun getEndLayerMargin(
     context: CartesianMeasuringContext,
-    horizontalDimensions: HorizontalDimensions,
+    layerDimensions: CartesianLayerDimensions,
     tickThickness: Float,
     maxLabelWidth: Float,
   ) = if (shiftExtremeLines) tickThickness else tickThickness.half

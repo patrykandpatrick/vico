@@ -33,7 +33,7 @@ import com.patrykandpatrick.vico.core.common.setValue
 /** Creates and remembers a [CandlestickCartesianLayer]. */
 @Composable
 public fun rememberCandlestickCartesianLayer(
-  candles: CandlestickCartesianLayer.CandleProvider =
+  candleProvider: CandlestickCartesianLayer.CandleProvider =
     CandlestickCartesianLayer.CandleProvider.absolute(),
   minCandleBodyHeight: Dp = Defaults.MIN_CANDLE_BODY_HEIGHT_DP.dp,
   candleSpacing: Dp = Defaults.CANDLE_SPACING_DP.dp,
@@ -42,7 +42,7 @@ public fun rememberCandlestickCartesianLayer(
   verticalAxisPosition: Axis.Position.Vertical? = null,
   drawingModelInterpolator:
     CartesianLayerDrawingModelInterpolator<
-      CandlestickCartesianLayerDrawingModel.CandleInfo,
+      CandlestickCartesianLayerDrawingModel.Entry,
       CandlestickCartesianLayerDrawingModel,
     > =
     CartesianLayerDrawingModelInterpolator.default(),
@@ -51,7 +51,7 @@ public fun rememberCandlestickCartesianLayer(
     ValueWrapper<CandlestickCartesianLayer?>(null)
   }
   return remember(
-    candles,
+    candleProvider,
     minCandleBodyHeight,
     candleSpacing,
     scaleCandleWicks,
@@ -61,7 +61,7 @@ public fun rememberCandlestickCartesianLayer(
   ) {
     val candlestickCartesianLayer =
       candlestickCartesianLayerWrapper?.copy(
-        candles,
+        candleProvider,
         minCandleBodyHeight.value,
         candleSpacing.value,
         scaleCandleWicks,
@@ -70,7 +70,7 @@ public fun rememberCandlestickCartesianLayer(
         drawingModelInterpolator,
       )
         ?: CandlestickCartesianLayer(
-          candles,
+          candleProvider,
           minCandleBodyHeight.value,
           candleSpacing.value,
           scaleCandleWicks,

@@ -19,18 +19,18 @@ package com.patrykandpatrick.vico.core.common.data
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayer
 
 /** Houses drawing information for a [CartesianLayer]. */
-public abstract class CartesianLayerDrawingModel<T : CartesianLayerDrawingModel.DrawingInfo>(
-  private val drawingInfo: List<Map<Double, T>>
-) : List<Map<Double, T>> by drawingInfo {
+public abstract class CartesianLayerDrawingModel<T : CartesianLayerDrawingModel.Entry>(
+  private val entries: List<Map<Double, T>>
+) : List<Map<Double, T>> by entries {
   /**
    * Returns an intermediate [CartesianLayerDrawingModel] between this one and [from]. The returned
-   * drawing model includes the provided [DrawingInfo] list. [fraction] is the balance between
-   * [from] and this [CartesianLayerDrawingModel], with 0 corresponding to [from], and 1
-   * corresponding to this [CartesianLayerDrawingModel]. The returned object should be an instance
-   * of the [CartesianLayerDrawingModel] subclass to which this function belongs.
+   * drawing model includes the provided [Entry] list. [fraction] is the balance between [from] and
+   * this [CartesianLayerDrawingModel], with 0 corresponding to [from], and 1 corresponding to this
+   * [CartesianLayerDrawingModel]. The returned object should be an instance of the
+   * [CartesianLayerDrawingModel] subclass to which this function belongs.
    */
   public abstract fun transform(
-    drawingInfo: List<Map<Double, T>>,
+    entries: List<Map<Double, T>>,
     from: CartesianLayerDrawingModel<T>?,
     fraction: Float,
   ): CartesianLayerDrawingModel<T>
@@ -42,14 +42,14 @@ public abstract class CartesianLayerDrawingModel<T : CartesianLayerDrawingModel.
   /**
    * Houses positional information for a single [CartesianLayer] entity (e.g., a column or a point).
    */
-  public interface DrawingInfo {
+  public interface Entry {
     /**
-     * Returns an intermediate [DrawingInfo] implementation between this one and [from]. [fraction]
-     * is the balance between [from] and this [DrawingInfo] implementation, with 0 corresponding to
-     * [from], and 1 corresponding to this [DrawingInfo] implementation. The returned object should
-     * be an instance of the [DrawingInfo] implementation to which this function belongs.
+     * Returns an intermediate [Entry] implementation between this one and [from]. [fraction] is the
+     * balance between [from] and this [Entry] implementation, with 0 corresponding to [from], and 1
+     * corresponding to this [Entry] implementation. The returned object should be an instance of
+     * the [Entry] implementation to which this function belongs.
      */
-    public fun transform(from: DrawingInfo?, fraction: Float): DrawingInfo
+    public fun transform(from: Entry?, fraction: Float): Entry
 
     override fun equals(other: Any?): Boolean
 

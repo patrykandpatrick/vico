@@ -30,14 +30,13 @@ import android.text.TextUtils
 import androidx.compose.runtime.Immutable
 import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.Defaults.TEXT_COMPONENT_LINE_COUNT
-import com.patrykandpatrick.vico.core.common.Dimensions
 import com.patrykandpatrick.vico.core.common.DrawingContext
-import com.patrykandpatrick.vico.core.common.HorizontalPosition
+import com.patrykandpatrick.vico.core.common.Insets
 import com.patrykandpatrick.vico.core.common.MeasuringContext
-import com.patrykandpatrick.vico.core.common.VerticalPosition
+import com.patrykandpatrick.vico.core.common.Position
+import com.patrykandpatrick.vico.core.common.bounds
 import com.patrykandpatrick.vico.core.common.copy
 import com.patrykandpatrick.vico.core.common.data.CacheStore
-import com.patrykandpatrick.vico.core.common.getBounds
 import com.patrykandpatrick.vico.core.common.half
 import com.patrykandpatrick.vico.core.common.heightWithSpacingAddition
 import com.patrykandpatrick.vico.core.common.piRad
@@ -82,8 +81,8 @@ public open class TextComponent(
   protected val lineHeightSp: Float? = null,
   protected val lineCount: Int = TEXT_COMPONENT_LINE_COUNT,
   protected val truncateAt: TextUtils.TruncateAt? = TextUtils.TruncateAt.END,
-  protected val margins: Dimensions = Dimensions.Empty,
-  protected val padding: Dimensions = Dimensions.Empty,
+  protected val margins: Insets = Insets.Zero,
+  protected val padding: Insets = Insets.Zero,
   public val background: Component? = null,
   protected val minWidth: MinWidth = MinWidth.fixed(),
 ) {
@@ -95,7 +94,6 @@ public open class TextComponent(
     }
   private lateinit var layout: Layout
   private lateinit var measuringLayout: Layout
-  private val tempMeasureBounds = RectF()
 
   /**
    * Uses [Canvas] to draw this [TextComponent].
@@ -115,8 +113,8 @@ public open class TextComponent(
     text: CharSequence,
     x: Float,
     y: Float,
-    horizontalPosition: HorizontalPosition = HorizontalPosition.Center,
-    verticalPosition: VerticalPosition = VerticalPosition.Center,
+    horizontalPosition: Position.Horizontal = Position.Horizontal.Center,
+    verticalPosition: Position.Vertical = Position.Vertical.Center,
     maxWidth: Int = DEF_LAYOUT_SIZE,
     maxHeight: Int = DEF_LAYOUT_SIZE,
     rotationDegrees: Float = 0f,
@@ -132,9 +130,9 @@ public open class TextComponent(
         verticalPosition.getTextTopPosition(context, y, layout.heightWithSpacingAddition)
 
       context.withSavedCanvas {
-        val bounds = layout.getBounds(tempMeasureBounds)
-        val paddingLeft = padding.getLeftDp(isLtr).pixels
-        val paddingRight = padding.getRightDp(isLtr).pixels
+        val bounds = layout.bounds
+        val paddingLeft = padding.getLeft(context)
+        val paddingRight = padding.getRight(context)
         val textAlignmentCorrection: Float
 
         with(receiver = bounds) {
@@ -162,15 +160,15 @@ public open class TextComponent(
 
           xCorrection =
             when (horizontalPosition) {
-              HorizontalPosition.Start -> widthDelta.half
-              HorizontalPosition.End -> -widthDelta.half
+              Position.Horizontal.Start -> widthDelta.half
+              Position.Horizontal.End -> -widthDelta.half
               else -> 0f
             } * context.layoutDirectionMultiplier
 
           yCorrection =
             when (verticalPosition) {
-              VerticalPosition.Top -> heightDelta.half
-              VerticalPosition.Bottom -> -heightDelta.half
+              Position.Vertical.Top -> heightDelta.half
+              Position.Vertical.Bottom -> -heightDelta.half
               else -> 0f
             }
         }
@@ -198,28 +196,28 @@ public open class TextComponent(
     }
   }
 
-  private fun HorizontalPosition.getTextStartPosition(
+  private fun Position.Horizontal.getTextStartPosition(
     context: MeasuringContext,
     baseXPosition: Float,
     width: Float,
   ): Float =
     with(context) {
       when (this@getTextStartPosition) {
-        HorizontalPosition.Start ->
+        Position.Horizontal.Start ->
           if (isLtr) getTextRightPosition(baseXPosition, width)
           else getTextLeftPosition(baseXPosition)
-        HorizontalPosition.Center -> baseXPosition - width.half
-        HorizontalPosition.End ->
+        Position.Horizontal.Center -> baseXPosition - width.half
+        Position.Horizontal.End ->
           if (isLtr) getTextLeftPosition(baseXPosition)
           else getTextRightPosition(baseXPosition, width)
       }
     }
 
   private fun MeasuringContext.getTextLeftPosition(baseXPosition: Float): Float =
-    baseXPosition + padding.getLeftDp(isLtr).pixels + margins.getLeftDp(isLtr).pixels
+    baseXPosition + padding.getLeft(this) + margins.getLeft(this)
 
   private fun MeasuringContext.getTextRightPosition(baseXPosition: Float, width: Float): Float =
-    baseXPosition - padding.getRightDp(isLtr).pixels - margins.getRightDp(isLtr).pixels - width
+    baseXPosition - padding.getRight(this) - margins.getRight(this) - width
 
   private fun getTextAlignmentCorrection(width: Float): Float {
     val ltrAlignment =
@@ -240,7 +238,7 @@ public open class TextComponent(
   }
 
   @JvmName("getTextTopPositionExt")
-  private fun VerticalPosition.getTextTopPosition(
+  private fun Position.Vertical.getTextTopPosition(
     context: MeasuringContext,
     textY: Float,
     layoutHeight: Float,
@@ -248,9 +246,9 @@ public open class TextComponent(
     with(context) {
       textY +
         when (this@getTextTopPosition) {
-          VerticalPosition.Top -> -layoutHeight - padding.bottomDp.pixels - margins.bottomDp.pixels
-          VerticalPosition.Center -> -layoutHeight.half
-          VerticalPosition.Bottom -> padding.topDp.pixels + margins.topDp.pixels
+          Position.Vertical.Top -> -layoutHeight - padding.bottomDp.pixels - margins.bottomDp.pixels
+          Position.Vertical.Center -> -layoutHeight.half
+          Position.Vertical.Bottom -> padding.topDp.pixels + margins.topDp.pixels
         }
     }
 
@@ -308,8 +306,6 @@ public open class TextComponent(
     text: CharSequence? = null,
     maxWidth: Int = DEF_LAYOUT_SIZE,
     maxHeight: Int = DEF_LAYOUT_SIZE,
-    outRect: RectF = tempMeasureBounds,
-    includePaddingAndMargins: Boolean = true,
     rotationDegrees: Float = 0f,
     pad: Boolean = text == null,
   ): RectF =
@@ -322,24 +318,19 @@ public open class TextComponent(
         }
       }
       val layout = getLayout(this, measuredText, maxWidth, maxHeight, rotationDegrees)
-      layout
-        .getBounds(outRect)
+      layout.bounds
         .apply {
           val minWidth =
             minWidth.getValue(context, this@TextComponent, maxWidth, maxHeight, rotationDegrees) -
               padding.horizontalDp.pixels
           right = right.coerceAtLeast(minWidth).coerceAtMost(layout.width.toFloat())
-          if (includePaddingAndMargins) {
-            right += padding.horizontalDp.pixels
-            bottom += padding.verticalDp.pixels
-          }
+          right += padding.horizontalDp.pixels
+          bottom += padding.verticalDp.pixels
         }
         .rotate(rotationDegrees)
         .apply {
-          if (includePaddingAndMargins) {
-            right += margins.horizontalDp.pixels
-            bottom += margins.verticalDp.pixels
-          }
+          right += margins.horizontalDp.pixels
+          bottom += margins.verticalDp.pixels
         }
     }
 
@@ -352,8 +343,8 @@ public open class TextComponent(
     lineHeightSp: Float? = this.lineHeightSp,
     lineCount: Int = this.lineCount,
     truncateAt: TextUtils.TruncateAt? = this.truncateAt,
-    margins: Dimensions = this.margins,
-    padding: Dimensions = this.padding,
+    margins: Insets = this.margins,
+    padding: Insets = this.padding,
     background: Component? = this.background,
     minWidth: MinWidth = this.minWidth,
   ): TextComponent =
@@ -507,8 +498,6 @@ public open class TextComponent(
       }
 
       internal class Text(private val text: CharSequence) : MinWidth {
-        private val bounds = RectF()
-
         override fun getValue(
           context: MeasuringContext,
           textComponent: TextComponent,
@@ -519,7 +508,7 @@ public open class TextComponent(
           context.run {
             textComponent
               .getLayout(context, text, maxWidth, maxHeight, rotationDegrees)
-              .getBounds(bounds)
+              .bounds
               .width() + textComponent.padding.horizontalDp.pixels
           }
 

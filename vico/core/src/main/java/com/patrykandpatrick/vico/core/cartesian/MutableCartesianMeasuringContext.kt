@@ -20,7 +20,9 @@ import android.graphics.RectF
 import androidx.annotation.RestrictTo
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartRanges
+import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayerPadding
 import com.patrykandpatrick.vico.core.common.MutableMeasuringContext
+import com.patrykandpatrick.vico.core.common.Point
 
 /** @suppress */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
@@ -33,6 +35,7 @@ public class MutableCartesianMeasuringContext(
   override var scrollEnabled: Boolean,
   override var zoomEnabled: Boolean,
   override var layerPadding: CartesianLayerPadding,
+  override var pointerPosition: Point?,
   spToPx: (Float) -> Float,
 ) :
   MutableMeasuringContext(
@@ -41,6 +44,4 @@ public class MutableCartesianMeasuringContext(
     isLtr = isLtr,
     spToPx = spToPx,
   ),
-  CartesianMeasuringContext {
-  override fun spToPx(sp: Float): Float = spToPx.invoke(sp)
-}
+  CartesianMeasuringContext

@@ -32,7 +32,7 @@ public interface DrawingContext : MeasuringContext {
    * Updates the value of [DrawingContext.canvas] to [canvas], runs [block], and restores the
    * previous [DrawingContext.canvas] value.
    */
-  public fun withOtherCanvas(canvas: Canvas, block: () -> Unit)
+  public fun withCanvas(canvas: Canvas, block: () -> Unit)
 }
 
 /** @suppress */
@@ -55,7 +55,7 @@ public fun DrawingContext(
 
     override val cacheStore: CacheStore = CacheStore()
 
-    override fun withOtherCanvas(canvas: Canvas, block: () -> Unit) {
+    override fun withCanvas(canvas: Canvas, block: () -> Unit) {
       val originalCanvas = this.canvas
       this.canvas = canvas
       block()

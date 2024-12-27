@@ -25,17 +25,17 @@ import com.patrykandpatrick.vico.core.common.orZero
  * Houses drawing information for a [CandlestickCartesianLayer]. [opacity] is the columns’ opacity.
  */
 public class CandlestickCartesianLayerDrawingModel(
-  public val entries: Map<Double, CandleInfo>,
+  public val entries: Map<Double, Entry>,
   public val opacity: Float = 1f,
-) : CartesianLayerDrawingModel<CandlestickCartesianLayerDrawingModel.CandleInfo>(listOf(entries)) {
+) : CartesianLayerDrawingModel<CandlestickCartesianLayerDrawingModel.Entry>(listOf(entries)) {
   override fun transform(
-    drawingInfo: List<Map<Double, CandleInfo>>,
-    from: CartesianLayerDrawingModel<CandleInfo>?,
+    entries: List<Map<Double, Entry>>,
+    from: CartesianLayerDrawingModel<Entry>?,
     fraction: Float,
-  ): CartesianLayerDrawingModel<CandleInfo> {
+  ): CartesianLayerDrawingModel<Entry> {
     val oldOpacity = (from as CandlestickCartesianLayerDrawingModel?)?.opacity.orZero
     return CandlestickCartesianLayerDrawingModel(
-      entries = drawingInfo.first(),
+      entries = entries.first(),
       opacity = oldOpacity.lerp(opacity, fraction),
     )
   }
@@ -58,19 +58,22 @@ public class CandlestickCartesianLayerDrawingModel(
    * @property bottomWickY the position of the bottom wick’s bottom edge.
    * @property topWickY the position of the top wick’s top edge.
    */
-  public class CandleInfo(
+  public class Entry(
     public val bodyBottomY: Float,
     public val bodyTopY: Float,
     public val bottomWickY: Float,
     public val topWickY: Float,
-  ) : DrawingInfo {
-    override fun transform(from: DrawingInfo?, fraction: Float): DrawingInfo {
-      val old = from as? CandleInfo
+  ) : CartesianLayerDrawingModel.Entry {
+    override fun transform(
+      from: CartesianLayerDrawingModel.Entry?,
+      fraction: Float,
+    ): CartesianLayerDrawingModel.Entry {
+      val old = from as? Entry
       val oldBodyBottomY = old?.bodyBottomY.orZero
       val oldBodyTopY = old?.bodyTopY.orZero
       val oldBottomWickY = old?.bottomWickY.orZero
       val oldTopWickY = old?.topWickY.orZero
-      return CandleInfo(
+      return Entry(
         oldBodyBottomY.lerp(bodyBottomY, fraction),
         oldBodyTopY.lerp(bodyTopY, fraction),
         oldBottomWickY.lerp(bottomWickY, fraction),
@@ -80,7 +83,7 @@ public class CandlestickCartesianLayerDrawingModel(
 
     override fun equals(other: Any?): Boolean =
       this === other ||
-        other is CandleInfo &&
+        other is Entry &&
           bodyBottomY == other.bodyBottomY &&
           bodyTopY == other.bodyTopY &&
           bottomWickY == other.bottomWickY &&

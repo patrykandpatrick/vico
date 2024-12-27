@@ -23,16 +23,16 @@ import com.patrykandpatrick.vico.core.common.orZero
 
 /** Houses drawing information for a [ColumnCartesianLayer]. [opacity] is the columns’ opacity. */
 public class ColumnCartesianLayerDrawingModel(
-  private val entries: List<Map<Double, ColumnInfo>>,
+  private val entries: List<Map<Double, Entry>>,
   public val opacity: Float = 1f,
-) : CartesianLayerDrawingModel<ColumnCartesianLayerDrawingModel.ColumnInfo>(entries) {
+) : CartesianLayerDrawingModel<ColumnCartesianLayerDrawingModel.Entry>(entries) {
   override fun transform(
-    drawingInfo: List<Map<Double, ColumnInfo>>,
-    from: CartesianLayerDrawingModel<ColumnInfo>?,
+    entries: List<Map<Double, Entry>>,
+    from: CartesianLayerDrawingModel<Entry>?,
     fraction: Float,
-  ): CartesianLayerDrawingModel<ColumnInfo> {
+  ): CartesianLayerDrawingModel<Entry> {
     val oldOpacity = (from as ColumnCartesianLayerDrawingModel?)?.opacity.orZero
-    return ColumnCartesianLayerDrawingModel(drawingInfo, oldOpacity.lerp(opacity, fraction))
+    return ColumnCartesianLayerDrawingModel(entries, oldOpacity.lerp(opacity, fraction))
   }
 
   override fun equals(other: Any?): Boolean =
@@ -47,14 +47,17 @@ public class ColumnCartesianLayerDrawingModel(
    * Houses positional information for a [ColumnCartesianLayer]’s column. [height] expresses the
    * column’s height as a fraction of the [ColumnCartesianLayer]’s height.
    */
-  public class ColumnInfo(public val height: Float) : DrawingInfo {
-    override fun transform(from: DrawingInfo?, fraction: Float): DrawingInfo {
-      val oldHeight = (from as? ColumnInfo)?.height.orZero
-      return ColumnInfo(oldHeight.lerp(height, fraction))
+  public class Entry(public val height: Float) : CartesianLayerDrawingModel.Entry {
+    override fun transform(
+      from: CartesianLayerDrawingModel.Entry?,
+      fraction: Float,
+    ): CartesianLayerDrawingModel.Entry {
+      val oldHeight = (from as? Entry)?.height.orZero
+      return Entry(oldHeight.lerp(height, fraction))
     }
 
     override fun equals(other: Any?): Boolean =
-      this === other || other is ColumnInfo && height == other.height
+      this === other || other is Entry && height == other.height
 
     override fun hashCode(): Int = height.hashCode()
   }

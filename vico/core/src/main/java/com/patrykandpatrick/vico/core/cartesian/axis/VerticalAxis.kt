@@ -19,19 +19,17 @@ package com.patrykandpatrick.vico.core.cartesian.axis
 import androidx.annotation.RestrictTo
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
-import com.patrykandpatrick.vico.core.cartesian.HorizontalDimensions
-import com.patrykandpatrick.vico.core.cartesian.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis.HorizontalLabelPosition.Inside
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis.HorizontalLabelPosition.Outside
-import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis.VerticalLabelPosition.Center
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.formatForAxis
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayer
-import com.patrykandpatrick.vico.core.common.HorizontalInsets
-import com.patrykandpatrick.vico.core.common.HorizontalPosition
-import com.patrykandpatrick.vico.core.common.Insets
-import com.patrykandpatrick.vico.core.common.VerticalPosition
+import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayerDimensions
+import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayerMargins
+import com.patrykandpatrick.vico.core.cartesian.layer.HorizontalCartesianLayerMargins
+import com.patrykandpatrick.vico.core.cartesian.layer.MutableCartesianLayerDimensions
+import com.patrykandpatrick.vico.core.common.Position
 import com.patrykandpatrick.vico.core.common.component.LineComponent
 import com.patrykandpatrick.vico.core.common.component.TextComponent
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
@@ -61,7 +59,7 @@ protected constructor(
   label: TextComponent?,
   labelRotationDegrees: Float,
   public val horizontalLabelPosition: HorizontalLabelPosition,
-  public val verticalLabelPosition: VerticalLabelPosition,
+  public val verticalLabelPosition: Position.Vertical,
   valueFormatter: CartesianValueFormatter,
   tick: LineComponent?,
   tickLengthDp: Float,
@@ -88,9 +86,13 @@ protected constructor(
       position == Axis.Position.Vertical.Start && horizontalLabelPosition == Outside ||
         position == Axis.Position.Vertical.End && horizontalLabelPosition == Inside
 
-  protected val textHorizontalPosition: HorizontalPosition
+  protected val textHorizontalPosition: Position.Horizontal
     get() =
-      if (areLabelsOutsideAtStartOrInsideAtEnd) HorizontalPosition.Start else HorizontalPosition.End
+      if (areLabelsOutsideAtStartOrInsideAtEnd) {
+        Position.Horizontal.Start
+      } else {
+        Position.Horizontal.End
+      }
 
   protected var maxLabelWidth: Float? = null
 
@@ -102,7 +104,7 @@ protected constructor(
     label: TextComponent?,
     labelRotationDegrees: Float,
     horizontalLabelPosition: HorizontalLabelPosition,
-    verticalLabelPosition: VerticalLabelPosition,
+    verticalLabelPosition: Position.Vertical,
     tick: LineComponent?,
     tickLengthDp: Float,
     guideline: LineComponent?,
@@ -153,20 +155,20 @@ protected constructor(
             context = context,
             left = layerBounds.left,
             right = layerBounds.right,
-            centerY = centerY,
+            y = centerY,
           )
       }
       val lineExtensionLength = if (itemPlacer.getShiftTopLines(this)) tickThickness else 0f
       line?.drawVertical(
         context = context,
-        top = bounds.top - lineExtensionLength,
-        bottom = bounds.bottom + lineExtensionLength,
-        centerX =
+        x =
           if (position.isLeft(this)) {
             bounds.right - lineThickness.half
           } else {
             bounds.left + lineThickness.half
           },
+        top = bounds.top - lineExtensionLength,
+        bottom = bounds.bottom + lineExtensionLength,
       )
     }
   }
@@ -191,7 +193,7 @@ protected constructor(
           context = context,
           left = tickLeftX,
           right = tickRightX,
-          centerY = tickCenterY,
+          y = tickCenterY,
         )
 
         label ?: return@forEach
@@ -212,11 +214,11 @@ protected constructor(
           y = bounds.centerY(),
           horizontalPosition =
             if (position == Axis.Position.Vertical.Start) {
-              HorizontalPosition.End
+              Position.Horizontal.End
             } else {
-              HorizontalPosition.Start
+              Position.Horizontal.Start
             },
-          verticalPosition = VerticalPosition.Center,
+          verticalPosition = Position.Vertical.Center,
           rotationDegrees =
             if (position == Axis.Position.Vertical.Start) {
               -TITLE_ABS_ROTATION_DEGREES
@@ -229,9 +231,9 @@ protected constructor(
     }
   }
 
-  override fun updateHorizontalDimensions(
+  override fun updateLayerDimensions(
     context: CartesianMeasuringContext,
-    horizontalDimensions: MutableHorizontalDimensions,
+    layerDimensions: MutableCartesianLayerDimensions,
   ): Unit = Unit
 
   protected open fun drawLabel(
@@ -262,7 +264,7 @@ protected constructor(
           x = labelX,
           y = tickCenterY,
           horizontalPosition = textHorizontalPosition,
-          verticalPosition = verticalLabelPosition.textPosition,
+          verticalPosition = verticalLabelPosition,
           rotationDegrees = labelRotationDegrees,
           maxWidth = (maxLabelWidth ?: (layerBounds.width().half - tickLength)).toInt(),
         )
@@ -281,38 +283,38 @@ protected constructor(
     }
   }
 
-  override fun updateHorizontalInsets(
+  override fun updateHorizontalLayerMargins(
     context: CartesianMeasuringContext,
-    freeHeight: Float,
+    horizontalLayerMargins: HorizontalCartesianLayerMargins,
+    layerHeight: Float,
     model: CartesianChartModel,
-    insets: HorizontalInsets,
   ) {
-    val width = getWidth(context, freeHeight)
+    val width = getWidth(context, layerHeight)
     when (position) {
-      Axis.Position.Vertical.Start -> insets.ensureValuesAtLeast(start = width)
-      Axis.Position.Vertical.End -> insets.ensureValuesAtLeast(end = width)
+      Axis.Position.Vertical.Start -> horizontalLayerMargins.ensureValuesAtLeast(start = width)
+      Axis.Position.Vertical.End -> horizontalLayerMargins.ensureValuesAtLeast(end = width)
     }
   }
 
-  override fun updateInsets(
+  override fun updateLayerMargins(
     context: CartesianMeasuringContext,
-    horizontalDimensions: HorizontalDimensions,
+    layerMargins: CartesianLayerMargins,
+    layerDimensions: CartesianLayerDimensions,
     model: CartesianChartModel,
-    insets: Insets,
   ): Unit =
     with(context) {
       val maxLabelHeight = getMaxLabelHeight()
       val maxLineThickness = max(lineThickness, tickThickness)
-      insets.ensureValuesAtLeast(
+      layerMargins.ensureValuesAtLeast(
         top =
-          itemPlacer.getTopVerticalAxisInset(
+          itemPlacer.getTopLayerMargin(
             context,
             verticalLabelPosition,
             maxLabelHeight,
             maxLineThickness,
           ),
         bottom =
-          itemPlacer.getBottomVerticalAxisInset(
+          itemPlacer.getBottomLayerMargin(
             context,
             verticalLabelPosition,
             maxLabelHeight,
@@ -342,11 +344,11 @@ protected constructor(
               Inside -> 0f
             }
           (labelSpace + titleComponentWidth + lineThickness).coerceIn(
-            minimumValue = size.minSizeDp.pixels,
-            maximumValue = size.maxSizeDp.pixels,
+            size.minDp.pixels,
+            size.maxDp.pixels,
           )
         }
-        is Size.Exact -> size.sizeDp.pixels
+        is Size.Fixed -> size.valueDp.pixels
         is Size.Fraction -> canvasBounds.width() * size.fraction
         is Size.Text ->
           label
@@ -399,7 +401,7 @@ protected constructor(
     label: TextComponent? = this.label,
     labelRotationDegrees: Float = this.labelRotationDegrees,
     horizontalLabelPosition: HorizontalLabelPosition = this.horizontalLabelPosition,
-    verticalLabelPosition: VerticalLabelPosition = this.verticalLabelPosition,
+    verticalLabelPosition: Position.Vertical = this.verticalLabelPosition,
     valueFormatter: CartesianValueFormatter = this.valueFormatter,
     tick: LineComponent? = this.tick,
     tickLengthDp: Float = this.tickLengthDp,
@@ -447,19 +449,6 @@ protected constructor(
   public enum class HorizontalLabelPosition {
     Outside,
     Inside,
-  }
-
-  /**
-   * Defines the vertical position of each of a horizontal axis’s labels relative to the label’s
-   * corresponding tick.
-   *
-   * @param textPosition the label position.
-   * @see VerticalPosition
-   */
-  public enum class VerticalLabelPosition(public val textPosition: VerticalPosition) {
-    Center(VerticalPosition.Center),
-    Top(VerticalPosition.Top),
-    Bottom(VerticalPosition.Bottom),
   }
 
   /** Determines for what _y_ values a [VerticalAxis] displays labels, ticks, and guidelines. */
@@ -510,18 +499,18 @@ protected constructor(
       position: Axis.Position.Vertical,
     ): List<Double>? = null
 
-    /** Returns the top inset required by the [VerticalAxis]. */
-    public fun getTopVerticalAxisInset(
+    /** Returns the top [CartesianLayer]-area margin required by the [VerticalAxis]. */
+    public fun getTopLayerMargin(
       context: CartesianMeasuringContext,
-      verticalLabelPosition: VerticalLabelPosition,
+      verticalLabelPosition: Position.Vertical,
       maxLabelHeight: Float,
       maxLineThickness: Float,
     ): Float
 
-    /** Returns the bottom inset required by the [VerticalAxis]. */
-    public fun getBottomVerticalAxisInset(
+    /** Returns the bottom [CartesianLayer]-area margin required by the [VerticalAxis]. */
+    public fun getBottomLayerMargin(
       context: CartesianMeasuringContext,
-      verticalLabelPosition: VerticalLabelPosition,
+      verticalLabelPosition: Position.Vertical,
       maxLabelHeight: Float,
       maxLineThickness: Float,
     ): Float
@@ -566,7 +555,7 @@ protected constructor(
       label: TextComponent? = null,
       labelRotationDegrees: Float = 0f,
       horizontalLabelPosition: HorizontalLabelPosition = Outside,
-      verticalLabelPosition: VerticalLabelPosition = Center,
+      verticalLabelPosition: Position.Vertical = Position.Vertical.Center,
       valueFormatter: CartesianValueFormatter = CartesianValueFormatter.decimal(),
       tick: LineComponent? = null,
       tickLengthDp: Float = 0f,
@@ -599,7 +588,7 @@ protected constructor(
       label: TextComponent? = null,
       labelRotationDegrees: Float = 0f,
       horizontalLabelPosition: HorizontalLabelPosition = Outside,
-      verticalLabelPosition: VerticalLabelPosition = Center,
+      verticalLabelPosition: Position.Vertical = Position.Vertical.Center,
       valueFormatter: CartesianValueFormatter = CartesianValueFormatter.decimal(),
       tick: LineComponent? = null,
       tickLengthDp: Float = 0f,

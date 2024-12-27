@@ -17,15 +17,13 @@
 package com.patrykandpatrick.vico.core.cartesian.data
 
 import androidx.annotation.RestrictTo
-import com.patrykandpatrick.vico.core.cartesian.CartesianChart
-import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayer
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.core.common.data.MutableExtraStore
 import java.util.concurrent.ConcurrentHashMap
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -33,61 +31,61 @@ import kotlinx.coroutines.withContext
 
 /** Creates [CartesianChartModel]s and handles difference animations. */
 public class CartesianChartModelProducer {
-  private var partials = emptyList<CartesianLayerModel.Partial>()
-  private var extraStore = MutableExtraStore()
+  private var lastPartials = emptyList<CartesianLayerModel.Partial>()
+  private var lastTransactionExtraStore = MutableExtraStore()
   private var cachedModel: CartesianChartModel? = null
-  private val updateMutex = Mutex()
-  private val registrationMutex = Mutex()
+  private var cachedModelPartialHashCode: Int? = null
+  private val mutex = Mutex()
   private val updateReceivers = ConcurrentHashMap<Any, UpdateReceiver>()
 
   private suspend fun update(
     partials: List<CartesianLayerModel.Partial>,
-    extraStore: MutableExtraStore,
+    transactionExtraStore: MutableExtraStore,
   ) {
     withContext(Dispatchers.Default) {
-      updateMutex.lock()
-      registrationMutex.lock()
-      val immutablePartials = partials.toList()
-      if (
-        immutablePartials == this@CartesianChartModelProducer.partials &&
-          extraStore == this@CartesianChartModelProducer.extraStore
-      ) {
-        updateMutex.unlock()
-        registrationMutex.unlock()
-        return@withContext
+      mutex.withLock {
+        val immutablePartials = partials.toList()
+        if (
+          immutablePartials == this@CartesianChartModelProducer.lastPartials &&
+            transactionExtraStore == this@CartesianChartModelProducer.lastTransactionExtraStore
+        ) {
+          return@withContext
+        }
+        updateReceivers.values
+          .map { launch { it.handleUpdate(immutablePartials, transactionExtraStore) } }
+          .joinAll()
+        lastPartials = immutablePartials
+        lastTransactionExtraStore = transactionExtraStore
       }
-      this@CartesianChartModelProducer.partials = partials.toList()
-      this@CartesianChartModelProducer.extraStore = extraStore
-      cachedModel = null
-      coroutineScope {
-        updateReceivers.values.forEach { launch { it.handleUpdate() } }
-        registrationMutex.unlock()
-      }
-      updateMutex.unlock()
     }
   }
 
-  private fun getModel(extraStore: ExtraStore) =
-    if (partials.isEmpty()) {
-      null
+  private fun getModel(partials: List<CartesianLayerModel.Partial>, extraStore: ExtraStore) =
+    if (partials.hashCode() == cachedModelPartialHashCode) {
+      cachedModel?.copy(extraStore)
     } else {
-      val mergedExtraStore = this.extraStore + extraStore
-      cachedModel?.copy(mergedExtraStore)
-        ?: CartesianChartModel(partials.map { it.complete(mergedExtraStore) }, mergedExtraStore)
-          .also { cachedModel = it }
+      if (partials.isNotEmpty()) {
+          CartesianChartModel(partials.map { it.complete(extraStore) }, extraStore)
+        } else {
+          null
+        }
+        .also { model ->
+          cachedModel = model
+          cachedModelPartialHashCode = partials.hashCode()
+        }
     }
 
   private suspend fun transformModel(
     key: Any,
     fraction: Float,
     model: CartesianChartModel?,
+    transactionExtraStore: ExtraStore,
     ranges: CartesianChartRanges,
   ) {
     with(updateReceivers[key] ?: return) {
       withContext(Dispatchers.Default) {
-        transform(extraStore, fraction)
-        val transformedModel =
-          model?.copy(this@CartesianChartModelProducer.extraStore + extraStore.copy())
+        transform(hostExtraStore, fraction)
+        val transformedModel = model?.copy(transactionExtraStore + hostExtraStore.copy())
         currentCoroutineContext().ensureActive()
         onModelCreated(transformedModel, ranges)
       }
@@ -103,7 +101,7 @@ public class CartesianChartModelProducer {
     prepareForTransformation:
       (CartesianChartModel?, MutableExtraStore, CartesianChartRanges) -> Unit,
     transform: suspend (MutableExtraStore, Float) -> Unit,
-    extraStore: MutableExtraStore,
+    hostExtraStore: MutableExtraStore,
     updateRanges: (CartesianChartModel?) -> CartesianChartRanges,
     onModelCreated: (CartesianChartModel?, CartesianChartRanges) -> Unit,
   ) {
@@ -113,14 +111,14 @@ public class CartesianChartModelProducer {
           cancelAnimation,
           startAnimation,
           onModelCreated,
-          extraStore,
+          hostExtraStore,
           prepareForTransformation,
           transform,
           updateRanges,
         )
-      registrationMutex.withLock {
+      mutex.withLock {
         updateReceivers[key] = receiver
-        receiver.handleUpdate()
+        receiver.handleUpdate(lastPartials, lastTransactionExtraStore)
       }
     }
   }
@@ -135,19 +133,17 @@ public class CartesianChartModelProducer {
     updateReceivers.remove(key)
   }
 
-  public fun createTransaction(): Transaction = Transaction()
-
-  /** Creates a [Transaction], runs [block], and calls [Transaction.commit]. */
+  /**
+   * (1) Creates a [Transaction], (2) invokes [block], and (3) runs a data update, returning once
+   * the update is complete. Between steps 2 and 3, if there’s already an update in progress, the
+   * current coroutine is suspended until the ongoing update’s completion.
+   */
   public suspend fun runTransaction(block: Transaction.() -> Unit) {
     Transaction().also(block).commit()
   }
 
-  /**
-   * Handles data updates. An initially empty list of [CartesianLayerModel.Partial]s is created and
-   * can be updated via the class’s functions. Each [CartesianLayerModel.Partial] corresponds to a
-   * [CartesianLayer].
-   */
-  public inner class Transaction {
+  /** Handles data updates. This is used via [runTransaction]. */
+  public inner class Transaction internal constructor() {
     private val newPartials = mutableListOf<CartesianLayerModel.Partial>()
     private val newExtraStore = MutableExtraStore()
 
@@ -164,13 +160,7 @@ public class CartesianChartModelProducer {
       block(newExtraStore)
     }
 
-    /**
-     * Runs a data update, returning once the update is complete. If there’s already an update in
-     * progress, the current coroutine is first suspended until the ongoing update’s completion. An
-     * update is complete once a new [CartesianChartModel] has been generated, and the
-     * [CartesianChart] hosts have been notified.
-     */
-    public suspend fun commit() {
+    internal suspend fun commit() {
       update(newPartials, newExtraStore)
     }
   }
@@ -179,18 +169,23 @@ public class CartesianChartModelProducer {
     val cancelAnimation: suspend () -> Unit,
     val startAnimation: (transformModel: suspend (key: Any, fraction: Float) -> Unit) -> Unit,
     val onModelCreated: (CartesianChartModel?, CartesianChartRanges) -> Unit,
-    val extraStore: MutableExtraStore,
+    val hostExtraStore: MutableExtraStore,
     val prepareForTransformation:
       (CartesianChartModel?, MutableExtraStore, CartesianChartRanges) -> Unit,
     val transform: suspend (MutableExtraStore, Float) -> Unit,
     val updateRanges: (CartesianChartModel?) -> CartesianChartRanges,
   ) {
-    suspend fun handleUpdate() {
+    suspend fun handleUpdate(
+      partials: List<CartesianLayerModel.Partial>,
+      transactionExtraStore: ExtraStore,
+    ) {
       cancelAnimation()
-      val model = getModel(extraStore)
+      val model = getModel(partials, transactionExtraStore + hostExtraStore)
       val ranges = updateRanges(model)
-      prepareForTransformation(model, extraStore, ranges)
-      startAnimation { key, fraction -> transformModel(key, fraction, model, ranges) }
+      prepareForTransformation(model, hostExtraStore, ranges)
+      startAnimation { key, fraction ->
+        transformModel(key, fraction, model, transactionExtraStore, ranges)
+      }
     }
   }
 }

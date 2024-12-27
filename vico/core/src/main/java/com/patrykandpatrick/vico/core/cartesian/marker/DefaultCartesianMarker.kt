@@ -17,14 +17,19 @@
 package com.patrykandpatrick.vico.core.cartesian.marker
 
 import android.graphics.RectF
+import android.text.Spannable
+import android.text.SpannableStringBuilder
+import android.text.style.ForegroundColorSpan
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
-import com.patrykandpatrick.vico.core.cartesian.HorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianLayerModel
+import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayerDimensions
+import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayerMargins
 import com.patrykandpatrick.vico.core.common.Defaults
-import com.patrykandpatrick.vico.core.common.Insets
-import com.patrykandpatrick.vico.core.common.VerticalPosition
+import com.patrykandpatrick.vico.core.common.Position
+import com.patrykandpatrick.vico.core.common.appendCompat
 import com.patrykandpatrick.vico.core.common.averageOf
 import com.patrykandpatrick.vico.core.common.component.Component
 import com.patrykandpatrick.vico.core.common.component.LineComponent
@@ -35,6 +40,7 @@ import com.patrykandpatrick.vico.core.common.doubled
 import com.patrykandpatrick.vico.core.common.half
 import com.patrykandpatrick.vico.core.common.orZero
 import com.patrykandpatrick.vico.core.common.shape.MarkerCorneredShape
+import java.text.DecimalFormat
 import kotlin.math.ceil
 import kotlin.math.min
 
@@ -50,14 +56,12 @@ import kotlin.math.min
  */
 public open class DefaultCartesianMarker(
   protected val label: TextComponent,
-  protected val valueFormatter: CartesianMarkerValueFormatter =
-    DefaultCartesianMarkerValueFormatter(),
+  protected val valueFormatter: ValueFormatter = ValueFormatter.default(),
   protected val labelPosition: LabelPosition = LabelPosition.Top,
   protected val indicator: ((Int) -> Component)? = null,
   protected val indicatorSizeDp: Float = Defaults.MARKER_INDICATOR_SIZE,
   protected val guideline: LineComponent? = null,
 ) : CartesianMarker {
-  protected val tempBounds: RectF = RectF()
 
   protected val markerCorneredShape: MarkerCorneredShape? =
     (label.background as? ShapeComponent)?.shape as? MarkerCorneredShape
@@ -131,29 +135,23 @@ public open class DefaultCartesianMarker(
     with(context) {
       val text = valueFormatter.format(context, targets)
       val targetX = targets.averageOf { it.canvasX }
-      val labelBounds =
-        label.getBounds(
-          context = context,
-          text = text,
-          maxWidth = layerBounds.width().toInt(),
-          outRect = tempBounds,
-        )
+      val labelBounds = label.getBounds(context, text, layerBounds.width().toInt())
       val halfOfTextWidth = labelBounds.width().half
       val x = overrideXPositionToFit(targetX, layerBounds, halfOfTextWidth)
       markerCorneredShape?.tickX = targetX
       val tickPosition: MarkerCorneredShape.TickPosition
       val y: Float
-      val verticalPosition: VerticalPosition
+      val verticalPosition: Position.Vertical
       when (labelPosition) {
         LabelPosition.Top -> {
           tickPosition = MarkerCorneredShape.TickPosition.Bottom
           y = context.layerBounds.top - tickSizeDp.pixels
-          verticalPosition = VerticalPosition.Top
+          verticalPosition = Position.Vertical.Top
         }
         LabelPosition.Bottom -> {
           tickPosition = MarkerCorneredShape.TickPosition.Top
           y = context.layerBounds.bottom + tickSizeDp.pixels
-          verticalPosition = VerticalPosition.Bottom
+          verticalPosition = Position.Vertical.Bottom
         }
         LabelPosition.AroundPoint,
         LabelPosition.AbovePoint -> {
@@ -175,7 +173,7 @@ public open class DefaultCartesianMarker(
             if (flip) MarkerCorneredShape.TickPosition.Top
             else MarkerCorneredShape.TickPosition.Bottom
           y = topPointY + (if (flip) 1 else -1) * tickSizeDp.pixels
-          verticalPosition = if (flip) VerticalPosition.Bottom else VerticalPosition.Top
+          verticalPosition = if (flip) Position.Vertical.Bottom else Position.Vertical.Top
         }
       }
       markerCorneredShape?.tickPosition = tickPosition
@@ -205,22 +203,22 @@ public open class DefaultCartesianMarker(
     targets
       .map { it.canvasX }
       .toSet()
-      .forEach { x -> guideline?.drawVertical(this, layerBounds.top, layerBounds.bottom, x) }
+      .forEach { x -> guideline?.drawVertical(this, x, layerBounds.top, layerBounds.bottom) }
   }
 
-  override fun updateInsets(
+  override fun updateLayerMargins(
     context: CartesianMeasuringContext,
-    horizontalDimensions: HorizontalDimensions,
+    layerMargins: CartesianLayerMargins,
+    layerDimensions: CartesianLayerDimensions,
     model: CartesianChartModel,
-    insets: Insets,
   ) {
     with(context) {
       when (labelPosition) {
         LabelPosition.Top,
         LabelPosition.AbovePoint ->
-          insets.ensureValuesAtLeast(top = label.getHeight(context) + tickSizeDp.pixels)
+          layerMargins.ensureValuesAtLeast(top = label.getHeight(context) + tickSizeDp.pixels)
         LabelPosition.Bottom ->
-          insets.ensureValuesAtLeast(bottom = label.getHeight(context) + tickSizeDp.pixels)
+          layerMargins.ensureValuesAtLeast(bottom = label.getHeight(context) + tickSizeDp.pixels)
         LabelPosition.AroundPoint -> Unit // Will be inside the chart
       }
     }
@@ -266,7 +264,103 @@ public open class DefaultCartesianMarker(
     AbovePoint,
   }
 
+  /** Formats [CartesianMarker] values for display. */
+  public fun interface ValueFormatter {
+    /** Returns a label for the given [CartesianMarker.Target]s. */
+    public fun format(
+      context: CartesianDrawingContext,
+      targets: List<CartesianMarker.Target>,
+    ): CharSequence
+
+    /** Houses a [ValueFormatter] factory function. */
+    public companion object {
+      /**
+       * Creates an instance of the default [ValueFormatter] implementation. The labels produced
+       * include the [CartesianLayerModel.Entry] _y_ values, which are formatted via [decimalFormat]
+       * and, if [colorCode] is true, color-coded.
+       */
+      public fun default(
+        decimalFormat: DecimalFormat = DecimalFormat("#.##;−#.##"),
+        colorCode: Boolean = true,
+      ): ValueFormatter = DefaultValueFormatter(decimalFormat, colorCode)
+    }
+  }
+
   protected companion object {
     public val keyNamespace: CacheStore.KeyNamespace = CacheStore.KeyNamespace()
   }
+}
+
+internal class DefaultValueFormatter(
+  private val decimalFormat: DecimalFormat,
+  private val colorCode: Boolean,
+) : DefaultCartesianMarker.ValueFormatter {
+  private fun SpannableStringBuilder.append(y: Double, color: Int? = null) {
+    if (colorCode && color != null) {
+      appendCompat(
+        decimalFormat.format(y),
+        ForegroundColorSpan(color),
+        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
+      )
+    } else {
+      append(decimalFormat.format(y))
+    }
+  }
+
+  private fun SpannableStringBuilder.append(target: CartesianMarker.Target, shorten: Boolean) {
+    when (target) {
+      is CandlestickCartesianLayerMarkerTarget -> {
+        if (shorten) {
+          append(target.entry.closing, target.closingColor)
+        } else {
+          append("O ")
+          append(target.entry.opening, target.openingColor)
+          append(", C ")
+          append(target.entry.closing, target.closingColor)
+          append(", L ")
+          append(target.entry.low, target.lowColor)
+          append(", H ")
+          append(target.entry.high, target.highColor)
+        }
+      }
+      is ColumnCartesianLayerMarkerTarget -> {
+        val includeSum = target.columns.size > 1
+        if (includeSum) {
+          append(target.columns.sumOf { it.entry.y })
+          append(" (")
+        }
+        target.columns.forEachIndexed { index, column ->
+          append(column.entry.y, column.color)
+          if (index != target.columns.lastIndex) append(", ")
+        }
+        if (includeSum) append(")")
+      }
+      is LineCartesianLayerMarkerTarget -> {
+        target.points.forEachIndexed { index, point ->
+          append(point.entry.y, point.color)
+          if (index != target.points.lastIndex) append(", ")
+        }
+      }
+      else -> throw IllegalArgumentException("Unexpected `CartesianMarker.Target` implementation.")
+    }
+  }
+
+  override fun format(
+    context: CartesianDrawingContext,
+    targets: List<CartesianMarker.Target>,
+  ): CharSequence =
+    SpannableStringBuilder().apply {
+      targets.forEachIndexed { index, target ->
+        append(target = target, shorten = targets.size > 1)
+        if (index != targets.lastIndex) append(", ")
+      }
+    }
+
+  override fun equals(other: Any?): Boolean =
+    this === other ||
+      other is DefaultValueFormatter &&
+        decimalFormat == other.decimalFormat &&
+        colorCode == other.colorCode
+
+  override fun hashCode(): Int = 31 * decimalFormat.hashCode() + colorCode.hashCode()
 }

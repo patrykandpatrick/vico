@@ -22,13 +22,13 @@ import com.patrykandpatrick.vico.core.cartesian.axis.BaseAxis
 
 /** Creates a [BaseAxis.Size.Auto] instance. */
 public fun BaseAxis.Size.Companion.auto(
-  minSize: Dp = 0.dp,
-  maxSize: Dp = Float.MAX_VALUE.dp,
-): BaseAxis.Size.Auto = BaseAxis.Size.Auto(minSize.value, maxSize.value)
+  min: Dp = 0.dp,
+  max: Dp = Float.MAX_VALUE.dp,
+): BaseAxis.Size.Auto = BaseAxis.Size.Auto(min.value, max.value)
 
-/** Creates a [BaseAxis.Size.Exact] instance. */
-public fun BaseAxis.Size.Companion.exact(size: Dp): BaseAxis.Size.Exact =
-  BaseAxis.Size.Exact(size.value)
+/** Creates a [BaseAxis.Size.Fixed] instance. */
+public fun BaseAxis.Size.Companion.fixed(value: Dp): BaseAxis.Size.Fixed =
+  BaseAxis.Size.Fixed(value.value)
 
 /** Creates a [BaseAxis.Size.Fraction] instance. */
 public fun BaseAxis.Size.Companion.fraction(fraction: Float): BaseAxis.Size.Fraction =

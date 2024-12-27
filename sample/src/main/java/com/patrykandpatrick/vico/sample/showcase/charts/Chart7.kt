@@ -37,9 +37,8 @@ import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
 import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.common.component.shapeComponent
-import com.patrykandpatrick.vico.compose.common.data.rememberExtraLambda
-import com.patrykandpatrick.vico.compose.common.dimensions
 import com.patrykandpatrick.vico.compose.common.fill
+import com.patrykandpatrick.vico.compose.common.insets
 import com.patrykandpatrick.vico.compose.common.rememberVerticalLegend
 import com.patrykandpatrick.vico.compose.common.shape.rounded
 import com.patrykandpatrick.vico.compose.common.vicoTheme
@@ -151,8 +150,8 @@ private fun ViewChart7(modelProducer: CartesianChartModelProducer, modifier: Mod
 private fun rememberStartAxisLabel() =
   rememberAxisLabelComponent(
     color = Color.Black,
-    margins = dimensions(4.dp),
-    padding = dimensions(8.dp, 2.dp),
+    margins = insets(4.dp),
+    padding = insets(8.dp, 2.dp),
     background = rememberShapeComponent(fill(Color(0xfffab94d)), CorneredShape.rounded(4.dp)),
   )
 
@@ -161,19 +160,18 @@ private fun rememberLegend(): Legend<CartesianMeasuringContext, CartesianDrawing
   val labelComponent = rememberTextComponent(vicoTheme.textColor)
   val resources = LocalContext.current.resources
   return rememberVerticalLegend(
-    items =
-      rememberExtraLambda {
-        chartColors.forEachIndexed { index, color ->
-          add(
-            LegendItem(
-              icon = shapeComponent(fill(color), CorneredShape.Pill),
-              labelComponent = labelComponent,
-              label = resources.getString(R.string.series_x, index + 1),
-            )
+    items = {
+      chartColors.forEachIndexed { index, color ->
+        add(
+          LegendItem(
+            icon = shapeComponent(fill(color), CorneredShape.Pill),
+            labelComponent = labelComponent,
+            label = resources.getString(R.string.series_x, index + 1),
           )
-        }
-      },
-    padding = dimensions(top = 8.dp),
+        )
+      }
+    },
+    padding = insets(top = 8.dp),
   )
 }
 

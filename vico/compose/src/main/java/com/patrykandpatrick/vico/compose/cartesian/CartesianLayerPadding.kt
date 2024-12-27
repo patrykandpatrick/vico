@@ -18,7 +18,7 @@ package com.patrykandpatrick.vico.compose.cartesian
 
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.patrykandpatrick.vico.core.cartesian.CartesianLayerPadding
+import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayerPadding
 
 /** Creates a [CartesianLayerPadding] instance. */
 public fun cartesianLayerPadding(

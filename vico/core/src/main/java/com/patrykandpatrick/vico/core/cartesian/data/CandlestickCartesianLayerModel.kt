@@ -96,6 +96,24 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
     return result
   }
 
+  /** Represents an [Entry]’s absolute or relative price change. */
+  public enum class Change {
+    Bullish,
+    Bearish,
+    Neutral;
+
+    internal companion object {
+      private fun forPrices(old: Float, new: Float) =
+        when {
+          new > old -> Bullish
+          new < old -> Bearish
+          else -> Neutral
+        }
+
+      fun forPrices(old: Number, new: Number) = forPrices(old.toFloat(), new.toFloat())
+    }
+  }
+
   /**
    * Houses a single candle’s data.
    *
@@ -165,29 +183,6 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
       result = 31 * result + relativeChange.hashCode()
       return result
     }
-
-    /** Represents an [Entry]’s absolute or relative price change. */
-    public enum class Change {
-      /** Represents a price increase. */
-      Bullish,
-
-      /** Represents a price decrease. */
-      Bearish,
-
-      /** Represents no change in price. */
-      Neutral;
-
-      internal companion object {
-        private fun forPrices(old: Float, new: Float) =
-          when {
-            new > old -> Bullish
-            new < old -> Bearish
-            else -> Neutral
-          }
-
-        fun forPrices(old: Number, new: Number) = forPrices(old.toFloat(), new.toFloat())
-      }
-    }
   }
 
   /**
@@ -218,9 +213,8 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
             closing = closingPrice,
             low = low.elementAt(index),
             high = high.elementAt(index),
-            absoluteChange = Entry.Change.forPrices(old = openingPrice, new = closingPrice),
-            relativeChange =
-              Entry.Change.forPrices(old = previousClosingPrice ?: 0, new = closingPrice),
+            absoluteChange = Change.forPrices(old = openingPrice, new = closingPrice),
+            relativeChange = Change.forPrices(old = previousClosingPrice ?: 0, new = closingPrice),
           )
         )
         previousClosingPrice = closingPrice

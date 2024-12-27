@@ -28,14 +28,11 @@ public abstract class ExtraStore internal constructor() {
   /** Returns the value associated with the provided key, or `null` if there’s no such value. */
   public fun <T : Any> getOrNull(key: Key<T>): T? = mapDelegate[key] as? T
 
-  /** Creates a copy of this [ExtraStore]. */
-  public abstract fun copy(): ExtraStore
+  internal abstract fun copy(): ExtraStore
 
-  /** Copies this [ExtraStore]’s content to [destination]. */
-  public abstract fun copyContentTo(destination: MutableMap<Key<*>, Any>)
+  internal abstract fun copyContentTo(destination: MutableMap<Key<*>, Any>)
 
-  /** Combines this [ExtraStore] and [other]. */
-  public abstract operator fun plus(other: ExtraStore): ExtraStore
+  internal abstract operator fun plus(other: ExtraStore): ExtraStore
 
   override fun equals(other: Any?): Boolean =
     this === other || other is ExtraStore && mapDelegate == other.mapDelegate
@@ -45,9 +42,8 @@ public abstract class ExtraStore internal constructor() {
   /** Used for writing to and reading from [ExtraStore]s. */
   @Suppress("UNUSED") public open class Key<T : Any>
 
-  public companion object {
-    /** An empty [ExtraStore]. */
-    public val Empty: ExtraStore = MutableExtraStore()
+  internal companion object {
+    val Empty = MutableExtraStore()
   }
 }
 

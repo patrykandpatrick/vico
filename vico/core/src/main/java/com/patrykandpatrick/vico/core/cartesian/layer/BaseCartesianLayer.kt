@@ -18,24 +18,23 @@ package com.patrykandpatrick.vico.core.cartesian.layer
 
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianLayerModel
-import com.patrykandpatrick.vico.core.common.Insets
 import com.patrykandpatrick.vico.core.common.inClip
 
 /** A base [CartesianLayer] implementation. */
 public abstract class BaseCartesianLayer<T : CartesianLayerModel> : CartesianLayer<T> {
-  private val insets: Insets = Insets()
+  private val margins: CartesianLayerMargins = CartesianLayerMargins()
 
   protected abstract fun drawInternal(context: CartesianDrawingContext, model: T)
 
   override fun draw(context: CartesianDrawingContext, model: T) {
     with(context) {
-      insets.clear()
-      updateInsets(this, horizontalDimensions, model, insets)
+      margins.clear()
+      updateLayerMargins(this, margins, layerDimensions, model)
       canvas.inClip(
-        left = layerBounds.left - insets.getLeft(isLtr),
-        top = layerBounds.top - insets.top,
-        right = layerBounds.right + insets.getRight(isLtr),
-        bottom = layerBounds.bottom + insets.bottom,
+        left = layerBounds.left - margins.getLeft(isLtr),
+        top = layerBounds.top - margins.top,
+        right = layerBounds.right + margins.getRight(isLtr),
+        bottom = layerBounds.bottom + margins.bottom,
       ) {
         drawInternal(context, model)
       }

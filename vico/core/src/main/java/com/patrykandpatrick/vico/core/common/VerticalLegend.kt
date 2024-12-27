@@ -34,7 +34,7 @@ public open class VerticalLegend<M : MeasuringContext, D : DrawingContext>(
   protected val iconSizeDp: Float = Defaults.LEGEND_ICON_SIZE,
   protected val iconLabelSpacingDp: Float = Defaults.LEGEND_ICON_LABEL_SPACING,
   protected val rowSpacingDp: Float = Defaults.LEGEND_ROW_SPACING,
-  protected val padding: Dimensions = Dimensions.Empty,
+  protected val padding: Insets = Insets.Zero,
 ) : Legend<M, D> {
   private val itemManager = LegendItemManager(items)
   private val heights: HashMap<LegendItem, Float> = HashMap()
@@ -48,7 +48,7 @@ public open class VerticalLegend<M : MeasuringContext, D : DrawingContext>(
         sum +
           max(
               iconSizeDp.pixels,
-              item.getLabelHeight(context, maxWidth, iconLabelSpacingDp, iconSizeDp),
+              item.getLabelHeight(context, iconSizeDp, iconLabelSpacingDp, maxWidth),
             )
             .also { height -> heights[item] = height }
       } + (padding.verticalDp + rowSpacingDp * (itemManager.itemList.size - 1)).pixels
@@ -88,7 +88,7 @@ public open class VerticalLegend<M : MeasuringContext, D : DrawingContext>(
           text = item.label,
           x = startX,
           y = centerY,
-          horizontalPosition = HorizontalPosition.End,
+          horizontalPosition = Position.Horizontal.End,
           maxWidth =
             (bounds.width() - (iconSizeDp + iconLabelSpacingDp + padding.horizontalDp).pixels)
               .toInt(),

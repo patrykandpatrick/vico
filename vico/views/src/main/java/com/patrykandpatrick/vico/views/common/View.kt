@@ -25,19 +25,10 @@ import com.patrykandpatrick.vico.core.common.Point
 internal val Int.specSize: Int
   get() = View.MeasureSpec.getSize(this)
 
-internal val Int.specMode: Int
-  get() = View.MeasureSpec.getMode(this)
-
 internal var View.verticalPadding: Int
   get() = paddingTop + paddingBottom
   set(value) {
     updatePadding(top = value / 2, bottom = value / 2)
-  }
-
-internal var View.horizontalPadding: Int
-  get() = paddingLeft + paddingRight
-  set(value) {
-    updatePadding(left = value / 2, right = value / 2)
   }
 
 internal fun OverScroller.fling(

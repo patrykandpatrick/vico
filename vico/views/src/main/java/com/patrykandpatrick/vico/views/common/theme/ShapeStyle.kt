@@ -19,14 +19,9 @@ package com.patrykandpatrick.vico.views.common.theme
 import android.content.Context
 import android.content.res.TypedArray
 import androidx.annotation.StyleableRes
-import com.patrykandpatrick.vico.core.common.shape.Corner
-import com.patrykandpatrick.vico.core.common.shape.CornerTreatment
 import com.patrykandpatrick.vico.core.common.shape.CorneredShape
-import com.patrykandpatrick.vico.core.common.shape.CutCornerTreatment
 import com.patrykandpatrick.vico.core.common.shape.DashedShape
-import com.patrykandpatrick.vico.core.common.shape.RoundedCornerTreatment
 import com.patrykandpatrick.vico.core.common.shape.Shape
-import com.patrykandpatrick.vico.core.common.shape.SharpCornerTreatment
 import com.patrykandpatrick.vico.views.R
 
 private const val ONE_HUNDRED_PERCENT = 100
@@ -75,7 +70,7 @@ private fun TypedArray.getCorner(
   @StyleableRes sizeIndex: Int,
   @StyleableRes treatmentIndex: Int,
   handleNullSizeIndex: Boolean = true,
-): Corner =
+): CorneredShape.Corner =
   when {
     !hasValue(sizeIndex) && handleNullSizeIndex -> {
       getCorner(
@@ -87,11 +82,11 @@ private fun TypedArray.getCorner(
     }
     isFraction(sizeIndex) -> {
       val percentage = (getFraction(sizeIndex, defaultValue = 0f) * ONE_HUNDRED_PERCENT).toInt()
-      Corner.Relative(
-        percentage = percentage,
-        cornerTreatment =
+      CorneredShape.Corner.Relative(
+        sizePercent = percentage,
+        treatment =
           if (percentage == 0) {
-            SharpCornerTreatment
+            CorneredShape.CornerTreatment.Sharp
           } else {
             getCornerTreatment(treatmentIndex)
           },
@@ -99,11 +94,11 @@ private fun TypedArray.getCorner(
     }
     else -> {
       val sizeDp = getRawDimension(context, sizeIndex, defaultValue = 0f)
-      Corner.Absolute(
+      CorneredShape.Corner.Absolute(
         sizeDp = sizeDp,
-        cornerTreatment =
+        shape =
           if (sizeDp == 0f) {
-            SharpCornerTreatment
+            CorneredShape.CornerTreatment.Sharp
           } else {
             getCornerTreatment(treatmentIndex)
           },
@@ -114,9 +109,9 @@ private fun TypedArray.getCorner(
 private fun TypedArray.getCornerTreatment(
   @StyleableRes index: Int,
   defaultValue: Int = -1,
-): CornerTreatment =
+): CorneredShape.CornerTreatment =
   when (getInt(index, defaultValue)) {
     -1 -> getCornerTreatment(R.styleable.ShapeStyle_cornerTreatment, defaultValue = 0)
-    0 -> RoundedCornerTreatment
-    else -> CutCornerTreatment
+    0 -> CorneredShape.CornerTreatment.Rounded
+    else -> CorneredShape.CornerTreatment.Cut
   }

@@ -23,12 +23,12 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import com.patrykandpatrick.vico.core.common.DrawingContext
 
-internal data class VicoComposeShader(
-  private val first: DynamicShader,
-  private val second: DynamicShader,
+internal data class ComposeShaderProvider(
+  private val first: ShaderProvider,
+  private val second: ShaderProvider,
   private val mode: Mode,
-) : DynamicShader {
-  override fun provideShader(
+) : ShaderProvider {
+  override fun getShader(
     context: DrawingContext,
     left: Float,
     top: Float,
@@ -36,8 +36,8 @@ internal data class VicoComposeShader(
     bottom: Float,
   ) =
     mode.createShader(
-      first.provideShader(context, left, top, right, bottom),
-      second.provideShader(context, left, top, right, bottom),
+      first.getShader(context, left, top, right, bottom),
+      second.getShader(context, left, top, right, bottom),
     )
 
   interface Mode {

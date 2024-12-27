@@ -23,14 +23,9 @@ import com.patrykandpatrick.vico.core.common.doubled
 import com.patrykandpatrick.vico.core.common.half
 
 /**
- * [MarkerCorneredShape] is an extension of [CorneredShape] that supports drawing a triangular tick
- * at a given point.
+ * A [CorneredShape] extension that additionally draws a triangular tick.
  *
- * @param topLeft specifies a [Corner] for the top left of the [Shape].
- * @param topRight specifies a [Corner] for the top right of the [Shape].
- * @param bottomLeft specifies a [Corner] for the bottom left of the [Shape].
- * @param bottomRight specifies a [Corner] for the bottom right of the [Shape].
- * @param tickSizeDp the size of the tick (in dp).
+ * @property tickSizeDp the size of the tick (in dp).
  */
 public open class MarkerCorneredShape(
   topLeft: Corner,
@@ -51,13 +46,13 @@ public open class MarkerCorneredShape(
   ) : this(all, all, all, all, tickSizeDp)
 
   public constructor(
-    corneredShape: CorneredShape,
+    base: CorneredShape,
     tickSizeDp: Float = MARKER_TICK_SIZE,
   ) : this(
-    topLeft = corneredShape.topLeft,
-    topRight = corneredShape.topRight,
-    bottomRight = corneredShape.bottomRight,
-    bottomLeft = corneredShape.bottomLeft,
+    topLeft = base.topLeft,
+    topRight = base.topRight,
+    bottomRight = base.bottomRight,
+    bottomLeft = base.bottomLeft,
     tickSizeDp = tickSizeDp,
   )
 
@@ -78,8 +73,8 @@ public open class MarkerCorneredShape(
       val availableCornerSize = minOf(right - left, bottom - top)
       val cornerScale = getCornerScale(right - left, bottom - top, density)
 
-      val minLeft = left + bottomLeft.getCornerSize(availableCornerSize, density) * cornerScale
-      val maxLeft = right - bottomRight.getCornerSize(availableCornerSize, density) * cornerScale
+      val minLeft = left + bottomLeft.getSize(availableCornerSize, density) * cornerScale
+      val maxLeft = right - bottomRight.getSize(availableCornerSize, density) * cornerScale
 
       val coercedTickSize = tickSize.coerceAtMost((maxLeft - minLeft).half.coerceAtLeast(0f))
 

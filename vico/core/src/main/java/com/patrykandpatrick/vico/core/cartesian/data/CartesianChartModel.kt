@@ -16,6 +16,7 @@
 
 package com.patrykandpatrick.vico.core.cartesian.data
 
+import androidx.annotation.RestrictTo
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
 import com.patrykandpatrick.vico.core.common.data.CartesianLayerDrawingModel
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
@@ -83,8 +84,9 @@ public class CartesianChartModel {
   /** Creates an immutable copy of this [CartesianChartModel]. */
   public fun toImmutable(): CartesianChartModel = this
 
+  /** @suppress */
+  @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
   public companion object {
-    /** An empty [CartesianChartModel]. */
     public val Empty: CartesianChartModel =
       CartesianChartModel(models = emptyList(), id = 0, width = 0.0, extraStore = ExtraStore.Empty)
   }

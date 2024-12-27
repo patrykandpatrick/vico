@@ -32,7 +32,7 @@ internal data class SingleLineFill(val fill: Fill) : LineCartesianLayer.LineFill
   ) {
     with(context) {
       paint.shader =
-        fill.shader?.provideShader(
+        fill.shaderProvider?.getShader(
           this,
           layerBounds.left,
           layerBounds.top,
@@ -60,7 +60,7 @@ internal data class DoubleLineFill(
       val canvasSplitY = getCanvasSplitY(splitY, halfLineThickness, verticalAxisPosition)
       paint.color = topFill.color
       paint.shader =
-        topFill.shader?.provideShader(
+        topFill.shaderProvider?.getShader(
           this,
           layerBounds.left,
           layerBounds.top - halfLineThickness,
@@ -76,7 +76,7 @@ internal data class DoubleLineFill(
       )
       paint.color = bottomFill.color
       paint.shader =
-        bottomFill.shader?.provideShader(
+        bottomFill.shaderProvider?.getShader(
           this,
           layerBounds.left,
           canvasSplitY,

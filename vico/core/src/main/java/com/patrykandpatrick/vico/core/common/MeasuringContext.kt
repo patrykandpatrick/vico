@@ -51,9 +51,9 @@ public interface MeasuringContext {
   /** Caches drawing data. */
   public val cacheStore: CacheStore
 
-  /** `1f` if [isLtr] is `true`, and `-1f` otherwise. */
-  public val layoutDirectionMultiplier: Float
-    get() = if (isLtr) 1f else -1f
+  /** 1 if [isLtr] is true; −1 otherwise. */
+  public val layoutDirectionMultiplier: Int
+    get() = if (isLtr) 1 else -1
 
   /** Removes all temporary data. */
   public fun reset() {

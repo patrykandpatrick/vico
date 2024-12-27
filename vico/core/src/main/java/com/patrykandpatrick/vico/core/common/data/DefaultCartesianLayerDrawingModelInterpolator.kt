@@ -23,7 +23,7 @@ import kotlinx.coroutines.ensureActive
 
 @Suppress("UNCHECKED_CAST")
 internal class DefaultCartesianLayerDrawingModelInterpolator<
-  T : CartesianLayerDrawingModel.DrawingInfo,
+  T : CartesianLayerDrawingModel.Entry,
   R : CartesianLayerDrawingModel<T>,
 > : CartesianLayerDrawingModelInterpolator<T, R> {
   private var transformationMaps = emptyList<Map<Double, TransformationModel<T>>>()
@@ -40,12 +40,12 @@ internal class DefaultCartesianLayerDrawingModelInterpolator<
 
   override suspend fun transform(fraction: Float): R? =
     newDrawingModel?.transform(
-      drawingInfo =
+      entries =
         transformationMaps.mapNotNull { map ->
           map
             .mapNotNull { (x, model) ->
               currentCoroutineContext().ensureActive()
-              model.transform(fraction)?.let { drawingInfo -> x to drawingInfo }
+              model.transform(fraction)?.let { entry -> x to entry }
             }
             .takeIf { list -> list.isNotEmpty() }
             ?.toMap()
@@ -58,18 +58,18 @@ internal class DefaultCartesianLayerDrawingModelInterpolator<
     transformationMaps = buildList {
       repeat(max(oldDrawingModel?.size.orZero, newDrawingModel?.size.orZero)) { index ->
         val map = mutableMapOf<Double, TransformationModel<T>>()
-        oldDrawingModel?.getOrNull(index)?.forEach { (x, drawingInfo) ->
-          map[x] = TransformationModel(drawingInfo)
+        oldDrawingModel?.getOrNull(index)?.forEach { (x, entry) ->
+          map[x] = TransformationModel(entry)
         }
-        newDrawingModel?.getOrNull(index)?.forEach { (x, drawingInfo) ->
-          map[x] = TransformationModel(map[x]?.old, drawingInfo)
+        newDrawingModel?.getOrNull(index)?.forEach { (x, entry) ->
+          map[x] = TransformationModel(map[x]?.old, entry)
         }
         add(map)
       }
     }
   }
 
-  private class TransformationModel<T : CartesianLayerDrawingModel.DrawingInfo>(
+  private class TransformationModel<T : CartesianLayerDrawingModel.Entry>(
     val old: T?,
     val new: T? = null,
   ) {

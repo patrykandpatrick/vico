@@ -18,6 +18,9 @@ package com.patrykandpatrick.vico.views.cartesian
 
 import android.content.Context
 import android.graphics.Canvas
+import android.os.Build
+import android.os.Bundle
+import android.os.Parcelable
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
@@ -25,9 +28,7 @@ import android.view.View
 import android.widget.OverScroller
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
-import com.patrykandpatrick.vico.core.cartesian.CartesianLayerPadding
 import com.patrykandpatrick.vico.core.cartesian.MutableCartesianMeasuringContext
-import com.patrykandpatrick.vico.core.cartesian.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.Scroll
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
@@ -35,6 +36,8 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartRanges
 import com.patrykandpatrick.vico.core.cartesian.data.MutableCartesianChartRanges
 import com.patrykandpatrick.vico.core.cartesian.data.RandomCartesianModelGenerator
 import com.patrykandpatrick.vico.core.cartesian.data.toImmutable
+import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayerPadding
+import com.patrykandpatrick.vico.core.cartesian.layer.MutableCartesianLayerDimensions
 import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.NEW_PRODUCER_ERROR_MESSAGE
 import com.patrykandpatrick.vico.core.common.Point
@@ -84,6 +87,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       zoomEnabled = false,
       layerPadding = CartesianLayerPadding(),
       spToPx = context::spToPx,
+      pointerPosition = null,
     )
 
   private val scaleGestureListener: ScaleGestureDetector.OnScaleGestureListener =
@@ -91,11 +95,9 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 
   private val scaleGestureDetector = ScaleGestureDetector(context, scaleGestureListener)
 
-  private var markerTouchPoint: Point? = null
-
   private var scrollDirectionResolved = false
 
-  private var horizontalDimensions = MutableHorizontalDimensions()
+  private val layerDimensions = MutableCartesianLayerDimensions()
 
   private var previousLayerPaddingHashCode: Int? = null
 
@@ -159,7 +161,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
           chart?.prepareForTransformation(model, extraStore, ranges)
         },
         transform = { extraStore, fraction -> chart?.transform(extraStore, fraction) },
-        extraStore = extraStore,
+        hostExtraStore = extraStore,
         updateRanges = { model ->
           ranges.reset()
           if (model != null) {
@@ -306,7 +308,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   }
 
   private fun handleTouchEvent(point: Point?) {
-    markerTouchPoint = point
+    measuringContext.pointerPosition = point
   }
 
   override fun dispatchDraw(canvas: Canvas) {
@@ -314,8 +316,8 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 
     withChartAndModel { chart, model ->
       measuringContext.reset()
-      horizontalDimensions.clear()
-      chart.prepare(measuringContext, horizontalDimensions, canvasBounds)
+      layerDimensions.clear()
+      chart.prepare(measuringContext, layerDimensions)
 
       if (chart.layerBounds.isEmpty) return@withChartAndModel
 
@@ -325,21 +327,20 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
         postInvalidateOnAnimation()
       }
 
-      zoomHandler.update(measuringContext, horizontalDimensions, chart.layerBounds)
-      scrollHandler.update(measuringContext, chart.layerBounds, horizontalDimensions)
+      zoomHandler.update(measuringContext, layerDimensions, chart.layerBounds)
+      scrollHandler.update(measuringContext, chart.layerBounds, layerDimensions)
 
       val drawingContext =
         CartesianDrawingContext(
-          measuringContext = measuringContext,
-          canvas = canvas,
-          markerTouchPoint = markerTouchPoint,
-          horizontalDimensions = horizontalDimensions,
-          layerBounds = chart.layerBounds,
-          scroll = scrollHandler.value,
-          zoom = zoomHandler.value,
+          measuringContext,
+          canvas,
+          layerDimensions,
+          chart.layerBounds,
+          scrollHandler.value,
+          zoomHandler.value,
         )
 
-      chart.draw(drawingContext, markerTouchPoint)
+      chart.draw(drawingContext)
       measuringContext.reset()
     }
   }
@@ -347,12 +348,38 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   override fun getChartDesiredHeight(widthMeasureSpec: Int, heightMeasureSpec: Int): Int =
     Defaults.CHART_HEIGHT.dpInt
 
+  override fun onSaveInstanceState(): Parcelable =
+    Bundle().apply {
+      scrollHandler.saveInstanceState(this)
+      zoomHandler.saveInstanceState(this)
+      putParcelable(SUPER_STATE_KEY, super.onSaveInstanceState())
+    }
+
+  override fun onRestoreInstanceState(state: Parcelable?) {
+    var superState = state
+    if (state is Bundle) {
+      scrollHandler.restoreInstanceState(state)
+      zoomHandler.restoreInstanceState(state)
+      superState =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+          state.getParcelable(SUPER_STATE_KEY, BaseSavedState::class.java)
+        } else {
+          @Suppress("DEPRECATION") state.getParcelable(SUPER_STATE_KEY)
+        }
+    }
+    super.onRestoreInstanceState(superState)
+  }
+
   private inline fun withChartAndModel(
     block: (chart: CartesianChart, model: CartesianChartModel) -> Unit
   ) {
     val chart = chart ?: return
     val model = model ?: return
     block(chart, model)
+  }
+
+  private companion object {
+    const val SUPER_STATE_KEY = "superState"
   }
 }
 

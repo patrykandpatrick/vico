@@ -19,13 +19,13 @@ package com.patrykandpatrick.vico.core.cartesian.marker
 import androidx.compose.runtime.Immutable
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
-import com.patrykandpatrick.vico.core.cartesian.CartesianLayerInsetter
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayer
+import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayerMarginUpdater
 
 /** Marks [CartesianChart] objects. */
 @Immutable
-public interface CartesianMarker : CartesianLayerInsetter<CartesianChartModel> {
+public interface CartesianMarker : CartesianLayerMarginUpdater<CartesianChartModel> {
   /** Draws content under the [CartesianLayer]s. */
   public fun drawUnderLayers(context: CartesianDrawingContext, targets: List<Target>) {}
 

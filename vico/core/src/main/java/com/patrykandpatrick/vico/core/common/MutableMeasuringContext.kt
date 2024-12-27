@@ -20,12 +20,13 @@ import android.graphics.RectF
 import androidx.annotation.RestrictTo
 import com.patrykandpatrick.vico.core.common.data.CacheStore
 
-/** A [MeasuringContext] implementation that facilitates the mutation of some of its properties. */
+/** @suppress */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public open class MutableMeasuringContext(
   override val canvasBounds: RectF,
   override var density: Float,
   override var isLtr: Boolean,
-  @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) public var spToPx: (Float) -> Float,
+  private var spToPx: (Float) -> Float,
 ) : MeasuringContext {
   override val cacheStore: CacheStore = CacheStore()
 

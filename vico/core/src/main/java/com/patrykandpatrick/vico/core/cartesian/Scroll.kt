@@ -20,6 +20,7 @@ import android.graphics.RectF
 import androidx.annotation.RestrictTo
 import com.patrykandpatrick.vico.core.cartesian.Scroll.Absolute
 import com.patrykandpatrick.vico.core.cartesian.Scroll.Relative
+import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayerDimensions
 
 /** Represents a [CartesianChart] scroll value or delta. */
 public sealed interface Scroll {
@@ -28,7 +29,7 @@ public sealed interface Scroll {
     /** Returns the scroll value. */
     public fun getValue(
       context: CartesianMeasuringContext,
-      horizontalDimensions: HorizontalDimensions,
+      layerDimensions: CartesianLayerDimensions,
       bounds: RectF,
       maxValue: Float,
     ): Float
@@ -49,10 +50,10 @@ public sealed interface Scroll {
        * ([bias] = 0) and the end edge ([bias] = 1) of the [CartesianChart].
        */
       public fun x(x: Double, bias: Float = 0f): Absolute =
-        Absolute { context, horizontalDimensions, bounds, _ ->
-          horizontalDimensions.startPadding +
+        Absolute { context, layerDimensions, bounds, _ ->
+          layerDimensions.startPadding +
             ((x - context.ranges.minX) / context.ranges.xStep).toFloat() *
-              horizontalDimensions.xSpacing - bias * bounds.width()
+              layerDimensions.xSpacing - bias * bounds.width()
         }
     }
   }
@@ -62,7 +63,7 @@ public sealed interface Scroll {
     /** Returns the scroll delta. */
     public fun getDelta(
       context: CartesianMeasuringContext,
-      horizontalDimensions: HorizontalDimensions,
+      layerDimensions: CartesianLayerDimensions,
       bounds: RectF,
       maxValue: Float,
     ): Float
@@ -73,8 +74,8 @@ public sealed interface Scroll {
       public fun pixels(pixels: Float): Relative = Relative { _, _, _, _ -> pixels }
 
       /** Scrolls by the specified number of _x_ units. */
-      public fun x(x: Double): Relative = Relative { context, horizontalDimensions, _, _ ->
-        (x / context.ranges.xStep).toFloat() * horizontalDimensions.xSpacing
+      public fun x(x: Double): Relative = Relative { context, layerDimensions, _, _ ->
+        (x / context.ranges.xStep).toFloat() * layerDimensions.xSpacing
       }
     }
   }
@@ -84,12 +85,12 @@ public sealed interface Scroll {
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public fun Scroll.getDelta(
   context: CartesianMeasuringContext,
-  horizontalDimensions: HorizontalDimensions,
+  layerDimensions: CartesianLayerDimensions,
   bounds: RectF,
   maxValue: Float,
   value: Float,
 ): Float =
   when (this) {
-    is Absolute -> getValue(context, horizontalDimensions, bounds, maxValue) - value
-    is Relative -> getDelta(context, horizontalDimensions, bounds, maxValue)
+    is Absolute -> getValue(context, layerDimensions, bounds, maxValue) - value
+    is Relative -> getDelta(context, layerDimensions, bounds, maxValue)
   }

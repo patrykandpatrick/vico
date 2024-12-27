@@ -19,10 +19,10 @@ package com.patrykandpatrick.vico.compose.common
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import com.patrykandpatrick.vico.core.common.Fill
-import com.patrykandpatrick.vico.core.common.shader.DynamicShader
+import com.patrykandpatrick.vico.core.common.shader.ShaderProvider
 
-/** Creates a [Color]&#0020;[Fill]. */
+/** Creates a [Fill]. */
 public fun fill(color: Color): Fill = Fill(color.toArgb())
 
-/** Creates a [DynamicShader]&#0020;[Fill]. */
-public fun fill(shader: DynamicShader): Fill = Fill(shader)
+/** Creates a [Fill]. */
+public fun fill(shaderProvider: ShaderProvider): Fill = Fill(shaderProvider)

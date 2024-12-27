@@ -29,14 +29,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
-import com.patrykandpatrick.vico.compose.common.dimensions
 import com.patrykandpatrick.vico.compose.common.fill
+import com.patrykandpatrick.vico.compose.common.insets
 import com.patrykandpatrick.vico.compose.common.shape.dashedShape
 import com.patrykandpatrick.vico.compose.common.vicoTheme
 import com.patrykandpatrick.vico.core.cartesian.axis.Axis
 import com.patrykandpatrick.vico.core.common.Defaults
-import com.patrykandpatrick.vico.core.common.Dimensions
 import com.patrykandpatrick.vico.core.common.Fill
+import com.patrykandpatrick.vico.core.common.Insets
 import com.patrykandpatrick.vico.core.common.component.Component
 import com.patrykandpatrick.vico.core.common.component.LineComponent
 import com.patrykandpatrick.vico.core.common.component.Shadow
@@ -53,10 +53,10 @@ public fun rememberAxisLabelComponent(
   lineHeight: TextUnit? = null,
   lineCount: Int = Defaults.AXIS_LABEL_MAX_LINES,
   truncateAt: TextUtils.TruncateAt = TextUtils.TruncateAt.END,
-  margins: Dimensions =
-    dimensions(Defaults.AXIS_LABEL_HORIZONTAL_MARGIN.dp, Defaults.AXIS_LABEL_VERTICAL_MARGIN.dp),
-  padding: Dimensions =
-    dimensions(Defaults.AXIS_LABEL_HORIZONTAL_PADDING.dp, Defaults.AXIS_LABEL_VERTICAL_PADDING.dp),
+  margins: Insets =
+    insets(Defaults.AXIS_LABEL_HORIZONTAL_MARGIN.dp, Defaults.AXIS_LABEL_VERTICAL_MARGIN.dp),
+  padding: Insets =
+    insets(Defaults.AXIS_LABEL_HORIZONTAL_PADDING.dp, Defaults.AXIS_LABEL_VERTICAL_PADDING.dp),
   background: Component? = null,
   minWidth: TextComponent.MinWidth = TextComponent.MinWidth.fixed(),
 ): TextComponent =
@@ -80,7 +80,7 @@ public fun rememberAxisLineComponent(
   fill: Fill = fill(vicoTheme.lineColor),
   thickness: Dp = Defaults.AXIS_LINE_WIDTH.dp,
   shape: Shape = Shape.Rectangle,
-  margins: Dimensions = Dimensions.Empty,
+  margins: Insets = Insets.Zero,
   strokeFill: Fill = Fill.Transparent,
   strokeThickness: Dp = 0.dp,
   shadow: Shadow? = null,
@@ -93,7 +93,7 @@ public fun rememberAxisTickComponent(
   fill: Fill = fill(vicoTheme.lineColor),
   thickness: Dp = Defaults.AXIS_LINE_WIDTH.dp,
   shape: Shape = Shape.Rectangle,
-  margins: Dimensions = Dimensions.Empty,
+  margins: Insets = Insets.Zero,
   strokeFill: Fill = Fill.Transparent,
   strokeThickness: Dp = 0.dp,
   shadow: Shadow? = null,
@@ -106,7 +106,7 @@ public fun rememberAxisGuidelineComponent(
   fill: Fill = fill(vicoTheme.lineColor),
   thickness: Dp = Defaults.AXIS_GUIDELINE_WIDTH.dp,
   shape: Shape = dashedShape(),
-  margins: Dimensions = Dimensions.Empty,
+  margins: Insets = Insets.Zero,
   strokeFill: Fill = Fill.Transparent,
   strokeThickness: Dp = 0.dp,
   shadow: Shadow? = null,

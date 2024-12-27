@@ -33,11 +33,11 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import com.patrykandpatrick.vico.core.cartesian.AutoScrollCondition
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
-import com.patrykandpatrick.vico.core.cartesian.HorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.Scroll
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.core.cartesian.getDelta
 import com.patrykandpatrick.vico.core.cartesian.getMaxScrollDistance
+import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayerDimensions
 import com.patrykandpatrick.vico.core.common.rangeWith
 import kotlinx.coroutines.flow.MutableSharedFlow
 
@@ -54,7 +54,7 @@ public class VicoScrollState {
   private val _maxValue = mutableFloatStateOf(0f)
   private var initialScrollHandled: Boolean
   private var context: CartesianMeasuringContext? = null
-  private var horizontalDimensions: HorizontalDimensions? = null
+  private var layerDimensions: CartesianLayerDimensions? = null
   private var bounds: RectF? = null
   internal val scrollEnabled: Boolean
   internal val pointerXDeltas = MutableSharedFlow<Float>(extraBufferCapacity = 1)
@@ -134,33 +134,33 @@ public class VicoScrollState {
   )
 
   private inline fun withUpdated(
-    block: (CartesianMeasuringContext, HorizontalDimensions, RectF) -> Unit
+    block: (CartesianMeasuringContext, CartesianLayerDimensions, RectF) -> Unit
   ) {
     val context = this.context
-    val horizontalDimensions = this.horizontalDimensions
+    val layerDimensions = this.layerDimensions
     val bounds = this.bounds
-    if (context != null && horizontalDimensions != null && bounds != null) {
-      block(context, horizontalDimensions, bounds)
+    if (context != null && layerDimensions != null && bounds != null) {
+      block(context, layerDimensions, bounds)
     }
   }
 
   internal fun update(
     context: CartesianMeasuringContext,
     bounds: RectF,
-    horizontalDimensions: HorizontalDimensions,
+    layerDimensions: CartesianLayerDimensions,
   ) {
     this.context = context
-    this.horizontalDimensions = horizontalDimensions
+    this.layerDimensions = layerDimensions
     this.bounds = bounds
-    maxValue = context.getMaxScrollDistance(bounds.width(), horizontalDimensions)
+    maxValue = context.getMaxScrollDistance(bounds.width(), layerDimensions)
     if (!initialScrollHandled) {
-      value = initialScroll.getValue(context, horizontalDimensions, bounds, maxValue)
+      value = initialScroll.getValue(context, layerDimensions, bounds, maxValue)
       initialScrollHandled = true
     }
   }
 
   internal suspend fun autoScroll(model: CartesianChartModel, oldModel: CartesianChartModel?) {
-    if (!autoScrollCondition.shouldPerformAutoScroll(model, oldModel)) return
+    if (!autoScrollCondition.shouldScroll(oldModel, model)) return
     if (scrollableState.isScrollInProgress)
       scrollableState.stopScroll(MutatePriority.PreventUserInput)
     animateScroll(autoScroll, autoScrollAnimationSpec)
@@ -168,24 +168,22 @@ public class VicoScrollState {
 
   internal fun clearUpdated() {
     context = null
-    horizontalDimensions = null
+    layerDimensions = null
     bounds = null
   }
 
   /** Triggers a scroll. */
   public suspend fun scroll(scroll: Scroll) {
-    withUpdated { context, horizontalDimensions, bounds ->
-      scrollableState.scrollBy(
-        scroll.getDelta(context, horizontalDimensions, bounds, maxValue, value)
-      )
+    withUpdated { context, layerDimensions, bounds ->
+      scrollableState.scrollBy(scroll.getDelta(context, layerDimensions, bounds, maxValue, value))
     }
   }
 
   /** Triggers an animated scroll. */
   public suspend fun animateScroll(scroll: Scroll, animationSpec: AnimationSpec<Float> = spring()) {
-    withUpdated { context, horizontalDimensions, bounds ->
+    withUpdated { context, layerDimensions, bounds ->
       scrollableState.animateScrollBy(
-        scroll.getDelta(context, horizontalDimensions, bounds, maxValue, value),
+        scroll.getDelta(context, layerDimensions, bounds, maxValue, value),
         animationSpec,
       )
     }

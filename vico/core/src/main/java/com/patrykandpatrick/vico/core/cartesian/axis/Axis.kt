@@ -20,17 +20,18 @@ import android.graphics.RectF
 import androidx.compose.runtime.Immutable
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
-import com.patrykandpatrick.vico.core.cartesian.CartesianLayerInsetter
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
-import com.patrykandpatrick.vico.core.cartesian.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayer
+import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayerMarginUpdater
+import com.patrykandpatrick.vico.core.cartesian.layer.MutableCartesianLayerDimensions
 import com.patrykandpatrick.vico.core.common.Bounded
 import com.patrykandpatrick.vico.core.common.MeasuringContext
 
 /** Draws an axis. */
 @Immutable
-public interface Axis<P : Axis.Position> : Bounded, CartesianLayerInsetter<CartesianChartModel> {
+public interface Axis<P : Axis.Position> :
+  Bounded, CartesianLayerMarginUpdater<CartesianChartModel> {
   /** The position of the [Axis]. */
   public val position: P
 
@@ -43,10 +44,10 @@ public interface Axis<P : Axis.Position> : Bounded, CartesianLayerInsetter<Carte
   /** The bounds ([RectF]) passed here define the area where the [Axis] shouldn’t draw anything. */
   public fun setRestrictedBounds(vararg bounds: RectF?)
 
-  /** Updates the chart’s [MutableHorizontalDimensions] instance. */
-  public fun updateHorizontalDimensions(
+  /** Updates the chart’s [MutableCartesianLayerDimensions] instance. */
+  public fun updateLayerDimensions(
     context: CartesianMeasuringContext,
-    horizontalDimensions: MutableHorizontalDimensions,
+    layerDimensions: MutableCartesianLayerDimensions,
   )
 
   /** Specifies the position of an [Axis]. */

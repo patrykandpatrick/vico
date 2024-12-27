@@ -19,7 +19,9 @@ package com.patrykandpatrick.vico.core.cartesian
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartRanges
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayer
+import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayerPadding
 import com.patrykandpatrick.vico.core.common.MeasuringContext
+import com.patrykandpatrick.vico.core.common.Point
 
 /** A [MeasuringContext] extension with [CartesianChart]-specific data. */
 public interface CartesianMeasuringContext : MeasuringContext {
@@ -37,4 +39,7 @@ public interface CartesianMeasuringContext : MeasuringContext {
 
   /** Stores the [CartesianLayer] padding values. */
   public val layerPadding: CartesianLayerPadding
+
+  /** The pointer position. */
+  public val pointerPosition: Point?
 }

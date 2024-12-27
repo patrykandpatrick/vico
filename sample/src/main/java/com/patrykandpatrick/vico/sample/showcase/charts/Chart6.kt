@@ -34,8 +34,8 @@ import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.common.component.shapeComponent
-import com.patrykandpatrick.vico.compose.common.dimensions
 import com.patrykandpatrick.vico.compose.common.fill
+import com.patrykandpatrick.vico.compose.common.insets
 import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
@@ -43,7 +43,7 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
 import com.patrykandpatrick.vico.core.cartesian.decoration.HorizontalBox
 import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
-import com.patrykandpatrick.vico.core.common.Dimensions
+import com.patrykandpatrick.vico.core.common.Insets
 import com.patrykandpatrick.vico.core.common.component.ShapeComponent
 import com.patrykandpatrick.vico.core.common.component.TextComponent
 import com.patrykandpatrick.vico.core.common.shape.CorneredShape
@@ -140,9 +140,9 @@ private fun rememberComposeHorizontalBox(): HorizontalBox {
   val box = rememberShapeComponent(fill(color.copy(HORIZONTAL_BOX_ALPHA)))
   val labelComponent =
     rememberTextComponent(
-      margins = dimensions(HORIZONTAL_BOX_LABEL_MARGIN_DP.dp),
+      margins = insets(HORIZONTAL_BOX_LABEL_MARGIN_DP.dp),
       padding =
-        dimensions(
+        insets(
           HORIZONTAL_BOX_LABEL_HORIZONTAL_PADDING_DP.dp,
           HORIZONTAL_BOX_LABEL_VERTICAL_PADDING_DP.dp,
         ),
@@ -158,9 +158,9 @@ private fun getViewHorizontalBox(): HorizontalBox {
     box = ShapeComponent(fill(color.copy(HORIZONTAL_BOX_ALPHA))),
     labelComponent =
       TextComponent(
-        margins = Dimensions(HORIZONTAL_BOX_LABEL_MARGIN_DP),
+        margins = Insets(HORIZONTAL_BOX_LABEL_MARGIN_DP),
         padding =
-          Dimensions(
+          Insets(
             HORIZONTAL_BOX_LABEL_HORIZONTAL_PADDING_DP,
             HORIZONTAL_BOX_LABEL_VERTICAL_PADDING_DP,
           ),

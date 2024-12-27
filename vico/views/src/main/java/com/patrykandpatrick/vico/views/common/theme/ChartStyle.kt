@@ -26,7 +26,7 @@ import com.patrykandpatrick.vico.core.cartesian.layer.absolute
 import com.patrykandpatrick.vico.core.cartesian.layer.absoluteRelative
 import com.patrykandpatrick.vico.core.cartesian.layer.asWick
 import com.patrykandpatrick.vico.core.common.Defaults
-import com.patrykandpatrick.vico.core.common.VerticalPosition
+import com.patrykandpatrick.vico.core.common.Position
 import com.patrykandpatrick.vico.core.common.getRepeating
 import com.patrykandpatrick.vico.core.common.shape.CorneredShape
 import com.patrykandpatrick.vico.views.R
@@ -110,9 +110,9 @@ internal fun TypedArray.getColumnCartesianLayer(
         } else {
           null
         },
-      dataLabelVerticalPosition =
-        VerticalPosition.entries[
-            getInteger(R.styleable.ColumnCartesianLayerStyle_dataLabelVerticalPosition, 0)],
+      dataLabelPosition =
+        Position.Vertical.entries[
+            getInteger(R.styleable.ColumnCartesianLayerStyle_dataLabelPosition, 0)],
       dataLabelRotationDegrees =
         getFloat(R.styleable.ColumnCartesianLayerStyle_dataLabelRotationDegrees, 0f),
     )
@@ -261,7 +261,7 @@ internal fun TypedArray.getCandlestickCartesianLayer(context: Context): Candlest
           else -> throw IllegalArgumentException("Unexpected `candleStyle` value.")
         }
       CandlestickCartesianLayer(
-        candles = candleProvider,
+        candleProvider = candleProvider,
         minCandleBodyHeightDp =
           typedArray.getRawDimension(
             context,

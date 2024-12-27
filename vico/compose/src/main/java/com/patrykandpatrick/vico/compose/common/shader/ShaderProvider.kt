@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:Suppress("UnusedReceiverParameter")
-
 package com.patrykandpatrick.vico.compose.common.shader
 
 import android.graphics.Shader
@@ -28,45 +26,36 @@ import androidx.compose.ui.unit.Dp
 import androidx.core.graphics.translationMatrix
 import com.patrykandpatrick.vico.core.common.DrawingContext
 import com.patrykandpatrick.vico.core.common.component.Component
-import com.patrykandpatrick.vico.core.common.shader.CacheableDynamicShader
-import com.patrykandpatrick.vico.core.common.shader.DynamicShader
-import com.patrykandpatrick.vico.core.common.shader.LinearGradientShader
+import com.patrykandpatrick.vico.core.common.shader.CachingShaderProvider
+import com.patrykandpatrick.vico.core.common.shader.LinearGradientShaderProvider
+import com.patrykandpatrick.vico.core.common.shader.ShaderProvider
 
-/** A [Dp] version of [DynamicShader.component]. */
-public fun DynamicShader.Companion.component(
+/** A [Dp] version of [ShaderProvider.component]. */
+public fun ShaderProvider.Companion.component(
   component: Component,
   componentSize: Dp,
-  checkeredArrangement: Boolean = true,
-  tileXMode: Shader.TileMode = Shader.TileMode.REPEAT,
-  tileYMode: Shader.TileMode = tileXMode,
-): DynamicShader =
-  component(component, componentSize.value, checkeredArrangement, tileXMode, tileYMode)
+  checker: Boolean = true,
+  xTileMode: Shader.TileMode = Shader.TileMode.REPEAT,
+  yTileMode: Shader.TileMode = xTileMode,
+): ShaderProvider = component(component, componentSize.value, checker, xTileMode, yTileMode)
 
-/**
- * Creates a [DynamicShader] with a horizontal gradient. [colors] houses the gradient colors, and
- * [positions] specifies the color offsets (between 0 and 1), with `null` producing an even
- * distribution.
- */
-public fun DynamicShader.Companion.horizontalGradient(
+/** A [Color] version of [ShaderProvider.horizontalGradient]. */
+public fun ShaderProvider.Companion.horizontalGradient(
   colors: Array<Color>,
   positions: FloatArray? = null,
-): DynamicShader =
-  LinearGradientShader(IntArray(colors.size) { colors[it].toArgb() }, positions, true)
+): ShaderProvider =
+  LinearGradientShaderProvider(IntArray(colors.size) { colors[it].toArgb() }, positions, true)
 
-/**
- * Creates a [DynamicShader] with a vertical gradient. [colors] houses the gradient colors, and
- * [positions] specifies the color offsets (between 0 and 1), with `null` producing an even
- * distribution.
- */
-public fun DynamicShader.Companion.verticalGradient(
+/** A [Color] version of [ShaderProvider.verticalGradient]. */
+public fun ShaderProvider.Companion.verticalGradient(
   colors: Array<Color>,
   positions: FloatArray? = null,
-): DynamicShader =
-  LinearGradientShader(IntArray(colors.size) { colors[it].toArgb() }, positions, false)
+): ShaderProvider =
+  LinearGradientShaderProvider(IntArray(colors.size) { colors[it].toArgb() }, positions, false)
 
-/** Converts this [Brush] to a [DynamicShader]. */
-public fun Brush.toDynamicShader(): DynamicShader =
-  object : CacheableDynamicShader() {
+/** Converts this [Brush] to a [ShaderProvider]. */
+public fun Brush.toShaderProvider(): ShaderProvider =
+  object : CachingShaderProvider() {
     override fun createShader(
       context: DrawingContext,
       left: Float,

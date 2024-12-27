@@ -24,11 +24,11 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import com.patrykandpatrick.vico.core.cartesian.AutoScrollCondition
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
-import com.patrykandpatrick.vico.core.cartesian.HorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.Scroll
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.core.cartesian.getDelta
 import com.patrykandpatrick.vico.core.cartesian.getMaxScrollDistance
+import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayerDimensions
 import com.patrykandpatrick.vico.core.common.Animation
 import com.patrykandpatrick.vico.core.common.rangeWith
 
@@ -54,7 +54,7 @@ public class ScrollHandler(
   private val scrollListeners = mutableSetOf<Listener>()
   private var initialScrollHandled = false
   private var context: CartesianMeasuringContext? = null
-  private var horizontalDimensions: HorizontalDimensions? = null
+  private var layerDimensions: CartesianLayerDimensions? = null
   private var bounds: RectF? = null
   internal var postInvalidate: (() -> Unit)? = null
   internal var postInvalidateOnAnimation: (() -> Unit)? = null
@@ -86,26 +86,26 @@ public class ScrollHandler(
   internal fun update(
     context: CartesianMeasuringContext,
     bounds: RectF,
-    horizontalDimensions: HorizontalDimensions,
+    layerDimensions: CartesianLayerDimensions,
   ) {
     this.context = context
-    this.horizontalDimensions = horizontalDimensions
+    this.layerDimensions = layerDimensions
     this.bounds = bounds
-    maxValue = context.getMaxScrollDistance(bounds.width(), horizontalDimensions)
+    maxValue = context.getMaxScrollDistance(bounds.width(), layerDimensions)
     if (!initialScrollHandled) {
-      value = initialScroll.getValue(context, horizontalDimensions, bounds, maxValue)
+      value = initialScroll.getValue(context, layerDimensions, bounds, maxValue)
       initialScrollHandled = true
     }
   }
 
   private inline fun withUpdated(
-    block: (CartesianMeasuringContext, HorizontalDimensions, RectF) -> Unit
+    block: (CartesianMeasuringContext, CartesianLayerDimensions, RectF) -> Unit
   ) {
     val context = this.context
-    val horizontalDimensions = this.horizontalDimensions
+    val layerDimensions = this.layerDimensions
     val bounds = this.bounds
-    if (context != null && horizontalDimensions != null && bounds != null) {
-      block(context, horizontalDimensions, bounds)
+    if (context != null && layerDimensions != null && bounds != null) {
+      block(context, layerDimensions, bounds)
     }
   }
 
@@ -113,8 +113,8 @@ public class ScrollHandler(
     delta > 0 && value < maxValue || delta == 0f || delta < 0 && value > 0
 
   internal fun autoScroll(model: CartesianChartModel, oldModel: CartesianChartModel?) {
-    if (!autoScrollCondition.shouldPerformAutoScroll(model, oldModel)) return
-    animateScroll(autoScroll, autoScrollInterpolator, autoScrollDuration)
+    if (!autoScrollCondition.shouldScroll(oldModel, model)) return
+    animateScroll(autoScroll, autoScrollDuration, autoScrollInterpolator)
   }
 
   internal fun saveInstanceState(bundle: Bundle) {
@@ -129,7 +129,7 @@ public class ScrollHandler(
 
   internal fun clearUpdated() {
     context = null
-    horizontalDimensions = null
+    layerDimensions = null
     bounds = null
     postInvalidate = null
     postInvalidateOnAnimation = null
@@ -142,7 +142,7 @@ public class ScrollHandler(
     return value - oldValue
   }
 
-  private fun animateScrollBy(delta: Float, interpolator: TimeInterpolator, duration: Long): Float {
+  private fun animateScrollBy(delta: Float, duration: Long, interpolator: TimeInterpolator): Float {
     val oldValue = value
     val limitedDelta = delta.coerceIn((-value).rangeWith(maxValue - value))
     with(animator) {
@@ -161,22 +161,22 @@ public class ScrollHandler(
 
   /** Triggers a scroll. */
   public fun scroll(scroll: Scroll) {
-    withUpdated { context, horizontalDimensions, bounds ->
-      scrollBy(scroll.getDelta(context, horizontalDimensions, bounds, maxValue, value))
+    withUpdated { context, layerDimensions, bounds ->
+      scrollBy(scroll.getDelta(context, layerDimensions, bounds, maxValue, value))
     }
   }
 
   /** Triggers an animated scroll. */
   public fun animateScroll(
     scroll: Scroll,
-    interpolator: TimeInterpolator = AccelerateDecelerateInterpolator(),
     duration: Long = Animation.DIFF_DURATION.toLong(),
+    interpolator: TimeInterpolator = AccelerateDecelerateInterpolator(),
   ) {
-    withUpdated { context, horizontalDimensions, bounds ->
+    withUpdated { context, layerDimensions, bounds ->
       animateScrollBy(
-        scroll.getDelta(context, horizontalDimensions, bounds, maxValue, value),
-        interpolator,
+        scroll.getDelta(context, layerDimensions, bounds, maxValue, value),
         duration,
+        interpolator,
       )
     }
   }
@@ -195,10 +195,10 @@ public class ScrollHandler(
   /** Facilitates listening for scroll events. */
   public interface Listener {
     /** Called when the scroll value changes. */
-    public fun onValueChanged(oldValue: Float, newValue: Float) {}
+    public fun onValueChanged(old: Float, new: Float) {}
 
     /** Called when the maximum scroll value changes. */
-    public fun onMaxValueChanged(oldMaxValue: Float, newMaxValue: Float) {}
+    public fun onMaxValueChanged(old: Float, new: Float) {}
   }
 
   private companion object {

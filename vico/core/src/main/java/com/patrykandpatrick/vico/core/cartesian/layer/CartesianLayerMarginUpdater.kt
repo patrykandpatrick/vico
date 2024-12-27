@@ -14,32 +14,28 @@
  * limitations under the License.
  */
 
-package com.patrykandpatrick.vico.core.cartesian
+package com.patrykandpatrick.vico.core.cartesian.layer
 
-import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayer
-import com.patrykandpatrick.vico.core.common.HorizontalInsets
-import com.patrykandpatrick.vico.core.common.Insets
+import com.patrykandpatrick.vico.core.cartesian.CartesianChart
+import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
 
 /**
  * Enables a [CartesianChart] component to make room for itself around the [CartesianLayer] area.
  */
-public interface CartesianLayerInsetter<M> {
-  /** Ensures that there are sufficient insets. */
-  public fun updateInsets(
+public interface CartesianLayerMarginUpdater<M> {
+  /** Ensures that there are sufficient [CartesianLayer]-area margins. */
+  public fun updateLayerMargins(
     context: CartesianMeasuringContext,
-    horizontalDimensions: HorizontalDimensions,
+    layerMargins: CartesianLayerMargins,
+    layerDimensions: CartesianLayerDimensions,
     model: M,
-    insets: Insets,
   ) {}
 
-  /**
-   * Ensures that there are sufficient horizontal insets. [freeHeight] is the height of the
-   * [CartesianLayer] area.
-   */
-  public fun updateHorizontalInsets(
+  /** Ensures that there are sufficient horizontal [CartesianLayer]-area margins. */
+  public fun updateHorizontalLayerMargins(
     context: CartesianMeasuringContext,
-    freeHeight: Float,
+    horizontalLayerMargins: HorizontalCartesianLayerMargins,
+    layerHeight: Float,
     model: M,
-    insets: HorizontalInsets,
   ) {}
 }

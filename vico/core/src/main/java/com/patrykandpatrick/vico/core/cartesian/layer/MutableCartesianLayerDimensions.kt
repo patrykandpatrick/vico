@@ -14,26 +14,25 @@
  * limitations under the License.
  */
 
-package com.patrykandpatrick.vico.core.cartesian
+package com.patrykandpatrick.vico.core.cartesian.layer
 
 import androidx.annotation.RestrictTo
 
-/** An implementation of [HorizontalDimensions] whose every property is mutable. */
-public data class MutableHorizontalDimensions(
+/** An implementation of [CartesianLayerDimensions] whose every property is mutable. */
+public class MutableCartesianLayerDimensions(
   override var xSpacing: Float = 0f,
   override var scalableStartPadding: Float = 0f,
   override var scalableEndPadding: Float = 0f,
   override var unscalableStartPadding: Float = 0f,
   override var unscalableEndPadding: Float = 0f,
-) : HorizontalDimensions {
-  /** Updates the stored values. */
-  public fun set(
+) : CartesianLayerDimensions {
+  internal fun set(
     xSpacing: Float,
     scalableStartPadding: Float,
     scalableEndPadding: Float,
     unscalableStartPadding: Float,
     unscalableEndPadding: Float,
-  ): MutableHorizontalDimensions = apply {
+  ) {
     this.xSpacing = xSpacing
     this.scalableStartPadding = scalableStartPadding
     this.scalableEndPadding = scalableEndPadding
@@ -41,14 +40,14 @@ public data class MutableHorizontalDimensions(
     this.unscalableEndPadding = unscalableEndPadding
   }
 
-  /** Ensures that the stored values are no smaller than the provided ones. */
+  /** Ensures that the stored values are no smaller than those provided. */
   public fun ensureValuesAtLeast(
     xSpacing: Float = 0f,
     scalableStartPadding: Float = 0f,
     scalableEndPadding: Float = 0f,
     unscalableStartPadding: Float = 0f,
     unscalableEndPadding: Float = 0f,
-  ): MutableHorizontalDimensions =
+  ) {
     set(
       this.xSpacing.coerceAtLeast(xSpacing),
       this.scalableStartPadding.coerceAtLeast(scalableStartPadding),
@@ -56,6 +55,7 @@ public data class MutableHorizontalDimensions(
       this.unscalableStartPadding.coerceAtLeast(unscalableStartPadding),
       this.unscalableEndPadding.coerceAtLeast(unscalableEndPadding),
     )
+  }
 
   /** Clears the stored values. */
   public fun clear() {
@@ -69,7 +69,7 @@ public data class MutableHorizontalDimensions(
 
 /** @suppress */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public fun MutableHorizontalDimensions.scale(factor: Float): MutableHorizontalDimensions =
+public fun MutableCartesianLayerDimensions.scale(factor: Float) {
   set(
     factor * xSpacing,
     factor * scalableStartPadding,
@@ -77,3 +77,4 @@ public fun MutableHorizontalDimensions.scale(factor: Float): MutableHorizontalDi
     unscalableStartPadding,
     unscalableEndPadding,
   )
+}

@@ -119,26 +119,29 @@ public abstract class BaseAxis<P : Axis.Position>(
   @Immutable
   public sealed class Size {
     /**
-     * The axis will measure itself and use as much space as it needs, but no less than [minSizeDp],
-     * and no more than [maxSizeDp].
+     * Allows a [BaseAxis] to adopt its preferred size from the given range.
+     *
+     * @property minDp the minimum size (in dp).
+     * @property maxDp the maximum size (in dp).
      */
-    public class Auto(
-      public val minSizeDp: Float = 0f,
-      public val maxSizeDp: Float = Float.MAX_VALUE,
-    ) : Size() {
+    public class Auto(public val minDp: Float = 0f, public val maxDp: Float = Float.MAX_VALUE) :
+      Size() {
       override fun equals(other: Any?): Boolean =
-        this === other ||
-          other is Auto && minSizeDp == other.minSizeDp && maxSizeDp == other.maxSizeDp
+        this === other || other is Auto && minDp == other.minDp && maxDp == other.maxDp
 
-      override fun hashCode(): Int = 31 * minSizeDp.hashCode() + maxSizeDp.hashCode()
+      override fun hashCode(): Int = 31 * minDp.hashCode() + maxDp.hashCode()
     }
 
-    /** The axis size will be exactly [sizeDp]. */
-    public class Exact(public val sizeDp: Float) : Size() {
+    /**
+     * Instructs a [BaseAxis] to adopt the given size.
+     *
+     * @property valueDp the size (in dp).
+     */
+    public class Fixed(public val valueDp: Float) : Size() {
       override fun equals(other: Any?): Boolean =
-        this === other || other is Exact && sizeDp == other.sizeDp
+        this === other || other is Fixed && valueDp == other.valueDp
 
-      override fun hashCode(): Int = sizeDp.hashCode()
+      override fun hashCode(): Int = valueDp.hashCode()
     }
 
     /**

@@ -20,25 +20,27 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import com.patrykandpatrick.vico.core.common.data.CacheStore
-import com.patrykandpatrick.vico.core.common.shader.DynamicShader
+import com.patrykandpatrick.vico.core.common.shader.ShaderProvider
 
 /**
  * Stores fill properties.
  *
- * @property color the color. If [shader] is not `null`, this is [Color.BLACK].
- * @property shader the [DynamicShader].
+ * @property color the color. If [shaderProvider] is not null, this is [Color.BLACK].
+ * @property shaderProvider the [ShaderProvider].
  */
-public class Fill private constructor(public val color: Int, public val shader: DynamicShader?) {
+public class Fill
+private constructor(public val color: Int, public val shaderProvider: ShaderProvider?) {
   /** Creates a color [Fill]. */
-  public constructor(color: Int) : this(color = color, shader = null)
+  public constructor(color: Int) : this(color = color, shaderProvider = null)
 
-  /** Creates a [DynamicShader]&#0020;[Fill]. */
-  public constructor(shader: DynamicShader) : this(Color.BLACK, shader)
+  /** Creates a [ShaderProvider]&#0020;[Fill]. */
+  public constructor(shaderProvider: ShaderProvider) : this(Color.BLACK, shaderProvider)
 
   override fun equals(other: Any?): Boolean =
-    this === other || other is Fill && color == other.color && shader == other.shader
+    this === other ||
+      other is Fill && color == other.color && shaderProvider == other.shaderProvider
 
-  override fun hashCode(): Int = 31 * color + shader?.hashCode().orZero
+  override fun hashCode(): Int = 31 * color + shaderProvider?.hashCode().orZero
 
   /** Houses [Fill] singletons. */
   public companion object {
@@ -60,12 +62,12 @@ internal fun Fill.extractColor(
   height: Float,
   side: Int = 1,
 ): Int =
-  if (shader != null) {
+  if (shaderProvider != null) {
     val bitmap = context.getBitmap(cacheKeyNamespace)
     canvas.setBitmap(bitmap)
     val correctedHeight = if (height <= 0f) canvas.height.toFloat() else height.coerceAtLeast(1f)
     val correctedWidth = if (width <= 0f) canvas.width.toFloat() else width.coerceAtLeast(1f)
-    paint.shader = shader.provideShader(context, 0f, 0f, correctedWidth, correctedHeight)
+    paint.shader = shaderProvider.getShader(context, 0f, 0f, correctedWidth, correctedHeight)
     canvas.drawRect(0f, 0f, correctedWidth, correctedHeight, paint)
     bitmap.getPixel(
       correctedWidth.half.toInt(),
