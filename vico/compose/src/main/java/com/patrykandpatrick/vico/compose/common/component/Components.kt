@@ -32,7 +32,6 @@ import com.patrykandpatrick.vico.compose.common.pixelSize
 import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.Fill
 import com.patrykandpatrick.vico.core.common.Insets
-import com.patrykandpatrick.vico.core.common.LayeredComponent
 import com.patrykandpatrick.vico.core.common.component.Component
 import com.patrykandpatrick.vico.core.common.component.LineComponent
 import com.patrykandpatrick.vico.core.common.component.Shadow
@@ -78,16 +77,6 @@ public fun rememberShapeComponent(
   remember(fill, shape, margins, strokeFill, strokeThickness, shadow) {
     shapeComponent(fill, shape, margins, strokeFill, strokeThickness, shadow)
   }
-
-/** Creates and remembers a [LayeredComponent]. */
-@Composable
-public fun rememberLayeredComponent(
-  back: Component,
-  front: Component,
-  padding: Insets = Insets.Zero,
-  margins: Insets = Insets.Zero,
-): LayeredComponent =
-  remember(back, front, padding, margins) { LayeredComponent(back, front, padding, margins) }
 
 /** Creates and remembers a [TextComponent]. */
 @Composable

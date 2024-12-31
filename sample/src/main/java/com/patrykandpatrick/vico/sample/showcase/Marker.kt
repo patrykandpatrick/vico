@@ -24,7 +24,6 @@ import androidx.compose.ui.unit.dp
 import androidx.core.graphics.ColorUtils
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberAxisGuidelineComponent
 import com.patrykandpatrick.vico.compose.common.component.fixed
-import com.patrykandpatrick.vico.compose.common.component.rememberLayeredComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.common.component.shadow
@@ -70,10 +69,10 @@ internal fun rememberMarker(
   val indicatorCenterComponent = rememberShapeComponent(shape = CorneredShape.Pill)
   val indicatorRearComponent = rememberShapeComponent(shape = CorneredShape.Pill)
   val indicator =
-    rememberLayeredComponent(
+    LayeredComponent(
       back = indicatorRearComponent,
       front =
-        rememberLayeredComponent(
+        LayeredComponent(
           back = indicatorCenterComponent,
           front = indicatorFrontComponent,
           padding = insets(5.dp),
