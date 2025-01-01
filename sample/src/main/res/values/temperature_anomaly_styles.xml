@@ -15,7 +15,19 @@
   -->
 
 <resources>
-    <string name="app_name">Vico</string>
-    <string name="compose">Compose</string>
-    <string name="views">Views</string>
+    <style name="TemperatureAnomalyColumnLayerStyle">
+        <item name="columnCollectionSpacing">4dp</item>
+    </style>
+
+    <style name="TemperatureAnomalyBottomAxisStyle">
+        <item name="labelRotationDegrees">45</item>
+    </style>
+
+    <style name="TemperatureAnomalyChartStyle">
+        <item name="bottomAxisStyle">@style/TemperatureAnomalyBottomAxisStyle</item>
+        <item name="columnLayerStyle">@style/TemperatureAnomalyColumnLayerStyle</item>
+        <item name="layers">column</item>
+        <item name="showBottomAxis">true</item>
+        <item name="showStartAxis">true</item>
+    </style>
 </resources>

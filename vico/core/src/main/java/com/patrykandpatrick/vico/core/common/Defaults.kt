@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,16 +39,14 @@ public object Defaults {
   public const val AXIS_GUIDELINE_WIDTH: Float = 1f
   public const val AXIS_LINE_WIDTH: Float = 1f
   public const val AXIS_TICK_LENGTH: Float = 4f
-  public const val COLUMN_WIDTH: Float = 8f
+  public const val COLUMN_WIDTH: Float = 16f
   public const val GROUPED_COLUMN_SPACING: Float = 8f
-  public const val COLUMN_COLLECTION_SPACING: Float = 32f
-  public const val COLUMN_ROUNDNESS_PERCENT: Int = 40
+  public const val COLUMN_COLLECTION_SPACING: Float = 16f
   public const val CANDLE_BODY_WIDTH_DP: Float = 8f
   public const val MIN_CANDLE_BODY_HEIGHT_DP: Float = 1f
   public const val WICK_DEFAULT_WIDTH_DP: Float = 1f
   public const val HOLLOW_CANDLE_STROKE_THICKNESS_DP: Float = 1f
   public const val CANDLE_SPACING_DP: Float = 4f
-  public const val LINE_CURVATURE: Float = 0.5f
   public const val LINE_DASH_LENGTH: Float = 6f
   public const val LINE_GAP_LENGTH: Float = 6f
   public const val DASHED_SHAPE_DASH_LENGTH: Float = 4f
@@ -63,7 +61,7 @@ public object Defaults {
   public const val MARKER_VERTICAL_PADDING: Float = 4f
   public const val MARKER_TICK_SIZE: Float = 6f
   public const val MAX_ZOOM: Float = 10f
-  public const val POINT_SIZE: Float = 16f
+  public const val POINT_SIZE: Float = 8f
   public const val POINT_SPACING: Float = 32f
   public const val TEXT_COMPONENT_TEXT_SIZE: Float = 12f
   public const val THRESHOLD_LINE_THICKNESS: Float = 2f
@@ -88,21 +86,21 @@ public class DefaultColors(
   public companion object {
     public val Light: DefaultColors =
       DefaultColors(
-        bullishCandleColor = 0xff02c898,
-        neutralCandleColor = 0xff212121,
-        bearishCandleColor = 0xffea284b,
-        cartesianLayerColors = listOf(0xff787878, 0xff5a5a5a, 0xff383838),
-        lineColor = 0x47000000,
-        textColor = 0xde000000,
+        bullishCandleColor = 0xff0ac285,
+        neutralCandleColor = 0xff000000,
+        bearishCandleColor = 0xffe8304f,
+        cartesianLayerColors = listOf(0xff3287ff, 0xff0ac285, 0xffffab02),
+        lineColor = 0xffbcbfc2,
+        textColor = 0xff000000,
       )
 
     public val Dark: DefaultColors =
       DefaultColors(
-        bullishCandleColor = 0xff02c898,
-        neutralCandleColor = 0xff8a8a8a,
-        bearishCandleColor = 0xffea284b,
-        cartesianLayerColors = listOf(0xffcacaca, 0xffa8a8a8, 0xff888888),
-        lineColor = 0xff555555,
+        bullishCandleColor = 0xff0ac285,
+        neutralCandleColor = 0xffffffff,
+        bearishCandleColor = 0xffe8304f,
+        cartesianLayerColors = listOf(0xff3287ff, 0xff0ac285, 0xffffab02),
+        lineColor = 0xff494c50,
         textColor = 0xffffffff,
       )
   }

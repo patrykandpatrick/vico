@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ import com.patrykandpatrick.vico.core.cartesian.layer.asWick
 import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.Position
 import com.patrykandpatrick.vico.core.common.getRepeating
-import com.patrykandpatrick.vico.core.common.shape.CorneredShape
+import com.patrykandpatrick.vico.core.common.shape.Shape
 import com.patrykandpatrick.vico.views.R
 import com.patrykandpatrick.vico.views.cartesian.copyWithColor
 import com.patrykandpatrick.vico.views.cartesian.sharpFilledCandle
@@ -41,7 +41,7 @@ internal fun TypedArray.getColumnCartesianLayer(
   @StyleableRes styleableResourceId: IntArray = R.styleable.ColumnCartesianLayerStyle,
 ): ColumnCartesianLayer =
   getNestedTypedArray(context, resourceId, styleableResourceId).run {
-    val defaultShape = CorneredShape.rounded(Defaults.COLUMN_ROUNDNESS_PERCENT)
+    val defaultShape = Shape.Rectangle
     val mergeMode =
       when (getInteger(R.styleable.ColumnCartesianLayerStyle_mergeMode, 0)) {
         0 ->

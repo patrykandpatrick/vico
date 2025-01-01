@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-  ~ Copyright 2024 by Patryk Goworowski and Patrick Michalik.
+  ~ Copyright 2025 by Patryk Goworowski and Patrick Michalik.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -14,15 +14,10 @@
   ~ limitations under the License.
   -->
 
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
-
-    <com.patrykandpatrick.vico.views.cartesian.CartesianChartView
-        android:id="@+id/chart_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:chartStyle="@style/Chart6CartesianChartStyle"
-        app:zoomEnabled="false" />
-</FrameLayout>
+<resources>
+    <style name="BasicLineChartChartStyle">
+        <item name="layers">line</item>
+        <item name="showBottomAxis">true</item>
+        <item name="showStartAxis">true</item>
+    </style>
+</resources>

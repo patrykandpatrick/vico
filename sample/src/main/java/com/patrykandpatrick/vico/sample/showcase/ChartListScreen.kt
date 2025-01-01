@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -73,7 +73,7 @@ internal fun ChartListScreen(navController: NavController) {
       }
       items(charts.size) { chartID ->
         ListItem(
-          { Text(stringResource(R.string.chart_x, chartID + 1)) },
+          { Text(charts[chartID].title) },
           Modifier.clickable { navController.navigate("chart/$chartID/${uiFramework.ordinal}") },
         )
       }

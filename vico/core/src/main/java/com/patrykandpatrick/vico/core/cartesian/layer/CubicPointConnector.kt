@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import kotlin.math.abs
 internal data class CubicPointConnector(private val curvature: Float) :
   LineCartesianLayer.PointConnector {
   init {
-    require(curvature in 0f..1f) { "`curvature` must be in the interval [0, 1]." }
+    require(curvature > 0 && curvature <= 1) { "`curvature` must be in (0, 1]." }
   }
 
   override fun connect(

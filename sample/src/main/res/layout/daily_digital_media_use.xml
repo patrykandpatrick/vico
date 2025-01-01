@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-  ~ Copyright 2024 by Patryk Goworowski and Patrick Michalik.
+  ~ Copyright 2025 by Patryk Goworowski and Patrick Michalik.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@
     <com.patrykandpatrick.vico.views.cartesian.CartesianChartView
         android:id="@+id/chart_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:chartStyle="@style/Chart2CartesianChartStyle" />
+        android:layout_height="256dp"
+        app:chartStyle="@style/DailyDigitalMediaUseChartStyle"
+        app:zoomEnabled="false" />
 </FrameLayout>

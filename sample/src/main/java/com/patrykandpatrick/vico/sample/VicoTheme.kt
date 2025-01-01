@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,29 +16,44 @@
 
 package com.patrykandpatrick.vico.sample
 
-import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.Color
+import com.patrykandpatrick.vico.core.common.DefaultColors
 
 @Composable
-fun VicoTheme(useDynamicColor: Boolean = true, content: @Composable () -> Unit) {
-  val isSystemInDarkTheme = isSystemInDarkTheme()
+fun VicoTheme(content: @Composable () -> Unit) {
   MaterialTheme(
     colorScheme =
-      when {
-        useDynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-          val context = LocalContext.current
-          if (isSystemInDarkTheme) dynamicDarkColorScheme(context)
-          else dynamicLightColorScheme(context)
-        }
-        isSystemInDarkTheme -> darkColorScheme()
-        else -> lightColorScheme()
+      if (isSystemInDarkTheme()) {
+        val textColor = Color(DefaultColors.Dark.textColor)
+        val lineColor = Color(DefaultColors.Dark.lineColor)
+        darkColorScheme(
+          secondaryContainer = Color(0xff18191b),
+          onSecondaryContainer = textColor,
+          background = Color.Black,
+          onBackground = textColor,
+          surface = Color.Black,
+          onSurface = textColor,
+          outline = lineColor,
+          surfaceContainer = Color(0xff303336),
+        )
+      } else {
+        val textColor = Color(DefaultColors.Light.textColor)
+        val lineColor = Color(DefaultColors.Light.lineColor)
+        lightColorScheme(
+          secondaryContainer = Color(0xfff2f2f3),
+          onSecondaryContainer = textColor,
+          background = Color.White,
+          onBackground = textColor,
+          surface = Color.White,
+          onSurface = textColor,
+          outline = lineColor,
+          surfaceContainer = Color.White,
+        )
       },
     content = content,
   )

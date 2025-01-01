@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ package com.patrykandpatrick.vico.core.cartesian.layer
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
-import androidx.annotation.RestrictTo
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.core.cartesian.axis.Axis
 import com.patrykandpatrick.vico.core.common.DefaultAlpha
@@ -170,14 +169,3 @@ private fun LineCartesianLayer.AreaFill.Companion.default(
       ),
     splitY = splitY,
   )
-
-/** @suppress */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public fun LineCartesianLayer.LineFill.getDefaultAreaFill(): LineCartesianLayer.AreaFill? =
-  when {
-    this is SingleLineFill && fill.shaderProvider == null ->
-      LineCartesianLayer.AreaFill.default(topColor = fill.color, bottomColor = fill.color)
-    this is DoubleLineFill && topFill.shaderProvider == null && bottomFill.shaderProvider == null ->
-      LineCartesianLayer.AreaFill.default(topFill.color, bottomFill.color, splitY)
-    else -> null
-  }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-  ~ Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+  ~ Copyright 2025 by Patryk Goworowski and Patrick Michalik.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -14,7 +14,14 @@
   ~ limitations under the License.
   -->
 
-<resources>
-    <color name="chart_9_color_positive">#735cff</color>
-    <color name="chart_9_color_negative">#ff337d</color>
-</resources>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <com.patrykandpatrick.vico.views.cartesian.CartesianChartView
+        android:id="@+id/chart_view"
+        android:layout_width="match_parent"
+        android:layout_height="224dp"
+        app:chartStyle="@style/GoldPriceChartStyle" />
+</FrameLayout>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-  ~ Copyright 2024 by Patryk Goworowski and Patrick Michalik.
+  ~ Copyright 2025 by Patryk Goworowski and Patrick Michalik.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -101,8 +101,8 @@
 
         <!-- The vertical position of the labels on this axis if it is vertical. -->
         <attr name="verticalAxisVerticalLabelPosition" format="enum">
-            <enum name="center" value="0" />
-            <enum name="top" value="1" />
+            <enum name="top" value="0" />
+            <enum name="center" value="1" />
             <enum name="bottom" value="2" />
         </attr>
     </declare-styleable>
@@ -491,20 +491,8 @@
         <!-- The line stroke cap. -->
         <attr name="android:strokeLineCap"/>
 
-        <!-- The bottom color of the vertical background gradient. -->
-        <attr name="gradientBottomColor" format="color" />
-
-        <!-- The top color of the vertical background gradient. -->
-        <attr name="gradientTopColor" format="color" />
-
         <!-- The color for negative values. -->
         <attr name="negativeColor" format="color" />
-
-        <!-- The bottom color of the gradient for negative values. -->
-        <attr name="negativeGradientBottomColor" format="color" />
-
-        <!-- The top color of the gradient for negative values. -->
-        <attr name="negativeGradientTopColor" format="color" />
 
         <!-- The size of the points on the line. -->
         <attr name="pointSize" format="dimension" />
@@ -514,12 +502,6 @@
 
         <!-- The color for positive values. -->
         <attr name="positiveColor" format="color" />
-
-        <!-- The bottom color of the gradient for positive values. -->
-        <attr name="positiveGradientBottomColor" format="color" />
-
-        <!-- The top color of the gradient for positive values. -->
-        <attr name="positiveGradientTopColor" format="color" />
 
         <!-- Whether to show data labels. -->
         <attr name="showDataLabels" />

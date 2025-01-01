@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffXfermode
+import androidx.annotation.FloatRange
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
@@ -37,6 +38,7 @@ import com.patrykandpatrick.vico.core.cartesian.data.LineCartesianLayerModel
 import com.patrykandpatrick.vico.core.cartesian.data.MutableCartesianChartRanges
 import com.patrykandpatrick.vico.core.cartesian.data.forEachIn
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer.Line
+import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer.PointConnector
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.core.cartesian.marker.LineCartesianLayerMarkerTarget
 import com.patrykandpatrick.vico.core.cartesian.marker.MutableLineCartesianLayerMarkerTarget
@@ -104,9 +106,9 @@ protected constructor(
   public open class Line(
     protected val fill: LineFill,
     public val stroke: LineStroke = LineStroke.Continuous(),
-    protected val areaFill: AreaFill? = fill.getDefaultAreaFill(),
+    protected val areaFill: AreaFill? = null,
     public val pointProvider: PointProvider? = null,
-    public val pointConnector: PointConnector = PointConnector.cubic(),
+    public val pointConnector: PointConnector = PointConnector.Sharp,
     public val dataLabel: TextComponent? = null,
     public val dataLabelPosition: Position.Vertical = Position.Vertical.Top,
     public val dataLabelValueFormatter: CartesianValueFormatter = CartesianValueFormatter.decimal(),
@@ -177,7 +179,7 @@ protected constructor(
      */
     public data class Continuous(
       override val thicknessDp: Float = Defaults.LINE_SPEC_THICKNESS_DP,
-      public val cap: Paint.Cap = Paint.Cap.ROUND,
+      public val cap: Paint.Cap = Paint.Cap.BUTT,
     ) : LineStroke {
       override fun apply(context: CartesianDrawingContext, paint: Paint) {
         with(context) {
@@ -197,7 +199,7 @@ protected constructor(
      */
     public data class Dashed(
       public override val thicknessDp: Float = Defaults.LINE_SPEC_THICKNESS_DP,
-      public val cap: Paint.Cap = Paint.Cap.ROUND,
+      public val cap: Paint.Cap = Paint.Cap.BUTT,
       public val dashLengthDp: Float = Defaults.LINE_DASH_LENGTH,
       public val gapLengthDp: Float = Defaults.LINE_GAP_LENGTH,
     ) : LineStroke {
@@ -262,12 +264,17 @@ protected constructor(
 
     /** Houses a [PointConnector] factory function. */
     public companion object {
+      /** Uses line segments. */
+      public val Sharp: PointConnector = PointConnector { _, path, _, _, x2, y2 ->
+        path.lineTo(x2, y2)
+      }
+
       /**
-       * Uses cubic Bézier curves. [curvature], which must be in the interval [[0, 1]], defines
-       * their strength.
+       * Uses cubic Bézier curves. [curvature], which must be in ([0, 1]], defines their strength.
        */
-      public fun cubic(curvature: Float = Defaults.LINE_CURVATURE): PointConnector =
-        CubicPointConnector(curvature)
+      public fun cubic(
+        @FloatRange(from = 0.0, to = 1.0, fromInclusive = false) curvature: Float = 0.5f
+      ): PointConnector = CubicPointConnector(curvature)
     }
   }
 

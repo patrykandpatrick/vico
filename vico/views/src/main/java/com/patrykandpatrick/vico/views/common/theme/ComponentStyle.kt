@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import android.content.res.TypedArray
 import android.graphics.Color
 import android.graphics.Paint
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
-import com.patrykandpatrick.vico.core.common.DefaultAlpha
 import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.Fill
 import com.patrykandpatrick.vico.core.common.Insets
@@ -30,8 +29,6 @@ import com.patrykandpatrick.vico.core.common.Position
 import com.patrykandpatrick.vico.core.common.component.Component
 import com.patrykandpatrick.vico.core.common.component.LineComponent
 import com.patrykandpatrick.vico.core.common.component.ShapeComponent
-import com.patrykandpatrick.vico.core.common.copyColor
-import com.patrykandpatrick.vico.core.common.shader.ShaderProvider
 import com.patrykandpatrick.vico.core.common.shape.Shape
 import com.patrykandpatrick.vico.views.R
 import com.patrykandpatrick.vico.views.common.defaultColors
@@ -125,42 +122,6 @@ internal fun TypedArray.getLine(context: Context, defaultColor: Int): LineCartes
       getColor(R.styleable.LineStyle_android_color, defaultColor),
     )
 
-  val positiveGradientTopColor =
-    getColor(
-      R.styleable.LineStyle_positiveGradientTopColor,
-      getColor(
-        R.styleable.LineStyle_gradientTopColor,
-        positiveLineColor.copyColor(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_START),
-      ),
-    )
-
-  val positiveGradientBottomColor =
-    getColor(
-      R.styleable.LineStyle_positiveGradientBottomColor,
-      getColor(
-        R.styleable.LineStyle_gradientBottomColor,
-        positiveLineColor.copyColor(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_END),
-      ),
-    )
-
-  val negativeGradientTopColor =
-    getColor(
-      R.styleable.LineStyle_negativeGradientTopColor,
-      getColor(
-        R.styleable.LineStyle_gradientBottomColor,
-        negativeLineColor.copyColor(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_END),
-      ),
-    )
-
-  val negativeGradientBottomColor =
-    getColor(
-      R.styleable.LineStyle_negativeGradientBottomColor,
-      getColor(
-        R.styleable.LineStyle_gradientTopColor,
-        negativeLineColor.copyColor(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_START),
-      ),
-    )
-
   val dashLength = getRawDimension(context, R.styleable.LineStyle_dashLength, 0f)
   val dashGap = getRawDimension(context, R.styleable.LineStyle_gapLength, 0f)
   val thicknessDp =
@@ -174,13 +135,6 @@ internal fun TypedArray.getLine(context: Context, defaultColor: Int): LineCartes
       } else {
         LineCartesianLayer.LineFill.single(Fill(positiveLineColor))
       },
-    areaFill =
-      LineCartesianLayer.AreaFill.double(
-        Fill(
-          ShaderProvider.verticalGradient(positiveGradientTopColor, positiveGradientBottomColor)
-        ),
-        Fill(ShaderProvider.verticalGradient(negativeGradientTopColor, negativeGradientBottomColor)),
-      ),
     pointProvider =
       getNestedTypedArray(context, R.styleable.LineStyle_pointStyle, R.styleable.ComponentStyle)
         .getComponent(context)
@@ -193,9 +147,13 @@ internal fun TypedArray.getLine(context: Context, defaultColor: Int): LineCartes
           )
         },
     pointConnector =
-      LineCartesianLayer.PointConnector.cubic(
-        getFraction(R.styleable.LineStyle_curvature, Defaults.LINE_CURVATURE)
-      ),
+      getFraction(R.styleable.LineStyle_curvature, 0f).let { curvature ->
+        if (curvature == 0f) {
+          LineCartesianLayer.PointConnector.Sharp
+        } else {
+          LineCartesianLayer.PointConnector.cubic(curvature)
+        }
+      },
     dataLabel =
       if (getBoolean(R.styleable.LineStyle_showDataLabels, false)) {
         getNestedTypedArray(

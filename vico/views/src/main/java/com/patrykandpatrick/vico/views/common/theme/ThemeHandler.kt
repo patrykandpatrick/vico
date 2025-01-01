@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -180,7 +180,10 @@ internal class ThemeHandler(private val context: Context, attrs: AttributeSet?) 
                   )],
             verticalLabelPosition =
               Position.Vertical.entries[
-                  axisStyle.getInteger(R.styleable.AxisStyle_verticalAxisVerticalLabelPosition, 0)],
+                  axisStyle.getInteger(
+                    R.styleable.AxisStyle_verticalAxisVerticalLabelPosition,
+                    Position.Vertical.Center.ordinal,
+                  )],
             tick = tick,
             tickLengthDp = tickLengthDp,
             guideline = guideline,

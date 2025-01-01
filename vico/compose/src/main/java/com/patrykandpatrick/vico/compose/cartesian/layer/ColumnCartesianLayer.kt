@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,6 @@ import com.patrykandpatrick.vico.core.common.data.CartesianLayerDrawingModelInte
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.core.common.getValue
 import com.patrykandpatrick.vico.core.common.setValue
-import com.patrykandpatrick.vico.core.common.shape.CorneredShape
 
 /** Creates and remembers a [ColumnCartesianLayer]. */
 @Composable
@@ -45,11 +44,7 @@ public fun rememberColumnCartesianLayer(
   columnProvider: ColumnCartesianLayer.ColumnProvider =
     ColumnCartesianLayer.ColumnProvider.series(
       vicoTheme.columnCartesianLayerColors.map { color ->
-        rememberLineComponent(
-          fill(color),
-          Defaults.COLUMN_WIDTH.dp,
-          CorneredShape.rounded(Defaults.COLUMN_ROUNDNESS_PERCENT),
-        )
+        rememberLineComponent(fill(color), Defaults.COLUMN_WIDTH.dp)
       }
     ),
   columnCollectionSpacing: Dp = Defaults.COLUMN_COLLECTION_SPACING.dp,

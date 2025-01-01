@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,13 +45,14 @@ import com.patrykandpatrick.vico.core.common.shape.CorneredShape
 
 @Composable
 internal fun rememberMarker(
-  labelPosition: DefaultCartesianMarker.LabelPosition = DefaultCartesianMarker.LabelPosition.Top,
+  valueFormatter: DefaultCartesianMarker.ValueFormatter =
+    DefaultCartesianMarker.ValueFormatter.default(),
   showIndicator: Boolean = true,
 ): CartesianMarker {
   val labelBackgroundShape = markerCorneredShape(CorneredShape.Corner.Rounded)
   val labelBackground =
     rememberShapeComponent(
-      fill = fill(MaterialTheme.colorScheme.surfaceBright),
+      fill = fill(MaterialTheme.colorScheme.surfaceContainer),
       shape = labelBackgroundShape,
       shadow =
         shadow(radius = LABEL_BACKGROUND_SHADOW_RADIUS_DP.dp, y = LABEL_BACKGROUND_SHADOW_DY_DP.dp),
@@ -80,11 +81,11 @@ internal fun rememberMarker(
       padding = insets(10.dp),
     )
   val guideline = rememberAxisGuidelineComponent()
-  return remember(label, labelPosition, indicator, showIndicator, guideline) {
+  return remember(label, valueFormatter, indicator, showIndicator, guideline) {
     object :
       DefaultCartesianMarker(
         label = label,
-        labelPosition = labelPosition,
+        valueFormatter = valueFormatter,
         indicator =
           if (showIndicator) {
             { color ->

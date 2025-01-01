@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,9 @@ package com.patrykandpatrick.vico.sample.showcase
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -37,8 +39,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavController
@@ -48,7 +50,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.patrykandpatrick.vico.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -66,7 +67,7 @@ internal fun ChartScreen(navController: NavController, initialChartID: Int, uiFr
     modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
     topBar = {
       TopAppBar(
-        title = { Text(stringResource(R.string.chart_x, chartID + 1)) },
+        title = { Text(charts[chartID].title) },
         navigationIcon = {
           IconButton(navigateBack) {
             Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
@@ -110,12 +111,23 @@ internal fun ChartScreen(navController: NavController, initialChartID: Int, uiFr
           }
         ),
       ) { backStackEntry ->
+        val chart = charts[requireNotNull(backStackEntry.arguments).getInt("chartID")]
         BackHandler(onBack = navigateBack)
-        val arguments = requireNotNull(backStackEntry.arguments)
-        charts[arguments.getInt("chartID")](
-          UIFramework.entries[uiFrameworkID],
-          Modifier.padding(horizontal = 16.dp),
-        )
+        Box(Modifier.fillMaxSize()) {
+          chart.content(
+            UIFramework.entries[uiFrameworkID],
+            Modifier.padding(horizontal = 16.dp).align(Alignment.Center),
+          )
+          if (chart.citation != null) {
+            Text(
+              text = chart.citation,
+              modifier =
+                Modifier.padding(start = 16.dp, end = 16.dp, bottom = 8.dp)
+                  .align(Alignment.BottomStart),
+              fontSize = 12.sp,
+            )
+          }
+        }
       }
     }
   }
