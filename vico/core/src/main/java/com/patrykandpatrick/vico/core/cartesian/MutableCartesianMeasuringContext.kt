@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartRanges
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayerPadding
 import com.patrykandpatrick.vico.core.common.MutableMeasuringContext
 import com.patrykandpatrick.vico.core.common.Point
+import com.patrykandpatrick.vico.core.common.data.CacheStore
 
 /** @suppress */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
@@ -30,18 +31,14 @@ public class MutableCartesianMeasuringContext(
   override val canvasBounds: RectF,
   override var density: Float,
   override var isLtr: Boolean,
+  spToPx: (Float) -> Float,
   override var model: CartesianChartModel,
   override var ranges: CartesianChartRanges,
   override var scrollEnabled: Boolean,
   override var zoomEnabled: Boolean,
   override var layerPadding: CartesianLayerPadding,
   override var pointerPosition: Point?,
-  spToPx: (Float) -> Float,
+  cacheStore: CacheStore = CacheStore(),
 ) :
-  MutableMeasuringContext(
-    canvasBounds = canvasBounds,
-    density = density,
-    isLtr = isLtr,
-    spToPx = spToPx,
-  ),
+  MutableMeasuringContext(canvasBounds, density, isLtr, spToPx, cacheStore),
   CartesianMeasuringContext

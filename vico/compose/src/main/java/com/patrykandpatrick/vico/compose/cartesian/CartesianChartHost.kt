@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -140,13 +140,13 @@ internal fun CartesianChartHostImpl(
   val measuringContext =
     rememberCartesianMeasuringContext(
       canvasBounds = canvasBounds,
+      spToPx = with(LocalContext.current) { ::spToPx },
       model = model,
       ranges = ranges,
       scrollEnabled = scrollState.scrollEnabled,
       zoomEnabled = scrollState.scrollEnabled && zoomState.zoomEnabled,
       layerPadding =
         remember(chart.layerPadding, model.extraStore) { chart.layerPadding(model.extraStore) },
-      spToPx = with(LocalContext.current) { ::spToPx },
       pointerPosition = pointerPosition.value,
     )
 

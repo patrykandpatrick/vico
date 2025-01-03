@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,12 +50,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   protected val canvasBounds: RectF = RectF()
 
   protected open val measuringContext: MutableMeasuringContext =
-    MutableMeasuringContext(
-      canvasBounds = canvasBounds,
-      density = context.density,
-      isLtr = context.isLtr,
-      spToPx = context::spToPx,
-    )
+    MutableMeasuringContext(canvasBounds, context.density, context.isLtr, context::spToPx)
 
   /** Houses the chart data. */
   public abstract var model: M?

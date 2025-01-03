@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,10 @@
 
 package com.patrykandpatrick.vico.core.common.data
 
+import androidx.annotation.RestrictTo
+
 /** Caches data. */
-public class CacheStore {
+public class CacheStore @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) public constructor() {
   private var map = mutableMapOf<String, Any>()
   private var purgedMap = mutableMapOf<String, Any>()
 
@@ -53,12 +55,7 @@ public class CacheStore {
     getOrNull(keyNamespace, *keyComponents)
       ?: value().also { set(keyNamespace, *keyComponents, value = it) }
 
-  /**
-   * Removes all values that were added before the last call to this function and haven’t been read
-   * since the last call. When called for the first time on a given [CacheStore], this function
-   * doesn’t remove any values.
-   */
-  public fun purge() {
+  internal fun purge() {
     map = purgedMap
     purgedMap = mutableMapOf()
   }

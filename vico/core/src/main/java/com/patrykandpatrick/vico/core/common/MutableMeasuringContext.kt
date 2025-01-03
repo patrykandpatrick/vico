@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,8 +27,7 @@ public open class MutableMeasuringContext(
   override var density: Float,
   override var isLtr: Boolean,
   private var spToPx: (Float) -> Float,
+  override val cacheStore: CacheStore = CacheStore(),
 ) : MeasuringContext {
-  override val cacheStore: CacheStore = CacheStore()
-
   override fun spToPx(sp: Float): Float = spToPx.invoke(sp)
 }

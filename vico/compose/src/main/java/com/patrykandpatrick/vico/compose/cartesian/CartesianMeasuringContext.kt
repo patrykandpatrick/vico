@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,41 +28,47 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartRanges
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayerPadding
 import com.patrykandpatrick.vico.core.common.Point
+import com.patrykandpatrick.vico.core.common.data.CacheStore
 
 @Composable
 internal fun rememberCartesianMeasuringContext(
   canvasBounds: RectF,
+  spToPx: (Float) -> Float,
   model: CartesianChartModel,
   ranges: CartesianChartRanges,
   scrollEnabled: Boolean,
   zoomEnabled: Boolean,
   layerPadding: CartesianLayerPadding,
-  spToPx: (Float) -> Float,
   pointerPosition: Point?,
 ): CartesianMeasuringContext {
   val density = LocalDensity.current.density
   val isLtr = LocalLayoutDirection.current == LayoutDirection.Ltr
+  val cacheStore = remember { CacheStore() }
   return remember(
     canvasBounds,
+    density,
+    isLtr,
+    spToPx,
     model,
     ranges,
     scrollEnabled,
     zoomEnabled,
     layerPadding,
-    spToPx,
     pointerPosition,
+    cacheStore,
   ) {
     MutableCartesianMeasuringContext(
       canvasBounds,
       density,
       isLtr,
+      spToPx,
       model,
       ranges,
       scrollEnabled,
       zoomEnabled,
       layerPadding,
       pointerPosition,
-      spToPx,
+      cacheStore,
     )
   }
 }

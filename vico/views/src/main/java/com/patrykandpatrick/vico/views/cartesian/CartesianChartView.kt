@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -81,12 +81,12 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       canvasBounds = canvasBounds,
       density = context.density,
       isLtr = context.isLtr,
+      spToPx = context::spToPx,
       model = CartesianChartModel.Empty,
       ranges = CartesianChartRanges.Empty,
       scrollEnabled = false,
       zoomEnabled = false,
       layerPadding = CartesianLayerPadding(),
-      spToPx = context::spToPx,
       pointerPosition = null,
     )
 
