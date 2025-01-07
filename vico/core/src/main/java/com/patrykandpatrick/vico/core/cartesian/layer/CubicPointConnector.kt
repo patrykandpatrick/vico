@@ -34,15 +34,11 @@ internal data class CubicPointConnector(private val curvature: Float) :
     x2: Float,
     y2: Float,
   ) {
-    if (curvature == 0f) {
-      path.lineTo(x2, y2)
-    } else {
-      val xDelta =
-        (Y_MULTIPLIER * abs(y2 - y1) / context.layerBounds.height()).coerceAtMost(1f) *
-          curvature *
-          (x2 - x1)
-      path.cubicTo(x1 + xDelta, y1, x2 - xDelta, y2, x2, y2)
-    }
+    val xDelta =
+      (Y_MULTIPLIER * abs(y2 - y1) / context.layerBounds.height()).coerceAtMost(1f) *
+        curvature *
+        (x2 - x1)
+    path.cubicTo(x1 + xDelta, y1, x2 - xDelta, y2, x2, y2)
   }
 
   private companion object {
