@@ -39,7 +39,7 @@ jobs:
           cd ${{ github.workspace }}/vico
           git remote set-url origin https://patrykandpatrickbot:${{ secrets.BOT_PAT }}@github.com/patrykandpatrick/vico
           ./gradlew dokkaHtmlMultiModule
-          API_REFERENCE_DESTINATION=${{ github.workspace }}/vico-api-reference/latest
+          API_REFERENCE_DESTINATION=${{ github.workspace }}/vico-api-reference/$(if $IS_PRERELEASE; then echo $VERSION_NAME; else echo stable; fi)
           rm -fr $API_REFERENCE_DESTINATION/*
           cp -R ${{ github.workspace }}/vico/vico/build/dokka/htmlMultiModule/. $API_REFERENCE_DESTINATION
           cd ${{ github.workspace }}/vico-api-reference
