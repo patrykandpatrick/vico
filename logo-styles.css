@@ -1,3 +1,5 @@
 :root {
     --dokka-logo-image-url: url("https://raw.githubusercontent.com/patrykandpatrick/vico/master/sample/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png");
+    --dokka-logo-width: 36px;
+    --dokka-logo-height: 36px;
 }
