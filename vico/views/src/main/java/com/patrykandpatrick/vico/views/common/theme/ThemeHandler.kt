@@ -45,10 +45,15 @@ internal class ThemeHandler(private val context: Context, attrs: AttributeSet?) 
   var chart: CartesianChart? = null
     private set
 
+  var consumeMoveEvents: Boolean = false
+    private set
+
   init {
     context.obtainStyledAttributes(attrs, R.styleable.CartesianChartView).use { typedArray ->
       scrollEnabled = typedArray.getBoolean(R.styleable.CartesianChartView_scrollEnabled, true)
       zoomEnabled = typedArray.getBoolean(R.styleable.CartesianChartView_zoomEnabled, true)
+      consumeMoveEvents =
+        typedArray.getBoolean(R.styleable.CartesianChartView_consumeMoveEvents, false)
       typedArray
         .getNestedTypedArray(
           context,

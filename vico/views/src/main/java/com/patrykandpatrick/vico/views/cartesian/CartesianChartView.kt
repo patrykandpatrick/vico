@@ -127,10 +127,17 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   private val motionEventHandler =
     MotionEventHandler(
       scroller = scroller,
+      consumeMoveEvents = themeHandler.consumeMoveEvents,
       density = resources.displayMetrics.density,
       onTouchPoint = ::handleTouchEvent,
       requestInvalidate = ::invalidate,
     )
+
+  /**
+   * Manages move touch events consumption by the view when scrolling is disabled and
+   * [CartesianChart.marker] is not null.
+   */
+  public var consumeMoveEvents: Boolean by motionEventHandler::consumeMoveEvents
 
   /** The [CartesianChart] displayed by this [View]. */
   public var chart: CartesianChart? by
@@ -286,20 +293,29 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
         false
       }
     val touchHandled = motionEventHandler.handleMotionEvent(event, scrollHandler)
+    val hasMarker = chart?.marker != null
+    when {
+      consumeMoveEvents && !scrollHandler.scrollEnabled && hasMarker -> {
+        parent.requestDisallowInterceptTouchEvent(true)
+      }
 
-    if (scrollDirectionResolved.not() && event.historySize > 0) {
-      scrollDirectionResolved = true
-      parent.requestDisallowInterceptTouchEvent(
-        event.movedXDistance > event.movedYDistance || event.pointerCount > 1
-      )
-    } else if (
-      event.actionMasked == MotionEvent.ACTION_UP || event.actionMasked == MotionEvent.ACTION_CANCEL
-    ) {
-      scrollDirectionResolved = false
+      scrollDirectionResolved.not() && event.historySize > 0 -> {
+        scrollDirectionResolved = true
+        parent.requestDisallowInterceptTouchEvent(
+          event.movedXDistance > event.movedYDistance || event.pointerCount > 1
+        )
+      }
+
+      event.isUpOrCancel() -> {
+        scrollDirectionResolved = false
+      }
     }
 
     return touchHandled || scaleHandled || superHandled
   }
+
+  private fun MotionEvent.isUpOrCancel(): Boolean =
+    actionMasked == MotionEvent.ACTION_UP || actionMasked == MotionEvent.ACTION_CANCEL
 
   private fun handleZoom(focusX: Float, zoomChange: Float) {
     val chart = chart ?: return

@@ -211,6 +211,9 @@
 
         <!-- Whether to enable zooming. -->
         <attr name="zoomEnabled" format="boolean" />
+
+        <!-- Whether to enable consumption of move events. -->
+        <attr name="consumeMoveEvents" format="boolean" />
     </declare-styleable>
 
     <declare-styleable name="CartesianChartStyle">
