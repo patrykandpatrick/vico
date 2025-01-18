@@ -19,6 +19,5 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/chart_view"
     android:layout_width="wrap_content"
-    android:layout_height="224dp"
-    app:chartStyle="@style/ElectricCarSaleChartStyle"
-    app:scrollEnabled="false" />
+    android:layout_height="wrap_content"
+    app:chartStyle="@style/BasicComboChartChartStyle" />

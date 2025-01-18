@@ -15,24 +15,26 @@
   -->
 
 <resources>
-    <style name="RockMetalRatioColumn1Style">
-        <item name="android:color">#ff5500</item>
+    <style name="BasicComboChartColumnStyle">
+        <item name="android:color">#ffc002</item>
     </style>
 
-    <style name="RockMetalRatioColumnLayerStyle">
-        <item name="column1Style">@style/RockMetalRatioColumn1Style</item>
+    <style name="BasicComboChartColumnLayerStyle">
+        <item name="column1Style">@style/BasicComboChartColumnStyle</item>
     </style>
 
-    <style name="RockMetalRatioBottomAxisStyle">
-        <item name="horizontalAxisItemPlacer">segmented</item>
+    <style name="BasicComboChartLineStyle">
+        <item name="android:color">#ee2b2b</item>
     </style>
 
-    <style name="RockMetalRatioChartStyle">
-        <item name="bottomAxisStyle">@style/RockMetalRatioBottomAxisStyle</item>
-        <item name="columnLayerStyle">@style/RockMetalRatioColumnLayerStyle</item>
-        <item name="layers">column</item>
-        <item name="scalableEndLayerPadding">8dp</item>
-        <item name="scalableStartLayerPadding">8dp</item>
+    <style name="BasicComboChartLineLayerStyle">
+        <item name="line1Style">@style/BasicComboChartLineStyle</item>
+    </style>
+
+    <style name="BasicComboChartChartStyle">
+        <item name="columnLayerStyle">@style/BasicComboChartColumnLayerStyle</item>
+        <item name="layers">column|line</item>
+        <item name="lineLayerStyle">@style/BasicComboChartLineLayerStyle</item>
         <item name="showBottomAxis">true</item>
         <item name="showStartAxis">true</item>
     </style>

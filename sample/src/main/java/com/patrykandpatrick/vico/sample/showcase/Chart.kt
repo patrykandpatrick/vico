@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.patrykandpatrick.vico.sample.showcase.charts.AITestScores
 import com.patrykandpatrick.vico.sample.showcase.charts.BasicColumnChart
+import com.patrykandpatrick.vico.sample.showcase.charts.BasicComboChart
 import com.patrykandpatrick.vico.sample.showcase.charts.BasicLineChart
 import com.patrykandpatrick.vico.sample.showcase.charts.DailyDigitalMediaUse
 import com.patrykandpatrick.vico.sample.showcase.charts.ElectricCarSales
@@ -39,6 +40,7 @@ internal val charts =
       BasicColumnChart(uiFramework, modifier)
     },
     Chart("Basic line chart") { uiFramework, modifier -> BasicLineChart(uiFramework, modifier) },
+    Chart("Basic combo chart") { uiFramework, modifier -> BasicComboChart(uiFramework, modifier) },
     Chart("AI test scores", "Kiela et al. 2023. Processing by Our World in\u00A0Data.") {
       uiFramework,
       modifier ->
