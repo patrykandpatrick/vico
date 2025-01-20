@@ -22,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.sp
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
 import com.patrykandpatrick.vico.core.cartesian.MutableCartesianMeasuringContext
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
@@ -33,7 +34,6 @@ import com.patrykandpatrick.vico.core.common.data.CacheStore
 @Composable
 internal fun rememberCartesianMeasuringContext(
   canvasBounds: RectF,
-  spToPx: (Float) -> Float,
   model: CartesianChartModel,
   ranges: CartesianChartRanges,
   scrollEnabled: Boolean,
@@ -41,14 +41,13 @@ internal fun rememberCartesianMeasuringContext(
   layerPadding: CartesianLayerPadding,
   pointerPosition: Point?,
 ): CartesianMeasuringContext {
-  val density = LocalDensity.current.density
+  val density = LocalDensity.current
   val isLtr = LocalLayoutDirection.current == LayoutDirection.Ltr
   val cacheStore = remember { CacheStore() }
   return remember(
     canvasBounds,
     density,
     isLtr,
-    spToPx,
     model,
     ranges,
     scrollEnabled,
@@ -58,17 +57,17 @@ internal fun rememberCartesianMeasuringContext(
     cacheStore,
   ) {
     MutableCartesianMeasuringContext(
-      canvasBounds,
-      density,
-      isLtr,
-      spToPx,
-      model,
-      ranges,
-      scrollEnabled,
-      zoomEnabled,
-      layerPadding,
-      pointerPosition,
-      cacheStore,
+      canvasBounds = canvasBounds,
+      density = density.density,
+      isLtr = isLtr,
+      spToPx = density.run { { it.sp.toPx() } },
+      model = model,
+      ranges = ranges,
+      scrollEnabled = scrollEnabled,
+      zoomEnabled = zoomEnabled,
+      layerPadding = layerPadding,
+      pointerPosition = pointerPosition,
+      cacheStore = cacheStore,
     )
   }
 }

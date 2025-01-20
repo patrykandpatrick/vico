@@ -34,7 +34,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.nativeCanvas
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.cartesian.data.component1
 import com.patrykandpatrick.vico.compose.cartesian.data.component2
@@ -53,7 +52,6 @@ import com.patrykandpatrick.vico.core.common.ValueWrapper
 import com.patrykandpatrick.vico.core.common.getValue
 import com.patrykandpatrick.vico.core.common.set
 import com.patrykandpatrick.vico.core.common.setValue
-import com.patrykandpatrick.vico.core.common.spToPx
 import kotlinx.coroutines.launch
 
 /**
@@ -140,7 +138,6 @@ internal fun CartesianChartHostImpl(
   val measuringContext =
     rememberCartesianMeasuringContext(
       canvasBounds = canvasBounds,
-      spToPx = with(LocalContext.current) { ::spToPx },
       model = model,
       ranges = ranges,
       scrollEnabled = scrollState.scrollEnabled,
