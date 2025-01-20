@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.sp
 import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
 import com.patrykandpatrick.vico.core.chart.values.ChartValues
 import com.patrykandpatrick.vico.core.chart.values.ChartValuesProvider
@@ -42,21 +43,21 @@ public fun getMeasureContext(
     isHorizontalScrollEnabled: Boolean,
     canvasBounds: RectF,
     horizontalLayout: HorizontalLayout,
-    spToPx: (Float) -> Float,
     chartValuesProvider: ChartValuesProvider,
 ): MutableMeasureContext = remember {
     MutableMeasureContext(
         canvasBounds = canvasBounds,
         density = 0f,
         isLtr = true,
-        spToPx = spToPx,
+        spToPx = { 0f },
         chartValuesProvider = chartValuesProvider,
     )
 }.apply {
-    this.density = LocalDensity.current.density
+    val density = LocalDensity.current
+    this.density = density.density
     this.isLtr = LocalLayoutDirection.current == LayoutDirection.Ltr
     this.isHorizontalScrollEnabled = isHorizontalScrollEnabled
     this.horizontalLayout = horizontalLayout
-    this.spToPx = spToPx
+    this.spToPx = density.run { { it.sp.toPx() } }
     this.chartValuesProvider = chartValuesProvider
 }

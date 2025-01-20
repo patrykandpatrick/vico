@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.chart.column.columnChart
 import com.patrykandpatrick.vico.compose.chart.entry.collectAsState
@@ -76,7 +75,6 @@ import com.patrykandpatrick.vico.core.chart.values.toChartValuesProvider
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
 import com.patrykandpatrick.vico.core.entry.ChartModelProducer
 import com.patrykandpatrick.vico.core.extension.set
-import com.patrykandpatrick.vico.core.extension.spToPx
 import com.patrykandpatrick.vico.core.layout.VirtualLayout
 import com.patrykandpatrick.vico.core.legend.Legend
 import com.patrykandpatrick.vico.core.marker.Marker
@@ -280,7 +278,6 @@ internal fun <Model : ChartEntryModel> ChartImpl(
         chartScrollSpec.isScrollEnabled,
         bounds,
         horizontalLayout,
-        with(LocalContext.current) { ::spToPx },
         chartValuesProvider,
     )
     val scrollListener = rememberScrollListener(markerTouchPoint)
