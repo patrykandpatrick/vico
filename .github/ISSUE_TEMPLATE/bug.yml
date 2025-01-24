@@ -25,7 +25,7 @@ body:
       multiple: true
       options:
         - 2.0.0
-        - 1.16.0
+        - 1.16.1
     validations:
       required: true
   - type: input
