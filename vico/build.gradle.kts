@@ -14,4 +14,20 @@
  * limitations under the License.
  */
 
-subprojects.forEach { it.tasks.withType<Test>().configureEach { useJUnitPlatform() } }
+plugins { `dokka-convention` }
+
+subprojects {
+  group = "com.patrykandpatrick.vico"
+  version = Versions.VICO
+}
+
+dependencies {
+  dokka(project(":vico:compose"))
+  dokka(project(":vico:compose-m2"))
+  dokka(project(":vico:compose-m3"))
+  dokka(project(":vico:core"))
+  dokka(project(":vico:multiplatform"))
+  dokka(project(":vico:views"))
+}
+
+dokka { pluginsConfiguration.html { customStyleSheets.from("$rootDir/logo-styles.css") } }

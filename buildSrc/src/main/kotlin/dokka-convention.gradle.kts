@@ -14,4 +14,6 @@
  * limitations under the License.
  */
 
-subprojects.forEach { it.tasks.withType<Test>().configureEach { useJUnitPlatform() } }
+plugins { id("org.jetbrains.dokka") }
+
+dokka { dokkaPublications.configureEach { suppressInheritedMembers = true } }

@@ -14,4 +14,17 @@
  * limitations under the License.
  */
 
-subprojects.forEach { it.tasks.withType<Test>().configureEach { useJUnitPlatform() } }
+package com.patrykandpatrick.vico.multiplatform.common
+
+import androidx.compose.ui.geometry.Rect
+
+/** Defines an abstract component that has some physical bounds. */
+public interface Bounded {
+  /** The bounds of the abstract component. */
+  public var bounds: Rect
+
+  /** Sets the coordinates of the bounds to the provided values. */
+  public fun setBounds(left: Number, top: Number, right: Number, bottom: Number) {
+    bounds = Rect(left.toFloat(), top.toFloat(), right.toFloat(), bottom.toFloat())
+  }
+}

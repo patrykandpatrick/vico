@@ -14,4 +14,20 @@
  * limitations under the License.
  */
 
-subprojects.forEach { it.tasks.withType<Test>().configureEach { useJUnitPlatform() } }
+package com.patrykandpatrick.vico.multiplatform.common
+
+import androidx.compose.ui.graphics.Canvas
+import androidx.compose.ui.graphics.withSave
+
+internal inline fun Canvas.inClip(
+  left: Float,
+  top: Float,
+  right: Float,
+  bottom: Float,
+  block: () -> Unit,
+) {
+  withSave {
+    clipRect(left, top, right, bottom)
+    block()
+  }
+}

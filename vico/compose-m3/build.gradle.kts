@@ -14,4 +14,26 @@
  * limitations under the License.
  */
 
-subprojects.forEach { it.tasks.withType<Test>().configureEach { useJUnitPlatform() } }
+plugins {
+  `publishing-convention`
+  id("com.android.library")
+  id("kotlin-android")
+  id("org.jetbrains.kotlin.plugin.compose")
+  `dokka-convention`
+}
+
+android {
+  configure()
+  kotlinOptions { jvmTarget = JavaVersion.VERSION_1_8.toString() }
+  namespace = moduleNamespace
+}
+
+kotlin { explicitApi() }
+
+composeCompiler { reportsDestination = layout.buildDirectory.dir("reports") }
+
+dependencies {
+  api(project(":vico:compose"))
+  implementation(platform(libs.composeBom))
+  implementation(libs.composeMaterial3)
+}

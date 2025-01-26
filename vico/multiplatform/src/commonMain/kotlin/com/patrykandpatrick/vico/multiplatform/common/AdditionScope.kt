@@ -14,4 +14,10 @@
  * limitations under the License.
  */
 
-subprojects.forEach { it.tasks.withType<Test>().configureEach { useJUnitPlatform() } }
+package com.patrykandpatrick.vico.multiplatform.common
+
+/** Facilitates adding elements to a collection. */
+public fun interface AdditionScope<E> {
+  /** Adds [element]. */
+  public fun add(element: E)
+}

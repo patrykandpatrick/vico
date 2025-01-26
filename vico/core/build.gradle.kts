@@ -14,4 +14,29 @@
  * limitations under the License.
  */
 
-subprojects.forEach { it.tasks.withType<Test>().configureEach { useJUnitPlatform() } }
+plugins {
+  `publishing-convention`
+  id("com.android.library")
+  id("kotlin-android")
+  `dokka-convention`
+}
+
+android {
+  configure()
+  kotlinOptions { jvmTarget = JavaVersion.VERSION_1_8.toString() }
+  namespace = moduleNamespace
+}
+
+kotlin { explicitApi() }
+
+dependencies {
+  implementation(libs.androidXAnnotation)
+  implementation(libs.coroutinesCore)
+  implementation(libs.kotlinStdLib)
+  compileOnly(libs.composeStableMarker)
+  testImplementation(libs.jupiter)
+  testImplementation(libs.jupiterParams)
+  testImplementation(libs.kotlinTest)
+  testImplementation(libs.mockK)
+  testImplementation(libs.testCore)
+}

@@ -14,4 +14,13 @@
  * limitations under the License.
  */
 
-subprojects.forEach { it.tasks.withType<Test>().configureEach { useJUnitPlatform() } }
+package com.patrykandpatrick.vico.multiplatform.common
+
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+
+internal fun ImageBitmap.getPixel(x: Int, y: Int): Color {
+  val buffer = IntArray(1)
+  readPixels(buffer, x, y, 1, 1)
+  return Color(buffer[0])
+}

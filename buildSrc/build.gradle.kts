@@ -14,4 +14,15 @@
  * limitations under the License.
  */
 
-subprojects.forEach { it.tasks.withType<Test>().configureEach { useJUnitPlatform() } }
+plugins { `kotlin-dsl` }
+
+dependencies {
+  implementation(libs.androidApplication)
+  implementation(libs.androidLibrary)
+  implementation(libs.composeCompiler)
+  implementation(libs.composeMultiplatform)
+  implementation(libs.dokka)
+  implementation(libs.kotlinAndroid)
+  implementation(libs.kotlinMultiplatform)
+  implementation(libs.mavenPublish)
+}

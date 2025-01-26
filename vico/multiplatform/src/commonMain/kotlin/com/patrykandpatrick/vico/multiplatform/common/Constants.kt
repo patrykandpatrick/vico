@@ -14,4 +14,11 @@
  * limitations under the License.
  */
 
-subprojects.forEach { it.tasks.withType<Test>().configureEach { useJUnitPlatform() } }
+package com.patrykandpatrick.vico.multiplatform.common
+
+internal const val ERR_REPEATING_COLLECTION_EMPTY =
+  "Cannot get repeated item from empty collection."
+
+internal const val NEW_PRODUCER_ERROR_MESSAGE: String =
+  "A new `CartesianChartModelProducer` was provided. Run data updates via `runTransaction`, not " +
+    "by creating new `CartesianChartModelProducer`s."

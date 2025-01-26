@@ -14,4 +14,25 @@
  * limitations under the License.
  */
 
-subprojects.forEach { it.tasks.withType<Test>().configureEach { useJUnitPlatform() } }
+plugins {
+  `publishing-convention`
+  id("com.android.library")
+  id("kotlin-android")
+  `dokka-convention`
+}
+
+android {
+  configure()
+  kotlinOptions { jvmTarget = JavaVersion.VERSION_1_8.toString() }
+  namespace = moduleNamespace
+}
+
+kotlin { explicitApi() }
+
+dependencies {
+  api(project(":vico:core"))
+  implementation(libs.androidXCore)
+  implementation(libs.appcompat)
+  implementation(libs.kotlinStdLib)
+  testImplementation(libs.kotlinTest)
+}

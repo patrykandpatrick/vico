@@ -14,4 +14,7 @@
  * limitations under the License.
  */
 
-subprojects.forEach { it.tasks.withType<Test>().configureEach { useJUnitPlatform() } }
+import org.gradle.api.Project
+
+val Project.moduleNamespace
+  get() = "${group}.${project.name.replace("-", ".")}"

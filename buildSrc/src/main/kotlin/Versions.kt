@@ -14,4 +14,8 @@
  * limitations under the License.
  */
 
-subprojects.forEach { it.tasks.withType<Test>().configureEach { useJUnitPlatform() } }
+object Versions {
+  const val COMPILE_SDK = 35
+  const val MIN_SDK = 21
+  const val VICO = "2.1.0-alpha.2"
+}

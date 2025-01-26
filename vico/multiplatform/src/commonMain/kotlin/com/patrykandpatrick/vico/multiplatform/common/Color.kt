@@ -14,4 +14,16 @@
  * limitations under the License.
  */
 
-subprojects.forEach { it.tasks.withType<Test>().configureEach { useJUnitPlatform() } }
+package com.patrykandpatrick.vico.multiplatform.common
+
+private const val ALPHA_BIT_SHIFT = 24
+private const val COLOR_MASK = 0xff
+
+internal val Int.alpha: Int
+  get() = extractColorChannel(ALPHA_BIT_SHIFT)
+
+private fun Int.extractColorChannel(bitShift: Int): Int = this shr bitShift and COLOR_MASK
+
+internal val Long.alpha: Float
+  get() =
+    if (this and 0x3fL == 0L) (this shr 56 and 0xff) / 255.0f else (this shr 6 and 0x3ff) / 1023.0f

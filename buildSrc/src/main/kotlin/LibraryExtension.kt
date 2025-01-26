@@ -14,4 +14,20 @@
  * limitations under the License.
  */
 
-subprojects.forEach { it.tasks.withType<Test>().configureEach { useJUnitPlatform() } }
+import com.android.build.gradle.LibraryExtension
+import org.gradle.api.JavaVersion
+
+fun LibraryExtension.configure() {
+  buildTypes {
+    release {
+      isMinifyEnabled = false
+      proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"))
+    }
+  }
+  compileOptions {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+  }
+  compileSdk = Versions.COMPILE_SDK
+  defaultConfig { minSdk = Versions.MIN_SDK }
+}

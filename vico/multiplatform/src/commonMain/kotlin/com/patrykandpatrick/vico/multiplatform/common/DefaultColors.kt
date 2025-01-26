@@ -14,4 +14,11 @@
  * limitations under the License.
  */
 
-subprojects.forEach { it.tasks.withType<Test>().configureEach { useJUnitPlatform() } }
+package com.patrykandpatrick.vico.multiplatform.common
+
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.runtime.Composable
+
+@Composable
+internal fun getDefaultColors(): DefaultColors =
+  if (isSystemInDarkTheme()) DefaultColors.Dark else DefaultColors.Light

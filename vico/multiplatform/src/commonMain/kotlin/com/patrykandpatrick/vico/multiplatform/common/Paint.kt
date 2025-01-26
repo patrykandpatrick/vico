@@ -14,4 +14,15 @@
  * limitations under the License.
  */
 
-subprojects.forEach { it.tasks.withType<Test>().configureEach { useJUnitPlatform() } }
+package com.patrykandpatrick.vico.multiplatform.common
+
+import androidx.compose.ui.graphics.Paint
+
+internal val EmptyPaint = Paint()
+
+internal fun Paint.withOpacity(opacity: Float, action: (Paint) -> Unit) {
+  val previousOpacity = alpha
+  alpha *= opacity
+  action(this)
+  alpha = previousOpacity
+}
