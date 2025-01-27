@@ -1,9 +1,9 @@
-name: Build debug APK
+name: Build project
 on:
   push:
   pull_request:
 jobs:
-  build-debug-apk:
+  build-project:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -15,5 +15,5 @@ jobs:
       - run: ./gradlew assembleDebug
       - uses: actions/upload-artifact@v4
         with:
-          name: Debug APK
+          name: sample-debug
           path: sample/build/outputs/apk/debug/**.apk

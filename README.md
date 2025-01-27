@@ -1,7 +1,7 @@
 # Vico
 
 ![](https://img.shields.io/maven-central/v/com.patrykandpatrick.vico/core)
-![](https://img.shields.io/github/actions/workflow/status/patrykandpatrick/vico/build-debug-apk.yml?branch=master)
+![](https://img.shields.io/github/actions/workflow/status/patrykandpatrick/vico/build-project.yml?branch=master)
 ![](https://kotlin-version.aws.icerock.dev/kotlin-version?group=com.patrykandpatrick.vico&name=core)
 
 ![](https://patrykandpatrick.com/vico/images/cover.png)

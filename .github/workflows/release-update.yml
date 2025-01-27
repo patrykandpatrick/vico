@@ -21,7 +21,7 @@ jobs:
           git config --global user.name "Patryk & Patrick Bot"
           git clone https://${{ secrets.BOT_PAT }}@github.com/patrykandpatrick/vico-api-reference
           cd ${{ github.workspace }}/vico
-          VERSION_NAME=$(grep -oP "(?<=version_name).*(?=\",)" versions.gradle | grep -oP "(?<=\").*")
+          VERSION_NAME=$(grep -oP "(?<=const val VICO = \")[^\"]*" buildSrc/src/main/kotlin/Versions.kt)
           echo "VERSION_NAME=$VERSION_NAME" >> $GITHUB_ENV
           echo "TAG_NAME=v$VERSION_NAME" >> $GITHUB_ENV
           IS_PRERELEASE=false
@@ -38,10 +38,10 @@ jobs:
       - run: |
           cd ${{ github.workspace }}/vico
           git remote set-url origin https://patrykandpatrickbot:${{ secrets.BOT_PAT }}@github.com/patrykandpatrick/vico
-          ./gradlew dokkaHtmlMultiModule
+          ./gradlew dokkaGenerate
           API_REFERENCE_DESTINATION=${{ github.workspace }}/vico-api-reference/$(if $IS_PRERELEASE; then echo $VERSION_NAME; else echo stable; fi)
           rm -fr $API_REFERENCE_DESTINATION/*
-          cp -R ${{ github.workspace }}/vico/vico/build/dokka/htmlMultiModule/. $API_REFERENCE_DESTINATION
+          cp -R ${{ github.workspace }}/vico/vico/build/dokka/html/. $API_REFERENCE_DESTINATION
           cd ${{ github.workspace }}/vico-api-reference
           git remote set-url origin https://patrykandpatrickbot:${{ secrets.BOT_PAT }}@github.com/patrykandpatrick/vico-api-reference
           git add -A
@@ -49,9 +49,9 @@ jobs:
           git push origin
           cd ${{ github.workspace }}/vico
           git push origin
-          ./gradlew publish
+          ./gradlew publishToMavenCentral --no-configuration-cache
         env:
-          ORG_GRADLE_PROJECT_GPG_KEY: ${{ secrets.GPG_KEY }}
-          ORG_GRADLE_PROJECT_GPG_KEY_PASSWORD: ${{ secrets.GPG_KEY_PASSWORD }}
-          ORG_GRADLE_PROJECT_OSSRH_TOKEN: ${{ secrets.OSSRH_TOKEN }}
-          ORG_GRADLE_PROJECT_OSSRH_TOKEN_PASSWORD: ${{ secrets.OSSRH_TOKEN_PASSWORD }}
+          ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.OSSRH_TOKEN_PASSWORD }}
+          ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.OSSRH_TOKEN }}
+          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.GPG_KEY }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.GPG_KEY_PASSWORD }}

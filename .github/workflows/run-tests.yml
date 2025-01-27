@@ -15,4 +15,4 @@ jobs:
           distribution: zulu
       - run: chmod +x gradlew
       - id: unit-tests
-        run: ./gradlew vico:core:testDebug
+        run: ./gradlew testDebug
