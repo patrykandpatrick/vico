@@ -47,8 +47,8 @@ public object Defaults {
   public const val WICK_DEFAULT_WIDTH_DP: Float = 1f
   public const val HOLLOW_CANDLE_STROKE_THICKNESS_DP: Float = 1f
   public const val CANDLE_SPACING_DP: Float = 4f
-  public const val LINE_DASH_LENGTH: Float = 6f
-  public const val LINE_GAP_LENGTH: Float = 6f
+  public const val LINE_DASH_LENGTH: Float = 8f
+  public const val LINE_GAP_LENGTH: Float = 4f
   public const val DASHED_SHAPE_DASH_LENGTH: Float = 4f
   public const val DASHED_SHAPE_GAP_LENGTH: Float = 2f
   public const val FADING_EDGE_VISIBILITY_THRESHOLD_DP: Float = 16f

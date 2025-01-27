@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,23 +14,4 @@
  * limitations under the License.
  */
 
-buildscript {
-  dependencies {
-    classpath(libs.buildTools)
-    classpath(libs.kotlinGradlePlugin)
-    classpath(libs.paparazziGradlePlugin)
-  }
-}
-
-plugins {
-  alias(libs.plugins.composeCompiler) apply false
-  alias(libs.plugins.dokka) apply false
-}
-
-apply("versions.gradle")
-
-tasks.register<Delete>("clean") { delete(rootProject.layout.buildDirectory) }
-
-subprojects.forEach { project ->
-  project.tasks.withType<Test>().configureEach { useJUnitPlatform() }
-}
+subprojects.forEach { it.tasks.withType<Test>().configureEach { useJUnitPlatform() } }

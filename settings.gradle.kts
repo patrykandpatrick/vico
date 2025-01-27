@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,5 +39,6 @@ include(
   "vico:compose-m2",
   "vico:compose-m3",
   "vico:core",
+  "vico:multiplatform",
   "vico:views",
 )

@@ -175,6 +175,22 @@ public open class DefaultCartesianMarker(
           y = topPointY + (if (flip) 1 else -1) * tickSizeDp.pixels
           verticalPosition = if (flip) Position.Vertical.Bottom else Position.Vertical.Top
         }
+        LabelPosition.BelowPoint -> {
+          val bottomPointY =
+            targets.maxOf { target ->
+              when (target) {
+                is CandlestickCartesianLayerMarkerTarget -> target.lowCanvasY
+                is ColumnCartesianLayerMarkerTarget ->
+                  target.columns.maxOf(ColumnCartesianLayerMarkerTarget.Column::canvasY)
+                is LineCartesianLayerMarkerTarget ->
+                  target.points.maxOf(LineCartesianLayerMarkerTarget.Point::canvasY)
+                else -> error("Unexpected `CartesianMarker.Target` implementation.")
+              }
+            }
+          tickPosition = MarkerCorneredShape.TickPosition.Top
+          y = bottomPointY + tickSizeDp.pixels
+          verticalPosition = Position.Vertical.Bottom
+        }
       }
       markerCorneredShape?.tickPosition = tickPosition
 
@@ -217,7 +233,8 @@ public open class DefaultCartesianMarker(
         LabelPosition.Top,
         LabelPosition.AbovePoint ->
           layerMargins.ensureValuesAtLeast(top = label.getHeight(context) + tickSizeDp.pixels)
-        LabelPosition.Bottom ->
+        LabelPosition.Bottom,
+        LabelPosition.BelowPoint ->
           layerMargins.ensureValuesAtLeast(bottom = label.getHeight(context) + tickSizeDp.pixels)
         LabelPosition.AroundPoint -> Unit // Will be inside the chart
       }
@@ -262,6 +279,12 @@ public open class DefaultCartesianMarker(
      * [CartesianChart].
      */
     AbovePoint,
+
+    /**
+     * Positions the label below the bottommost marked point. Sufficient room is made at the bottom
+     * of the [CartesianChart].
+     */
+    BelowPoint,
   }
 
   /** Formats [CartesianMarker] values for display. */
