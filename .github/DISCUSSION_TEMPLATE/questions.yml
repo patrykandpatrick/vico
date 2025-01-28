@@ -4,13 +4,37 @@ body:
       label: Question
     validations:
       required: true
+  - type: dropdown
+    attributes:
+      label: Module(s)
+      description: >
+        Leave this empty only if the question doesn’t concern a specific module or a set thereof.
+      multiple: true
+      options:
+        - compose
+        - compose-m2
+        - compose-m3
+        - multiplatform
+        - views
+  - type: dropdown
+    attributes:
+      label: Platform(s)
+      description: >
+        Leave this empty only if the question doesn’t concern a specific platform or a set thereof.
+      multiple: true
+      options:
+        - Android
+        - iOS
+  - type: input
+    attributes:
+      label: Platform version(s)
+      description: >
+        Leave this empty only if the question doesn’t concern a specific platform version or a set
+        thereof.
   - type: input
     attributes:
       label: Vico version(s)
-  - type: dropdown
-    attributes:
-      label: UI framework(s)
-      multiple: true
-      options:
-        - Jetpack Compose
-        - Views
+      description: >
+        Support is provided only for versions released within the last year; for older versions,
+        update Vico first. Leave this empty only if the question doesn’t concern a specific version
+        or a set thereof.

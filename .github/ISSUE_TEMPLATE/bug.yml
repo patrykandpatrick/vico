@@ -4,8 +4,15 @@ labels: ["bug"]
 body:
   - type: textarea
     attributes:
+      label: Example
+      description: >
+        Provide either a minimal reproducible example or the name of an affected sample chart.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
       label: How to reproduce
-      description: Please provide a detailed description of how to reproduce the bug.
+      description: Describe how to reproduce the bug using the example.
     validations:
       required: true
   - type: textarea
@@ -20,17 +27,39 @@ body:
       required: true
   - type: dropdown
     attributes:
-      label: Vico version(s)
-      description: If you’re using an outdated version, please try updating Vico first.
+      label: Module(s)
       multiple: true
       options:
-        - 2.0.0
-        - 1.16.1
+        - compose
+        - compose-m2
+        - compose-m3
+        - multiplatform
+        - views
+    validations:
+      required: true
+  - type: dropdown
+    attributes:
+      label: Platform(s)
+      multiple: true
+      options:
+        - Android
+        - iOS
     validations:
       required: true
   - type: input
     attributes:
-      label: Android version(s)
+      label: Platform version(s)
+    validations:
+      required: true
+  - type: dropdown
+    attributes:
+      label: Vico version(s)
+      description: For outdated versions, try updating Vico first.
+      multiple: true
+      options:
+        - 2.0.1
+        - 2.1.0-alpha.2
+        - 1.16.1
     validations:
       required: true
   - type: textarea
