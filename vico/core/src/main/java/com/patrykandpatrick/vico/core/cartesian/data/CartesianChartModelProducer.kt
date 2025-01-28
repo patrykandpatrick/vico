@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,9 @@ import androidx.annotation.RestrictTo
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.core.common.data.MutableExtraStore
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.coroutines.AbstractCoroutineContextElement
+import kotlin.coroutines.CoroutineContext
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
@@ -83,7 +86,7 @@ public class CartesianChartModelProducer {
     ranges: CartesianChartRanges,
   ) {
     with(updateReceivers[key] ?: return) {
-      withContext(Dispatchers.Default) {
+      withContext(getDispatcher()) {
         transform(hostExtraStore, fraction)
         val transformedModel = model?.copy(transactionExtraStore + hostExtraStore.copy())
         currentCoroutineContext().ensureActive()
@@ -105,7 +108,7 @@ public class CartesianChartModelProducer {
     updateRanges: (CartesianChartModel?) -> CartesianChartRanges,
     onModelCreated: (CartesianChartModel?, CartesianChartRanges) -> Unit,
   ) {
-    withContext(Dispatchers.Default) {
+    withContext(getDispatcher()) {
       val receiver =
         UpdateReceiver(
           cancelAnimation,
@@ -188,4 +191,15 @@ public class CartesianChartModelProducer {
       }
     }
   }
+
+  private suspend fun getDispatcher(): CoroutineDispatcher {
+    val context = currentCoroutineContext()
+    return if (context[PreviewContextKey] != null) Dispatchers.Main else Dispatchers.Default
+  }
 }
+
+internal object PreviewContextKey : CoroutineContext.Key<PreviewContext>
+
+/** @suppress */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+public object PreviewContext : AbstractCoroutineContextElement(PreviewContextKey)

@@ -18,6 +18,9 @@ package com.patrykandpatrick.vico.multiplatform.cartesian.data
 
 import com.patrykandpatrick.vico.multiplatform.common.data.ExtraStore
 import com.patrykandpatrick.vico.multiplatform.common.data.MutableExtraStore
+import kotlin.coroutines.AbstractCoroutineContextElement
+import kotlin.coroutines.CoroutineContext
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
@@ -81,7 +84,7 @@ public class CartesianChartModelProducer {
     ranges: CartesianChartRanges,
   ) {
     with(updateReceivers[key] ?: return) {
-      withContext(Dispatchers.Default) {
+      withContext(getDispatcher()) {
         transform(hostExtraStore, fraction)
         val transformedModel = model?.copy(transactionExtraStore + hostExtraStore.copy())
         currentCoroutineContext().ensureActive()
@@ -101,7 +104,7 @@ public class CartesianChartModelProducer {
     updateRanges: (CartesianChartModel?) -> CartesianChartRanges,
     onModelCreated: (CartesianChartModel?, CartesianChartRanges) -> Unit,
   ) {
-    withContext(Dispatchers.Default) {
+    withContext(getDispatcher()) {
       val receiver =
         UpdateReceiver(
           cancelAnimation,
@@ -180,4 +183,13 @@ public class CartesianChartModelProducer {
       }
     }
   }
+
+  private suspend fun getDispatcher(): CoroutineDispatcher {
+    val context = currentCoroutineContext()
+    return if (context[PreviewContextKey] != null) Dispatchers.Main else Dispatchers.Default
+  }
 }
+
+internal object PreviewContextKey : CoroutineContext.Key<PreviewContext>
+
+internal object PreviewContext : AbstractCoroutineContextElement(PreviewContextKey)

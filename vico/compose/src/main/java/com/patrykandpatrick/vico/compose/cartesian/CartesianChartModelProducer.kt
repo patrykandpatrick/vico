@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@ import com.patrykandpatrick.vico.core.cartesian.CartesianChart
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartRanges
 import com.patrykandpatrick.vico.core.cartesian.data.MutableCartesianChartRanges
+import com.patrykandpatrick.vico.core.cartesian.data.PreviewContext
 import com.patrykandpatrick.vico.core.cartesian.data.toImmutable
 import com.patrykandpatrick.vico.core.common.Animation
 import com.patrykandpatrick.vico.core.common.NEW_PRODUCER_ERROR_MESSAGE
@@ -39,10 +40,14 @@ import com.patrykandpatrick.vico.core.common.ValueWrapper
 import com.patrykandpatrick.vico.core.common.data.MutableExtraStore
 import com.patrykandpatrick.vico.core.common.getValue
 import com.patrykandpatrick.vico.core.common.setValue
+import java.util.UUID
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.EmptyCoroutineContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 internal val defaultCartesianDiffAnimationSpec: AnimationSpec<Float> =
   tween(durationMillis = Animation.DIFF_DURATION)
@@ -60,10 +65,10 @@ internal fun CartesianChartModelProducer.collectAsState(
   previousHashCode = hashCode
   val modelWrapperState = remember(chart.id) { CartesianChartModelWrapperState() }
   val extraStore = remember(chart.id) { MutableExtraStore() }
-  val scope = rememberCoroutineScope()
   val isInPreview = LocalInspectionMode.current
+  val scope = rememberCoroutineScope { getCoroutineContext(isInPreview) }
   val chartState = rememberWrappedValue(chart)
-  DisposableEffect(chart.id, animateIn, isInPreview) {
+  LaunchRegistration(chart.id, animateIn, isInPreview) {
     var mainAnimationJob: Job? = null
     var animationFrameJob: Job? = null
     var finalAnimationFrameJob: Job? = null
@@ -139,7 +144,7 @@ internal fun CartesianChartModelProducer.collectAsState(
         modelWrapperState.set(model, ranges)
       }
     }
-    onDispose {
+    return@LaunchRegistration {
       mainAnimationJob?.cancel()
       animationFrameJob?.cancel()
       finalAnimationFrameJob?.cancel()
@@ -148,3 +153,23 @@ internal fun CartesianChartModelProducer.collectAsState(
   }
   return modelWrapperState
 }
+
+@Composable
+private fun LaunchRegistration(
+  chartID: UUID,
+  animateIn: Boolean,
+  isInPreview: Boolean,
+  block: () -> () -> Unit,
+) {
+  if (isInPreview) {
+    runBlocking(getCoroutineContext(isPreview = true)) { block() }
+  } else {
+    DisposableEffect(chartID, animateIn) {
+      val disposable = block()
+      onDispose { disposable() }
+    }
+  }
+}
+
+private fun getCoroutineContext(isPreview: Boolean): CoroutineContext =
+  if (isPreview) Dispatchers.Main + PreviewContext else EmptyCoroutineContext
