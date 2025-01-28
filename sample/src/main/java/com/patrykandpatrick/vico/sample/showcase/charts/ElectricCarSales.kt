@@ -22,6 +22,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import androidx.core.graphics.ColorUtils
@@ -45,9 +46,11 @@ import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
 import com.patrykandpatrick.vico.core.common.Fill
 import com.patrykandpatrick.vico.core.common.shader.ShaderProvider
 import com.patrykandpatrick.vico.databinding.ElectricCarSalesBinding
+import com.patrykandpatrick.vico.sample.PreviewSurface
 import com.patrykandpatrick.vico.sample.showcase.UIFramework
 import com.patrykandpatrick.vico.sample.showcase.rememberMarker
 import java.text.DecimalFormat
+import kotlinx.coroutines.runBlocking
 
 private val RangeProvider = CartesianLayerRangeProvider.fixed(maxY = 100.0)
 private val YDecimalFormat = DecimalFormat("#.##'%'")
@@ -57,7 +60,7 @@ private val MarkerValueFormatter = DefaultCartesianMarker.ValueFormatter.default
 @Composable
 private fun ComposeElectricCarSales(
   modelProducer: CartesianChartModelProducer,
-  modifier: Modifier,
+  modifier: Modifier = Modifier,
 ) {
   val lineColor = Color(0xffa485e0)
   CartesianChartHost(
@@ -146,4 +149,13 @@ internal fun ElectricCarSales(uiFramework: UIFramework, modifier: Modifier) {
     UIFramework.Compose -> ComposeElectricCarSales(modelProducer, modifier)
     UIFramework.Views -> ViewElectricCarSales(modelProducer, modifier)
   }
+}
+
+@Preview
+@Composable
+private fun ElectricCarSalePreview() {
+  val modelProducer = remember { CartesianChartModelProducer() }
+  // Use `runBlocking` only for previews, which don’t support asynchronous execution
+  runBlocking { modelProducer.runTransaction { lineSeries { series(x, y) } } }
+  PreviewSurface { ComposeElectricCarSales(modelProducer) }
 }

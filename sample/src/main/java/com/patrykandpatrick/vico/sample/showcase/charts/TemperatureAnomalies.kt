@@ -22,6 +22,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
@@ -47,6 +48,7 @@ import com.patrykandpatrick.vico.core.common.component.LineComponent
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.core.common.shape.CorneredShape
 import com.patrykandpatrick.vico.databinding.TemperatureAnomaliesBinding
+import com.patrykandpatrick.vico.sample.PreviewSurface
 import com.patrykandpatrick.vico.sample.showcase.UIFramework
 import com.patrykandpatrick.vico.sample.showcase.rememberMarker
 import com.patrykandpatrick.vico.views.cartesian.ScrollHandler
@@ -54,6 +56,7 @@ import java.text.DecimalFormat
 import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.max
+import kotlinx.coroutines.runBlocking
 
 private const val RANGE_PROVIDER_BASE = 0.1
 
@@ -86,7 +89,7 @@ private fun getColumnProvider(positive: LineComponent, negative: LineComponent) 
 @Composable
 private fun ComposeTemperatureAnomalies(
   modelProducer: CartesianChartModelProducer,
-  modifier: Modifier,
+  modifier: Modifier = Modifier,
 ) {
   val positiveColumn =
     rememberLineComponent(
@@ -266,4 +269,13 @@ internal fun TemperatureAnomalies(uiFramework: UIFramework, modifier: Modifier) 
     UIFramework.Compose -> ComposeTemperatureAnomalies(modelProducer, modifier)
     UIFramework.Views -> ViewTemperatureAnomalies(modelProducer, modifier)
   }
+}
+
+@Preview
+@Composable
+private fun TemperatureAnomaliesPreview() {
+  val modelProducer = remember { CartesianChartModelProducer() }
+  // Use `runBlocking` only for previews, which don’t support asynchronous execution
+  runBlocking { modelProducer.runTransaction { columnSeries { series(x, y) } } }
+  PreviewSurface { ComposeTemperatureAnomalies(modelProducer) }
 }

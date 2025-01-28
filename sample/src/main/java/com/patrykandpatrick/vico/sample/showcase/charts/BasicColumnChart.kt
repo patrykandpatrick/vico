@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
@@ -31,12 +32,14 @@ import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
 import com.patrykandpatrick.vico.databinding.BasicColumnChartBinding
+import com.patrykandpatrick.vico.sample.PreviewSurface
 import com.patrykandpatrick.vico.sample.showcase.UIFramework
+import kotlinx.coroutines.runBlocking
 
 @Composable
 private fun ComposeBasicColumnChart(
   modelProducer: CartesianChartModelProducer,
-  modifier: Modifier,
+  modifier: Modifier = Modifier,
 ) {
   CartesianChartHost(
     chart =
@@ -75,4 +78,17 @@ internal fun BasicColumnChart(uiFramework: UIFramework, modifier: Modifier) {
     UIFramework.Compose -> ComposeBasicColumnChart(modelProducer, modifier)
     UIFramework.Views -> ViewBasicColumnChart(modelProducer, modifier)
   }
+}
+
+@Preview
+@Composable
+private fun BasicColumnChartPreview() {
+  val modelProducer = remember { CartesianChartModelProducer() }
+  // Use `runBlocking` only for previews, which don’t support asynchronous execution.
+  runBlocking {
+    modelProducer.runTransaction {
+      columnSeries { series(5, 6, 5, 2, 11, 8, 5, 2, 15, 11, 8, 13, 12, 10, 2, 7) }
+    }
+  }
+  PreviewSurface { ComposeBasicColumnChart(modelProducer) }
 }

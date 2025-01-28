@@ -14,13 +14,26 @@
  * limitations under the License.
  */
 
-package com.patrykandpatrick.vico.sample.previews.resource
+package com.patrykandpatrick.vico.sample
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import com.patrykandpatrick.vico.sample.VicoTheme
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 
 @Composable
-fun PreviewSurface(content: @Composable () -> Unit) {
-  VicoTheme { Surface(content = content) }
+fun PreviewSurface(
+  paddingValues: PaddingValues = PaddingValues(0.dp),
+  modifier: Modifier = Modifier,
+  content: @Composable BoxScope.() -> Unit,
+) {
+  VicoTheme {
+    Surface(modifier = modifier) {
+      Box(modifier = Modifier.padding(paddingValues), content = content)
+    }
+  }
 }

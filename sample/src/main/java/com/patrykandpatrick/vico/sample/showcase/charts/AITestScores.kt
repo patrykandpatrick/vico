@@ -24,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import androidx.core.content.ContextCompat
@@ -64,8 +65,10 @@ import com.patrykandpatrick.vico.core.common.component.TextComponent
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.core.common.shape.CorneredShape
 import com.patrykandpatrick.vico.databinding.AiTestScoresBinding
+import com.patrykandpatrick.vico.sample.PreviewSurface
 import com.patrykandpatrick.vico.sample.showcase.UIFramework
 import com.patrykandpatrick.vico.sample.showcase.rememberMarker
+import kotlinx.coroutines.runBlocking
 
 private val LegendLabelKey = ExtraStore.Key<Set<String>>()
 
@@ -92,7 +95,10 @@ private fun rememberComposeHorizontalLine(): HorizontalLine {
 }
 
 @Composable
-private fun ComposeAITestScores(modelProducer: CartesianChartModelProducer, modifier: Modifier) {
+private fun ComposeAITestScores(
+  modelProducer: CartesianChartModelProducer,
+  modifier: Modifier = Modifier,
+) {
   val lineColors = listOf(Color(0xff916cda), Color(0xffd877d8), Color(0xfff094bb))
   val legendItemLabelComponent = rememberTextComponent(vicoTheme.textColor)
   CartesianChartHost(
@@ -239,4 +245,18 @@ internal fun AITestScores(uiFramework: UIFramework, modifier: Modifier) {
     UIFramework.Compose -> ComposeAITestScores(modelProducer, modifier)
     UIFramework.Views -> ViewAITestScores(modelProducer, modifier)
   }
+}
+
+@Preview
+@Composable
+private fun AITestScorePreview() {
+  val modelProducer = remember { CartesianChartModelProducer() }
+  // Use `runBlocking` only for previews, which don’t support asynchronous execution.
+  runBlocking {
+    modelProducer.runTransaction {
+      lineSeries { data.forEach { (_, map) -> series(map.keys, map.values) } }
+      extras { extraStore -> extraStore[LegendLabelKey] = data.keys }
+    }
+  }
+  PreviewSurface { ComposeAITestScores(modelProducer) }
 }

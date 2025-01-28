@@ -25,6 +25,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
@@ -46,9 +47,11 @@ import com.patrykandpatrick.vico.core.cartesian.marker.ColumnCartesianLayerMarke
 import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.databinding.RockMetalRatiosBinding
+import com.patrykandpatrick.vico.sample.PreviewSurface
 import com.patrykandpatrick.vico.sample.showcase.UIFramework
 import com.patrykandpatrick.vico.sample.showcase.rememberMarker
 import java.text.DecimalFormat
+import kotlinx.coroutines.runBlocking
 
 private const val Y_DIVISOR = 1000
 
@@ -76,7 +79,10 @@ private val MarkerValueFormatter =
   }
 
 @Composable
-private fun ComposeChart7(modelProducer: CartesianChartModelProducer, modifier: Modifier) {
+private fun ComposeRockMetalRatios(
+  modelProducer: CartesianChartModelProducer,
+  modifier: Modifier = Modifier,
+) {
   CartesianChartHost(
     chart =
       rememberCartesianChart(
@@ -101,7 +107,7 @@ private fun ComposeChart7(modelProducer: CartesianChartModelProducer, modifier: 
 }
 
 @Composable
-private fun ViewChart7(modelProducer: CartesianChartModelProducer, modifier: Modifier) {
+private fun ViewRockMetalRatios(modelProducer: CartesianChartModelProducer, modifier: Modifier) {
   val marker = rememberMarker(MarkerValueFormatter)
   AndroidViewBinding(
     { inflater, parent, attachToParent ->
@@ -139,7 +145,21 @@ internal fun RockMetalRatios(uiFramework: UIFramework, modifier: Modifier) {
     }
   }
   when (uiFramework) {
-    UIFramework.Compose -> ComposeChart7(modelProducer, modifier)
-    UIFramework.Views -> ViewChart7(modelProducer, modifier)
+    UIFramework.Compose -> ComposeRockMetalRatios(modelProducer, modifier)
+    UIFramework.Views -> ViewRockMetalRatios(modelProducer, modifier)
   }
+}
+
+@Preview
+@Composable
+private fun RockMetalRatiosPreview() {
+  val modelProducer = remember { CartesianChartModelProducer() }
+  // Use `runBlocking` only for previews, which don’t support asynchronous execution.
+  runBlocking {
+    modelProducer.runTransaction {
+      columnSeries { series(data.values) }
+      extras { it[BottomAxisLabelKey] = data.keys.toList() }
+    }
+  }
+  PreviewSurface { ComposeRockMetalRatios(modelProducer) }
 }

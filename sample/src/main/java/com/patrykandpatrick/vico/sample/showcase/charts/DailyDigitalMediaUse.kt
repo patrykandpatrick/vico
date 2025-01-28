@@ -24,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import androidx.core.content.ContextCompat
@@ -60,9 +61,11 @@ import com.patrykandpatrick.vico.core.common.component.TextComponent
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.core.common.shape.CorneredShape
 import com.patrykandpatrick.vico.databinding.DailyDigitalMediaUseBinding
+import com.patrykandpatrick.vico.sample.PreviewSurface
 import com.patrykandpatrick.vico.sample.showcase.UIFramework
 import com.patrykandpatrick.vico.sample.showcase.rememberMarker
 import java.text.DecimalFormat
+import kotlinx.coroutines.runBlocking
 
 private val LegendLabelKey = ExtraStore.Key<Set<String>>()
 private val YDecimalFormat = DecimalFormat("#.## h")
@@ -71,7 +74,10 @@ private val StartAxisItemPlacer = VerticalAxis.ItemPlacer.step({ 0.5 })
 private val MarkerValueFormatter = DefaultCartesianMarker.ValueFormatter.default(YDecimalFormat)
 
 @Composable
-private fun ComposeDigitalMediaUse(modelProducer: CartesianChartModelProducer, modifier: Modifier) {
+private fun ComposeDigitalMediaUse(
+  modelProducer: CartesianChartModelProducer,
+  modifier: Modifier = Modifier,
+) {
   val columnColors = listOf(Color(0xff6438a7), Color(0xff3490de), Color(0xff73e8dc))
   val legendItemLabelComponent = rememberTextComponent(vicoTheme.textColor)
   CartesianChartHost(
@@ -200,4 +206,18 @@ internal fun DailyDigitalMediaUse(uiFramework: UIFramework, modifier: Modifier) 
     UIFramework.Compose -> ComposeDigitalMediaUse(modelProducer, modifier)
     UIFramework.Views -> ViewDigitalMediaUse(modelProducer, modifier)
   }
+}
+
+@Preview
+@Composable
+private fun DailyDigitalMediaUsePreview() {
+  val modelProducer = remember { CartesianChartModelProducer() }
+  // Use `runBlocking` only for previews, which don’t support asynchronous execution.
+  runBlocking {
+    modelProducer.runTransaction {
+      columnSeries { y.values.forEach { series(x, it) } }
+      extras { it[LegendLabelKey] = y.keys }
+    }
+  }
+  PreviewSurface { ComposeDigitalMediaUse(modelProducer) }
 }

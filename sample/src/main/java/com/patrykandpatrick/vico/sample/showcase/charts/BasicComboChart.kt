@@ -21,6 +21,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
@@ -39,10 +40,15 @@ import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
 import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.databinding.BasicComboChartBinding
+import com.patrykandpatrick.vico.sample.PreviewSurface
 import com.patrykandpatrick.vico.sample.showcase.UIFramework
+import kotlinx.coroutines.runBlocking
 
 @Composable
-private fun ComposeBasicComboChart(modelProducer: CartesianChartModelProducer, modifier: Modifier) {
+private fun ComposeBasicComboChart(
+  modelProducer: CartesianChartModelProducer,
+  modifier: Modifier = Modifier,
+) {
   CartesianChartHost(
     rememberCartesianChart(
       rememberColumnCartesianLayer(
@@ -90,4 +96,18 @@ internal fun BasicComboChart(uiFramework: UIFramework, modifier: Modifier) {
     UIFramework.Compose -> ComposeBasicComboChart(modelProducer, modifier)
     UIFramework.Views -> ViewBasicComboChart(modelProducer, modifier)
   }
+}
+
+@Preview
+@Composable
+private fun BasicComboChartPreview() {
+  val modelProducer = remember { CartesianChartModelProducer() }
+  // Use `runBlocking` only for previews, which don’t support asynchronous execution.
+  runBlocking {
+    modelProducer.runTransaction {
+      columnSeries { series(4, 15, 5, 8, 10, 15, 9, 10, 7, 9, 10, 12, 2, 9, 5, 14) }
+      lineSeries { series(1, 5, 4, 7, 3, 14, 5, 9, 9, 14, 7, 13, 14, 4, 10, 12) }
+    }
+  }
+  PreviewSurface { ComposeBasicComboChart(modelProducer) }
 }

@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
@@ -40,6 +41,7 @@ import com.patrykandpatrick.vico.core.cartesian.layer.CandlestickCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.databinding.GoldPricesBinding
+import com.patrykandpatrick.vico.sample.PreviewSurface
 import com.patrykandpatrick.vico.sample.showcase.UIFramework
 import com.patrykandpatrick.vico.sample.showcase.rememberMarker
 import java.text.DecimalFormat
@@ -48,6 +50,7 @@ import java.util.Locale
 import java.util.TimeZone
 import kotlin.math.ceil
 import kotlin.math.floor
+import kotlinx.coroutines.runBlocking
 
 private const val Y_STEP = 10.0
 
@@ -82,7 +85,10 @@ private val MarkerValueFormatter =
   DefaultCartesianMarker.ValueFormatter.default(DecimalFormat("$#,###.00"))
 
 @Composable
-private fun ComposeChart8(modelProducer: CartesianChartModelProducer, modifier: Modifier) {
+private fun ComposeGoldPrices(
+  modelProducer: CartesianChartModelProducer,
+  modifier: Modifier = Modifier,
+) {
   CartesianChartHost(
     rememberCartesianChart(
       rememberCandlestickCartesianLayer(rangeProvider = RangeProvider),
@@ -101,7 +107,7 @@ private fun ComposeChart8(modelProducer: CartesianChartModelProducer, modifier: 
 }
 
 @Composable
-private fun ViewChart8(modelProducer: CartesianChartModelProducer, modifier: Modifier) {
+private fun ViewGoldPrices(modelProducer: CartesianChartModelProducer, modifier: Modifier) {
   val marker = rememberMarker(valueFormatter = MarkerValueFormatter, showIndicator = false)
   AndroidViewBinding(
     { inflater, parent, attachToParent ->
@@ -249,7 +255,16 @@ internal fun GoldPrices(uiFramework: UIFramework, modifier: Modifier) {
     }
   }
   when (uiFramework) {
-    UIFramework.Compose -> ComposeChart8(modelProducer, modifier)
-    UIFramework.Views -> ViewChart8(modelProducer, modifier)
+    UIFramework.Compose -> ComposeGoldPrices(modelProducer, modifier)
+    UIFramework.Views -> ViewGoldPrices(modelProducer, modifier)
   }
+}
+
+@Preview
+@Composable
+private fun GoldPricePreview() {
+  val modelProducer = remember { CartesianChartModelProducer() }
+  // Use `runBlocking` only for previews, which don’t support asynchronous execution
+  runBlocking { modelProducer.runTransaction { candlestickSeries(x, opening, closing, low, high) } }
+  PreviewSurface { ComposeGoldPrices(modelProducer) }
 }
