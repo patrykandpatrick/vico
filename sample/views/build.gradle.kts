@@ -14,34 +14,23 @@
  * limitations under the License.
  */
 
-pluginManagement.repositories {
-  google()
-  gradlePluginPortal()
-  mavenCentral()
+plugins {
+  id("com.android.library")
+  id("kotlin-android")
+  id("org.jetbrains.kotlin.plugin.compose")
 }
 
-@Suppress("UnstableApiUsage")
-dependencyResolutionManagement {
-  repositoriesMode = RepositoriesMode.FAIL_ON_PROJECT_REPOS
-  repositories {
-    google()
-    mavenCentral()
-    mavenLocal()
-  }
+android {
+  configure()
+  buildFeatures { viewBinding = true }
+  kotlinOptions { jvmTarget = JavaVersion.VERSION_1_8.toString() }
+  namespace = "com.patrykandpatrick.vico.sample.views"
 }
 
-rootProject.name = "Vico"
-
-include(
-  "sample:app",
-  "sample:compose",
-  "sample:multiplatform",
-  "sample:views",
-  "vico",
-  "vico:compose",
-  "vico:compose-m2",
-  "vico:compose-m3",
-  "vico:core",
-  "vico:multiplatform",
-  "vico:views",
-)
+dependencies {
+  implementation(platform(libs.composeBom))
+  implementation(libs.appcompat)
+  implementation(libs.composeUI)
+  implementation(libs.composeViewBinding)
+  implementation(project(":vico:views"))
+}

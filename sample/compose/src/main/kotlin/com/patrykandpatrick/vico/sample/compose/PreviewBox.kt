@@ -14,34 +14,18 @@
  * limitations under the License.
  */
 
-pluginManagement.repositories {
-  google()
-  gradlePluginPortal()
-  mavenCentral()
+package com.patrykandpatrick.vico.sample.compose
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.padding
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+
+@Composable
+fun PreviewBox(content: @Composable BoxScope.() -> Unit) {
+  Box(modifier = Modifier.background(Color.White).padding(16.dp), content = content)
 }
-
-@Suppress("UnstableApiUsage")
-dependencyResolutionManagement {
-  repositoriesMode = RepositoriesMode.FAIL_ON_PROJECT_REPOS
-  repositories {
-    google()
-    mavenCentral()
-    mavenLocal()
-  }
-}
-
-rootProject.name = "Vico"
-
-include(
-  "sample:app",
-  "sample:compose",
-  "sample:multiplatform",
-  "sample:views",
-  "vico",
-  "vico:compose",
-  "vico:compose-m2",
-  "vico:compose-m3",
-  "vico:core",
-  "vico:multiplatform",
-  "vico:views",
-)
