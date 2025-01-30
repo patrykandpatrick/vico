@@ -31,7 +31,7 @@ jobs:
       - uses: softprops/action-gh-release@v2
         with:
           draft: true
-          files: ${{ github.workspace }}/vico/sample/build/outputs/apk/debug/*.apk
+          files: ${{ github.workspace }}/vico/sample/app/build/outputs/apk/debug/*.apk
           prerelease: ${{ env.IS_PRERELEASE }}
           tag_name: ${{ env.TAG_NAME }}
           token: ${{ secrets.BOT_PAT }}

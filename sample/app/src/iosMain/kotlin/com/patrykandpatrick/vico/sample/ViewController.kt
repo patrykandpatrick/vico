@@ -14,34 +14,8 @@
  * limitations under the License.
  */
 
-pluginManagement.repositories {
-  google()
-  gradlePluginPortal()
-  mavenCentral()
-}
+package com.patrykandpatrick.vico.sample
 
-@Suppress("UnstableApiUsage")
-dependencyResolutionManagement {
-  repositoriesMode = RepositoriesMode.FAIL_ON_PROJECT_REPOS
-  repositories {
-    google()
-    mavenCentral()
-    mavenLocal()
-  }
-}
+import androidx.compose.ui.window.ComposeUIViewController
 
-rootProject.name = "Vico"
-
-include(
-  "sample:app",
-  "sample:compose",
-  "sample:multiplatform",
-  "sample:views",
-  "vico",
-  "vico:compose",
-  "vico:compose-m2",
-  "vico:compose-m3",
-  "vico:core",
-  "vico:multiplatform",
-  "vico:views",
-)
+fun ViewController() = ComposeUIViewController { SampleApp() }
