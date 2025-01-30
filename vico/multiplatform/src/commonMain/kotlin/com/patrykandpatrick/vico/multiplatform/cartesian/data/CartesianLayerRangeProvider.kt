@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.patrykandpatrick.vico.core.cartesian.data
+package com.patrykandpatrick.vico.multiplatform.cartesian.data
 
 import androidx.compose.runtime.Immutable
 import com.patrykandpatrick.vico.multiplatform.cartesian.layer.CartesianLayer

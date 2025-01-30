@@ -21,7 +21,6 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.patrykandpatrick.vico.core.cartesian.data.CartesianLayerRangeProvider
 import com.patrykandpatrick.vico.multiplatform.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.multiplatform.cartesian.CartesianMeasuringContext
 import com.patrykandpatrick.vico.multiplatform.cartesian.axis.Axis
@@ -30,6 +29,7 @@ import com.patrykandpatrick.vico.multiplatform.cartesian.data.CandlestickCartesi
 import com.patrykandpatrick.vico.multiplatform.cartesian.data.CandlestickCartesianLayerModel
 import com.patrykandpatrick.vico.multiplatform.cartesian.data.CandlestickCartesianLayerModel.Change
 import com.patrykandpatrick.vico.multiplatform.cartesian.data.CartesianChartRanges
+import com.patrykandpatrick.vico.multiplatform.cartesian.data.CartesianLayerRangeProvider
 import com.patrykandpatrick.vico.multiplatform.cartesian.data.MutableCartesianChartRanges
 import com.patrykandpatrick.vico.multiplatform.cartesian.data.forEachIn
 import com.patrykandpatrick.vico.multiplatform.cartesian.marker.CandlestickCartesianLayerMarkerTarget
