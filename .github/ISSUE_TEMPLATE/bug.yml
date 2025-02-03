@@ -58,7 +58,7 @@ body:
       multiple: true
       options:
         - 2.0.1
-        - 2.1.0-alpha.2
+        - 2.1.0-alpha.3
         - 1.16.1
     validations:
       required: true
