@@ -251,7 +251,7 @@ public open class CartesianChart(
       axisManager.setAxesBounds(context, canvasSize, layerBounds, layerMargins)
       legend?.setBounds(
         left = 0,
-        top = 0,
+        top = layerBounds.bottom + layerMargins.bottom,
         right = canvasSize.width,
         bottom = layerBounds.bottom + layerMargins.bottom + legendHeight,
       )
