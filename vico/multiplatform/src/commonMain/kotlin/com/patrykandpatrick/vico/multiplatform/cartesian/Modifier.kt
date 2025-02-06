@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.pointerInput
+import com.patrykandpatrick.vico.multiplatform.cartesian.marker.PointerState
 import com.patrykandpatrick.vico.multiplatform.common.Point
 import com.patrykandpatrick.vico.multiplatform.common.detectZoomGestures
 
@@ -35,7 +36,7 @@ private fun Offset.toPoint() = Point(x, y)
 @Composable
 internal fun Modifier.pointerInput(
   scrollState: VicoScrollState,
-  onPointerPositionChange: ((Point?) -> Unit)?,
+  onPointerPositionChange: ((PointerState?) -> Unit)?,
   onZoom: ((Float, Offset) -> Unit)?,
   consumeMoveEvents: Boolean,
 ) =
@@ -49,22 +50,22 @@ internal fun Modifier.pointerInput(
       awaitPointerEventScope {
         while (true) {
           val event = awaitPointerEvent()
+          val pointerPosition = event.changes.first().position.toPoint()
           when {
             event.type == PointerEventType.Scroll && scrollState.scrollEnabled && onZoom != null ->
               onZoom(
                 1 - event.changes.first().scrollDelta.y * BASE_SCROLL_ZOOM_DELTA,
                 event.changes.first().position,
               )
-
             onPointerPositionChange == null -> continue
             event.type == PointerEventType.Press ->
-              onPointerPositionChange(event.changes.first().position.toPoint())
-
-            event.type == PointerEventType.Release -> onPointerPositionChange(null)
+              onPointerPositionChange(PointerState.Pressed(pointerPosition))
+            event.type == PointerEventType.Release ->
+              onPointerPositionChange(PointerState.Released(pointerPosition))
             event.type == PointerEventType.Move && !scrollState.scrollEnabled -> {
               val changes = event.changes.first()
               if (consumeMoveEvents) changes.consume()
-              onPointerPositionChange(changes.position.toPoint())
+              onPointerPositionChange(PointerState.Moved(pointerPosition))
             }
           }
         }
@@ -74,7 +75,7 @@ internal fun Modifier.pointerInput(
       if (scrollState.scrollEnabled && onZoom != null) {
         Modifier.pointerInput(onPointerPositionChange, onZoom) {
           detectZoomGestures { centroid, zoom ->
-            onPointerPositionChange?.invoke(null)
+            onPointerPositionChange?.invoke(PointerState.Zoomed(centroid.toPoint()))
             onZoom(zoom, centroid)
           }
         }

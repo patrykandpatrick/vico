@@ -45,8 +45,8 @@ import com.patrykandpatrick.vico.multiplatform.cartesian.data.component4
 import com.patrykandpatrick.vico.multiplatform.cartesian.data.defaultCartesianDiffAnimationSpec
 import com.patrykandpatrick.vico.multiplatform.cartesian.data.toImmutable
 import com.patrykandpatrick.vico.multiplatform.cartesian.layer.MutableCartesianLayerDimensions
+import com.patrykandpatrick.vico.multiplatform.cartesian.marker.PointerState
 import com.patrykandpatrick.vico.multiplatform.common.Defaults.CHART_HEIGHT
-import com.patrykandpatrick.vico.multiplatform.common.Point
 import com.patrykandpatrick.vico.multiplatform.common.ValueWrapper
 import com.patrykandpatrick.vico.multiplatform.common.data.ExtraStore
 import com.patrykandpatrick.vico.multiplatform.common.getValue
@@ -152,7 +152,7 @@ internal fun CartesianChartHostImpl(
   previousModel: CartesianChartModel? = null,
   extraStore: ExtraStore = ExtraStore.Empty,
 ) {
-  val pointerPosition = remember { mutableStateOf<Point?>(null) }
+  val pointerState = remember { mutableStateOf<PointerState?>(null) }
   val measuringContext =
     rememberCartesianMeasuringContext(
       extraStore = extraStore,
@@ -162,7 +162,7 @@ internal fun CartesianChartHostImpl(
       zoomEnabled = scrollState.scrollEnabled && zoomState.zoomEnabled,
       layerPadding =
         remember(chart.layerPadding, model.extraStore) { chart.layerPadding(model.extraStore) },
-      pointerPosition = pointerPosition.value,
+      pointerState = pointerState.value,
     )
 
   val coroutineScope = rememberCoroutineScope()
@@ -171,7 +171,9 @@ internal fun CartesianChartHostImpl(
 
   LaunchedEffect(scrollState.pointerXDeltas) {
     scrollState.pointerXDeltas.collect { delta ->
-      pointerPosition.value?.let { point -> pointerPosition.value = point.copy(point.x + delta) }
+      pointerState.value
+        ?.takeIf { it.isPressedOrMoved }
+        ?.let { pointerState.value = PointerState.Moved(it.point.copy(it.point.x + delta)) }
     }
   }
 
@@ -187,7 +189,7 @@ internal fun CartesianChartHostImpl(
           consumeMoveEvents = consumeMoveEvents,
           onPointerPositionChange =
             remember(chart.marker == null) {
-              if (chart.marker != null) pointerPosition.component2() else null
+              if (chart.marker != null) pointerState.component2() else null
             },
           onZoom =
             remember(zoomState, scrollState, coroutineScope) {

@@ -39,6 +39,7 @@ import com.patrykandpatrick.vico.core.cartesian.layer.HorizontalCartesianLayerMa
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.layer.MutableCartesianLayerDimensions
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
+import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerController
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerVisibilityListener
 import com.patrykandpatrick.vico.core.common.Legend
 import com.patrykandpatrick.vico.core.common.Point
@@ -81,6 +82,7 @@ private constructor(
   private var previousMarkerTargetHashCode: Int?,
   private val persistentMarkerMap: MutableMap<Double, CartesianMarker>,
   private var previousPersistentMarkerHashCode: Int?,
+  protected val markerController: CartesianMarkerController,
 ) : CartesianLayerMarginUpdater<CartesianChartModel> {
   private val persistentMarkerScope = PersistentMarkerScope {
     persistentMarkerMap[it.toDouble()] = this
@@ -220,6 +222,7 @@ private constructor(
     decorations: List<Decoration> = emptyList(),
     persistentMarkers: (PersistentMarkerScope.(ExtraStore) -> Unit)? = null,
     getXStep: ((CartesianChartModel) -> Double) = { it.getXDeltaGcd() },
+    markerController: CartesianMarkerController = CartesianMarkerController.showOnPress,
   ) : this(
     layers = layers,
     startAxis = startAxis,
@@ -238,6 +241,7 @@ private constructor(
     previousMarkerTargetHashCode = null,
     persistentMarkerMap = mutableMapOf(),
     previousPersistentMarkerHashCode = null,
+    markerController = markerController,
   )
 
   private fun setLayerBounds(left: Float, top: Float, right: Float, bottom: Float) {
@@ -316,8 +320,11 @@ private constructor(
         model.forEachWithLayer(drawingConsumer.apply { this.context = context })
       }
       forEachPersistentMarker { marker, targets -> marker.drawUnderLayers(context, targets) }
-      val markerTargets = getMarkerTargets(context, pointerPosition)
-      if (markerTargets.isNotEmpty()) marker?.drawUnderLayers(context, markerTargets)
+      val markerTargets = getMarkerTargets(context, pointerState?.point)
+      val drawMarker =
+        markerTargets.isNotEmpty() &&
+          pointerState?.let { markerController.onPointerState(it, markerTargets) } == true
+      if (drawMarker) marker?.drawUnderLayers(context, markerTargets)
       canvas.drawBitmap(layerBitmap, 0f, 0f, null)
       fadingEdges?.run {
         draw(context)
@@ -327,7 +334,7 @@ private constructor(
       decorations.forEach { it.drawOverLayers(context) }
       forEachPersistentMarker { marker, targets -> marker.drawOverLayers(context, targets) }
       legend?.draw(context)
-      if (markerTargets.isNotEmpty()) marker?.drawOverLayers(context, markerTargets)
+      if (drawMarker) marker?.drawOverLayers(context, markerTargets)
     }
   }
 
@@ -466,6 +473,7 @@ private constructor(
     decorations: List<Decoration> = this.decorations,
     persistentMarkers: (PersistentMarkerScope.(ExtraStore) -> Unit)? = this.persistentMarkers,
     getXStep: ((CartesianChartModel) -> Double) = this.getXStep,
+    markerController: CartesianMarkerController = this.markerController,
   ): CartesianChart =
     CartesianChart(
       layers = layers,
@@ -485,6 +493,7 @@ private constructor(
       previousMarkerTargetHashCode = previousMarkerTargetHashCode,
       persistentMarkerMap = persistentMarkerMap,
       previousPersistentMarkerHashCode = previousPersistentMarkerHashCode,
+      markerController = markerController,
     )
 
   override fun equals(other: Any?): Boolean =
@@ -503,7 +512,8 @@ private constructor(
         startAxis == other.startAxis &&
         topAxis == other.topAxis &&
         endAxis == other.endAxis &&
-        bottomAxis == other.bottomAxis
+        bottomAxis == other.bottomAxis &&
+        markerController == other.markerController
 
   override fun hashCode(): Int {
     var result = marker.hashCode()
@@ -519,6 +529,7 @@ private constructor(
     result = 31 * result + topAxis.hashCode()
     result = 31 * result + endAxis.hashCode()
     result = 31 * result + bottomAxis.hashCode()
+    result = 31 * result + markerController.hashCode()
     result = 31 * result + id.hashCode()
     return result
   }

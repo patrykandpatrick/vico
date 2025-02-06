@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,10 +21,10 @@ import android.view.ScaleGestureDetector
 
 internal class ChartScaleGestureListener(
   private val getLayerBounds: () -> RectF?,
-  private val onZoom: (focusX: Float, zoomChange: Float) -> Unit,
+  private val onZoom: (focusX: Float, focusY: Float, zoomChange: Float) -> Unit,
 ) : ScaleGestureDetector.OnScaleGestureListener {
   override fun onScale(detector: ScaleGestureDetector): Boolean {
-    onZoom(detector.focusX, detector.scaleFactor)
+    onZoom(detector.focusX, detector.focusY, detector.scaleFactor)
     return true
   }
 
