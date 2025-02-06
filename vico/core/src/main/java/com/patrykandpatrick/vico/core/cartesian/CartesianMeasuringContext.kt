@@ -21,6 +21,7 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartRanges
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayerDimensions
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayerPadding
+import com.patrykandpatrick.vico.core.cartesian.marker.PointerEvent
 import com.patrykandpatrick.vico.core.common.MeasuringContext
 import com.patrykandpatrick.vico.core.common.Point
 
@@ -42,7 +43,12 @@ public interface CartesianMeasuringContext : MeasuringContext {
   public val layerPadding: CartesianLayerPadding
 
   /** The pointer position. */
+  @Deprecated("Use pointerState instead", ReplaceWith("pointerState?.point"))
   public val pointerPosition: Point?
+    get() = pointerEvent?.point
+
+  /** The pointer state. */
+  public val pointerEvent: PointerEvent?
 }
 
 internal fun CartesianMeasuringContext.getFullXRange(layerDimensions: CartesianLayerDimensions) =

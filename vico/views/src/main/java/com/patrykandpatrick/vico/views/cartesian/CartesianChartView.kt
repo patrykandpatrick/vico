@@ -38,6 +38,7 @@ import com.patrykandpatrick.vico.core.cartesian.data.RandomCartesianModelGenerat
 import com.patrykandpatrick.vico.core.cartesian.data.toImmutable
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayerPadding
 import com.patrykandpatrick.vico.core.cartesian.layer.MutableCartesianLayerDimensions
+import com.patrykandpatrick.vico.core.cartesian.marker.PointerEvent
 import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.NEW_PRODUCER_ERROR_MESSAGE
 import com.patrykandpatrick.vico.core.common.Point
@@ -89,7 +90,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       scrollEnabled = false,
       zoomEnabled = false,
       layerPadding = CartesianLayerPadding(),
-      pointerPosition = null,
+      pointerEvent = null,
     )
 
   private val scaleGestureListener: ScaleGestureDetector.OnScaleGestureListener =
@@ -131,7 +132,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       scroller = scroller,
       consumeMoveEvents = themeHandler.consumeMoveEvents,
       density = resources.displayMetrics.density,
-      onTouchPoint = ::handleTouchEvent,
+      onPointerState = ::handleTouchEvent,
       requestInvalidate = ::invalidate,
     )
 
@@ -319,14 +320,15 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   private fun MotionEvent.isUpOrCancel(): Boolean =
     actionMasked == MotionEvent.ACTION_UP || actionMasked == MotionEvent.ACTION_CANCEL
 
-  private fun handleZoom(focusX: Float, zoomChange: Float) {
+  private fun handleZoom(focusX: Float, focusY: Float, zoomChange: Float) {
     val chart = chart ?: return
     zoomHandler.zoom(zoomChange, focusX, scrollHandler.value, chart.layerBounds)
-    handleTouchEvent(null)
+    handleTouchEvent(PointerEvent.Zoom(Point(focusX, focusY)))
+    invalidate()
   }
 
-  private fun handleTouchEvent(point: Point?) {
-    measuringContext.pointerPosition = point
+  private fun handleTouchEvent(pointerEvent: PointerEvent) {
+    measuringContext.pointerEvent = pointerEvent
   }
 
   override fun dispatchDraw(canvas: Canvas) {

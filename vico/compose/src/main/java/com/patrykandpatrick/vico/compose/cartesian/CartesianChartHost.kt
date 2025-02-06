@@ -48,8 +48,8 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartRanges
 import com.patrykandpatrick.vico.core.cartesian.data.MutableCartesianChartRanges
 import com.patrykandpatrick.vico.core.cartesian.data.toImmutable
 import com.patrykandpatrick.vico.core.cartesian.layer.MutableCartesianLayerDimensions
+import com.patrykandpatrick.vico.core.cartesian.marker.PointerEvent
 import com.patrykandpatrick.vico.core.common.Defaults.CHART_HEIGHT
-import com.patrykandpatrick.vico.core.common.Point
 import com.patrykandpatrick.vico.core.common.ValueWrapper
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.core.common.getValue
@@ -161,7 +161,7 @@ internal fun CartesianChartHostImpl(
   extraStore: ExtraStore = ExtraStore.Empty,
 ) {
   val canvasBounds = remember { RectF() }
-  val pointerPosition = remember { mutableStateOf<Point?>(null) }
+  val pointerEvent = remember { mutableStateOf<PointerEvent?>(null) }
   val measuringContext =
     rememberCartesianMeasuringContext(
       canvasBounds = canvasBounds,
@@ -172,7 +172,7 @@ internal fun CartesianChartHostImpl(
       zoomEnabled = scrollState.scrollEnabled && zoomState.zoomEnabled,
       layerPadding =
         remember(chart.layerPadding, model.extraStore) { chart.layerPadding(model.extraStore) },
-      pointerPosition = pointerPosition.value,
+      pointerEvent = pointerEvent.value,
     )
 
   val coroutineScope = rememberCoroutineScope()
@@ -181,7 +181,10 @@ internal fun CartesianChartHostImpl(
 
   LaunchedEffect(scrollState.pointerXDeltas) {
     scrollState.pointerXDeltas.collect { delta ->
-      pointerPosition.value?.let { point -> pointerPosition.value = point.copy(point.x + delta) }
+      val state = pointerEvent.value
+      if (state?.isPressedOrMoved == true) {
+        pointerEvent.value = PointerEvent.Move(state.point.copy(state.point.x + delta))
+      }
     }
   }
 
@@ -199,9 +202,9 @@ internal fun CartesianChartHostImpl(
         .pointerInput(
           scrollState = scrollState,
           consumeMoveEvents = consumeMoveEvents,
-          onPointerPositionChange =
+          onPointerStateChange =
             remember(chart.marker == null) {
-              if (chart.marker != null) pointerPosition.component2() else null
+              if (chart.marker != null) pointerEvent.component2() else null
             },
           onZoom =
             remember(zoomState, scrollState, coroutineScope) {
