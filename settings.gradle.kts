@@ -43,5 +43,7 @@ include(
   "vico:compose-m3",
   "vico:core",
   "vico:multiplatform",
+  "vico:multiplatform-m2",
+  "vico:multiplatform-m3",
   "vico:views",
 )

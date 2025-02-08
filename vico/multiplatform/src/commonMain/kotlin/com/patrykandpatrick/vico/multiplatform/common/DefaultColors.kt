@@ -16,9 +16,12 @@
 
 package com.patrykandpatrick.vico.multiplatform.common
 
+import androidx.annotation.RestrictTo
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 
+/** @suppress */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 @Composable
-internal fun getDefaultColors(): DefaultColors =
+public fun getDefaultColors(): DefaultColors =
   if (isSystemInDarkTheme()) DefaultColors.Dark else DefaultColors.Light

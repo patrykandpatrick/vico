@@ -15,11 +15,11 @@
  */
 
 plugins {
+  `dokka-convention`
   `publishing-convention`
   id("com.android.library")
   id("kotlin-android")
   id("org.jetbrains.kotlin.plugin.compose")
-  `dokka-convention`
 }
 
 android {

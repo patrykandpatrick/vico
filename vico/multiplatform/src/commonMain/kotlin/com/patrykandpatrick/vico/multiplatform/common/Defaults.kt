@@ -16,6 +16,8 @@
 
 package com.patrykandpatrick.vico.multiplatform.common
 
+import androidx.annotation.RestrictTo
+
 internal object Animation {
   val range: ClosedFloatingPointRange<Float> = 0f..1f
   const val DIFF_DURATION: Int = 500
@@ -66,16 +68,18 @@ internal object Defaults {
   const val LEGEND_ROW_SPACING: Float = 8f
 }
 
-internal class DefaultColors(
-  val bullishCandleColor: Long,
-  val neutralCandleColor: Long,
-  val bearishCandleColor: Long,
-  val cartesianLayerColors: List<Long>,
-  val lineColor: Long,
-  val textColor: Long,
+/** @suppress */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+public class DefaultColors(
+  public val bullishCandleColor: Long,
+  public val neutralCandleColor: Long,
+  public val bearishCandleColor: Long,
+  public val cartesianLayerColors: List<Long>,
+  public val lineColor: Long,
+  public val textColor: Long,
 ) {
-  companion object {
-    val Light: DefaultColors =
+  public companion object {
+    public val Light: DefaultColors =
       DefaultColors(
         bullishCandleColor = 0xff0ac285,
         neutralCandleColor = 0xff000000,
@@ -85,7 +89,7 @@ internal class DefaultColors(
         textColor = 0xff000000,
       )
 
-    val Dark: DefaultColors =
+    public val Dark: DefaultColors =
       DefaultColors(
         bullishCandleColor = 0xff0ac285,
         neutralCandleColor = 0xffffffff,

@@ -16,6 +16,7 @@
 
 package com.patrykandpatrick.vico.multiplatform.common
 
+import androidx.annotation.RestrictTo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
@@ -56,8 +57,10 @@ public data class VicoTheme(
     val neutral: Color,
     val bearish: Color,
   ) {
-    internal companion object {
-      fun fromDefaultColors(defaultColors: DefaultColors): CandlestickCartesianLayerColors =
+    /** @suppress */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public companion object {
+      public fun fromDefaultColors(defaultColors: DefaultColors): CandlestickCartesianLayerColors =
         CandlestickCartesianLayerColors(
           Color(defaultColors.bullishCandleColor),
           Color(defaultColors.neutralCandleColor),

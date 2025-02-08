@@ -43,12 +43,8 @@ kotlin {
   }
   sourceSets {
     commonMain.dependencies {
-      implementation(compose.foundation)
-      implementation(compose.runtime)
-      implementation(compose.ui)
-      implementation(libs.androidXAnnotation)
-      implementation(libs.coroutinesCore)
-      implementation(libs.kotlinStdLib)
+      api(project(":vico:multiplatform"))
+      implementation(compose.material3)
     }
   }
   explicitApi()
