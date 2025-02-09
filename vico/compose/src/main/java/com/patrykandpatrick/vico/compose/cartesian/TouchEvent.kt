@@ -47,7 +47,9 @@ internal fun Modifier.chartTouchEvent(
                 PointerEventType.Press -> setTouchPoint(event.changes.first().position.point)
                 PointerEventType.Release -> setTouchPoint(null)
                 PointerEventType.Move ->
-                  if (!isScrollEnabled) setTouchPoint(event.changes.first().position.point)
+                  if (!isScrollEnabled) {
+                    setTouchPoint(event.changes.first().also { it.consume() }.position.point)
+                  }
               }
             }
           }
