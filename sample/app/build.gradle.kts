@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -53,6 +54,7 @@ kotlin {
       isStatic = true
     }
   }
+  jvm("desktop")
   sourceSets {
     androidMain.dependencies {
       implementation(libs.activityCompose)
@@ -65,6 +67,18 @@ kotlin {
       implementation(compose.material3)
       implementation(libs.composeNavigation)
       implementation(project(":sample:multiplatform"))
+    }
+    val desktopMain by getting
+    desktopMain.dependencies { implementation(compose.desktop.currentOs) }
+  }
+}
+
+compose.desktop {
+  application {
+    mainClass = "com.patrykandpatrick.vico.sample.MainKt"
+    nativeDistributions {
+      packageName = "com.patrykandpatrick.vico.sample"
+      targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
     }
   }
 }

@@ -4,6 +4,7 @@
 .externalNativeBuild
 .gradle
 .kotlin
+/.idea/.artifacts/
 /.idea/AndroidProjectSystem.xml
 /.idea/assetWizardSettings.xml
 /.idea/caches
