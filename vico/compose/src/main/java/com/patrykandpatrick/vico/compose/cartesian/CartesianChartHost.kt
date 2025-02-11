@@ -162,13 +162,12 @@ internal fun CartesianChartHostImpl(
   Canvas(
     modifier =
       Modifier.fillMaxSize()
-        .chartTouchEvent(
-          setTouchPoint =
+        .pointerInput(
+          scrollState = scrollState,
+          onPointerPositionChange =
             remember(chart.marker == null) {
               if (chart.marker != null) pointerPosition.component2() else null
             },
-          isScrollEnabled = scrollState.scrollEnabled,
-          scrollState = scrollState,
           onZoom =
             remember(zoomState, scrollState, chart, coroutineScope) {
               if (zoomState.zoomEnabled) {

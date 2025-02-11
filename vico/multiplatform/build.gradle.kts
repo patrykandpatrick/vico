@@ -41,6 +41,7 @@ kotlin {
       isStatic = true
     }
   }
+  jvm("desktop")
   sourceSets {
     commonMain.dependencies {
       implementation(compose.foundation)

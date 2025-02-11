@@ -5,6 +5,7 @@
 .gradle
 .kotlin
 /.idea/AndroidProjectSystem.xml
+/.idea/artifacts/
 /.idea/assetWizardSettings.xml
 /.idea/caches
 /.idea/codeStyles/Project.xml

@@ -25,42 +25,46 @@ import androidx.compose.ui.input.pointer.pointerInput
 import com.patrykandpatrick.vico.compose.common.detectZoomGestures
 import com.patrykandpatrick.vico.core.common.Point
 
-internal fun Modifier.chartTouchEvent(
-  setTouchPoint: ((Point?) -> Unit)?,
-  isScrollEnabled: Boolean,
+private const val BASE_SCROLL_ZOOM_DELTA = 0.1f
+
+private fun Offset.toPoint() = Point(x, y)
+
+internal fun Modifier.pointerInput(
   scrollState: VicoScrollState,
+  onPointerPositionChange: ((Point?) -> Unit)?,
   onZoom: ((Float, Offset) -> Unit)?,
-): Modifier =
+) =
   scrollable(
       state = scrollState.scrollableState,
       orientation = Orientation.Horizontal,
+      enabled = scrollState.scrollEnabled,
       reverseDirection = true,
-      enabled = isScrollEnabled,
     )
-    .then(
-      if (setTouchPoint != null) {
-        pointerInput(setTouchPoint) {
-          awaitPointerEventScope {
-            while (true) {
-              val event = awaitPointerEvent()
-              when (event.type) {
-                PointerEventType.Press -> setTouchPoint(event.changes.first().position.point)
-                PointerEventType.Release -> setTouchPoint(null)
-                PointerEventType.Move ->
-                  if (!isScrollEnabled) setTouchPoint(event.changes.first().position.point)
-              }
-            }
+    .pointerInput(onZoom, onPointerPositionChange) {
+      awaitPointerEventScope {
+        while (true) {
+          val event = awaitPointerEvent()
+          when {
+            event.type == PointerEventType.Scroll && scrollState.scrollEnabled && onZoom != null ->
+              onZoom(
+                1 - event.changes.first().scrollDelta.y * BASE_SCROLL_ZOOM_DELTA,
+                event.changes.first().position,
+              )
+            onPointerPositionChange == null -> continue
+            event.type == PointerEventType.Press ->
+              onPointerPositionChange(event.changes.first().position.toPoint())
+            event.type == PointerEventType.Release -> onPointerPositionChange(null)
+            event.type == PointerEventType.Move && !scrollState.scrollEnabled ->
+              onPointerPositionChange(event.changes.first().position.toPoint())
           }
         }
-      } else {
-        Modifier
       }
-    )
+    }
     .then(
-      if (isScrollEnabled && onZoom != null) {
-        pointerInput(setTouchPoint, onZoom) {
+      if (scrollState.scrollEnabled && onZoom != null) {
+        Modifier.pointerInput(onPointerPositionChange, onZoom) {
           detectZoomGestures { centroid, zoom ->
-            setTouchPoint?.invoke(null)
+            onPointerPositionChange?.invoke(null)
             onZoom(zoom, centroid)
           }
         }
@@ -68,6 +72,3 @@ internal fun Modifier.chartTouchEvent(
         Modifier
       }
     )
-
-private val Offset.point: Point
-  get() = Point(x, y)
