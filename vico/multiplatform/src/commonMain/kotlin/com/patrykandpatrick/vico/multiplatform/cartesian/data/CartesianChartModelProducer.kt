@@ -186,7 +186,7 @@ public class CartesianChartModelProducer {
 
   private suspend fun getDispatcher(): CoroutineDispatcher {
     val context = currentCoroutineContext()
-    return if (context[PreviewContextKey] != null) Dispatchers.Main else Dispatchers.Default
+    return if (context[PreviewContextKey] != null) Dispatchers.Unconfined else Dispatchers.Default
   }
 }
 
