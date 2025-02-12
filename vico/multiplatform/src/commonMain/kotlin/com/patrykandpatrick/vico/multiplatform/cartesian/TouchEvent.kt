@@ -27,7 +27,6 @@ import com.patrykandpatrick.vico.multiplatform.common.detectZoomGestures
 
 internal fun Modifier.chartTouchEvent(
   setTouchPoint: ((Point?) -> Unit)?,
-  isScrollEnabled: Boolean,
   scrollState: VicoScrollState,
   onZoom: ((Float, Offset) -> Unit)?,
 ): Modifier =
@@ -35,7 +34,7 @@ internal fun Modifier.chartTouchEvent(
       state = scrollState.scrollableState,
       orientation = Orientation.Horizontal,
       reverseDirection = true,
-      enabled = isScrollEnabled,
+      enabled = scrollState.scrollEnabled,
     )
     .then(
       if (setTouchPoint != null) {
@@ -46,8 +45,15 @@ internal fun Modifier.chartTouchEvent(
               when (event.type) {
                 PointerEventType.Press -> setTouchPoint(event.changes.first().position.point)
                 PointerEventType.Release -> setTouchPoint(null)
-                PointerEventType.Move ->
-                  if (!isScrollEnabled) setTouchPoint(event.changes.first().position.point)
+                PointerEventType.Move -> {
+                  val changes = event.changes.first()
+                  if (!scrollState.scrollEnabled) {
+                    setTouchPoint(changes.position.point)
+                  }
+                  if (scrollState.consumeMoveEvents) {
+                    changes.consume()
+                  }
+                }
               }
             }
           }
@@ -57,7 +63,7 @@ internal fun Modifier.chartTouchEvent(
       }
     )
     .then(
-      if (isScrollEnabled && onZoom != null) {
+      if (scrollState.scrollEnabled && onZoom != null) {
         pointerInput(setTouchPoint, onZoom) {
           detectZoomGestures { centroid, zoom ->
             setTouchPoint?.invoke(null)

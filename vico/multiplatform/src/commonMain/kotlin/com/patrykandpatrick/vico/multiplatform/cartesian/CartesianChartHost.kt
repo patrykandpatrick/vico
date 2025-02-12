@@ -138,6 +138,7 @@ internal fun CartesianChartHostImpl(
       layerPadding =
         remember(chart.layerPadding, model.extraStore) { chart.layerPadding(model.extraStore) },
       pointerPosition = pointerPosition.value,
+
     )
 
   val coroutineScope = rememberCoroutineScope()
@@ -160,7 +161,6 @@ internal fun CartesianChartHostImpl(
             remember(chart.marker == null) {
               if (chart.marker != null) pointerPosition.component2() else null
             },
-          isScrollEnabled = scrollState.scrollEnabled,
           scrollState = scrollState,
           onZoom =
             remember(zoomState, scrollState, chart, coroutineScope) {

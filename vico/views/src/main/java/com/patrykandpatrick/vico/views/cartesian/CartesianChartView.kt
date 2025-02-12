@@ -88,6 +88,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       zoomEnabled = false,
       layerPadding = CartesianLayerPadding(),
       pointerPosition = null,
+      consumeMoveEvents = false,
     )
 
   private val scaleGestureListener: ScaleGestureDetector.OnScaleGestureListener =
@@ -106,12 +107,15 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
    * programmatic scrolling.
    */
   public var scrollHandler: ScrollHandler by
-    invalidatingObservable(ScrollHandler(themeHandler.scrollEnabled)) { oldValue, newValue ->
+    invalidatingObservable(
+      ScrollHandler(themeHandler.scrollEnabled, themeHandler.consumeMoveEvents)
+    ) { oldValue, newValue ->
       oldValue?.clearUpdated()
       newValue.postInvalidate = ::postInvalidate
       newValue.postInvalidateOnAnimation = ::postInvalidateOnAnimation
       measuringContext.scrollEnabled = newValue.scrollEnabled
       measuringContext.zoomEnabled = measuringContext.zoomEnabled && newValue.scrollEnabled
+      measuringContext.consumeMoveEvents = newValue.consumeMoveEvents
     }
 
   /** Houses information on the [CartesianChart]’s zoom factor. Allows for zoom customization. */
@@ -322,6 +326,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       if (chart.layerBounds.isEmpty) return@withChartAndModel
 
       motionEventHandler.scrollEnabled = scrollHandler.scrollEnabled
+      motionEventHandler.consumeMoveEvents = scrollHandler.consumeMoveEvents
       if (scroller.computeScrollOffset()) {
         scrollHandler.scroll(Scroll.Absolute.pixels(scroller.currX.toFloat()))
         postInvalidateOnAnimation()

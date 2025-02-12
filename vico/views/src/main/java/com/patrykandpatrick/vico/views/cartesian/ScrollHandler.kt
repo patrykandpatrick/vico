@@ -37,6 +37,7 @@ import com.patrykandpatrick.vico.core.common.rangeWith
  * programmatic scrolling.
  *
  * @property scrollEnabled whether scroll is enabled.
+ * @property consumeMoveEvents whether move events should be consumed.
  * @property initialScroll represents the initial scroll value.
  * @property autoScroll represents the scroll value or delta for automatic scrolling.
  * @property autoScrollCondition defines when an automatic scroll should be performed.
@@ -45,6 +46,7 @@ import com.patrykandpatrick.vico.core.common.rangeWith
  */
 public class ScrollHandler(
   internal val scrollEnabled: Boolean = true,
+  internal val consumeMoveEvents: Boolean = false,
   private val initialScroll: Scroll.Absolute = Scroll.Absolute.Start,
   private val autoScroll: Scroll = initialScroll,
   private val autoScrollCondition: AutoScrollCondition = AutoScrollCondition.Never,

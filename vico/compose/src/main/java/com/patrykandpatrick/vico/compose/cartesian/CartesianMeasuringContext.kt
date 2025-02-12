@@ -40,6 +40,7 @@ internal fun rememberCartesianMeasuringContext(
   zoomEnabled: Boolean,
   layerPadding: CartesianLayerPadding,
   pointerPosition: Point?,
+  consumeMoveEvents: Boolean,
 ): CartesianMeasuringContext {
   val density = LocalDensity.current
   val isLtr = LocalLayoutDirection.current == LayoutDirection.Ltr
@@ -55,6 +56,7 @@ internal fun rememberCartesianMeasuringContext(
     layerPadding,
     pointerPosition,
     cacheStore,
+    consumeMoveEvents,
   ) {
     MutableCartesianMeasuringContext(
       canvasBounds = canvasBounds,
@@ -68,6 +70,7 @@ internal fun rememberCartesianMeasuringContext(
       layerPadding = layerPadding,
       pointerPosition = pointerPosition,
       cacheStore = cacheStore,
+      consumeMoveEvents = consumeMoveEvents,
     )
   }
 }

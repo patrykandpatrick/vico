@@ -57,6 +57,7 @@ public class VicoScrollState {
   private var layerDimensions: CartesianLayerDimensions? = null
   private var bounds: RectF? = null
   internal val scrollEnabled: Boolean
+  internal val consumeMoveEvents: Boolean
   internal val pointerXDeltas = MutableSharedFlow<Float>(extraBufferCapacity = 1)
 
   internal val scrollableState = ScrollableState { delta ->
@@ -97,6 +98,7 @@ public class VicoScrollState {
     autoScrollAnimationSpec: AnimationSpec<Float>,
     value: Float,
     initialScrollHandled: Boolean,
+    consumeMoveEvents: Boolean,
   ) {
     this.scrollEnabled = scrollEnabled
     this.initialScroll = initialScroll
@@ -105,6 +107,7 @@ public class VicoScrollState {
     this.autoScrollAnimationSpec = autoScrollAnimationSpec
     _value = mutableFloatStateOf(value)
     this.initialScrollHandled = initialScrollHandled
+    this.consumeMoveEvents = consumeMoveEvents
   }
 
   /**
@@ -116,6 +119,7 @@ public class VicoScrollState {
    * @param autoScroll represents the scroll value or delta for automatic scrolling.
    * @param autoScrollCondition defines when an automatic scroll should occur.
    * @param autoScrollAnimationSpec the [AnimationSpec] for automatic scrolling.
+   * @param consumeMoveEvents whether move events should be consumed.
    */
   public constructor(
     scrollEnabled: Boolean,
@@ -123,6 +127,7 @@ public class VicoScrollState {
     autoScroll: Scroll,
     autoScrollCondition: AutoScrollCondition,
     autoScrollAnimationSpec: AnimationSpec<Float>,
+    consumeMoveEvents: Boolean,
   ) : this(
     scrollEnabled = scrollEnabled,
     initialScroll = initialScroll,
@@ -131,6 +136,7 @@ public class VicoScrollState {
     autoScrollAnimationSpec = autoScrollAnimationSpec,
     value = 0f,
     initialScrollHandled = false,
+    consumeMoveEvents = consumeMoveEvents,
   )
 
   private inline fun withUpdated(
@@ -196,6 +202,7 @@ public class VicoScrollState {
       autoScroll: Scroll,
       autoScrollCondition: AutoScrollCondition,
       autoScrollAnimationSpec: AnimationSpec<Float>,
+      consumeMoveEvents: Boolean,
     ) =
       Saver<VicoScrollState, Pair<Float, Boolean>>(
         save = { it.value to it.initialScrollHandled },
@@ -208,6 +215,7 @@ public class VicoScrollState {
             autoScrollAnimationSpec,
             value,
             initialScrollHandled,
+            consumeMoveEvents,
           )
         },
       )
@@ -222,6 +230,7 @@ public fun rememberVicoScrollState(
   autoScroll: Scroll = initialScroll,
   autoScrollCondition: AutoScrollCondition = AutoScrollCondition.Never,
   autoScrollAnimationSpec: AnimationSpec<Float> = spring(),
+  consumeMoveEvents: Boolean = false,
 ): VicoScrollState =
   rememberSaveable(
     scrollEnabled,
@@ -229,6 +238,7 @@ public fun rememberVicoScrollState(
     autoScroll,
     autoScrollCondition,
     autoScrollAnimationSpec,
+    consumeMoveEvents,
     saver =
       remember(scrollEnabled, initialScroll, autoScrollCondition, autoScrollAnimationSpec) {
         VicoScrollState.Saver(
@@ -237,6 +247,7 @@ public fun rememberVicoScrollState(
           autoScroll,
           autoScrollCondition,
           autoScrollAnimationSpec,
+          consumeMoveEvents,
         )
       },
   ) {
@@ -246,5 +257,6 @@ public fun rememberVicoScrollState(
       autoScroll,
       autoScrollCondition,
       autoScrollAnimationSpec,
+      consumeMoveEvents,
     )
   }

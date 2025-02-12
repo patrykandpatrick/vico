@@ -31,6 +31,7 @@ internal class MotionEventHandler(
   private val scroller: OverScroller,
   density: Float,
   var scrollEnabled: Boolean = false,
+  var consumeMoveEvents: Boolean = false,
   private val onTouchPoint: (Point?) -> Unit,
   private val requestInvalidate: () -> Unit,
 ) {
@@ -78,7 +79,7 @@ internal class MotionEventHandler(
           onTouchPoint(motionEvent.point)
           requestInvalidate()
         }
-        scrollHandled
+        scrollHandled || consumeMoveEvents
       }
       MotionEvent.ACTION_CANCEL,
       MotionEvent.ACTION_UP -> {
