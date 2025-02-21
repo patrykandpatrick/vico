@@ -24,6 +24,7 @@ import kotlin.coroutines.AbstractCoroutineContextElement
 import kotlin.coroutines.CoroutineContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.joinAll
@@ -45,14 +46,14 @@ public class CartesianChartModelProducer {
     partials: List<CartesianLayerModel.Partial>,
     transactionExtraStore: MutableExtraStore,
   ) {
-    withContext(Dispatchers.Default) {
+    coroutineScope {
       mutex.withLock {
         val immutablePartials = partials.toList()
         if (
           immutablePartials == this@CartesianChartModelProducer.lastPartials &&
             transactionExtraStore == this@CartesianChartModelProducer.lastTransactionExtraStore
         ) {
-          return@withContext
+          return@coroutineScope
         }
         updateReceivers.values
           .map { launch { it.handleUpdate(immutablePartials, transactionExtraStore) } }
@@ -142,7 +143,7 @@ public class CartesianChartModelProducer {
    * current coroutine is suspended until the ongoing update’s completion.
    */
   public suspend fun runTransaction(block: Transaction.() -> Unit) {
-    Transaction().also(block).commit()
+    withContext(Dispatchers.Default) { Transaction().also(block).commit() }
   }
 
   /** Handles data updates. This is used via [runTransaction]. */
