@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,16 +17,16 @@
 package com.patrykandpatrick.vico.compose.common
 
 import androidx.annotation.RestrictTo
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
+import com.patrykandpatrick.vico.compose.common.VicoTheme.Companion.Dark
+import com.patrykandpatrick.vico.compose.common.VicoTheme.Companion.Light
 import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
-import com.patrykandpatrick.vico.core.cartesian.layer.CandlestickCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
-import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.common.DefaultColors
 import com.patrykandpatrick.vico.core.common.component.LineComponent
 
@@ -71,6 +71,10 @@ public data class VicoTheme(
   }
 
   internal companion object {
+    val Light = fromDefaultColors(DefaultColors.Light)
+
+    val Dark = fromDefaultColors(DefaultColors.Dark)
+
     fun fromDefaultColors(defaultColors: DefaultColors) =
       VicoTheme(
         candlestickCartesianLayerColors =
@@ -86,10 +90,7 @@ private val LocalVicoTheme = staticCompositionLocalOf<VicoTheme?> { null }
 
 /** The current [VicoTheme]. */
 public val vicoTheme: VicoTheme
-  @Composable
-  get() =
-    LocalVicoTheme.current
-      ?: getDefaultColors().let { remember(it) { VicoTheme.fromDefaultColors(it) } }
+  @Composable get() = LocalVicoTheme.current ?: if (isSystemInDarkTheme()) Dark else Light
 
 /** Provides a [VicoTheme]. */
 @Composable

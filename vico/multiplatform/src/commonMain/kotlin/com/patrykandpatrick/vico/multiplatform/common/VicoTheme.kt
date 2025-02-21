@@ -17,16 +17,16 @@
 package com.patrykandpatrick.vico.multiplatform.common
 
 import androidx.annotation.RestrictTo
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import com.patrykandpatrick.vico.multiplatform.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.multiplatform.cartesian.axis.VerticalAxis
-import com.patrykandpatrick.vico.multiplatform.cartesian.layer.CandlestickCartesianLayer
 import com.patrykandpatrick.vico.multiplatform.cartesian.layer.ColumnCartesianLayer
-import com.patrykandpatrick.vico.multiplatform.cartesian.layer.LineCartesianLayer
+import com.patrykandpatrick.vico.multiplatform.common.VicoTheme.Companion.Dark
+import com.patrykandpatrick.vico.multiplatform.common.VicoTheme.Companion.Light
 import com.patrykandpatrick.vico.multiplatform.common.component.LineComponent
 
 /**
@@ -70,6 +70,10 @@ public data class VicoTheme(
   }
 
   internal companion object {
+    val Light = fromDefaultColors(DefaultColors.Light)
+
+    val Dark = fromDefaultColors(DefaultColors.Dark)
+
     fun fromDefaultColors(defaultColors: DefaultColors) =
       VicoTheme(
         candlestickCartesianLayerColors =
@@ -85,10 +89,7 @@ private val LocalVicoTheme = staticCompositionLocalOf<VicoTheme?> { null }
 
 /** The current [VicoTheme]. */
 public val vicoTheme: VicoTheme
-  @Composable
-  get() =
-    LocalVicoTheme.current
-      ?: getDefaultColors().let { remember(it) { VicoTheme.fromDefaultColors(it) } }
+  @Composable get() = LocalVicoTheme.current ?: if (isSystemInDarkTheme()) Dark else Light
 
 /** Provides a [VicoTheme]. */
 @Composable
