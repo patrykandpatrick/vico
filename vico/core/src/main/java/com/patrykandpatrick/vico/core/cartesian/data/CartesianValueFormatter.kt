@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,13 @@
 
 package com.patrykandpatrick.vico.core.cartesian.data
 
+import android.util.LruCache
+import androidx.annotation.RestrictTo
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
 import com.patrykandpatrick.vico.core.cartesian.axis.Axis
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import java.text.DecimalFormat
+import java.util.Locale
 
 /** Formats values for display. */
 public fun interface CartesianValueFormatter {
@@ -35,6 +38,16 @@ public fun interface CartesianValueFormatter {
 
   /** Houses [CartesianValueFormatter] factory functions. */
   public companion object {
+    private val cache = LruCache<Locale, CartesianValueFormatter>(1)
+
+    /** @suppress */
+    public val Default: CartesianValueFormatter
+      @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+      get() {
+        val locale = Locale.getDefault()
+        return cache.get(locale) ?: decimal().also { cache.put(locale, it) }
+      }
+
     private class Decimal(private val decimalFormat: DecimalFormat) : CartesianValueFormatter {
       override fun format(
         context: CartesianMeasuringContext,

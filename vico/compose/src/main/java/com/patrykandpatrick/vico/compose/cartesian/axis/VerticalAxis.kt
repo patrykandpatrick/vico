@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ public fun VerticalAxis.Companion.rememberStart(
   horizontalLabelPosition: VerticalAxis.HorizontalLabelPosition =
     VerticalAxis.HorizontalLabelPosition.Outside,
   verticalLabelPosition: Position.Vertical = Position.Vertical.Center,
-  valueFormatter: CartesianValueFormatter = remember { CartesianValueFormatter.decimal() },
+  valueFormatter: CartesianValueFormatter = CartesianValueFormatter.Default,
   tick: LineComponent? = rememberAxisTickComponent(),
   tickLength: Dp = Defaults.AXIS_TICK_LENGTH.dp,
   guideline: LineComponent? = rememberAxisGuidelineComponent(),
@@ -88,7 +88,7 @@ public fun VerticalAxis.Companion.rememberEnd(
   horizontalLabelPosition: VerticalAxis.HorizontalLabelPosition =
     VerticalAxis.HorizontalLabelPosition.Outside,
   verticalLabelPosition: Position.Vertical = Position.Vertical.Center,
-  valueFormatter: CartesianValueFormatter = remember { CartesianValueFormatter.decimal() },
+  valueFormatter: CartesianValueFormatter = CartesianValueFormatter.Default,
   tick: LineComponent? = rememberAxisTickComponent(),
   tickLength: Dp = Defaults.AXIS_TICK_LENGTH.dp,
   guideline: LineComponent? = rememberAxisGuidelineComponent(),

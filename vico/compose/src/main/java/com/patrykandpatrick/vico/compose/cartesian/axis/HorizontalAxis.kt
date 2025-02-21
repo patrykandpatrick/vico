@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ public fun HorizontalAxis.Companion.rememberTop(
   line: LineComponent? = rememberAxisLineComponent(),
   label: TextComponent? = rememberAxisLabelComponent(),
   labelRotationDegrees: Float = Defaults.AXIS_LABEL_ROTATION_DEGREES,
-  valueFormatter: CartesianValueFormatter = remember { CartesianValueFormatter.decimal() },
+  valueFormatter: CartesianValueFormatter = CartesianValueFormatter.Default,
   tick: LineComponent? = rememberAxisTickComponent(),
   tickLength: Dp = Defaults.AXIS_TICK_LENGTH.dp,
   guideline: LineComponent? = rememberAxisGuidelineComponent(),
@@ -77,7 +77,7 @@ public fun HorizontalAxis.Companion.rememberBottom(
   line: LineComponent? = rememberAxisLineComponent(),
   label: TextComponent? = rememberAxisLabelComponent(),
   labelRotationDegrees: Float = Defaults.AXIS_LABEL_ROTATION_DEGREES,
-  valueFormatter: CartesianValueFormatter = remember { CartesianValueFormatter.decimal() },
+  valueFormatter: CartesianValueFormatter = CartesianValueFormatter.Default,
   tick: LineComponent? = rememberAxisTickComponent(),
   tickLength: Dp = Defaults.AXIS_TICK_LENGTH.dp,
   guideline: LineComponent? = rememberAxisGuidelineComponent(),

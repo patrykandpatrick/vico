@@ -51,7 +51,7 @@ public fun rememberColumnCartesianLayer(
   mergeMode: (ExtraStore) -> MergeMode = { MergeMode.grouped() },
   dataLabel: TextComponent? = null,
   dataLabelPosition: Position.Vertical = Position.Vertical.Top,
-  dataLabelValueFormatter: CartesianValueFormatter = remember { CartesianValueFormatter.decimal() },
+  dataLabelValueFormatter: CartesianValueFormatter = CartesianValueFormatter.Default,
   dataLabelRotationDegrees: Float = 0f,
   rangeProvider: CartesianLayerRangeProvider = remember { CartesianLayerRangeProvider.auto() },
   verticalAxisPosition: Axis.Position.Vertical? = null,

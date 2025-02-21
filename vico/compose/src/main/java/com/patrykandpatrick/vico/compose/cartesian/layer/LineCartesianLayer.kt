@@ -100,7 +100,7 @@ public fun LineCartesianLayer.Companion.rememberLine(
   pointConnector: LineCartesianLayer.PointConnector = LineCartesianLayer.PointConnector.Sharp,
   dataLabel: TextComponent? = null,
   dataLabelPosition: Position.Vertical = Position.Vertical.Top,
-  dataLabelValueFormatter: CartesianValueFormatter = remember { CartesianValueFormatter.decimal() },
+  dataLabelValueFormatter: CartesianValueFormatter = CartesianValueFormatter.Default,
   dataLabelRotationDegrees: Float = 0f,
 ): LineCartesianLayer.Line =
   remember(
