@@ -20,7 +20,7 @@ import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -46,8 +46,11 @@ import kotlin.coroutines.EmptyCoroutineContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 
 internal val defaultCartesianDiffAnimationSpec: AnimationSpec<Float> =
   tween(durationMillis = Animation.DIFF_DURATION)
@@ -164,9 +167,11 @@ private fun LaunchRegistration(
   if (isInPreview) {
     runBlocking(getCoroutineContext(isPreview = true)) { block() }
   } else {
-    DisposableEffect(chartID, animateIn) {
-      val disposable = block()
-      onDispose { disposable() }
+    LaunchedEffect(chartID, animateIn) {
+      withContext(getCoroutineContext(isPreview = false)) {
+        val disposable = block()
+        currentCoroutineContext().job.invokeOnCompletion { disposable() }
+      }
     }
   }
 }
