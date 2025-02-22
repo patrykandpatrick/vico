@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -320,11 +320,7 @@ internal class DefaultValueFormatter(
 ) : DefaultCartesianMarker.ValueFormatter {
   private fun SpannableStringBuilder.append(y: Double, color: Int? = null) {
     if (colorCode && color != null) {
-      appendCompat(
-        decimalFormat.format(y),
-        ForegroundColorSpan(color),
-        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
-      )
+      appendCompat(decimalFormat.format(y), ColorSpan(color), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
     } else {
       append(decimalFormat.format(y))
     }
@@ -386,4 +382,6 @@ internal class DefaultValueFormatter(
         colorCode == other.colorCode
 
   override fun hashCode(): Int = 31 * decimalFormat.hashCode() + colorCode.hashCode()
+
+  private data class ColorSpan(private val color: Int) : ForegroundColorSpan(color)
 }
