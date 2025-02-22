@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 package com.patrykandpatrick.vico.core.common
 
 import android.graphics.Canvas
-import android.os.Build
 import kotlin.math.roundToInt
 
 internal inline fun Canvas.inClip(
@@ -33,31 +32,7 @@ internal inline fun Canvas.inClip(
   restoreToCount(clipRestoreCount)
 }
 
-internal fun Canvas.saveLayer(): Int =
-  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-    saveLayer(0f, 0f, width.toFloat(), height.toFloat(), null)
-  } else {
-    @Suppress("DEPRECATION")
-    saveLayer(0f, 0f, width.toFloat(), height.toFloat(), null, Canvas.ALL_SAVE_FLAG)
-  }
+internal fun Canvas.saveLayer(): Int = saveLayer(0f, 0f, width.toFloat(), height.toFloat(), null)
 
 internal fun Canvas.saveLayer(opacity: Float): Int =
-  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-    saveLayerAlpha(
-      0f,
-      0f,
-      width.toFloat(),
-      height.toFloat(),
-      (opacity * MAX_HEX_VALUE).roundToInt(),
-    )
-  } else {
-    @Suppress("DEPRECATION")
-    saveLayerAlpha(
-      0f,
-      0f,
-      width.toFloat(),
-      height.toFloat(),
-      (opacity * MAX_HEX_VALUE).roundToInt(),
-      Canvas.ALL_SAVE_FLAG,
-    )
-  }
+  saveLayerAlpha(0f, 0f, width.toFloat(), height.toFloat(), (opacity * MAX_HEX_VALUE).roundToInt())
