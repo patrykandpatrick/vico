@@ -34,6 +34,8 @@ body:
         - compose-m2
         - compose-m3
         - multiplatform
+        - multiplatform-m2
+        - multiplatform-m3
         - views
     validations:
       required: true
@@ -44,6 +46,9 @@ body:
       options:
         - Android
         - iOS
+        - Windows
+        - macOS
+        - Linux
     validations:
       required: true
   - type: input
@@ -58,7 +63,7 @@ body:
       multiple: true
       options:
         - 2.0.1
-        - 2.1.0-alpha.4
+        - 2.1.0-alpha.5
         - 1.16.1
     validations:
       required: true
