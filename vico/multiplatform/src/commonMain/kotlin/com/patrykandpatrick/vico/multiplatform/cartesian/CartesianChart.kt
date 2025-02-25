@@ -454,18 +454,26 @@ public open class CartesianChart(
         decorations == other.decorations &&
         persistentMarkers == other.persistentMarkers &&
         getXStep == other.getXStep &&
-        layers == other.layers
+        layers == other.layers &&
+        startAxis == other.startAxis &&
+        topAxis == other.topAxis &&
+        endAxis == other.endAxis &&
+        bottomAxis == other.bottomAxis
 
   override fun hashCode(): Int {
-    var result = marker?.hashCode() ?: 0
-    result = 31 * result + (markerVisibilityListener?.hashCode() ?: 0)
+    var result = marker.hashCode()
+    result = 31 * result + markerVisibilityListener.hashCode()
     result = 31 * result + layerPadding.hashCode()
-    result = 31 * result + (legend?.hashCode() ?: 0)
-    result = 31 * result + (fadingEdges?.hashCode() ?: 0)
+    result = 31 * result + legend.hashCode()
+    result = 31 * result + fadingEdges.hashCode()
     result = 31 * result + decorations.hashCode()
-    result = 31 * result + (persistentMarkers?.hashCode() ?: 0)
+    result = 31 * result + persistentMarkers.hashCode()
     result = 31 * result + getXStep.hashCode()
     result = 31 * result + layers.hashCode()
+    result = 31 * result + startAxis.hashCode()
+    result = 31 * result + topAxis.hashCode()
+    result = 31 * result + endAxis.hashCode()
+    result = 31 * result + bottomAxis.hashCode()
     @OptIn(ExperimentalUuidApi::class)
     result = 31 * result + id.hashCode()
     return result
