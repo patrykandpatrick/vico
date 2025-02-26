@@ -401,7 +401,7 @@ protected constructor(
     with(context) {
       resetTempData()
 
-      val drawingModel = model.extraStore.getOrNull(drawingModelKey)
+      val drawingModel = extraStore.getOrNull(drawingModelKey)
 
       model.series.forEachIndexed { seriesIndex, series ->
         val pointInfoMap = drawingModel?.getOrNull(seriesIndex)

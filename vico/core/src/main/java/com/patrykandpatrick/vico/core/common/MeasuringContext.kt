@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package com.patrykandpatrick.vico.core.common
 import android.graphics.Canvas
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.common.data.CacheStore
+import com.patrykandpatrick.vico.core.common.data.ExtraStore
 
 /** Holds data used for measuring and drawing. */
 public interface MeasuringContext {
@@ -27,6 +28,9 @@ public interface MeasuringContext {
 
   /** The number of pixels corresponding to one density-independent pixel. */
   public val density: Float
+
+  /** Houses auxiliary drawing data. */
+  public val extraStore: ExtraStore
 
   /** The number of pixels corresponding to this number of density-independent pixels. */
   public val Float.pixels: Float

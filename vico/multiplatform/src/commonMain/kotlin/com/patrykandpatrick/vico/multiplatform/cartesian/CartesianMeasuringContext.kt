@@ -29,6 +29,7 @@ import com.patrykandpatrick.vico.multiplatform.cartesian.layer.CartesianLayerPad
 import com.patrykandpatrick.vico.multiplatform.common.MeasuringContext
 import com.patrykandpatrick.vico.multiplatform.common.Point
 import com.patrykandpatrick.vico.multiplatform.common.data.CacheStore
+import com.patrykandpatrick.vico.multiplatform.common.data.ExtraStore
 
 /** A [MeasuringContext] extension with [CartesianChart]-specific data. */
 public interface CartesianMeasuringContext : MeasuringContext {
@@ -53,6 +54,7 @@ public interface CartesianMeasuringContext : MeasuringContext {
 
 @Composable
 internal fun rememberCartesianMeasuringContext(
+  extraStore: ExtraStore,
   model: CartesianChartModel,
   ranges: CartesianChartRanges,
   scrollEnabled: Boolean,
@@ -67,6 +69,7 @@ internal fun rememberCartesianMeasuringContext(
   return remember(
     fontFamilyResolver,
     density,
+    extraStore,
     layoutDirection,
     model,
     ranges,
@@ -80,6 +83,7 @@ internal fun rememberCartesianMeasuringContext(
       canvasSize = Size.Zero,
       fontFamilyResolver = fontFamilyResolver,
       density = density,
+      extraStore = extraStore,
       layoutDirection = layoutDirection,
       model = model,
       ranges = ranges,

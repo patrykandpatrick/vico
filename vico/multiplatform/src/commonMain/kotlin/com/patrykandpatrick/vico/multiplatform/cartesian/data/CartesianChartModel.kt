@@ -128,12 +128,12 @@ internal fun CartesianChartModelProducer.collectAsState(
   animationSpec: AnimationSpec<Float>?,
   animateIn: Boolean,
   ranges: MutableCartesianChartRanges,
-): State<CartesianChartModelWrapper> {
+): State<CartesianChartData> {
   var previousHashCode by remember { ValueWrapper<Int?>(null) }
   val hashCode = hashCode()
   check(previousHashCode == null || hashCode == previousHashCode) { NEW_PRODUCER_ERROR_MESSAGE }
   previousHashCode = hashCode
-  val modelWrapperState = remember(chart.id) { CartesianChartModelWrapperState() }
+  val dataState = remember(chart.id) { CartesianChartDataState() }
   val extraStore = remember(chart.id) { MutableExtraStore() }
   val isInPreview = LocalInspectionMode.current
   val scope = rememberCoroutineScope { getCoroutineContext(isInPreview) }
@@ -146,11 +146,7 @@ internal fun CartesianChartModelProducer.collectAsState(
     var isAnimationFrameGenerationRunning = false
     val startAnimation: (transformModel: suspend (key: Any, fraction: Float) -> Unit) -> Unit =
       { transformModel ->
-        if (
-          animationSpec != null &&
-            !isInPreview &&
-            (modelWrapperState.value.model != null || animateIn)
-        ) {
+        if (animationSpec != null && !isInPreview && (dataState.value.model != null || animateIn)) {
           isAnimationRunning = true
           mainAnimationJob =
             scope.launch {
@@ -210,8 +206,8 @@ internal fun CartesianChartModelProducer.collectAsState(
             CartesianChartRanges.Empty
           }
         },
-      ) { model, ranges ->
-        modelWrapperState.set(model, ranges)
+      ) { model, ranges, extraStore ->
+        dataState.set(model, ranges, extraStore)
       }
     }
     return@LaunchRegistration {
@@ -221,7 +217,7 @@ internal fun CartesianChartModelProducer.collectAsState(
       unregisterFromUpdates(chartState.value.id)
     }
   }
-  return modelWrapperState
+  return dataState
 }
 
 @Composable

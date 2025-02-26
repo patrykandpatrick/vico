@@ -30,10 +30,12 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartRanges
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayerPadding
 import com.patrykandpatrick.vico.core.common.Point
 import com.patrykandpatrick.vico.core.common.data.CacheStore
+import com.patrykandpatrick.vico.core.common.data.ExtraStore
 
 @Composable
 internal fun rememberCartesianMeasuringContext(
   canvasBounds: RectF,
+  extraStore: ExtraStore,
   model: CartesianChartModel,
   ranges: CartesianChartRanges,
   scrollEnabled: Boolean,
@@ -47,6 +49,7 @@ internal fun rememberCartesianMeasuringContext(
   return remember(
     canvasBounds,
     density,
+    extraStore,
     isLtr,
     model,
     ranges,
@@ -59,6 +62,7 @@ internal fun rememberCartesianMeasuringContext(
     MutableCartesianMeasuringContext(
       canvasBounds = canvasBounds,
       density = density.density,
+      extraStore = extraStore,
       isLtr = isLtr,
       spToPx = density.run { { it.sp.toPx() } },
       model = model,

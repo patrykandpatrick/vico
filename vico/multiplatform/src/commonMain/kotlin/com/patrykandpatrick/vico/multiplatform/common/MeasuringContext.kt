@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import com.patrykandpatrick.vico.multiplatform.common.data.CacheStore
+import com.patrykandpatrick.vico.multiplatform.common.data.ExtraStore
 
 /** Holds data used for measuring and drawing. */
 public interface MeasuringContext {
@@ -34,6 +35,9 @@ public interface MeasuringContext {
 
   /** The [Density]. */
   public val density: Density
+
+  /** Houses auxiliary drawing data. */
+  public val extraStore: ExtraStore
 
   /** The number of pixels corresponding to this number of density-independent pixels. */
   public val Dp.pixels: Float

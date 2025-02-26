@@ -22,6 +22,7 @@ import android.graphics.Color
 import android.graphics.RectF
 import androidx.annotation.RestrictTo
 import com.patrykandpatrick.vico.core.common.data.CacheStore
+import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import kotlin.math.roundToInt
 
 /** A [MeasuringContext] extension with a [Canvas] reference. */
@@ -51,6 +52,8 @@ public fun DrawingContext(
     override var canvas: Canvas = canvas
 
     override val density: Float = density
+
+    override val extraStore: ExtraStore = ExtraStore.Empty
 
     override val isLtr: Boolean = isLtr
 

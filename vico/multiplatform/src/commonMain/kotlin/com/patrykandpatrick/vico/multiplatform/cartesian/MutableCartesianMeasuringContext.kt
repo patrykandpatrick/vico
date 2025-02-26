@@ -26,11 +26,13 @@ import com.patrykandpatrick.vico.multiplatform.cartesian.layer.CartesianLayerPad
 import com.patrykandpatrick.vico.multiplatform.common.MeasuringContext
 import com.patrykandpatrick.vico.multiplatform.common.Point
 import com.patrykandpatrick.vico.multiplatform.common.data.CacheStore
+import com.patrykandpatrick.vico.multiplatform.common.data.ExtraStore
 
 internal class MutableCartesianMeasuringContext(
   override var canvasSize: Size,
   override val fontFamilyResolver: FontFamily.Resolver,
   override var density: Density,
+  override var extraStore: ExtraStore,
   override val layoutDirection: LayoutDirection,
   override var model: CartesianChartModel,
   override var ranges: CartesianChartRanges,

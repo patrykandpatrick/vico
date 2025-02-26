@@ -77,19 +77,17 @@ public class CartesianChartModelProducer {
         }
     }
 
-  private suspend fun transformModel(
+  private suspend fun transform(
     key: Any,
     fraction: Float,
     model: CartesianChartModel?,
-    transactionExtraStore: ExtraStore,
     ranges: CartesianChartRanges,
   ) {
     with(updateReceivers[key] ?: return) {
       withContext(getDispatcher()) {
         transform(hostExtraStore, fraction)
-        val transformedModel = model?.copy(transactionExtraStore + hostExtraStore.copy())
         currentCoroutineContext().ensureActive()
-        onModelCreated(transformedModel, ranges)
+        onUpdate(model, ranges, hostExtraStore.copy())
       }
     }
   }
@@ -103,14 +101,14 @@ public class CartesianChartModelProducer {
     transform: suspend (MutableExtraStore, Float) -> Unit,
     hostExtraStore: MutableExtraStore,
     updateRanges: (CartesianChartModel?) -> CartesianChartRanges,
-    onModelCreated: (CartesianChartModel?, CartesianChartRanges) -> Unit,
+    onUpdate: (CartesianChartModel?, CartesianChartRanges, ExtraStore) -> Unit,
   ) {
     withContext(getDispatcher()) {
       val receiver =
         UpdateReceiver(
           cancelAnimation,
           startAnimation,
-          onModelCreated,
+          onUpdate,
           hostExtraStore,
           prepareForTransformation,
           transform,
@@ -164,7 +162,7 @@ public class CartesianChartModelProducer {
   private inner class UpdateReceiver(
     val cancelAnimation: suspend () -> Unit,
     val startAnimation: (transformModel: suspend (key: Any, fraction: Float) -> Unit) -> Unit,
-    val onModelCreated: (CartesianChartModel?, CartesianChartRanges) -> Unit,
+    val onUpdate: (CartesianChartModel?, CartesianChartRanges, ExtraStore) -> Unit,
     val hostExtraStore: MutableExtraStore,
     val prepareForTransformation:
       (CartesianChartModel?, MutableExtraStore, CartesianChartRanges) -> Unit,
@@ -179,9 +177,7 @@ public class CartesianChartModelProducer {
       val model = getModel(partials, transactionExtraStore + hostExtraStore)
       val ranges = updateRanges(model)
       prepareForTransformation(model, hostExtraStore, ranges)
-      startAnimation { key, fraction ->
-        transformModel(key, fraction, model, transactionExtraStore, ranges)
-      }
+      startAnimation { key, fraction -> transform(key, fraction, model, ranges) }
     }
   }
 

@@ -41,6 +41,7 @@ import com.patrykandpatrick.vico.core.cartesian.layer.MutableCartesianLayerDimen
 import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.NEW_PRODUCER_ERROR_MESSAGE
 import com.patrykandpatrick.vico.core.common.Point
+import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.core.common.spToPx
 import com.patrykandpatrick.vico.views.R
 import com.patrykandpatrick.vico.views.common.ChartView
@@ -80,6 +81,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     MutableCartesianMeasuringContext(
       canvasBounds = canvasBounds,
       density = context.density,
+      extraStore = ExtraStore.Empty,
       isLtr = context.isLtr,
       spToPx = context::spToPx,
       model = CartesianChartModel.Empty,
@@ -171,9 +173,10 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
             CartesianChartRanges.Empty
           }
         },
-      ) { model, ranges ->
+      ) { model, ranges, extraStore ->
         post {
           setModel(model = model, updateRanges = false)
+          measuringContext.extraStore = extraStore
           measuringContext.ranges = ranges
           postInvalidateOnAnimation()
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  */
 
 package com.patrykandpatrick.vico.core.common.data
+
+import androidx.annotation.RestrictTo
 
 /** Houses auxiliary data. */
 @Suppress("UNCHECKED_CAST")
@@ -42,8 +44,10 @@ public abstract class ExtraStore internal constructor() {
   /** Used for writing to and reading from [ExtraStore]s. */
   @Suppress("UNUSED") public open class Key<T : Any>
 
-  internal companion object {
-    val Empty = MutableExtraStore()
+  /** @suppress */
+  @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+  public companion object {
+    public val Empty: ExtraStore = MutableExtraStore()
   }
 }
 

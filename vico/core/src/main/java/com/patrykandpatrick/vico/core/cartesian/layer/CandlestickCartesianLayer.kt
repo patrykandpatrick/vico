@@ -129,7 +129,7 @@ protected constructor(
   ): Unit =
     with(context) {
       _markerTargets.clear()
-      drawChartInternal(model, ranges, model.extraStore.getOrNull(drawingModelKey))
+      drawChartInternal(model, ranges, extraStore.getOrNull(drawingModelKey))
     }
 
   private fun CartesianDrawingContext.drawChartInternal(

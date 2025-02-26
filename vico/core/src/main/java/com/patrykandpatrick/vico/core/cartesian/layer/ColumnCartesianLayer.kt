@@ -132,7 +132,7 @@ protected constructor(
   override fun drawInternal(context: CartesianDrawingContext, model: ColumnCartesianLayerModel) {
     with(context) {
       _markerTargets.clear()
-      drawChartInternal(model, ranges, model.extraStore.getOrNull(drawingModelKey))
+      drawChartInternal(model, ranges, extraStore.getOrNull(drawingModelKey))
       stackInfo.clear()
     }
   }

@@ -24,12 +24,14 @@ import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayerPadding
 import com.patrykandpatrick.vico.core.common.MutableMeasuringContext
 import com.patrykandpatrick.vico.core.common.Point
 import com.patrykandpatrick.vico.core.common.data.CacheStore
+import com.patrykandpatrick.vico.core.common.data.ExtraStore
 
 /** @suppress */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public class MutableCartesianMeasuringContext(
   override val canvasBounds: RectF,
   override var density: Float,
+  override var extraStore: ExtraStore,
   override var isLtr: Boolean,
   spToPx: (Float) -> Float,
   override var model: CartesianChartModel,
@@ -40,5 +42,5 @@ public class MutableCartesianMeasuringContext(
   override var pointerPosition: Point?,
   cacheStore: CacheStore = CacheStore(),
 ) :
-  MutableMeasuringContext(canvasBounds, density, isLtr, spToPx, cacheStore),
+  MutableMeasuringContext(canvasBounds, density, extraStore, isLtr, spToPx, cacheStore),
   CartesianMeasuringContext

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,29 +23,33 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartRanges
+import com.patrykandpatrick.vico.core.common.data.ExtraStore
 
 @Immutable
-internal class CartesianChartModelWrapper(
+internal class CartesianChartData(
   val model: CartesianChartModel? = null,
   val previousModel: CartesianChartModel? = null,
   val ranges: CartesianChartRanges = CartesianChartRanges.Empty,
+  val extraStore: ExtraStore = ExtraStore.Empty,
 )
 
-internal operator fun CartesianChartModelWrapper.component1(): CartesianChartModel? = model
+internal operator fun CartesianChartData.component1(): CartesianChartModel? = model
 
-internal operator fun CartesianChartModelWrapper.component2(): CartesianChartModel? = previousModel
+internal operator fun CartesianChartData.component2(): CartesianChartModel? = previousModel
 
-internal operator fun CartesianChartModelWrapper.component3(): CartesianChartRanges = ranges
+internal operator fun CartesianChartData.component3(): CartesianChartRanges = ranges
 
-internal class CartesianChartModelWrapperState : State<CartesianChartModelWrapper> {
+internal operator fun CartesianChartData.component4(): ExtraStore = extraStore
+
+internal class CartesianChartDataState : State<CartesianChartData> {
   private var previousModel: CartesianChartModel? = null
 
-  override var value by mutableStateOf(CartesianChartModelWrapper())
+  override var value by mutableStateOf(CartesianChartData())
     private set
 
-  fun set(model: CartesianChartModel?, ranges: CartesianChartRanges) {
+  fun set(model: CartesianChartModel?, ranges: CartesianChartRanges, extraStore: ExtraStore) {
     val currentModel = value.model
     if (model?.id != currentModel?.id) previousModel = currentModel
-    value = CartesianChartModelWrapper(model, previousModel, ranges)
+    value = CartesianChartData(model, previousModel, ranges, extraStore)
   }
 }

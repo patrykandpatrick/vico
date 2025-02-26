@@ -31,6 +31,7 @@ import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
 import com.patrykandpatrick.vico.core.common.Animation
 import com.patrykandpatrick.vico.core.common.MutableMeasuringContext
+import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.core.common.data.MutableExtraStore
 import com.patrykandpatrick.vico.core.common.set
 import com.patrykandpatrick.vico.core.common.spToPx
@@ -50,7 +51,13 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   protected val canvasBounds: RectF = RectF()
 
   protected open val measuringContext: MutableMeasuringContext =
-    MutableMeasuringContext(canvasBounds, context.density, context.isLtr, context::spToPx)
+    MutableMeasuringContext(
+      canvasBounds,
+      context.density,
+      ExtraStore.Empty,
+      context.isLtr,
+      context::spToPx,
+    )
 
   /** Houses the chart data. */
   public abstract var model: M?
