@@ -25,6 +25,7 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import com.patrykandpatrick.vico.multiplatform.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.multiplatform.cartesian.data.CartesianChartRanges
 import com.patrykandpatrick.vico.multiplatform.cartesian.layer.CartesianLayer
+import com.patrykandpatrick.vico.multiplatform.cartesian.layer.CartesianLayerDimensions
 import com.patrykandpatrick.vico.multiplatform.cartesian.layer.CartesianLayerPadding
 import com.patrykandpatrick.vico.multiplatform.common.MeasuringContext
 import com.patrykandpatrick.vico.multiplatform.common.Point
@@ -51,6 +52,13 @@ public interface CartesianMeasuringContext : MeasuringContext {
   /** The pointer position. */
   public val pointerPosition: Point?
 }
+
+internal fun CartesianMeasuringContext.getFullXRange(layerDimensions: CartesianLayerDimensions) =
+  layerDimensions.run {
+    val start = ranges.minX - startPadding / xSpacing * ranges.xStep
+    val end = ranges.maxX + endPadding / xSpacing * ranges.xStep
+    start..end
+  }
 
 @Composable
 internal fun rememberCartesianMeasuringContext(

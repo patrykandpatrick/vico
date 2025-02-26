@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,8 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartRanges
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.formatForAxis
+import com.patrykandpatrick.vico.core.cartesian.getFullXRange as internalGetFullXRange
+import com.patrykandpatrick.vico.core.cartesian.getVisibleXRange
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayerDimensions
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayerMargins
@@ -119,7 +121,7 @@ protected constructor(
           bounds.top
         }
       val tickBottom = tickTop + lineThickness + tickLength
-      val fullXRange = getFullXRange(layerDimensions)
+      val fullXRange = internalGetFullXRange(layerDimensions)
       val maxLabelWidth = getMaxLabelWidth(layerDimensions, fullXRange)
 
       canvas.clipRect(
@@ -134,11 +136,7 @@ protected constructor(
       val textY = if (position == Axis.Position.Horizontal.Top) tickTop else tickBottom
       val baseCanvasX =
         bounds.getStart(isLtr) - scroll + layerDimensions.startPadding * layoutDirectionMultiplier
-      val firstVisibleX =
-        fullXRange.start +
-          scroll / layerDimensions.xSpacing * ranges.xStep * layoutDirectionMultiplier
-      val lastVisibleX = firstVisibleX + bounds.width() / layerDimensions.xSpacing * ranges.xStep
-      val visibleXRange = firstVisibleX..lastVisibleX
+      val visibleXRange = getVisibleXRange()
       val labelValues = itemPlacer.getLabelValues(this, visibleXRange, fullXRange, maxLabelWidth)
       val lineValues = itemPlacer.getLineValues(this, visibleXRange, fullXRange, maxLabelWidth)
 
@@ -292,7 +290,7 @@ protected constructor(
     val label = label ?: return
     val ranges = context.ranges
     val maxLabelWidth =
-      context.getMaxLabelWidth(layerDimensions, context.getFullXRange(layerDimensions))
+      context.getMaxLabelWidth(layerDimensions, context.internalGetFullXRange(layerDimensions))
     val firstLabelValue = itemPlacer.getFirstLabelValue(context, maxLabelWidth)
     val lastLabelValue = itemPlacer.getLastLabelValue(context, maxLabelWidth)
     if (firstLabelValue != null) {
@@ -348,7 +346,7 @@ protected constructor(
     model: CartesianChartModel,
   ) {
     val maxLabelWidth =
-      context.getMaxLabelWidth(layerDimensions, context.getFullXRange(layerDimensions))
+      context.getMaxLabelWidth(layerDimensions, context.internalGetFullXRange(layerDimensions))
     val height = getHeight(context, layerDimensions, maxLabelWidth)
     layerMargins.ensureValuesAtLeast(
       itemPlacer.getStartLayerMargin(
@@ -365,10 +363,11 @@ protected constructor(
     }
   }
 
+  @Deprecated("Calculate the full x-range manually; see this function’s definition.")
   protected fun CartesianMeasuringContext.getFullXRange(
     layerDimensions: CartesianLayerDimensions
   ): ClosedFloatingPointRange<Double> =
-    with(layerDimensions) {
+    layerDimensions.run {
       val start = ranges.minX - startPadding / xSpacing * ranges.xStep
       val end = ranges.maxX + endPadding / xSpacing * ranges.xStep
       start..end
@@ -380,7 +379,7 @@ protected constructor(
     maxLabelWidth: Float,
   ): Float =
     with(context) {
-      val fullXRange = getFullXRange(layerDimensions)
+      val fullXRange = internalGetFullXRange(layerDimensions)
 
       when (size) {
         is Size.Auto -> {

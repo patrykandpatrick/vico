@@ -31,13 +31,14 @@ import com.patrykandpatrick.vico.multiplatform.cartesian.data.CandlestickCartesi
 import com.patrykandpatrick.vico.multiplatform.cartesian.data.CartesianChartRanges
 import com.patrykandpatrick.vico.multiplatform.cartesian.data.CartesianLayerRangeProvider
 import com.patrykandpatrick.vico.multiplatform.cartesian.data.MutableCartesianChartRanges
-import com.patrykandpatrick.vico.multiplatform.cartesian.data.forEachIn
+import com.patrykandpatrick.vico.multiplatform.cartesian.data.getSliceIndices
+import com.patrykandpatrick.vico.multiplatform.cartesian.getVisibleXRange
+import com.patrykandpatrick.vico.multiplatform.cartesian.layer.CandlestickCartesianLayer.Candle
 import com.patrykandpatrick.vico.multiplatform.cartesian.marker.CandlestickCartesianLayerMarkerTarget
 import com.patrykandpatrick.vico.multiplatform.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.multiplatform.common.Defaults
 import com.patrykandpatrick.vico.multiplatform.common.ValueWrapper
 import com.patrykandpatrick.vico.multiplatform.common.component.LineComponent
-import com.patrykandpatrick.vico.multiplatform.common.component.intersectsVertical
 import com.patrykandpatrick.vico.multiplatform.common.data.CartesianLayerDrawingModelInterpolator
 import com.patrykandpatrick.vico.multiplatform.common.data.ExtraStore
 import com.patrykandpatrick.vico.multiplatform.common.data.MutableExtraStore
@@ -150,8 +151,17 @@ protected constructor(
     var bodyCenterX: Float
     var candle: Candle
     val minBodyHeight = minCandleBodyHeight.pixels
+    val visibleXRange = getVisibleXRange()
 
-    model.series.forEachIn(ranges.minX, ranges.maxX) { entry, _ ->
+    val (_, firstVisibleEntryIndex, lastVisibleEntryIndex) =
+      model.series.getSliceIndices(
+        ranges.minX,
+        ranges.maxX,
+        visibleXRange.start,
+        visibleXRange.endInclusive,
+      )
+
+    model.series.subList(firstVisibleEntryIndex, lastVisibleEntryIndex + 1).forEach { entry ->
       candle = candleProvider.getCandle(entry, model.extraStore)
       val candleInfo = drawingModel?.entries?.get(entry.x) ?: entry.toCandleInfo(yRange)
       val xSpacingMultiplier = ((entry.x - ranges.minX) / ranges.xStep).toFloat()
@@ -170,42 +180,25 @@ protected constructor(
         bodyTopY = bodyBottomY - minBodyHeight
       }
 
-      if (
-        candle.body.intersectsVertical(
-          context = this,
-          x = bodyCenterX,
-          bounds = layerBounds,
-          thicknessFactor = zoom,
-        )
-      ) {
-        updateMarkerTargets(
-          entry,
-          bodyCenterX,
-          bodyBottomY,
-          bodyTopY,
-          bottomWickY,
-          topWickY,
-          candle,
-        )
+      updateMarkerTargets(entry, bodyCenterX, bodyBottomY, bodyTopY, bottomWickY, topWickY, candle)
 
-        candle.body.drawVertical(this, bodyCenterX, bodyTopY, bodyBottomY, zoom)
+      candle.body.drawVertical(this, bodyCenterX, bodyTopY, bodyBottomY, zoom)
 
-        candle.topWick.drawVertical(
-          context = this,
-          x = bodyCenterX,
-          top = topWickY,
-          bottom = bodyTopY,
-          thicknessFactor = if (scaleCandleWicks) zoom else 1f,
-        )
+      candle.topWick.drawVertical(
+        context = this,
+        x = bodyCenterX,
+        top = topWickY,
+        bottom = bodyTopY,
+        thicknessFactor = if (scaleCandleWicks) zoom else 1f,
+      )
 
-        candle.bottomWick.drawVertical(
-          context = this,
-          x = bodyCenterX,
-          top = bodyBottomY,
-          bottom = bottomWickY,
-          thicknessFactor = if (scaleCandleWicks) zoom else 1f,
-        )
-      }
+      candle.bottomWick.drawVertical(
+        context = this,
+        x = bodyCenterX,
+        top = bodyBottomY,
+        bottom = bottomWickY,
+        thicknessFactor = if (scaleCandleWicks) zoom else 1f,
+      )
     }
   }
 

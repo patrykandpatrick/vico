@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,6 +53,14 @@ public fun CartesianMeasuringContext.getMaxScrollDistance(
 
 internal fun CartesianDrawingContext.getMaxScrollDistance() =
   getMaxScrollDistance(layerBounds.width(), layerDimensions)
+
+internal fun CartesianDrawingContext.getVisibleXRange(): ClosedFloatingPointRange<Double> {
+  val fullRange = getFullXRange(layerDimensions)
+  val start =
+    fullRange.start + layoutDirectionMultiplier * scroll / layerDimensions.xSpacing * ranges.xStep
+  val end = start + layerBounds.width() / layerDimensions.xSpacing * ranges.xStep
+  return start..end
+}
 
 /** @suppress */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)

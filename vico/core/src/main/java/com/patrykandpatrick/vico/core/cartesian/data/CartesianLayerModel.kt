@@ -109,3 +109,34 @@ internal inline fun <T : CartesianLayerModel.Entry> List<T>.forEachIn(
   end = (end + padding).coerceAtMost(lastIndex)
   (start..end).forEach { action(this[it], getOrNull(it + 1)) }
 }
+
+internal fun <T : CartesianLayerModel.Entry> List<T>.getSliceIndices(
+  layerXRangeStart: Double,
+  layerXRangeEnd: Double,
+  visibleXRangeStart: Double,
+  visibleXRangeEnd: Double,
+): Triple<Int, Int, Int> {
+  var firstInLayerXRange = 0
+  var lastInLayerXRange = 0
+  var firstVisible = 0
+  var lastVisible = 0
+  for (entry in this) {
+    when {
+      entry.x > layerXRangeEnd || lastInLayerXRange == lastIndex -> break
+      entry.x < layerXRangeStart -> {
+        firstInLayerXRange++
+        firstVisible++
+        lastVisible++
+      }
+      entry.x < visibleXRangeStart -> {
+        firstVisible++
+        lastVisible++
+      }
+      entry.x <= visibleXRangeEnd -> lastVisible++
+    }
+    lastInLayerXRange++
+  }
+  firstVisible = (firstVisible - 1).coerceAtLeast(firstInLayerXRange)
+  lastVisible = (lastVisible + 1).coerceAtMost(lastInLayerXRange)
+  return Triple(firstInLayerXRange, firstVisible, lastVisible)
+}
