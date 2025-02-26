@@ -595,7 +595,7 @@ protected constructor(
           layerBounds.height()
     }
 
-    series.forEachIn(range = minX..maxX, padding = 1) { entry, next ->
+    series.forEachIn(minX = minX, maxX = maxX, padding = 1) { entry, next ->
       val previousX = x
       val immutableX = nextX ?: getDrawX(entry)
       val immutableNextX = next?.let(::getDrawX)

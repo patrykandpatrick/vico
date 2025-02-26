@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -149,7 +149,7 @@ protected constructor(
     var candle: Candle
     val minBodyHeight = minCandleBodyHeightDp.pixels
 
-    model.series.forEachIn(ranges.minX..ranges.maxX) { entry, _ ->
+    model.series.forEachIn(ranges.minX, ranges.maxX) { entry, _ ->
       candle = candleProvider.getCandle(entry, model.extraStore)
       val candleInfo = drawingModel?.entries?.get(entry.x) ?: entry.toCandleInfo(yRange)
       val xSpacingMultiplier = ((entry.x - ranges.minX) / ranges.xStep).toFloat()

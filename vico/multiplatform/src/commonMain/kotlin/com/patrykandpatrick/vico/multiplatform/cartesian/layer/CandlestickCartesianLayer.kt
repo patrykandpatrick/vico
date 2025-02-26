@@ -151,7 +151,7 @@ protected constructor(
     var candle: Candle
     val minBodyHeight = minCandleBodyHeight.pixels
 
-    model.series.forEachIn(ranges.minX..ranges.maxX) { entry, _ ->
+    model.series.forEachIn(ranges.minX, ranges.maxX) { entry, _ ->
       candle = candleProvider.getCandle(entry, model.extraStore)
       val candleInfo = drawingModel?.entries?.get(entry.x) ?: entry.toCandleInfo(yRange)
       val xSpacingMultiplier = ((entry.x - ranges.minX) / ranges.xStep).toFloat()

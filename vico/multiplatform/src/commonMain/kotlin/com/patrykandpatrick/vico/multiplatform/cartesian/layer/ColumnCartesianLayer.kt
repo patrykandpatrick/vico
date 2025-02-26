@@ -169,7 +169,7 @@ protected constructor(
     model.series.forEachIndexed { index, entryCollection ->
       drawingStart = getDrawingStart(index, model.series.size, mergeMode) - scroll
 
-      entryCollection.forEachIn(ranges.minX..ranges.maxX) { entry, _ ->
+      entryCollection.forEachIn(ranges.minX, ranges.maxX) { entry, _ ->
         val columnInfo = drawingModel?.getOrNull(index)?.get(entry.x)
         height =
           (columnInfo?.height ?: (abs(entry.y) / yRange.length)).toFloat() * layerBounds.height

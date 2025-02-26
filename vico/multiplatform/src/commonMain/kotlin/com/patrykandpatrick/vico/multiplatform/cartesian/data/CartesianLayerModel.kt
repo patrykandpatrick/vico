@@ -91,7 +91,8 @@ internal fun List<CartesianLayerModel.Entry>.getXDeltaGcd(): Double {
 }
 
 internal inline fun <T : CartesianLayerModel.Entry> List<T>.forEachIn(
-  range: ClosedFloatingPointRange<Double>,
+  minX: Double,
+  maxX: Double,
   padding: Int = 0,
   action: (T, T?) -> Unit,
 ) {
@@ -99,8 +100,8 @@ internal inline fun <T : CartesianLayerModel.Entry> List<T>.forEachIn(
   var end = 0
   for (entry in this) {
     when {
-      entry.x < range.start -> start++
-      entry.x > range.endInclusive -> break
+      entry.x < minX -> start++
+      entry.x > maxX -> break
     }
     end++
   }

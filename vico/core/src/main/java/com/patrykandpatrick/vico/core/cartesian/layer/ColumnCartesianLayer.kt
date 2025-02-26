@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -159,7 +159,7 @@ protected constructor(
     model.series.forEachIndexed { index, entryCollection ->
       drawingStart = getDrawingStart(index, model.series.size, mergeMode) - scroll
 
-      entryCollection.forEachIn(ranges.minX..ranges.maxX) { entry, _ ->
+      entryCollection.forEachIn(ranges.minX, ranges.maxX) { entry, _ ->
         val columnInfo = drawingModel?.getOrNull(index)?.get(entry.x)
         height =
           (columnInfo?.height ?: (abs(entry.y) / yRange.length)).toFloat() * layerBounds.height()
