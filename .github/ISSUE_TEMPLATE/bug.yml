@@ -63,7 +63,7 @@ body:
       multiple: true
       options:
         - 2.0.1
-        - 2.1.0-alpha.5
+        - 2.1.0-alpha.6
         - 1.16.1
     validations:
       required: true
