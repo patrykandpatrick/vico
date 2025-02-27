@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -461,21 +461,29 @@ public open class CartesianChart(
         decorations == other.decorations &&
         persistentMarkers == other.persistentMarkers &&
         getXStep == other.getXStep &&
-        layers == other.layers
+        layers == other.layers &&
+        startAxis == other.startAxis &&
+        topAxis == other.topAxis &&
+        endAxis == other.endAxis &&
+        bottomAxis == other.bottomAxis
 
-  override fun hashCode(): Int =
-    Objects.hash(
-      id,
-      marker,
-      markerVisibilityListener,
-      layerPadding,
-      legend,
-      fadingEdges,
-      decorations,
-      persistentMarkers,
-      getXStep,
-      layers,
-    )
+  override fun hashCode(): Int {
+    var result = marker.hashCode()
+    result = 31 * result + markerVisibilityListener.hashCode()
+    result = 31 * result + layerPadding.hashCode()
+    result = 31 * result + legend.hashCode()
+    result = 31 * result + fadingEdges.hashCode()
+    result = 31 * result + decorations.hashCode()
+    result = 31 * result + persistentMarkers.hashCode()
+    result = 31 * result + getXStep.hashCode()
+    result = 31 * result + layers.hashCode()
+    result = 31 * result + startAxis.hashCode()
+    result = 31 * result + topAxis.hashCode()
+    result = 31 * result + endAxis.hashCode()
+    result = 31 * result + bottomAxis.hashCode()
+    result = 31 * result + id.hashCode()
+    return result
+  }
 
   /** Facilitates adding persistent [CartesianMarker]s to [CartesianChart]s. */
   public fun interface PersistentMarkerScope {
