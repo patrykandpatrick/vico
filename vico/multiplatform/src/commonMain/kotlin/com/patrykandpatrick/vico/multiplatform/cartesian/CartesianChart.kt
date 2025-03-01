@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
+@file:OptIn(ExperimentalUuidApi::class)
+
 package com.patrykandpatrick.vico.multiplatform.cartesian
 
-import androidx.annotation.RestrictTo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
@@ -58,50 +59,34 @@ import kotlin.math.abs
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
-/**
- * A chart based on a Cartesian coordinate plane, composed of [CartesianLayer]s.
- *
- * @param startAxis the start [Axis].
- * @param topAxis the top [Axis].
- * @param endAxis the end [Axis].
- * @param bottomAxis the bottom [Axis].
- * @property layers the [CartesianLayer]s.
- * @property marker appears when the [CartesianChart] is tapped.
- * @property markerVisibilityListener allows for listening to [marker] visibility changes.
- * @property layerPadding returns the [CartesianLayerPadding].
- * @property legend the legend.
- * @property fadingEdges applies a horizontal fade to the edges of the [CartesianChart], provided
- *   that it’s scrollable.
- * @property decorations the [Decoration]s.
- * @property persistentMarkers adds persistent [CartesianMarker]s.
- * @property getXStep defines the _x_ step (the difference between neighboring major _x_ values).
- */
+/** Draws charts based on Cartesian coordinate planes, composed of [CartesianLayer]s. */
 @Stable
-public open class CartesianChart(
+public open class CartesianChart
+internal constructor(
   vararg layers: CartesianLayer<*>,
   startAxis: Axis<Axis.Position.Vertical.Start>? = null,
   topAxis: Axis<Axis.Position.Horizontal.Top>? = null,
   endAxis: Axis<Axis.Position.Vertical.End>? = null,
   bottomAxis: Axis<Axis.Position.Horizontal.Bottom>? = null,
-  @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) public val marker: CartesianMarker? = null,
+  internal val marker: CartesianMarker? = null,
   protected val markerVisibilityListener: CartesianMarkerVisibilityListener? = null,
-  @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-  public val layerPadding: ((ExtraStore) -> CartesianLayerPadding) = { CartesianLayerPadding() },
+  internal val layerPadding: ((ExtraStore) -> CartesianLayerPadding) = { CartesianLayerPadding() },
   protected val legend: Legend<CartesianMeasuringContext, CartesianDrawingContext>? = null,
   protected val fadingEdges: FadingEdges? = null,
   protected val decorations: List<Decoration> = emptyList(),
   protected val persistentMarkers: (PersistentMarkerScope.(ExtraStore) -> Unit)? = null,
   protected val getXStep: ((CartesianChartModel) -> Double) = { it.getXDeltaGcd() },
+  internal val id: Uuid = Uuid.random(),
+  private var previousMarkerTargetHashCode: Int? = null,
+  private val persistentMarkerMap: MutableMap<Double, CartesianMarker> = mutableMapOf(),
+  private var previousPersistentMarkerHashCode: Int? = null,
 ) : CartesianLayerMarginUpdater<CartesianChartModel> {
-  private val persistentMarkerMap = mutableMapOf<Double, CartesianMarker>()
   private val persistentMarkerScope = PersistentMarkerScope {
     persistentMarkerMap[it.toDouble()] = this
   }
-  private var previousPersistentMarkerHashCode: Int? = null
   private val layerMargins = CartesianLayerMargins()
   private val axisManager = AxisManager()
   private val _markerTargets = mutableMapOf<Double, MutableList<CartesianMarker.Target>>()
-  private var previousMarkerTargetHashCode: Int? = null
 
   private val drawingConsumer =
     object : ModelAndLayerConsumer {
@@ -190,10 +175,6 @@ public open class CartesianChart(
 
   /** The bottom [Axis]. */
   public val bottomAxis: Axis<Axis.Position.Horizontal.Bottom>? by axisManager::bottomAxis
-
-  @OptIn(ExperimentalUuidApi::class)
-  internal var id: Uuid = Uuid.random()
-    private set
 
   init {
     axisManager.startAxis = startAxis
@@ -422,26 +403,25 @@ public open class CartesianChart(
     getXStep: ((CartesianChartModel) -> Double) = this.getXStep,
   ): CartesianChart =
     CartesianChart(
-        *layers,
-        startAxis = startAxis,
-        topAxis = topAxis,
-        endAxis = endAxis,
-        bottomAxis = bottomAxis,
-        marker = marker,
-        markerVisibilityListener = markerVisibilityListener,
-        layerPadding = layerPadding,
-        legend = legend,
-        fadingEdges = fadingEdges,
-        decorations = decorations,
-        persistentMarkers = persistentMarkers,
-        getXStep = getXStep,
-      )
-      .also {
-        @OptIn(ExperimentalUuidApi::class)
-        it.id = id
-      }
+      layers = layers,
+      startAxis = startAxis,
+      topAxis = topAxis,
+      endAxis = endAxis,
+      bottomAxis = bottomAxis,
+      marker = marker,
+      markerVisibilityListener = markerVisibilityListener,
+      layerPadding = layerPadding,
+      legend = legend,
+      fadingEdges = fadingEdges,
+      decorations = decorations,
+      persistentMarkers = persistentMarkers,
+      getXStep = getXStep,
+      id = id,
+      previousMarkerTargetHashCode = previousMarkerTargetHashCode,
+      persistentMarkerMap = persistentMarkerMap,
+      previousPersistentMarkerHashCode = previousPersistentMarkerHashCode,
+    )
 
-  @OptIn(ExperimentalUuidApi::class)
   override fun equals(other: Any?): Boolean =
     this === other ||
       other is CartesianChart &&
@@ -474,7 +454,6 @@ public open class CartesianChart(
     result = 31 * result + topAxis.hashCode()
     result = 31 * result + endAxis.hashCode()
     result = 31 * result + bottomAxis.hashCode()
-    @OptIn(ExperimentalUuidApi::class)
     result = 31 * result + id.hashCode()
     return result
   }
@@ -493,6 +472,20 @@ public open class CartesianChart(
 /**
  * Creates and remembers a [CartesianChart].
  *
+ * @param startAxis the start [Axis].
+ * @param topAxis the top [Axis].
+ * @param endAxis the end [Axis].
+ * @param bottomAxis the bottom [Axis].
+ * @param layers the [CartesianLayer]s.
+ * @param marker appears when the [CartesianChart] is tapped.
+ * @param markerVisibilityListener allows for listening to [marker] visibility changes.
+ * @param layerPadding returns the [CartesianLayerPadding].
+ * @param legend the legend.
+ * @param fadingEdges applies a horizontal fade to the edges of the [CartesianLayer] area, provided
+ *   that the [CartesianChart] is scrollable.
+ * @param decorations the [Decoration]s.
+ * @param persistentMarkers adds persistent [CartesianMarker]s.
+ * @param getXStep defines the _x_ step (the difference between neighboring major _x_ values).
  * @see rememberCandlestickCartesianLayer
  * @see rememberColumnCartesianLayer
  * @see rememberLineCartesianLayer
@@ -531,7 +524,7 @@ public fun rememberCartesianChart(
   ) {
     val cartesianChart =
       wrapper.value?.copy(
-        *layers,
+        layers = layers,
         startAxis = startAxis,
         topAxis = topAxis,
         endAxis = endAxis,
@@ -546,7 +539,7 @@ public fun rememberCartesianChart(
         getXStep = getXStep,
       )
         ?: CartesianChart(
-          *layers,
+          layers = layers,
           startAxis = startAxis,
           topAxis = topAxis,
           endAxis = endAxis,

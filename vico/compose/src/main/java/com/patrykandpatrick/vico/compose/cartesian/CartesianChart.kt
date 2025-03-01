@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -77,7 +77,7 @@ public fun rememberCartesianChart(
   ) {
     val cartesianChart =
       wrapper.value?.copy(
-        *layers,
+        layers = layers,
         startAxis = startAxis,
         topAxis = topAxis,
         endAxis = endAxis,
@@ -92,7 +92,7 @@ public fun rememberCartesianChart(
         getXStep = getXStep,
       )
         ?: CartesianChart(
-          *layers,
+          layers = layers,
           startAxis = startAxis,
           topAxis = topAxis,
           endAxis = endAxis,
