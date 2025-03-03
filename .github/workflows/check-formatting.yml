@@ -9,8 +9,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
         with:
-          java-version: 21
           distribution: zulu
+          java-version: 23
       - run: |
           curl -sSL -o ktfmt.jar https://github.com/facebook/ktfmt/releases/download/v0.54/ktfmt-0.54-jar-with-dependencies.jar
           java -jar ktfmt.jar --dry-run --google-style --set-exit-if-changed .
