@@ -1,18 +1,15 @@
-name: Run tests
+name: Test
 on:
   push:
   pull_request:
 jobs:
-  run-tests:
+  test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          lfs: true
       - uses: actions/setup-java@v4
         with:
-          java-version: 17
           distribution: zulu
-      - run: chmod +x gradlew
-      - id: unit-tests
-        run: ./gradlew testDebug
+          java-version: 17
+      - uses: gradle/actions/setup-gradle@v4
+      - run: ./gradlew test

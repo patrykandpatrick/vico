@@ -13,9 +13,9 @@ jobs:
           path: vico
       - uses: actions/setup-java@v4
         with:
-          java-version: 17
           distribution: zulu
-      - uses: gradle/gradle-build-action@v3
+          java-version: 17
+      - uses: gradle/actions/setup-gradle@v4
       - run: |
           git config --global user.email "96002241+patrykandpatrickbot@users.noreply.github.com"
           git config --global user.name "Patryk & Patrick Bot"
@@ -28,10 +28,12 @@ jobs:
           echo $VERSION_NAME | grep -q "alpha\|beta" && IS_PRERELEASE=true
           echo "IS_PRERELEASE=$IS_PRERELEASE" >> $GITHUB_ENV
           ./gradlew assembleDebug
+          cd sample/app/build/outputs/apk/debug
+          mv app-debug.apk android-sample-debug.apk
       - uses: softprops/action-gh-release@v2
         with:
           draft: true
-          files: ${{ github.workspace }}/vico/sample/app/build/outputs/apk/debug/*.apk
+          files: ${{ github.workspace }}/vico/sample/app/build/outputs/apk/debug/android-sample-debug.apk
           prerelease: ${{ env.IS_PRERELEASE }}
           tag_name: ${{ env.TAG_NAME }}
           token: ${{ secrets.BOT_PAT }}

@@ -1,0 +1,22 @@
+name: Build
+on:
+  push:
+  pull_request:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: zulu
+          java-version: 17
+      - uses: gradle/actions/setup-gradle@v4
+      - run: |
+          ./gradlew build -x lint -x test
+          cd sample/app/build/outputs/apk/debug
+          mv app-debug.apk android-sample-debug.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android-sample-debug
+          path: sample/app/build/outputs/apk/debug/android-sample-debug.apk
