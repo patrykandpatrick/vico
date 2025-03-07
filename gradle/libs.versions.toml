@@ -1,6 +1,6 @@
 [versions]
 activity = "1.10.1"
-agp = "8.8.2"
+agp = "8.9.0"
 androidXAnnotation = "1.9.1"
 androidXCore = "1.15.0"
 appcompat = "1.7.0"
@@ -13,8 +13,8 @@ dokka = "2.0.0"
 jupiter = "5.12.0"
 kotlin = "2.1.10"
 material = "1.12.0"
-mavenPublish = "0.30.0"
-mockK = "1.13.16"
+mavenPublish = "0.31.0"
+mockK = "1.13.17"
 testCore = "1.6.1"
 
 [libraries]
