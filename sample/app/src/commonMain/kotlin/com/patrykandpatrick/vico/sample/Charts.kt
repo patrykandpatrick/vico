@@ -19,16 +19,28 @@ package com.patrykandpatrick.vico.sample
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.patrykandpatrick.vico.sample.Chart.Details
+import com.patrykandpatrick.vico.sample.multiplatform.ComposeMultiplatformAITestScores
 import com.patrykandpatrick.vico.sample.multiplatform.ComposeMultiplatformBasicColumnChart
 import com.patrykandpatrick.vico.sample.multiplatform.ComposeMultiplatformBasicComboChart
 import com.patrykandpatrick.vico.sample.multiplatform.ComposeMultiplatformBasicLineChart
+import com.patrykandpatrick.vico.sample.multiplatform.ComposeMultiplatformDailyDigitalMediaUse
+import com.patrykandpatrick.vico.sample.multiplatform.ComposeMultiplatformElectricCarSales
+import com.patrykandpatrick.vico.sample.multiplatform.ComposeMultiplatformGoldPrices
+import com.patrykandpatrick.vico.sample.multiplatform.ComposeMultiplatformRockMetalRatios
+import com.patrykandpatrick.vico.sample.multiplatform.ComposeMultiplatformTemperatureAnomalies
 
 object Charts {
   val ComposeMultiplatform =
-    listOf(
-      Chart(Details.BasicColumnChart) { ComposeMultiplatformBasicColumnChart(it) },
-      Chart(Details.BasicLineChart) { ComposeMultiplatformBasicLineChart(it) },
-      Chart(Details.BasicComboChart) { ComposeMultiplatformBasicComboChart(it) },
+    default(
+      { ComposeMultiplatformBasicColumnChart(it) },
+      { ComposeMultiplatformBasicLineChart(it) },
+      { ComposeMultiplatformBasicComboChart(it) },
+      { ComposeMultiplatformAITestScores(it) },
+      { ComposeMultiplatformDailyDigitalMediaUse(it) },
+      { ComposeMultiplatformTemperatureAnomalies(it) },
+      { ComposeMultiplatformElectricCarSales(it) },
+      { ComposeMultiplatformRockMetalRatios(it) },
+      { ComposeMultiplatformGoldPrices(it) },
     )
 
   fun default(

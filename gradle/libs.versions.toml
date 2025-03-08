@@ -9,6 +9,7 @@ composeMultiplatform = "1.7.3"
 composeNavigation = "2.8.0-alpha12"
 composeStableMarker = "1.0.5"
 coroutines = "1.10.1"
+dateTime = "0.6.0"
 dokka = "2.0.0"
 jupiter = "5.12.0"
 kotlin = "2.1.10"
@@ -44,6 +45,7 @@ kotlinAndroid = { group = "org.jetbrains.kotlin.android", name = "org.jetbrains.
 kotlinMultiplatform = { group = "org.jetbrains.kotlin.multiplatform", name = "org.jetbrains.kotlin.multiplatform.gradle.plugin", version.ref = "kotlin" }
 kotlinStdLib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlin" }
 kotlinTest = { group = "org.jetbrains.kotlin", name = "kotlin-test", version.ref = "kotlin" }
+kotlinDateTime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "dateTime" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 mavenPublish = { group = "com.vanniktech.maven.publish", name = "com.vanniktech.maven.publish.gradle.plugin", version.ref = "mavenPublish" }
 mockK = { group = "io.mockk", name = "mockk", version.ref = "mockK" }

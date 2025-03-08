@@ -80,7 +80,7 @@ private fun JetpackComposeElectricCarSales(
       marker = rememberMarker(MarkerValueFormatter),
     ),
     modelProducer,
-    modifier.height(224.dp),
+    modifier.height(220.dp),
     rememberVicoScrollState(scrollEnabled = false),
   )
 }

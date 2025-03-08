@@ -121,7 +121,7 @@ private fun JetpackComposeAITestScores(
       decorations = listOf(rememberHorizontalLine()),
     ),
     modelProducer,
-    modifier.height(304.dp),
+    modifier.height(300.dp),
     rememberVicoScrollState(scrollEnabled = false),
   )
 }

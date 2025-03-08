@@ -17,6 +17,7 @@
 package com.patrykandpatrick.vico.multiplatform.common.shape
 
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.PathOperation
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.multiplatform.common.Defaults.MARKER_TICK_SIZE
@@ -44,6 +45,8 @@ public open class MarkerCorneredShape(
 
   /** Specifies the tick position. */
   public var tickPosition: TickPosition = TickPosition.Bottom
+
+  private val tickPath = Path()
 
   public constructor(
     all: Corner,
@@ -97,12 +100,13 @@ public open class MarkerCorneredShape(
               TickPosition.Top -> -1
               TickPosition.Bottom -> 1
             }
-          path.moveTo(tickBaseLeft, tickBaseY)
-          path.lineTo(tickX, tickBaseY + tickDirection * tickSize)
-          path.lineTo(tickBaseLeft + coercedTickSize.doubled, tickBaseY)
+          tickPath.rewind()
+          tickPath.moveTo(tickBaseLeft, tickBaseY)
+          tickPath.lineTo(tickX, tickBaseY + tickDirection * tickSize)
+          tickPath.lineTo(tickBaseLeft + coercedTickSize.doubled, tickBaseY)
         }
 
-      path.close()
+      path.op(path, tickPath, PathOperation.Union)
     }
   }
 

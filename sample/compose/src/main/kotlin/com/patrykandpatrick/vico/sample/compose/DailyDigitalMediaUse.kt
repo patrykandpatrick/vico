@@ -106,7 +106,7 @@ private fun JetpackComposeDailyDigitalMediaUse(
           ),
       ),
     modelProducer = modelProducer,
-    modifier = modifier.height(256.dp),
+    modifier = modifier.height(252.dp),
     zoomState = rememberVicoZoomState(zoomEnabled = false),
   )
 }

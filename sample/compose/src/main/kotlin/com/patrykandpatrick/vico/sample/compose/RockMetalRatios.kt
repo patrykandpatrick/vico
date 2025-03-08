@@ -96,7 +96,7 @@ private fun JetpackComposeRockMetalRatios(
         layerPadding = { cartesianLayerPadding(scalableStart = 8.dp, scalableEnd = 8.dp) },
       ),
     modelProducer = modelProducer,
-    modifier = modifier.height(224.dp),
+    modifier = modifier.height(220.dp),
     scrollState = rememberVicoScrollState(scrollEnabled = false),
   )
 }

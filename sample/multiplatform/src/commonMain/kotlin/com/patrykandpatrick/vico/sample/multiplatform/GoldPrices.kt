@@ -14,41 +14,33 @@
  * limitations under the License.
  */
 
-package com.patrykandpatrick.vico.sample.compose
+package com.patrykandpatrick.vico.sample.multiplatform
 
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
-import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
-import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStart
-import com.patrykandpatrick.vico.compose.cartesian.layer.rememberCandlestickCartesianLayer
-import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
-import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
-import com.patrykandpatrick.vico.core.cartesian.axis.Axis
-import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
-import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
-import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
-import com.patrykandpatrick.vico.core.cartesian.data.CartesianLayerRangeProvider
-import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
-import com.patrykandpatrick.vico.core.cartesian.data.candlestickSeries
-import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
-import com.patrykandpatrick.vico.core.common.data.ExtraStore
-import java.text.DecimalFormat
-import java.text.SimpleDateFormat
-import java.util.Locale
-import java.util.TimeZone
+import com.patrykandpatrick.vico.multiplatform.cartesian.CartesianChartHost
+import com.patrykandpatrick.vico.multiplatform.cartesian.CartesianMeasuringContext
+import com.patrykandpatrick.vico.multiplatform.cartesian.axis.Axis
+import com.patrykandpatrick.vico.multiplatform.cartesian.axis.HorizontalAxis
+import com.patrykandpatrick.vico.multiplatform.cartesian.axis.VerticalAxis
+import com.patrykandpatrick.vico.multiplatform.cartesian.data.CartesianChartModelProducer
+import com.patrykandpatrick.vico.multiplatform.cartesian.data.CartesianLayerRangeProvider
+import com.patrykandpatrick.vico.multiplatform.cartesian.data.CartesianValueFormatter
+import com.patrykandpatrick.vico.multiplatform.cartesian.data.candlestickSeries
+import com.patrykandpatrick.vico.multiplatform.cartesian.layer.rememberCandlestickCartesianLayer
+import com.patrykandpatrick.vico.multiplatform.cartesian.marker.DefaultCartesianMarker
+import com.patrykandpatrick.vico.multiplatform.cartesian.rememberCartesianChart
+import com.patrykandpatrick.vico.multiplatform.common.data.ExtraStore
 import kotlin.math.ceil
 import kotlin.math.floor
-import kotlinx.coroutines.runBlocking
+import kotlinx.datetime.LocalTime
+import kotlinx.datetime.format.Padding
 
 private const val Y_STEP = 10.0
-
-private const val MS_IN_H = 3.6e+6
 
 private val RangeProvider =
   object : CartesianLayerRangeProvider {
@@ -59,30 +51,35 @@ private val RangeProvider =
       Y_STEP * ceil(maxY / Y_STEP)
   }
 
-private val StartAxisValueFormatter = CartesianValueFormatter.decimal(DecimalFormat("$#,###"))
+private val StartAxisValueFormatter =
+  CartesianValueFormatter.decimal(thousandsSeparator = ",", prefix = "$")
 
 private val StartAxisItemPlacer = VerticalAxis.ItemPlacer.step({ Y_STEP })
 
 private val BottomAxisValueFormatter =
   object : CartesianValueFormatter {
-    private val dateFormat =
-      SimpleDateFormat("h a", Locale.US).apply { timeZone = TimeZone.getTimeZone("GMT") }
+    private val dateTimeFormat =
+      LocalTime.Format {
+        amPmHour(Padding.SPACE)
+        amPmMarker(" AM", " PM")
+      }
 
     override fun format(
       context: CartesianMeasuringContext,
       value: Double,
       verticalAxisPosition: Axis.Position.Vertical?,
-    ) = dateFormat.format(value * MS_IN_H)
+    ) = dateTimeFormat.format(LocalTime(value.toInt(), 0))
   }
 
 private val MarkerValueFormatter =
-  DefaultCartesianMarker.ValueFormatter.default(DecimalFormat("$#,###.00"))
+  DefaultCartesianMarker.ValueFormatter.default(thousandsSeparator = ",", prefix = "$")
 
 @Composable
-private fun JetpackComposeGoldPrices(
-  modelProducer: CartesianChartModelProducer,
-  modifier: Modifier = Modifier,
-) {
+fun ComposeMultiplatformGoldPrices(modifier: Modifier = Modifier) {
+  val modelProducer = remember { CartesianChartModelProducer() }
+  LaunchedEffect(Unit) {
+    modelProducer.runTransaction { candlestickSeries(x, opening, closing, low, high) }
+  }
   CartesianChartHost(
     rememberCartesianChart(
       rememberCandlestickCartesianLayer(rangeProvider = RangeProvider),
@@ -96,7 +93,7 @@ private fun JetpackComposeGoldPrices(
       marker = rememberMarker(valueFormatter = MarkerValueFormatter, showIndicator = false),
     ),
     modelProducer,
-    modifier.height(220.dp),
+    modifier.height(216.dp),
   )
 }
 
@@ -209,29 +206,3 @@ private val high =
     2619.600098,
     2619.399902,
   )
-
-@Composable
-fun JetpackComposeGoldPrices(modifier: Modifier = Modifier) {
-  val modelProducer = remember { CartesianChartModelProducer() }
-  LaunchedEffect(Unit) {
-    modelProducer.runTransaction {
-      // Learn more: https://patrykandpatrick.com/y3c4gz.
-      candlestickSeries(x, opening, closing, low, high)
-    }
-  }
-  JetpackComposeGoldPrices(modelProducer, modifier)
-}
-
-@Composable
-@Preview
-private fun Preview() {
-  val modelProducer = remember { CartesianChartModelProducer() }
-  // Use `runBlocking` only for previews, which don’t support asynchronous execution.
-  runBlocking {
-    modelProducer.runTransaction {
-      // Learn more: https://patrykandpatrick.com/y3c4gz.
-      candlestickSeries(x, opening, closing, low, high)
-    }
-  }
-  PreviewBox { JetpackComposeGoldPrices(modelProducer) }
-}

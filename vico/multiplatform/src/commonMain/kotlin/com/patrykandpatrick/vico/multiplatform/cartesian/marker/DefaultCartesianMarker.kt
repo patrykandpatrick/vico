@@ -319,7 +319,7 @@ public open class DefaultCartesianMarker(
       public fun default(
         decimalCount: Int = 2,
         decimalSeparator: String = ".",
-        thousandsSeparator: String = ",",
+        thousandsSeparator: String = "",
         prefix: String = "",
         suffix: String = "",
         colorCode: Boolean = true,

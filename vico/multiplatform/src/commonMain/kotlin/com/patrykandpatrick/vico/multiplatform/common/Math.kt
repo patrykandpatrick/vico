@@ -119,7 +119,7 @@ internal fun Number.toRadians(): Double = toDouble() * PI / PI_RAD
 internal fun Double.format(
   decimalCount: Int = 2,
   decimalSeparator: String = ".",
-  thousandsSeparator: String = ",",
+  thousandsSeparator: String = "",
   prefix: String = "",
   suffix: String = "",
 ): String {
@@ -130,17 +130,16 @@ internal fun Double.format(
   val value = if (isNegative) "−$trimmed" else trimmed
   return buildString {
     append(prefix)
-    append(addThousandsSeparator(value, decimalSeparator, thousandsSeparator))
+    append(value.addThousandsSeparator(decimalSeparator, thousandsSeparator))
     append(suffix)
   }
 }
 
-private fun addThousandsSeparator(
-  value: String,
+private fun String.addThousandsSeparator(
   decimalSeparator: String,
   thousandsSeparator: String,
 ): String {
-  val parts = value.split(decimalSeparator)
+  val parts = split(decimalSeparator)
   val integerPart = parts[0]
   val withCommas = integerPart.reversed().chunked(3).joinToString(thousandsSeparator).reversed()
   return buildString {

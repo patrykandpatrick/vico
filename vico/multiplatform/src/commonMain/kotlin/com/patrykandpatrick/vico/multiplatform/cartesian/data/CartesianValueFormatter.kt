@@ -63,9 +63,6 @@ public fun interface CartesianValueFormatter {
       ): CharSequence =
         (value / context.ranges.getYRange(verticalAxisPosition).maxY).format(
           decimalCount = decimalCount,
-          decimalSeparator = ".",
-          thousandsSeparator = "",
-          prefix = "",
           suffix = "%",
         )
 
