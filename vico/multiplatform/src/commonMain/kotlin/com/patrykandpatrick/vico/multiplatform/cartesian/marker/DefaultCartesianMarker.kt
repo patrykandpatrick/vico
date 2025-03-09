@@ -186,6 +186,7 @@ public open class DefaultCartesianMarker(
           y = topPointY + (if (flip) 1 else -1) * tickSize.pixels
           verticalPosition = if (flip) Position.Vertical.Bottom else Position.Vertical.Top
         }
+
         LabelPosition.BelowPoint -> {
           val bottomPointY =
             targets.maxOf { target ->
@@ -193,8 +194,10 @@ public open class DefaultCartesianMarker(
                 is CandlestickCartesianLayerMarkerTarget -> target.lowCanvasY
                 is ColumnCartesianLayerMarkerTarget ->
                   target.columns.maxOf(ColumnCartesianLayerMarkerTarget.Column::canvasY)
+
                 is LineCartesianLayerMarkerTarget ->
                   target.points.maxOf(LineCartesianLayerMarkerTarget.Point::canvasY)
+
                 else -> error("Unexpected `CartesianMarker.Target` implementation.")
               }
             }
@@ -316,8 +319,22 @@ public open class DefaultCartesianMarker(
        * [decimalCount] decimal digits and, if [colorCode] is true, color-coded. Trailing zeros are
        * skipped.
        */
-      public fun default(decimalCount: Int = 2, colorCode: Boolean = true): ValueFormatter =
-        DefaultValueFormatter(decimalCount, colorCode)
+      public fun default(
+        decimalCount: Int = 2,
+        colorCode: Boolean = true,
+        prefix: String = "",
+        suffix: String = "",
+        decimalSeparator: String = ".",
+        thousandsSeparator: String = ",",
+      ): ValueFormatter =
+        DefaultValueFormatter(
+          decimalCount,
+          colorCode,
+          prefix,
+          suffix,
+          decimalSeparator,
+          thousandsSeparator,
+        )
     }
   }
 
@@ -329,12 +346,18 @@ public open class DefaultCartesianMarker(
 internal class DefaultValueFormatter(
   private val decimalCount: Int,
   private val colorCode: Boolean,
+  private val prefix: String,
+  private val suffix: String,
+  private val decimalSeparator: String,
+  private val thousandsSeparator: String,
 ) : DefaultCartesianMarker.ValueFormatter {
   private fun AnnotatedString.Builder.append(y: Double, color: Color? = null) {
     if (colorCode && color != null) {
-      withStyle(SpanStyle(color = color)) { append(y.format(decimalCount)) }
+      withStyle(SpanStyle(color = color)) {
+        append(y.format(decimalCount, decimalSeparator, thousandsSeparator, prefix, suffix))
+      }
     } else {
-      append(y.format(decimalCount))
+      append(y.format(decimalCount, decimalSeparator, thousandsSeparator, prefix, suffix))
     }
   }
 
