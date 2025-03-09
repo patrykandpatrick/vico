@@ -36,6 +36,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -86,10 +87,18 @@ internal fun ChartScreen(navController: NavController, initialChartID: Int, uiFr
         Alignment.CenterVertically,
       ) {
         IconButton(onClick = { chartID-- }, enabled = chartID > 0) {
-          Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
+          Icon(
+            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onBackground,
+          )
         }
         IconButton(onClick = { chartID++ }, enabled = chartID < charts.lastIndex) {
-          Icon(imageVector = Icons.AutoMirrored.Filled.ArrowForward, contentDescription = null)
+          Icon(
+            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onBackground,
+          )
         }
       }
     },
@@ -114,6 +123,7 @@ internal fun ChartScreen(navController: NavController, initialChartID: Int, uiFr
           modifier =
             Modifier.padding(start = 16.dp, end = 16.dp, bottom = 8.dp)
               .align(Alignment.BottomStart),
+          color = MaterialTheme.colorScheme.onBackground,
           fontSize = 12.sp,
         )
       }
