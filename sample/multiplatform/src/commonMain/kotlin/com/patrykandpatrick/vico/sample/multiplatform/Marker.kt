@@ -18,7 +18,6 @@ package com.patrykandpatrick.vico.sample.multiplatform
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -26,6 +25,7 @@ import androidx.compose.ui.unit.sp
 import com.patrykandpatrick.vico.multiplatform.cartesian.axis.rememberAxisGuidelineComponent
 import com.patrykandpatrick.vico.multiplatform.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.multiplatform.cartesian.marker.DefaultCartesianMarker
+import com.patrykandpatrick.vico.multiplatform.cartesian.marker.rememberDefaultCartesianMarker
 import com.patrykandpatrick.vico.multiplatform.common.Fill
 import com.patrykandpatrick.vico.multiplatform.common.Insets
 import com.patrykandpatrick.vico.multiplatform.common.LayeredComponent
@@ -46,8 +46,10 @@ internal fun rememberMarker(
   val labelBackgroundShape = MarkerCorneredShape(CorneredShape.Corner.Rounded)
   val labelBackground =
     rememberShapeComponent(
-      fill = fill(MaterialTheme.colorScheme.surfaceContainer),
+      fill = fill(MaterialTheme.colorScheme.background),
       shape = labelBackgroundShape,
+      strokeFill = fill(MaterialTheme.colorScheme.outline),
+      strokeThickness = 1.dp,
     )
   val label =
     rememberTextComponent(
@@ -63,43 +65,28 @@ internal fun rememberMarker(
     )
   val indicatorFrontComponent =
     rememberShapeComponent(fill(MaterialTheme.colorScheme.surface), CorneredShape.Pill)
-  val indicatorCenterComponent = rememberShapeComponent(shape = CorneredShape.Pill)
-  val indicatorRearComponent = rememberShapeComponent(shape = CorneredShape.Pill)
-  val indicator =
-    LayeredComponent(
-      back = indicatorRearComponent,
-      front =
-        LayeredComponent(
-          back = indicatorCenterComponent,
-          front = indicatorFrontComponent,
-          padding = Insets(5.dp),
-        ),
-      padding = Insets(10.dp),
-    )
   val guideline = rememberAxisGuidelineComponent()
-  return remember(label, valueFormatter, indicator, showIndicator, guideline) {
-    DefaultCartesianMarker(
-      label = label,
-      valueFormatter = valueFormatter,
-      indicator =
-        if (showIndicator) {
-          { color ->
-            LayeredComponent(
-              back = ShapeComponent(Fill(color.copy(.38f)), CorneredShape.Pill),
-              front =
-                LayeredComponent(
-                  back = ShapeComponent(fill = Fill(color), shape = CorneredShape.Pill),
-                  front = indicatorFrontComponent,
-                  padding = Insets(5.dp),
-                ),
-              padding = Insets(10.dp),
-            )
-          }
-        } else {
-          null
-        },
-      indicatorSize = 36.dp,
-      guideline = guideline,
-    )
-  }
+  return rememberDefaultCartesianMarker(
+    label = label,
+    valueFormatter = valueFormatter,
+    indicator =
+      if (showIndicator) {
+        { color ->
+          LayeredComponent(
+            back = ShapeComponent(Fill(color.copy(.15f)), CorneredShape.Pill),
+            front =
+              LayeredComponent(
+                back = ShapeComponent(fill = Fill(color), shape = CorneredShape.Pill),
+                front = indicatorFrontComponent,
+                padding = Insets(5.dp),
+              ),
+            padding = Insets(10.dp),
+          )
+        }
+      } else {
+        null
+      },
+    indicatorSize = 36.dp,
+    guideline = guideline,
+  )
 }
