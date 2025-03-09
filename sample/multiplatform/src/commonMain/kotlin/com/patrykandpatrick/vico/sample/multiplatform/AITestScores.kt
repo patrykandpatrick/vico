@@ -136,6 +136,7 @@ fun ComposeMultiplatformAITestScores(modifier: Modifier = Modifier) {
           padding = Insets(top = 16.dp),
         ),
       decorations = listOf(rememberHorizontalLine()),
+      marker = rememberMarker(),
     ),
     modelProducer,
     modifier.height(278.dp),
