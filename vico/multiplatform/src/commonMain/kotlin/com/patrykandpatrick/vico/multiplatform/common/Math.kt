@@ -116,10 +116,38 @@ internal fun Float.lerp(to: Float, fraction: Float): Float = this + (to - this) 
 
 internal fun Number.toRadians(): Double = toDouble() * PI / PI_RAD
 
-internal fun Double.format(decimalCount: Int = 2): String {
+internal fun Double.format(
+  decimalCount: Int = 2,
+  decimalSeparator: String = ".",
+  thousandsSeparator: String = ",",
+  prefix: String = "",
+  suffix: String = "",
+): String {
   val isNegative = this < 0
   val factor = 10.0.pow(decimalCount)
   val truncated = floor(factor * absoluteValue) / factor
-  val trimmed = truncated.toString().trimEnd('0').trimEnd('.')
-  return if (isNegative) "−$trimmed" else trimmed
+  val trimmed = truncated.toString().trimEnd('0').trimEnd('.').replace(".", decimalSeparator)
+  val value = if (isNegative) "−$trimmed" else trimmed
+  return buildString {
+    append(prefix)
+    append(addThousandsSeparator(value, decimalSeparator, thousandsSeparator))
+    append(suffix)
+  }
+}
+
+private fun addThousandsSeparator(
+  value: String,
+  decimalSeparator: String,
+  thousandsSeparator: String,
+): String {
+  val parts = value.split(decimalSeparator)
+  val integerPart = parts[0]
+  val withCommas = integerPart.reversed().chunked(3).joinToString(thousandsSeparator).reversed()
+  return buildString {
+    append(withCommas)
+    if (parts.size > 1) {
+      append(decimalSeparator)
+      append(parts[1])
+    }
+  }
 }

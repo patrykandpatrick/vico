@@ -316,8 +316,22 @@ public open class DefaultCartesianMarker(
        * [decimalCount] decimal digits and, if [colorCode] is true, color-coded. Trailing zeros are
        * skipped.
        */
-      public fun default(decimalCount: Int = 2, colorCode: Boolean = true): ValueFormatter =
-        DefaultValueFormatter(decimalCount, colorCode)
+      public fun default(
+        decimalCount: Int = 2,
+        decimalSeparator: String = ".",
+        thousandsSeparator: String = ",",
+        prefix: String = "",
+        suffix: String = "",
+        colorCode: Boolean = true,
+      ): ValueFormatter =
+        DefaultValueFormatter(
+          decimalCount,
+          decimalSeparator,
+          thousandsSeparator,
+          prefix,
+          suffix,
+          colorCode,
+        )
     }
   }
 
@@ -328,13 +342,19 @@ public open class DefaultCartesianMarker(
 
 internal class DefaultValueFormatter(
   private val decimalCount: Int,
+  private val decimalSeparator: String,
+  private val thousandsSeparator: String,
+  private val prefix: String,
+  private val suffix: String,
   private val colorCode: Boolean,
 ) : DefaultCartesianMarker.ValueFormatter {
   private fun AnnotatedString.Builder.append(y: Double, color: Color? = null) {
     if (colorCode && color != null) {
-      withStyle(SpanStyle(color = color)) { append(y.format(decimalCount)) }
+      withStyle(SpanStyle(color = color)) {
+        append(y.format(decimalCount, decimalSeparator, thousandsSeparator, prefix, suffix))
+      }
     } else {
-      append(y.format(decimalCount))
+      append(y.format(decimalCount, decimalSeparator, thousandsSeparator, prefix, suffix))
     }
   }
 

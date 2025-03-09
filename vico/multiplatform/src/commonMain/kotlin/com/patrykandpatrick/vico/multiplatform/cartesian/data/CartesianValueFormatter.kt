@@ -35,12 +35,19 @@ public fun interface CartesianValueFormatter {
 
   /** Houses [CartesianValueFormatter] factory functions. */
   public companion object {
-    private class Decimal(private val decimalCount: Int) : CartesianValueFormatter {
+    private class Decimal(
+      private val decimalCount: Int,
+      private val decimalSeparator: String,
+      private val thousandsSeparator: String,
+      private val prefix: String,
+      private val suffix: String,
+    ) : CartesianValueFormatter {
       override fun format(
         context: CartesianMeasuringContext,
         value: Double,
         verticalAxisPosition: Axis.Position.Vertical?,
-      ): CharSequence = value.format(decimalCount)
+      ): CharSequence =
+        value.format(decimalCount, decimalSeparator, thousandsSeparator, prefix, suffix)
 
       override fun equals(other: Any?) =
         this === other || other is Decimal && decimalCount == other.decimalCount
@@ -54,7 +61,13 @@ public fun interface CartesianValueFormatter {
         value: Double,
         verticalAxisPosition: Axis.Position.Vertical?,
       ): CharSequence =
-        (value / context.ranges.getYRange(verticalAxisPosition).maxY).format(decimalCount)
+        (value / context.ranges.getYRange(verticalAxisPosition).maxY).format(
+          decimalCount = decimalCount,
+          decimalSeparator = ".",
+          thousandsSeparator = "",
+          prefix = "",
+          suffix = "%",
+        )
 
       override fun equals(other: Any?) =
         this === other || other is YPercent && decimalCount == other.decimalCount
@@ -65,7 +78,14 @@ public fun interface CartesianValueFormatter {
     /**
      * Formats values to include up to [decimalCount] decimal digits. Trailing zeros are skipped.
      */
-    public fun decimal(decimalCount: Int = 2): CartesianValueFormatter = Decimal(decimalCount)
+    public fun decimal(
+      decimalCount: Int = 2,
+      decimalSeparator: String = ".",
+      thousandsSeparator: String = "",
+      prefix: String = "",
+      suffix: String = "",
+    ): CartesianValueFormatter =
+      Decimal(decimalCount, decimalSeparator, thousandsSeparator, prefix, suffix)
 
     /**
      * Divides values by [CartesianChartRanges.YRange.maxY] and formats the resulting quotients to
