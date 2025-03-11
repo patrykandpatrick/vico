@@ -26,7 +26,7 @@ internal object Animation {
 internal object Defaults {
   const val AXIS_LABEL_HORIZONTAL_PADDING: Int = 4
   const val AXIS_LABEL_MAX_LINES: Int = 1
-  const val AXIS_LABEL_VERTICAL_PADDING: Int = 2
+  const val AXIS_LABEL_VERTICAL_PADDING: Int = 4
   const val AXIS_LABEL_SIZE: Int = 12
   const val AXIS_LABEL_HORIZONTAL_MARGIN: Int = 0
   const val AXIS_LABEL_VERTICAL_MARGIN: Int = 0
@@ -65,7 +65,7 @@ internal object Defaults {
   const val LEGEND_COLUMN_SPACING: Float = 16f
   const val LEGEND_ICON_LABEL_SPACING: Float = 8f
   const val LEGEND_ICON_SIZE: Float = 8f
-  const val LEGEND_ROW_SPACING: Float = 8f
+  const val LEGEND_ROW_SPACING: Float = 10f
 }
 
 /** @suppress */
