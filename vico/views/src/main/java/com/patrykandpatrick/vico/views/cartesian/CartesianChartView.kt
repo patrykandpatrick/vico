@@ -127,10 +127,17 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   private val motionEventHandler =
     MotionEventHandler(
       scroller = scroller,
+      consumeMoveEvents = themeHandler.consumeMoveEvents,
       density = resources.displayMetrics.density,
       onTouchPoint = ::handleTouchEvent,
       requestInvalidate = ::invalidate,
     )
+
+  public var consumeMoveEvents: Boolean
+    get() = motionEventHandler.consumeMoveEvents
+    set(value) {
+      motionEventHandler.consumeMoveEvents = value
+    }
 
   /** The [CartesianChart] displayed by this [View]. */
   public var chart: CartesianChart? by
@@ -325,7 +332,6 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       if (chart.layerBounds.isEmpty) return@withChartAndModel
 
       motionEventHandler.scrollEnabled = scrollHandler.scrollEnabled
-      motionEventHandler.consumeMoveEvents = themeHandler.consumeMoveEvents
       if (scroller.computeScrollOffset()) {
         scrollHandler.scroll(Scroll.Absolute.pixels(scroller.currX.toFloat()))
         postInvalidateOnAnimation()

@@ -30,8 +30,8 @@ import kotlin.math.abs
 internal class MotionEventHandler(
   private val scroller: OverScroller,
   density: Float,
+  var consumeMoveEvents: Boolean,
   var scrollEnabled: Boolean = false,
-  var consumeMoveEvents: Boolean = false,
   private val onTouchPoint: (Point?) -> Unit,
   private val requestInvalidate: () -> Unit,
 ) {
