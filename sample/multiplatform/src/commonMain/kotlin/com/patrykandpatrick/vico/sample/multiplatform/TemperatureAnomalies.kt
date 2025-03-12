@@ -75,7 +75,12 @@ private fun getColumnProvider(positive: LineComponent, negative: LineComponent) 
 @Composable
 fun ComposeMultiplatformTemperatureAnomalies(modifier: Modifier = Modifier) {
   val modelProducer = remember { CartesianChartModelProducer() }
-  LaunchedEffect(Unit) { modelProducer.runTransaction { columnSeries { series(x, y) } } }
+  LaunchedEffect(Unit) {
+    modelProducer.runTransaction {
+      // Learn more: https://patrykandpatrick.com/3aqy4o.
+      columnSeries { series(x, y) }
+    }
+  }
   val positiveColumn =
     rememberLineComponent(
       fill = fill(Color(0xff0ac285)),

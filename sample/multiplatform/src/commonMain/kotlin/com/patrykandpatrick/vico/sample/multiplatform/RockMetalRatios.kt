@@ -80,6 +80,7 @@ fun ComposeMultiplatformRockMetalRatios(modifier: Modifier = Modifier) {
   val modelProducer = remember { CartesianChartModelProducer() }
   LaunchedEffect(Unit) {
     modelProducer.runTransaction {
+      // Learn more: https://patrykandpatrick.com/3aqy4o.
       columnSeries { series(data.values) }
       extras { it[BottomAxisLabelKey] = data.keys.toList() }
     }

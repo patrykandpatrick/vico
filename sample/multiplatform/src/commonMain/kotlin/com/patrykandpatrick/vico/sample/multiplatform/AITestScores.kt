@@ -95,6 +95,7 @@ fun ComposeMultiplatformAITestScores(modifier: Modifier = Modifier) {
   val modelProducer = remember { CartesianChartModelProducer() }
   LaunchedEffect(Unit) {
     modelProducer.runTransaction {
+      // Learn more: https://patrykandpatrick.com/z5ah6v.
       lineSeries { data.forEach { (_, map) -> series(map.keys, map.values) } }
       extras { extraStore -> extraStore[LegendLabelKey] = data.keys }
     }

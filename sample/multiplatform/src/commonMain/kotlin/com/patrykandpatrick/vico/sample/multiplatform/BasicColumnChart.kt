@@ -33,6 +33,7 @@ fun ComposeMultiplatformBasicColumnChart(modifier: Modifier = Modifier) {
   val modelProducer = remember { CartesianChartModelProducer() }
   LaunchedEffect(Unit) {
     modelProducer.runTransaction {
+      // Learn more: https://patrykandpatrick.com/3aqy4o.
       columnSeries { series(5, 6, 5, 2, 11, 8, 5, 2, 15, 11, 8, 13, 12, 10, 2, 7) }
     }
   }

@@ -33,6 +33,7 @@ fun ComposeMultiplatformBasicLineChart(modifier: Modifier = Modifier) {
   val modelProducer = remember { CartesianChartModelProducer() }
   LaunchedEffect(Unit) {
     modelProducer.runTransaction {
+      // Learn more: https://patrykandpatrick.com/z5ah6v.
       lineSeries { series(13, 8, 7, 12, 0, 1, 15, 14, 0, 11, 6, 12, 0, 11, 12, 11) }
     }
   }

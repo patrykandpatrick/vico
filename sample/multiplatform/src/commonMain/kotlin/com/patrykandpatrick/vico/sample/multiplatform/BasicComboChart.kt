@@ -41,7 +41,9 @@ fun ComposeMultiplatformBasicComboChart(modifier: Modifier = Modifier) {
   val modelProducer = remember { CartesianChartModelProducer() }
   LaunchedEffect(Unit) {
     modelProducer.runTransaction {
+      // Learn more: https://patrykandpatrick.com/3aqy4o.
       columnSeries { series(4, 15, 5, 8, 10, 15, 9, 10, 7, 9, 10, 12, 2, 9, 5, 14) }
+      // Learn more: https://patrykandpatrick.com/z5ah6v.
       lineSeries { series(1, 5, 4, 7, 3, 14, 5, 9, 9, 14, 7, 13, 14, 4, 10, 12) }
     }
   }

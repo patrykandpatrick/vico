@@ -69,6 +69,7 @@ fun ComposeMultiplatformDailyDigitalMediaUse(modifier: Modifier = Modifier) {
   val modelProducer = remember { CartesianChartModelProducer() }
   LaunchedEffect(Unit) {
     modelProducer.runTransaction {
+      // Learn more: https://patrykandpatrick.com/3aqy4o.
       columnSeries { y.values.forEach { series(x, it) } }
       extras { it[LegendLabelKey] = y.keys }
     }

@@ -71,14 +71,16 @@ private val BottomAxisValueFormatter =
     ) = dateTimeFormat.format(LocalTime(value.toInt(), 0))
   }
 
-private val MarkerValueFormatter =
-  DefaultCartesianMarker.ValueFormatter.default(thousandsSeparator = ",", prefix = "$")
+private val MarkerValueFormatter = DefaultCartesianMarker.ValueFormatter.default(prefix = "$")
 
 @Composable
 fun ComposeMultiplatformGoldPrices(modifier: Modifier = Modifier) {
   val modelProducer = remember { CartesianChartModelProducer() }
   LaunchedEffect(Unit) {
-    modelProducer.runTransaction { candlestickSeries(x, opening, closing, low, high) }
+    modelProducer.runTransaction {
+      // Learn more: https://patrykandpatrick.com/r8d20v.
+      candlestickSeries(x, opening, closing, low, high)
+    }
   }
   CartesianChartHost(
     rememberCartesianChart(

@@ -48,7 +48,12 @@ private val y = listOf<Number>(0.28, 1.4, 3.1, 5.8, 15, 22, 29, 39, 49, 56, 75, 
 @Composable
 fun ComposeMultiplatformElectricCarSales(modifier: Modifier = Modifier) {
   val modelProducer = remember { CartesianChartModelProducer() }
-  LaunchedEffect(Unit) { modelProducer.runTransaction { lineSeries { series(x, y) } } }
+  LaunchedEffect(Unit) {
+    modelProducer.runTransaction {
+      // Learn more: https://patrykandpatrick.com/z5ah6v.
+      lineSeries { series(x, y) }
+    }
+  }
   val lineColor = Color(0xffa485e0)
   CartesianChartHost(
     rememberCartesianChart(
