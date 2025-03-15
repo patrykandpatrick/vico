@@ -65,6 +65,7 @@ import kotlinx.coroutines.launch
  * @param animationSpec the [AnimationSpec] for difference animations.
  * @param animateIn whether to run an initial animation when the [CartesianChartHost] enters
  *   composition. The animation is skipped for previews.
+ * @param consumeMoveEvents determines whether Move events should be consumed by the toucher's input
  * @param placeholder shown when no [CartesianChartModel] is available.
  */
 @Composable
@@ -76,6 +77,7 @@ public fun CartesianChartHost(
   zoomState: VicoZoomState = rememberDefaultVicoZoomState(scrollState.scrollEnabled),
   animationSpec: AnimationSpec<Float>? = defaultCartesianDiffAnimationSpec,
   animateIn: Boolean = true,
+  consumeMoveEvents: Boolean = false,
   placeholder: @Composable BoxScope.() -> Unit = {},
 ) {
   val mutableRanges = remember(chart) { MutableCartesianChartRanges() }
@@ -90,6 +92,7 @@ public fun CartesianChartHost(
         scrollState,
         zoomState,
         ranges,
+        consumeMoveEvents,
         previousModel,
         extraStore,
       )
@@ -118,6 +121,7 @@ public fun CartesianChartHost(
   modifier: Modifier = Modifier,
   scrollState: VicoScrollState = rememberVicoScrollState(),
   zoomState: VicoZoomState = rememberDefaultVicoZoomState(scrollState.scrollEnabled),
+  consumeMoveEvents: Boolean = false,
 ) {
   val ranges = remember(chart) { MutableCartesianChartRanges() }
   remember(ranges, chart, model) {
@@ -125,7 +129,14 @@ public fun CartesianChartHost(
     chart.updateRanges(ranges, model)
   }
   CartesianChartHostBox(modifier) {
-    CartesianChartHostImpl(chart, model, scrollState, zoomState, ranges.toImmutable())
+    CartesianChartHostImpl(
+      chart,
+      model,
+      scrollState,
+      zoomState,
+      ranges.toImmutable(),
+      consumeMoveEvents,
+    )
   }
 }
 
@@ -136,6 +147,7 @@ internal fun CartesianChartHostImpl(
   scrollState: VicoScrollState,
   zoomState: VicoZoomState,
   ranges: CartesianChartRanges,
+  consumeMoveEvents: Boolean,
   previousModel: CartesianChartModel? = null,
   extraStore: ExtraStore = ExtraStore.Empty,
 ) {
@@ -169,6 +181,7 @@ internal fun CartesianChartHostImpl(
       Modifier.fillMaxSize()
         .pointerInput(
           scrollState = scrollState,
+          consumeMoveEvents = consumeMoveEvents,
           onPointerPositionChange =
             remember(chart.marker == null) {
               if (chart.marker != null) pointerPosition.component2() else null

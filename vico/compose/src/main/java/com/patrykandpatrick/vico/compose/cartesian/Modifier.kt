@@ -33,6 +33,7 @@ internal fun Modifier.pointerInput(
   scrollState: VicoScrollState,
   onPointerPositionChange: ((Point?) -> Unit)?,
   onZoom: ((Float, Offset) -> Unit)?,
+  consumeMoveEvents: Boolean,
 ) =
   scrollable(
       state = scrollState.scrollableState,
@@ -54,8 +55,11 @@ internal fun Modifier.pointerInput(
             event.type == PointerEventType.Press ->
               onPointerPositionChange(event.changes.first().position.toPoint())
             event.type == PointerEventType.Release -> onPointerPositionChange(null)
-            event.type == PointerEventType.Move && !scrollState.scrollEnabled ->
-              onPointerPositionChange(event.changes.first().position.toPoint())
+            event.type == PointerEventType.Move && !scrollState.scrollEnabled -> {
+              val changes = event.changes.first()
+              if (consumeMoveEvents) changes.consume()
+              onPointerPositionChange(changes.position.toPoint())
+            }
           }
         }
       }
