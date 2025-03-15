@@ -16,6 +16,9 @@
 
 package com.patrykandpatrick.vico.sample.views
 
+import android.text.Spannable
+import android.text.SpannableStringBuilder
+import android.text.style.ForegroundColorSpan
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -26,6 +29,8 @@ import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
+import com.patrykandpatrick.vico.core.cartesian.marker.ColumnCartesianLayerMarkerTarget
+import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.sample.views.databinding.RockMetalRatiosBinding
 import java.text.DecimalFormat
@@ -46,6 +51,17 @@ private val StartAxisValueFormatter = CartesianValueFormatter { _, value, _ ->
 private val BottomAxisValueFormatter = CartesianValueFormatter { context, x, _ ->
   context.model.extraStore[BottomAxisLabelKey][x.toInt()]
 }
+
+private val MarkerValueFormatter =
+  DefaultCartesianMarker.ValueFormatter { _, targets ->
+    val column = (targets[0] as ColumnCartesianLayerMarkerTarget).columns[0]
+    SpannableStringBuilder()
+      .append(
+        YDecimalFormat.format(column.entry.y / Y_DIVISOR),
+        ForegroundColorSpan(column.color),
+        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
+      )
+  }
 
 @Composable
 fun ViewRockMetalRatios(modifier: Modifier) {
@@ -69,6 +85,7 @@ fun ViewRockMetalRatios(modifier: Modifier) {
                 (chart!!.bottomAxis as HorizontalAxis).copy(
                   valueFormatter = BottomAxisValueFormatter
                 ),
+              marker = getMarker(context, MarkerValueFormatter),
             )
           this.modelProducer = modelProducer
         }

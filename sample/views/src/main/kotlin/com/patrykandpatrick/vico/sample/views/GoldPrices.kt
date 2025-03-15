@@ -30,6 +30,7 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianLayerRangeProvider
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.candlestickSeries
 import com.patrykandpatrick.vico.core.cartesian.layer.CandlestickCartesianLayer
+import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.sample.views.databinding.GoldPricesBinding
 import java.text.DecimalFormat
@@ -68,6 +69,9 @@ private val BottomAxisValueFormatter =
     ) = dateFormat.format(value * MS_IN_H)
   }
 
+private val MarkerValueFormatter =
+  DefaultCartesianMarker.ValueFormatter.default(DecimalFormat("$#,###.00"))
+
 @Composable
 fun ViewGoldPrices(modifier: Modifier) {
   val modelProducer = remember { CartesianChartModelProducer() }
@@ -92,6 +96,12 @@ fun ViewGoldPrices(modifier: Modifier) {
               bottomAxis =
                 (chart!!.bottomAxis as HorizontalAxis).copy(
                   valueFormatter = BottomAxisValueFormatter
+                ),
+              marker =
+                getMarker(
+                  context = context,
+                  valueFormatter = MarkerValueFormatter,
+                  showIndicator = false,
                 ),
             )
           this.modelProducer = modelProducer

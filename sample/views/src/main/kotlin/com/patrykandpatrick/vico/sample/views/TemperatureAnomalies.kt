@@ -29,6 +29,7 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.ColumnCartesianLayerModel
 import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
 import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
+import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
 import com.patrykandpatrick.vico.core.common.Fill
 import com.patrykandpatrick.vico.core.common.component.LineComponent
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
@@ -51,8 +52,11 @@ private val RangeProvider =
       -getMinY(minY, maxY, extraStore)
   }
 
-private val StartAxisValueFormatter =
-  CartesianValueFormatter.decimal(DecimalFormat("#.## °C;−#.## °C"))
+private val YDecimalFormat = DecimalFormat("#.## °C;−#.## °C")
+
+private val StartAxisValueFormatter = CartesianValueFormatter.decimal(YDecimalFormat)
+
+private val MarkerValueFormatter = DefaultCartesianMarker.ValueFormatter.default(YDecimalFormat)
 
 private fun getColumnProvider(positive: LineComponent, negative: LineComponent) =
   object : ColumnCartesianLayer.ColumnProvider {
@@ -98,6 +102,7 @@ fun ViewTemperatureAnomalies(modifier: Modifier) {
               ),
               startAxis =
                 (chart!!.startAxis as VerticalAxis).copy(valueFormatter = StartAxisValueFormatter),
+              marker = getMarker(context, MarkerValueFormatter),
             )
           this.modelProducer = modelProducer
           scrollHandler = ScrollHandler(initialScroll = Scroll.Absolute.End)

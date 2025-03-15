@@ -14,11 +14,9 @@
   ~ limitations under the License.
   -->
 
-<com.patrykandpatrick.vico.views.cartesian.CartesianChartView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/chart_view"
-    android:layout_width="wrap_content"
-    android:layout_height="252dp"
-    app:chartStyle="@style/DailyDigitalMediaUseChartStyle"
-    app:zoomEnabled="false" />
+<resources>
+    <color name="background">#000000</color>
+    <color name="outline">#494c50</color>
+    <color name="surface">#000000</color>
+    <color name="on_surface">#ffffff</color>
+</resources>

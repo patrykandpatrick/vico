@@ -28,6 +28,7 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianLayerRangeProvider
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
+import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
 import com.patrykandpatrick.vico.core.common.Fill
 import com.patrykandpatrick.vico.core.common.shader.ShaderProvider
 import com.patrykandpatrick.vico.sample.views.databinding.ElectricCarSalesBinding
@@ -36,7 +37,9 @@ import java.text.DecimalFormat
 private val x = (2010..2023).toList()
 private val y = listOf<Number>(0.28, 1.4, 3.1, 5.8, 15, 22, 29, 39, 49, 56, 75, 86, 89, 93)
 private val RangeProvider = CartesianLayerRangeProvider.fixed(maxY = 100.0)
-private val StartAxisValueFormatter = CartesianValueFormatter.decimal(DecimalFormat("#.##'%'"))
+private val YDecimalFormat = DecimalFormat("#.##'%'")
+private val StartAxisValueFormatter = CartesianValueFormatter.decimal(YDecimalFormat)
+private val MarkerValueFormatter = DefaultCartesianMarker.ValueFormatter.default(YDecimalFormat)
 
 @Composable
 fun ViewElectricCarSales(modifier: Modifier) {
@@ -75,6 +78,7 @@ fun ViewElectricCarSales(modifier: Modifier) {
               ),
               startAxis =
                 (chart!!.startAxis as VerticalAxis).copy(valueFormatter = StartAxisValueFormatter),
+              marker = getMarker(context, MarkerValueFormatter),
             )
           this.modelProducer = modelProducer
         }

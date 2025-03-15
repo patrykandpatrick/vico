@@ -125,7 +125,12 @@ fun ViewAITestScores(modifier: Modifier) {
         )
       AiTestScoresBinding.inflate(inflater, parent, attachToParent).apply {
         with(chartView) {
-          chart = chart!!.copy(legend = legend, decorations = listOf(getHorizontalLine()))
+          chart =
+            chart!!.copy(
+              legend = legend,
+              decorations = listOf(getHorizontalLine()),
+              marker = getMarker(context),
+            )
           this.modelProducer = modelProducer
         }
       }

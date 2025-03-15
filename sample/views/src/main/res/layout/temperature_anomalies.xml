@@ -19,5 +19,5 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/chart_view"
     android:layout_width="wrap_content"
-    android:layout_height="218dp"
+    android:layout_height="238dp"
     app:chartStyle="@style/TemperatureAnomalyChartStyle" />
