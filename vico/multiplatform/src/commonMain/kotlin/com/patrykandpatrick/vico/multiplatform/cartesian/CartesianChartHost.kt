@@ -30,6 +30,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.multiplatform.cartesian.data.CartesianChartModel
@@ -78,7 +79,7 @@ public fun CartesianChartHost(
   animateIn: Boolean = true,
   placeholder: @Composable BoxScope.() -> Unit = {},
 ) {
-  val mutableRanges = remember(chart) { MutableCartesianChartRanges() }
+  val mutableRanges = remember { MutableCartesianChartRanges() }
   val modelWrapper by modelProducer.collectAsState(chart, animationSpec, animateIn, mutableRanges)
   val (model, previousModel, ranges, extraStore) = modelWrapper
 
@@ -119,8 +120,8 @@ public fun CartesianChartHost(
   scrollState: VicoScrollState = rememberVicoScrollState(),
   zoomState: VicoZoomState = rememberDefaultVicoZoomState(scrollState.scrollEnabled),
 ) {
-  val ranges = remember(chart) { MutableCartesianChartRanges() }
-  remember(ranges, chart, model) {
+  val ranges = remember { MutableCartesianChartRanges() }
+  remember(chart, model) {
     ranges.reset()
     chart.updateRanges(ranges, model)
   }
@@ -164,6 +165,8 @@ internal fun CartesianChartHostImpl(
 
   DisposableEffect(scrollState) { onDispose { scrollState.clearUpdated() } }
 
+  val layerBounds = rememberUpdatedState(chart.layerBounds)
+
   Canvas(
     modifier =
       Modifier.fillMaxSize()
@@ -174,10 +177,10 @@ internal fun CartesianChartHostImpl(
               if (chart.marker != null) pointerPosition.component2() else null
             },
           onZoom =
-            remember(zoomState, scrollState, chart, coroutineScope) {
+            remember(zoomState, scrollState, coroutineScope) {
               if (zoomState.zoomEnabled) {
                 { factor, centroid ->
-                  zoomState.zoom(factor, centroid.x, scrollState.value, chart.layerBounds).let {
+                  zoomState.zoom(factor, centroid.x, scrollState.value, layerBounds.value).let {
                     scroll ->
                     coroutineScope.launch { scrollState.scroll(scroll) }
                   }
