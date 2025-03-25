@@ -81,13 +81,17 @@ internal fun List<CartesianLayerModel.Entry>.getXDeltaGcd(): Double {
     val x = iterator.next().x
     val delta = abs(x - prevX)
     prevX = x
-    if (delta != 0.0) gcd = gcd?.gcdWith(delta) ?: delta
-  }
-  return gcd?.also {
-    require(it != 0.0) {
-      "The x values are too precise. The maximum precision is four decimal places."
+    if (delta == 0.0) continue
+    if (gcd != null) {
+      gcd = gcd.gcdWith(delta)
+      require(gcd != 0.0) {
+        "The x-values are too precise. The maximum precision is four decimal places."
+      }
+    } else {
+      gcd = delta
     }
-  } ?: 1.0
+  }
+  return gcd ?: 1.0
 }
 
 internal inline fun <T : CartesianLayerModel.Entry> List<T>.forEachIn(
