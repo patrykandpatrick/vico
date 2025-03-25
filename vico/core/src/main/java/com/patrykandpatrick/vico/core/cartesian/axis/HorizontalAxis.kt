@@ -113,7 +113,7 @@ protected constructor(
 
   override fun drawUnderLayers(context: CartesianDrawingContext) {
     with(context) {
-      val clipRestoreCount = canvas.save()
+      val saveCount = canvas.save()
       val tickTop =
         if (position == Axis.Position.Horizontal.Top) {
           bounds.bottom - lineThickness - tickLength
@@ -222,7 +222,7 @@ protected constructor(
         )
       }
 
-      if (clipRestoreCount >= 0) canvas.restoreToCount(clipRestoreCount)
+      canvas.restoreToCount(saveCount)
 
       drawGuidelines(context, baseCanvasX, fullXRange, labelValues, lineValues)
     }
