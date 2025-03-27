@@ -33,6 +33,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.unit.dp
@@ -176,6 +177,8 @@ internal fun CartesianChartHostImpl(
 
   val layerBounds = rememberUpdatedState(chart.layerBounds)
 
+  var targets by remember { mutableStateOf(emptyList<CartesianMarker.Target>()) }
+
   Box {
     Canvas(
       modifier =
@@ -207,6 +210,7 @@ internal fun CartesianChartHostImpl(
 
       layerDimensions.clear()
       chart.prepare(measuringContext, layerDimensions)
+      targets = chart.allTargets
 
       if (chart.layerBounds.isEmpty) return@Canvas
 
@@ -232,7 +236,7 @@ internal fun CartesianChartHostImpl(
       measuringContext.reset()
     }
     AccessibilityHighlighter(
-      targets = emptyList(), // TODO pass targets
+      targets = targets,
       canvasHeight = canvasBounds.height(),
       xSpacing = layerDimensions.xSpacing,
     )
