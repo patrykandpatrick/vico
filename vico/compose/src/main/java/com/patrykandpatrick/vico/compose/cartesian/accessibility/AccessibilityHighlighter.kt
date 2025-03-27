@@ -90,15 +90,17 @@ private fun ColumnCartesianMarkerHighlighter(
   canvasHeight: Float,
 ) {
   Box {
-    target.columns.forEach { column ->
-      Highlighter(
-        xSpacing = xSpacing,
-        canvasX = target.canvasX,
-        canvasY = column.canvasY,
-        height = canvasHeight,
-        contentDescription = column.entry.contentDescription,
-      )
-    }
+    target.columns
+      .sortedBy { it.canvasY }
+      .forEach { column ->
+        Highlighter(
+          xSpacing = xSpacing,
+          canvasX = target.canvasX,
+          canvasY = column.canvasY,
+          height = canvasHeight,
+          contentDescription = column.entry.contentDescription,
+        )
+      }
   }
 }
 
