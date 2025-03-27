@@ -55,7 +55,7 @@ fun JetpackComposeBasicLineChart(modifier: Modifier = Modifier) {
   LaunchedEffect(Unit) {
     modelProducer.runTransaction {
       // Learn more: https://patrykandpatrick.com/vmml6t.
-      lineSeries { series(13, 8, 7, 12, 0, 1, 15, 14, 0, 11, 6, 12, 0, 11, 12, 11) }
+      lineSeries { series(y = y, contentDescriptions = contentDescriptions) }
     }
   }
   JetpackComposeBasicLineChart(modelProducer, modifier)
@@ -69,8 +69,11 @@ private fun Preview() {
   runBlocking {
     modelProducer.runTransaction {
       // Learn more: https://patrykandpatrick.com/vmml6t.
-      lineSeries { series(13, 8, 7, 12, 0, 1, 15, 14, 0, 11, 6, 12, 0, 11, 12, 11) }
+      lineSeries { series(y = y, contentDescriptions = contentDescriptions) }
     }
   }
   PreviewBox { JetpackComposeBasicLineChart(modelProducer) }
 }
+
+private val y = listOf(13, 8, 7, 12, 0, 1, 15, 14, 0, 11, 6, 12, 0, 11, 12, 11)
+private val contentDescriptions = y.mapIndexed { x, y -> "$x to $y" }
