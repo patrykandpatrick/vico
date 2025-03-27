@@ -17,7 +17,9 @@
 package com.patrykandpatrick.vico.compose.cartesian
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.graphics.RectF
+import android.view.accessibility.AccessibilityManager
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
@@ -36,6 +38,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.cartesian.accessibility.AccessibilityHighlighter
 import com.patrykandpatrick.vico.compose.cartesian.data.component1
@@ -235,11 +238,13 @@ internal fun CartesianChartHostImpl(
       chart.draw(drawingContext)
       measuringContext.reset()
     }
-    AccessibilityHighlighter(
-      targets = targets,
-      canvasHeight = canvasBounds.height(),
-      xSpacing = layerDimensions.xSpacing,
-    )
+    if (isTouchExplorationEnabled()) {
+      AccessibilityHighlighter(
+        targets = targets,
+        canvasHeight = canvasBounds.height(),
+        xSpacing = layerDimensions.xSpacing,
+      )
+    }
   }
 }
 
@@ -250,3 +255,11 @@ private fun CartesianChartHostBox(modifier: Modifier, content: @Composable BoxSc
 
 private val CartesianChart.allTargets: List<CartesianMarker.Target>
   get() = layers.flatMap { it.markerTargets.values }.flatten()
+
+@Composable
+private fun isTouchExplorationEnabled(): Boolean {
+  val context = LocalContext.current
+  val accessibilityManager =
+    context.getSystemService(Context.ACCESSIBILITY_SERVICE) as? AccessibilityManager
+  return accessibilityManager?.isTouchExplorationEnabled == true
+}
