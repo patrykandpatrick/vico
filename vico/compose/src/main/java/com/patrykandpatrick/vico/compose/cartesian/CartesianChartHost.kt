@@ -231,8 +231,9 @@ internal fun CartesianChartHostImpl(
       chart.draw(drawingContext)
       measuringContext.reset()
     }
+
     AccessibilityHighlighter(
-      targets = emptyList(), // TODO pass targets
+      targets = chart.allTargets,
       canvasHeight = canvasBounds.height(),
       xSpacing = layerDimensions.xSpacing,
     )
