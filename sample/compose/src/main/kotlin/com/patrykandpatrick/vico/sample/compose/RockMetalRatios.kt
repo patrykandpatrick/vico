@@ -43,8 +43,10 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
 import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.marker.ColumnCartesianLayerMarkerTarget
+import com.patrykandpatrick.vico.core.cartesian.marker.ContentDescriptionProvider
 import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
+import com.patrykandpatrick.vico.sample.compose.ContentDescriptionProvider
 import java.text.DecimalFormat
 import kotlinx.coroutines.runBlocking
 
@@ -73,6 +75,16 @@ private val MarkerValueFormatter =
       )
   }
 
+private val ContentDescriptionProvider = ContentDescriptionProvider { context, targets ->
+  val target = targets.first() as ColumnCartesianLayerMarkerTarget
+  buildString {
+    val metal = context.model.extraStore[BottomAxisLabelKey][target.x.toInt()]
+    append("$metal.")
+    val rockPerKgMetal = target.columns[0]
+    append("${rockPerKgMetal.entry.y}.")
+  }
+}
+
 @Composable
 private fun JetpackComposeRockMetalRatios(
   modelProducer: CartesianChartModelProducer,
@@ -94,6 +106,7 @@ private fun JetpackComposeRockMetalRatios(
           ),
         marker = rememberMarker(MarkerValueFormatter),
         layerPadding = { cartesianLayerPadding(scalableStart = 8.dp, scalableEnd = 8.dp) },
+        contentDescriptionProvider = ContentDescriptionProvider,
       ),
     modelProducer = modelProducer,
     modifier = modifier.height(220.dp),

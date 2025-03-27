@@ -352,11 +352,11 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       val drawingContext =
         CartesianDrawingContext(
           measuringContext,
-          canvas,
           layerDimensions,
           chart.layerBounds,
           scrollHandler.value,
           zoomHandler.value,
+          canvas,
         )
 
       chart.draw(drawingContext)

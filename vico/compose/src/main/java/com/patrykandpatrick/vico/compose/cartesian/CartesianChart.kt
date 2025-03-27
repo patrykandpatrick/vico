@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@ import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayerPadding
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerVisibilityListener
+import com.patrykandpatrick.vico.core.cartesian.marker.ContentDescriptionProvider
 import com.patrykandpatrick.vico.core.common.Legend
 import com.patrykandpatrick.vico.core.common.ValueWrapper
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
@@ -58,6 +59,7 @@ public fun rememberCartesianChart(
   decorations: List<Decoration> = emptyList(),
   persistentMarkers: (CartesianChart.PersistentMarkerScope.(ExtraStore) -> Unit)? = null,
   getXStep: ((CartesianChartModel) -> Double) = { it.getXDeltaGcd() },
+  contentDescriptionProvider: ContentDescriptionProvider = ContentDescriptionProvider.default,
 ): CartesianChart {
   val wrapper = remember { ValueWrapper<CartesianChart?>(null) }
   return remember(
@@ -74,6 +76,7 @@ public fun rememberCartesianChart(
     decorations,
     persistentMarkers,
     getXStep,
+    contentDescriptionProvider,
   ) {
     val cartesianChart =
       wrapper.value?.copy(
@@ -90,6 +93,7 @@ public fun rememberCartesianChart(
         decorations = decorations,
         persistentMarkers = persistentMarkers,
         getXStep = getXStep,
+        contentDescriptionProvider = contentDescriptionProvider,
       )
         ?: CartesianChart(
           *layers,
@@ -105,6 +109,7 @@ public fun rememberCartesianChart(
           decorations = decorations,
           persistentMarkers = persistentMarkers,
           getXStep = getXStep,
+          contentDescriptionProvider = contentDescriptionProvider,
         )
     wrapper.value = cartesianChart
     cartesianChart

@@ -135,15 +135,29 @@ public class ColumnCartesianLayerModel : CartesianLayerModel {
     return result
   }
 
-  /** Represents a column of height [y] at [x]. */
-  public class Entry internal constructor(override val x: Double, public val y: Double) :
+  /** Represents a column of height [y] at [x] in a specific series identified by [seriesIndex]. */
+  public class Entry
+  internal constructor(override val x: Double, public val y: Double, public val seriesIndex: Int) :
     CartesianLayerModel.Entry {
-    public constructor(x: Number, y: Number) : this(x.toDouble(), y.toDouble())
+    @Deprecated("Use the constructor with `seriesIndex` instead.")
+    public constructor(x: Number, y: Number) : this(x.toDouble(), y.toDouble(), -1)
+
+    public constructor(
+      x: Number,
+      y: Number,
+      seriesIndex: Int,
+    ) : this(x.toDouble(), y.toDouble(), seriesIndex)
 
     override fun equals(other: Any?): Boolean =
-      this === other || other is Entry && x == other.x && y == other.y
+      this === other ||
+        other is Entry && x == other.x && y == other.y && seriesIndex == other.seriesIndex
 
-    override fun hashCode(): Int = 31 * x.hashCode() + y.hashCode()
+    override fun hashCode(): Int {
+      var result = x.hashCode()
+      result = 31 * result + y.hashCode()
+      result = 31 * result + seriesIndex
+      return result
+    }
   }
 
   /**
@@ -169,7 +183,8 @@ public class ColumnCartesianLayerModel : CartesianLayerModel {
      * have the same size.
      */
     public fun series(x: Collection<Number>, y: Collection<Number>) {
-      series.add(x.zip(y, ColumnCartesianLayerModel::Entry))
+      val seriesIndex = series.size
+      series.add(x.zip(y) { x, y -> Entry(x, y, seriesIndex) })
     }
 
     /** Adds a series with the provided _y_ values ([y]), using their indices as the _x_ values. */
