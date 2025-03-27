@@ -206,6 +206,7 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
       closing: Collection<Number>,
       low: Collection<Number>,
       high: Collection<Number>,
+      contentDescription: Collection<String?>? = null,
     ) = buildList {
       var previousClosingPrice: Number? = null
       x.forEachIndexed { index, x ->
@@ -220,6 +221,7 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
             high = high.elementAt(index),
             absoluteChange = Change.forPrices(old = openingPrice, new = closingPrice),
             relativeChange = Change.forPrices(old = previousClosingPrice ?: 0, new = closingPrice),
+            contentDescription = contentDescription?.elementAt(index),
           )
         )
         previousClosingPrice = closingPrice
@@ -240,6 +242,20 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
       CandlestickCartesianLayerModel(series(x, opening, closing, low, high))
 
     /**
+     * Creates a [CandlestickCartesianLayerModel] with the provided _x_ values ([x]) and prices.
+     * [opening], [closing], [low], [high] and [contentDescriptions] should have the same sizes.
+     */
+    public fun build(
+      x: Collection<Number>,
+      opening: Collection<Number>,
+      closing: Collection<Number>,
+      low: Collection<Number>,
+      high: Collection<Number>,
+      contentDescriptions: List<String?>,
+    ): CandlestickCartesianLayerModel =
+      CandlestickCartesianLayerModel(series(x, opening, closing, low, high, contentDescriptions))
+
+    /**
      * Creates a [CandlestickCartesianLayerModel] with the provided prices, using their indices as
      * the _x_ values. [opening], [closing], [low], and [high] should have the same sizes.
      */
@@ -258,6 +274,27 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
       )
 
     /**
+     * Creates a [CandlestickCartesianLayerModel] with the provided prices, using their indices as
+     * the _x_ values. [opening], [closing], [low], [high] and [contentDescriptions] should have the
+     * same sizes.
+     */
+    public fun build(
+      opening: Collection<Number>,
+      closing: Collection<Number>,
+      low: Collection<Number>,
+      high: Collection<Number>,
+      contentDescriptions: List<String?>,
+    ): CandlestickCartesianLayerModel =
+      build(
+        x = opening.indices.toList(),
+        opening = opening,
+        closing = closing,
+        low = low,
+        high = high,
+        contentDescriptions = contentDescriptions,
+      )
+
+    /**
      * Creates a [Partial] with the provided _x_ values ([x]) and prices. [opening], [closing],
      * [low], and [high] should have the same sizes.
      */
@@ -268,6 +305,20 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
       low: Collection<Number>,
       high: Collection<Number>,
     ): Partial = Partial(series(x, opening, closing, low, high))
+
+    /**
+     * Creates a [Partial] with the provided _x_ values ([x]) and prices. [opening], [closing],
+     * [low], [high] and [contentDescriptions] should have the same sizes.
+     */
+    @JvmName("partialWithContentDescriptions")
+    public fun partial(
+      x: Collection<Number>,
+      opening: Collection<Number>,
+      closing: Collection<Number>,
+      low: Collection<Number>,
+      high: Collection<Number>,
+      contentDescriptions: Collection<String?>,
+    ): Partial = Partial(series(x, opening, closing, low, high, contentDescriptions))
 
     /**
      * Creates a [Partial] with the provided prices, using their indices as the _x_ values.
@@ -285,6 +336,27 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
         closing = closing,
         low = low,
         high = high,
+      )
+
+    /**
+     * Creates a [Partial] with the provided prices, using their indices as the _x_ values.
+     * [opening], [closing], [low], [high] and [contentDescriptions] should have the same sizes.
+     */
+    @JvmName("partialWithContentDescriptions")
+    public fun partial(
+      opening: Collection<Number>,
+      closing: Collection<Number>,
+      low: Collection<Number>,
+      high: Collection<Number>,
+      contentDescriptions: Collection<String?>,
+    ): Partial =
+      partial(
+        x = opening.indices.toList(),
+        opening = opening,
+        closing = closing,
+        low = low,
+        high = high,
+        contentDescriptions = contentDescriptions,
       )
   }
 }
@@ -305,6 +377,23 @@ public fun CartesianChartModelProducer.Transaction.candlestickSeries(
 }
 
 /**
+ * Creates a [CandlestickCartesianLayerModel.Partial] with the provided _x_ values ([x]) and prices
+ * and adds it to the [CartesianChartModelProducer.Transaction]’s [CartesianLayerModel.Partial]
+ * list. [opening], [closing], [low], [high] and [contentDescriptions] should have the same sizes.
+ */
+@JvmName("candlestickSeriesWithContentDescriptions")
+public fun CartesianChartModelProducer.Transaction.candlestickSeries(
+  x: Collection<Number>,
+  opening: Collection<Number>,
+  closing: Collection<Number>,
+  low: Collection<Number>,
+  high: Collection<Number>,
+  contentDescriptions: Collection<String?>,
+) {
+  add(CandlestickCartesianLayerModel.partial(x, opening, closing, low, high, contentDescriptions))
+}
+
+/**
  * Creates a [CandlestickCartesianLayerModel.Partial] with the provided prices, using their indices
  * as the _x_ values, and adds it to the [CartesianChartModelProducer.Transaction]’s
  * [CartesianLayerModel.Partial] list. [opening], [closing], [low], and [high] should have the same
@@ -322,5 +411,29 @@ public fun CartesianChartModelProducer.Transaction.candlestickSeries(
     closing = closing,
     low = low,
     high = high,
+  )
+}
+
+/**
+ * Creates a [CandlestickCartesianLayerModel.Partial] with the provided prices, using their indices
+ * as the _x_ values, and adds it to the [CartesianChartModelProducer.Transaction]’s
+ * [CartesianLayerModel.Partial] list. [opening], [closing], [low], [high] and [contentDescriptions]
+ * should have the same sizes.
+ */
+@JvmName("candlestickSeriesWithContentDescriptions")
+public fun CartesianChartModelProducer.Transaction.candlestickSeries(
+  opening: Collection<Number>,
+  closing: Collection<Number>,
+  low: Collection<Number>,
+  high: Collection<Number>,
+  contentDescriptions: Collection<String?>,
+) {
+  candlestickSeries(
+    x = opening.indices.toList(),
+    opening = opening,
+    closing = closing,
+    low = low,
+    high = high,
+    contentDescriptions = contentDescriptions,
   )
 }
