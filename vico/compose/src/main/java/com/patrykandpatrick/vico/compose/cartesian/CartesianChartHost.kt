@@ -36,6 +36,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.unit.dp
+import com.patrykandpatrick.vico.compose.cartesian.accessibility.AccessibilityHighlighter
 import com.patrykandpatrick.vico.compose.cartesian.data.component1
 import com.patrykandpatrick.vico.compose.cartesian.data.component2
 import com.patrykandpatrick.vico.compose.cartesian.data.component3
@@ -174,59 +175,66 @@ internal fun CartesianChartHostImpl(
 
   val layerBounds = rememberUpdatedState(chart.layerBounds)
 
-  Canvas(
-    modifier =
-      Modifier.fillMaxSize()
-        .pointerInput(
-          scrollState = scrollState,
-          onPointerPositionChange =
-            remember(chart.marker == null) {
-              if (chart.marker != null) pointerPosition.component2() else null
-            },
-          onZoom =
-            remember(zoomState, scrollState, coroutineScope) {
-              if (zoomState.zoomEnabled) {
-                { factor, centroid ->
-                  zoomState.zoom(factor, centroid.x, scrollState.value, layerBounds.value).let {
-                    scroll ->
-                    coroutineScope.launch { scrollState.scroll(scroll) }
+  Box {
+    Canvas(
+      modifier =
+        Modifier.fillMaxSize()
+          .pointerInput(
+            scrollState = scrollState,
+            onPointerPositionChange =
+              remember(chart.marker == null) {
+                if (chart.marker != null) pointerPosition.component2() else null
+              },
+            onZoom =
+              remember(zoomState, scrollState, coroutineScope) {
+                if (zoomState.zoomEnabled) {
+                  { factor, centroid ->
+                    zoomState.zoom(factor, centroid.x, scrollState.value, layerBounds.value).let {
+                      scroll ->
+                      coroutineScope.launch { scrollState.scroll(scroll) }
+                    }
                   }
+                } else {
+                  null
                 }
-              } else {
-                null
-              }
-            },
+              },
+          )
+    ) {
+      val canvas = drawContext.canvas.nativeCanvas
+      if (canvas.width == 0 || canvas.height == 0) return@Canvas
+      canvasBounds.set(left = 0, top = 0, right = size.width, bottom = size.height)
+
+      layerDimensions.clear()
+      chart.prepare(measuringContext, layerDimensions)
+
+      if (chart.layerBounds.isEmpty) return@Canvas
+
+      zoomState.update(measuringContext, layerDimensions, chart.layerBounds)
+      scrollState.update(measuringContext, chart.layerBounds, layerDimensions)
+
+      if (model.id != previousModelID) {
+        coroutineScope.launch { scrollState.autoScroll(model, previousModel) }
+        previousModelID = model.id
+      }
+
+      val drawingContext =
+        CartesianDrawingContext(
+          measuringContext,
+          canvas,
+          layerDimensions,
+          chart.layerBounds,
+          scrollState.value,
+          zoomState.value,
         )
-  ) {
-    val canvas = drawContext.canvas.nativeCanvas
-    if (canvas.width == 0 || canvas.height == 0) return@Canvas
-    canvasBounds.set(left = 0, top = 0, right = size.width, bottom = size.height)
 
-    layerDimensions.clear()
-    chart.prepare(measuringContext, layerDimensions)
-
-    if (chart.layerBounds.isEmpty) return@Canvas
-
-    zoomState.update(measuringContext, layerDimensions, chart.layerBounds)
-    scrollState.update(measuringContext, chart.layerBounds, layerDimensions)
-
-    if (model.id != previousModelID) {
-      coroutineScope.launch { scrollState.autoScroll(model, previousModel) }
-      previousModelID = model.id
+      chart.draw(drawingContext)
+      measuringContext.reset()
     }
-
-    val drawingContext =
-      CartesianDrawingContext(
-        measuringContext,
-        canvas,
-        layerDimensions,
-        chart.layerBounds,
-        scrollState.value,
-        zoomState.value,
-      )
-
-    chart.draw(drawingContext)
-    measuringContext.reset()
+    AccessibilityHighlighter(
+      targets = emptyList(), // TODO pass targets
+      canvasHeight = canvasBounds.height(),
+      xSpacing = layerDimensions.xSpacing,
+    )
   }
 }
 
