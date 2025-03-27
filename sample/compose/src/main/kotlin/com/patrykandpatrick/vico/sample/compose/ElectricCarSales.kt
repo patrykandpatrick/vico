@@ -87,6 +87,7 @@ private fun JetpackComposeElectricCarSales(
 
 private val x = (2010..2023).toList()
 private val y = listOf<Number>(0.28, 1.4, 3.1, 5.8, 15, 22, 29, 39, 49, 56, 75, 86, 89, 93)
+private val contentDescriptions = x.mapIndexed { index, x -> "Year $x, electric car sales percentage: ${y[index]}" }
 
 @Composable
 fun JetpackComposeElectricCarSales(modifier: Modifier = Modifier) {
@@ -94,7 +95,7 @@ fun JetpackComposeElectricCarSales(modifier: Modifier = Modifier) {
   LaunchedEffect(Unit) {
     modelProducer.runTransaction {
       // Learn more: https://patrykandpatrick.com/vmml6t.
-      lineSeries { series(x, y) }
+      lineSeries { series(x, y, contentDescriptions) }
     }
   }
   JetpackComposeElectricCarSales(modelProducer, modifier)
@@ -108,7 +109,7 @@ private fun Preview() {
   runBlocking {
     modelProducer.runTransaction {
       // Learn more: https://patrykandpatrick.com/vmml6t.
-      lineSeries { series(x, y) }
+      lineSeries { series(x, y, contentDescriptions) }
     }
   }
   PreviewBox { JetpackComposeElectricCarSales(modelProducer) }
