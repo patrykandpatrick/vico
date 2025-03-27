@@ -49,6 +49,7 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartRanges
 import com.patrykandpatrick.vico.core.cartesian.data.MutableCartesianChartRanges
 import com.patrykandpatrick.vico.core.cartesian.data.toImmutable
 import com.patrykandpatrick.vico.core.cartesian.layer.MutableCartesianLayerDimensions
+import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.core.common.Defaults.CHART_HEIGHT
 import com.patrykandpatrick.vico.core.common.Point
 import com.patrykandpatrick.vico.core.common.ValueWrapper
@@ -242,3 +243,6 @@ internal fun CartesianChartHostImpl(
 private fun CartesianChartHostBox(modifier: Modifier, content: @Composable BoxScope.() -> Unit) {
   Box(modifier = modifier.height(CHART_HEIGHT.dp).fillMaxWidth(), content = content)
 }
+
+private val CartesianChart.allTargets: List<CartesianMarker.Target>
+  get() = layers.flatMap { it.markerTargets.values }.flatten()
