@@ -136,9 +136,17 @@ public class ColumnCartesianLayerModel : CartesianLayerModel {
   }
 
   /** Represents a column of height [y] at [x]. */
-  public class Entry internal constructor(override val x: Double, public val y: Double) :
-    CartesianLayerModel.Entry {
-    public constructor(x: Number, y: Number) : this(x.toDouble(), y.toDouble())
+  public class Entry
+  internal constructor(
+    override val x: Double,
+    public val y: Double,
+    override val contentDescription: String? = null,
+  ) : CartesianLayerModel.Entry {
+    public constructor(
+      x: Number,
+      y: Number,
+      contentDescription: String? = null,
+    ) : this(x.toDouble(), y.toDouble(), contentDescription)
 
     override fun equals(other: Any?): Boolean =
       this === other || other is Entry && x == other.x && y == other.y
@@ -169,7 +177,20 @@ public class ColumnCartesianLayerModel : CartesianLayerModel {
      * have the same size.
      */
     public fun series(x: Collection<Number>, y: Collection<Number>) {
-      series.add(x.zip(y, ColumnCartesianLayerModel::Entry))
+      seriesImpl(x = x, y = y, contentDescriptions = null)
+    }
+
+    /**
+     * Adds a series with the provided _x_ values ([x]), _y_ values ([y]), and optional content
+     * descriptions ([contentDescriptions]). All lists should have the same size.
+     */
+    @JvmName("seriesWithContentDescriptions")
+    public fun series(
+      x: Collection<Number>,
+      y: Collection<Number>,
+      contentDescriptions: Collection<String?>,
+    ) {
+      seriesImpl(x = x, y = y, contentDescriptions = contentDescriptions)
     }
 
     /** Adds a series with the provided _y_ values ([y]), using their indices as the _x_ values. */
@@ -177,9 +198,30 @@ public class ColumnCartesianLayerModel : CartesianLayerModel {
       series(y.indices.toList(), y)
     }
 
+    /**
+     * Adds a series with the provided _y_ values ([y]), using their indices as the _x_ values, and
+     * optional content descriptions ([contentDescriptions]). [y] and [contentDescriptions] should
+     * have the same size.
+     */
+    @JvmName("seriesWithContentDescriptions")
+    public fun series(y: Collection<Number>, contentDescriptions: Collection<String?>) {
+      series(y.indices.toList(), y, contentDescriptions)
+    }
+
     /** Adds a series with the provided _y_ values ([y]), using their indices as the _x_ values. */
     public fun series(vararg y: Number) {
       series(y.toList())
+    }
+
+    private fun seriesImpl(
+      x: Collection<Number>,
+      y: Collection<Number>,
+      contentDescriptions: Collection<String?>?,
+    ) {
+      val descriptions = contentDescriptions ?: List(x.size) { null }
+      series.add(
+        x.zip(y).zip(descriptions) { (x, y), contentDescription -> Entry(x, y, contentDescription) }
+      )
     }
   }
 
