@@ -44,8 +44,8 @@ actual val Charts.overridden: LinkedHashMap<UIFramework, List<Chart>>?
         default(
           { JetpackComposeBasicColumnChart(it) },
           { JetpackComposeBasicLineChart(it) },
-          { JetpackComposeCV345DFSales2021(it) },
           { JetpackComposeBasicComboChart(it) },
+          { JetpackComposeCV345DFSales2021(it) },
           { JetpackComposeAITestScores(it) },
           { JetpackComposeDailyDigitalMediaUse(it) },
           { JetpackComposeTemperatureAnomalies(it) },
@@ -58,8 +58,8 @@ actual val Charts.overridden: LinkedHashMap<UIFramework, List<Chart>>?
         default(
           { ViewBasicColumnChart(it) },
           { ViewBasicLineChart(it) },
-          { ViewCV345DFSales2021(it) },
           { ViewBasicComboChart(it) },
+          { ViewCV345DFSales2021(it) },
           { ViewAITestScores(it) },
           { ViewDailyDigitalMediaUse(it) },
           { ViewTemperatureAnomalies(it) },
