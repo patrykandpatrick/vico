@@ -20,11 +20,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
-import com.patrykandpatrick.vico.core.common.data.ExtraStore
-import com.patrykandpatrick.vico.sample.views.databinding.BasicLineChartBinding
+import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
 import com.patrykandpatrick.vico.sample.views.databinding.BasicScatterChartBinding
 
 private data class Point(val x: Int, val y: Int)
@@ -44,6 +44,8 @@ private val data: List<List<Point>> = listOf(
   )
 )
 
+private val MarkerValueFormatter = DefaultCartesianMarker.ValueFormatter.default(colorCode = false)
+
 @Composable
 fun ViewBasicScatterChart(modifier: Modifier) {
   val modelProducer = remember { CartesianChartModelProducer() }
@@ -60,10 +62,17 @@ fun ViewBasicScatterChart(modifier: Modifier) {
       }
     }
   }
+  val context = LocalContext.current
   AndroidViewBinding(
     { inflater, parent, attachToParent ->
       BasicScatterChartBinding.inflate(inflater, parent, attachToParent).apply {
-        chartView.modelProducer = modelProducer
+        with(chartView) {
+          chart =
+            chart!!.copy(
+                marker = getMarker(context, MarkerValueFormatter),
+            )
+          this.modelProducer = modelProducer
+        }
       }
     },
     modifier,
