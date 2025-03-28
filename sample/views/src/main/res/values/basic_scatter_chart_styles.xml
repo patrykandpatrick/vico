@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright 2025 by Patryk Goworowski and Patrick Michalik.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<resources>
+    <color name="basic_scatter_chart_line_1_color">#916cda</color>
+
+    <style name="BasicScatterChartPointShapeStyle">
+        <item name="cornerSize">50%</item>
+        <item name="cornerTreatment">rounded</item>
+    </style>
+
+    <style name="BasicScatterChartPoint1Style">
+        <item name="android:color">@color/basic_scatter_chart_line_1_color</item>
+        <item name="shapeStyle">@style/BasicScatterChartPointShapeStyle</item>
+    </style>
+
+    <style name="BasicScatterChartLine1Style">
+        <item name="android:color">#00ee2b2b</item>
+        <item name="pointStyle">@style/BasicScatterChartPoint1Style</item>
+    </style>
+
+    <style name="BasicScatterChartLineLayerStyle">
+        <item name="line1Style">@style/BasicScatterChartLine1Style</item>
+        <item name="line2Style">@style/BasicScatterChartLine1Style</item>
+    </style>
+
+    <style name="BasicScatterChartChartStyle">
+        <item name="layers">line</item>
+        <item name="lineLayerStyle">@style/BasicScatterChartLineLayerStyle</item>
+        <item name="showBottomAxis">true</item>
+        <item name="showStartAxis">true</item>
+    </style>
+</resources>

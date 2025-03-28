@@ -29,6 +29,7 @@ class Chart(internal val details: Details, internal val content: @Composable (Mo
     companion object {
       val BasicColumnChart = Details("Basic column chart")
       val BasicLineChart = Details("Basic line chart")
+      val BasicScatterChart = Details("Basic scatter chart")
       val BasicComboChart = Details("Basic combo chart")
       val AITestScores =
         Details("AI test scores", "Kiela et al. 2023. Processing by Our World in\u00A0Data.")

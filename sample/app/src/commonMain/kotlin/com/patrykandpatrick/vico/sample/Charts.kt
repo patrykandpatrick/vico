@@ -23,6 +23,7 @@ import com.patrykandpatrick.vico.sample.multiplatform.ComposeMultiplatformAITest
 import com.patrykandpatrick.vico.sample.multiplatform.ComposeMultiplatformBasicColumnChart
 import com.patrykandpatrick.vico.sample.multiplatform.ComposeMultiplatformBasicComboChart
 import com.patrykandpatrick.vico.sample.multiplatform.ComposeMultiplatformBasicLineChart
+import com.patrykandpatrick.vico.sample.multiplatform.ComposeMultiplatformBasicScatterChart
 import com.patrykandpatrick.vico.sample.multiplatform.ComposeMultiplatformDailyDigitalMediaUse
 import com.patrykandpatrick.vico.sample.multiplatform.ComposeMultiplatformElectricCarSales
 import com.patrykandpatrick.vico.sample.multiplatform.ComposeMultiplatformGoldPrices
@@ -34,6 +35,7 @@ object Charts {
     default(
       { ComposeMultiplatformBasicColumnChart(it) },
       { ComposeMultiplatformBasicLineChart(it) },
+      { ComposeMultiplatformBasicScatterChart(it) },
       { ComposeMultiplatformBasicComboChart(it) },
       { ComposeMultiplatformAITestScores(it) },
       { ComposeMultiplatformDailyDigitalMediaUse(it) },
@@ -46,6 +48,7 @@ object Charts {
   fun default(
     basicColumnChart: @Composable (Modifier) -> Unit,
     basicLineChart: @Composable (Modifier) -> Unit,
+    basicScatterChart: @Composable (Modifier) -> Unit,
     basicComboChart: @Composable (Modifier) -> Unit,
     aiTestScores: @Composable (Modifier) -> Unit,
     dailyDigitalMediaUse: @Composable (Modifier) -> Unit,
@@ -57,6 +60,7 @@ object Charts {
     listOf(
       Chart(Details.BasicColumnChart, basicColumnChart),
       Chart(Details.BasicLineChart, basicLineChart),
+      Chart(Details.BasicScatterChart, basicScatterChart),
       Chart(Details.BasicComboChart, basicComboChart),
       Chart(Details.AITestScores, aiTestScores),
       Chart(Details.DailyDigitalMediaUse, dailyDigitalMediaUse),
