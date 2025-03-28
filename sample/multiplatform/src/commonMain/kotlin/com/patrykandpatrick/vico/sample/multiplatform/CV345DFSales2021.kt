@@ -34,40 +34,33 @@ import com.patrykandpatrick.vico.multiplatform.cartesian.layer.rememberLineCarte
 import com.patrykandpatrick.vico.multiplatform.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.multiplatform.cartesian.rememberVicoZoomState
 import com.patrykandpatrick.vico.multiplatform.common.component.rememberShapeComponent
-import com.patrykandpatrick.vico.multiplatform.common.data.ExtraStore
 import com.patrykandpatrick.vico.multiplatform.common.fill
 import com.patrykandpatrick.vico.multiplatform.common.shape.CorneredShape
 
 private data class Point(val x: Int, val y: Int)
 
-private val data: List<List<Point>> = listOf(
+private val data: List<List<Point>> =
   listOf(
-    Point(2, 225),
-    Point(3, 200),
-    Point(4, 221),
-    Point(7, 270),
-    Point(8, 246),
-    Point(9, 205),
-    Point(10, 215),
-  ),
-  listOf(
-    Point(3, 230)
+    listOf(
+      Point(13, 225),
+      Point(17, 200),
+      Point(18, 221),
+      Point(32, 270),
+      Point(34, 246),
+      Point(38, 205),
+      Point(40, 215),
+    ),
+    listOf(Point(17, 230)),
   )
-)
 
 @Composable
-fun ComposeMultiplatformBasicScatterChart(modifier: Modifier = Modifier) {
+fun ComposeMultiplatformCV345DFSales2021(modifier: Modifier = Modifier) {
   val modelProducer = remember { CartesianChartModelProducer() }
   LaunchedEffect(Unit) {
     modelProducer.runTransaction {
       // Learn more: https://patrykandpatrick.com/vmml6t.
       lineSeries {
-        data.forEach { points ->
-          series(
-            x = points.map { it.x },
-            y = points.map { it.y }
-          )
-        }
+        data.forEach { points -> series(x = points.map { it.x }, y = points.map { it.y }) }
       }
     }
   }
@@ -76,19 +69,18 @@ fun ComposeMultiplatformBasicScatterChart(modifier: Modifier = Modifier) {
     chart =
       rememberCartesianChart(
         rememberLineCartesianLayer(
-          lineProvider = LineCartesianLayer.LineProvider.series(
-            LineCartesianLayer.rememberLine(
-              stroke = LineCartesianLayer.LineStroke.Dashed(dashLength = 0.dp),
-              pointProvider =
-                LineCartesianLayer.PointProvider.single(
-                  LineCartesianLayer.Point(
-                    rememberShapeComponent(
-                      fill(colour1), CorneredShape.Pill
+          lineProvider =
+            LineCartesianLayer.LineProvider.series(
+              LineCartesianLayer.rememberLine(
+                stroke = LineCartesianLayer.LineStroke.Dashed(dashLength = 0.dp),
+                pointProvider =
+                  LineCartesianLayer.PointProvider.single(
+                    LineCartesianLayer.Point(
+                      rememberShapeComponent(fill(colour1), CorneredShape.Pill)
                     )
-                  )
-                ),
-            ),
-          ),
+                  ),
+              )
+            )
         ),
         startAxis = VerticalAxis.rememberStart(),
         bottomAxis = HorizontalAxis.rememberBottom(),
@@ -96,9 +88,6 @@ fun ComposeMultiplatformBasicScatterChart(modifier: Modifier = Modifier) {
       ),
     modelProducer = modelProducer,
     modifier = modifier,
-    zoomState = rememberVicoZoomState(
-      zoomEnabled = true,
-      initialZoom = Zoom.Content
-    ),
+    zoomState = rememberVicoZoomState(zoomEnabled = true, initialZoom = Zoom.Content),
   )
 }

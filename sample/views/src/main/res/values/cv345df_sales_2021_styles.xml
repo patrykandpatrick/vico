@@ -15,31 +15,31 @@
   -->
 
 <resources>
-    <color name="basic_scatter_chart_line_1_color">#916cda</color>
+    <color name="cv345df_sales_2021_line_1_color">#916cda</color>
 
-    <style name="BasicScatterChartPointShapeStyle">
+    <style name="CV345DFSales2021PointShapeStyle">
         <item name="cornerSize">50%</item>
         <item name="cornerTreatment">rounded</item>
     </style>
 
-    <style name="BasicScatterChartPoint1Style">
-        <item name="android:color">@color/basic_scatter_chart_line_1_color</item>
-        <item name="shapeStyle">@style/BasicScatterChartPointShapeStyle</item>
+    <style name="CV345DFSales2021Point1Style">
+        <item name="android:color">@color/cv345df_sales_2021_line_1_color</item>
+        <item name="shapeStyle">@style/CV345DFSales2021PointShapeStyle</item>
     </style>
 
-    <style name="BasicScatterChartLine1Style">
+    <style name="CV345DFSales2021Line1Style">
         <item name="android:color">#00ee2b2b</item>
-        <item name="pointStyle">@style/BasicScatterChartPoint1Style</item>
+        <item name="pointStyle">@style/CV345DFSales2021Point1Style</item>
     </style>
 
-    <style name="BasicScatterChartLineLayerStyle">
-        <item name="line1Style">@style/BasicScatterChartLine1Style</item>
-        <item name="line2Style">@style/BasicScatterChartLine1Style</item>
+    <style name="CV345DFSales2021LineLayerStyle">
+        <item name="line1Style">@style/CV345DFSales2021Line1Style</item>
+        <item name="line2Style">@style/CV345DFSales2021Line1Style</item>
     </style>
 
-    <style name="BasicScatterChartChartStyle">
+    <style name="CV345DFSales2021ChartStyle">
         <item name="layers">line</item>
-        <item name="lineLayerStyle">@style/BasicScatterChartLineLayerStyle</item>
+        <item name="lineLayerStyle">@style/CV345DFSales2021LineLayerStyle</item>
         <item name="showBottomAxis">true</item>
         <item name="showStartAxis">true</item>
     </style>

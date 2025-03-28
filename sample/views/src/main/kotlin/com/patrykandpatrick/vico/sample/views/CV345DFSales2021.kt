@@ -25,52 +25,43 @@ import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
 import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
-import com.patrykandpatrick.vico.sample.views.databinding.BasicScatterChartBinding
+import com.patrykandpatrick.vico.sample.views.databinding.Cv345dfSales2021Binding
 
 private data class Point(val x: Int, val y: Int)
 
-private val data: List<List<Point>> = listOf(
+private val data: List<List<Point>> =
   listOf(
-    Point(2, 225),
-    Point(3, 200),
-    Point(4, 221),
-    Point(7, 270),
-    Point(8, 246),
-    Point(9, 205),
-    Point(10, 215),
-  ),
-  listOf(
-    Point(3, 230)
+    listOf(
+      Point(13, 225),
+      Point(17, 200),
+      Point(18, 221),
+      Point(32, 270),
+      Point(34, 246),
+      Point(38, 205),
+      Point(40, 215),
+    ),
+    listOf(Point(17, 230)),
   )
-)
 
 private val MarkerValueFormatter = DefaultCartesianMarker.ValueFormatter.default(colorCode = false)
 
 @Composable
-fun ViewBasicScatterChart(modifier: Modifier) {
+fun ViewCV345DFSales2021(modifier: Modifier) {
   val modelProducer = remember { CartesianChartModelProducer() }
   LaunchedEffect(Unit) {
     modelProducer.runTransaction {
       // Learn more: https://patrykandpatrick.com/vmml6t.
       lineSeries {
-        data.forEach { points ->
-          series(
-            x = points.map { it.x },
-            y = points.map { it.y }
-          )
-        }
+        data.forEach { points -> series(x = points.map { it.x }, y = points.map { it.y }) }
       }
     }
   }
   val context = LocalContext.current
   AndroidViewBinding(
     { inflater, parent, attachToParent ->
-      BasicScatterChartBinding.inflate(inflater, parent, attachToParent).apply {
+      Cv345dfSales2021Binding.inflate(inflater, parent, attachToParent).apply {
         with(chartView) {
-          chart =
-            chart!!.copy(
-                marker = getMarker(context, MarkerValueFormatter),
-            )
+          chart = chart!!.copy(marker = getMarker(context, MarkerValueFormatter))
           this.modelProducer = modelProducer
         }
       }

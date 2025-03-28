@@ -27,34 +27,23 @@ import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStart
 import com.patrykandpatrick.vico.compose.cartesian.layer.dashed
-import com.patrykandpatrick.vico.compose.cartesian.layer.point
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLine
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
 import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
-import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
-import com.patrykandpatrick.vico.compose.common.component.shapeComponent
 import com.patrykandpatrick.vico.compose.common.fill
-import com.patrykandpatrick.vico.compose.common.insets
-import com.patrykandpatrick.vico.compose.common.rememberVerticalLegend
-import com.patrykandpatrick.vico.compose.common.vicoTheme
 import com.patrykandpatrick.vico.core.cartesian.Zoom
 import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
-import com.patrykandpatrick.vico.core.cartesian.data.CartesianLayerRangeProvider
-import com.patrykandpatrick.vico.core.cartesian.data.LineCartesianLayerModel
 import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
-import com.patrykandpatrick.vico.core.common.LegendItem
-import com.patrykandpatrick.vico.core.common.component.Component
-import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.core.common.shape.CorneredShape
 import kotlinx.coroutines.runBlocking
 
 @Composable
-private fun JetpackComposeBasicScatterChart(
+private fun JetpackComposeCV345DFSales2021(
   modelProducer: CartesianChartModelProducer,
   modifier: Modifier = Modifier,
 ) {
@@ -63,16 +52,18 @@ private fun JetpackComposeBasicScatterChart(
     chart =
       rememberCartesianChart(
         rememberLineCartesianLayer(
-          lineProvider = LineCartesianLayer.LineProvider.series(
-            LineCartesianLayer.rememberLine(
-              stroke = LineCartesianLayer.LineStroke.dashed(dashLength = 0.dp),
-              pointProvider =
-                LineCartesianLayer.PointProvider.single(
-                  LineCartesianLayer.Point(rememberShapeComponent(
-                    fill(colour1), CorneredShape.Pill)))
-              ,
-            ),
-          ),
+          lineProvider =
+            LineCartesianLayer.LineProvider.series(
+              LineCartesianLayer.rememberLine(
+                stroke = LineCartesianLayer.LineStroke.dashed(dashLength = 0.dp),
+                pointProvider =
+                  LineCartesianLayer.PointProvider.single(
+                    LineCartesianLayer.Point(
+                      rememberShapeComponent(fill(colour1), CorneredShape.Pill)
+                    )
+                  ),
+              )
+            )
         ),
         startAxis = VerticalAxis.rememberStart(),
         bottomAxis = HorizontalAxis.rememberBottom(),
@@ -80,48 +71,39 @@ private fun JetpackComposeBasicScatterChart(
       ),
     modelProducer = modelProducer,
     modifier = modifier,
-    zoomState = rememberVicoZoomState(
-      zoomEnabled = true,
-      initialZoom = Zoom.Content
-    ),
+    zoomState = rememberVicoZoomState(zoomEnabled = true, initialZoom = Zoom.Content),
   )
 }
 
 @Composable
-fun JetpackComposeBasicScatterChart(modifier: Modifier = Modifier) {
+fun JetpackComposeCV345DFSales2021(modifier: Modifier = Modifier) {
   val modelProducer = remember { CartesianChartModelProducer() }
   LaunchedEffect(Unit) {
     modelProducer.runTransaction {
       // Learn more: https://patrykandpatrick.com/vmml6t.
       lineSeries {
-        data.forEach { points ->
-          series(
-            x = points.map { it.x },
-            y = points.map { it.y }
-          )
-        }
+        data.forEach { points -> series(x = points.map { it.x }, y = points.map { it.y }) }
       }
     }
   }
-  JetpackComposeBasicScatterChart(modelProducer, modifier)
+  JetpackComposeCV345DFSales2021(modelProducer, modifier)
 }
 
 private data class Point(val x: Int, val y: Int)
 
-private val data: List<List<Point>> = listOf(
+private val data: List<List<Point>> =
   listOf(
-    Point(2, 225),
-    Point(3, 200),
-    Point(4, 221),
-    Point(7, 270),
-    Point(8, 246),
-    Point(9, 205),
-    Point(10, 215),
-  ),
-  listOf(
-    Point(3, 230)
+    listOf(
+      Point(13, 225),
+      Point(17, 200),
+      Point(18, 221),
+      Point(32, 270),
+      Point(34, 246),
+      Point(38, 205),
+      Point(40, 215),
+    ),
+    listOf(Point(17, 230)),
   )
-)
 
 @Composable
 @Preview
@@ -132,14 +114,9 @@ private fun Preview() {
     modelProducer.runTransaction {
       // Learn more: https://patrykandpatrick.com/vmml6t.
       lineSeries {
-        data.forEach { points ->
-          series(
-            x = points.map { it.x },
-            y = points.map { it.y }
-          )
-        }
+        data.forEach { points -> series(x = points.map { it.x }, y = points.map { it.y }) }
       }
     }
   }
-  PreviewBox { JetpackComposeBasicScatterChart(modelProducer) }
+  PreviewBox { JetpackComposeCV345DFSales2021(modelProducer) }
 }

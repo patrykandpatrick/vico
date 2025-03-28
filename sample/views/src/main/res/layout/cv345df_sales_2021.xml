@@ -20,4 +20,4 @@
     android:id="@+id/chart_view"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    app:chartStyle="@style/BasicScatterChartChartStyle" />
+    app:chartStyle="@style/CV345DFSales2021ChartStyle" />
