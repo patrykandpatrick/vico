@@ -34,20 +34,10 @@ import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
 import com.patrykandpatrick.vico.core.cartesian.marker.LineCartesianLayerMarkerTarget
 import com.patrykandpatrick.vico.sample.views.databinding.Cv345dfSales2021Binding
 
-private data class Point(val x: Int, val y: Int)
-
-private val data: List<List<Point>> =
+private val data =
   listOf(
-    listOf(
-      Point(13, 225),
-      Point(17, 200),
-      Point(18, 221),
-      Point(32, 270),
-      Point(34, 246),
-      Point(38, 205),
-      Point(40, 215),
-    ),
-    listOf(Point(17, 230)),
+    mapOf<Int, Int>(13 to 225, 17 to 200, 18 to 221, 32 to 270, 34 to 246, 38 to 205, 40 to 215),
+    mapOf<Int, Int>(17 to 230),
   )
 
 private var colourInt: Int = 0
@@ -83,9 +73,7 @@ fun ViewCV345DFSales2021(modifier: Modifier) {
   LaunchedEffect(Unit) {
     modelProducer.runTransaction {
       // Learn more: https://patrykandpatrick.com/vmml6t.
-      lineSeries {
-        data.forEach { points -> series(x = points.map { it.x }, y = points.map { it.y }) }
-      }
+      lineSeries { data.forEach { series(it.keys, it.values) } }
     }
   }
   val context = LocalContext.current
