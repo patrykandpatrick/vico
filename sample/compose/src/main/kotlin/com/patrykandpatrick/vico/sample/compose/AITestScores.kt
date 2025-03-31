@@ -149,7 +149,11 @@ fun JetpackComposeAITestScores(modifier: Modifier = Modifier) {
   LaunchedEffect(Unit) {
     modelProducer.runTransaction {
       // Learn more: https://patrykandpatrick.com/vmml6t.
-      lineSeries { data.forEach { (_, map) -> series(map.keys, map.values) } }
+      lineSeries {
+        data.forEach { (key, map) ->
+          series(map.keys, map.values, map.map { (year, value) -> "Year $year: $value for $key" })
+        }
+      }
       extras { extraStore -> extraStore[LegendLabelKey] = data.keys }
     }
   }
@@ -164,7 +168,11 @@ private fun Preview() {
   runBlocking {
     modelProducer.runTransaction {
       // Learn more: https://patrykandpatrick.com/vmml6t.
-      lineSeries { data.forEach { (_, map) -> series(map.keys, map.values) } }
+      lineSeries {
+        data.forEach { (key, map) ->
+          series(map.keys, map.values, map.map { (year, value) -> "Year $year: $value for $key" })
+        }
+      }
       extras { extraStore -> extraStore[LegendLabelKey] = data.keys }
     }
   }

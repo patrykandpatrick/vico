@@ -17,7 +17,9 @@
 package com.patrykandpatrick.vico.compose.cartesian
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.graphics.RectF
+import android.view.accessibility.AccessibilityManager
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
@@ -33,9 +35,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.patrykandpatrick.vico.compose.cartesian.accessibility.AccessibilityHighlighter
 import com.patrykandpatrick.vico.compose.cartesian.data.component1
 import com.patrykandpatrick.vico.compose.cartesian.data.component2
 import com.patrykandpatrick.vico.compose.cartesian.data.component3
@@ -48,6 +53,7 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartRanges
 import com.patrykandpatrick.vico.core.cartesian.data.MutableCartesianChartRanges
 import com.patrykandpatrick.vico.core.cartesian.data.toImmutable
 import com.patrykandpatrick.vico.core.cartesian.layer.MutableCartesianLayerDimensions
+import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.core.common.Defaults.CHART_HEIGHT
 import com.patrykandpatrick.vico.core.common.Point
 import com.patrykandpatrick.vico.core.common.ValueWrapper
@@ -174,63 +180,86 @@ internal fun CartesianChartHostImpl(
 
   val layerBounds = rememberUpdatedState(chart.layerBounds)
 
-  Canvas(
-    modifier =
-      Modifier.fillMaxSize()
-        .pointerInput(
-          scrollState = scrollState,
-          onPointerPositionChange =
-            remember(chart.marker == null) {
-              if (chart.marker != null) pointerPosition.component2() else null
-            },
-          onZoom =
-            remember(zoomState, scrollState, coroutineScope) {
-              if (zoomState.zoomEnabled) {
-                { factor, centroid ->
-                  zoomState.zoom(factor, centroid.x, scrollState.value, layerBounds.value).let {
-                    scroll ->
-                    coroutineScope.launch { scrollState.scroll(scroll) }
+  var targets by remember { mutableStateOf(emptyList<CartesianMarker.Target>()) }
+
+  Box {
+    Canvas(
+      modifier =
+        Modifier.fillMaxSize()
+          .pointerInput(
+            scrollState = scrollState,
+            onPointerPositionChange =
+              remember(chart.marker == null) {
+                if (chart.marker != null) pointerPosition.component2() else null
+              },
+            onZoom =
+              remember(zoomState, scrollState, coroutineScope) {
+                if (zoomState.zoomEnabled) {
+                  { factor, centroid ->
+                    zoomState.zoom(factor, centroid.x, scrollState.value, layerBounds.value).let {
+                      scroll ->
+                      coroutineScope.launch { scrollState.scroll(scroll) }
+                    }
                   }
+                } else {
+                  null
                 }
-              } else {
-                null
-              }
-            },
+              },
+          )
+    ) {
+      val canvas = drawContext.canvas.nativeCanvas
+      if (canvas.width == 0 || canvas.height == 0) return@Canvas
+      canvasBounds.set(left = 0, top = 0, right = size.width, bottom = size.height)
+
+      layerDimensions.clear()
+      chart.prepare(measuringContext, layerDimensions)
+      targets = chart.allTargets
+
+      if (chart.layerBounds.isEmpty) return@Canvas
+
+      zoomState.update(measuringContext, layerDimensions, chart.layerBounds)
+      scrollState.update(measuringContext, chart.layerBounds, layerDimensions)
+
+      if (model.id != previousModelID) {
+        coroutineScope.launch { scrollState.autoScroll(model, previousModel) }
+        previousModelID = model.id
+      }
+
+      val drawingContext =
+        CartesianDrawingContext(
+          measuringContext,
+          canvas,
+          layerDimensions,
+          chart.layerBounds,
+          scrollState.value,
+          zoomState.value,
         )
-  ) {
-    val canvas = drawContext.canvas.nativeCanvas
-    if (canvas.width == 0 || canvas.height == 0) return@Canvas
-    canvasBounds.set(left = 0, top = 0, right = size.width, bottom = size.height)
 
-    layerDimensions.clear()
-    chart.prepare(measuringContext, layerDimensions)
-
-    if (chart.layerBounds.isEmpty) return@Canvas
-
-    zoomState.update(measuringContext, layerDimensions, chart.layerBounds)
-    scrollState.update(measuringContext, chart.layerBounds, layerDimensions)
-
-    if (model.id != previousModelID) {
-      coroutineScope.launch { scrollState.autoScroll(model, previousModel) }
-      previousModelID = model.id
+      chart.draw(drawingContext)
+      measuringContext.reset()
     }
-
-    val drawingContext =
-      CartesianDrawingContext(
-        measuringContext,
-        canvas,
-        layerDimensions,
-        chart.layerBounds,
-        scrollState.value,
-        zoomState.value,
+    if (isTouchExplorationEnabled()) {
+      AccessibilityHighlighter(
+        targets = targets,
+        canvasHeight = canvasBounds.height(),
+        xSpacing = layerDimensions.xSpacing,
       )
-
-    chart.draw(drawingContext)
-    measuringContext.reset()
+    }
   }
 }
 
 @Composable
 private fun CartesianChartHostBox(modifier: Modifier, content: @Composable BoxScope.() -> Unit) {
   Box(modifier = modifier.height(CHART_HEIGHT.dp).fillMaxWidth(), content = content)
+}
+
+private val CartesianChart.allTargets: List<CartesianMarker.Target>
+  get() = layers.flatMap { it.markerTargets.values }.flatten()
+
+@Composable
+private fun isTouchExplorationEnabled(): Boolean {
+  val context = LocalContext.current
+  val accessibilityManager =
+    context.getSystemService(Context.ACCESSIBILITY_SERVICE) as? AccessibilityManager
+  return accessibilityManager?.isTouchExplorationEnabled == true
 }
