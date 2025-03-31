@@ -60,7 +60,6 @@ import com.patrykandpatrick.vico.multiplatform.common.data.CartesianLayerDrawing
 import com.patrykandpatrick.vico.multiplatform.common.data.ExtraStore
 import com.patrykandpatrick.vico.multiplatform.common.data.MutableExtraStore
 import com.patrykandpatrick.vico.multiplatform.common.doubled
-import com.patrykandpatrick.vico.multiplatform.common.fill
 import com.patrykandpatrick.vico.multiplatform.common.getBitmap
 import com.patrykandpatrick.vico.multiplatform.common.getPixel
 import com.patrykandpatrick.vico.multiplatform.common.getRepeating
@@ -773,7 +772,7 @@ public fun rememberLineCartesianLayer(
   lineProvider: LineCartesianLayer.LineProvider =
     LineCartesianLayer.LineProvider.series(
       vicoTheme.lineCartesianLayerColors.map { color ->
-        LineCartesianLayer.rememberLine(LineCartesianLayer.LineFill.single(fill(color)))
+        LineCartesianLayer.rememberLine(LineCartesianLayer.LineFill.single(Fill(color)))
       }
     ),
   pointSpacing: Dp = Defaults.POINT_SPACING.dp,
@@ -821,7 +820,7 @@ public fun rememberLineCartesianLayer(
 public fun LineCartesianLayer.Companion.rememberLine(
   fill: LineCartesianLayer.LineFill =
     vicoTheme.lineCartesianLayerColors.first().let { color ->
-      remember(color) { LineCartesianLayer.LineFill.single(fill(color)) }
+      remember(color) { LineCartesianLayer.LineFill.single(Fill(color)) }
     },
   stroke: LineCartesianLayer.LineStroke = LineCartesianLayer.LineStroke.Continuous(),
   areaFill: LineCartesianLayer.AreaFill? = null,

@@ -73,9 +73,3 @@ internal fun Fill.extractColor(
   } else {
     color
   }
-
-/** Creates a [Fill]. */
-public fun fill(color: Color): Fill = Fill(color)
-
-/** Creates a [Fill]. */
-public fun fill(brush: Brush): Fill = Fill(brush)

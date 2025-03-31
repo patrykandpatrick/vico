@@ -37,10 +37,10 @@ import com.patrykandpatrick.vico.multiplatform.cartesian.layer.rememberColumnCar
 import com.patrykandpatrick.vico.multiplatform.cartesian.marker.DefaultCartesianMarker
 import com.patrykandpatrick.vico.multiplatform.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.multiplatform.cartesian.rememberVicoScrollState
+import com.patrykandpatrick.vico.multiplatform.common.Fill
 import com.patrykandpatrick.vico.multiplatform.common.component.LineComponent
 import com.patrykandpatrick.vico.multiplatform.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.multiplatform.common.data.ExtraStore
-import com.patrykandpatrick.vico.multiplatform.common.fill
 import com.patrykandpatrick.vico.multiplatform.common.shape.CorneredShape
 import kotlin.math.abs
 import kotlin.math.ceil
@@ -83,13 +83,13 @@ fun ComposeMultiplatformTemperatureAnomalies(modifier: Modifier = Modifier) {
   }
   val positiveColumn =
     rememberLineComponent(
-      fill = fill(Color(0xff0ac285)),
+      fill = Fill(Color(0xff0ac285)),
       thickness = 8.dp,
       shape = CorneredShape.rounded(topLeftPercent = 40, topRightPercent = 40),
     )
   val negativeColumn =
     rememberLineComponent(
-      fill = fill(Color(0xffe8304f)),
+      fill = Fill(Color(0xffe8304f)),
       thickness = 8.dp,
       shape = CorneredShape.rounded(bottomLeftPercent = 40, bottomRightPercent = 40),
     )

@@ -36,13 +36,13 @@ import com.patrykandpatrick.vico.multiplatform.cartesian.layer.rememberColumnCar
 import com.patrykandpatrick.vico.multiplatform.cartesian.marker.DefaultCartesianMarker
 import com.patrykandpatrick.vico.multiplatform.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.multiplatform.cartesian.rememberVicoZoomState
+import com.patrykandpatrick.vico.multiplatform.common.Fill
 import com.patrykandpatrick.vico.multiplatform.common.Insets
 import com.patrykandpatrick.vico.multiplatform.common.LegendItem
 import com.patrykandpatrick.vico.multiplatform.common.component.ShapeComponent
 import com.patrykandpatrick.vico.multiplatform.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.multiplatform.common.component.rememberTextComponent
 import com.patrykandpatrick.vico.multiplatform.common.data.ExtraStore
-import com.patrykandpatrick.vico.multiplatform.common.fill
 import com.patrykandpatrick.vico.multiplatform.common.rememberHorizontalLegend
 import com.patrykandpatrick.vico.multiplatform.common.shape.CorneredShape
 import com.patrykandpatrick.vico.multiplatform.common.vicoTheme
@@ -83,7 +83,7 @@ fun ComposeMultiplatformDailyDigitalMediaUse(modifier: Modifier = Modifier) {
           columnProvider =
             ColumnCartesianLayer.ColumnProvider.series(
               columnColors.map { color ->
-                rememberLineComponent(fill = fill(color), thickness = 16.dp)
+                rememberLineComponent(fill = Fill(color), thickness = 16.dp)
               }
             ),
           columnCollectionSpacing = 32.dp,
@@ -106,7 +106,7 @@ fun ComposeMultiplatformDailyDigitalMediaUse(modifier: Modifier = Modifier) {
               extraStore[LegendLabelKey].forEachIndexed { index, label ->
                 add(
                   LegendItem(
-                    ShapeComponent(fill(columnColors[index]), CorneredShape.Pill),
+                    ShapeComponent(Fill(columnColors[index]), CorneredShape.Pill),
                     legendItemLabelComponent,
                     label,
                   )

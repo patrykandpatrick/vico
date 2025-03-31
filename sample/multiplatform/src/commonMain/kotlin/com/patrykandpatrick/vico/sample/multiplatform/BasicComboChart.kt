@@ -33,8 +33,8 @@ import com.patrykandpatrick.vico.multiplatform.cartesian.layer.LineCartesianLaye
 import com.patrykandpatrick.vico.multiplatform.cartesian.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.multiplatform.cartesian.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.multiplatform.cartesian.rememberCartesianChart
+import com.patrykandpatrick.vico.multiplatform.common.Fill
 import com.patrykandpatrick.vico.multiplatform.common.component.rememberLineComponent
-import com.patrykandpatrick.vico.multiplatform.common.fill
 
 @Composable
 fun ComposeMultiplatformBasicComboChart(modifier: Modifier = Modifier) {
@@ -51,12 +51,12 @@ fun ComposeMultiplatformBasicComboChart(modifier: Modifier = Modifier) {
     rememberCartesianChart(
       rememberColumnCartesianLayer(
         ColumnCartesianLayer.ColumnProvider.series(
-          rememberLineComponent(fill = fill(Color(0xffffc002)), thickness = 16.dp)
+          rememberLineComponent(fill = Fill(Color(0xffffc002)), thickness = 16.dp)
         )
       ),
       rememberLineCartesianLayer(
         LineCartesianLayer.LineProvider.series(
-          LineCartesianLayer.Line(LineCartesianLayer.LineFill.single(fill(Color(0xffee2b2b))))
+          LineCartesianLayer.Line(LineCartesianLayer.LineFill.single(Fill(Color(0xffee2b2b))))
         )
       ),
       startAxis = VerticalAxis.rememberStart(),

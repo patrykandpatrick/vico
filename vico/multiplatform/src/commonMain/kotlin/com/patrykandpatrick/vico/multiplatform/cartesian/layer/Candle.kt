@@ -26,14 +26,13 @@ import com.patrykandpatrick.vico.multiplatform.common.Defaults
 import com.patrykandpatrick.vico.multiplatform.common.Fill
 import com.patrykandpatrick.vico.multiplatform.common.component.LineComponent
 import com.patrykandpatrick.vico.multiplatform.common.component.rememberLineComponent
-import com.patrykandpatrick.vico.multiplatform.common.fill
 import com.patrykandpatrick.vico.multiplatform.common.vicoTheme
 
 @Composable
 private fun Candle.Companion.sharpFilledCandle(
   color: Color,
   thickness: Dp = Defaults.CANDLE_BODY_WIDTH_DP.dp,
-) = Candle(rememberLineComponent(fill(color), thickness))
+) = Candle(rememberLineComponent(Fill(color), thickness))
 
 @Composable
 private fun Candle.Companion.sharpHollowCandle(
@@ -45,7 +44,7 @@ private fun Candle.Companion.sharpHollowCandle(
     rememberLineComponent(
       fill = Fill.Transparent,
       thickness = thickness,
-      strokeFill = fill(color),
+      strokeFill = Fill(color),
       strokeThickness = strokeThickness,
     )
   )
@@ -55,8 +54,8 @@ private fun Candle.copyWithColor(color: Color) =
 
 private fun LineComponent.copyWithColor(color: Color) =
   copy(
-    fill = if (fill.color.alpha == 0f) fill else fill(color),
-    strokeFill = if (strokeFill.color.alpha == 0f) strokeFill else fill(color),
+    fill = if (fill.color.alpha == 0f) fill else Fill(color),
+    strokeFill = if (strokeFill.color.alpha == 0f) strokeFill else Fill(color),
   )
 
 /**

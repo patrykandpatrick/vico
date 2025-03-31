@@ -33,7 +33,6 @@ import com.patrykandpatrick.vico.multiplatform.common.component.ShapeComponent
 import com.patrykandpatrick.vico.multiplatform.common.component.TextComponent
 import com.patrykandpatrick.vico.multiplatform.common.component.rememberShapeComponent
 import com.patrykandpatrick.vico.multiplatform.common.component.rememberTextComponent
-import com.patrykandpatrick.vico.multiplatform.common.fill
 import com.patrykandpatrick.vico.multiplatform.common.shape.CorneredShape
 import com.patrykandpatrick.vico.multiplatform.common.shape.MarkerCorneredShape
 
@@ -46,9 +45,9 @@ internal fun rememberMarker(
   val labelBackgroundShape = MarkerCorneredShape(CorneredShape.Corner.Rounded)
   val labelBackground =
     rememberShapeComponent(
-      fill = fill(MaterialTheme.colorScheme.background),
+      fill = Fill(MaterialTheme.colorScheme.background),
       shape = labelBackgroundShape,
-      strokeFill = fill(MaterialTheme.colorScheme.outline),
+      strokeFill = Fill(MaterialTheme.colorScheme.outline),
       strokeThickness = 1.dp,
     )
   val label =
@@ -64,7 +63,7 @@ internal fun rememberMarker(
       minWidth = TextComponent.MinWidth.fixed(40.dp),
     )
   val indicatorFrontComponent =
-    rememberShapeComponent(fill(MaterialTheme.colorScheme.surface), CorneredShape.Pill)
+    rememberShapeComponent(Fill(MaterialTheme.colorScheme.surface), CorneredShape.Pill)
   val guideline = rememberAxisGuidelineComponent()
   return rememberDefaultCartesianMarker(
     label = label,

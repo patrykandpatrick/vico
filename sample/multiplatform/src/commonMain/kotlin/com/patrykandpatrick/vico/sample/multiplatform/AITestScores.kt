@@ -36,6 +36,7 @@ import com.patrykandpatrick.vico.multiplatform.cartesian.layer.rememberLine
 import com.patrykandpatrick.vico.multiplatform.cartesian.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.multiplatform.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.multiplatform.cartesian.rememberVicoScrollState
+import com.patrykandpatrick.vico.multiplatform.common.Fill
 import com.patrykandpatrick.vico.multiplatform.common.Insets
 import com.patrykandpatrick.vico.multiplatform.common.LegendItem
 import com.patrykandpatrick.vico.multiplatform.common.Position
@@ -44,7 +45,6 @@ import com.patrykandpatrick.vico.multiplatform.common.component.rememberLineComp
 import com.patrykandpatrick.vico.multiplatform.common.component.rememberShapeComponent
 import com.patrykandpatrick.vico.multiplatform.common.component.rememberTextComponent
 import com.patrykandpatrick.vico.multiplatform.common.data.ExtraStore
-import com.patrykandpatrick.vico.multiplatform.common.fill
 import com.patrykandpatrick.vico.multiplatform.common.rememberVerticalLegend
 import com.patrykandpatrick.vico.multiplatform.common.shape.CorneredShape
 import com.patrykandpatrick.vico.multiplatform.common.vicoTheme
@@ -70,7 +70,7 @@ private val data =
 
 @Composable
 private fun rememberHorizontalLine(): HorizontalLine {
-  val fill = fill(Color(0xfffdc8c4))
+  val fill = Fill(Color(0xfffdc8c4))
   val line = rememberLineComponent(fill = fill, thickness = 2.dp)
   val labelComponent =
     rememberTextComponent(
@@ -108,11 +108,11 @@ fun ComposeMultiplatformAITestScores(modifier: Modifier = Modifier) {
         LineCartesianLayer.LineProvider.series(
           lineColors.map { color ->
             LineCartesianLayer.rememberLine(
-              fill = LineCartesianLayer.LineFill.single(fill(color)),
+              fill = LineCartesianLayer.LineFill.single(Fill(color)),
               areaFill = null,
               pointProvider =
                 LineCartesianLayer.PointProvider.single(
-                  LineCartesianLayer.Point(rememberShapeComponent(fill(color), CorneredShape.Pill))
+                  LineCartesianLayer.Point(rememberShapeComponent(Fill(color), CorneredShape.Pill))
                 ),
             )
           }
@@ -126,7 +126,7 @@ fun ComposeMultiplatformAITestScores(modifier: Modifier = Modifier) {
             extraStore[LegendLabelKey].forEachIndexed { index, label ->
               add(
                 LegendItem(
-                  ShapeComponent(fill(lineColors[index]), CorneredShape.Pill),
+                  ShapeComponent(Fill(lineColors[index]), CorneredShape.Pill),
                   legendItemLabelComponent,
                   label,
                 )

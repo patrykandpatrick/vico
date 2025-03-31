@@ -30,7 +30,6 @@ import com.patrykandpatrick.vico.multiplatform.common.component.LineComponent
 import com.patrykandpatrick.vico.multiplatform.common.component.TextComponent
 import com.patrykandpatrick.vico.multiplatform.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.multiplatform.common.component.rememberTextComponent
-import com.patrykandpatrick.vico.multiplatform.common.fill
 import com.patrykandpatrick.vico.multiplatform.common.shape.DashedShape
 import com.patrykandpatrick.vico.multiplatform.common.shape.Shape
 import com.patrykandpatrick.vico.multiplatform.common.vicoTheme
@@ -53,7 +52,7 @@ public fun rememberAxisLabelComponent(
 /** A [rememberLineComponent] alias with defaults for [Axis] lines. */
 @Composable
 public fun rememberAxisLineComponent(
-  fill: Fill = fill(vicoTheme.lineColor),
+  fill: Fill = Fill(vicoTheme.lineColor),
   thickness: Dp = Defaults.AXIS_LINE_WIDTH.dp,
   shape: Shape = Shape.Rectangle,
   margins: Insets = Insets.Zero,
@@ -65,7 +64,7 @@ public fun rememberAxisLineComponent(
 /** A [rememberLineComponent] alias with defaults for [Axis] ticks. */
 @Composable
 public fun rememberAxisTickComponent(
-  fill: Fill = fill(vicoTheme.lineColor),
+  fill: Fill = Fill(vicoTheme.lineColor),
   thickness: Dp = Defaults.AXIS_LINE_WIDTH.dp,
   shape: Shape = Shape.Rectangle,
   margins: Insets = Insets.Zero,
@@ -77,7 +76,7 @@ public fun rememberAxisTickComponent(
 /** A [rememberLineComponent] alias with defaults for [Axis] guidelines. */
 @Composable
 public fun rememberAxisGuidelineComponent(
-  fill: Fill = fill(vicoTheme.lineColor),
+  fill: Fill = Fill(vicoTheme.lineColor),
   thickness: Dp = Defaults.AXIS_GUIDELINE_WIDTH.dp,
   shape: Shape = DashedShape(),
   margins: Insets = Insets.Zero,

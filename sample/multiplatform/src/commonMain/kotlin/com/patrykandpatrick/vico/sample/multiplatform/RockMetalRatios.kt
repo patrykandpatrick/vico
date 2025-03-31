@@ -39,9 +39,9 @@ import com.patrykandpatrick.vico.multiplatform.cartesian.marker.ColumnCartesianL
 import com.patrykandpatrick.vico.multiplatform.cartesian.marker.DefaultCartesianMarker
 import com.patrykandpatrick.vico.multiplatform.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.multiplatform.cartesian.rememberVicoScrollState
+import com.patrykandpatrick.vico.multiplatform.common.Fill
 import com.patrykandpatrick.vico.multiplatform.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.multiplatform.common.data.ExtraStore
-import com.patrykandpatrick.vico.multiplatform.common.fill
 
 private const val Y_DIVISOR = 1000
 
@@ -90,7 +90,7 @@ fun ComposeMultiplatformRockMetalRatios(modifier: Modifier = Modifier) {
       rememberCartesianChart(
         rememberColumnCartesianLayer(
           ColumnCartesianLayer.ColumnProvider.series(
-            rememberLineComponent(fill = fill(Color(0xffff5500)), thickness = 16.dp)
+            rememberLineComponent(fill = Fill(Color(0xffff5500)), thickness = 16.dp)
           )
         ),
         startAxis = VerticalAxis.rememberStart(valueFormatter = StartAxisValueFormatter),

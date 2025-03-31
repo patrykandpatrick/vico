@@ -39,6 +39,7 @@ import com.patrykandpatrick.vico.multiplatform.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.multiplatform.cartesian.marker.ColumnCartesianLayerMarkerTarget
 import com.patrykandpatrick.vico.multiplatform.cartesian.marker.MutableColumnCartesianLayerMarkerTarget
 import com.patrykandpatrick.vico.multiplatform.common.Defaults
+import com.patrykandpatrick.vico.multiplatform.common.Fill
 import com.patrykandpatrick.vico.multiplatform.common.Position
 import com.patrykandpatrick.vico.multiplatform.common.ValueWrapper
 import com.patrykandpatrick.vico.multiplatform.common.component.LineComponent
@@ -49,7 +50,6 @@ import com.patrykandpatrick.vico.multiplatform.common.data.ExtraStore
 import com.patrykandpatrick.vico.multiplatform.common.data.MutableExtraStore
 import com.patrykandpatrick.vico.multiplatform.common.doubled
 import com.patrykandpatrick.vico.multiplatform.common.extractColor
-import com.patrykandpatrick.vico.multiplatform.common.fill
 import com.patrykandpatrick.vico.multiplatform.common.getRepeating
 import com.patrykandpatrick.vico.multiplatform.common.getStart
 import com.patrykandpatrick.vico.multiplatform.common.getValue
@@ -655,7 +655,7 @@ public fun rememberColumnCartesianLayer(
   columnProvider: ColumnCartesianLayer.ColumnProvider =
     ColumnCartesianLayer.ColumnProvider.series(
       vicoTheme.columnCartesianLayerColors.map { color ->
-        rememberLineComponent(fill(color), Defaults.COLUMN_WIDTH.dp)
+        rememberLineComponent(Fill(color), Defaults.COLUMN_WIDTH.dp)
       }
     ),
   columnCollectionSpacing: Dp = Defaults.COLUMN_COLLECTION_SPACING.dp,

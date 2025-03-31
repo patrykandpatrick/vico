@@ -37,7 +37,7 @@ import com.patrykandpatrick.vico.multiplatform.cartesian.layer.rememberLineCarte
 import com.patrykandpatrick.vico.multiplatform.cartesian.marker.DefaultCartesianMarker
 import com.patrykandpatrick.vico.multiplatform.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.multiplatform.cartesian.rememberVicoScrollState
-import com.patrykandpatrick.vico.multiplatform.common.fill
+import com.patrykandpatrick.vico.multiplatform.common.Fill
 
 private val RangeProvider = CartesianLayerRangeProvider.fixed(maxY = 100.0)
 private val StartAxisValueFormatter = CartesianValueFormatter.decimal(suffix = "%")
@@ -61,10 +61,10 @@ fun ComposeMultiplatformElectricCarSales(modifier: Modifier = Modifier) {
         lineProvider =
           LineCartesianLayer.LineProvider.series(
             LineCartesianLayer.rememberLine(
-              fill = LineCartesianLayer.LineFill.single(fill(lineColor)),
+              fill = LineCartesianLayer.LineFill.single(Fill(lineColor)),
               areaFill =
                 LineCartesianLayer.AreaFill.single(
-                  fill(
+                  Fill(
                     Brush.verticalGradient(listOf(lineColor.copy(alpha = 0.4f), Color.Transparent))
                   )
                 ),

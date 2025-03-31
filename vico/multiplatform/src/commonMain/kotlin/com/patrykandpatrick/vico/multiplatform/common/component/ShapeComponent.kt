@@ -26,7 +26,6 @@ import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.multiplatform.common.DrawingContext
 import com.patrykandpatrick.vico.multiplatform.common.Fill
 import com.patrykandpatrick.vico.multiplatform.common.Insets
-import com.patrykandpatrick.vico.multiplatform.common.fill
 import com.patrykandpatrick.vico.multiplatform.common.half
 import com.patrykandpatrick.vico.multiplatform.common.shape.Shape
 
