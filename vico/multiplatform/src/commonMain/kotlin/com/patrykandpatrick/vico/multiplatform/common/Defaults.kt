@@ -52,15 +52,11 @@ internal object Defaults {
   const val LINE_COMPONENT_THICKNESS_DP: Float = 1f
   const val LINE_SPEC_THICKNESS_DP: Float = 2f
   const val MARKER_INDICATOR_SIZE: Float = 16f
-  const val MARKER_HORIZONTAL_PADDING: Float = 8f
-  const val MARKER_VERTICAL_PADDING: Float = 4f
   const val MARKER_TICK_SIZE: Float = 6f
   const val MAX_ZOOM: Float = 10f
   const val POINT_SIZE: Float = 8f
   const val POINT_SPACING: Float = 32f
   const val TEXT_COMPONENT_TEXT_SIZE: Float = 12f
-  const val THRESHOLD_LINE_THICKNESS: Float = 2f
-  const val SHADOW_COLOR: Int = 0x8A000000.toInt()
   const val CHART_HEIGHT: Float = 200f
   const val LEGEND_COLUMN_SPACING: Float = 16f
   const val LEGEND_ICON_LABEL_SPACING: Float = 8f
