@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -92,8 +92,8 @@ public open class TextComponent(
       textPaint.typeface = typeface
       textPaint.textSize = 0f
     }
-  private lateinit var layout: Layout
-  private lateinit var measuringLayout: Layout
+  private lateinit var layout: StaticLayout
+  private lateinit var measuringLayout: StaticLayout
 
   /**
    * Uses [Canvas] to draw this [TextComponent].
@@ -133,20 +133,13 @@ public open class TextComponent(
         val bounds = layout.bounds
         val paddingLeft = padding.getLeft(context)
         val paddingRight = padding.getRight(context)
-        val textAlignmentCorrection: Float
+        val baseWidth = getBaseWidth(maxWidth, maxHeight, rotationDegrees, layout)
 
-        with(receiver = bounds) {
-          val minWidth =
-            minWidth.getValue(context, this@TextComponent, maxWidth, maxHeight, rotationDegrees) -
-              padding.horizontalDp.pixels
-          val minWidthCorrection =
-            (minWidth.coerceAtMost(layout.width.toFloat()) - width()).coerceAtLeast(0f)
-          left -= minWidthCorrection.half
-          right += minWidthCorrection.half
-          textAlignmentCorrection = getTextAlignmentCorrection(width())
-          left -= paddingLeft
+        with(bounds) {
+          val centerX = centerX()
+          left = centerX - baseWidth.half - paddingLeft
           top -= padding.topDp.pixels
-          right += paddingRight
+          right = centerX + baseWidth.half + paddingRight
           bottom += padding.bottomDp.pixels
         }
 
@@ -187,7 +180,7 @@ public open class TextComponent(
         )
 
         translate(
-          bounds.left + paddingLeft + textAlignmentCorrection,
+          bounds.left + paddingLeft + getTextAlignmentCorrection(baseWidth),
           bounds.top + padding.topDp.pixels + layout.spacingAdd.half,
         )
 
@@ -320,11 +313,8 @@ public open class TextComponent(
       val layout = getLayout(this, measuredText, maxWidth, maxHeight, rotationDegrees)
       layout.bounds
         .apply {
-          val minWidth =
-            minWidth.getValue(context, this@TextComponent, maxWidth, maxHeight, rotationDegrees) -
-              padding.horizontalDp.pixels
-          right = right.coerceAtLeast(minWidth).coerceAtMost(layout.width.toFloat())
-          right += padding.horizontalDp.pixels
+          right =
+            getBaseWidth(maxWidth, maxHeight, rotationDegrees, layout) + padding.horizontalDp.pixels
           bottom += padding.verticalDp.pixels
         }
         .rotate(rotationDegrees)
@@ -427,6 +417,19 @@ public open class TextComponent(
     canvas.block()
     canvas.restore()
   }
+
+  private fun MeasuringContext.getBaseWidth(
+    maxWidth: Int,
+    maxHeight: Int,
+    rotationDegrees: Float,
+    layout: StaticLayout,
+  ) =
+    layout.widestLineWidth
+      .coerceAtLeast(
+        minWidth.getValue(this, this@TextComponent, maxWidth, maxHeight, rotationDegrees) -
+          padding.horizontalDp.pixels
+      )
+      .coerceAtMost(layout.width.toFloat())
 
   override fun equals(other: Any?): Boolean =
     this === other ||
