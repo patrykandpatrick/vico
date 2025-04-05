@@ -37,7 +37,6 @@ import com.patrykandpatrick.vico.multiplatform.common.Insets
 import com.patrykandpatrick.vico.multiplatform.common.MeasuringContext
 import com.patrykandpatrick.vico.multiplatform.common.Position
 import com.patrykandpatrick.vico.multiplatform.common.bounds
-import com.patrykandpatrick.vico.multiplatform.common.component.TextComponent.MinWidth.Companion.text
 import com.patrykandpatrick.vico.multiplatform.common.data.CacheStore
 import com.patrykandpatrick.vico.multiplatform.common.extendBy
 import com.patrykandpatrick.vico.multiplatform.common.half
@@ -121,22 +120,14 @@ public open class TextComponent(
         var textBounds = textLayoutResult.bounds
         val paddingLeft = padding.getLeft(context)
         val paddingRight = padding.getRight(context)
-        val textAlignmentCorrection: Float
+        val baseWidth = getBaseWidth(maxWidth, maxHeight, rotationDegrees, textLayoutResult)
 
         textBounds =
           textBounds.run {
-            val minWidth =
-              minWidth.getValue(context, this@TextComponent, maxWidth, maxHeight, rotationDegrees) -
-                padding.horizontal.pixels
-            val minWidthCorrection =
-              (minWidth.coerceAtMost(textLayoutResult.size.width.toFloat()) - width).coerceAtLeast(
-                0f
-              )
-            textAlignmentCorrection = getTextAlignmentCorrection(width)
             Rect(
-              (left - minWidthCorrection.half - paddingLeft),
+              center.x - baseWidth.half - paddingLeft,
               top - padding.top.pixels,
-              right + minWidthCorrection.half + paddingRight,
+              center.x + baseWidth.half + paddingRight,
               bottom + padding.bottom.pixels,
             )
           }
@@ -177,8 +168,8 @@ public open class TextComponent(
         )
 
         translate(
-          (textBounds.left + paddingLeft + textAlignmentCorrection),
-          (textBounds.top + padding.top.pixels),
+          textBounds.left + paddingLeft + getTextAlignmentCorrection(baseWidth),
+          textBounds.top + padding.top.pixels,
         )
 
         textLayoutResult.multiParagraph.paint(canvas)
@@ -311,22 +302,12 @@ public open class TextComponent(
         }
       }
       val layout = getTextLayoutResult(this, measuredText, maxWidth, maxHeight, rotationDegrees)
-      layout
-        .run {
-          val minWidth =
-            minWidth.getValue(context, this@TextComponent, maxWidth, maxHeight, rotationDegrees) -
-              padding.horizontal.pixels
-          Rect(
-            left = 0f,
-            top = 0f,
-            right =
-              size.width
-                .toFloat()
-                .coerceAtLeast(minWidth)
-                .coerceAtMost(layout.size.width.toFloat()) + padding.horizontal.pixels,
-            bottom = size.height.toFloat() + padding.vertical.pixels,
-          )
-        }
+      Rect(
+          0f,
+          0f,
+          getBaseWidth(maxWidth, maxHeight, rotationDegrees, layout) + padding.horizontal.pixels,
+          layout.size.height.toFloat() + padding.vertical.pixels,
+        )
         .rotate(rotationDegrees)
         .extendBy(right = margins.horizontal.pixels, bottom = margins.vertical.pixels)
     }
@@ -403,6 +384,20 @@ public open class TextComponent(
     canvas.block()
     canvas.restore()
   }
+
+  private fun MeasuringContext.getBaseWidth(
+    maxWidth: Int,
+    maxHeight: Int,
+    rotationDegrees: Float,
+    layoutResult: TextLayoutResult,
+  ) =
+    layoutResult.size.width
+      .toFloat()
+      .coerceAtLeast(
+        minWidth.getValue(this, this@TextComponent, maxWidth, maxHeight, rotationDegrees) -
+          padding.horizontal.pixels
+      )
+      .coerceAtMost(layoutResult.layoutInput.constraints.maxWidth.toFloat())
 
   override fun equals(other: Any?): Boolean =
     this === other ||
