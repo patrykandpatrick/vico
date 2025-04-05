@@ -79,7 +79,6 @@ internal class ThemeHandler(private val context: Context, attrs: AttributeSet?) 
         visibilityAttributeIndex = R.styleable.CartesianChartStyle_showBottomAxis
         styleAttributeIndex = R.styleable.CartesianChartStyle_bottomAxisStyle
       }
-      else -> throw IllegalArgumentException("Unexpected `Axis.Position` subclass.")
     }
     if (!getBoolean(visibilityAttributeIndex, false)) return null
     if (!hasValue(styleAttributeIndex)) {
@@ -191,7 +190,6 @@ internal class ThemeHandler(private val context: Context, attrs: AttributeSet?) 
             titleComponent = titleComponent,
             title = title,
           )
-        else -> throw IllegalArgumentException("Unexpected `Axis.Position` subclass.")
       }
         as Axis<P>
     }
