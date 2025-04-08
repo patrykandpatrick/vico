@@ -240,7 +240,11 @@ internal fun CartesianChartHostImpl(
 
     val context = drawingContext
     if (isTouchExplorationEnabled() && context != null) {
-      AccessibilityHighlighter(targets = chart.allTargets, context = context)
+      AccessibilityHighlighter(
+        targets = chart.allTargets,
+        context = context,
+        contentDescriptionProvider = chart.contentDescriptionProvider,
+      )
     }
   }
 }
