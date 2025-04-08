@@ -55,7 +55,7 @@ fun JetpackComposeBasicColumnChart(modifier: Modifier = Modifier) {
   LaunchedEffect(Unit) {
     modelProducer.runTransaction {
       // Learn more: https://patrykandpatrick.com/eji9zq.
-      columnSeries { series(y = y, contentDescriptions = contentDescriptions) }
+      columnSeries { series(5, 6, 5, 2, 11, 8, 5, 2, 15, 11, 8, 13, 12, 10, 2, 7) }
     }
   }
   JetpackComposeBasicColumnChart(modelProducer, modifier)
@@ -69,11 +69,8 @@ private fun Preview() {
   runBlocking {
     modelProducer.runTransaction {
       // Learn more: https://patrykandpatrick.com/eji9zq.
-      columnSeries { series(y = y, contentDescriptions = contentDescriptions) }
+      columnSeries { series(5, 6, 5, 2, 11, 8, 5, 2, 15, 11, 8, 13, 12, 10, 2, 7) }
     }
   }
   PreviewBox { JetpackComposeBasicColumnChart(modelProducer) }
 }
-
-private val y = listOf(5, 6, 5, 2, 11, 8, 5, 2, 15, 11, 8, 13, 12, 10, 2, 7)
-private val contentDescriptions = y.mapIndexed { x, y -> "$x to $y" }
