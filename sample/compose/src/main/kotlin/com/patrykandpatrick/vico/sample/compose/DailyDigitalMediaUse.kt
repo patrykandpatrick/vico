@@ -120,18 +120,13 @@ private val y =
     "Other" to listOf(0.2, 0.3, 0.4, 0.3, 0.3, 0.3, 0.3, 0.4, 0.4, 0.6, 0.7),
   )
 
-private val descriptions =
-  y.map { (key, values) ->
-    values.mapIndexed { index, value -> "$key Year ${x[index]} value $value hours" }
-  }
-
 @Composable
 fun JetpackComposeDailyDigitalMediaUse(modifier: Modifier = Modifier) {
   val modelProducer = remember { CartesianChartModelProducer() }
   LaunchedEffect(Unit) {
     modelProducer.runTransaction {
       // Learn more: https://patrykandpatrick.com/eji9zq.
-      columnSeries { y.values.forEachIndexed { i, values -> series(x, values, descriptions[i]) } }
+      columnSeries { y.values.forEach { series(x, it) } }
       extras { it[LegendLabelKey] = y.keys }
     }
   }
