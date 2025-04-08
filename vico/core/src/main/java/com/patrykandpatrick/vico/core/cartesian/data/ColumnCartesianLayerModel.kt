@@ -180,36 +180,9 @@ public class ColumnCartesianLayerModel : CartesianLayerModel {
       series.add(x.zip(y, ColumnCartesianLayerModel::Entry))
     }
 
-    /**
-     * Adds a series with the provided _x_ values ([x]), _y_ values ([y]), and optional content
-     * descriptions ([contentDescriptions]). All lists should have the same size.
-     */
-    @JvmName("seriesWithContentDescriptions")
-    public fun series(
-      x: Collection<Number>,
-      y: Collection<Number>,
-      contentDescriptions: Collection<String?>,
-    ) {
-      series.add(
-        x.zip(y).zip(contentDescriptions) { (x, y), contentDescription ->
-          Entry(x = x, y = y, contentDescription = contentDescription)
-        }
-      )
-    }
-
     /** Adds a series with the provided _y_ values ([y]), using their indices as the _x_ values. */
     public fun series(y: Collection<Number>) {
       series(y.indices.toList(), y)
-    }
-
-    /**
-     * Adds a series with the provided _y_ values ([y]), using their indices as the _x_ values, and
-     * optional content descriptions ([contentDescriptions]). [y] and [contentDescriptions] should
-     * have the same size.
-     */
-    @JvmName("seriesWithContentDescriptions")
-    public fun series(y: Collection<Number>, contentDescriptions: Collection<String?>) {
-      series(y.indices.toList(), y, contentDescriptions)
     }
 
     /** Adds a series with the provided _y_ values ([y]), using their indices as the _x_ values. */
