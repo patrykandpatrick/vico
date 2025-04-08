@@ -103,7 +103,6 @@ private fun JetpackComposeRockMetalRatios(
 
 private val data =
   mapOf("Ag" to 22378, "Mo" to 4478, "U" to 3624, "Sn" to 2231, "Li" to 1634, "W" to 1081)
-private val contentDescriptions = data.map { (key, value) -> "$key to $value" }
 
 @Composable
 fun JetpackComposeRockMetalRatios(modifier: Modifier = Modifier) {
@@ -111,7 +110,7 @@ fun JetpackComposeRockMetalRatios(modifier: Modifier = Modifier) {
   LaunchedEffect(Unit) {
     modelProducer.runTransaction {
       // Learn more: https://patrykandpatrick.com/eji9zq.
-      columnSeries { series(data.values, contentDescriptions) }
+      columnSeries { series(data.values) }
       extras { it[BottomAxisLabelKey] = data.keys.toList() }
     }
   }
@@ -126,7 +125,7 @@ private fun Preview() {
   runBlocking {
     modelProducer.runTransaction {
       // Learn more: https://patrykandpatrick.com/eji9zq.
-      columnSeries { series(data.values, contentDescriptions) }
+      columnSeries { series(data.values) }
       extras { it[BottomAxisLabelKey] = data.keys.toList() }
     }
   }
