@@ -165,6 +165,7 @@ internal fun CartesianChartHostImpl(
         remember(chart.layerPadding, model.extraStore) { chart.layerPadding(model.extraStore) },
       pointerPosition = pointerPosition.value,
     )
+  var drawingContext by remember { mutableStateOf<CartesianDrawingContext?>(null) }
 
   val coroutineScope = rememberCoroutineScope()
   var previousModelID by remember { ValueWrapper(model.id) }
@@ -225,23 +226,26 @@ internal fun CartesianChartHostImpl(
         previousModelID = model.id
       }
 
-      val drawingContext =
+      val context =
         CartesianDrawingContext(
-          measuringContext,
-          canvas,
-          layerDimensions,
-          chart.layerBounds,
-          scrollState.value,
-          zoomState.value,
-        )
+            measuringContext,
+            canvas,
+            layerDimensions,
+            chart.layerBounds,
+            scrollState.value,
+            zoomState.value,
+          )
+          .also { drawingContext = it }
 
-      chart.draw(drawingContext)
+      chart.draw(context)
       measuringContext.reset()
     }
-    if (isTouchExplorationEnabled()) {
+
+    val context = drawingContext
+    if (isTouchExplorationEnabled() && context != null) {
       AccessibilityHighlighter(
         targets = targets,
-        canvasHeight = canvasBounds.height(),
+        context = context,
         xSpacing = layerDimensions.xSpacing,
       )
     }
