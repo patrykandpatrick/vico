@@ -41,6 +41,7 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.ColumnCartesianLayerModel
 import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
 import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
+import com.patrykandpatrick.vico.core.cartesian.marker.ColumnCartesianLayerMarkerTarget
 import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
 import com.patrykandpatrick.vico.core.common.component.LineComponent
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
@@ -67,6 +68,15 @@ private val YDecimalFormat = DecimalFormat("#.## °C;−#.## °C")
 private val StartAxisValueFormatter = CartesianValueFormatter.decimal(YDecimalFormat)
 
 private val MarkerValueFormatter = DefaultCartesianMarker.ValueFormatter.default(YDecimalFormat)
+
+private val ContentDescriptionProvider =
+  DefaultCartesianMarker.ContentDescriptionProvider { _, targets ->
+    val target = targets.first() as ColumnCartesianLayerMarkerTarget
+    buildString {
+      append("Year: ${target.x.toInt()}")
+      target.columns.forEach { column -> append("Anomaly: ${column.entry.y}°C") }
+    }
+  }
 
 private fun getColumnProvider(positive: LineComponent, negative: LineComponent) =
   object : ColumnCartesianLayer.ColumnProvider {
@@ -110,6 +120,7 @@ private fun JetpackComposeTemperatureAnomalies(
         startAxis = VerticalAxis.rememberStart(valueFormatter = StartAxisValueFormatter),
         bottomAxis = HorizontalAxis.rememberBottom(labelRotationDegrees = 45f),
         marker = rememberMarker(MarkerValueFormatter),
+        contentDescriptionProvider = ContentDescriptionProvider
       ),
     modelProducer = modelProducer,
     modifier = modifier.height(238.dp),
