@@ -309,6 +309,22 @@ public open class DefaultCartesianMarker(
     }
   }
 
+  /** Provides contentDescription for [CartesianMarker] * */
+  public fun interface ContentDescriptionProvider {
+
+    /** Returns content description for given [CartesianMarker.Target]s */
+    public fun getContentDescription(
+      context: CartesianDrawingContext,
+      targets: List<CartesianMarker.Target>,
+    ): String
+
+    /** Houses a [ContentDescriptionProvider] factory function. */
+    public companion object {
+      /** Creates an instance of the default [ContentDescriptionProvider] implementation. */
+      public fun default(): ContentDescriptionProvider = DefaultContentDescriptionProvider()
+    }
+  }
+
   protected companion object {
     public val keyNamespace: CacheStore.KeyNamespace = CacheStore.KeyNamespace()
   }
@@ -384,4 +400,39 @@ internal class DefaultValueFormatter(
   override fun hashCode(): Int = 31 * decimalFormat.hashCode() + colorCode.hashCode()
 
   private data class ColorSpan(private val color: Int) : ForegroundColorSpan(color)
+}
+
+internal class DefaultContentDescriptionProvider :
+  DefaultCartesianMarker.ContentDescriptionProvider {
+
+  override fun getContentDescription(
+    context: CartesianDrawingContext,
+    targets: List<CartesianMarker.Target>,
+  ): String {
+    return buildString { targets.forEach { target -> append(target = target) } }
+  }
+
+  private fun StringBuilder.append(target: CartesianMarker.Target) {
+    when (target) {
+      is CandlestickCartesianLayerMarkerTarget -> {
+        append("x ${target.x}")
+        append("opening ${target.entry.opening}")
+        append("closing ${target.entry.closing}")
+        append("low ${target.entry.low}")
+        append("high ${target.entry.high}")
+      }
+
+      is ColumnCartesianLayerMarkerTarget -> {
+        append("x ${target.x}")
+        target.columns.forEach { append("y ${it.entry.y}") }
+      }
+
+      is LineCartesianLayerMarkerTarget -> {
+        append("x ${target.x}")
+        target.points.forEach { append("y ${it.entry.y}") }
+      }
+
+      else -> throw IllegalArgumentException("Unexpected `CartesianMarker.Target` implementation.")
+    }
+  }
 }
