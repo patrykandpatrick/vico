@@ -35,6 +35,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.platform.LocalContext
@@ -164,6 +165,7 @@ internal fun CartesianChartHostImpl(
         remember(chart.layerPadding, model.extraStore) { chart.layerPadding(model.extraStore) },
       pointerPosition = pointerPosition.value,
     )
+  var drawingContext by remember { mutableStateOf<CartesianDrawingContext?>(null) }
 
   val coroutineScope = rememberCoroutineScope()
   var previousModelID by remember { ValueWrapper(model.id) }
@@ -221,24 +223,26 @@ internal fun CartesianChartHostImpl(
         previousModelID = model.id
       }
 
-      val drawingContext =
+      val context =
         CartesianDrawingContext(
-          measuringContext,
-          canvas,
-          layerDimensions,
-          chart.layerBounds,
-          scrollState.value,
-          zoomState.value,
-        )
+            measuringContext,
+            canvas,
+            layerDimensions,
+            chart.layerBounds,
+            scrollState.value,
+            zoomState.value,
+          )
+          .also { drawingContext = it }
 
-      chart.draw(drawingContext)
+      chart.draw(context)
       measuringContext.reset()
     }
 
-    if (isTouchExplorationEnabled()) {
+    val context = drawingContext
+    if (isTouchExplorationEnabled() && context != null) {
       AccessibilityHighlighter(
         targets = chart.allTargets,
-        canvasHeight = canvasBounds.height(),
+        context = context,
         xSpacing = layerDimensions.xSpacing,
       )
     }

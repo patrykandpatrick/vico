@@ -27,6 +27,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.core.cartesian.marker.CandlestickCartesianLayerMarkerTarget
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.core.cartesian.marker.ColumnCartesianLayerMarkerTarget
@@ -46,14 +47,14 @@ import com.patrykandpatrick.vico.core.cartesian.marker.LineCartesianLayerMarkerT
  *
  * @param targets the list of marker targets representing data points to be highlighted for
  *   accessibility
- * @param canvasHeight the full height of the canvas, used to compute highlighter size
+ * @param context holds environment data
  * @param xSpacing the horizontal spacing between data points, used to calculate highlight width
  * @param modifier the modifier to be applied to the [AccessibilityHighlighter].
  */
 @Composable
 internal fun AccessibilityHighlighter(
   targets: List<CartesianMarker.Target>,
-  canvasHeight: Float,
+  context: CartesianDrawingContext,
   xSpacing: Float,
   modifier: Modifier = Modifier,
 ) {
@@ -63,7 +64,8 @@ internal fun AccessibilityHighlighter(
         is ColumnCartesianLayerMarkerTarget -> {
           ColumnCartesianMarkerHighlighter(
             target = target,
-            canvasHeight = canvasHeight,
+            canvasTopY = context.layerBounds.top,
+            canvasHeight = context.layerBounds.height(),
             xSpacing = xSpacing,
           )
         }
@@ -71,13 +73,19 @@ internal fun AccessibilityHighlighter(
         is LineCartesianLayerMarkerTarget -> {
           LineCartesianMarkerHighlighter(
             target = target,
-            canvasHeight = canvasHeight,
+            canvasTopY = context.layerBounds.top,
+            canvasHeight = context.layerBounds.height(),
             xSpacing = xSpacing,
           )
         }
 
         is CandlestickCartesianLayerMarkerTarget ->
-          CandlestickCartesianMarkerHighlighter(target = target, xSpacing = xSpacing)
+          CandlestickCartesianMarkerHighlighter(
+            target = target,
+            canvasTopY = context.layerBounds.top,
+            canvasHeight = context.layerBounds.height(),
+            xSpacing = xSpacing,
+          )
       }
     }
   }
@@ -87,6 +95,7 @@ internal fun AccessibilityHighlighter(
 private fun ColumnCartesianMarkerHighlighter(
   target: ColumnCartesianLayerMarkerTarget,
   xSpacing: Float,
+  canvasTopY: Float,
   canvasHeight: Float,
 ) {
   Box {
@@ -96,7 +105,7 @@ private fun ColumnCartesianMarkerHighlighter(
         Highlighter(
           xSpacing = xSpacing,
           canvasX = target.canvasX,
-          canvasY = column.canvasY,
+          canvasTopY = canvasTopY,
           height = canvasHeight,
           contentDescription = column.entry.contentDescription,
         )
@@ -108,6 +117,7 @@ private fun ColumnCartesianMarkerHighlighter(
 private fun LineCartesianMarkerHighlighter(
   target: LineCartesianLayerMarkerTarget,
   xSpacing: Float,
+  canvasTopY: Float,
   canvasHeight: Float,
 ) {
   Box {
@@ -115,7 +125,7 @@ private fun LineCartesianMarkerHighlighter(
       Highlighter(
         xSpacing = xSpacing,
         canvasX = target.canvasX,
-        canvasY = point.canvasY,
+        canvasTopY = canvasTopY,
         height = canvasHeight,
         contentDescription = point.entry.contentDescription,
       )
@@ -127,12 +137,14 @@ private fun LineCartesianMarkerHighlighter(
 private fun CandlestickCartesianMarkerHighlighter(
   target: CandlestickCartesianLayerMarkerTarget,
   xSpacing: Float,
+  canvasTopY: Float,
+  canvasHeight: Float,
 ) {
   Highlighter(
     xSpacing = xSpacing,
     canvasX = target.canvasX,
-    canvasY = target.highCanvasY,
-    height = target.lowCanvasY,
+    canvasTopY = canvasTopY,
+    height = canvasHeight,
     contentDescription = target.entry.contentDescription,
   )
 }
@@ -141,7 +153,7 @@ private fun CandlestickCartesianMarkerHighlighter(
 private fun Highlighter(
   xSpacing: Float,
   canvasX: Float,
-  canvasY: Float,
+  canvasTopY: Float,
   height: Float,
   contentDescription: String?,
 ) {
@@ -151,10 +163,10 @@ private fun Highlighter(
     modifier =
       Modifier.graphicsLayer {
           translationX = canvasX - width.toPx() / 2
-          translationY = canvasY
+          translationY = canvasTopY
         }
         .border(width = borderWidth, color = Color.Transparent)
-        .size(width = width, height = height.pxToDp() - canvasY.pxToDp())
+        .size(width = width, height = height.pxToDp())
         .semantics { contentDescription?.let { this.contentDescription = it } }
   )
 }
