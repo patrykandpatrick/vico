@@ -149,7 +149,7 @@ public class LineCartesianLayerModel : CartesianLayerModel {
      * have the same size.
      */
     public fun series(x: Collection<Number>, y: Collection<Number>) {
-      seriesImpl(x = x, y = y, contentDescriptions = null)
+      series.add(x.zip(y, LineCartesianLayerModel::Entry))
     }
 
     /**
@@ -162,7 +162,11 @@ public class LineCartesianLayerModel : CartesianLayerModel {
       y: Collection<Number>,
       contentDescriptions: Collection<String?>,
     ) {
-      seriesImpl(x = x, y = y, contentDescriptions = contentDescriptions)
+      series.add(
+        x.zip(y).zip(contentDescriptions) { (x, y), contentDescription ->
+          Entry(x = x, y = y, contentDescription = contentDescription)
+        }
+      )
     }
 
     /** Adds a series with the provided _y_ values ([y]), using their indices as the _x_ values. */
@@ -183,19 +187,6 @@ public class LineCartesianLayerModel : CartesianLayerModel {
     /** Adds a series with the provided _y_ values ([y]), using their indices as the _x_ values. */
     public fun series(vararg y: Number) {
       series(y.toList())
-    }
-
-    private fun seriesImpl(
-      x: Collection<Number>,
-      y: Collection<Number>,
-      contentDescriptions: Collection<String?>?,
-    ) {
-      val descriptions = contentDescriptions ?: List(x.size) { null }
-      series.add(
-        x.zip(y).zip(descriptions) { (x, y), contentDescription ->
-          Entry(x = x.toDouble(), y = y.toDouble(), contentDescription = contentDescription)
-        }
-      )
     }
   }
 
