@@ -210,21 +210,13 @@ private val high =
     2619.399902,
   )
 
-private val contentDescriptions = x.mapIndexed { hour, index ->
-  val opening = opening[hour]
-  val closing = closing[hour]
-  val low = low[hour]
-  val high = high[hour]
-  "Hour $index, opening: $opening, closing: $closing, low: $low, high: $high"
-}
-
 @Composable
 fun JetpackComposeGoldPrices(modifier: Modifier = Modifier) {
   val modelProducer = remember { CartesianChartModelProducer() }
   LaunchedEffect(Unit) {
     modelProducer.runTransaction {
       // Learn more: https://patrykandpatrick.com/y3c4gz.
-      candlestickSeries(x, opening, closing, low, high, contentDescriptions)
+      candlestickSeries(x, opening, closing, low, high)
     }
   }
   JetpackComposeGoldPrices(modelProducer, modifier)
@@ -238,7 +230,7 @@ private fun Preview() {
   runBlocking {
     modelProducer.runTransaction {
       // Learn more: https://patrykandpatrick.com/y3c4gz.
-      candlestickSeries(x, opening, closing, low, high, contentDescriptions)
+      candlestickSeries(x, opening, closing, low, high)
     }
   }
   PreviewBox { JetpackComposeGoldPrices(modelProducer) }
