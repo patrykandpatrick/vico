@@ -208,17 +208,13 @@ private val y =
     0.6741648,
   )
 
-private val contentDescriptions = x.mapIndexed { index, year ->
-  "Year: $year: anomaly: ${y[index]} °C"
-}
-
 @Composable
 fun JetpackComposeTemperatureAnomalies(modifier: Modifier) {
   val modelProducer = remember { CartesianChartModelProducer() }
   LaunchedEffect(Unit) {
     modelProducer.runTransaction {
       // Learn more: https://patrykandpatrick.com/eji9zq.
-      columnSeries { series(x, y, contentDescriptions) }
+      columnSeries { series(x, y) }
     }
   }
   JetpackComposeTemperatureAnomalies(modelProducer, modifier)
@@ -232,7 +228,7 @@ private fun Preview() {
   runBlocking {
     modelProducer.runTransaction {
       // Learn more: https://patrykandpatrick.com/eji9zq.
-      columnSeries { series(x, y, contentDescriptions) }
+      columnSeries { series(x, y) }
     }
   }
   PreviewBox { JetpackComposeTemperatureAnomalies(modelProducer) }
