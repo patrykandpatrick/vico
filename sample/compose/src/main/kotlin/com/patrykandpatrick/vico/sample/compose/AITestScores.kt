@@ -47,6 +47,8 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
 import com.patrykandpatrick.vico.core.cartesian.decoration.HorizontalLine
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
+import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
+import com.patrykandpatrick.vico.core.cartesian.marker.LineCartesianLayerMarkerTarget
 import com.patrykandpatrick.vico.core.common.LegendItem
 import com.patrykandpatrick.vico.core.common.Position
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
@@ -54,6 +56,17 @@ import com.patrykandpatrick.vico.core.common.shape.CorneredShape
 import kotlinx.coroutines.runBlocking
 
 private val LegendLabelKey = ExtraStore.Key<Set<String>>()
+private val ContentDescriptionProvider =
+  DefaultCartesianMarker.ContentDescriptionProvider { context, targets ->
+    val legendLabels = context.model.extraStore[LegendLabelKey]
+    val target = targets.first() as LineCartesianLayerMarkerTarget
+    buildString {
+      append("Year: ${target.x.toInt()}.")
+      target.points.zip(legendLabels).forEach { (point, label) ->
+        append("$label: ${point.entry.y}.")
+      }
+    }
+  }
 
 @Composable
 private fun rememberHorizontalLine(): HorizontalLine {
@@ -119,6 +132,7 @@ private fun JetpackComposeAITestScores(
           padding = insets(top = 16.dp),
         ),
       decorations = listOf(rememberHorizontalLine()),
+      contentDescriptionProvider = ContentDescriptionProvider,
     ),
     modelProducer,
     modifier.height(300.dp),
