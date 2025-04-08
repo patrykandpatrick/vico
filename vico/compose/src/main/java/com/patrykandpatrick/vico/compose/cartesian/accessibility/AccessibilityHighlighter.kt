@@ -28,10 +28,8 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
-import com.patrykandpatrick.vico.core.cartesian.marker.CandlestickCartesianLayerMarkerTarget
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
-import com.patrykandpatrick.vico.core.cartesian.marker.ColumnCartesianLayerMarkerTarget
-import com.patrykandpatrick.vico.core.cartesian.marker.LineCartesianLayerMarkerTarget
+import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
 
 /**
  * Displays accessibility-focused highlight indicators for a set of chart marker targets.
@@ -40,16 +38,12 @@ import com.patrykandpatrick.vico.core.cartesian.marker.LineCartesianLayerMarkerT
  * accessibility tools like screen readers (e.g., TalkBack). Each marker is rendered with a semantic
  * `contentDescription`, allowing users to navigate data points via accessibility focus.
  *
- * The function delegates rendering to specific implementations based on the target type:
- * - [ColumnCartesianLayerMarkerTarget]
- * - [LineCartesianLayerMarkerTarget]
- * - [CandlestickCartesianLayerMarkerTarget]
- *
  * @param targets the list of marker targets representing data points to be highlighted for
  *   accessibility
  * @param context holds environment data
  * @param xSpacing the horizontal spacing between data points, used to calculate highlight width
  * @param modifier the modifier to be applied to the [AccessibilityHighlighter].
+ * @param contentDescriptionProvider provides the content description for the highlight elements.
  */
 @Composable
 internal fun AccessibilityHighlighter(
@@ -57,96 +51,25 @@ internal fun AccessibilityHighlighter(
   context: CartesianDrawingContext,
   xSpacing: Float,
   modifier: Modifier = Modifier,
+  contentDescriptionProvider: DefaultCartesianMarker.ContentDescriptionProvider =
+    DefaultCartesianMarker.ContentDescriptionProvider.default(),
 ) {
+  val groupedTargets = targets.groupBy { it.canvasX }
+
   Box(modifier) {
-    targets.forEach { target ->
-      when (target) {
-        is ColumnCartesianLayerMarkerTarget -> {
-          ColumnCartesianMarkerHighlighter(
-            target = target,
-            canvasTopY = context.layerBounds.top,
-            canvasHeight = context.layerBounds.height(),
-            xSpacing = xSpacing,
-          )
-        }
-
-        is LineCartesianLayerMarkerTarget -> {
-          LineCartesianMarkerHighlighter(
-            target = target,
-            canvasTopY = context.layerBounds.top,
-            canvasHeight = context.layerBounds.height(),
-            xSpacing = xSpacing,
-          )
-        }
-
-        is CandlestickCartesianLayerMarkerTarget ->
-          CandlestickCartesianMarkerHighlighter(
-            target = target,
-            canvasTopY = context.layerBounds.top,
-            canvasHeight = context.layerBounds.height(),
-            xSpacing = xSpacing,
-          )
-      }
-    }
-  }
-}
-
-@Composable
-private fun ColumnCartesianMarkerHighlighter(
-  target: ColumnCartesianLayerMarkerTarget,
-  xSpacing: Float,
-  canvasTopY: Float,
-  canvasHeight: Float,
-) {
-  Box {
-    target.columns
-      .sortedBy { it.canvasY }
-      .forEach { column ->
-        Highlighter(
-          xSpacing = xSpacing,
-          canvasX = target.canvasX,
-          canvasTopY = canvasTopY,
-          height = canvasHeight,
-          contentDescription = column.entry.contentDescription,
-        )
-      }
-  }
-}
-
-@Composable
-private fun LineCartesianMarkerHighlighter(
-  target: LineCartesianLayerMarkerTarget,
-  xSpacing: Float,
-  canvasTopY: Float,
-  canvasHeight: Float,
-) {
-  Box {
-    target.points.forEach { point ->
+    for ((x, targetsGroup) in groupedTargets) {
       Highlighter(
         xSpacing = xSpacing,
-        canvasX = target.canvasX,
-        canvasTopY = canvasTopY,
-        height = canvasHeight,
-        contentDescription = point.entry.contentDescription,
+        canvasX = x,
+        canvasTopY = context.layerBounds.top,
+        height = context.layerBounds.height(),
+        contentDescription =
+          contentDescriptionProvider
+            .getContentDescription(context = context, targets = targetsGroup)
+            .toString(),
       )
     }
   }
-}
-
-@Composable
-private fun CandlestickCartesianMarkerHighlighter(
-  target: CandlestickCartesianLayerMarkerTarget,
-  xSpacing: Float,
-  canvasTopY: Float,
-  canvasHeight: Float,
-) {
-  Highlighter(
-    xSpacing = xSpacing,
-    canvasX = target.canvasX,
-    canvasTopY = canvasTopY,
-    height = canvasHeight,
-    contentDescription = target.entry.contentDescription,
-  )
 }
 
 @Composable
