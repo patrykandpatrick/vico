@@ -41,7 +41,6 @@ import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
  * @param targets the list of marker targets representing data points to be highlighted for
  *   accessibility
  * @param context holds environment data
- * @param xSpacing the horizontal spacing between data points, used to calculate highlight width
  * @param modifier the modifier to be applied to the [AccessibilityHighlighter].
  * @param contentDescriptionProvider provides the content description for the highlight elements.
  */
@@ -49,7 +48,6 @@ import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
 internal fun AccessibilityHighlighter(
   targets: List<CartesianMarker.Target>,
   context: CartesianDrawingContext,
-  xSpacing: Float,
   modifier: Modifier = Modifier,
   contentDescriptionProvider: DefaultCartesianMarker.ContentDescriptionProvider =
     DefaultCartesianMarker.ContentDescriptionProvider.default(),
@@ -59,7 +57,7 @@ internal fun AccessibilityHighlighter(
   Box(modifier) {
     for ((x, targetsGroup) in groupedTargets) {
       Highlighter(
-        xSpacing = xSpacing,
+        xSpacing = context.layerDimensions.xSpacing,
         canvasX = x,
         canvasTopY = context.layerBounds.top,
         height = context.layerBounds.height(),
