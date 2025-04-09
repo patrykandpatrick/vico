@@ -136,9 +136,17 @@ public class ColumnCartesianLayerModel : CartesianLayerModel {
   }
 
   /** Represents a column of height [y] at [x]. */
-  public class Entry internal constructor(override val x: Double, public val y: Double) :
-    CartesianLayerModel.Entry {
-    public constructor(x: Number, y: Number) : this(x.toDouble(), y.toDouble())
+  public class Entry
+  internal constructor(
+    override val x: Double,
+    public val y: Double,
+    override val contentDescription: String? = null,
+  ) : CartesianLayerModel.Entry {
+    public constructor(
+      x: Number,
+      y: Number,
+      contentDescription: String? = null,
+    ) : this(x.toDouble(), y.toDouble(), contentDescription)
 
     override fun equals(other: Any?): Boolean =
       this === other || other is Entry && x == other.x && y == other.y

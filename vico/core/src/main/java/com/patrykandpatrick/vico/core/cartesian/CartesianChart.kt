@@ -40,6 +40,7 @@ import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.layer.MutableCartesianLayerDimensions
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerVisibilityListener
+import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
 import com.patrykandpatrick.vico.core.common.Legend
 import com.patrykandpatrick.vico.core.common.Point
 import com.patrykandpatrick.vico.core.common.data.CacheStore
@@ -81,6 +82,10 @@ private constructor(
   private var previousMarkerTargetHashCode: Int?,
   private val persistentMarkerMap: MutableMap<Double, CartesianMarker>,
   private var previousPersistentMarkerHashCode: Int?,
+  /** @suppress */
+  @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+  public val contentDescriptionProvider: DefaultCartesianMarker.ContentDescriptionProvider =
+    DefaultCartesianMarker.ContentDescriptionProvider.default(),
 ) : CartesianLayerMarginUpdater<CartesianChartModel> {
   private val persistentMarkerScope = PersistentMarkerScope {
     persistentMarkerMap[it.toDouble()] = this
@@ -220,6 +225,7 @@ private constructor(
     decorations: List<Decoration> = emptyList(),
     persistentMarkers: (PersistentMarkerScope.(ExtraStore) -> Unit)? = null,
     getXStep: ((CartesianChartModel) -> Double) = { it.getXDeltaGcd() },
+    contentDescriptionProvider: DefaultCartesianMarker.ContentDescriptionProvider = DefaultCartesianMarker.ContentDescriptionProvider.default()
   ) : this(
     layers = layers,
     startAxis = startAxis,
@@ -234,6 +240,7 @@ private constructor(
     decorations = decorations,
     persistentMarkers = persistentMarkers,
     getXStep = getXStep,
+    contentDescriptionProvider = contentDescriptionProvider,
     id = UUID.randomUUID(),
     previousMarkerTargetHashCode = null,
     persistentMarkerMap = mutableMapOf(),
@@ -466,6 +473,7 @@ private constructor(
     decorations: List<Decoration> = this.decorations,
     persistentMarkers: (PersistentMarkerScope.(ExtraStore) -> Unit)? = this.persistentMarkers,
     getXStep: ((CartesianChartModel) -> Double) = this.getXStep,
+    contentDescriptionProvider: DefaultCartesianMarker.ContentDescriptionProvider = this.contentDescriptionProvider,
   ): CartesianChart =
     CartesianChart(
       layers = layers,
@@ -485,6 +493,7 @@ private constructor(
       previousMarkerTargetHashCode = previousMarkerTargetHashCode,
       persistentMarkerMap = persistentMarkerMap,
       previousPersistentMarkerHashCode = previousPersistentMarkerHashCode,
+      contentDescriptionProvider = contentDescriptionProvider,
     )
 
   override fun equals(other: Any?): Boolean =
@@ -503,7 +512,8 @@ private constructor(
         startAxis == other.startAxis &&
         topAxis == other.topAxis &&
         endAxis == other.endAxis &&
-        bottomAxis == other.bottomAxis
+        bottomAxis == other.bottomAxis &&
+        contentDescriptionProvider == other.contentDescriptionProvider
 
   override fun hashCode(): Int {
     var result = marker.hashCode()
@@ -520,6 +530,7 @@ private constructor(
     result = 31 * result + endAxis.hashCode()
     result = 31 * result + bottomAxis.hashCode()
     result = 31 * result + id.hashCode()
+    result = 31 * result + contentDescriptionProvider.hashCode()
     return result
   }
 

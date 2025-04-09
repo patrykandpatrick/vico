@@ -45,6 +45,7 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
 import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
+import com.patrykandpatrick.vico.core.cartesian.marker.ColumnCartesianLayerMarkerTarget
 import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
 import com.patrykandpatrick.vico.core.common.LegendItem
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
@@ -57,6 +58,17 @@ private val YDecimalFormat = DecimalFormat("#.## h")
 private val StartAxisValueFormatter = CartesianValueFormatter.decimal(YDecimalFormat)
 private val StartAxisItemPlacer = VerticalAxis.ItemPlacer.step({ 0.5 })
 private val MarkerValueFormatter = DefaultCartesianMarker.ValueFormatter.default(YDecimalFormat)
+private val ContentDescriptionProvider =
+  DefaultCartesianMarker.ContentDescriptionProvider { context, targets ->
+    val legendLabels = context.model.extraStore[LegendLabelKey]
+    val target = targets.first() as ColumnCartesianLayerMarkerTarget
+    buildString {
+      append("Year: ${target.x.toInt()}")
+      target.columns.zip(legendLabels).forEach { (column, label) ->
+        append("$label: ${column.entry.y}")
+      }
+    }
+  }
 
 @Composable
 private fun JetpackComposeDailyDigitalMediaUse(
@@ -104,6 +116,7 @@ private fun JetpackComposeDailyDigitalMediaUse(
             },
             padding = insets(top = 16.dp),
           ),
+        contentDescriptionProvider = ContentDescriptionProvider
       ),
     modelProducer = modelProducer,
     modifier = modifier.height(252.dp),

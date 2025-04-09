@@ -73,6 +73,17 @@ private val MarkerValueFormatter =
       )
   }
 
+private val ContentDescriptionProvider =
+  DefaultCartesianMarker.ContentDescriptionProvider { context, targets ->
+    val target = targets.first() as ColumnCartesianLayerMarkerTarget
+    buildString {
+      val metal = context.model.extraStore[BottomAxisLabelKey][target.x.toInt()]
+      append(metal)
+      val rockPerKgMetal = target.columns[0]
+      append(rockPerKgMetal.entry.y)
+    }
+  }
+
 @Composable
 private fun JetpackComposeRockMetalRatios(
   modelProducer: CartesianChartModelProducer,
@@ -94,6 +105,7 @@ private fun JetpackComposeRockMetalRatios(
           ),
         marker = rememberMarker(MarkerValueFormatter),
         layerPadding = { cartesianLayerPadding(scalableStart = 8.dp, scalableEnd = 8.dp) },
+        contentDescriptionProvider = ContentDescriptionProvider,
       ),
     modelProducer = modelProducer,
     modifier = modifier.height(220.dp),
