@@ -57,8 +57,8 @@ import kotlinx.coroutines.runBlocking
 
 private val LegendLabelKey = ExtraStore.Key<Set<String>>()
 private val ContentDescriptionProvider =
-  DefaultCartesianMarker.ContentDescriptionProvider { _, targets ->
-    val legendLabels = data.keys
+  DefaultCartesianMarker.ContentDescriptionProvider { context, targets ->
+    val legendLabels = context.model.extraStore[LegendLabelKey]
     val target = targets.first() as LineCartesianLayerMarkerTarget
     buildString {
       append("Year: ${target.x.toInt()}")
@@ -132,7 +132,7 @@ private fun JetpackComposeAITestScores(
           padding = insets(top = 16.dp),
         ),
       decorations = listOf(rememberHorizontalLine()),
-      contentDescriptionProvider = ContentDescriptionProvider
+      contentDescriptionProvider = ContentDescriptionProvider,
     ),
     modelProducer,
     modifier.height(300.dp),
