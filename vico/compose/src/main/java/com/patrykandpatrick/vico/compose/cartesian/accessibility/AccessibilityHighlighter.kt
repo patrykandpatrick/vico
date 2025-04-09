@@ -55,7 +55,7 @@ internal fun AccessibilityHighlighter(
   val groupedTargets = targets.groupBy { it.canvasX }
 
   Box(modifier) {
-    for ((x, targetsGroup) in groupedTargets) {
+    groupedTargets.forEach { (x, targetsGroup) ->
       Highlighter(
         xSpacing = context.layerDimensions.xSpacing,
         canvasX = x,
