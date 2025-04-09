@@ -74,10 +74,10 @@ private val MarkerValueFormatter =
   }
 
 private val ContentDescriptionProvider =
-  DefaultCartesianMarker.ContentDescriptionProvider { _, targets ->
+  DefaultCartesianMarker.ContentDescriptionProvider { context, targets ->
     val target = targets.first() as ColumnCartesianLayerMarkerTarget
     buildString {
-      val metal = data.keys.elementAt(target.x.toInt())
+      val metal = context.model.extraStore[BottomAxisLabelKey][target.x.toInt()]
       append(metal)
       val rockPerKgMetal = target.columns[0]
       append(rockPerKgMetal.entry.y)
