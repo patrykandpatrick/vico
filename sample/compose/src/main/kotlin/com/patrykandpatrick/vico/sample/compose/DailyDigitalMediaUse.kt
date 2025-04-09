@@ -59,8 +59,8 @@ private val StartAxisValueFormatter = CartesianValueFormatter.decimal(YDecimalFo
 private val StartAxisItemPlacer = VerticalAxis.ItemPlacer.step({ 0.5 })
 private val MarkerValueFormatter = DefaultCartesianMarker.ValueFormatter.default(YDecimalFormat)
 private val ContentDescriptionProvider =
-  DefaultCartesianMarker.ContentDescriptionProvider { _, targets ->
-    val legendLabels = y.keys
+  DefaultCartesianMarker.ContentDescriptionProvider { context, targets ->
+    val legendLabels = context.model.extraStore[LegendLabelKey]
     val target = targets.first() as ColumnCartesianLayerMarkerTarget
     buildString {
       append("Year: ${target.x.toInt()}")
