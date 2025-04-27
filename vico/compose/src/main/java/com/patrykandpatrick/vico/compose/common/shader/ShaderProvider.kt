@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,6 +65,8 @@ public fun Brush.toShaderProvider(): ShaderProvider =
     ): Shader {
       val paint = Paint()
       applyTo(size = Size(right - left, bottom - top), p = paint, alpha = 1f)
-      return paint.shader!!.apply { setLocalMatrix(translationMatrix(left, top)) }
+      return paint.shader?.apply { setLocalMatrix(translationMatrix(left, top)) } ?: emptyShader
     }
   }
+
+private val emptyShader = object : Shader() {}
