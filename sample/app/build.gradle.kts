@@ -66,6 +66,7 @@ kotlin {
     commonMain.dependencies {
       implementation(compose.material3)
       implementation(libs.composeNavigation)
+      implementation(libs.materialIcons)
       implementation(project(":sample:multiplatform"))
     }
     val desktopMain by getting

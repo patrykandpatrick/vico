@@ -1,21 +1,22 @@
 [versions]
 activity = "1.10.1"
-agp = "8.9.1"
+agp = "8.10.0"
 androidXAnnotation = "1.9.1"
-androidXCore = "1.15.0"
+androidXCore = "1.16.0"
 appcompat = "1.7.0"
-composeBom = "2025.03.01"
-composeMultiplatform = "1.7.3"
-composeNavigation = "2.8.0-alpha12"
+composeBom = "2025.05.01"
+composeMultiplatform = "1.8.1"
+composeNavigation = "2.8.0-alpha13"
 composeStableMarker = "1.0.6"
-coroutines = "1.10.1"
+coroutines = "1.10.2"
 dateTime = "0.6.2"
 dokka = "2.0.0"
-jupiter = "5.12.1"
-kotlin = "2.1.20"
+jupiter = "5.12.2"
+kotlin = "2.1.21"
 material = "1.12.0"
-mavenPublish = "0.31.0"
-mockK = "1.13.17"
+materialIcons = "1.7.3"
+mavenPublish = "0.32.0"
+mockK = "1.14.2"
 testCore = "1.6.1"
 
 [libraries]
@@ -47,6 +48,7 @@ kotlinStdLib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version
 kotlinTest = { group = "org.jetbrains.kotlin", name = "kotlin-test", version.ref = "kotlin" }
 kotlinDateTime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "dateTime" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+materialIcons = { group = "org.jetbrains.compose.material", name = "material-icons-core", version.ref = "materialIcons" }
 mavenPublish = { group = "com.vanniktech.maven.publish", name = "com.vanniktech.maven.publish.gradle.plugin", version.ref = "mavenPublish" }
 mockK = { group = "io.mockk", name = "mockk", version.ref = "mockK" }
 testCore = { group = "androidx.test", name = "core-ktx", version.ref = "testCore" }
