@@ -10,7 +10,7 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: zulu
-          java-version: 23
+          java-version: 24
       - run: |
-          curl -sSL -o ktfmt.jar https://github.com/facebook/ktfmt/releases/download/v0.54/ktfmt-0.54-jar-with-dependencies.jar
+          curl -sSL -o ktfmt.jar https://github.com/facebook/ktfmt/releases/download/v0.55/ktfmt-0.55-with-dependencies.jar
           java -jar ktfmt.jar --dry-run --google-style --set-exit-if-changed .
