@@ -57,9 +57,6 @@ public interface CartesianLayerModel {
     /** The _x_ coordinate. */
     public val x: Double
 
-    /** Text used by accessibility services to describe what this entry represents. */
-    public val contentDescription: String?
-
     override fun equals(other: Any?): Boolean
 
     override fun hashCode(): Int
