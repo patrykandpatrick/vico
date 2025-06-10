@@ -107,23 +107,31 @@ public class LineCartesianLayerModel : CartesianLayerModel {
     return result
   }
 
-  /** Represents a line node at ([x], [y]). */
+  /** Represents a line node at ([x], [y]) in a specific series identified by [seriesIndex]. */
   public class Entry
   internal constructor(
     override val x: Double,
     public val y: Double,
+    override val seriesIndex: Int,
     override val contentDescription: String? = null,
   ) : CartesianLayerModel.Entry {
     public constructor(
       x: Number,
       y: Number,
+      seriesIndex: Int = 0,
       contentDescription: String? = null,
-    ) : this(x.toDouble(), y.toDouble(), contentDescription)
+    ) : this(x.toDouble(), y.toDouble(), seriesIndex, contentDescription)
 
     override fun equals(other: Any?): Boolean =
-      this === other || other is Entry && x == other.x && y == other.y
+      this === other ||
+        other is Entry && x == other.x && y == other.y && seriesIndex == other.seriesIndex
 
-    override fun hashCode(): Int = 31 * x.hashCode() + y.hashCode()
+    override fun hashCode(): Int {
+      var result = x.hashCode()
+      result = 31 * result + y.hashCode()
+      result = 31 * result + seriesIndex
+      return result
+    }
   }
 
   /**
@@ -149,7 +157,8 @@ public class LineCartesianLayerModel : CartesianLayerModel {
      * have the same size.
      */
     public fun series(x: Collection<Number>, y: Collection<Number>) {
-      series.add(x.zip(y, LineCartesianLayerModel::Entry))
+      val nextSeriesIndex = series.size
+      series.add(x.zip(y) { x, y -> Entry(x = x, y = y, seriesIndex = nextSeriesIndex) })
     }
 
     /** Adds a series with the provided _y_ values ([y]), using their indices as the _x_ values. */

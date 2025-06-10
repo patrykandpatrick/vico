@@ -57,6 +57,9 @@ public interface CartesianLayerModel {
     /** The _x_ coordinate. */
     public val x: Double
 
+    /** The series index this entry belongs to. */
+    public val seriesIndex: Int
+
     /** Text used by accessibility services to describe what this entry represents. */
     public val contentDescription: String?
 

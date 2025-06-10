@@ -159,6 +159,8 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
       contentDescription,
     )
 
+    override val seriesIndex: Int = 0 // Candlestick series doesn't support multiple series.
+
     init {
       require(low <= opening && low <= closing && low <= high) {
         "`low` can’t be greater than `opening`, `closing`, or `high`."
@@ -176,7 +178,8 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
           low == other.low &&
           high == other.high &&
           absoluteChange == other.absoluteChange &&
-          relativeChange == other.relativeChange
+          relativeChange == other.relativeChange &&
+          seriesIndex == other.seriesIndex
 
     override fun hashCode(): Int {
       var result = x.hashCode()
@@ -186,6 +189,7 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
       result = 31 * result + high.hashCode()
       result = 31 * result + absoluteChange.hashCode()
       result = 31 * result + relativeChange.hashCode()
+      result = 31 * result + seriesIndex
       return result
     }
   }

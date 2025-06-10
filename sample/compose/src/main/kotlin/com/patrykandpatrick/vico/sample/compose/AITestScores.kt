@@ -58,11 +58,13 @@ import kotlinx.coroutines.runBlocking
 private val LegendLabelKey = ExtraStore.Key<Set<String>>()
 private val ContentDescriptionProvider =
   DefaultCartesianMarker.ContentDescriptionProvider { context, targets ->
-    val legendLabels = context.model.extraStore[LegendLabelKey]
+    val legendLabels = context.model.extraStore[LegendLabelKey].toList()
     val target = targets.first() as LineCartesianLayerMarkerTarget
     buildString {
       append("Year: ${target.x.toInt()}")
-      target.points.zip(legendLabels).forEach { (point, label) ->
+      target.points.forEach { point ->
+        val seriesIndex = point.entry.seriesIndex
+        val label = legendLabels[seriesIndex]
         append("$label: ${point.entry.y}")
       }
     }
