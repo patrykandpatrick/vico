@@ -35,7 +35,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.platform.LocalContext
@@ -46,7 +45,6 @@ import com.patrykandpatrick.vico.compose.cartesian.data.component2
 import com.patrykandpatrick.vico.compose.cartesian.data.component3
 import com.patrykandpatrick.vico.compose.cartesian.data.component4
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
-import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartRanges
@@ -165,7 +163,6 @@ internal fun CartesianChartHostImpl(
         remember(chart.layerPadding, model.extraStore) { chart.layerPadding(model.extraStore) },
       pointerPosition = pointerPosition.value,
     )
-  var drawingContext by remember { mutableStateOf<CartesianDrawingContext?>(null) }
 
   val coroutineScope = rememberCoroutineScope()
   var previousModelID by remember { ValueWrapper(model.id) }
@@ -180,6 +177,15 @@ internal fun CartesianChartHostImpl(
   DisposableEffect(scrollState) { onDispose { scrollState.clearUpdated() } }
 
   val layerBounds = rememberUpdatedState(chart.layerBounds)
+
+  val context =
+    rememberCartesianDrawingContext(
+      measuringContext = measuringContext,
+      layerDimensions = layerDimensions,
+      layerBounds = chart.layerBounds,
+      scroll = scrollState.value,
+      zoom = zoomState.value,
+    )
 
   Box {
     Canvas(
@@ -223,23 +229,13 @@ internal fun CartesianChartHostImpl(
         previousModelID = model.id
       }
 
-      val context =
-        CartesianDrawingContext(
-            measuringContext,
-            canvas,
-            layerDimensions,
-            chart.layerBounds,
-            scrollState.value,
-            zoomState.value,
-          )
-          .also { drawingContext = it }
-
-      chart.draw(context)
-      measuringContext.reset()
+      context.withCanvas(canvas) {
+        chart.draw(context)
+        measuringContext.reset()
+      }
     }
 
-    val context = drawingContext
-    if (isTouchExplorationEnabled() && context != null) {
+    if (isTouchExplorationEnabled()) {
       AccessibilityHighlighter(
         targets = chart.allTargets,
         context = context,

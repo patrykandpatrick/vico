@@ -66,7 +66,7 @@ internal fun CartesianDrawingContext.getVisibleXRange(): ClosedFloatingPointRang
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public fun CartesianDrawingContext(
   measuringContext: CartesianMeasuringContext,
-  canvas: Canvas,
+  canvas: Canvas = Canvas(),
   layerDimensions: CartesianLayerDimensions,
   layerBounds: RectF,
   scroll: Float,
