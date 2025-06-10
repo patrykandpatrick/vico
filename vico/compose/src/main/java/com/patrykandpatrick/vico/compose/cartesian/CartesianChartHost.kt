@@ -181,8 +181,6 @@ internal fun CartesianChartHostImpl(
 
   val layerBounds = rememberUpdatedState(chart.layerBounds)
 
-  var targets by remember { mutableStateOf(emptyList<CartesianMarker.Target>()) }
-
   Box {
     Canvas(
       modifier =
@@ -214,7 +212,6 @@ internal fun CartesianChartHostImpl(
 
       layerDimensions.clear()
       chart.prepare(measuringContext, layerDimensions)
-      targets = chart.allTargets
 
       if (chart.layerBounds.isEmpty) return@Canvas
 
@@ -244,7 +241,7 @@ internal fun CartesianChartHostImpl(
     val context = drawingContext
     if (isTouchExplorationEnabled() && context != null) {
       AccessibilityHighlighter(
-        targets = targets,
+        targets = chart.allTargets,
         context = context,
         contentDescriptionProvider = chart.contentDescriptionProvider,
       )
