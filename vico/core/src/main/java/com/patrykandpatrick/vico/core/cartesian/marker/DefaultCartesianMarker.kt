@@ -316,7 +316,7 @@ public open class DefaultCartesianMarker(
     public fun getContentDescription(
       context: CartesianDrawingContext,
       targets: List<CartesianMarker.Target>,
-    ): CharSequence
+    ): String
 
     /** Houses a [ContentDescriptionProvider] factory function. */
     public companion object {
@@ -408,7 +408,7 @@ internal class DefaultContentDescriptionProvider :
   override fun getContentDescription(
     context: CartesianDrawingContext,
     targets: List<CartesianMarker.Target>,
-  ): CharSequence {
+  ): String {
     return buildString { targets.forEach { target -> append(target = target) } }
   }
 

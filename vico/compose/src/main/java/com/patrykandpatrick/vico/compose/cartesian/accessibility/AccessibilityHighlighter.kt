@@ -62,9 +62,10 @@ internal fun AccessibilityHighlighter(
         canvasTopY = context.layerBounds.top,
         height = context.layerBounds.height(),
         contentDescription =
-          contentDescriptionProvider
-            .getContentDescription(context = context, targets = targetsGroup)
-            .toString(),
+          contentDescriptionProvider.getContentDescription(
+            context = context,
+            targets = targetsGroup,
+          ),
       )
     }
   }
