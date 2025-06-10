@@ -29,7 +29,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
-import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
+import com.patrykandpatrick.vico.core.cartesian.marker.ContentDescriptionProvider
 
 /**
  * Displays accessibility-focused highlight indicators for a set of chart marker targets.
@@ -49,8 +49,7 @@ internal fun AccessibilityHighlighter(
   targets: List<CartesianMarker.Target>,
   context: CartesianDrawingContext,
   modifier: Modifier = Modifier,
-  contentDescriptionProvider: DefaultCartesianMarker.ContentDescriptionProvider =
-    DefaultCartesianMarker.ContentDescriptionProvider.default(),
+  contentDescriptionProvider: ContentDescriptionProvider = ContentDescriptionProvider.default(),
 ) {
   val groupedTargets = targets.groupBy { it.canvasX }
 
