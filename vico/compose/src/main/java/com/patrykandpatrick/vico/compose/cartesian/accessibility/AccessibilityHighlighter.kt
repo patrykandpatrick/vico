@@ -18,11 +18,11 @@ package com.patrykandpatrick.vico.compose.cartesian.accessibility
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -82,7 +82,10 @@ private fun Highlighter(
 
   Box(
     modifier =
-      Modifier.offset(x = canvasX.pxToDp() - width / 2, y = canvasTopY.pxToDp())
+      Modifier.graphicsLayer {
+          translationX = canvasX - width.toPx() / 2
+          translationY = canvasTopY
+        }
         .border(width = borderWidth, color = Color.Transparent)
         .size(width = width, height = height.pxToDp())
         .semantics { contentDescription?.let { this.contentDescription = it } }
