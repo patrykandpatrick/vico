@@ -256,7 +256,8 @@ private val CartesianChart.allTargets: List<CartesianMarker.Target>
 @Composable
 private fun isTouchExplorationEnabled(): Boolean {
   val context = LocalContext.current
-  val accessibilityManager =
+  val accessibilityManager = remember {
     context.getSystemService(Context.ACCESSIBILITY_SERVICE) as? AccessibilityManager
+  }
   return accessibilityManager?.isTouchExplorationEnabled == true
 }
