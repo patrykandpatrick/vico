@@ -137,7 +137,6 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
     public val high: Double,
     public val absoluteChange: Change,
     public val relativeChange: Change,
-    override val contentDescription: String? = null,
   ) : CartesianLayerModel.Entry {
     public constructor(
       x: Number,
@@ -147,7 +146,6 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
       high: Number,
       absoluteChange: Change,
       relativeChange: Change,
-      contentDescription: String? = null,
     ) : this(
       x.toDouble(),
       opening.toDouble(),
@@ -156,7 +154,6 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
       high.toDouble(),
       absoluteChange,
       relativeChange,
-      contentDescription,
     )
 
     override val seriesIndex: Int = 0 // Candlestick series doesn't support multiple series.

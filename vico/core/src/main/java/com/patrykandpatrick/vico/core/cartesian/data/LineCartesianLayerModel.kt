@@ -113,14 +113,12 @@ public class LineCartesianLayerModel : CartesianLayerModel {
     override val x: Double,
     public val y: Double,
     override val seriesIndex: Int,
-    override val contentDescription: String? = null,
   ) : CartesianLayerModel.Entry {
     public constructor(
       x: Number,
       y: Number,
       seriesIndex: Int = 0,
-      contentDescription: String? = null,
-    ) : this(x.toDouble(), y.toDouble(), seriesIndex, contentDescription)
+    ) : this(x.toDouble(), y.toDouble(), seriesIndex)
 
     override fun equals(other: Any?): Boolean =
       this === other ||
