@@ -43,10 +43,12 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
 import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.marker.ColumnCartesianLayerMarkerTarget
+import com.patrykandpatrick.vico.core.cartesian.marker.ContentDescriptionProvider
 import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
-import java.text.DecimalFormat
+import com.patrykandpatrick.vico.sample.compose.ContentDescriptionProvider
 import kotlinx.coroutines.runBlocking
+import java.text.DecimalFormat
 
 private const val Y_DIVISOR = 1000
 
@@ -73,16 +75,16 @@ private val MarkerValueFormatter =
       )
   }
 
-private val ContentDescriptionProvider =
-  DefaultCartesianMarker.ContentDescriptionProvider { context, targets ->
-    val target = targets.first() as ColumnCartesianLayerMarkerTarget
-    buildString {
-      val metal = context.model.extraStore[BottomAxisLabelKey][target.x.toInt()]
-      append("$metal.")
-      val rockPerKgMetal = target.columns[0]
-      append("${rockPerKgMetal.entry.y}.")
-    }
+
+private val ContentDescriptionProvider = ContentDescriptionProvider { context, targets ->
+  val target = targets.first() as ColumnCartesianLayerMarkerTarget
+  buildString {
+    val metal = context.model.extraStore[BottomAxisLabelKey][target.x.toInt()]
+    append("$metal.")
+    val rockPerKgMetal = target.columns[0]
+    append("${rockPerKgMetal.entry.y}.")
   }
+}
 
 @Composable
 private fun JetpackComposeRockMetalRatios(
