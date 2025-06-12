@@ -340,7 +340,6 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
           chart.layerBounds,
           scrollHandler.value,
           zoomHandler.value,
-          canvas,
         )
 
       chart.draw(drawingContext)

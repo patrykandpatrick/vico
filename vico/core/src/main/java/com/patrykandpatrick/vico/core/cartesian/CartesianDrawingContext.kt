@@ -70,12 +70,14 @@ public fun CartesianDrawingContext(
   layerBounds: RectF,
   scroll: Float,
   zoom: Float,
-  canvas: Canvas = Canvas(),
 ): CartesianDrawingContext =
   object : CartesianDrawingContext, CartesianMeasuringContext by measuringContext {
     override val layerBounds: RectF = layerBounds
 
-    override var canvas: Canvas = canvas
+    private var internalCanvas: Canvas? = null
+
+    override val canvas: Canvas
+      get() = checkNotNull(internalCanvas)
 
     override val layerDimensions: CartesianLayerDimensions = layerDimensions
 
@@ -84,9 +86,9 @@ public fun CartesianDrawingContext(
     override val zoom: Float = zoom
 
     override fun withCanvas(canvas: Canvas, block: () -> Unit) {
-      val originalCanvas = this.canvas
-      this.canvas = canvas
+      val originalCanvas = internalCanvas
+      internalCanvas = canvas
       block()
-      this.canvas = originalCanvas
+      internalCanvas = originalCanvas
     }
   }
