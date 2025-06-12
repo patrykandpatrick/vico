@@ -112,7 +112,7 @@ public class LineCartesianLayerModel : CartesianLayerModel {
   internal constructor(
     override val x: Double,
     public val y: Double,
-    override val seriesIndex: Int,
+    public val seriesIndex: Int,
   ) : CartesianLayerModel.Entry {
     public constructor(
       x: Number,

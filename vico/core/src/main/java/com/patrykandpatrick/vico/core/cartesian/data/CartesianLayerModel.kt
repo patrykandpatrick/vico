@@ -57,9 +57,6 @@ public interface CartesianLayerModel {
     /** The _x_ coordinate. */
     public val x: Double
 
-    /** The series index this entry belongs to. */
-    public val seriesIndex: Int
-
     override fun equals(other: Any?): Boolean
 
     override fun hashCode(): Int
