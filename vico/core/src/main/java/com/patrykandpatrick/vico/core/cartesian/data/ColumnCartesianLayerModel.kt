@@ -142,10 +142,16 @@ public class ColumnCartesianLayerModel : CartesianLayerModel {
     public val y: Double,
     public val seriesIndex: Int,
   ) : CartesianLayerModel.Entry {
+    @Deprecated("Use the constructor with `seriesIndex` instead.")
     public constructor(
       x: Number,
       y: Number,
-      seriesIndex: Int = 0,
+    ) : this(x.toDouble(), y.toDouble(), -1)
+
+    public constructor(
+      x: Number,
+      y: Number,
+      seriesIndex: Int,
     ) : this(x.toDouble(), y.toDouble(), seriesIndex)
 
     override fun equals(other: Any?): Boolean =
