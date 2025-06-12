@@ -16,7 +16,6 @@
 
 package com.patrykandpatrick.vico.compose.cartesian
 
-import android.graphics.Canvas
 import android.graphics.RectF
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -31,23 +30,14 @@ internal fun rememberCartesianDrawingContext(
   layerBounds: RectF,
   scroll: Float,
   zoom: Float,
-  canvas: Canvas = Canvas(),
 ): CartesianDrawingContext {
-  return remember(
-    measuringContext,
-    layerDimensions,
-    layerBounds,
-    scroll,
-    zoom,
-    canvas
-  ) {
+  return remember(measuringContext, layerDimensions, layerBounds, scroll, zoom) {
     CartesianDrawingContext(
       measuringContext = measuringContext,
       layerDimensions = layerDimensions,
       layerBounds = layerBounds,
       scroll = scroll,
       zoom = zoom,
-      canvas = canvas
     )
   }
 }
