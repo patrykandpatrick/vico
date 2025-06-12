@@ -125,6 +125,8 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
    * @property absoluteChange represents the absolute price change ([closing] vs. [opening]).
    * @property relativeChange represents the relative price change (this [Entry]’s [closing] vs. the
    *   previous [Entry]’s [closing]).
+   * @property contentDescription Text used by accessibility services to describe what this entry
+   *   represents.
    */
   public open class Entry
   internal constructor(

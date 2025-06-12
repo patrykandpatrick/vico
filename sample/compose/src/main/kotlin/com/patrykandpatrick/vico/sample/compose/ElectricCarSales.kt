@@ -40,8 +40,11 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianLayerRangeProvider
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
+import com.patrykandpatrick.vico.core.cartesian.marker.ContentDescriptionProvider
 import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
+import com.patrykandpatrick.vico.core.cartesian.marker.LineCartesianLayerMarkerTarget
 import com.patrykandpatrick.vico.core.common.shader.ShaderProvider
+import com.patrykandpatrick.vico.sample.compose.ContentDescriptionProvider
 import java.text.DecimalFormat
 import kotlinx.coroutines.runBlocking
 
@@ -49,6 +52,13 @@ private val RangeProvider = CartesianLayerRangeProvider.fixed(maxY = 100.0)
 private val YDecimalFormat = DecimalFormat("#.##'%'")
 private val StartAxisValueFormatter = CartesianValueFormatter.decimal(YDecimalFormat)
 private val MarkerValueFormatter = DefaultCartesianMarker.ValueFormatter.default(YDecimalFormat)
+private val ContentDescriptionProvider = ContentDescriptionProvider { _, targets ->
+  val target = targets.first() as LineCartesianLayerMarkerTarget
+  buildString {
+    append("Year: ${target.x.toInt()}")
+    target.points.forEach { point -> append("${point.entry.y}%") }
+  }
+}
 
 @Composable
 private fun JetpackComposeElectricCarSales(
@@ -78,6 +88,7 @@ private fun JetpackComposeElectricCarSales(
       startAxis = VerticalAxis.rememberStart(valueFormatter = StartAxisValueFormatter),
       bottomAxis = HorizontalAxis.rememberBottom(),
       marker = rememberMarker(MarkerValueFormatter),
+      contentDescriptionProvider = ContentDescriptionProvider,
     ),
     modelProducer,
     modifier.height(220.dp),
