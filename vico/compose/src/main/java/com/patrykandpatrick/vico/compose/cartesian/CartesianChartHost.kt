@@ -185,6 +185,10 @@ internal fun CartesianChartHostImpl(
     }
   }
 
+  LaunchedEffect(zoomState, scrollState) {
+    zoomState.pendingScroll.collect { scrollState.scroll(it) }
+  }
+
   DisposableEffect(scrollState) { onDispose { scrollState.clearUpdated() } }
 
   val layerBounds = rememberUpdatedState(chart.layerBounds)
@@ -203,9 +207,8 @@ internal fun CartesianChartHostImpl(
             remember(zoomState, scrollState, coroutineScope) {
               if (zoomState.zoomEnabled) {
                 { factor, centroid ->
-                  zoomState.zoom(factor, centroid.x, scrollState.value, layerBounds.value).let {
-                    scroll ->
-                    coroutineScope.launch { scrollState.scroll(scroll) }
+                  coroutineScope.launch {
+                    zoomState.zoom(factor, centroid.x, scrollState.value, layerBounds.value)
                   }
                 }
               } else {
@@ -223,7 +226,7 @@ internal fun CartesianChartHostImpl(
 
     if (chart.layerBounds.isEmpty) return@Canvas
 
-    zoomState.update(measuringContext, layerDimensions, chart.layerBounds)
+    zoomState.update(measuringContext, layerDimensions, chart.layerBounds, scrollState.value)
     scrollState.update(measuringContext, chart.layerBounds, layerDimensions)
 
     if (model.id != previousModelID) {

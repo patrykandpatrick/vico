@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,6 +42,12 @@ public class ZoomHandler(
 ) {
   private var overridden = false
   private val listeners = mutableSetOf<Listener>()
+  private var context: CartesianMeasuringContext? = null
+  private var layerDimensions: MutableCartesianLayerDimensions? = null
+  private var bounds: RectF? = null
+  private var scroll = 0f
+  private var pendingScroll = mutableListOf<Scroll>()
+  internal var invalidate: (() -> Unit)? = null
 
   /** The current zoom factor. */
   public var value: Float = 0f
@@ -61,11 +67,46 @@ public class ZoomHandler(
       value = value
     }
 
+  /** Triggers a zoom. */
+  public fun zoom(zoom: Zoom) {
+    withUpdated { context, layerDimensions, bounds ->
+      val newValue = zoom.getValue(context, layerDimensions, bounds)
+      if (newValue != value) {
+        zoom(newValue / value, context.canvasBounds.centerX(), scroll, bounds)
+      }
+    }
+  }
+
+  private inline fun withUpdated(
+    block: (CartesianMeasuringContext, MutableCartesianLayerDimensions, RectF) -> Unit
+  ) {
+    val context = this.context
+    val layerDimensions = this.layerDimensions
+    val bounds = this.bounds
+    if (context != null && layerDimensions != null && bounds != null) {
+      block(context, layerDimensions, bounds)
+    }
+  }
+
+  internal inline fun consumePendingScroll(scroll: (Scroll) -> Unit) {
+    val iterator = pendingScroll.iterator()
+    while (iterator.hasNext()) {
+      scroll(iterator.next())
+      iterator.remove()
+    }
+  }
+
   internal fun update(
     context: CartesianMeasuringContext,
     layerDimensions: MutableCartesianLayerDimensions,
     bounds: RectF,
+    scroll: Float,
   ) {
+    this.context = context
+    this.layerDimensions = layerDimensions
+    this.bounds = bounds
+    this.scroll = scroll
+
     val minValue = minZoom.getValue(context, layerDimensions, bounds)
     val maxValue = maxZoom.getValue(context, layerDimensions, bounds)
     valueRange = minValue..maxValue
@@ -73,14 +114,15 @@ public class ZoomHandler(
     layerDimensions.scale(value)
   }
 
-  internal fun zoom(factor: Float, centroidX: Float, scroll: Float, bounds: RectF): Scroll {
+  internal fun zoom(factor: Float, centroidX: Float, scroll: Float, bounds: RectF) {
     overridden = true
     val oldValue = value
     value *= factor
-    if (value == oldValue) Scroll.Relative.pixels(0f)
+    if (value == oldValue) return
     val transformationAxisX = scroll + centroidX - bounds.left
     val zoomedTransformationAxisX = transformationAxisX * (value / oldValue)
-    return Scroll.Relative.pixels(zoomedTransformationAxisX - transformationAxisX)
+    pendingScroll.add(Scroll.Relative.pixels(zoomedTransformationAxisX - transformationAxisX))
+    invalidate?.invoke()
   }
 
   internal fun saveInstanceState(bundle: Bundle) {
@@ -103,6 +145,13 @@ public class ZoomHandler(
 
   /** Removes the provided [Listener]. */
   public fun removeListener(listener: Listener): Boolean = listeners.remove(listener)
+
+  internal fun clearUpdated() {
+    context = null
+    layerDimensions = null
+    bounds = null
+    invalidate = null
+  }
 
   /** Facilitates listening for zoom events. */
   public interface Listener {

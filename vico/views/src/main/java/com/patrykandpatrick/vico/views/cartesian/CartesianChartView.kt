@@ -120,7 +120,9 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   public var zoomHandler: ZoomHandler by
     invalidatingObservable(
       ZoomHandler.default(themeHandler.zoomEnabled, scrollHandler.scrollEnabled)
-    ) { _, newValue ->
+    ) { oldValue, newValue ->
+      oldValue?.clearUpdated()
+      newValue.invalidate = ::invalidate
       measuringContext.zoomEnabled = newValue.zoomEnabled && measuringContext.scrollEnabled
     }
 
@@ -319,11 +321,8 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 
   private fun handleZoom(focusX: Float, zoomChange: Float) {
     val chart = chart ?: return
-    scrollHandler.scroll(
-      zoomHandler.zoom(zoomChange, focusX, scrollHandler.value, chart.layerBounds)
-    )
+    zoomHandler.zoom(zoomChange, focusX, scrollHandler.value, chart.layerBounds)
     handleTouchEvent(null)
-    invalidate()
   }
 
   private fun handleTouchEvent(point: Point?) {
@@ -346,7 +345,8 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
         postInvalidateOnAnimation()
       }
 
-      zoomHandler.update(measuringContext, layerDimensions, chart.layerBounds)
+      zoomHandler.consumePendingScroll(scrollHandler::scroll)
+      zoomHandler.update(measuringContext, layerDimensions, chart.layerBounds, scrollHandler.value)
       scrollHandler.update(measuringContext, chart.layerBounds, layerDimensions)
 
       val drawingContext =

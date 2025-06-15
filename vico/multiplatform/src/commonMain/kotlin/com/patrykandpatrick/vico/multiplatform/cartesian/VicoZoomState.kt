@@ -24,9 +24,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.center
 import com.patrykandpatrick.vico.multiplatform.cartesian.layer.MutableCartesianLayerDimensions
 import com.patrykandpatrick.vico.multiplatform.cartesian.layer.scale
 import com.patrykandpatrick.vico.multiplatform.common.Defaults
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 
 /** Houses information on a [CartesianChart]’s zoom factor. Allows for zoom customization. */
 public class VicoZoomState {
@@ -37,6 +40,12 @@ public class VicoZoomState {
   private val _value: MutableFloatState
   private val _valueRange = mutableStateOf(0f..0f)
   internal val zoomEnabled: Boolean
+  private var context: CartesianMeasuringContext? = null
+  private var layerDimensions: MutableCartesianLayerDimensions? = null
+  private var bounds: Rect? = null
+  private var scroll = 0f
+  private val _pendingScroll = MutableSharedFlow<Scroll>()
+  internal val pendingScroll = _pendingScroll.asSharedFlow()
 
   /** The current zoom factor. */
   public var value: Float
@@ -92,11 +101,38 @@ public class VicoZoomState {
     overridden = false,
   )
 
+  /** Triggers a zoom. */
+  public suspend fun zoom(zoom: Zoom) {
+    withUpdated { context, layerDimensions, bounds ->
+      val newValue = zoom.getValue(context, layerDimensions, bounds)
+      if (newValue != value) {
+        zoom(newValue / value, context.canvasSize.center.x, scroll, bounds)
+      }
+    }
+  }
+
+  private inline fun withUpdated(
+    block: (CartesianMeasuringContext, MutableCartesianLayerDimensions, Rect) -> Unit
+  ) {
+    val context = this.context
+    val layerDimensions = this.layerDimensions
+    val bounds = this.bounds
+    if (context != null && layerDimensions != null && bounds != null) {
+      block(context, layerDimensions, bounds)
+    }
+  }
+
   internal fun update(
     context: CartesianMeasuringContext,
     layerDimensions: MutableCartesianLayerDimensions,
     bounds: Rect,
+    scroll: Float,
   ) {
+    this.context = context
+    this.layerDimensions = layerDimensions
+    this.bounds = bounds
+    this.scroll = scroll
+
     val minValue = minZoom.getValue(context, layerDimensions, bounds)
     val maxValue = maxZoom.getValue(context, layerDimensions, bounds)
     valueRange = minValue..maxValue
@@ -104,14 +140,14 @@ public class VicoZoomState {
     layerDimensions.scale(value)
   }
 
-  internal fun zoom(factor: Float, centroidX: Float, scroll: Float, bounds: Rect): Scroll {
+  internal suspend fun zoom(factor: Float, centroidX: Float, scroll: Float, bounds: Rect) {
     overridden = true
     val oldValue = value
     value *= factor
-    if (value == oldValue) return Scroll.Relative.pixels(0f)
+    if (value == oldValue) return
     val transformationAxisX = scroll + centroidX - bounds.left
     val zoomedTransformationAxisX = transformationAxisX * (value / oldValue)
-    return Scroll.Relative.pixels(zoomedTransformationAxisX - transformationAxisX)
+    _pendingScroll.emit(Scroll.Relative.pixels(zoomedTransformationAxisX - transformationAxisX))
   }
 
   internal companion object {
