@@ -70,8 +70,8 @@ import kotlinx.coroutines.launch
  * @param animationSpec the [AnimationSpec] for difference animations.
  * @param animateIn whether to run an initial animation when the [CartesianChartHost] enters
  *   composition. The animation is skipped for previews.
- * @param consumeMoveEvents whether move touch events will be consumed by the composable when
- *   scrolling is disabled and [CartesianChart.marker] is not null.
+ * @param consumeMoveEvents whether to consume move touch events when scroll is disabled and
+ *   [CartesianChart.marker] is not null.
  * @param placeholder shown when no [CartesianChartModel] is available.
  */
 @Composable
@@ -119,8 +119,8 @@ public fun CartesianChartHost(
  *   customization and programmatic scrolling.
  * @param zoomState houses information on the [CartesianChart]’s zoom factor. Allows for zoom
  *   customization.
- * @param consumeMoveEvents whether move touch events will be consumed by the composable when
- *   scrolling is disabled and [CartesianChart.marker] is not null.
+ * @param consumeMoveEvents whether to consume move touch events when scroll is disabled and
+ *   [CartesianChart.marker] is not null.
  */
 @Composable
 @SuppressLint("RememberReturnType")

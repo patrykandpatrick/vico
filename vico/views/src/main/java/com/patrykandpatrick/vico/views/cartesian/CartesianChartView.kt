@@ -136,8 +136,8 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     )
 
   /**
-   * Manages move touch events consumption by the view when scrolling is disabled and
-   * [CartesianChart.marker] is not null.
+   * Whether to consume move touch events when scroll is disabled and [CartesianChart.marker] is not
+   * null.
    */
   public var consumeMoveEvents: Boolean by motionEventHandler::consumeMoveEvents
 

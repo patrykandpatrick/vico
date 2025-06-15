@@ -212,7 +212,7 @@
         <!-- Whether to enable zooming. -->
         <attr name="zoomEnabled" format="boolean" />
 
-        <!-- Whether to enable consumption of move events. -->
+        <!-- Equivalent to `CartesianChartView.consumeMoveEvents`. -->
         <attr name="consumeMoveEvents" format="boolean" />
     </declare-styleable>
 
