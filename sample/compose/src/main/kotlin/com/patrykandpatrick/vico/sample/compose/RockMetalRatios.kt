@@ -47,8 +47,8 @@ import com.patrykandpatrick.vico.core.cartesian.marker.ContentDescriptionProvide
 import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.sample.compose.ContentDescriptionProvider
-import kotlinx.coroutines.runBlocking
 import java.text.DecimalFormat
+import kotlinx.coroutines.runBlocking
 
 private const val Y_DIVISOR = 1000
 
