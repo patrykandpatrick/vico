@@ -109,16 +109,10 @@ public class LineCartesianLayerModel : CartesianLayerModel {
 
   /** Represents a line node at ([x], [y]) in a specific series identified by [seriesIndex]. */
   public class Entry
-  internal constructor(
-    override val x: Double,
-    public val y: Double,
-    public val seriesIndex: Int,
-  ) : CartesianLayerModel.Entry {
+  internal constructor(override val x: Double, public val y: Double, public val seriesIndex: Int) :
+    CartesianLayerModel.Entry {
     @Deprecated("Use the constructor with `seriesIndex` instead.")
-    public constructor(
-      x: Number,
-      y: Number,
-    ) : this(x.toDouble(), y.toDouble(), -1)
+    public constructor(x: Number, y: Number) : this(x.toDouble(), y.toDouble(), -1)
 
     public constructor(
       x: Number,
