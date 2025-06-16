@@ -52,8 +52,8 @@ import com.patrykandpatrick.vico.core.common.LegendItem
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.core.common.shape.CorneredShape
 import com.patrykandpatrick.vico.sample.compose.ContentDescriptionProvider
-import kotlinx.coroutines.runBlocking
 import java.text.DecimalFormat
+import kotlinx.coroutines.runBlocking
 
 private val LegendLabelKey = ExtraStore.Key<Set<String>>()
 private val YDecimalFormat = DecimalFormat("#.## h")
