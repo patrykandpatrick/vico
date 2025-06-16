@@ -20,7 +20,6 @@ import android.graphics.Canvas
 import android.graphics.RectF
 import androidx.annotation.RestrictTo
 import androidx.compose.runtime.Stable
-import com.patrykandpatrick.vico.core.cartesian.CartesianChart.PersistentMarkerScope
 import com.patrykandpatrick.vico.core.cartesian.axis.Axis
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisManager
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
@@ -40,6 +39,7 @@ import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.layer.MutableCartesianLayerDimensions
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerVisibilityListener
+import com.patrykandpatrick.vico.core.cartesian.marker.ContentDescriptionProvider
 import com.patrykandpatrick.vico.core.common.Legend
 import com.patrykandpatrick.vico.core.common.Point
 import com.patrykandpatrick.vico.core.common.data.CacheStore
@@ -51,9 +51,6 @@ import com.patrykandpatrick.vico.core.common.saveLayer
 import java.util.Objects
 import java.util.SortedMap
 import java.util.UUID
-import kotlin.collections.component1
-import kotlin.collections.component2
-import kotlin.collections.set
 import kotlin.math.abs
 
 /** A chart based on a Cartesian coordinate plane, composed of [CartesianLayer]s. */
@@ -81,6 +78,10 @@ private constructor(
   private var previousMarkerTargetHashCode: Int?,
   private val persistentMarkerMap: MutableMap<Double, CartesianMarker>,
   private var previousPersistentMarkerHashCode: Int?,
+  /** @suppress */
+  @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+  public val contentDescriptionProvider: ContentDescriptionProvider =
+    ContentDescriptionProvider.default(),
 ) : CartesianLayerMarginUpdater<CartesianChartModel> {
   private val persistentMarkerScope = PersistentMarkerScope {
     persistentMarkerMap[it.toDouble()] = this
@@ -220,6 +221,7 @@ private constructor(
     decorations: List<Decoration> = emptyList(),
     persistentMarkers: (PersistentMarkerScope.(ExtraStore) -> Unit)? = null,
     getXStep: ((CartesianChartModel) -> Double) = { it.getXDeltaGcd() },
+    contentDescriptionProvider: ContentDescriptionProvider = ContentDescriptionProvider.default(),
   ) : this(
     layers = layers,
     startAxis = startAxis,
@@ -234,6 +236,7 @@ private constructor(
     decorations = decorations,
     persistentMarkers = persistentMarkers,
     getXStep = getXStep,
+    contentDescriptionProvider = contentDescriptionProvider,
     id = UUID.randomUUID(),
     previousMarkerTargetHashCode = null,
     persistentMarkerMap = mutableMapOf(),
@@ -466,6 +469,7 @@ private constructor(
     decorations: List<Decoration> = this.decorations,
     persistentMarkers: (PersistentMarkerScope.(ExtraStore) -> Unit)? = this.persistentMarkers,
     getXStep: ((CartesianChartModel) -> Double) = this.getXStep,
+    contentDescriptionProvider: ContentDescriptionProvider = this.contentDescriptionProvider,
   ): CartesianChart =
     CartesianChart(
       layers = layers,
@@ -485,6 +489,7 @@ private constructor(
       previousMarkerTargetHashCode = previousMarkerTargetHashCode,
       persistentMarkerMap = persistentMarkerMap,
       previousPersistentMarkerHashCode = previousPersistentMarkerHashCode,
+      contentDescriptionProvider = contentDescriptionProvider,
     )
 
   override fun equals(other: Any?): Boolean =
@@ -503,7 +508,8 @@ private constructor(
         startAxis == other.startAxis &&
         topAxis == other.topAxis &&
         endAxis == other.endAxis &&
-        bottomAxis == other.bottomAxis
+        bottomAxis == other.bottomAxis &&
+        contentDescriptionProvider == other.contentDescriptionProvider
 
   override fun hashCode(): Int {
     var result = marker.hashCode()
@@ -520,6 +526,7 @@ private constructor(
     result = 31 * result + endAxis.hashCode()
     result = 31 * result + bottomAxis.hashCode()
     result = 31 * result + id.hashCode()
+    result = 31 * result + contentDescriptionProvider.hashCode()
     return result
   }
 
