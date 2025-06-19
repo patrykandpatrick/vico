@@ -23,6 +23,7 @@ import com.patrykandpatrick.vico.sample.multiplatform.ComposeMultiplatformAITest
 import com.patrykandpatrick.vico.sample.multiplatform.ComposeMultiplatformBasicColumnChart
 import com.patrykandpatrick.vico.sample.multiplatform.ComposeMultiplatformBasicComboChart
 import com.patrykandpatrick.vico.sample.multiplatform.ComposeMultiplatformBasicLineChart
+import com.patrykandpatrick.vico.sample.multiplatform.ComposeMultiplatformCV345DFSales2021
 import com.patrykandpatrick.vico.sample.multiplatform.ComposeMultiplatformDailyDigitalMediaUse
 import com.patrykandpatrick.vico.sample.multiplatform.ComposeMultiplatformElectricCarSales
 import com.patrykandpatrick.vico.sample.multiplatform.ComposeMultiplatformGoldPrices
@@ -35,6 +36,7 @@ object Charts {
       { ComposeMultiplatformBasicColumnChart(it) },
       { ComposeMultiplatformBasicLineChart(it) },
       { ComposeMultiplatformBasicComboChart(it) },
+      { ComposeMultiplatformCV345DFSales2021(it) },
       { ComposeMultiplatformAITestScores(it) },
       { ComposeMultiplatformDailyDigitalMediaUse(it) },
       { ComposeMultiplatformTemperatureAnomalies(it) },
@@ -47,6 +49,7 @@ object Charts {
     basicColumnChart: @Composable (Modifier) -> Unit,
     basicLineChart: @Composable (Modifier) -> Unit,
     basicComboChart: @Composable (Modifier) -> Unit,
+    CV345DFSales2021: @Composable (Modifier) -> Unit,
     aiTestScores: @Composable (Modifier) -> Unit,
     dailyDigitalMediaUse: @Composable (Modifier) -> Unit,
     temperatureAnomalies: @Composable (Modifier) -> Unit,
@@ -58,6 +61,7 @@ object Charts {
       Chart(Details.BasicColumnChart, basicColumnChart),
       Chart(Details.BasicLineChart, basicLineChart),
       Chart(Details.BasicComboChart, basicComboChart),
+      Chart(Details.CV345DFSales2021, CV345DFSales2021),
       Chart(Details.AITestScores, aiTestScores),
       Chart(Details.DailyDigitalMediaUse, dailyDigitalMediaUse),
       Chart(Details.TemperatureAnomalies, temperatureAnomalies),
