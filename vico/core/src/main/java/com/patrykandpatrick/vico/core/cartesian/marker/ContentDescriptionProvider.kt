@@ -46,21 +46,21 @@ internal class DefaultContentDescriptionProvider : ContentDescriptionProvider {
   private fun StringBuilder.append(target: CartesianMarker.Target) {
     when (target) {
       is CandlestickCartesianLayerMarkerTarget -> {
-        append("x ${target.x}")
-        append("opening ${target.entry.opening}")
-        append("closing ${target.entry.closing}")
-        append("low ${target.entry.low}")
-        append("high ${target.entry.high}")
+        append("x ${target.x}.")
+        append("opening ${target.entry.opening}.")
+        append("closing ${target.entry.closing}.")
+        append("low ${target.entry.low}.")
+        append("high ${target.entry.high}.")
       }
 
       is ColumnCartesianLayerMarkerTarget -> {
-        append("x ${target.x}")
-        target.columns.forEach { append("y ${it.entry.y}") }
+        append("x ${target.x}.")
+        target.columns.forEach { append("y ${it.entry.y}.") }
       }
 
       is LineCartesianLayerMarkerTarget -> {
-        append("x ${target.x}")
-        target.points.forEach { append("y ${it.entry.y}") }
+        append("x ${target.x}.")
+        target.points.forEach { append("y ${it.entry.y}.") }
       }
 
       else -> throw IllegalArgumentException("Unexpected `CartesianMarker.Target` implementation.")
