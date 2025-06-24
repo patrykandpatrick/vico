@@ -75,7 +75,6 @@ private val MarkerValueFormatter =
       )
   }
 
-
 private val ContentDescriptionProvider = ContentDescriptionProvider { context, targets ->
   val target = targets.first() as ColumnCartesianLayerMarkerTarget
   buildString {
