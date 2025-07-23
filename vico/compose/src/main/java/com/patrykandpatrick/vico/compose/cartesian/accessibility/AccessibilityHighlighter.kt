@@ -31,19 +31,6 @@ import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.core.cartesian.marker.ContentDescriptionProvider
 
-/**
- * Displays accessibility-focused highlight indicators for a set of chart marker targets.
- *
- * This function renders invisible highlight elements for each target in the chart to support
- * accessibility tools like screen readers (e.g., TalkBack). Each marker is rendered with a semantic
- * `contentDescription`, allowing users to navigate data points via accessibility focus.
- *
- * @param targets the list of marker targets representing data points to be highlighted for
- *   accessibility
- * @param context holds environment data
- * @param modifier the modifier to be applied to the [AccessibilityHighlighter].
- * @param contentDescriptionProvider provides the content description for the highlight elements.
- */
 @Composable
 internal fun AccessibilityHighlighter(
   targets: List<CartesianMarker.Target>,
