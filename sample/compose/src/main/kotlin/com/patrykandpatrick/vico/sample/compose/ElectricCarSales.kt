@@ -52,6 +52,7 @@ private val RangeProvider = CartesianLayerRangeProvider.fixed(maxY = 100.0)
 private val YDecimalFormat = DecimalFormat("#.##'%'")
 private val StartAxisValueFormatter = CartesianValueFormatter.decimal(YDecimalFormat)
 private val MarkerValueFormatter = DefaultCartesianMarker.ValueFormatter.default(YDecimalFormat)
+
 private val ContentDescriptionProvider = ContentDescriptionProvider { _, targets ->
   val target = targets.first() as LineCartesianLayerMarkerTarget
   buildString {
