@@ -92,6 +92,6 @@ private fun Highlighter(
   )
 }
 
-@Composable private fun Float.pxToDp() = with(LocalDensity.current) { this@pxToDp.toDp() }
+@Composable private fun Float.pxToDp() = LocalDensity.current.run { this@pxToDp.toDp() }
 
 private val borderWidth = 2.dp
