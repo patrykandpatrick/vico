@@ -30,14 +30,12 @@ internal fun rememberCartesianDrawingContext(
   layerBounds: RectF,
   scroll: Float,
   zoom: Float,
-): CartesianDrawingContext {
-  return remember(measuringContext, layerDimensions, layerBounds, scroll, zoom) {
-    CartesianDrawingContext(
-      measuringContext = measuringContext,
-      layerDimensions = layerDimensions,
-      layerBounds = layerBounds,
-      scroll = scroll,
-      zoom = zoom,
-    )
-  }
+) = remember(measuringContext, layerDimensions, layerBounds, scroll, zoom) {
+  CartesianDrawingContext(
+    measuringContext = measuringContext,
+    layerDimensions = layerDimensions,
+    layerBounds = layerBounds,
+    scroll = scroll,
+    zoom = zoom,
+  )
 }
