@@ -60,6 +60,7 @@ private val YDecimalFormat = DecimalFormat("#.## h")
 private val StartAxisValueFormatter = CartesianValueFormatter.decimal(YDecimalFormat)
 private val StartAxisItemPlacer = VerticalAxis.ItemPlacer.step({ 0.5 })
 private val MarkerValueFormatter = DefaultCartesianMarker.ValueFormatter.default(YDecimalFormat)
+
 private val ContentDescriptionProvider = ContentDescriptionProvider { context, targets ->
   val legendLabels = context.model.extraStore[LegendLabelKey]
   val target = targets.first() as ColumnCartesianLayerMarkerTarget
