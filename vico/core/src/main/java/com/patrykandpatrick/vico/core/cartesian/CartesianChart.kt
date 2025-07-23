@@ -74,14 +74,14 @@ private constructor(
   protected val persistentMarkers: (PersistentMarkerScope.(ExtraStore) -> Unit)? = null,
   protected val getXStep: ((CartesianChartModel) -> Double) = { it.getXDeltaGcd() },
   /** @suppress */
+  @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+  public val contentDescriptionProvider: ContentDescriptionProvider =
+    ContentDescriptionProvider.default(),
+  /** @suppress */
   @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) public val id: UUID,
   private var previousMarkerTargetHashCode: Int?,
   private val persistentMarkerMap: MutableMap<Double, CartesianMarker>,
   private var previousPersistentMarkerHashCode: Int?,
-  /** @suppress */
-  @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-  public val contentDescriptionProvider: ContentDescriptionProvider =
-    ContentDescriptionProvider.default(),
 ) : CartesianLayerMarginUpdater<CartesianChartModel> {
   private val persistentMarkerScope = PersistentMarkerScope {
     persistentMarkerMap[it.toDouble()] = this
