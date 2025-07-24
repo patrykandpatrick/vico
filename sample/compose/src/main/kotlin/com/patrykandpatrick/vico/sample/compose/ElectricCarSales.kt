@@ -49,8 +49,11 @@ import java.text.DecimalFormat
 import kotlinx.coroutines.runBlocking
 
 private val RangeProvider = CartesianLayerRangeProvider.fixed(maxY = 100.0)
+
 private val YDecimalFormat = DecimalFormat("#.##'%'")
+
 private val StartAxisValueFormatter = CartesianValueFormatter.decimal(YDecimalFormat)
+
 private val MarkerValueFormatter = DefaultCartesianMarker.ValueFormatter.default(YDecimalFormat)
 
 private val ContentDescriptionProvider = ContentDescriptionProvider { _, targets ->
