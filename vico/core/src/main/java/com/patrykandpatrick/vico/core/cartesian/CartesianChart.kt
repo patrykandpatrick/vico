@@ -485,11 +485,11 @@ private constructor(
       decorations = decorations,
       persistentMarkers = persistentMarkers,
       getXStep = getXStep,
+      contentDescriptionProvider = contentDescriptionProvider,
       id = id,
       previousMarkerTargetHashCode = previousMarkerTargetHashCode,
       persistentMarkerMap = persistentMarkerMap,
       previousPersistentMarkerHashCode = previousPersistentMarkerHashCode,
-      contentDescriptionProvider = contentDescriptionProvider,
     )
 
   override fun equals(other: Any?): Boolean =
