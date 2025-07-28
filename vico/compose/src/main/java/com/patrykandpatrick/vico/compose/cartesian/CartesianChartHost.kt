@@ -236,11 +236,7 @@ internal fun CartesianChartHostImpl(
     }
 
     if (isTouchExplorationEnabled()) {
-      AccessibilityHighlighter(
-        chart.allTargets,
-        context,
-        chart.contentDescriptionProvider,
-      )
+      AccessibilityHighlighter(chart.allTargets, context, chart.contentDescriptionProvider)
     }
   }
 }
