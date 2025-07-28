@@ -237,9 +237,9 @@ internal fun CartesianChartHostImpl(
 
     if (isTouchExplorationEnabled()) {
       AccessibilityHighlighter(
-        targets = chart.allTargets,
-        context = context,
-        contentDescriptionProvider = chart.contentDescriptionProvider,
+        chart.allTargets,
+        context,
+        chart.contentDescriptionProvider,
       )
     }
   }
