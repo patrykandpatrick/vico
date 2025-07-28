@@ -35,12 +35,11 @@ import com.patrykandpatrick.vico.core.cartesian.marker.ContentDescriptionProvide
 internal fun AccessibilityHighlighter(
   targets: List<CartesianMarker.Target>,
   context: CartesianDrawingContext,
-  modifier: Modifier = Modifier,
   contentDescriptionProvider: ContentDescriptionProvider = ContentDescriptionProvider.default(),
 ) {
   val groupedTargets = targets.groupBy(CartesianMarker.Target::canvasX)
 
-  Box(modifier) {
+  Box {
     groupedTargets.forEach { (x, targetsGroup) ->
       Highlighter(
         xSpacing = context.layerDimensions.xSpacing,
