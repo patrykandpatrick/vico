@@ -38,7 +38,7 @@ internal fun AccessibilityHighlighter(
   modifier: Modifier = Modifier,
   contentDescriptionProvider: ContentDescriptionProvider = ContentDescriptionProvider.default(),
 ) {
-  val groupedTargets = targets.groupBy { it.canvasX }
+  val groupedTargets = targets.groupBy(CartesianMarker.Target::canvasX)
 
   Box(modifier) {
     groupedTargets.forEach { (x, targetsGroup) ->
