@@ -35,7 +35,7 @@ internal fun rememberCartesianDrawingContext(
     measuringContext,
     layerDimensions,
     layerBounds,
-    zoom,
     scroll,
+    zoom,
   )
 }
