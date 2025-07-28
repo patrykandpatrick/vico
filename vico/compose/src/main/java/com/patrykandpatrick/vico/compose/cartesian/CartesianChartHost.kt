@@ -180,11 +180,11 @@ internal fun CartesianChartHostImpl(
 
   val context =
     rememberCartesianDrawingContext(
-      measuringContext = measuringContext,
-      layerDimensions = layerDimensions,
-      layerBounds = chart.layerBounds,
-      scroll = scrollState.value,
-      zoom = zoomState.value,
+      measuringContext,
+      layerDimensions,
+      chart.layerBounds,
+      scrollState.value,
+      zoomState.value,
     )
 
   Box {
