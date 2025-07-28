@@ -73,7 +73,7 @@ private fun Highlighter(
           translationY = canvasTopY
         }
         .border(borderWidth, Color.Transparent)
-        .size(width = width, height = height.pxToDp())
+        .size(width, height.pxToDp())
         .semantics { contentDescription?.let { this.contentDescription = it } }
   )
 }
