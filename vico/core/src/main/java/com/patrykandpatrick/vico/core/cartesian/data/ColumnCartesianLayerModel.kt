@@ -184,7 +184,7 @@ public class ColumnCartesianLayerModel : CartesianLayerModel {
      */
     public fun series(x: Collection<Number>, y: Collection<Number>) {
       val nextSeriesIndex = series.size
-      series.add(x.zip(y) { x, y -> Entry(x = x, y = y, seriesIndex = nextSeriesIndex) })
+      series.add(x.zip(y) { x, y -> Entry(x, y, nextSeriesIndex) })
     }
 
     /** Adds a series with the provided _y_ values ([y]), using their indices as the _x_ values. */
