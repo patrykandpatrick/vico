@@ -19,7 +19,6 @@ package com.patrykandpatrick.vico.multiplatform.common.shape
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Path
@@ -70,8 +69,7 @@ public fun androidx.compose.ui.graphics.Shape.toVicoShape(): Shape =
     when (outline) {
       is Outline.Rectangle ->
         path.addRect(Rect(left, top, right, bottom), Path.Direction.CounterClockwise)
-      is Outline.Rounded ->
-        path.addRoundRect(RoundRect(left, top, right, bottom), Path.Direction.CounterClockwise)
+      is Outline.Rounded -> path.addRoundRect(outline.roundRect, Path.Direction.CounterClockwise)
       is Outline.Generic -> path.addPath(outline.path, Offset(left, top))
     }
   }
