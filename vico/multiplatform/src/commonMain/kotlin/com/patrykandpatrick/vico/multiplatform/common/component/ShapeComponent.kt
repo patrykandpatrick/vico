@@ -61,9 +61,9 @@ public open class ShapeComponent(
     require(strokeThickness >= 0.dp) { "`strokeThickness` must be nonnegative." }
   }
 
-  protected fun applyBrushes(size: Size) {
-    fill.brush?.applyTo(size = size, p = paint, alpha = 1f)
-    strokeFill.brush?.applyTo(size = size, p = strokePaint, alpha = 1f)
+  protected fun applyBrushes(context: DrawingContext, size: Size, translationY: Float) {
+    fill.applyShader(paint, context, size, translationY)
+    strokeFill.applyShader(strokePaint, context, size, translationY)
   }
 
   override fun draw(context: DrawingContext, left: Float, top: Float, right: Float, bottom: Float) {
@@ -84,7 +84,7 @@ public open class ShapeComponent(
       path.rewind()
       val width = right - left
       val height = bottom - top
-      applyBrushes(Size(width, height))
+      applyBrushes(context = context, size = Size(width, height), translationY = top)
       shape.outline(this, path, 0f, 0f, width, height)
       canvas.withSave {
         canvas.translate(left, top)

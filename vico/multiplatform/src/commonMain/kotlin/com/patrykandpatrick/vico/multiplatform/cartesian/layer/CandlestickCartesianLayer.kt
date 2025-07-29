@@ -231,6 +231,12 @@ protected constructor(
           openingColor =
             candle.body.effectiveStrokeFill.extractColor(
               context = this,
+              significantY =
+                if (entry.absoluteChange == Change.Bearish) {
+                  limitedBodyTopCanvasY
+                } else {
+                  limitedBodyBottomCanvasY
+                },
               width = candle.body.thickness.pixels,
               height = limitedBodyBottomCanvasY - limitedBodyTopCanvasY,
               side = if (entry.absoluteChange == Change.Bearish) 1 else -1,
@@ -238,6 +244,12 @@ protected constructor(
           closingColor =
             candle.body.effectiveStrokeFill.extractColor(
               context = this,
+              significantY =
+                if (entry.absoluteChange == Change.Bearish) {
+                  limitedBodyBottomCanvasY
+                } else {
+                  limitedBodyTopCanvasY
+                },
               width = candle.body.thickness.pixels,
               height = limitedBodyBottomCanvasY - limitedBodyTopCanvasY,
               side = if (entry.absoluteChange == Change.Bearish) -1 else 1,
@@ -245,6 +257,7 @@ protected constructor(
           lowColor =
             candle.bottomWick.effectiveStrokeFill.extractColor(
               context = this,
+              significantY = lowCanvasY,
               width = candle.bottomWick.thickness.pixels,
               height = lowCanvasY - limitedBodyBottomCanvasY,
               side = -1,
@@ -252,6 +265,7 @@ protected constructor(
           highColor =
             candle.topWick.effectiveStrokeFill.extractColor(
               context = this,
+              significantY = highCanvasY,
               width = candle.topWick.thickness.pixels,
               height = highCanvasY - limitedBodyTopCanvasY,
             ),
@@ -437,12 +451,14 @@ protected constructor(
                 Change.Neutral -> absolutelyBullishRelativelyNeutral
                 Change.Bearish -> absolutelyBullishRelativelyBearish
               }
+
             Change.Neutral ->
               when (entry.relativeChange) {
                 Change.Bullish -> absolutelyNeutralRelativelyBullish
                 Change.Neutral -> absolutelyNeutralRelativelyNeutral
                 Change.Bearish -> absolutelyNeutralRelativelyBearish
               }
+
             Change.Bearish ->
               when (entry.relativeChange) {
                 Change.Bullish -> absolutelyBearishRelativelyBullish

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,10 @@ package com.patrykandpatrick.vico.compose.common
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import com.patrykandpatrick.vico.core.cartesian.axis.Axis
 import com.patrykandpatrick.vico.core.common.Fill
+import com.patrykandpatrick.vico.core.common.data.ExtraStore
+import com.patrykandpatrick.vico.core.common.mapKeysAndValues
 import com.patrykandpatrick.vico.core.common.shader.ShaderProvider
 
 /** Creates a [Fill]. */
@@ -26,3 +29,17 @@ public fun fill(color: Color): Fill = Fill(color.toArgb())
 
 /** Creates a [Fill]. */
 public fun fill(shaderProvider: ShaderProvider): Fill = Fill(shaderProvider)
+
+/** Creates a [Fill] */
+public fun <T : Number> fill(
+  colors: (ExtraStore) -> Map<T, Color>,
+  alpha: (ExtraStore) -> Float = { 1f },
+  verticalAxisPosition: Axis.Position.Vertical? = null,
+): Fill =
+  Fill(
+    colors = { extraStore ->
+      colors(extraStore).mapKeysAndValues { key, color -> key.toDouble() to color.toArgb() }
+    },
+    alpha = alpha,
+    verticalAxisPosition = verticalAxisPosition,
+  )

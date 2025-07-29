@@ -28,7 +28,6 @@ import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.core.common.getEnd
 import com.patrykandpatrick.vico.core.common.getStart
 import com.patrykandpatrick.vico.core.common.shader.ShaderProvider
-import com.patrykandpatrick.vico.core.common.shader.getShader
 
 internal abstract class BaseAreaFill(open val splitY: (ExtraStore) -> Number) :
   LineCartesianLayer.AreaFill {
@@ -113,7 +112,7 @@ internal data class SingleAreaFill(
   override fun onAreasCreated(context: CartesianDrawingContext, fillBounds: RectF) {
     with(context) {
       paint.color = fill.color
-      paint.shader = fill.shaderProvider?.getShader(this, fillBounds)
+      fill.applyShader(paint, this, fillBounds)
       canvas.drawPath(areaPath, paint)
     }
   }
@@ -129,7 +128,7 @@ internal data class DoubleAreaFill(
   override fun onTopAreasCreated(context: CartesianDrawingContext, path: Path, fillBounds: RectF) {
     with(context) {
       paint.color = topFill.color
-      paint.shader = topFill.shaderProvider?.getShader(this, fillBounds)
+      topFill.applyShader(paint, context, fillBounds)
       canvas.drawPath(path, paint)
     }
   }
@@ -141,7 +140,7 @@ internal data class DoubleAreaFill(
   ) {
     with(context) {
       paint.color = bottomFill.color
-      paint.shader = bottomFill.shaderProvider?.getShader(this, fillBounds)
+      bottomFill.applyShader(paint, context, fillBounds)
       canvas.drawPath(path, paint)
     }
   }

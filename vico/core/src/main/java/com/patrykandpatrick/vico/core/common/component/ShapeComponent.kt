@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,10 +66,8 @@ public open class ShapeComponent(
     right: Float,
     bottom: Float,
   ) {
-    fill.shaderProvider?.getShader(context, left, top, right, bottom)?.let(paint::setShader)
-    strokeFill.shaderProvider
-      ?.getShader(context, left, top, right, bottom)
-      ?.let(strokePaint::setShader)
+    fill.applyShader(paint, context, left, top, right, bottom)
+    strokeFill.applyShader(strokePaint, context, left, top, right, bottom)
   }
 
   override fun draw(context: DrawingContext, left: Float, top: Float, right: Float, bottom: Float) {
