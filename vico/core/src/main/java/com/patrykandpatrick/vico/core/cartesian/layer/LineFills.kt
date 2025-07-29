@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,14 +31,14 @@ internal data class SingleLineFill(val fill: Fill) : LineCartesianLayer.LineFill
     verticalAxisPosition: Axis.Position.Vertical?,
   ) {
     with(context) {
-      paint.shader =
-        fill.shaderProvider?.getShader(
-          this,
-          layerBounds.left,
-          layerBounds.top - halfLineThickness,
-          layerBounds.right,
-          layerBounds.bottom + halfLineThickness,
-        )
+      fill.applyShader(
+        paint,
+        this,
+        layerBounds.left,
+        layerBounds.top,
+        layerBounds.right,
+        layerBounds.bottom,
+      )
       canvas.drawPaint(paint)
     }
   }
@@ -59,14 +59,14 @@ internal data class DoubleLineFill(
     with(context) {
       val canvasSplitY = getCanvasSplitY(splitY, halfLineThickness, verticalAxisPosition)
       paint.color = topFill.color
-      paint.shader =
-        topFill.shaderProvider?.getShader(
-          this,
-          layerBounds.left,
-          layerBounds.top - halfLineThickness,
-          layerBounds.right,
-          canvasSplitY,
-        )
+      topFill.applyShader(
+        paint,
+        this,
+        layerBounds.left,
+        layerBounds.top - halfLineThickness,
+        layerBounds.right,
+        canvasSplitY,
+      )
       canvas.drawRect(
         layerBounds.left,
         layerBounds.top - halfLineThickness,
@@ -75,14 +75,14 @@ internal data class DoubleLineFill(
         paint,
       )
       paint.color = bottomFill.color
-      paint.shader =
-        bottomFill.shaderProvider?.getShader(
-          this,
-          layerBounds.left,
-          canvasSplitY,
-          layerBounds.right,
-          layerBounds.bottom + halfLineThickness,
-        )
+      bottomFill.applyShader(
+        paint,
+        this,
+        layerBounds.left,
+        canvasSplitY,
+        layerBounds.right,
+        layerBounds.bottom + halfLineThickness,
+      )
       canvas.drawRect(
         layerBounds.left,
         canvasSplitY,

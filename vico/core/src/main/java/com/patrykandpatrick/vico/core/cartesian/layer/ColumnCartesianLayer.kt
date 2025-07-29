@@ -355,6 +355,7 @@ protected constructor(
     val markerColor =
       column.effectiveStrokeFill.extractColor(
         context = this,
+        significantY = canvasY,
         width = column.thicknessDp.pixels,
         height = columnHeight,
         side = if (entry.y < 0) -1 else 1,

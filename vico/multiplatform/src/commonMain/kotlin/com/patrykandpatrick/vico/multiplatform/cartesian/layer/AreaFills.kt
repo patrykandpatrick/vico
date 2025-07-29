@@ -108,7 +108,7 @@ internal data class SingleAreaFill(
   override fun onAreasCreated(context: CartesianDrawingContext, fillBounds: Rect) {
     with(context) {
       paint.color = fill.color
-      fill.brush?.applyTo(size = fillBounds.size, p = paint, alpha = 1f)
+      fill.applyShader(paint, context, fillBounds.size)
       val (left, top) = fillBounds
       canvas.withSave {
         canvas.translate(left, top)
@@ -129,7 +129,7 @@ internal data class DoubleAreaFill(
   override fun onTopAreasCreated(context: CartesianDrawingContext, path: Path, fillBounds: Rect) {
     with(context) {
       paint.color = topFill.color
-      topFill.brush?.applyTo(size = fillBounds.size, p = paint, alpha = 1f)
+      topFill.applyShader(paint, context, fillBounds.size)
       val (left, top) = fillBounds
       canvas.withSave {
         canvas.translate(left, top)
@@ -146,7 +146,7 @@ internal data class DoubleAreaFill(
   ) {
     with(context) {
       paint.color = bottomFill.color
-      bottomFill.brush?.applyTo(size = fillBounds.size, p = paint, alpha = 1f)
+      bottomFill.applyShader(paint, context, fillBounds.size)
       val (left, top) = fillBounds
       canvas.withSave {
         canvas.translate(left, top)
