@@ -82,12 +82,12 @@ public open class ShapeComponent(
         if (adjustedLeft > adjustedRight || adjustedTop > adjustedBottom) return
       }
       path.rewind()
-      val width = right - left
-      val height = bottom - top
+      val width = adjustedRight - adjustedLeft
+      val height = adjustedBottom - adjustedTop
       applyBrushes(context = context, size = Size(width, height), translationY = top)
       shape.outline(this, path, 0f, 0f, width, height)
       canvas.withSave {
-        canvas.translate(left, top)
+        canvas.translate(adjustedLeft, adjustedTop)
         canvas.drawPath(path, paint)
         if (strokeThickness == 0f || strokeFill.color.alpha == 0f) return@withSave
         strokePaint.strokeWidth = strokeThickness
