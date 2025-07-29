@@ -16,11 +16,27 @@
 
 package com.patrykandpatrick.vico.compose.common
 
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
+import com.patrykandpatrick.vico.compose.cartesian.axis.Axis
+import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 
 internal fun ImageBitmap.getPixel(x: Int, y: Int): Color {
   val buffer = IntArray(1)
   readPixels(buffer, x, y, 1, 1)
   return Color(buffer[0])
 }
+
+/** Creates a [Fill]. */
+public fun fill(color: Color): Fill = Fill(color)
+
+/** Creates a [Fill]. */
+public fun fill(brush: Brush): Fill = Fill(brush)
+
+/** Creates a [Fill]. */
+public fun fill(
+  colors: (ExtraStore) -> Map<Number, Color>,
+  alpha: (ExtraStore) -> Float = { 1f },
+  verticalAxisPosition: Axis.Position.Vertical? = null,
+): Fill = Fill(colors, alpha, verticalAxisPosition)

@@ -219,6 +219,12 @@ protected constructor(
           openingColor =
             candle.body.effectiveStrokeFill.extractColor(
               context = this,
+              significantY =
+                if (entry.absoluteChange == Change.Bearish) {
+                  limitedBodyTopCanvasY
+                } else {
+                  limitedBodyBottomCanvasY
+                },
               width = candle.body.thicknessDp.pixels,
               height = limitedBodyBottomCanvasY - limitedBodyTopCanvasY,
               side = if (entry.absoluteChange == Change.Bearish) 1 else -1,
@@ -226,6 +232,12 @@ protected constructor(
           closingColor =
             candle.body.effectiveStrokeFill.extractColor(
               context = this,
+              significantY =
+                if (entry.absoluteChange == Change.Bearish) {
+                  limitedBodyBottomCanvasY
+                } else {
+                  limitedBodyTopCanvasY
+                },
               width = candle.body.thicknessDp.pixels,
               height = limitedBodyBottomCanvasY - limitedBodyTopCanvasY,
               side = if (entry.absoluteChange == Change.Bearish) -1 else 1,
@@ -233,6 +245,7 @@ protected constructor(
           lowColor =
             candle.bottomWick.effectiveStrokeFill.extractColor(
               context = this,
+              significantY = lowCanvasY,
               width = candle.bottomWick.thicknessDp.pixels,
               height = lowCanvasY - limitedBodyBottomCanvasY,
               side = -1,
@@ -240,6 +253,7 @@ protected constructor(
           highColor =
             candle.topWick.effectiveStrokeFill.extractColor(
               context = this,
+              significantY = highCanvasY,
               width = candle.topWick.thicknessDp.pixels,
               height = highCanvasY - limitedBodyTopCanvasY,
             ),
