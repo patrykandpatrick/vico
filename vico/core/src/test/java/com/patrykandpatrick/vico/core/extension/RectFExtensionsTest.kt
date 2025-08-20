@@ -47,7 +47,7 @@ public class RectFExtensionsTest {
   }
 
   @Test
-  public fun `Given square when rotated 45 degrees then width increases to diagonal`() {
+  public fun `When square is rotated 45 degrees, width increases to diagonal`() {
     rect.set(0f, 0f, 10f, 10f)
     val squareDiagonalWidth = rect.width() * sqrt(2f)
     val originalCenterX = rect.centerX()
@@ -59,7 +59,7 @@ public class RectFExtensionsTest {
   }
 
   @Test
-  public fun `Given RectF when rotated 180 degrees then dimensions are preserved`() {
+  public fun `When RectF is rotated 180 degrees, dimensions are preserved`() {
     val left = 0f
     val top = 0f
     val right = 10f
@@ -73,7 +73,7 @@ public class RectFExtensionsTest {
   }
 
   @Test
-  public fun `Given RectF when rotated 90 degrees then width and height are swapped`() {
+  public fun `When RectF is rotated 90 degrees, width and height are swapped`() {
     val width = 5f
     val height = 10f
     rect.set(0, 0, width, height)
