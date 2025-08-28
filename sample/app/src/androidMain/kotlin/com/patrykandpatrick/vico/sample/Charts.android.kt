@@ -25,6 +25,9 @@ import com.patrykandpatrick.vico.sample.compose.JetpackComposeElectricCarSales
 import com.patrykandpatrick.vico.sample.compose.JetpackComposeGoldPrices
 import com.patrykandpatrick.vico.sample.compose.JetpackComposeRockMetalRatios
 import com.patrykandpatrick.vico.sample.compose.JetpackComposeTemperatureAnomalies
+import com.patrykandpatrick.vico.sample.compose.JetpackComposeClickableColumnChart
+import com.patrykandpatrick.vico.sample.compose.JetpackComposeColorChangingColumnChart
+import com.patrykandpatrick.vico.sample.compose.JetpackComposeMultiColorColumnChart
 import com.patrykandpatrick.vico.sample.views.ViewAITestScores
 import com.patrykandpatrick.vico.sample.views.ViewBasicColumnChart
 import com.patrykandpatrick.vico.sample.views.ViewBasicComboChart
@@ -49,6 +52,9 @@ actual val Charts.overridden: LinkedHashMap<UIFramework, List<Chart>>?
           { JetpackComposeElectricCarSales(it) },
           { JetpackComposeRockMetalRatios(it) },
           { JetpackComposeGoldPrices(it) },
+          { JetpackComposeClickableColumnChart(it) },
+          { JetpackComposeColorChangingColumnChart(it) },
+          { JetpackComposeMultiColorColumnChart(it) },
         ),
       UIFramework.ComposeMultiplatform to ComposeMultiplatform,
       UIFramework.Views to
@@ -62,5 +68,8 @@ actual val Charts.overridden: LinkedHashMap<UIFramework, List<Chart>>?
           { ViewElectricCarSales(it) },
           { ViewRockMetalRatios(it) },
           { ViewGoldPrices(it) },
+          { ViewBasicColumnChart(it) }, // TODO: Create Views versions
+          { ViewBasicColumnChart(it) }, // TODO: Create Views versions
+          { ViewBasicColumnChart(it) }, // TODO: Create Views versions
         ),
     )

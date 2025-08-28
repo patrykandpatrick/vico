@@ -41,6 +41,9 @@ object Charts {
       { ComposeMultiplatformElectricCarSales(it) },
       { ComposeMultiplatformRockMetalRatios(it) },
       { ComposeMultiplatformGoldPrices(it) },
+      { /* TODO: Add multiplatform versions of new charts */ },
+      { /* TODO: Add multiplatform versions of new charts */ },
+      { /* TODO: Add multiplatform versions of new charts */ },
     )
 
   fun default(
@@ -53,6 +56,9 @@ object Charts {
     electricCarSales: @Composable (Modifier) -> Unit,
     rockMetalRatios: @Composable (Modifier) -> Unit,
     goldPrices: @Composable (Modifier) -> Unit,
+    clickableColumnChart: @Composable (Modifier) -> Unit,
+    colorChangingColumnChart: @Composable (Modifier) -> Unit,
+    multiColorColumnChart: @Composable (Modifier) -> Unit,
   ) =
     listOf(
       Chart(Details.BasicColumnChart, basicColumnChart),
@@ -64,6 +70,9 @@ object Charts {
       Chart(Details.ElectricCarSales, electricCarSales),
       Chart(Details.RockMetalRatios, rockMetalRatios),
       Chart(Details.GoldPrices, goldPrices),
+      Chart(Details.ClickableColumnChart, clickableColumnChart),
+      Chart(Details.ColorChangingColumnChart, colorChangingColumnChart),
+      Chart(Details.MultiColorColumnChart, multiColorColumnChart),
     )
 }
 
