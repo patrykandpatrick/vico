@@ -19,6 +19,7 @@ package com.patrykandpatrick.vico.sample.compose
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
+import android.util.Log
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -82,7 +83,11 @@ private fun JetpackComposeRockMetalRatios(
     chart =
       rememberCartesianChart(
         rememberColumnCartesianLayer(
-          ColumnCartesianLayer.ColumnProvider.series(
+          onColumnClick = { entry, seriesIndex ->
+            Log.d("ColumnCartesianLayer", "Clicked: Series $seriesIndex, Value ${entry.y} at X ${entry.x}")
+//            setClickedInfo("Clicked: Series $seriesIndex, Value ${entry.y} at X ${entry.x}")
+          },
+          columnProvider = ColumnCartesianLayer.ColumnProvider.series(
             rememberLineComponent(fill = fill(Color(0xffff5500)), thickness = 16.dp)
           )
         ),

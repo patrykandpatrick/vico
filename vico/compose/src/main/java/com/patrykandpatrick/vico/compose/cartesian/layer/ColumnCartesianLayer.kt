@@ -27,6 +27,7 @@ import com.patrykandpatrick.vico.core.cartesian.axis.Axis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianLayerRangeProvider
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.ColumnCartesianLayerDrawingModel
+import com.patrykandpatrick.vico.core.cartesian.data.ColumnCartesianLayerModel
 import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer.MergeMode
 import com.patrykandpatrick.vico.core.common.Defaults
@@ -63,6 +64,7 @@ public fun rememberColumnCartesianLayer(
     remember {
       CartesianLayerDrawingModelInterpolator.default()
     },
+  onColumnClick: ((ColumnCartesianLayerModel.Entry, Int) -> Unit)? = null,
 ): ColumnCartesianLayer {
   var columnCartesianLayerWrapper by remember { ValueWrapper<ColumnCartesianLayer?>(null) }
   return remember(
@@ -76,6 +78,7 @@ public fun rememberColumnCartesianLayer(
     rangeProvider,
     verticalAxisPosition,
     drawingModelInterpolator,
+    onColumnClick,
   ) {
     val columnCartesianLayer =
       columnCartesianLayerWrapper?.copy(
@@ -89,6 +92,7 @@ public fun rememberColumnCartesianLayer(
         rangeProvider,
         verticalAxisPosition,
         drawingModelInterpolator,
+        onColumnClick,
       )
         ?: ColumnCartesianLayer(
           columnProvider,
@@ -101,6 +105,7 @@ public fun rememberColumnCartesianLayer(
           rangeProvider,
           verticalAxisPosition,
           drawingModelInterpolator,
+          onColumnClick,
         )
     columnCartesianLayerWrapper = columnCartesianLayer
     columnCartesianLayer

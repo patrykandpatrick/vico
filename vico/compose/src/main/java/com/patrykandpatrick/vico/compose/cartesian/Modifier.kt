@@ -33,6 +33,7 @@ internal fun Modifier.pointerInput(
   scrollState: VicoScrollState,
   onPointerPositionChange: ((Point?) -> Unit)?,
   onZoom: ((Float, Offset) -> Unit)?,
+  onTap: ((Point) -> Unit)?,
   consumeMoveEvents: Boolean,
 ) =
   scrollable(
@@ -41,7 +42,8 @@ internal fun Modifier.pointerInput(
       enabled = scrollState.scrollEnabled,
       reverseDirection = true,
     )
-    .pointerInput(onZoom, onPointerPositionChange) {
+    .pointerInput(onZoom, onPointerPositionChange, onTap) {
+      var pressedPosition: Point? = null
       awaitPointerEventScope {
         while (true) {
           val event = awaitPointerEvent()
@@ -51,15 +53,28 @@ internal fun Modifier.pointerInput(
                 1 - event.changes.first().scrollDelta.y * BASE_SCROLL_ZOOM_DELTA,
                 event.changes.first().position,
               )
-            onPointerPositionChange == null -> continue
-            event.type == PointerEventType.Press ->
-              onPointerPositionChange(event.changes.first().position.toPoint())
-            event.type == PointerEventType.Release -> onPointerPositionChange(null)
+            event.type == PointerEventType.Press -> {
+              val position = event.changes.first().position.toPoint()
+              pressedPosition = position
+              onPointerPositionChange?.invoke(position)
+            }
+            event.type == PointerEventType.Release -> {
+              val releasePosition = event.changes.first().position.toPoint()
+              pressedPosition?.let { pressPos ->
+                if (kotlin.math.abs(pressPos.x - releasePosition.x) < 10f && 
+                    kotlin.math.abs(pressPos.y - releasePosition.y) < 10f) {
+                  onTap?.invoke(releasePosition)
+                }
+              }
+              pressedPosition = null
+              onPointerPositionChange?.invoke(null)
+            }
             event.type == PointerEventType.Move && !scrollState.scrollEnabled -> {
               val changes = event.changes.first()
               if (consumeMoveEvents) changes.consume()
-              onPointerPositionChange(changes.position.toPoint())
+              onPointerPositionChange?.invoke(changes.position.toPoint())
             }
+            onPointerPositionChange == null && onTap == null -> continue
           }
         }
       }

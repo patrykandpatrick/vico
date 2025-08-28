@@ -215,6 +215,15 @@ internal fun CartesianChartHostImpl(
                 null
               }
             },
+          onTap = remember(chart) {
+            { point ->
+              chart.layers.forEach { layer ->
+                if (layer is com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer) {
+                  if (layer.handleColumnClick(point)) return@forEach
+                }
+              }
+            }
+          },
         )
   ) {
     val canvas = drawContext.canvas.nativeCanvas

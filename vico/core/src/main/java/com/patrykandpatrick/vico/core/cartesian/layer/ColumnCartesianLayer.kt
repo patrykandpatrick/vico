@@ -51,6 +51,8 @@ import com.patrykandpatrick.vico.core.common.unaryMinus
 import java.util.Objects
 import kotlin.math.abs
 import kotlin.math.min
+import android.graphics.RectF
+import com.patrykandpatrick.vico.core.common.Point
 
 /**
  * Displays data as vertical bars.
@@ -67,8 +69,9 @@ import kotlin.math.min
  * @property rangeProvider defines the _x_ and _y_ ranges.
  * @property verticalAxisPosition the position of the [VerticalAxis] with which the
  *   [ColumnCartesianLayer] should be associated. Use this for independent [CartesianLayer] scaling.
- * @property drawingModelInterpolator interpolates the [ColumnCartesianLayer]’s
+ * @property drawingModelInterpolator interpolates the [ColumnCartesianLayer]'s
  *   [ColumnCartesianLayerDrawingModel]s.
+ * @property onColumnClick called when a column is clicked. Receives the entry and series index.
  */
 @Stable
 public open class ColumnCartesianLayer
@@ -89,10 +92,13 @@ protected constructor(
       ColumnCartesianLayerDrawingModel,
     > =
     CartesianLayerDrawingModelInterpolator.default(),
+  protected val onColumnClick: ((ColumnCartesianLayerModel.Entry, Int) -> Unit)? = null,
   protected val drawingModelKey: ExtraStore.Key<ColumnCartesianLayerDrawingModel>,
 ) : BaseCartesianLayer<ColumnCartesianLayerModel>() {
   private val _markerTargets =
     mutableMapOf<Double, MutableList<MutableColumnCartesianLayerMarkerTarget>>()
+
+  private val columnBounds: MutableMap<Pair<ColumnCartesianLayerModel.Entry, Int>, RectF> = mutableMapOf()
 
   protected val stackInfo: MutableMap<Double, StackInfo> = mutableMapOf()
 
@@ -115,6 +121,7 @@ protected constructor(
         ColumnCartesianLayerDrawingModel,
       > =
       CartesianLayerDrawingModelInterpolator.default(),
+    onColumnClick: ((ColumnCartesianLayerModel.Entry, Int) -> Unit)? = null,
   ) : this(
     columnProvider,
     columnCollectionSpacingDp,
@@ -126,15 +133,30 @@ protected constructor(
     rangeProvider,
     verticalAxisPosition,
     drawingModelInterpolator,
+    onColumnClick,
     ExtraStore.Key(),
   )
 
   override fun drawInternal(context: CartesianDrawingContext, model: ColumnCartesianLayerModel) {
     with(context) {
       _markerTargets.clear()
+      columnBounds.clear()
       drawChartInternal(model, ranges, extraStore.getOrNull(drawingModelKey))
       stackInfo.clear()
     }
+  }
+
+  public fun handleColumnClick(clickPoint: Point): Boolean {
+    onColumnClick?.let { clickHandler ->
+      columnBounds.forEach { (entrySeriesPair, bounds) ->
+        if (bounds.contains(clickPoint.x, clickPoint.y)) {
+          val (entry, seriesIndex) = entrySeriesPair
+          clickHandler(entry, seriesIndex)
+          return true
+        }
+      }
+    }
+    return false
   }
 
   protected open fun CartesianDrawingContext.drawChartInternal(
@@ -213,6 +235,14 @@ protected constructor(
         )
 
         column.drawVertical(this, columnCenterX, columnTop, columnBottom, zoom)
+
+        val columnWidth = column.thicknessDp.pixels * zoom
+        columnBounds[Pair(entry, index)] = RectF(
+          columnCenterX - columnWidth / 2f,
+          columnTop,
+          columnCenterX + columnWidth / 2f,
+          columnBottom
+        )
 
         if (mergeMode is MergeMode.Grouped) {
           drawDataLabel(
@@ -535,6 +565,7 @@ protected constructor(
         ColumnCartesianLayerDrawingModel,
       > =
       this.drawingModelInterpolator,
+    onColumnClick: ((ColumnCartesianLayerModel.Entry, Int) -> Unit)? = this.onColumnClick,
   ): ColumnCartesianLayer =
     ColumnCartesianLayer(
       columnProvider,
@@ -547,6 +578,7 @@ protected constructor(
       rangeProvider,
       verticalAxisPosition,
       drawingModelInterpolator,
+      onColumnClick,
       drawingModelKey,
     )
 
@@ -562,7 +594,8 @@ protected constructor(
         dataLabelRotationDegrees == other.dataLabelRotationDegrees &&
         rangeProvider == other.rangeProvider &&
         verticalAxisPosition == other.verticalAxisPosition &&
-        drawingModelInterpolator == other.drawingModelInterpolator
+        drawingModelInterpolator == other.drawingModelInterpolator &&
+        onColumnClick == other.onColumnClick
 
   override fun hashCode(): Int =
     Objects.hash(
@@ -576,6 +609,7 @@ protected constructor(
       rangeProvider,
       verticalAxisPosition,
       drawingModelInterpolator,
+      onColumnClick,
     )
 
   protected data class StackInfo(
