@@ -77,6 +77,7 @@ public fun CartesianChartHost(
   modifier: Modifier = Modifier,
   scrollState: VicoScrollState = rememberVicoScrollState(),
   zoomState: VicoZoomState = rememberDefaultVicoZoomState(scrollState.scrollEnabled),
+  adaptiveYAxisEnabled: Boolean = false,
   animationSpec: AnimationSpec<Float>? = defaultCartesianDiffAnimationSpec,
   animateIn: Boolean = true,
   consumeMoveEvents: Boolean = false,
@@ -93,6 +94,7 @@ public fun CartesianChartHost(
         model,
         scrollState,
         zoomState,
+        adaptiveYAxisEnabled,
         ranges,
         consumeMoveEvents,
         previousModel,
@@ -124,6 +126,7 @@ public fun CartesianChartHost(
   model: CartesianChartModel,
   modifier: Modifier = Modifier,
   scrollState: VicoScrollState = rememberVicoScrollState(),
+  adaptiveYAxisEnabled: Boolean = false,
   zoomState: VicoZoomState = rememberDefaultVicoZoomState(scrollState.scrollEnabled),
   consumeMoveEvents: Boolean = false,
 ) {
@@ -138,6 +141,7 @@ public fun CartesianChartHost(
       model,
       scrollState,
       zoomState,
+      adaptiveYAxisEnabled,
       ranges.toImmutable(),
       consumeMoveEvents,
     )
@@ -150,6 +154,7 @@ internal fun CartesianChartHostImpl(
   model: CartesianChartModel,
   scrollState: VicoScrollState,
   zoomState: VicoZoomState,
+  adaptiveYAxisEnabled: Boolean,
   ranges: CartesianChartRanges,
   consumeMoveEvents: Boolean,
   previousModel: CartesianChartModel? = null,
@@ -163,6 +168,7 @@ internal fun CartesianChartHostImpl(
       ranges = ranges,
       scrollEnabled = scrollState.scrollEnabled,
       zoomEnabled = scrollState.scrollEnabled && zoomState.zoomEnabled,
+      adaptiveYAxisEnabled = scrollState.scrollEnabled && adaptiveYAxisEnabled,
       layerPadding =
         remember(chart.layerPadding, model.extraStore) { chart.layerPadding(model.extraStore) },
       pointerPosition = pointerPosition.value,
