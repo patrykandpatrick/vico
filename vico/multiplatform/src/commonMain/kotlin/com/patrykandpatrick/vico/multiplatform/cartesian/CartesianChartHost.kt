@@ -242,6 +242,13 @@ internal fun CartesianChartHostImpl(
         zoomState.value,
       )
 
+    if (measuringContext.adaptiveYAxisEnabled) {
+      val visibleXRange = drawingContext.getVisibleXRange()
+      val mutableRanges = MutableCartesianChartRanges()
+      chart.updateVisibleYRanges(mutableRanges, model, visibleXRange)
+      measuringContext.ranges = mutableRanges.toImmutable()
+    }
+
     chart.draw(drawingContext)
     measuringContext.cacheStore.purge()
   }

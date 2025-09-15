@@ -36,6 +36,7 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartRanges
 import com.patrykandpatrick.vico.core.cartesian.data.MutableCartesianChartRanges
 import com.patrykandpatrick.vico.core.cartesian.data.RandomCartesianModelGenerator
 import com.patrykandpatrick.vico.core.cartesian.data.toImmutable
+import com.patrykandpatrick.vico.core.cartesian.getVisibleXRange
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayerPadding
 import com.patrykandpatrick.vico.core.cartesian.layer.MutableCartesianLayerDimensions
 import com.patrykandpatrick.vico.core.common.Defaults
@@ -367,6 +368,13 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
           scrollHandler.value,
           zoomHandler.value,
         )
+
+      if (measuringContext.adaptiveYAxisEnabled) {
+        val visibleXRange = drawingContext.getVisibleXRange()
+        val mutableRanges = MutableCartesianChartRanges()
+        chart.updateVisibleYRanges(mutableRanges, model, visibleXRange)
+        measuringContext.ranges = mutableRanges.toImmutable()
+      }
 
       chart.draw(drawingContext)
       measuringContext.reset()
