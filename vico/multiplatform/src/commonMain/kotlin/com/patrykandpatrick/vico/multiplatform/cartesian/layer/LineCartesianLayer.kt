@@ -656,6 +656,32 @@ protected constructor(
     )
   }
 
+  override fun updateVisibleChartRanges(
+    chartRanges: MutableCartesianChartRanges,
+    model: LineCartesianLayerModel,
+    visibleXRange: ClosedFloatingPointRange<Double>
+  ) {
+    val visibleEntries = model.series.flatMap { series ->
+      series.filter { it.x in visibleXRange }
+    }
+
+    if (visibleEntries.isEmpty()) {
+      chartRanges.tryUpdate(0.0, 0.0, 0.0, 1.0, verticalAxisPosition)
+      return
+    }
+
+    val minY = visibleEntries.minOf { it.y }
+    val maxY = visibleEntries.maxOf { it.y }
+
+    chartRanges.tryUpdate(
+      rangeProvider.getMinX(model.minX, model.maxX, model.extraStore),
+      rangeProvider.getMaxX(model.minX, model.maxX, model.extraStore),
+      rangeProvider.getMinY(minY, maxY, model.extraStore),
+      rangeProvider.getMaxY(minY, maxY, model.extraStore),
+      verticalAxisPosition,
+    )
+  }
+
   override fun updateLayerMargins(
     context: CartesianMeasuringContext,
     layerMargins: CartesianLayerMargins,

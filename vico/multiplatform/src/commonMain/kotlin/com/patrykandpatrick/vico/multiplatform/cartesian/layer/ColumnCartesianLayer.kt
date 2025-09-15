@@ -400,6 +400,48 @@ protected constructor(
     )
   }
 
+  override fun updateVisibleChartRanges(
+    chartRanges: MutableCartesianChartRanges,
+    model: ColumnCartesianLayerModel,
+    visibleXRange: ClosedFloatingPointRange<Double>
+  ) {
+    val visibleEntries = model.series.flatMap { series ->
+      series.filter { it.x in visibleXRange }
+    }
+
+    if (visibleEntries.isEmpty()) {
+      chartRanges.tryUpdate(0.0, 0.0, 0.0, 1.0, verticalAxisPosition)
+      return
+    }
+
+    val mergeMode = mergeMode(model.extraStore)
+    val minY: Double
+    val maxY: Double
+
+    if (mergeMode == MergeMode.Stacked) {
+      val aggregateYRanges = visibleEntries
+        .groupBy { it.x }
+        .map { (_, entries) ->
+          val positiveY = entries.filter { it.y >= 0 }.sumOf { it.y }
+          val negativeY = entries.filter { it.y < 0 }.sumOf { it.y }
+          negativeY to positiveY
+        }
+      minY = aggregateYRanges.minOfOrNull { it.first } ?: 0.0
+      maxY = aggregateYRanges.maxOfOrNull { it.second } ?: 0.0
+    } else {
+      minY = visibleEntries.minOfOrNull { it.y } ?: 0.0
+      maxY = visibleEntries.maxOfOrNull { it.y } ?: 0.0
+    }
+
+    chartRanges.tryUpdate(
+      rangeProvider.getMinX(model.minX, model.maxX, model.extraStore),
+      rangeProvider.getMaxX(model.minX, model.maxX, model.extraStore),
+      rangeProvider.getMinY(minY, maxY, model.extraStore),
+      rangeProvider.getMaxY(minY, maxY, model.extraStore),
+      verticalAxisPosition,
+    )
+  }
+
   override fun updateDimensions(
     context: CartesianMeasuringContext,
     dimensions: MutableCartesianLayerDimensions,
