@@ -142,17 +142,26 @@ protected constructor(
   override fun drawInternal(context: CartesianDrawingContext, model: ColumnCartesianLayerModel) {
     with(context) {
       _markerTargets.clear()
-      drawChartInternal(model, ranges, extraStore.getOrNull(drawingModelKey))
+      drawChartInternal(
+        model,
+        adaptiveYAxisEnabled,
+        ranges,
+        globalRanges,
+        extraStore.getOrNull(drawingModelKey),
+      )
       stackInfo.clear()
     }
   }
 
   protected open fun CartesianDrawingContext.drawChartInternal(
     model: ColumnCartesianLayerModel,
+    adaptiveYAxisEnabled: Boolean,
     ranges: CartesianChartRanges,
+    globalRanges: CartesianChartRanges,
     drawingModel: ColumnCartesianLayerDrawingModel?,
   ) {
     val yRange = ranges.getYRange(verticalAxisPosition)
+    val globalYRange = globalRanges.getYRange(verticalAxisPosition)
     val heightMultiplier = layerBounds.height / yRange.length.toFloat()
 
     var drawingStart: Float
@@ -179,7 +188,11 @@ protected constructor(
         )
 
       entryCollection.subList(firstVisibleIndex, lastVisibleIndex + 1).forEach { entry ->
-        val columnInfo = drawingModel?.getOrNull(index)?.get(entry.x)
+        val columnInfo = if (adaptiveYAxisEnabled) {
+          drawingModel?.getOrNull(index)?.get(entry.x)?.transform(globalYRange, yRange)
+        } else {
+          drawingModel?.getOrNull(index)?.get(entry.x)
+        }
         height =
           (columnInfo?.height ?: (abs(entry.y) / yRange.length)).toFloat() * layerBounds.height
         val xSpacingMultiplier = ((entry.x - ranges.minX) / ranges.xStep).toFloat()

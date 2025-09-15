@@ -132,15 +132,24 @@ protected constructor(
   ): Unit =
     with(context) {
       _markerTargets.clear()
-      drawChartInternal(model, ranges, extraStore.getOrNull(drawingModelKey))
+      drawChartInternal(
+        model,
+        adaptiveYAxisEnabled,
+        ranges,
+        globalRanges,
+        extraStore.getOrNull(drawingModelKey),
+      )
     }
 
   private fun CartesianDrawingContext.drawChartInternal(
     model: CandlestickCartesianLayerModel,
+    adaptiveYAxisEnabled: Boolean,
     ranges: CartesianChartRanges,
+    globalRanges: CartesianChartRanges,
     drawingModel: CandlestickCartesianLayerDrawingModel?,
   ) {
     val yRange = ranges.getYRange(verticalAxisPosition)
+    val globalYRange = globalRanges.getYRange(verticalAxisPosition)
     val halfMaxCandleWidth = candleProvider.getWidestCandle(model.extraStore).width.pixels.half
 
     val drawingStart =
@@ -163,7 +172,14 @@ protected constructor(
 
     model.series.subList(firstVisibleEntryIndex, lastVisibleEntryIndex + 1).forEach { entry ->
       candle = candleProvider.getCandle(entry, model.extraStore)
-      val candleInfo = drawingModel?.entries?.get(entry.x) ?: entry.toCandleInfo(yRange)
+      val candleInfo = if (adaptiveYAxisEnabled) {
+        drawingModel?.entries?.get(entry.x)?.transform(
+          globalYRange = globalYRange,
+          localYRange = yRange,
+        ) ?: entry.toCandleInfo(yRange)
+      } else {
+        drawingModel?.entries?.get(entry.x) ?: entry.toCandleInfo(yRange)
+      }
       val xSpacingMultiplier = ((entry.x - ranges.minX) / ranges.xStep).toFloat()
       bodyCenterX =
         drawingStart +

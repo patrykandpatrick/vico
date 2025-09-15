@@ -591,9 +591,15 @@ protected constructor(
 
     fun getDrawY(entry: LineCartesianLayerModel.Entry): Float {
       val yRange = ranges.getYRange(verticalAxisPosition)
+      val globalYRanges = globalRanges.getYRange(verticalAxisPosition)
       return layerBounds.bottom -
-        (pointInfoMap?.get(entry.x)?.y ?: ((entry.y - yRange.minY) / yRange.length).toFloat()) *
-          layerBounds.height
+        (pointInfoMap?.get(entry.x)?.let {
+          if (adaptiveYAxisEnabled) it.transform(
+            globalYRange = globalYRanges,
+            localYRange = yRange,
+          ) else it
+        }?.y ?: ((entry.y - yRange.minY) / yRange.length).toFloat()) *
+        layerBounds.height
     }
 
     series.forEachIn(minX = minX, maxX = maxX, padding = 1) { entry, next ->
