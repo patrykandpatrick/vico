@@ -25,4 +25,5 @@ dependencies {
   implementation(libs.kotlinAndroid)
   implementation(libs.kotlinMultiplatform)
   implementation(libs.mavenPublish)
+  implementation(libs.serialization)
 }

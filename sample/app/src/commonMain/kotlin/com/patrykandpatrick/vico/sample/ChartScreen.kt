@@ -57,7 +57,7 @@ import androidx.navigation.NavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun ChartScreen(navController: NavController, initialChartID: Int, uiFrameworkID: Int) {
+internal fun ChartScreen(navController: NavController, uiFrameworkID: Int, initialChartID: Int) {
   var chartID by remember { mutableIntStateOf(initialChartID) }
   val charts = Charts.all.getValue(UIFramework.entries[uiFrameworkID])
   val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()

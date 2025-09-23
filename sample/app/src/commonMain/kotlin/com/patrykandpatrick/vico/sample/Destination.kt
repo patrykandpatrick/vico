@@ -14,30 +14,12 @@
  * limitations under the License.
  */
 
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+package com.patrykandpatrick.vico.sample
 
-plugins {
-  `dokka-convention`
-  `publishing-convention`
-  id("com.android.library")
-  id("kotlin-android")
-  id("org.jetbrains.kotlin.plugin.compose")
-}
+import kotlinx.serialization.Serializable
 
-android {
-  configure()
-  namespace = moduleNamespace
-}
+sealed interface Destination {
+  @Serializable object ChartList : Destination
 
-kotlin {
-  explicitApi()
-  compilerOptions { jvmTarget = JvmTarget.JVM_11 }
-}
-
-composeCompiler { reportsDestination = layout.buildDirectory.dir("reports") }
-
-dependencies {
-  api(project(":vico:compose"))
-  implementation(platform(libs.composeBom))
-  implementation(libs.composeMaterial)
+  @Serializable class Chart(val uiFrameworkID: Int, val initialChartID: Int) : Destination
 }

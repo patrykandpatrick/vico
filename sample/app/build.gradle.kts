@@ -22,6 +22,7 @@ plugins {
   id("org.jetbrains.compose")
   id("org.jetbrains.kotlin.multiplatform")
   id("org.jetbrains.kotlin.plugin.compose")
+  kotlin("plugin.serialization")
 }
 
 android {
@@ -32,8 +33,8 @@ android {
     }
   }
   compileOptions {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
   }
   compileSdk = Versions.COMPILE_SDK
   defaultConfig {
@@ -47,7 +48,7 @@ android {
 dependencies { debugImplementation(compose.uiTooling) }
 
 kotlin {
-  androidTarget { compilerOptions { jvmTarget.set(JvmTarget.JVM_1_8) } }
+  androidTarget { compilerOptions { jvmTarget = JvmTarget.JVM_11 } }
   listOf(iosX64(), iosArm64(), iosSimulatorArm64()).forEach { iosTarget ->
     iosTarget.binaries.framework {
       baseName = "Sample"
@@ -66,6 +67,7 @@ kotlin {
     commonMain.dependencies {
       implementation(compose.material3)
       implementation(libs.composeNavigation)
+      implementation(libs.lifecycleRuntime)
       implementation(libs.materialIcons)
       implementation(project(":sample:multiplatform"))
     }

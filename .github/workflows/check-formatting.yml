@@ -6,11 +6,11 @@ jobs:
   check-formatting:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v5
         with:
           distribution: zulu
           java-version: 24
       - run: |
-          curl -sSL -o ktfmt.jar https://github.com/facebook/ktfmt/releases/download/v0.56/ktfmt-0.56-with-dependencies.jar
+          curl -sSL -o ktfmt.jar https://github.com/facebook/ktfmt/releases/download/v0.58/ktfmt-0.58-with-dependencies.jar
           java -jar ktfmt.jar --dry-run --google-style --set-exit-if-changed .

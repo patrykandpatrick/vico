@@ -24,11 +24,10 @@ import androidx.compose.foundation.background
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
+import androidx.navigation.toRoute
 
 @Composable
 internal fun SampleApp() {
@@ -36,27 +35,17 @@ internal fun SampleApp() {
   Theme {
     NavHost(
       navController = navController,
-      startDestination = "chartList",
+      startDestination = Destination.ChartList,
       modifier = Modifier.background(MaterialTheme.colorScheme.background),
       enterTransition = { slideInHorizontally { it / 3 } + fadeIn() },
       exitTransition = { slideOutHorizontally { -it / 3 } + fadeOut() },
       popEnterTransition = { slideInHorizontally { -it / 3 } + fadeIn() },
       popExitTransition = { slideOutHorizontally { it / 3 } + fadeOut() },
     ) {
-      composable("chartList") { ChartListScreen(navController) }
-      composable(
-        "chart/{uiFrameworkID}/{initialChartID}",
-        listOf(
-          navArgument("uiFrameworkID") { type = NavType.IntType },
-          navArgument("initialChartID") { type = NavType.IntType },
-        ),
-      ) { backStackEntry ->
-        val arguments = requireNotNull(backStackEntry.arguments)
-        ChartScreen(
-          navController,
-          arguments.getInt("initialChartID"),
-          arguments.getInt("uiFrameworkID"),
-        )
+      composable<Destination.ChartList> { ChartListScreen(navController) }
+      composable<Destination.Chart> { backStackEntry ->
+        val destination = backStackEntry.toRoute<Destination.Chart>()
+        ChartScreen(navController, destination.uiFrameworkID, destination.initialChartID)
       }
     }
   }

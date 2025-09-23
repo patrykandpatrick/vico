@@ -8,10 +8,10 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           path: vico
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v5
         with:
           distribution: zulu
           java-version: 17

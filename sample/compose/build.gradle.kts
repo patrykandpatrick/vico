@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
   id("com.android.library")
   id("kotlin-android")
@@ -22,9 +24,10 @@ plugins {
 
 android {
   configure()
-  kotlinOptions { jvmTarget = JavaVersion.VERSION_1_8.toString() }
   namespace = "com.patrykandpatrick.vico.sample.compose"
 }
+
+kotlin { compilerOptions { jvmTarget = JvmTarget.JVM_11 } }
 
 dependencies {
   debugImplementation(libs.composeUITooling)

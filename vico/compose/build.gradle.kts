@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
   `publishing-convention`
   id("com.android.library")
@@ -24,11 +26,13 @@ plugins {
 
 android {
   configure()
-  kotlinOptions { jvmTarget = JavaVersion.VERSION_1_8.toString() }
   namespace = moduleNamespace
 }
 
-kotlin { explicitApi() }
+kotlin {
+  explicitApi()
+  compilerOptions { jvmTarget = JvmTarget.JVM_11 }
+}
 
 composeCompiler { reportsDestination = layout.buildDirectory.dir("reports") }
 

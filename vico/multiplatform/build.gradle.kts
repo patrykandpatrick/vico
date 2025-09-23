@@ -32,7 +32,7 @@ android {
 
 kotlin {
   androidTarget {
-    compilerOptions { jvmTarget.set(JvmTarget.JVM_1_8) }
+    compilerOptions { jvmTarget = JvmTarget.JVM_11 }
     publishLibraryVariants("release")
   }
   listOf(iosX64(), iosArm64(), iosSimulatorArm64()).forEach { target ->
@@ -53,4 +53,5 @@ kotlin {
     }
   }
   explicitApi()
+  compilerOptions { freeCompilerArgs.add("-Xannotation-default-target=param-property") }
 }

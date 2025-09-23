@@ -82,7 +82,9 @@ internal fun ChartListScreen(navController: NavController) {
         ListItem(
           headlineContent = { Text(charts[chartID].details.title) },
           modifier =
-            Modifier.clickable { navController.navigate("chart/${uiFramework.ordinal}/$chartID") },
+            Modifier.clickable {
+              navController.navigate(Destination.Chart(uiFramework.ordinal, chartID))
+            },
           colors = ListItemDefaults.colors(containerColor = Color.Transparent),
         )
       }

@@ -1,23 +1,24 @@
 [versions]
-activity = "1.10.1"
-agp = "8.10.1"
+activity = "1.11.0"
+agp = "8.13.0"
 androidXAnnotation = "1.9.1"
-androidXCore = "1.16.0"
+androidXCore = "1.17.0"
 appcompat = "1.7.1"
-composeBom = "2025.06.00"
-composeMultiplatform = "1.8.1"
-composeNavigation = "2.8.0-alpha13"
-composeStableMarker = "1.0.6"
+composeBom = "2025.09.00"
+composeMultiplatform = "1.9.0"
+composeNavigation = "2.9.0"
+composeStableMarker = "1.0.7"
 coroutines = "1.10.2"
-dateTime = "0.6.2"
+dateTime = "0.7.1"
 dokka = "2.0.0"
-jupiter = "5.13.1"
-kotlin = "2.1.21"
-material = "1.12.0"
+jupiter = "5.13.4"
+kotlin = "2.2.20"
+lifecycleRuntime = "2.9.4"
+material = "1.13.0"
 materialIcons = "1.7.3"
-mavenPublish = "0.32.0"
-mockK = "1.14.2"
-testCore = "1.6.1"
+mavenPublish = "0.34.0"
+mockK = "1.14.5"
+testCore = "1.7.0"
 
 [libraries]
 activityCompose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity" }
@@ -47,8 +48,10 @@ kotlinMultiplatform = { group = "org.jetbrains.kotlin.multiplatform", name = "or
 kotlinStdLib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlin" }
 kotlinTest = { group = "org.jetbrains.kotlin", name = "kotlin-test", version.ref = "kotlin" }
 kotlinDateTime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "dateTime" }
+lifecycleRuntime = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycleRuntime" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 materialIcons = { group = "org.jetbrains.compose.material", name = "material-icons-core", version.ref = "materialIcons" }
 mavenPublish = { group = "com.vanniktech.maven.publish", name = "com.vanniktech.maven.publish.gradle.plugin", version.ref = "mavenPublish" }
 mockK = { group = "io.mockk", name = "mockk", version.ref = "mockK" }
+serialization = { group = "org.jetbrains.kotlin.plugin.serialization", name = "org.jetbrains.kotlin.plugin.serialization.gradle.plugin", version.ref = "kotlin" }
 testCore = { group = "androidx.test", name = "core-ktx", version.ref = "testCore" }

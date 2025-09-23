@@ -29,7 +29,7 @@ android {
 }
 
 kotlin {
-  androidTarget { compilerOptions { jvmTarget.set(JvmTarget.JVM_1_8) } }
+  androidTarget { compilerOptions { jvmTarget = JvmTarget.JVM_11 } }
   listOf(iosX64(), iosArm64(), iosSimulatorArm64()).forEach { iosTarget ->
     iosTarget.binaries.framework {
       baseName = project.name
