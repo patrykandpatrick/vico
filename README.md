@@ -9,7 +9,7 @@
 Vico is a powerful and extensible multiplatform chart library. It offers native support for Jetpack
 Compose, Compose Multiplatform, and the Android view system.
 
-Learn more in [the guide](https://patrykandpatrick.com/vico/guide).
+Learn more in [the guide](https://guide.vico.patrykandpatrick.com).
 
 ## Sponsored by [Software Mansion](https://swmansion.com)
 
