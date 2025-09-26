@@ -20,6 +20,7 @@ import com.patrykandpatrick.vico.sample.compose.JetpackComposeAITestScores
 import com.patrykandpatrick.vico.sample.compose.JetpackComposeBasicColumnChart
 import com.patrykandpatrick.vico.sample.compose.JetpackComposeBasicComboChart
 import com.patrykandpatrick.vico.sample.compose.JetpackComposeBasicLineChart
+import com.patrykandpatrick.vico.sample.compose.JetpackComposeCV345DFSales2021
 import com.patrykandpatrick.vico.sample.compose.JetpackComposeDailyDigitalMediaUse
 import com.patrykandpatrick.vico.sample.compose.JetpackComposeElectricCarSales
 import com.patrykandpatrick.vico.sample.compose.JetpackComposeGoldPrices
@@ -29,6 +30,7 @@ import com.patrykandpatrick.vico.sample.views.ViewAITestScores
 import com.patrykandpatrick.vico.sample.views.ViewBasicColumnChart
 import com.patrykandpatrick.vico.sample.views.ViewBasicComboChart
 import com.patrykandpatrick.vico.sample.views.ViewBasicLineChart
+import com.patrykandpatrick.vico.sample.views.ViewCV345DFSales2021
 import com.patrykandpatrick.vico.sample.views.ViewDailyDigitalMediaUse
 import com.patrykandpatrick.vico.sample.views.ViewElectricCarSales
 import com.patrykandpatrick.vico.sample.views.ViewGoldPrices
@@ -43,6 +45,7 @@ actual val Charts.overridden: LinkedHashMap<UIFramework, List<Chart>>?
           { JetpackComposeBasicColumnChart(it) },
           { JetpackComposeBasicLineChart(it) },
           { JetpackComposeBasicComboChart(it) },
+          { JetpackComposeCV345DFSales2021(it) },
           { JetpackComposeAITestScores(it) },
           { JetpackComposeDailyDigitalMediaUse(it) },
           { JetpackComposeTemperatureAnomalies(it) },
@@ -56,6 +59,7 @@ actual val Charts.overridden: LinkedHashMap<UIFramework, List<Chart>>?
           { ViewBasicColumnChart(it) },
           { ViewBasicLineChart(it) },
           { ViewBasicComboChart(it) },
+          { ViewCV345DFSales2021(it) },
           { ViewAITestScores(it) },
           { ViewDailyDigitalMediaUse(it) },
           { ViewTemperatureAnomalies(it) },
