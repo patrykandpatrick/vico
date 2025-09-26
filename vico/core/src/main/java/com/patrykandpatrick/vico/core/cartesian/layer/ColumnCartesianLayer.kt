@@ -132,17 +132,26 @@ protected constructor(
   override fun drawInternal(context: CartesianDrawingContext, model: ColumnCartesianLayerModel) {
     with(context) {
       _markerTargets.clear()
-      drawChartInternal(model, ranges, extraStore.getOrNull(drawingModelKey))
+      drawChartInternal(
+        model,
+        adaptiveYAxisEnabled,
+        ranges,
+        globalRanges,
+        extraStore.getOrNull(drawingModelKey),
+      )
       stackInfo.clear()
     }
   }
 
   protected open fun CartesianDrawingContext.drawChartInternal(
     model: ColumnCartesianLayerModel,
+    adaptiveYAxisEnabled: Boolean,
     ranges: CartesianChartRanges,
+    globalRanges: CartesianChartRanges,
     drawingModel: ColumnCartesianLayerDrawingModel?,
   ) {
     val yRange = ranges.getYRange(verticalAxisPosition)
+    val globalYRange = globalRanges.getYRange(verticalAxisPosition)
     val heightMultiplier = layerBounds.height() / yRange.length.toFloat()
 
     var drawingStart: Float
@@ -169,7 +178,11 @@ protected constructor(
         )
 
       entryCollection.subList(firstVisibleIndex, lastVisibleIndex + 1).forEach { entry ->
-        val columnInfo = drawingModel?.getOrNull(index)?.get(entry.x)
+        val columnInfo = if (adaptiveYAxisEnabled) {
+          drawingModel?.getOrNull(index)?.get(entry.x)?.transform(globalYRange, yRange)
+        } else {
+          drawingModel?.getOrNull(index)?.get(entry.x)
+        }
         height =
           (columnInfo?.height ?: (abs(entry.y) / yRange.length)).toFloat() * layerBounds.height()
         val xSpacingMultiplier = ((entry.x - ranges.minX) / ranges.xStep).toFloat()
@@ -381,6 +394,48 @@ protected constructor(
     val mergeMode = mergeMode(model.extraStore)
     val minY = mergeMode.getMinY(model)
     val maxY = mergeMode.getMaxY(model)
+    chartRanges.tryUpdate(
+      rangeProvider.getMinX(model.minX, model.maxX, model.extraStore),
+      rangeProvider.getMaxX(model.minX, model.maxX, model.extraStore),
+      rangeProvider.getMinY(minY, maxY, model.extraStore),
+      rangeProvider.getMaxY(minY, maxY, model.extraStore),
+      verticalAxisPosition,
+    )
+  }
+
+  override fun updateVisibleChartRanges(
+    chartRanges: MutableCartesianChartRanges,
+    model: ColumnCartesianLayerModel,
+    visibleXRange: ClosedFloatingPointRange<Double>
+  ) {
+    val visibleEntries = model.series.flatMap { series ->
+      series.filter { it.x in visibleXRange }
+    }
+
+    if (visibleEntries.isEmpty()) {
+      chartRanges.tryUpdate(0.0, 0.0, 0.0, 1.0, verticalAxisPosition)
+      return
+    }
+
+    val mergeMode = mergeMode(model.extraStore)
+    val minY: Double
+    val maxY: Double
+
+    if (mergeMode == MergeMode.Stacked) {
+      val aggregateYRanges = visibleEntries
+        .groupBy { it.x }
+        .map { (_, entries) ->
+          val positiveY = entries.filter { it.y >= 0 }.sumOf { it.y }
+          val negativeY = entries.filter { it.y < 0 }.sumOf { it.y }
+          negativeY to positiveY
+        }
+      minY = aggregateYRanges.minOfOrNull { it.first } ?: 0.0
+      maxY = aggregateYRanges.maxOfOrNull { it.second } ?: 0.0
+    } else {
+      minY = visibleEntries.minOfOrNull { it.y } ?: 0.0
+      maxY = visibleEntries.maxOfOrNull { it.y } ?: 0.0
+    }
+
     chartRanges.tryUpdate(
       rangeProvider.getMinX(model.minX, model.maxX, model.extraStore),
       rangeProvider.getMaxX(model.minX, model.maxX, model.extraStore),

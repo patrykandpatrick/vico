@@ -312,6 +312,20 @@ internal constructor(
     model.forEachWithLayer(rangeUpdateConsumer.apply { this.ranges = ranges })
   }
 
+  internal fun updateVisibleYRanges(
+    ranges: MutableCartesianChartRanges,
+    model: CartesianChartModel,
+    visibleXRange: ClosedFloatingPointRange<Double>,
+  ) {
+    val visibleRangeUpdateConsumer = object : ModelAndLayerConsumer {
+      override fun <T : CartesianLayerModel> invoke(model: T?, layer: CartesianLayer<T>) {
+        if (model == null) return
+        layer.updateVisibleChartRanges(ranges, model, visibleXRange)
+      }
+    }
+    model.forEachWithLayer(visibleRangeUpdateConsumer)
+  }
+
   override fun updateLayerMargins(
     context: CartesianMeasuringContext,
     layerMargins: CartesianLayerMargins,

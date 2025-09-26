@@ -56,6 +56,21 @@ public class ColumnCartesianLayerDrawingModel(
       return Entry(oldHeight.lerp(height, fraction))
     }
 
+    /**
+     * Transforms this entry's fractional values from a global Y-range to a local Y-range.
+     * @param globalYRange The global Y-range this entry's values are relative to.
+     * @param localYRange The target local Y-range.
+     * @return A new [Entry] with its height re-calculated for the [localYRange].
+     */
+    public fun transform(
+      globalYRange: CartesianChartRanges.YRange,
+      localYRange: CartesianChartRanges.YRange,
+    ): Entry {
+      if (localYRange.length == 0.0 || globalYRange.length == 0.0) return this
+      val newHeight = this.height * (globalYRange.length / localYRange.length).toFloat()
+      return Entry(newHeight)
+    }
+
     override fun equals(other: Any?): Boolean =
       this === other || other is Entry && height == other.height
 

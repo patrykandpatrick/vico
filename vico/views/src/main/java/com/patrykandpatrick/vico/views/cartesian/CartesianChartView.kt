@@ -36,6 +36,7 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartRanges
 import com.patrykandpatrick.vico.core.cartesian.data.MutableCartesianChartRanges
 import com.patrykandpatrick.vico.core.cartesian.data.RandomCartesianModelGenerator
 import com.patrykandpatrick.vico.core.cartesian.data.toImmutable
+import com.patrykandpatrick.vico.core.cartesian.getVisibleXRange
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayerPadding
 import com.patrykandpatrick.vico.core.cartesian.layer.MutableCartesianLayerDimensions
 import com.patrykandpatrick.vico.core.common.Defaults
@@ -88,6 +89,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       ranges = CartesianChartRanges.Empty,
       scrollEnabled = false,
       zoomEnabled = false,
+      adaptiveYAxisEnabled = false,
       layerPadding = CartesianLayerPadding(),
       pointerPosition = null,
     )
@@ -124,6 +126,12 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       oldValue?.clearUpdated()
       newValue.invalidate = ::invalidate
       measuringContext.zoomEnabled = newValue.zoomEnabled && measuringContext.scrollEnabled
+    }
+
+  /** Houses information on the [CartesianChart]’s adaptiveYAxis enablement. Allows for adaptiveYAxis customization. */
+  public var adaptYAxisEnabled: Boolean by
+    invalidatingObservable(themeHandler.adaptYAxisEnabled) { _, newValue ->
+      measuringContext.adaptiveYAxisEnabled = measuringContext.scrollEnabled && newValue
     }
 
   private val motionEventHandler =
@@ -187,6 +195,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
           setModel(model = model, updateRanges = false)
           measuringContext.extraStore = extraStore
           measuringContext.ranges = ranges
+          measuringContext.globalRanges = ranges
           postInvalidateOnAnimation()
         }
       }
@@ -269,6 +278,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
         ranges.reset()
         chart.updateRanges(ranges, model)
         measuringContext.ranges = ranges.toImmutable()
+        measuringContext.globalRanges = ranges.toImmutable()
       }
     }
     if (isAttachedToWindow) invalidate()
@@ -358,6 +368,13 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
           scrollHandler.value,
           zoomHandler.value,
         )
+
+      if (measuringContext.adaptiveYAxisEnabled) {
+        val visibleXRange = drawingContext.getVisibleXRange()
+        val mutableRanges = MutableCartesianChartRanges()
+        chart.updateVisibleYRanges(mutableRanges, model, visibleXRange)
+        measuringContext.ranges = mutableRanges.toImmutable()
+      }
 
       chart.draw(drawingContext)
       measuringContext.reset()
