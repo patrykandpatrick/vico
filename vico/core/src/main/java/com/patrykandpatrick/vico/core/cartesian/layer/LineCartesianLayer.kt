@@ -37,8 +37,6 @@ import com.patrykandpatrick.vico.core.cartesian.data.LineCartesianLayerDrawingMo
 import com.patrykandpatrick.vico.core.cartesian.data.LineCartesianLayerModel
 import com.patrykandpatrick.vico.core.cartesian.data.MutableCartesianChartRanges
 import com.patrykandpatrick.vico.core.cartesian.data.forEachIn
-import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer.Line
-import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer.PointConnector
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.core.cartesian.marker.LineCartesianLayerMarkerTarget
 import com.patrykandpatrick.vico.core.cartesian.marker.MutableLineCartesianLayerMarkerTarget
@@ -60,6 +58,7 @@ import com.patrykandpatrick.vico.core.common.inBounds
 import com.patrykandpatrick.vico.core.common.orZero
 import com.patrykandpatrick.vico.core.common.saveLayer
 import java.util.Objects
+import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.max
 import kotlin.math.min
@@ -540,22 +539,23 @@ protected constructor(
     nextX: Float?,
   ): Int =
     when {
-      previousX != null && nextX != null -> min(x - previousX, nextX - x)
+      previousX != null && nextX != null -> min(abs(x - previousX), abs(nextX - x))
       previousX == null && nextX == null ->
         min(layerDimensions.startPadding, layerDimensions.endPadding).doubled
+
       nextX != null -> {
         ((entry.x - ranges.minX) / ranges.xStep * layerDimensions.xSpacing +
             layerDimensions.startPadding)
           .doubled
           .toFloat()
-          .coerceAtMost(nextX - x)
+          .coerceAtMost(abs(nextX - x))
       }
       else -> {
         ((ranges.maxX - entry.x) / ranges.xStep * layerDimensions.xSpacing +
             layerDimensions.endPadding)
           .doubled
           .toFloat()
-          .coerceAtMost(x - previousX!!)
+          .coerceAtMost(abs(x - previousX!!))
       }
     }.toInt()
 

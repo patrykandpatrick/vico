@@ -71,6 +71,7 @@ import com.patrykandpatrick.vico.multiplatform.common.orZero
 import com.patrykandpatrick.vico.multiplatform.common.saveLayer
 import com.patrykandpatrick.vico.multiplatform.common.setValue
 import com.patrykandpatrick.vico.multiplatform.common.vicoTheme
+import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.max
 import kotlin.math.min
@@ -541,7 +542,7 @@ protected constructor(
     nextX: Float?,
   ): Int =
     when {
-      previousX != null && nextX != null -> min(x - previousX, nextX - x)
+      previousX != null && nextX != null -> min(abs(x - previousX), abs(nextX - x))
       previousX == null && nextX == null ->
         min(layerDimensions.startPadding, layerDimensions.endPadding).doubled
       nextX != null -> {
@@ -549,14 +550,14 @@ protected constructor(
             layerDimensions.startPadding)
           .doubled
           .toFloat()
-          .coerceAtMost(nextX - x)
+          .coerceAtMost(abs(nextX - x))
       }
       else -> {
         ((ranges.maxX - entry.x) / ranges.xStep * layerDimensions.xSpacing +
             layerDimensions.endPadding)
           .doubled
           .toFloat()
-          .coerceAtMost(x - previousX!!)
+          .coerceAtMost(abs(x - previousX!!))
       }
     }.toInt()
 
