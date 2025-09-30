@@ -58,6 +58,23 @@ public class LineCartesianLayerDrawingModel(
       return Entry(oldY.lerp(y, fraction))
     }
 
+    /**
+     * Transforms this entry's fractional values from a global Y-range to a local Y-range.
+     * @param globalYRange The global Y-range this entry's values are relative to.
+     * @param localYRange The target local Y-range.
+     * @return A new [Entry] with fractional values relative to the [localYRange].
+     */
+    public fun transform(
+      globalYRange: CartesianChartRanges.YRange,
+      localYRange: CartesianChartRanges.YRange,
+    ): Entry {
+      if (localYRange.length == 0.0) return this
+
+      val yValue = this.y * globalYRange.length + globalYRange.minY
+      val localFraction = ((yValue - localYRange.minY) / localYRange.length).toFloat()
+      return Entry(y = localFraction)
+    }
+
     override fun equals(other: Any?): Boolean = this === other || other is Entry && y == other.y
 
     override fun hashCode(): Int = y.hashCode()

@@ -212,6 +212,9 @@
         <!-- Whether to enable zooming. -->
         <attr name="zoomEnabled" format="boolean" />
 
+        <!-- Whether to enable adaptive Y-axis. -->
+        <attr name="adaptYAxisEnabled" format="boolean" />
+
         <!-- Equivalent to `CartesianChartView.consumeMoveEvents`. -->
         <attr name="consumeMoveEvents" format="boolean" />
     </declare-styleable>

@@ -590,9 +590,15 @@ protected constructor(
 
     fun getDrawY(entry: LineCartesianLayerModel.Entry): Float {
       val yRange = ranges.getYRange(verticalAxisPosition)
+      val globalYRanges = globalRanges.getYRange(verticalAxisPosition)
       return layerBounds.bottom -
-        (pointInfoMap?.get(entry.x)?.y ?: ((entry.y - yRange.minY) / yRange.length).toFloat()) *
-          layerBounds.height()
+        (pointInfoMap?.get(entry.x)?.let {
+          if (adaptiveYAxisEnabled) it.transform(
+            globalYRange = globalYRanges,
+            localYRange = yRange,
+          ) else it
+        }?.y ?: ((entry.y - yRange.minY) / yRange.length).toFloat()) *
+        layerBounds.height()
     }
 
     series.forEachIn(minX = minX, maxX = maxX, padding = 1) { entry, next ->
@@ -651,6 +657,32 @@ protected constructor(
       rangeProvider.getMaxX(model.minX, model.maxX, model.extraStore),
       rangeProvider.getMinY(model.minY, model.maxY, model.extraStore),
       rangeProvider.getMaxY(model.minY, model.maxY, model.extraStore),
+      verticalAxisPosition,
+    )
+  }
+
+  override fun updateVisibleChartRanges(
+    chartRanges: MutableCartesianChartRanges,
+    model: LineCartesianLayerModel,
+    visibleXRange: ClosedFloatingPointRange<Double>
+  ) {
+    val visibleEntries = model.series.flatMap { series ->
+      series.filter { it.x in visibleXRange }
+    }
+
+    if (visibleEntries.isEmpty()) {
+      chartRanges.tryUpdate(0.0, 0.0, 0.0, 1.0, verticalAxisPosition)
+      return
+    }
+
+    val minY = visibleEntries.minOf { it.y }
+    val maxY = visibleEntries.maxOf { it.y }
+
+    chartRanges.tryUpdate(
+      rangeProvider.getMinX(model.minX, model.maxX, model.extraStore),
+      rangeProvider.getMaxX(model.minX, model.maxX, model.extraStore),
+      rangeProvider.getMinY(minY, maxY, model.extraStore),
+      rangeProvider.getMaxY(minY, maxY, model.extraStore),
       verticalAxisPosition,
     )
   }
