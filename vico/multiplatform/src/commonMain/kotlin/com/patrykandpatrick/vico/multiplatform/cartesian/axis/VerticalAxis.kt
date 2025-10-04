@@ -132,7 +132,33 @@ protected constructor(
     title,
   )
 
-  override fun drawUnderLayers(context: CartesianDrawingContext) {
+  override fun updateAxisProperties(
+    context: CartesianDrawingContext,
+    axisProperties: MutableAxisProperties,
+  ) {
+    with(context) {
+      val lineExtensionLength = if (itemPlacer.getShiftTopLines(this)) tickThickness else 0f
+
+      val left =
+        if (position.isLeft(this)) {
+          bounds.right - lineThickness
+        } else {
+          bounds.left
+        }
+
+      axisProperties.axisLineBounds.set(
+        left,
+        bounds.top - lineExtensionLength,
+        left + lineThickness,
+        bounds.bottom + lineExtensionLength,
+      )
+    }
+  }
+
+  override fun drawUnderLayers(
+    context: CartesianDrawingContext,
+    axisProperties: Map<Axis.Position, AxisProperties>,
+  ) {
     with(context) {
       var centerY: Float
       val yRange = ranges.getYRange(position)
@@ -177,7 +203,10 @@ protected constructor(
     }
   }
 
-  override fun drawOverLayers(context: CartesianDrawingContext) {
+  override fun drawOverLayers(
+    context: CartesianDrawingContext,
+    axisProperties: Map<Axis.Position, AxisProperties>,
+  ) {
     with(context) {
       val label = label
       val labelValues =

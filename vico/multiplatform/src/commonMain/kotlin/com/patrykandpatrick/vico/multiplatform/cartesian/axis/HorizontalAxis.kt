@@ -113,7 +113,36 @@ protected constructor(
     title,
   )
 
-  override fun drawUnderLayers(context: CartesianDrawingContext) {
+  override fun updateAxisProperties(
+    context: CartesianDrawingContext,
+    axisProperties: MutableAxisProperties,
+  ) {
+    with(context) {
+      val lineExtensionLength =
+        if (itemPlacer.getShiftExtremeLines(context)) {
+          tickThickness
+        } else {
+          tickThickness.half
+        }
+      val top =
+        if (position == Axis.Position.Horizontal.Top) {
+          bounds.bottom
+        } else {
+          bounds.top
+        }
+      axisProperties.axisLineBounds.set(
+        layerBounds.left - lineExtensionLength,
+        top,
+        layerBounds.right + lineExtensionLength,
+        top + lineThickness,
+      )
+    }
+  }
+
+  override fun drawUnderLayers(
+    context: CartesianDrawingContext,
+    axisProperties: Map<Axis.Position, AxisProperties>,
+  ) {
     with(context) {
       canvas.save()
       val tickTop =
@@ -283,7 +312,10 @@ protected constructor(
       else -> 0f
     } * layoutDirectionMultiplier
 
-  override fun drawOverLayers(context: CartesianDrawingContext) {}
+  override fun drawOverLayers(
+    context: CartesianDrawingContext,
+    axisProperties: Map<Axis.Position, AxisProperties>,
+  ) {}
 
   override fun updateLayerDimensions(
     context: CartesianMeasuringContext,

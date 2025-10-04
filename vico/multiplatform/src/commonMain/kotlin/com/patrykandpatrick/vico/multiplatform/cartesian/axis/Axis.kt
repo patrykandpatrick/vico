@@ -36,10 +36,16 @@ public interface Axis<P : Axis.Position> :
   public val position: P
 
   /** Draws content under the [CartesianLayer]s. */
-  public fun drawUnderLayers(context: CartesianDrawingContext)
+  public fun drawUnderLayers(
+    context: CartesianDrawingContext,
+    axisProperties: Map<Position, AxisProperties>,
+  )
 
   /** Draws content over the [CartesianLayer]s. */
-  public fun drawOverLayers(context: CartesianDrawingContext)
+  public fun drawOverLayers(
+    context: CartesianDrawingContext,
+    axisProperties: Map<Position, AxisProperties>,
+  )
 
   /** The bounds ([Rect]) passed here define the area where the [Axis] shouldn’t draw anything. */
   public fun setRestrictedBounds(vararg bounds: Rect?)
@@ -49,6 +55,11 @@ public interface Axis<P : Axis.Position> :
     context: CartesianMeasuringContext,
     layerDimensions: MutableCartesianLayerDimensions,
   )
+
+  public fun updateAxisProperties(
+    context: CartesianDrawingContext,
+    axisProperties: MutableAxisProperties,
+  ) {}
 
   /** Specifies the position of an [Axis]. */
   public sealed interface Position {
