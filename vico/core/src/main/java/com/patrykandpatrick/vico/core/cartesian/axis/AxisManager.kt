@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,15 @@ internal class AxisManager {
   var topAxis: Axis<Axis.Position.Horizontal.Top>? by cacheInList()
   var endAxis: Axis<Axis.Position.Vertical.End>? by cacheInList()
   var bottomAxis: Axis<Axis.Position.Horizontal.Bottom>? by cacheInList()
+
+  private val axisProperties = mutableMapOf<Axis.Position, MutableAxisProperties>()
+
+  init {
+    axisProperties[Axis.Position.Vertical.Start] = MutableAxisProperties()
+    axisProperties[Axis.Position.Horizontal.Top] = MutableAxisProperties()
+    axisProperties[Axis.Position.Vertical.End] = MutableAxisProperties()
+    axisProperties[Axis.Position.Horizontal.Bottom] = MutableAxisProperties()
+  }
 
   fun setAxesBounds(
     context: CartesianMeasuringContext,
@@ -115,11 +124,14 @@ internal class AxisManager {
   }
 
   fun drawUnderLayers(context: CartesianDrawingContext) {
-    axisCache.forEach { axis -> axis.drawUnderLayers(context) }
+    axisCache.forEach { axis ->
+      axis.fillAxisProperties(context)(axisProperties.getValue(axis.position))
+    }
+    axisCache.forEach { axis -> axis.drawUnderLayers(context, axisProperties) }
   }
 
   fun drawOverLayers(context: CartesianDrawingContext) {
-    axisCache.forEach { axis -> axis.drawOverLayers(context) }
+    axisCache.forEach { axis -> axis.drawOverLayers(context, axisProperties) }
   }
 
   private fun <S, T : Axis<S>?> cacheInList(): ReadWriteProperty<AxisManager, T?> =
