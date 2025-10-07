@@ -31,4 +31,8 @@ public class MutableRect(
     this.right = right
     this.bottom = bottom
   }
+
+  public fun getStart(isLtr: Boolean): Float = if (isLtr) left else right
+
+  public fun getEnd(isLtr: Boolean): Float = if (isLtr) right else left
 }

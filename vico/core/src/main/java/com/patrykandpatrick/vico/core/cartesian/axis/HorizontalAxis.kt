@@ -131,7 +131,7 @@ protected constructor(
         } else {
           bounds.top
         }
-      axisProperties.axisLineBounds.set(
+      axisProperties.lineBounds.set(
         layerBounds.left - lineExtensionLength,
         top,
         layerBounds.right + lineExtensionLength,
@@ -263,10 +263,10 @@ protected constructor(
     axisProperties: Map<Axis.Position, AxisProperties>,
   ): Float? {
     val startAxisProperties = axisProperties.getValue(Axis.Position.Vertical.Start)
-    return if (startAxisProperties.axisLineBounds.isEmpty) {
+    return if (startAxisProperties.lineBounds.isEmpty) {
       null
     } else {
-      startAxisProperties.axisLineBounds.getStart(context.isLtr)
+      startAxisProperties.lineBounds.getStart(context.isLtr)
     }
   }
 
@@ -275,10 +275,10 @@ protected constructor(
     axisProperties: Map<Axis.Position, AxisProperties>,
   ): Float? {
     val endAxisProperties = axisProperties.getValue(Axis.Position.Vertical.End)
-    return if (endAxisProperties.axisLineBounds.isEmpty) {
+    return if (endAxisProperties.lineBounds.isEmpty) {
       null
     } else {
-      endAxisProperties.axisLineBounds.getStart(context.isLtr)
+      endAxisProperties.lineBounds.getStart(context.isLtr)
     }
   }
 
@@ -286,8 +286,8 @@ protected constructor(
     context: CartesianDrawingContext,
     maxLabelWidth: Float,
     axisProperties: Map<Axis.Position, AxisProperties>,
-  ): Float =
-    with(context) {
+  ) =
+    context.run {
       val leftAxisLineX =
         if (context.isLtr) {
           getStartAxisLineX(context, axisProperties)
@@ -296,8 +296,8 @@ protected constructor(
         }
 
       val originalAxisLineX =
-        (bounds.left -
-          itemPlacer.getStartLayerMargin(this, layerDimensions, tickThickness, maxLabelWidth))
+        bounds.left -
+          itemPlacer.getStartLayerMargin(this, layerDimensions, tickThickness, maxLabelWidth)
 
       if (leftAxisLineX != null) {
         minOf(leftAxisLineX, originalAxisLineX)
@@ -310,8 +310,8 @@ protected constructor(
     context: CartesianDrawingContext,
     maxLabelWidth: Float,
     axisProperties: Map<Axis.Position, AxisProperties>,
-  ): Float =
-    with(context) {
+  ) =
+    context.run {
       val rightAxisLineX =
         if (context.isLtr) {
           getEndAxisLineX(context, axisProperties)
@@ -320,8 +320,8 @@ protected constructor(
         }
 
       val originalAxisLineX =
-        (bounds.right +
-          itemPlacer.getEndLayerMargin(this, layerDimensions, tickThickness, maxLabelWidth))
+        bounds.right +
+          itemPlacer.getEndLayerMargin(this, layerDimensions, tickThickness, maxLabelWidth)
 
       if (rightAxisLineX != null) {
         maxOf(rightAxisLineX, originalAxisLineX)

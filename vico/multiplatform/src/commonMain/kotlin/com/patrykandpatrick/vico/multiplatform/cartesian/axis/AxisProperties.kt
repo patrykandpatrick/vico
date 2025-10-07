@@ -19,5 +19,5 @@ package com.patrykandpatrick.vico.multiplatform.cartesian.axis
 import com.patrykandpatrick.vico.multiplatform.common.MutableRect
 
 public interface AxisProperties {
-  public val axisLineBounds: MutableRect
+  public val lineBounds: MutableRect
 }

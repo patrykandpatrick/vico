@@ -146,7 +146,7 @@ protected constructor(
           bounds.left
         }
 
-      axisProperties.axisLineBounds.set(
+      axisProperties.lineBounds.set(
         left,
         bounds.top - lineExtensionLength,
         left + lineThickness,

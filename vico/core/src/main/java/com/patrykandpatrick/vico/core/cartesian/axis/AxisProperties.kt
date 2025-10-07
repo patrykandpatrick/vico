@@ -19,5 +19,5 @@ package com.patrykandpatrick.vico.core.cartesian.axis
 import android.graphics.RectF
 
 public interface AxisProperties {
-  public val axisLineBounds: RectF
+  public val lineBounds: RectF
 }

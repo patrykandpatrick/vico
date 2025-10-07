@@ -20,5 +20,5 @@ import android.graphics.RectF
 
 /** TODO */
 public class MutableAxisProperties : AxisProperties {
-  override var axisLineBounds: RectF = RectF()
+  override var lineBounds: RectF = RectF()
 }

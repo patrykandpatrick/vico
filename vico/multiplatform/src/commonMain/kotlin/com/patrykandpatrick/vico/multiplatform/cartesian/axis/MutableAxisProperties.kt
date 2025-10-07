@@ -20,5 +20,5 @@ import com.patrykandpatrick.vico.multiplatform.common.MutableRect
 
 /** TODO */
 public class MutableAxisProperties : AxisProperties {
-  override var axisLineBounds: MutableRect = MutableRect()
+  override var lineBounds: MutableRect = MutableRect()
 }
