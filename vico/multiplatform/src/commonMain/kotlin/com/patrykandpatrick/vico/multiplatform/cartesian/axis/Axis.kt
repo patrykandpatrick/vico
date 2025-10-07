@@ -38,13 +38,13 @@ public interface Axis<P : Axis.Position> :
   /** Draws content under the [CartesianLayer]s. */
   public fun drawUnderLayers(
     context: CartesianDrawingContext,
-    axisProperties: Map<Position, AxisProperties>,
+    axisDimensions: Map<Position, AxisDimensions>,
   )
 
   /** Draws content over the [CartesianLayer]s. */
   public fun drawOverLayers(
     context: CartesianDrawingContext,
-    axisProperties: Map<Position, AxisProperties>,
+    axisDimensions: Map<Position, AxisDimensions>,
   )
 
   /** The bounds ([Rect]) passed here define the area where the [Axis] shouldn’t draw anything. */
@@ -56,9 +56,10 @@ public interface Axis<P : Axis.Position> :
     layerDimensions: MutableCartesianLayerDimensions,
   )
 
+  /** Updates the chart’s [MutableAxisDimensions] instance. */
   public fun updateAxisProperties(
     context: CartesianDrawingContext,
-    axisProperties: MutableAxisProperties,
+    axisProperties: MutableAxisDimensions,
   ) {}
 
   /** Specifies the position of an [Axis]. */

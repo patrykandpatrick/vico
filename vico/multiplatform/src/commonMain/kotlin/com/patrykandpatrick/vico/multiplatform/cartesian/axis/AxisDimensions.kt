@@ -18,6 +18,8 @@ package com.patrykandpatrick.vico.multiplatform.cartesian.axis
 
 import com.patrykandpatrick.vico.multiplatform.common.MutableRect
 
-public interface AxisProperties {
+/** Houses axis dimensions. */
+public interface AxisDimensions {
+  /** The bounds of the axis line. */
   public val lineBounds: MutableRect
 }

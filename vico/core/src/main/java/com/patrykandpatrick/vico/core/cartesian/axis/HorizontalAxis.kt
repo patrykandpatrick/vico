@@ -116,7 +116,7 @@ protected constructor(
 
   override fun updateAxisProperties(
     context: CartesianDrawingContext,
-    axisProperties: MutableAxisProperties,
+    axisProperties: MutableAxisDimensions,
   ) {
     with(context) {
       val lineExtensionLength =
@@ -142,7 +142,7 @@ protected constructor(
 
   override fun drawUnderLayers(
     context: CartesianDrawingContext,
-    axisProperties: Map<Axis.Position, AxisProperties>,
+    axisDimensions: Map<Axis.Position, AxisDimensions>,
   ) {
     with(context) {
       val saveCount = canvas.save()
@@ -156,8 +156,8 @@ protected constructor(
       val fullXRange = internalGetFullXRange(layerDimensions)
       val maxLabelWidth = getMaxLabelWidth(layerDimensions, fullXRange)
 
-      val axisLineLeft = getLeftAxisLineX(context, maxLabelWidth, axisProperties)
-      val axisLineRight = getRightAxisLineX(context, maxLabelWidth, axisProperties)
+      val axisLineLeft = getLeftAxisLineX(context, maxLabelWidth, axisDimensions)
+      val axisLineRight = getRightAxisLineX(context, maxLabelWidth, axisDimensions)
 
       clipPath.rewind()
       clipPath.addRect(
@@ -260,9 +260,9 @@ protected constructor(
 
   private fun getStartAxisLineX(
     context: CartesianDrawingContext,
-    axisProperties: Map<Axis.Position, AxisProperties>,
+    axisDimensions: Map<Axis.Position, AxisDimensions>,
   ): Float? {
-    val startAxisProperties = axisProperties.getValue(Axis.Position.Vertical.Start)
+    val startAxisProperties = axisDimensions.getValue(Axis.Position.Vertical.Start)
     return if (startAxisProperties.lineBounds.isEmpty) {
       null
     } else {
@@ -272,9 +272,9 @@ protected constructor(
 
   private fun getEndAxisLineX(
     context: CartesianDrawingContext,
-    axisProperties: Map<Axis.Position, AxisProperties>,
+    axisDimensions: Map<Axis.Position, AxisDimensions>,
   ): Float? {
-    val endAxisProperties = axisProperties.getValue(Axis.Position.Vertical.End)
+    val endAxisProperties = axisDimensions.getValue(Axis.Position.Vertical.End)
     return if (endAxisProperties.lineBounds.isEmpty) {
       null
     } else {
@@ -285,14 +285,14 @@ protected constructor(
   private fun getLeftAxisLineX(
     context: CartesianDrawingContext,
     maxLabelWidth: Float,
-    axisProperties: Map<Axis.Position, AxisProperties>,
+    axisDimensions: Map<Axis.Position, AxisDimensions>,
   ) =
     context.run {
       val leftAxisLineX =
         if (context.isLtr) {
-          getStartAxisLineX(context, axisProperties)
+          getStartAxisLineX(context, axisDimensions)
         } else {
-          getEndAxisLineX(context, axisProperties)
+          getEndAxisLineX(context, axisDimensions)
         }
 
       val originalAxisLineX =
@@ -309,14 +309,14 @@ protected constructor(
   private fun getRightAxisLineX(
     context: CartesianDrawingContext,
     maxLabelWidth: Float,
-    axisProperties: Map<Axis.Position, AxisProperties>,
+    axisDimensions: Map<Axis.Position, AxisDimensions>,
   ) =
     context.run {
       val rightAxisLineX =
         if (context.isLtr) {
-          getEndAxisLineX(context, axisProperties)
+          getEndAxisLineX(context, axisDimensions)
         } else {
-          getStartAxisLineX(context, axisProperties)
+          getStartAxisLineX(context, axisDimensions)
         }
 
       val originalAxisLineX =
@@ -385,7 +385,7 @@ protected constructor(
 
   override fun drawOverLayers(
     context: CartesianDrawingContext,
-    axisProperties: Map<Axis.Position, AxisProperties>,
+    axisDimensions: Map<Axis.Position, AxisDimensions>,
   ) {}
 
   override fun updateLayerDimensions(

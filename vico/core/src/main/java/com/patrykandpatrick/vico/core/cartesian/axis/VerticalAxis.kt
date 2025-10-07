@@ -130,7 +130,7 @@ protected constructor(
 
   override fun updateAxisProperties(
     context: CartesianDrawingContext,
-    axisProperties: MutableAxisProperties,
+    axisProperties: MutableAxisDimensions,
   ) {
     with(context) {
       val lineExtensionLength = if (itemPlacer.getShiftTopLines(this)) tickThickness else 0f
@@ -153,7 +153,7 @@ protected constructor(
 
   override fun drawUnderLayers(
     context: CartesianDrawingContext,
-    axisProperties: Map<Axis.Position, AxisProperties>,
+    axisDimensions: Map<Axis.Position, AxisDimensions>,
   ) {
     with(context) {
       var centerY: Float
@@ -201,7 +201,7 @@ protected constructor(
 
   override fun drawOverLayers(
     context: CartesianDrawingContext,
-    axisProperties: Map<Axis.Position, AxisProperties>,
+    axisDimensions: Map<Axis.Position, AxisDimensions>,
   ) {
     with(context) {
       val label = label

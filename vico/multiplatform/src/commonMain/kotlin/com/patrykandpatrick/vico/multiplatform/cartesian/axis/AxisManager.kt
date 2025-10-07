@@ -34,10 +34,10 @@ internal class AxisManager {
 
   private val axisProperties =
     mapOf(
-      Axis.Position.Vertical.Start to MutableAxisProperties(),
-      Axis.Position.Horizontal.Top to MutableAxisProperties(),
-      Axis.Position.Vertical.End to MutableAxisProperties(),
-      Axis.Position.Horizontal.Bottom to MutableAxisProperties(),
+      Axis.Position.Vertical.Start to MutableAxisDimensions(),
+      Axis.Position.Horizontal.Top to MutableAxisDimensions(),
+      Axis.Position.Vertical.End to MutableAxisDimensions(),
+      Axis.Position.Horizontal.Bottom to MutableAxisDimensions(),
     )
 
   fun setAxesBounds(

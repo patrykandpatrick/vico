@@ -18,7 +18,7 @@ package com.patrykandpatrick.vico.multiplatform.cartesian.axis
 
 import com.patrykandpatrick.vico.multiplatform.common.MutableRect
 
-/** TODO */
-public class MutableAxisProperties : AxisProperties {
+/** A mutable implementation of [AxisDimensions]. */
+public class MutableAxisDimensions : AxisDimensions {
   override var lineBounds: MutableRect = MutableRect()
 }

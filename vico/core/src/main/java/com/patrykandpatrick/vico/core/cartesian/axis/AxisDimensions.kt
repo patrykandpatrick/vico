@@ -18,7 +18,8 @@ package com.patrykandpatrick.vico.core.cartesian.axis
 
 import android.graphics.RectF
 
-/** TODO */
-public class MutableAxisProperties : AxisProperties {
-  override var lineBounds: RectF = RectF()
+/** Houses axis dimensions. */
+public interface AxisDimensions {
+  /** The bounds of the axis line. */
+  public val lineBounds: RectF
 }
