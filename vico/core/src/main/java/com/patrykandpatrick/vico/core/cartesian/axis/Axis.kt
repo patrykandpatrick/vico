@@ -57,9 +57,9 @@ public interface Axis<P : Axis.Position> :
   )
 
   /** Updates the chart’s [MutableAxisDimensions] instance. */
-  public fun updateAxisProperties(
+  public fun updateAxisDimensions(
     context: CartesianDrawingContext,
-    axisProperties: MutableAxisDimensions,
+    axisDimensions: MutableAxisDimensions,
   ) {}
 
   /** Specifies the position of an [Axis]. */

@@ -31,7 +31,7 @@ internal class AxisManager {
   var endAxis: Axis<Axis.Position.Vertical.End>? by cacheInList()
   var bottomAxis: Axis<Axis.Position.Horizontal.Bottom>? by cacheInList()
 
-  private val axisProperties =
+  private val axisDimensions =
     mapOf(
       Axis.Position.Vertical.Start to MutableAxisDimensions(),
       Axis.Position.Horizontal.Top to MutableAxisDimensions(),
@@ -124,13 +124,13 @@ internal class AxisManager {
 
   fun drawUnderLayers(context: CartesianDrawingContext) {
     axisCache.forEach { axis ->
-      axis.updateAxisProperties(context, axisProperties.getValue(axis.position))
+      axis.updateAxisDimensions(context, axisDimensions.getValue(axis.position))
     }
-    axisCache.forEach { axis -> axis.drawUnderLayers(context, axisProperties) }
+    axisCache.forEach { axis -> axis.drawUnderLayers(context, axisDimensions) }
   }
 
   fun drawOverLayers(context: CartesianDrawingContext) {
-    axisCache.forEach { axis -> axis.drawOverLayers(context, axisProperties) }
+    axisCache.forEach { axis -> axis.drawOverLayers(context, axisDimensions) }
   }
 
   private fun <S, T : Axis<S>?> cacheInList(): ReadWriteProperty<AxisManager, T?> =

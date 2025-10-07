@@ -132,9 +132,9 @@ protected constructor(
     title,
   )
 
-  override fun updateAxisProperties(
+  override fun updateAxisDimensions(
     context: CartesianDrawingContext,
-    axisProperties: MutableAxisDimensions,
+    axisDimensions: MutableAxisDimensions,
   ) {
     with(context) {
       val lineExtensionLength = if (itemPlacer.getShiftTopLines(this)) tickThickness else 0f
@@ -146,7 +146,7 @@ protected constructor(
           bounds.left
         }
 
-      axisProperties.lineBounds.set(
+      axisDimensions.lineBounds.set(
         left,
         bounds.top - lineExtensionLength,
         left + lineThickness,

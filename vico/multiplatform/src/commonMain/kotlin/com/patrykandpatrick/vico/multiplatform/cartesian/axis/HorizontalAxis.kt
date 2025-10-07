@@ -117,9 +117,9 @@ protected constructor(
     title,
   )
 
-  override fun updateAxisProperties(
+  override fun updateAxisDimensions(
     context: CartesianDrawingContext,
-    axisProperties: MutableAxisDimensions,
+    axisDimensions: MutableAxisDimensions,
   ) {
     with(context) {
       val lineExtensionLength =
@@ -134,7 +134,7 @@ protected constructor(
         } else {
           bounds.top
         }
-      axisProperties.lineBounds.set(
+      axisDimensions.lineBounds.set(
         layerBounds.left - lineExtensionLength,
         top,
         layerBounds.right + lineExtensionLength,
@@ -267,11 +267,11 @@ protected constructor(
     context: CartesianDrawingContext,
     axisDimensions: Map<Axis.Position, AxisDimensions>,
   ): Float? {
-    val startAxisProperties = axisDimensions.getValue(Axis.Position.Vertical.Start)
-    return if (startAxisProperties.lineBounds.isEmpty) {
+    val startAxisDimensions = axisDimensions.getValue(Axis.Position.Vertical.Start)
+    return if (startAxisDimensions.lineBounds.isEmpty) {
       null
     } else {
-      startAxisProperties.lineBounds.getStart(context.isLtr)
+      startAxisDimensions.lineBounds.getStart(context.isLtr)
     }
   }
 
@@ -279,11 +279,11 @@ protected constructor(
     context: CartesianDrawingContext,
     axisDimensions: Map<Axis.Position, AxisDimensions>,
   ): Float? {
-    val endAxisProperties = axisDimensions.getValue(Axis.Position.Vertical.End)
-    return if (endAxisProperties.lineBounds.isEmpty) {
+    val endAxisDimensions = axisDimensions.getValue(Axis.Position.Vertical.End)
+    return if (endAxisDimensions.lineBounds.isEmpty) {
       null
     } else {
-      endAxisProperties.lineBounds.getStart(context.isLtr)
+      endAxisDimensions.lineBounds.getStart(context.isLtr)
     }
   }
 
@@ -511,7 +511,6 @@ protected constructor(
             .coerceAtMost(canvasSize.height / MAX_HEIGHT_DIVISOR)
             .coerceIn(size.min.pixels, size.max.pixels)
         }
-
         is Size.Fixed -> size.value.pixels
         is Size.Fraction -> canvasSize.height * size.fraction
         is Size.Text ->
