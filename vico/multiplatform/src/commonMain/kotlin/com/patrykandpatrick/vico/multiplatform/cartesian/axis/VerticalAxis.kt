@@ -139,17 +139,10 @@ protected constructor(
     with(context) {
       val lineExtensionLength = if (itemPlacer.getShiftTopLines(this)) tickThickness else 0f
 
-      val left =
-        if (position.isLeft(this)) {
-          bounds.right - lineThickness
-        } else {
-          bounds.left
-        }
-
       axisDimensions.lineBounds.set(
-        left,
+        if (position.isLeft(this)) bounds.right - lineThickness else bounds.left,
         bounds.top - lineExtensionLength,
-        left + lineThickness,
+        if (position.isLeft(this)) bounds.right else bounds.left + lineThickness,
         bounds.bottom + lineExtensionLength,
       )
     }

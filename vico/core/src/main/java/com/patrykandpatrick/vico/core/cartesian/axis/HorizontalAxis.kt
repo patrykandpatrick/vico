@@ -125,17 +125,12 @@ protected constructor(
         } else {
           tickThickness.half
         }
-      val top =
-        if (position == Axis.Position.Horizontal.Top) {
-          bounds.bottom
-        } else {
-          bounds.top
-        }
+
       axisDimensions.lineBounds.set(
         layerBounds.left - lineExtensionLength,
-        top,
+        if (position == Axis.Position.Horizontal.Top) bounds.bottom - lineThickness else bounds.top,
         layerBounds.right + lineExtensionLength,
-        top + lineThickness,
+        if (position == Axis.Position.Horizontal.Top) bounds.bottom else bounds.top + lineThickness,
       )
     }
   }
