@@ -16,7 +16,7 @@
 
 package com.patrykandpatrick.vico.multiplatform.cartesian.axis
 
-import com.patrykandpatrick.vico.multiplatform.common.MutableRect
+import androidx.compose.ui.geometry.MutableRect
 
 /** Houses axis dimensions. */
 public interface AxisDimensions {

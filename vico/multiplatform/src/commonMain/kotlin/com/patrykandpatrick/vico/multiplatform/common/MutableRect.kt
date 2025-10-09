@@ -16,34 +16,10 @@
 
 package com.patrykandpatrick.vico.multiplatform.common
 
-/**
- * Stores the coordinates of a rectangle’s sides.
- *
- * @param left the _x_-coordinate for the left edge.
- * @param top the _y_-coordinate for the top edge.
- * @param right the _x_-coordinate for the right edge.
- * @param bottom the _y_-coordinate for the bottom edge.
- */
-public class MutableRect(
-  public var left: Float = 0f,
-  public var top: Float = 0f,
-  public var right: Float = 0f,
-  public var bottom: Float = 0f,
-) {
-  public val isEmpty: Boolean
-    get() = left >= right || top >= bottom
+import androidx.compose.ui.geometry.MutableRect
 
-  /** Sets new coordinates for the rectangle. */
-  public fun set(left: Float, top: Float, right: Float, bottom: Float) {
-    this.left = left
-    this.top = top
-    this.right = right
-    this.bottom = bottom
-  }
+/** Returns the start coordinate, depending on the layout direction. */
+public fun MutableRect.getStart(isLtr: Boolean): Float = if (isLtr) left else right
 
-  /** Returns the start coordinate, depending on the layout direction. */
-  public fun getStart(isLtr: Boolean): Float = if (isLtr) left else right
-
-  /** Returns the end coordinate, depending on the layout direction. */
-  public fun getEnd(isLtr: Boolean): Float = if (isLtr) right else left
-}
+/** Returns the end coordinate, depending on the layout direction. */
+public fun MutableRect.getEnd(isLtr: Boolean): Float = if (isLtr) right else left
