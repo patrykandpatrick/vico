@@ -151,14 +151,14 @@ protected constructor(
       val fullXRange = internalGetFullXRange(layerDimensions)
       val maxLabelWidth = getMaxLabelWidth(layerDimensions, fullXRange)
 
-      val axisLineLeft = getLeftAxisLineX(context, maxLabelWidth, axisDimensions)
-      val axisLineRight = getRightAxisLineX(context, maxLabelWidth, axisDimensions)
+      val lineLeft = getLineLeft(context, maxLabelWidth, axisDimensions)
+      val lineRight = getLineRight(context, maxLabelWidth, axisDimensions)
 
       clipPath.rewind()
       clipPath.addRect(
-        axisLineLeft,
+        lineLeft,
         min(bounds.top, layerBounds.top),
-        axisLineRight,
+        lineRight,
         max(bounds.bottom, layerBounds.bottom),
         Path.Direction.CW,
       )
@@ -221,8 +221,8 @@ protected constructor(
 
       line?.drawHorizontal(
         context = this,
-        left = axisLineLeft,
-        right = axisLineRight,
+        left = lineLeft,
+        right = lineRight,
         y =
           if (position == Axis.Position.Horizontal.Top) {
             bounds.bottom - lineThickness.half
@@ -253,7 +253,7 @@ protected constructor(
     }
   }
 
-  private fun getStartAxisLineX(
+  private fun getLineStart(
     context: CartesianDrawingContext,
     axisDimensions: Map<Axis.Position, AxisDimensions>,
   ): Float? {
@@ -265,7 +265,7 @@ protected constructor(
     }
   }
 
-  private fun getEndAxisLineX(
+  private fun getLineEnd(
     context: CartesianDrawingContext,
     axisDimensions: Map<Axis.Position, AxisDimensions>,
   ): Float? {
@@ -277,51 +277,51 @@ protected constructor(
     }
   }
 
-  private fun getLeftAxisLineX(
+  private fun getLineLeft(
     context: CartesianDrawingContext,
     maxLabelWidth: Float,
     axisDimensions: Map<Axis.Position, AxisDimensions>,
   ) =
     context.run {
-      val leftAxisLineX =
+      val lineLeft =
         if (context.isLtr) {
-          getStartAxisLineX(context, axisDimensions)
+          getLineStart(context, axisDimensions)
         } else {
-          getEndAxisLineX(context, axisDimensions)
+          getLineEnd(context, axisDimensions)
         }
 
-      val originalAxisLineX =
+      val defaultLineLeft =
         bounds.left -
           itemPlacer.getStartLayerMargin(this, layerDimensions, tickThickness, maxLabelWidth)
 
-      if (leftAxisLineX != null) {
-        minOf(leftAxisLineX, originalAxisLineX)
+      if (lineLeft != null) {
+        minOf(lineLeft, defaultLineLeft)
       } else {
-        originalAxisLineX
+        defaultLineLeft
       }
     }
 
-  private fun getRightAxisLineX(
+  private fun getLineRight(
     context: CartesianDrawingContext,
     maxLabelWidth: Float,
     axisDimensions: Map<Axis.Position, AxisDimensions>,
   ) =
     context.run {
-      val rightAxisLineX =
+      val lineRight =
         if (context.isLtr) {
-          getEndAxisLineX(context, axisDimensions)
+          getLineEnd(context, axisDimensions)
         } else {
-          getStartAxisLineX(context, axisDimensions)
+          getLineStart(context, axisDimensions)
         }
 
-      val originalAxisLineX =
+      val defaultLineRight =
         bounds.right +
           itemPlacer.getEndLayerMargin(this, layerDimensions, tickThickness, maxLabelWidth)
 
-      if (rightAxisLineX != null) {
-        maxOf(rightAxisLineX, originalAxisLineX)
+      if (lineRight != null) {
+        maxOf(lineRight, defaultLineRight)
       } else {
-        originalAxisLineX
+        defaultLineRight
       }
     }
 
