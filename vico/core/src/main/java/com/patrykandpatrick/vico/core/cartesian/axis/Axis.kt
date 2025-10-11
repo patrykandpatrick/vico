@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,10 +36,16 @@ public interface Axis<P : Axis.Position> :
   public val position: P
 
   /** Draws content under the [CartesianLayer]s. */
-  public fun drawUnderLayers(context: CartesianDrawingContext)
+  public fun drawUnderLayers(
+    context: CartesianDrawingContext,
+    axisDimensions: Map<Position, AxisDimensions>,
+  )
 
   /** Draws content over the [CartesianLayer]s. */
-  public fun drawOverLayers(context: CartesianDrawingContext)
+  public fun drawOverLayers(
+    context: CartesianDrawingContext,
+    axisDimensions: Map<Position, AxisDimensions>,
+  )
 
   /** The bounds ([RectF]) passed here define the area where the [Axis] shouldn’t draw anything. */
   public fun setRestrictedBounds(vararg bounds: RectF?)
@@ -49,6 +55,12 @@ public interface Axis<P : Axis.Position> :
     context: CartesianMeasuringContext,
     layerDimensions: MutableCartesianLayerDimensions,
   )
+
+  /** Updates the chart’s [MutableAxisDimensions] instance. */
+  public fun updateAxisDimensions(
+    context: CartesianDrawingContext,
+    axisDimensions: MutableAxisDimensions,
+  ) {}
 
   /** Specifies the position of an [Axis]. */
   public sealed interface Position {
