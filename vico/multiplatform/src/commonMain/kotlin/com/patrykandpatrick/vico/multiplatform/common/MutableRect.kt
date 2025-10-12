@@ -18,8 +18,6 @@ package com.patrykandpatrick.vico.multiplatform.common
 
 import androidx.compose.ui.geometry.MutableRect
 
-/** Returns the start coordinate, depending on the layout direction. */
-public fun MutableRect.getStart(isLtr: Boolean): Float = if (isLtr) left else right
+internal fun MutableRect.getStart(isLtr: Boolean) = if (isLtr) left else right
 
-/** Returns the end coordinate, depending on the layout direction. */
-public fun MutableRect.getEnd(isLtr: Boolean): Float = if (isLtr) right else left
+internal fun MutableRect.getEnd(isLtr: Boolean) = if (isLtr) right else left
