@@ -27,6 +27,8 @@ dependencies {
   dokka(project(":vico:compose-m3"))
   dokka(project(":vico:core"))
   dokka(project(":vico:multiplatform"))
+  dokka(project(":vico:multiplatform-m2"))
+  dokka(project(":vico:multiplatform-m3"))
   dokka(project(":vico:views"))
 }
 
