@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,14 @@ internal class AxisManager {
   var topAxis: Axis<Axis.Position.Horizontal.Top>? by cacheInList()
   var endAxis: Axis<Axis.Position.Vertical.End>? by cacheInList()
   var bottomAxis: Axis<Axis.Position.Horizontal.Bottom>? by cacheInList()
+
+  private val axisDimensions =
+    mapOf(
+      Axis.Position.Vertical.Start to MutableAxisDimensions(),
+      Axis.Position.Horizontal.Top to MutableAxisDimensions(),
+      Axis.Position.Vertical.End to MutableAxisDimensions(),
+      Axis.Position.Horizontal.Bottom to MutableAxisDimensions(),
+    )
 
   fun setAxesBounds(
     context: CartesianMeasuringContext,
@@ -115,11 +123,14 @@ internal class AxisManager {
   }
 
   fun drawUnderLayers(context: CartesianDrawingContext) {
-    axisCache.forEach { axis -> axis.drawUnderLayers(context) }
+    axisCache.forEach { axis ->
+      axis.updateAxisDimensions(context, axisDimensions.getValue(axis.position))
+    }
+    axisCache.forEach { axis -> axis.drawUnderLayers(context, axisDimensions) }
   }
 
   fun drawOverLayers(context: CartesianDrawingContext) {
-    axisCache.forEach { axis -> axis.drawOverLayers(context) }
+    axisCache.forEach { axis -> axis.drawOverLayers(context, axisDimensions) }
   }
 
   private fun <S, T : Axis<S>?> cacheInList(): ReadWriteProperty<AxisManager, T?> =

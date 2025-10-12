@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -128,7 +128,26 @@ protected constructor(
     title,
   )
 
-  override fun drawUnderLayers(context: CartesianDrawingContext) {
+  override fun updateAxisDimensions(
+    context: CartesianDrawingContext,
+    axisDimensions: MutableAxisDimensions,
+  ) {
+    with(context) {
+      val lineExtensionLength = if (itemPlacer.getShiftTopLines(this)) tickThickness else 0f
+
+      axisDimensions.lineBounds.set(
+        if (position.isLeft(this)) bounds.right - lineThickness else bounds.left,
+        bounds.top - lineExtensionLength,
+        if (position.isLeft(this)) bounds.right else bounds.left + lineThickness,
+        bounds.bottom + lineExtensionLength,
+      )
+    }
+  }
+
+  override fun drawUnderLayers(
+    context: CartesianDrawingContext,
+    axisDimensions: Map<Axis.Position, AxisDimensions>,
+  ) {
     with(context) {
       var centerY: Float
       val yRange = ranges.getYRange(position)
@@ -173,7 +192,10 @@ protected constructor(
     }
   }
 
-  override fun drawOverLayers(context: CartesianDrawingContext) {
+  override fun drawOverLayers(
+    context: CartesianDrawingContext,
+    axisDimensions: Map<Axis.Position, AxisDimensions>,
+  ) {
     with(context) {
       val label = label
       val labelValues =
