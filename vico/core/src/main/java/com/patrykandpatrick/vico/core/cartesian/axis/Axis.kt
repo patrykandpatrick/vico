@@ -36,16 +36,36 @@ public interface Axis<P : Axis.Position> :
   public val position: P
 
   /** Draws content under the [CartesianLayer]s. */
+  @Suppress("DEPRECATION")
   public fun drawUnderLayers(
     context: CartesianDrawingContext,
     axisDimensions: Map<Position, AxisDimensions>,
+  ) {
+    drawUnderLayers(context)
+  }
+
+  /** Draws content under the [CartesianLayer]s. */
+  @Deprecated(
+    "Use the overload with the `axisDimensions` parameter instead.",
+    ReplaceWith("drawUnderLayers(context, axisDimensions)"),
   )
+  public fun drawUnderLayers(context: CartesianDrawingContext) {}
 
   /** Draws content over the [CartesianLayer]s. */
+  @Suppress("DEPRECATION")
   public fun drawOverLayers(
     context: CartesianDrawingContext,
     axisDimensions: Map<Position, AxisDimensions>,
+  ) {
+    drawOverLayers(context)
+  }
+
+  /** Draws content over the [CartesianLayer]s. */
+  @Deprecated(
+    "Use the overload with the `axisDimensions` parameter instead.",
+    ReplaceWith("drawOverLayers(context, axisDimensions)"),
   )
+  public fun drawOverLayers(context: CartesianDrawingContext) {}
 
   /** The bounds ([RectF]) passed here define the area where the [Axis] shouldn’t draw anything. */
   public fun setRestrictedBounds(vararg bounds: RectF?)
