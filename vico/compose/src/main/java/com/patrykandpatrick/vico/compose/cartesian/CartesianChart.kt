@@ -31,7 +31,6 @@ import com.patrykandpatrick.vico.core.cartesian.decoration.Decoration
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayerPadding
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
-import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerController
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerVisibilityListener
 import com.patrykandpatrick.vico.core.common.Legend
 import com.patrykandpatrick.vico.core.common.ValueWrapper
@@ -59,7 +58,6 @@ public fun rememberCartesianChart(
   decorations: List<Decoration> = emptyList(),
   persistentMarkers: (CartesianChart.PersistentMarkerScope.(ExtraStore) -> Unit)? = null,
   getXStep: ((CartesianChartModel) -> Double) = { it.getXDeltaGcd() },
-  markerController: CartesianMarkerController = CartesianMarkerController.showOnPress,
 ): CartesianChart {
   val wrapper = remember { ValueWrapper<CartesianChart?>(null) }
   return remember(
@@ -76,7 +74,6 @@ public fun rememberCartesianChart(
     decorations,
     persistentMarkers,
     getXStep,
-    markerController,
   ) {
     val cartesianChart =
       wrapper.value?.copy(
@@ -93,7 +90,6 @@ public fun rememberCartesianChart(
         decorations = decorations,
         persistentMarkers = persistentMarkers,
         getXStep = getXStep,
-        markerController = markerController,
       )
         ?: CartesianChart(
           *layers,
@@ -109,7 +105,6 @@ public fun rememberCartesianChart(
           decorations = decorations,
           persistentMarkers = persistentMarkers,
           getXStep = getXStep,
-          markerController = markerController,
         )
     wrapper.value = cartesianChart
     cartesianChart

@@ -17,13 +17,14 @@
 package com.patrykandpatrick.vico.compose.cartesian
 
 import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.pointerInput
 import com.patrykandpatrick.vico.compose.common.detectZoomGestures
-import com.patrykandpatrick.vico.core.cartesian.marker.PointerEvent
+import com.patrykandpatrick.vico.core.cartesian.marker.InteractionEvent
 import com.patrykandpatrick.vico.core.common.Point
 
 private const val BASE_SCROLL_ZOOM_DELTA = 0.1f
@@ -32,7 +33,7 @@ private fun Offset.toPoint() = Point(x, y)
 
 internal fun Modifier.pointerInput(
   scrollState: VicoScrollState,
-  onPointerStateChange: ((PointerEvent?) -> Unit)?,
+  onInteractionEvent: ((InteractionEvent) -> Unit)?,
   onZoom: ((Float, Offset) -> Unit)?,
   consumeMoveEvents: Boolean,
 ) =
@@ -42,7 +43,7 @@ internal fun Modifier.pointerInput(
       enabled = scrollState.scrollEnabled,
       reverseDirection = true,
     )
-    .pointerInput(onZoom, onPointerStateChange) {
+    .pointerInput(onZoom, onInteractionEvent) {
       awaitPointerEventScope {
         while (true) {
           val event = awaitPointerEvent()
@@ -53,25 +54,31 @@ internal fun Modifier.pointerInput(
                 1 - event.changes.first().scrollDelta.y * BASE_SCROLL_ZOOM_DELTA,
                 event.changes.first().position,
               )
-            onPointerStateChange == null -> continue
+            onInteractionEvent == null -> continue
             event.type == PointerEventType.Press ->
-              onPointerStateChange(PointerEvent.Press(pointerPosition))
+              onInteractionEvent(InteractionEvent.Press(pointerPosition))
             event.type == PointerEventType.Release ->
-              onPointerStateChange(PointerEvent.Release(pointerPosition))
+              onInteractionEvent(InteractionEvent.Release(pointerPosition))
             event.type == PointerEventType.Move && !scrollState.scrollEnabled -> {
               val changes = event.changes.first()
               if (consumeMoveEvents) changes.consume()
-              onPointerStateChange(PointerEvent.Move(pointerPosition))
+              onInteractionEvent(InteractionEvent.Move(pointerPosition))
             }
           }
         }
       }
     }
+    .pointerInput(onInteractionEvent) {
+      detectTapGestures(
+        onLongPress = { onInteractionEvent?.invoke(InteractionEvent.LongPress(it.toPoint())) },
+        onTap = { onInteractionEvent?.invoke(InteractionEvent.Tap(it.toPoint())) },
+      )
+    }
     .then(
       if (scrollState.scrollEnabled && onZoom != null) {
-        Modifier.pointerInput(onPointerStateChange, onZoom) {
+        Modifier.pointerInput(onInteractionEvent, onZoom) {
           detectZoomGestures { centroid, zoom ->
-            onPointerStateChange?.invoke(PointerEvent.Zoom(centroid.toPoint()))
+            onInteractionEvent?.invoke(InteractionEvent.Zoom(centroid.toPoint()))
             onZoom(zoom, centroid)
           }
         }

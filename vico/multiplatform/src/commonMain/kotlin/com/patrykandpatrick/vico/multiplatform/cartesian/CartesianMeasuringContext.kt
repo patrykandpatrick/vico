@@ -27,7 +27,6 @@ import com.patrykandpatrick.vico.multiplatform.cartesian.data.CartesianChartRang
 import com.patrykandpatrick.vico.multiplatform.cartesian.layer.CartesianLayer
 import com.patrykandpatrick.vico.multiplatform.cartesian.layer.CartesianLayerDimensions
 import com.patrykandpatrick.vico.multiplatform.cartesian.layer.CartesianLayerPadding
-import com.patrykandpatrick.vico.multiplatform.cartesian.marker.PointerEvent
 import com.patrykandpatrick.vico.multiplatform.common.MeasuringContext
 import com.patrykandpatrick.vico.multiplatform.common.Point
 import com.patrykandpatrick.vico.multiplatform.common.data.CacheStore
@@ -51,12 +50,10 @@ public interface CartesianMeasuringContext : MeasuringContext {
   public val layerPadding: CartesianLayerPadding
 
   /** The pointer position. */
-  @Deprecated("Use pointerState instead", ReplaceWith("pointerState?.point"))
   public val pointerPosition: Point?
-    get() = pointerEvent?.point
 
-  /** The pointer state. */
-  public val pointerEvent: PointerEvent?
+  /** Whether the marker is visible. */
+  public val isMarkerVisible: Boolean
 }
 
 internal fun CartesianMeasuringContext.getFullXRange(layerDimensions: CartesianLayerDimensions) =
@@ -74,7 +71,8 @@ internal fun rememberCartesianMeasuringContext(
   scrollEnabled: Boolean,
   zoomEnabled: Boolean,
   layerPadding: CartesianLayerPadding,
-  pointerEvent: PointerEvent?,
+  pointerPosition: Point?,
+  isMarkerVisible: Boolean,
 ): MutableCartesianMeasuringContext {
   val fontFamilyResolver = LocalFontFamilyResolver.current
   val density = LocalDensity.current
@@ -90,7 +88,8 @@ internal fun rememberCartesianMeasuringContext(
     scrollEnabled,
     zoomEnabled,
     layerPadding,
-    pointerEvent,
+    pointerPosition,
+    isMarkerVisible,
     cacheStore,
   ) {
     MutableCartesianMeasuringContext(
@@ -104,7 +103,8 @@ internal fun rememberCartesianMeasuringContext(
       scrollEnabled = scrollEnabled,
       zoomEnabled = zoomEnabled,
       layerPadding = layerPadding,
-      pointerEvent = pointerEvent,
+      pointerPosition = pointerPosition,
+      isMarkerVisible = isMarkerVisible,
       cacheStore = cacheStore,
     )
   }

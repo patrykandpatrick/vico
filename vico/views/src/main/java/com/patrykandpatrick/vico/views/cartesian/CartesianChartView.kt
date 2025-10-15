@@ -22,6 +22,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
 import android.util.AttributeSet
+import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.View
@@ -38,7 +39,8 @@ import com.patrykandpatrick.vico.core.cartesian.data.RandomCartesianModelGenerat
 import com.patrykandpatrick.vico.core.cartesian.data.toImmutable
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayerPadding
 import com.patrykandpatrick.vico.core.cartesian.layer.MutableCartesianLayerDimensions
-import com.patrykandpatrick.vico.core.cartesian.marker.PointerEvent
+import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerController
+import com.patrykandpatrick.vico.core.cartesian.marker.InteractionEvent
 import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.NEW_PRODUCER_ERROR_MESSAGE
 import com.patrykandpatrick.vico.core.common.Point
@@ -49,6 +51,7 @@ import com.patrykandpatrick.vico.views.common.ChartView
 import com.patrykandpatrick.vico.views.common.density
 import com.patrykandpatrick.vico.views.common.dpInt
 import com.patrykandpatrick.vico.views.common.gesture.ChartScaleGestureListener
+import com.patrykandpatrick.vico.views.common.gesture.ChartSimpleOnGestureListener
 import com.patrykandpatrick.vico.views.common.gesture.MotionEventHandler
 import com.patrykandpatrick.vico.views.common.isLtr
 import com.patrykandpatrick.vico.views.common.theme.ThemeHandler
@@ -90,13 +93,22 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       scrollEnabled = false,
       zoomEnabled = false,
       layerPadding = CartesianLayerPadding(),
-      pointerEvent = null,
+      pointerPosition = null,
+      isMarkerVisible = false,
     )
 
   private val scaleGestureListener: ScaleGestureDetector.OnScaleGestureListener =
     ChartScaleGestureListener(getLayerBounds = { chart?.layerBounds }, onZoom = ::handleZoom)
 
   private val scaleGestureDetector = ScaleGestureDetector(context, scaleGestureListener)
+
+  private val onGestureListener: ChartSimpleOnGestureListener =
+    ChartSimpleOnGestureListener(
+      onTap = { x, y -> handleInteractionEvent(InteractionEvent.Tap(Point(x, y))) },
+      onLongPress = { x, y -> handleInteractionEvent(InteractionEvent.LongPress(Point(x, y))) },
+    )
+
+  private val gestureDetector = GestureDetector(context, onGestureListener)
 
   private var scrollDirectionResolved = false
 
@@ -132,7 +144,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       scroller = scroller,
       consumeMoveEvents = themeHandler.consumeMoveEvents,
       density = resources.displayMetrics.density,
-      onPointerState = ::handleTouchEvent,
+      onPointerState = ::handleInteractionEvent,
       requestInvalidate = ::invalidate,
     )
 
@@ -156,6 +168,10 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       field = value
       if (isAttachedToWindow) registerForUpdates()
     }
+
+  /** Controls the visibility of the [CartesianChart.marker]. */
+  public var cartesianMarkerController: CartesianMarkerController =
+    CartesianMarkerController.showOnPress
 
   private fun registerForUpdates() {
     coroutineScope?.launch {
@@ -296,6 +312,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
         false
       }
     val touchHandled = motionEventHandler.handleMotionEvent(event, scrollHandler)
+    val gestureHandled = gestureDetector.onTouchEvent(event)
     val hasMarker = chart?.marker != null
     when {
       consumeMoveEvents && !scrollHandler.scrollEnabled && hasMarker -> {
@@ -314,7 +331,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       }
     }
 
-    return touchHandled || scaleHandled || superHandled
+    return touchHandled || scaleHandled || superHandled || gestureHandled
   }
 
   private fun MotionEvent.isUpOrCancel(): Boolean =
@@ -323,12 +340,20 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   private fun handleZoom(focusX: Float, focusY: Float, zoomChange: Float) {
     val chart = chart ?: return
     zoomHandler.zoom(zoomChange, focusX, scrollHandler.value, chart.layerBounds)
-    handleTouchEvent(PointerEvent.Zoom(Point(focusX, focusY)))
-    invalidate()
+    handleInteractionEvent(InteractionEvent.Zoom(Point(focusX, focusY)))
   }
 
-  private fun handleTouchEvent(pointerEvent: PointerEvent) {
-    measuringContext.pointerEvent = pointerEvent
+  private fun handleInteractionEvent(interactionEvent: InteractionEvent) {
+    val markedEntries = chart?.getMarkerTargets(interactionEvent.point)
+    if (
+      !markedEntries.isNullOrEmpty() &&
+        cartesianMarkerController.acceptEvent(interactionEvent, markedEntries)
+    ) {
+      measuringContext.pointerPosition = interactionEvent.point
+      measuringContext.isMarkerVisible =
+        cartesianMarkerController.isMarkerVisible(interactionEvent, markedEntries)
+      invalidate()
+    }
   }
 
   override fun dispatchDraw(canvas: Canvas) {

@@ -21,8 +21,8 @@ import androidx.annotation.RestrictTo
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartRanges
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayerPadding
-import com.patrykandpatrick.vico.core.cartesian.marker.PointerEvent
 import com.patrykandpatrick.vico.core.common.MutableMeasuringContext
+import com.patrykandpatrick.vico.core.common.Point
 import com.patrykandpatrick.vico.core.common.data.CacheStore
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
 
@@ -39,7 +39,8 @@ public class MutableCartesianMeasuringContext(
   override var scrollEnabled: Boolean,
   override var zoomEnabled: Boolean,
   override var layerPadding: CartesianLayerPadding,
-  override var pointerEvent: PointerEvent?,
+  override var pointerPosition: Point?,
+  override var isMarkerVisible: Boolean,
   cacheStore: CacheStore = CacheStore(),
 ) :
   MutableMeasuringContext(canvasBounds, density, extraStore, isLtr, spToPx, cacheStore),

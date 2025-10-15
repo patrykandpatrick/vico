@@ -38,7 +38,6 @@ import com.patrykandpatrick.vico.core.cartesian.layer.HorizontalCartesianLayerMa
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.layer.MutableCartesianLayerDimensions
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
-import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerController
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerVisibilityListener
 import com.patrykandpatrick.vico.core.common.Legend
 import com.patrykandpatrick.vico.core.common.Point
@@ -51,9 +50,6 @@ import com.patrykandpatrick.vico.core.common.saveLayer
 import java.util.Objects
 import java.util.SortedMap
 import java.util.UUID
-import kotlin.collections.component1
-import kotlin.collections.component2
-import kotlin.collections.set
 import kotlin.math.abs
 
 /** A chart based on a Cartesian coordinate plane, composed of [CartesianLayer]s. */
@@ -81,7 +77,6 @@ private constructor(
   private var previousMarkerTargetHashCode: Int?,
   private val persistentMarkerMap: MutableMap<Double, CartesianMarker>,
   private var previousPersistentMarkerHashCode: Int?,
-  protected val markerController: CartesianMarkerController,
 ) : CartesianLayerMarginUpdater<CartesianChartModel> {
   private val persistentMarkerScope = PersistentMarkerScope {
     persistentMarkerMap[it.toDouble()] = this
@@ -221,7 +216,6 @@ private constructor(
     decorations: List<Decoration> = emptyList(),
     persistentMarkers: (PersistentMarkerScope.(ExtraStore) -> Unit)? = null,
     getXStep: ((CartesianChartModel) -> Double) = { it.getXDeltaGcd() },
-    markerController: CartesianMarkerController = CartesianMarkerController.showOnPress,
   ) : this(
     layers = layers,
     startAxis = startAxis,
@@ -240,7 +234,6 @@ private constructor(
     previousMarkerTargetHashCode = null,
     persistentMarkerMap = mutableMapOf(),
     previousPersistentMarkerHashCode = null,
-    markerController = markerController,
   )
 
   private fun setLayerBounds(left: Float, top: Float, right: Float, bottom: Float) {
@@ -319,10 +312,8 @@ private constructor(
         model.forEachWithLayer(drawingConsumer.apply { this.context = context })
       }
       forEachPersistentMarker { marker, targets -> marker.drawUnderLayers(context, targets) }
-      val markerTargets = getMarkerTargets(context, pointerEvent?.point)
-      val drawMarker =
-        markerTargets.isNotEmpty() &&
-          pointerEvent?.let { markerController.isMarkerVisible(it, markerTargets) } == true
+      val markerTargets = getMarkerTargets(pointerPosition)
+      val drawMarker = markerTargets.isNotEmpty() && isMarkerVisible
       if (drawMarker) marker?.drawUnderLayers(context, markerTargets)
       canvas.drawBitmap(layerBitmap, 0f, 0f, null)
       fadingEdges?.run {
@@ -415,10 +406,16 @@ private constructor(
     }
   }
 
+  @Deprecated(
+    "Use `getMarkerTargets(pointerPosition)` instead.",
+    ReplaceWith("getMarkerTargets(pointerPosition)"),
+  )
   protected open fun getMarkerTargets(
     context: CartesianDrawingContext,
     pointerPosition: Point?,
-  ): List<CartesianMarker.Target> {
+  ): List<CartesianMarker.Target> = getMarkerTargets(pointerPosition)
+
+  public open fun getMarkerTargets(pointerPosition: Point?): List<CartesianMarker.Target> {
     val marker = marker ?: return emptyList()
     if (pointerPosition == null || markerTargets.isEmpty()) {
       if (previousMarkerTargetHashCode != null) markerVisibilityListener?.onHidden(marker)
@@ -472,7 +469,6 @@ private constructor(
     decorations: List<Decoration> = this.decorations,
     persistentMarkers: (PersistentMarkerScope.(ExtraStore) -> Unit)? = this.persistentMarkers,
     getXStep: ((CartesianChartModel) -> Double) = this.getXStep,
-    markerController: CartesianMarkerController = this.markerController,
   ): CartesianChart =
     CartesianChart(
       layers = layers,
@@ -492,7 +488,6 @@ private constructor(
       previousMarkerTargetHashCode = previousMarkerTargetHashCode,
       persistentMarkerMap = persistentMarkerMap,
       previousPersistentMarkerHashCode = previousPersistentMarkerHashCode,
-      markerController = markerController,
     )
 
   override fun equals(other: Any?): Boolean =
@@ -511,8 +506,7 @@ private constructor(
         startAxis == other.startAxis &&
         topAxis == other.topAxis &&
         endAxis == other.endAxis &&
-        bottomAxis == other.bottomAxis &&
-        markerController == other.markerController
+        bottomAxis == other.bottomAxis
 
   override fun hashCode(): Int {
     var result = marker.hashCode()
@@ -528,7 +522,6 @@ private constructor(
     result = 31 * result + topAxis.hashCode()
     result = 31 * result + endAxis.hashCode()
     result = 31 * result + bottomAxis.hashCode()
-    result = 31 * result + markerController.hashCode()
     result = 31 * result + id.hashCode()
     return result
   }

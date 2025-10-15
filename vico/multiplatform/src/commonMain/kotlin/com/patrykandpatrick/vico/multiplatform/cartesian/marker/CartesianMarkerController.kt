@@ -16,62 +16,74 @@
 
 package com.patrykandpatrick.vico.multiplatform.cartesian.marker
 
-/** TODO */
+/** Controls [CartesianMarker] visibility. */
 public fun interface CartesianMarkerController {
-  /** TODO */
+  /**
+   * Whether this [CartesianMarkerController] wants to respond to [interactionEvent]. If it returns
+   * `true`, [isMarkerVisible] is called. Otherwise the marker visibility remains unchanged.
+   */
+  public fun acceptEvent(
+    interactionEvent: InteractionEvent,
+    markedEntries: List<CartesianMarker.Target>,
+  ): Boolean = true
+
+  /**
+   * Whether the marker should be visible, given the current [interactionEvent] and the currently
+   * [markedEntries].
+   */
   public fun isMarkerVisible(
-    pointerEvent: PointerEvent,
+    interactionEvent: InteractionEvent,
     markedEntries: List<CartesianMarker.Target>,
   ): Boolean
 
   public companion object {
-    /** TODO */
+    /** Shows [CartesianMarker] on press interaction. */
     public val showOnPress: CartesianMarkerController
       get() = ShowOnPressMarkerController()
 
-    /** TODO */
-    public val toggleOnPress: CartesianMarkerController
-      get() = ToggleOnPressMarkerController()
+    /** Toggles the visibility of [CartesianMarker] upon tap interaction. */
+    public val toggleOnTap: CartesianMarkerController
+      get() = ToggleOnTapMarkerController()
   }
 }
 
 private class ShowOnPressMarkerController : CartesianMarkerController {
+  override fun acceptEvent(
+    interactionEvent: InteractionEvent,
+    markedEntries: List<CartesianMarker.Target>,
+  ): Boolean =
+    interactionEvent is InteractionEvent.Press ||
+      interactionEvent is InteractionEvent.Release ||
+      interactionEvent is InteractionEvent.Move
 
   override fun isMarkerVisible(
-    pointerEvent: PointerEvent,
+    interactionEvent: InteractionEvent,
     markedEntries: List<CartesianMarker.Target>,
-  ): Boolean = pointerEvent.isPressedOrMoved
+  ): Boolean = interactionEvent !is InteractionEvent.Release
 
   override fun hashCode(): Int = 31
 
   override fun equals(other: Any?): Boolean = other === this || other is ShowOnPressMarkerController
 }
 
-private class ToggleOnPressMarkerController : CartesianMarkerController {
+private class ToggleOnTapMarkerController : CartesianMarkerController {
   private var lastMarkedEntries: List<CartesianMarker.Target>? = null
-  private var wasShown = false
+
+  override fun acceptEvent(
+    interactionEvent: InteractionEvent,
+    markedEntries: List<CartesianMarker.Target>,
+  ): Boolean = interactionEvent is InteractionEvent.Tap
 
   override fun isMarkerVisible(
-    pointerEvent: PointerEvent,
+    interactionEvent: InteractionEvent,
     markedEntries: List<CartesianMarker.Target>,
   ): Boolean {
-    val show =
-      when (pointerEvent) {
-        is PointerEvent.Tap,
-        is PointerEvent.LongPress,
-        is PointerEvent.Press -> markedEntries != lastMarkedEntries
-        is PointerEvent.Move,
-        is PointerEvent.Release -> wasShown
-
-        is PointerEvent.Zoom -> false
-      }
-    wasShown = show
+    val show = markedEntries != lastMarkedEntries
     lastMarkedEntries = if (show) markedEntries else null
     return show
   }
 
   override fun hashCode(): Int = 31
 
-  override fun equals(other: Any?): Boolean =
-    other === this || other is ToggleOnPressMarkerController
+  override fun equals(other: Any?): Boolean = other === this || other is ToggleOnTapMarkerController
 }
