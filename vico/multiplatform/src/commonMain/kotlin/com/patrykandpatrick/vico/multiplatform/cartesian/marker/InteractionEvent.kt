@@ -16,6 +16,10 @@
 
 package com.patrykandpatrick.vico.multiplatform.cartesian.marker
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.listSaver
 import com.patrykandpatrick.vico.multiplatform.common.Point
 
 /** Represent an interaction event such as press, move, or release. */
@@ -39,4 +43,36 @@ public sealed class InteractionEvent {
 
   /** A zoom interaction. */
   public data class Zoom(override val point: Point) : InteractionEvent()
+
+  public companion object {
+    internal val Saver: Saver<MutableState<InteractionEvent?>, Any> =
+      listSaver(
+        save = { eventState ->
+          val event = eventState.value
+          when (event) {
+            is Press -> listOf("Press", event.point.x, event.point.y)
+            is Tap -> listOf("Tap", event.point.x, event.point.y)
+            is LongPress -> listOf("LongPress", event.point.x, event.point.y)
+            is Move -> listOf("Move", event.point.x, event.point.y)
+            is Release -> listOf("Release", event.point.x, event.point.y)
+            is Zoom -> listOf("Zoom", event.point.x, event.point.y)
+            else -> emptyList()
+          }
+        },
+        restore = restore@{ list ->
+            if (list.isEmpty()) return@restore mutableStateOf(null)
+            val type = list[0] as String
+            val point = Point(list[1] as Float, list[2] as Float)
+            when (type) {
+              "Press" -> Press(point)
+              "Tap" -> Tap(point)
+              "LongPress" -> LongPress(point)
+              "Move" -> Move(point)
+              "Release" -> Release(point)
+              "Zoom" -> Zoom(point)
+              else -> error("Unknown InteractionEvent type: $type")
+            }.let(::mutableStateOf)
+          },
+      )
+  }
 }

@@ -54,11 +54,14 @@ internal fun Modifier.pointerInput(
                 1 - event.changes.first().scrollDelta.y * BASE_SCROLL_ZOOM_DELTA,
                 event.changes.first().position,
               )
+
             onInteractionEvent == null -> continue
             event.type == PointerEventType.Press ->
               onInteractionEvent(InteractionEvent.Press(pointerPosition))
+
             event.type == PointerEventType.Release ->
               onInteractionEvent(InteractionEvent.Release(pointerPosition))
+
             event.type == PointerEventType.Move && !scrollState.scrollEnabled -> {
               val changes = event.changes.first()
               if (consumeMoveEvents) changes.consume()
@@ -68,12 +71,18 @@ internal fun Modifier.pointerInput(
         }
       }
     }
-    .pointerInput(onInteractionEvent) {
-      detectTapGestures(
-        onLongPress = { onInteractionEvent?.invoke(InteractionEvent.LongPress(it.toPoint())) },
-        onTap = { onInteractionEvent?.invoke(InteractionEvent.Tap(it.toPoint())) },
-      )
-    }
+    .then(
+      if (onInteractionEvent != null) {
+        Modifier.pointerInput(onInteractionEvent) {
+          detectTapGestures(
+            onLongPress = { onInteractionEvent(InteractionEvent.LongPress(it.toPoint())) },
+            onTap = { onInteractionEvent(InteractionEvent.Tap(it.toPoint())) },
+          )
+        }
+      } else {
+        Modifier
+      }
+    )
     .then(
       if (scrollState.scrollEnabled && onZoom != null) {
         Modifier.pointerInput(onInteractionEvent, onZoom) {

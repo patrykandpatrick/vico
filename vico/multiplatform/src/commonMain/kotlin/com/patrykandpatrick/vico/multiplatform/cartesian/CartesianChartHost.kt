@@ -31,6 +31,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.multiplatform.cartesian.data.CartesianChartModel
@@ -163,8 +164,8 @@ internal fun CartesianChartHostImpl(
   previousModel: CartesianChartModel? = null,
   extraStore: ExtraStore = ExtraStore.Empty,
 ) {
-  val interactionEvent = remember { mutableStateOf<InteractionEvent?>(null) }
-  val isMarkerVisible = remember { mutableStateOf(false) }
+  val interactionEvent = rememberSaveable(saver = InteractionEvent.Saver) { mutableStateOf(null) }
+  val isMarkerVisible = rememberSaveable { mutableStateOf(false) }
   val measuringContext =
     rememberCartesianMeasuringContext(
       extraStore = extraStore,

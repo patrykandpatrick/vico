@@ -72,12 +72,18 @@ internal fun Modifier.pointerInput(
         }
       }
     }
-    .pointerInput(onInteractionEvent) {
-      detectTapGestures(
-        onLongPress = { onInteractionEvent?.invoke(InteractionEvent.LongPress(it.toPoint())) },
-        onTap = { onInteractionEvent?.invoke(InteractionEvent.Tap(it.toPoint())) },
-      )
-    }
+    .then(
+      if (onInteractionEvent != null) {
+        Modifier.pointerInput(onInteractionEvent) {
+          detectTapGestures(
+            onLongPress = { onInteractionEvent(InteractionEvent.LongPress(it.toPoint())) },
+            onTap = { onInteractionEvent(InteractionEvent.Tap(it.toPoint())) },
+          )
+        }
+      } else {
+        Modifier
+      }
+    )
     .then(
       if (scrollState.scrollEnabled && onZoom != null) {
         Modifier.pointerInput(onInteractionEvent, onZoom) {

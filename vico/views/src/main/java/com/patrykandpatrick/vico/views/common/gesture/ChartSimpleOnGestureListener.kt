@@ -30,6 +30,5 @@ internal class ChartSimpleOnGestureListener(
 
   override fun onLongPress(e: MotionEvent) {
     onLongPress(e.x, e.y)
-    super.onLongPress(e)
   }
 }
