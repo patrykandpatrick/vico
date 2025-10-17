@@ -187,8 +187,8 @@ internal fun CartesianChartHostImpl(
   LaunchedEffect(scrollState.pointerXDeltas) {
     scrollState.pointerXDeltas.collect { delta ->
       val event = interaction
-      if (event is Interaction.Press || event is Interaction.Move) {
-        interaction = Interaction.Move(event.point.copy(event.point.x + delta))
+      if (event is Interaction.Zoom) {
+        interaction = Interaction.Zoom(event.point.copy(event.point.x + delta))
       }
     }
   }
