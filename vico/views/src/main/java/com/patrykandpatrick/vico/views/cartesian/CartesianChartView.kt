@@ -40,7 +40,7 @@ import com.patrykandpatrick.vico.core.cartesian.data.toImmutable
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayerPadding
 import com.patrykandpatrick.vico.core.cartesian.layer.MutableCartesianLayerDimensions
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerController
-import com.patrykandpatrick.vico.core.cartesian.marker.InteractionEvent
+import com.patrykandpatrick.vico.core.cartesian.marker.Interaction
 import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.NEW_PRODUCER_ERROR_MESSAGE
 import com.patrykandpatrick.vico.core.common.Point
@@ -104,8 +104,8 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 
   private val onGestureListener: ChartSimpleOnGestureListener =
     ChartSimpleOnGestureListener(
-      onTap = { x, y -> handleInteractionEvent(InteractionEvent.Tap(Point(x, y))) },
-      onLongPress = { x, y -> handleInteractionEvent(InteractionEvent.LongPress(Point(x, y))) },
+      onTap = { x, y -> handleInteraction(Interaction.Tap(Point(x, y))) },
+      onLongPress = { x, y -> handleInteraction(Interaction.LongPress(Point(x, y))) },
     )
 
   private val gestureDetector = GestureDetector(context, onGestureListener)
@@ -144,7 +144,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       scroller = scroller,
       consumeMoveEvents = themeHandler.consumeMoveEvents,
       density = resources.displayMetrics.density,
-      onPointerState = ::handleInteractionEvent,
+      onPointerState = ::handleInteraction,
       requestInvalidate = ::invalidate,
     )
 
@@ -171,7 +171,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 
   /** Controls the visibility of the [CartesianChart.marker]. */
   public var cartesianMarkerController: CartesianMarkerController =
-    CartesianMarkerController.showOnPress
+    CartesianMarkerController.ShowOnPress
 
   private fun registerForUpdates() {
     coroutineScope?.launch {
@@ -340,18 +340,18 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   private fun handleZoom(focusX: Float, focusY: Float, zoomChange: Float) {
     val chart = chart ?: return
     zoomHandler.zoom(zoomChange, focusX, scrollHandler.value, chart.layerBounds)
-    handleInteractionEvent(InteractionEvent.Zoom(Point(focusX, focusY)))
+    handleInteraction(Interaction.Zoom(Point(focusX, focusY)))
   }
 
-  private fun handleInteractionEvent(interactionEvent: InteractionEvent) {
-    val markedEntries = chart?.getMarkerTargets(interactionEvent.point)
+  private fun handleInteraction(interaction: Interaction) {
+    val markedEntries = chart?.getMarkerTargets(interaction.point)
     if (
       !markedEntries.isNullOrEmpty() &&
-        cartesianMarkerController.acceptEvent(interactionEvent, markedEntries)
+        cartesianMarkerController.acceptEvent(interaction, markedEntries)
     ) {
-      measuringContext.pointerPosition = interactionEvent.point
+      measuringContext.pointerPosition = interaction.point
       measuringContext.isMarkerVisible =
-        cartesianMarkerController.isMarkerVisible(interactionEvent, markedEntries)
+        cartesianMarkerController.isMarkerVisible(interaction, markedEntries)
       invalidate()
     }
   }

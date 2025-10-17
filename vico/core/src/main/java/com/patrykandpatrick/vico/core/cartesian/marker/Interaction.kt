@@ -20,24 +20,24 @@ import com.patrykandpatrick.vico.core.common.Point
 import java.io.Serializable
 
 /** Represent an interaction event such as press, move, or release. */
-public sealed class InteractionEvent : Serializable {
+public sealed class Interaction : Serializable {
   public abstract val point: Point
 
   /** A press interaction. */
-  public data class Press(override val point: Point) : InteractionEvent()
+  public data class Press(override val point: Point) : Interaction()
 
   /** A tap interaction. */
-  public data class Tap(override val point: Point) : InteractionEvent()
+  public data class Tap(override val point: Point) : Interaction()
 
   /** A long-press interaction. */
-  public data class LongPress(override val point: Point) : InteractionEvent()
+  public data class LongPress(override val point: Point) : Interaction()
 
   /** A move interaction. */
-  public data class Move(override val point: Point) : InteractionEvent()
+  public data class Move(override val point: Point) : Interaction()
 
   /** A release interaction. */
-  public data class Release(override val point: Point) : InteractionEvent()
+  public data class Release(override val point: Point) : Interaction()
 
   /** A zoom interaction. */
-  public data class Zoom(override val point: Point) : InteractionEvent()
+  public data class Zoom(override val point: Point) : Interaction()
 }

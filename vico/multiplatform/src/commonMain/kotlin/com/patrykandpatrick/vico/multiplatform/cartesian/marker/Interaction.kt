@@ -23,29 +23,29 @@ import androidx.compose.runtime.saveable.listSaver
 import com.patrykandpatrick.vico.multiplatform.common.Point
 
 /** Represent an interaction event such as press, move, or release. */
-public sealed class InteractionEvent {
+public sealed class Interaction {
   public abstract val point: Point
 
   /** A press interaction. */
-  public data class Press(override val point: Point) : InteractionEvent()
+  public data class Press(override val point: Point) : Interaction()
 
   /** A tap interaction. */
-  public data class Tap(override val point: Point) : InteractionEvent()
+  public data class Tap(override val point: Point) : Interaction()
 
   /** A long-press interaction. */
-  public data class LongPress(override val point: Point) : InteractionEvent()
+  public data class LongPress(override val point: Point) : Interaction()
 
   /** A move interaction. */
-  public data class Move(override val point: Point) : InteractionEvent()
+  public data class Move(override val point: Point) : Interaction()
 
   /** A release interaction. */
-  public data class Release(override val point: Point) : InteractionEvent()
+  public data class Release(override val point: Point) : Interaction()
 
   /** A zoom interaction. */
-  public data class Zoom(override val point: Point) : InteractionEvent()
+  public data class Zoom(override val point: Point) : Interaction()
 
   public companion object {
-    internal val Saver: Saver<MutableState<InteractionEvent?>, Any> =
+    internal val Saver: Saver<MutableState<Interaction?>, Any> =
       listSaver(
         save = { eventState ->
           val event = eventState.value
@@ -59,20 +59,20 @@ public sealed class InteractionEvent {
             else -> emptyList()
           }
         },
-        restore = restore@{ list ->
-            if (list.isEmpty()) return@restore mutableStateOf(null)
-            val type = list[0] as String
-            val point = Point(list[1] as Float, list[2] as Float)
-            when (type) {
-              "Press" -> Press(point)
-              "Tap" -> Tap(point)
-              "LongPress" -> LongPress(point)
-              "Move" -> Move(point)
-              "Release" -> Release(point)
-              "Zoom" -> Zoom(point)
-              else -> error("Unknown InteractionEvent type: $type")
-            }.let(::mutableStateOf)
-          },
+        restore = { list ->
+          if (list.isEmpty()) return@listSaver mutableStateOf(null)
+          val type = list[0] as String
+          val point = Point(list[1] as Float, list[2] as Float)
+          when (type) {
+            "Press" -> Press(point)
+            "Tap" -> Tap(point)
+            "LongPress" -> LongPress(point)
+            "Move" -> Move(point)
+            "Release" -> Release(point)
+            "Zoom" -> Zoom(point)
+            else -> error("Unknown Interaction type: $type")
+          }.let(::mutableStateOf)
+        },
       )
   }
 }

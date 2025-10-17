@@ -21,7 +21,7 @@ import android.view.MotionEvent
 import android.view.VelocityTracker
 import android.widget.OverScroller
 import com.patrykandpatrick.vico.core.cartesian.Scroll
-import com.patrykandpatrick.vico.core.cartesian.marker.InteractionEvent
+import com.patrykandpatrick.vico.core.cartesian.marker.Interaction
 import com.patrykandpatrick.vico.views.cartesian.ScrollHandler
 import com.patrykandpatrick.vico.views.common.fling
 import com.patrykandpatrick.vico.views.common.point
@@ -32,7 +32,7 @@ internal class MotionEventHandler(
   density: Float,
   var consumeMoveEvents: Boolean,
   var scrollEnabled: Boolean = false,
-  private val onPointerState: (InteractionEvent) -> Unit,
+  private val onPointerState: (Interaction) -> Unit,
   private val requestInvalidate: () -> Unit,
 ) {
   private val velocityUnits = (VELOCITY_PIXELS * density).toInt()
@@ -53,7 +53,7 @@ internal class MotionEventHandler(
       MotionEvent.ACTION_DOWN -> {
         scroller.abortAnimation()
         initialX = motionEvent.x
-        onPointerState(InteractionEvent.Press(motionEvent.point))
+        onPointerState(Interaction.Press(motionEvent.point))
         lastX = initialX
         currentX = initialX
         velocityTracker.get().addMovement(motionEvent)
@@ -69,14 +69,14 @@ internal class MotionEventHandler(
           if (shouldPerformScroll && !ignoreEvent) {
             velocityTracker.get().addMovement(motionEvent)
             scrollHandler.scroll(Scroll.Relative.pixels(lastX - currentX))
-            onPointerState(InteractionEvent.Move(motionEvent.point))
+            onPointerState(Interaction.Move(motionEvent.point))
             requestInvalidate()
             initialX = -dragThreshold
           }
           scrollHandled = shouldPerformScroll.not() || scrollHandler.canScroll(lastX - currentX)
           lastX = motionEvent.x
         } else {
-          onPointerState(InteractionEvent.Move(motionEvent.point))
+          onPointerState(Interaction.Move(motionEvent.point))
           requestInvalidate()
         }
         scrollHandled
@@ -84,7 +84,7 @@ internal class MotionEventHandler(
       MotionEvent.ACTION_CANCEL,
       MotionEvent.ACTION_UP -> {
         totalDragAmount = 0f
-        onPointerState(InteractionEvent.Release(motionEvent.point))
+        onPointerState(Interaction.Release(motionEvent.point))
         velocityTracker.get().apply {
           computeCurrentVelocity(velocityUnits)
           val currentX = scrollHandler.value.toInt()

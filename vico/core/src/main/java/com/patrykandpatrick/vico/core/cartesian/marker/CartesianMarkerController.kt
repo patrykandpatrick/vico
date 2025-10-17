@@ -19,63 +19,57 @@ package com.patrykandpatrick.vico.core.cartesian.marker
 /** Controls [CartesianMarker] visibility. */
 public fun interface CartesianMarkerController {
   /**
-   * Whether this [CartesianMarkerController] wants to respond to [interactionEvent]. If it returns
+   * Whether this [CartesianMarkerController] wants to respond to [interaction]. If it returns
    * `true`, [isMarkerVisible] is called. Otherwise the marker visibility remains unchanged.
    */
   public fun acceptEvent(
-    interactionEvent: InteractionEvent,
+    interaction: Interaction,
     markedEntries: List<CartesianMarker.Target>,
   ): Boolean = true
 
   /**
-   * Whether the marker should be visible, given the current [interactionEvent] and the currently
+   * Whether the marker should be visible, given the current [interaction] and the currently
    * [markedEntries].
    */
   public fun isMarkerVisible(
-    interactionEvent: InteractionEvent,
+    interaction: Interaction,
     markedEntries: List<CartesianMarker.Target>,
   ): Boolean
 
   public companion object {
     /** Shows [CartesianMarker] on press interaction. */
-    public val showOnPress: CartesianMarkerController
-      get() = ShowOnPressMarkerController()
+    public val ShowOnPress: CartesianMarkerController = ShowOnPressMarkerController
 
     /** Toggles the visibility of [CartesianMarker] upon tap interaction. */
-    public val toggleOnTap: CartesianMarkerController
-      get() = ToggleOnTapMarkerController()
+    public fun toggleOnTap(): CartesianMarkerController = ToggleOnTapMarkerController()
   }
 }
 
-private class ShowOnPressMarkerController : CartesianMarkerController {
+private object ShowOnPressMarkerController : CartesianMarkerController {
   override fun acceptEvent(
-    interactionEvent: InteractionEvent,
+    interaction: Interaction,
     markedEntries: List<CartesianMarker.Target>,
   ): Boolean =
-    interactionEvent is InteractionEvent.Press ||
-      interactionEvent is InteractionEvent.Release ||
-      interactionEvent is InteractionEvent.Move
+    interaction is Interaction.Press ||
+      interaction is Interaction.Release ||
+      interaction is Interaction.Move
 
   override fun isMarkerVisible(
-    interactionEvent: InteractionEvent,
+    interaction: Interaction,
     markedEntries: List<CartesianMarker.Target>,
-  ): Boolean = interactionEvent !is InteractionEvent.Release
-
-  override fun hashCode(): Int = 31
-
-  override fun equals(other: Any?): Boolean = other === this || other is ShowOnPressMarkerController
+  ): Boolean = interaction !is Interaction.Release
 }
 
 private class ToggleOnTapMarkerController : CartesianMarkerController {
   private var lastMarkedEntries: List<CartesianMarker.Target>? = null
 
   override fun acceptEvent(
-    interactionEvent: InteractionEvent,
+    interaction: Interaction,
     markedEntries: List<CartesianMarker.Target>,
-  ): Boolean = interactionEvent is InteractionEvent.Tap
+  ): Boolean = interaction is Interaction.Tap
 
   override fun isMarkerVisible(
-    interactionEvent: InteractionEvent,
+    interaction: Interaction,
     markedEntries: List<CartesianMarker.Target>,
   ): Boolean {
     val show = markedEntries != lastMarkedEntries

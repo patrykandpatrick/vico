@@ -34,6 +34,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.unit.dp
@@ -50,7 +51,7 @@ import com.patrykandpatrick.vico.core.cartesian.data.MutableCartesianChartRanges
 import com.patrykandpatrick.vico.core.cartesian.data.toImmutable
 import com.patrykandpatrick.vico.core.cartesian.layer.MutableCartesianLayerDimensions
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerController
-import com.patrykandpatrick.vico.core.cartesian.marker.InteractionEvent
+import com.patrykandpatrick.vico.core.cartesian.marker.Interaction
 import com.patrykandpatrick.vico.core.common.Defaults.CHART_HEIGHT
 import com.patrykandpatrick.vico.core.common.ValueWrapper
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
@@ -87,7 +88,7 @@ public fun CartesianChartHost(
   animationSpec: AnimationSpec<Float>? = defaultCartesianDiffAnimationSpec,
   animateIn: Boolean = true,
   consumeMoveEvents: Boolean = false,
-  markerController: CartesianMarkerController = CartesianMarkerController.showOnPress,
+  markerController: CartesianMarkerController = CartesianMarkerController.ShowOnPress,
   placeholder: @Composable BoxScope.() -> Unit = {},
 ) {
   val mutableRanges = remember { MutableCartesianChartRanges() }
@@ -120,13 +121,13 @@ public fun CartesianChartHost(
  * @param chart the [CartesianChart].
  * @param model the [CartesianChartModel].
  * @param modifier the modifier to be applied to the chart.
- * @param markerController controls the visibility of the [CartesianChart.marker] upon interactions.
  * @param scrollState houses information on the [CartesianChart]’s scroll value. Allows for scroll
  *   customization and programmatic scrolling.
  * @param zoomState houses information on the [CartesianChart]’s zoom factor. Allows for zoom
  *   customization.
  * @param consumeMoveEvents whether to consume move touch events when scroll is disabled and
  *   [CartesianChart.marker] is not null.
+ * @param markerController controls the visibility of the [CartesianChart.marker] upon interactions.
  */
 @Composable
 @SuppressLint("RememberReturnType")
@@ -134,10 +135,10 @@ public fun CartesianChartHost(
   chart: CartesianChart,
   model: CartesianChartModel,
   modifier: Modifier = Modifier,
-  markerController: CartesianMarkerController,
   scrollState: VicoScrollState = rememberVicoScrollState(),
   zoomState: VicoZoomState = rememberDefaultVicoZoomState(scrollState.scrollEnabled),
   consumeMoveEvents: Boolean = false,
+  markerController: CartesianMarkerController = CartesianMarkerController.ShowOnPress,
 ) {
   val ranges = remember { MutableCartesianChartRanges() }
   remember(chart, model) {
@@ -170,8 +171,8 @@ internal fun CartesianChartHostImpl(
   extraStore: ExtraStore = ExtraStore.Empty,
 ) {
   val canvasBounds = remember { RectF() }
-  val interactionEvent = rememberSaveable { mutableStateOf<InteractionEvent?>(null) }
-  val isMarkerVisible = rememberSaveable { mutableStateOf(false) }
+  var interaction by rememberSaveable { mutableStateOf<Interaction?>(null) }
+  var isMarkerVisible by rememberSaveable { mutableStateOf(false) }
   val measuringContext =
     rememberCartesianMeasuringContext(
       canvasBounds = canvasBounds,
@@ -182,8 +183,8 @@ internal fun CartesianChartHostImpl(
       zoomEnabled = scrollState.scrollEnabled && zoomState.zoomEnabled,
       layerPadding =
         remember(chart.layerPadding, model.extraStore) { chart.layerPadding(model.extraStore) },
-      pointerPosition = interactionEvent.value?.point,
-      isMarkerVisible = isMarkerVisible.value,
+      pointerPosition = interaction?.point,
+      isMarkerVisible = isMarkerVisible,
     )
 
   val coroutineScope = rememberCoroutineScope()
@@ -192,9 +193,9 @@ internal fun CartesianChartHostImpl(
 
   LaunchedEffect(scrollState.pointerXDeltas) {
     scrollState.pointerXDeltas.collect { delta ->
-      val event = interactionEvent.value
-      if (event is InteractionEvent.Press || event is InteractionEvent.Move) {
-        interactionEvent.value = InteractionEvent.Move(event.point.copy(event.point.x + delta))
+      val event = interaction
+      if (event is Interaction.Press || event is Interaction.Move) {
+        interaction = Interaction.Move(event.point.copy(event.point.x + delta)) // TODO fix
       }
     }
   }
@@ -213,14 +214,14 @@ internal fun CartesianChartHostImpl(
         .pointerInput(
           scrollState = scrollState,
           consumeMoveEvents = consumeMoveEvents,
-          onInteractionEvent =
+          onInteraction =
             remember(chart.marker == null) {
               if (chart.marker != null) {
                 { event ->
                   val targets = chart.getMarkerTargets(event.point)
                   if (markerController.acceptEvent(event, targets)) {
-                    isMarkerVisible.value = markerController.isMarkerVisible(event, targets)
-                    interactionEvent.value = event
+                    isMarkerVisible = markerController.isMarkerVisible(event, targets)
+                    interaction = event
                   }
                 }
               } else {
