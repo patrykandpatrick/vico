@@ -46,10 +46,7 @@ public fun interface CartesianMarkerController {
 }
 
 private object ShowOnPressMarkerController : CartesianMarkerController {
-  override fun acceptEvent(
-    interaction: Interaction,
-    markedEntries: List<CartesianMarker.Target>,
-  ): Boolean =
+  override fun acceptEvent(interaction: Interaction, markedEntries: List<CartesianMarker.Target>) =
     interaction is Interaction.Press ||
       interaction is Interaction.Release ||
       interaction is Interaction.Move
@@ -57,7 +54,7 @@ private object ShowOnPressMarkerController : CartesianMarkerController {
   override fun isMarkerVisible(
     interaction: Interaction,
     markedEntries: List<CartesianMarker.Target>,
-  ): Boolean = interaction !is Interaction.Release
+  ) = interaction !is Interaction.Release
 }
 
 private class ToggleOnTapMarkerController : CartesianMarkerController {
@@ -77,7 +74,7 @@ private class ToggleOnTapMarkerController : CartesianMarkerController {
     return show
   }
 
-  override fun hashCode(): Int = 31
+  override fun hashCode() = 31
 
-  override fun equals(other: Any?): Boolean = other === this || other is ToggleOnTapMarkerController
+  override fun equals(other: Any?) = other === this || other is ToggleOnTapMarkerController
 }
