@@ -234,11 +234,11 @@ private constructor(
     decorations = decorations,
     persistentMarkers = persistentMarkers,
     getXStep = getXStep,
+    markerController = markerController,
     id = UUID.randomUUID(),
     previousMarkerTargetHashCode = null,
     persistentMarkerMap = mutableMapOf(),
     previousPersistentMarkerHashCode = null,
-    markerController = markerController,
   )
 
   private fun setLayerBounds(left: Float, top: Float, right: Float, bottom: Float) {
@@ -490,11 +490,11 @@ private constructor(
       decorations = decorations,
       persistentMarkers = persistentMarkers,
       getXStep = getXStep,
+      markerController = markerController,
       id = id,
       previousMarkerTargetHashCode = previousMarkerTargetHashCode,
       persistentMarkerMap = persistentMarkerMap,
       previousPersistentMarkerHashCode = previousPersistentMarkerHashCode,
-      markerController = markerController,
     )
 
   override fun equals(other: Any?): Boolean =
