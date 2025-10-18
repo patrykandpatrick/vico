@@ -81,6 +81,7 @@ internal constructor(
   private var previousMarkerTargetHashCode: Int? = null,
   private val persistentMarkerMap: MutableMap<Double, CartesianMarker> = mutableMapOf(),
   private var previousPersistentMarkerHashCode: Int? = null,
+  public val markerController: CartesianMarkerController = CartesianMarkerController.ShowOnPress,
 ) : CartesianLayerMarginUpdater<CartesianChartModel> {
   private val persistentMarkerScope = PersistentMarkerScope {
     persistentMarkerMap[it.toDouble()] = this
@@ -199,6 +200,7 @@ internal constructor(
     decorations: List<Decoration> = emptyList(),
     persistentMarkers: (PersistentMarkerScope.(ExtraStore) -> Unit)? = null,
     getXStep: ((CartesianChartModel) -> Double) = { it.getXDeltaGcd() },
+    markerController: CartesianMarkerController = CartesianMarkerController.ShowOnPress,
   ) : this(
     layers = layers,
     startAxis = startAxis,
@@ -217,6 +219,7 @@ internal constructor(
     previousMarkerTargetHashCode = null,
     persistentMarkerMap = mutableMapOf(),
     previousPersistentMarkerHashCode = null,
+    markerController = markerController,
   )
 
   private fun setLayerBounds(left: Float, top: Float, right: Float, bottom: Float) {
@@ -435,6 +438,7 @@ internal constructor(
     decorations: List<Decoration> = this.decorations,
     persistentMarkers: (PersistentMarkerScope.(ExtraStore) -> Unit)? = this.persistentMarkers,
     getXStep: ((CartesianChartModel) -> Double) = this.getXStep,
+    markerController: CartesianMarkerController = CartesianMarkerController.ShowOnPress,
   ): CartesianChart =
     CartesianChart(
       layers = layers,
@@ -454,6 +458,7 @@ internal constructor(
       previousMarkerTargetHashCode = previousMarkerTargetHashCode,
       persistentMarkerMap = persistentMarkerMap,
       previousPersistentMarkerHashCode = previousPersistentMarkerHashCode,
+      markerController = markerController,
     )
 
   override fun equals(other: Any?): Boolean =
@@ -472,7 +477,8 @@ internal constructor(
         startAxis == other.startAxis &&
         topAxis == other.topAxis &&
         endAxis == other.endAxis &&
-        bottomAxis == other.bottomAxis
+        bottomAxis == other.bottomAxis &&
+        markerController == other.markerController
 
   override fun hashCode(): Int {
     var result = marker.hashCode()
@@ -489,6 +495,7 @@ internal constructor(
     result = 31 * result + endAxis.hashCode()
     result = 31 * result + bottomAxis.hashCode()
     result = 31 * result + id.hashCode()
+    result = 31 * result + markerController.hashCode()
     return result
   }
 
@@ -520,6 +527,7 @@ internal constructor(
  * @param decorations the [Decoration]s.
  * @param persistentMarkers adds persistent [CartesianMarker]s.
  * @param getXStep defines the _x_ step (the difference between neighboring major _x_ values).
+ * @param markerController controls the visibility of the [CartesianChart.marker] upon interactions.
  * @see rememberCandlestickCartesianLayer
  * @see rememberColumnCartesianLayer
  * @see rememberLineCartesianLayer
@@ -573,6 +581,7 @@ public fun rememberCartesianChart(
         decorations = decorations,
         persistentMarkers = persistentMarkers,
         getXStep = getXStep,
+        markerController = markerController,
       )
         ?: CartesianChart(
           layers = layers,
@@ -588,6 +597,7 @@ public fun rememberCartesianChart(
           decorations = decorations,
           persistentMarkers = persistentMarkers,
           getXStep = getXStep,
+          markerController = markerController,
         )
     wrapper.value = cartesianChart
     cartesianChart

@@ -39,7 +39,6 @@ import com.patrykandpatrick.vico.core.cartesian.data.RandomCartesianModelGenerat
 import com.patrykandpatrick.vico.core.cartesian.data.toImmutable
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayerPadding
 import com.patrykandpatrick.vico.core.cartesian.layer.MutableCartesianLayerDimensions
-import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerController
 import com.patrykandpatrick.vico.core.cartesian.marker.Interaction
 import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.NEW_PRODUCER_ERROR_MESSAGE
@@ -168,10 +167,6 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       field = value
       if (isAttachedToWindow) registerForUpdates()
     }
-
-  /** Controls the visibility of the [CartesianChart.marker]. */
-  public var cartesianMarkerController: CartesianMarkerController =
-    CartesianMarkerController.ShowOnPress
 
   private fun registerForUpdates() {
     coroutineScope?.launch {
@@ -345,13 +340,13 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 
   private fun handleInteraction(interaction: Interaction) {
     val markedEntries = chart?.getMarkerTargets(interaction.point)
+    val markerController = chart?.markerController ?: return
     if (
-      !markedEntries.isNullOrEmpty() &&
-        cartesianMarkerController.acceptEvent(interaction, markedEntries)
+      !markedEntries.isNullOrEmpty() && markerController.acceptEvent(interaction, markedEntries)
     ) {
       measuringContext.pointerPosition = interaction.point
       measuringContext.isMarkerVisible =
-        cartesianMarkerController.isMarkerVisible(interaction, markedEntries)
+        markerController.isMarkerVisible(interaction, markedEntries)
       invalidate()
     }
   }
