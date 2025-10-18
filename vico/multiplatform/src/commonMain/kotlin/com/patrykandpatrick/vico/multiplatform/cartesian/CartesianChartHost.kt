@@ -157,7 +157,9 @@ internal fun CartesianChartHostImpl(
   previousModel: CartesianChartModel? = null,
   extraStore: ExtraStore = ExtraStore.Empty,
 ) {
-  var interaction by rememberSaveable(saver = Interaction.Saver) { mutableStateOf(null) }
+  var lastInteraction by rememberSaveable(saver = Interaction.Saver) { mutableStateOf(null) }
+  var lastAcceptedInteraction by
+    rememberSaveable(saver = Interaction.Saver) { mutableStateOf(null) }
   var isMarkerVisible by rememberSaveable { mutableStateOf(false) }
   val measuringContext =
     rememberCartesianMeasuringContext(
@@ -168,7 +170,7 @@ internal fun CartesianChartHostImpl(
       zoomEnabled = scrollState.scrollEnabled && zoomState.zoomEnabled,
       layerPadding =
         remember(chart.layerPadding, model.extraStore) { chart.layerPadding(model.extraStore) },
-      pointerPosition = interaction?.point,
+      pointerPosition = lastAcceptedInteraction?.point,
       isMarkerVisible = isMarkerVisible,
     )
 
@@ -178,10 +180,14 @@ internal fun CartesianChartHostImpl(
 
   LaunchedEffect(scrollState.pointerXDeltas) {
     scrollState.pointerXDeltas.collect { delta ->
-      val event = interaction
-      if (event is Interaction.Zoom) {
-        interaction = Interaction.Zoom(event.point.copy(event.point.x + delta))
-      }
+      val event = lastInteraction
+      lastAcceptedInteraction =
+        when (event) {
+          is Interaction.Press -> Interaction.Press(event.point.copy(event.point.x + delta))
+          is Interaction.Move -> Interaction.Move(event.point.copy(event.point.x + delta))
+          else -> lastAcceptedInteraction
+        }
+      lastInteraction = lastAcceptedInteraction
     }
   }
 
@@ -202,12 +208,15 @@ internal fun CartesianChartHostImpl(
           onInteraction =
             remember(chart.marker == null) {
               if (chart.marker != null) {
-                { event ->
-                  val targets = chart.getMarkerTargets(event.point)
-                  if (targets.isNotEmpty() && chart.markerController.acceptEvent(event, targets)) {
-                    isMarkerVisible = chart.markerController.isMarkerVisible(event, targets)
-                    interaction = event
+                { interaction ->
+                  val targets = chart.getMarkerTargets(interaction.point)
+                  if (
+                    targets.isNotEmpty() && chart.markerController.acceptEvent(interaction, targets)
+                  ) {
+                    isMarkerVisible = chart.markerController.isMarkerVisible(interaction, targets)
+                    lastAcceptedInteraction = interaction
                   }
+                  lastInteraction = interaction
                 }
               } else {
                 null
