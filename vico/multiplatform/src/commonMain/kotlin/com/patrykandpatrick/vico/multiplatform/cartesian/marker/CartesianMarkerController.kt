@@ -19,28 +19,26 @@ package com.patrykandpatrick.vico.multiplatform.cartesian.marker
 /** Controls [CartesianMarker] visibility. */
 public fun interface CartesianMarkerController {
   /**
-   * Whether this [CartesianMarkerController] wants to respond to [interaction]. If it returns
-   * `true`, [isMarkerVisible] is called. Otherwise the marker visibility remains unchanged.
+   * Indicates whether this [CartesianMarkerController] wants to respond to [interaction]. If `true`
+   * is returned, [isMarkerVisible] is called; otherwise, the marker visibility remains unchanged.
    */
   public fun acceptEvent(
     interaction: Interaction,
     markedEntries: List<CartesianMarker.Target>,
   ): Boolean = true
 
-  /**
-   * Whether the marker should be visible, given the current [interaction] and the currently
-   * [markedEntries].
-   */
+  /** Whether the marker should be visible. */
   public fun isMarkerVisible(
     interaction: Interaction,
     markedEntries: List<CartesianMarker.Target>,
   ): Boolean
 
+  /** Houses [CartesianMarkerController] singletons and factory functions. */
   public companion object {
-    /** Shows [CartesianMarker] on press interaction. */
+    /** Shows the [CartesianMarker] on press. */
     public val ShowOnPress: CartesianMarkerController = ShowOnPressMarkerController
 
-    /** Toggles the visibility of [CartesianMarker] upon tap interaction. */
+    /** Toggles the visibility of the [CartesianMarker] on tap. */
     public fun toggleOnTap(): CartesianMarkerController = ToggleOnTapMarkerController()
   }
 }

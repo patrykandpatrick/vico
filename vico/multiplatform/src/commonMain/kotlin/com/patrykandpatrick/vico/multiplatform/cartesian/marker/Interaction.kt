@@ -22,7 +22,7 @@ import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.listSaver
 import com.patrykandpatrick.vico.multiplatform.common.Point
 
-/** Represent an interaction event such as press, move, or release. */
+/** Represents a pointer interaction (such as a press, move, or release). */
 public sealed class Interaction {
   public abstract val point: Point
 
@@ -44,7 +44,7 @@ public sealed class Interaction {
   /** A zoom interaction. */
   public data class Zoom(override val point: Point) : Interaction()
 
-  public companion object {
+  internal companion object {
     internal val Saver: Saver<MutableState<Interaction?>, Any> =
       listSaver(
         save = { eventState ->

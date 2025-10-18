@@ -77,11 +77,11 @@ internal constructor(
   protected val decorations: List<Decoration> = emptyList(),
   protected val persistentMarkers: (PersistentMarkerScope.(ExtraStore) -> Unit)? = null,
   protected val getXStep: ((CartesianChartModel) -> Double) = { it.getXDeltaGcd() },
+  public val markerController: CartesianMarkerController = CartesianMarkerController.ShowOnPress,
   internal val id: Uuid = Uuid.random(),
   private var previousMarkerTargetHashCode: Int? = null,
   private val persistentMarkerMap: MutableMap<Double, CartesianMarker> = mutableMapOf(),
   private var previousPersistentMarkerHashCode: Int? = null,
-  public val markerController: CartesianMarkerController = CartesianMarkerController.ShowOnPress,
 ) : CartesianLayerMarginUpdater<CartesianChartModel> {
   private val persistentMarkerScope = PersistentMarkerScope {
     persistentMarkerMap[it.toDouble()] = this
@@ -527,7 +527,7 @@ internal constructor(
  * @param decorations the [Decoration]s.
  * @param persistentMarkers adds persistent [CartesianMarker]s.
  * @param getXStep defines the _x_ step (the difference between neighboring major _x_ values).
- * @param markerController controls the visibility of the [CartesianChart.marker] upon interactions.
+ * @param markerController controls [marker] visibility.
  * @see rememberCandlestickCartesianLayer
  * @see rememberColumnCartesianLayer
  * @see rememberLineCartesianLayer

@@ -19,7 +19,7 @@ package com.patrykandpatrick.vico.core.cartesian.marker
 import com.patrykandpatrick.vico.core.common.Point
 import java.io.Serializable
 
-/** Represent an interaction event such as press, move, or release. */
+/** Represents a pointer interaction (such as a press, move, or release). */
 public sealed class Interaction : Serializable {
   public abstract val point: Point
 
