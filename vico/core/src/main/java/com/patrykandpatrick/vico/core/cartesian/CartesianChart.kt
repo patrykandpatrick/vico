@@ -420,6 +420,7 @@ private constructor(
     pointerPosition: Point?,
   ): List<CartesianMarker.Target> = getMarkerTargets(pointerPosition)
 
+  /** Returns the `CartesianMarker.Target`s for `pointerPosition`. */
   public open fun getMarkerTargets(pointerPosition: Point?): List<CartesianMarker.Target> {
     val marker = marker ?: return emptyList()
     if (pointerPosition == null || markerTargets.isEmpty()) {
