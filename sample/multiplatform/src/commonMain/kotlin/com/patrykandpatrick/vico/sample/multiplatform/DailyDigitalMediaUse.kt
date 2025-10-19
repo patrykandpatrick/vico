@@ -33,6 +33,7 @@ import com.patrykandpatrick.vico.multiplatform.cartesian.data.columnSeries
 import com.patrykandpatrick.vico.multiplatform.cartesian.layer.CartesianLayerPadding
 import com.patrykandpatrick.vico.multiplatform.cartesian.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.multiplatform.cartesian.layer.rememberColumnCartesianLayer
+import com.patrykandpatrick.vico.multiplatform.cartesian.marker.CartesianMarkerController
 import com.patrykandpatrick.vico.multiplatform.cartesian.marker.DefaultCartesianMarker
 import com.patrykandpatrick.vico.multiplatform.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.multiplatform.cartesian.rememberVicoZoomState
@@ -115,6 +116,7 @@ fun ComposeMultiplatformDailyDigitalMediaUse(modifier: Modifier = Modifier) {
             },
             padding = Insets(top = 16.dp),
           ),
+        markerController = CartesianMarkerController.toggleOnTap(),
       ),
     modelProducer = modelProducer,
     modifier = modifier.height(248.dp),

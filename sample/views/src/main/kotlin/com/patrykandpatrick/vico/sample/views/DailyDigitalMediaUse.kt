@@ -31,6 +31,7 @@ import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
+import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerController
 import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
 import com.patrykandpatrick.vico.core.common.Fill
 import com.patrykandpatrick.vico.core.common.HorizontalLegend
@@ -114,6 +115,7 @@ fun ViewDailyDigitalMediaUse(modifier: Modifier) {
                 ),
               legend = legend,
               marker = getMarker(context, MarkerValueFormatter),
+              markerController = CartesianMarkerController.toggleOnTap(),
             )
           this.modelProducer = modelProducer
         }
