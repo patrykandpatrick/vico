@@ -28,12 +28,12 @@ public sealed class Interaction : Serializable {
   @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
   public fun moveXBy(deltaX: Float): Interaction =
     when (this) {
-      is Press -> copy(point = point.copy(x = point.x + deltaX))
-      is Tap -> copy(point = point.copy(x = point.x + deltaX))
-      is LongPress -> copy(point = point.copy(x = point.x + deltaX))
-      is Move -> copy(point = point.copy(x = point.x + deltaX))
-      is Release -> copy(point = point.copy(x = point.x + deltaX))
-      is Zoom -> copy(point = point.copy(x = point.x + deltaX))
+      is Press -> copy(point.copy(x = point.x + deltaX))
+      is Tap -> copy(point.copy(x = point.x + deltaX))
+      is LongPress -> copy(point.copy(x = point.x + deltaX))
+      is Move -> copy(point.copy(x = point.x + deltaX))
+      is Release -> copy(point.copy(x = point.x + deltaX))
+      is Zoom -> copy(point.copy(x = point.x + deltaX))
     }
 
   /** A press interaction. */

@@ -181,7 +181,7 @@ internal fun CartesianChartHostImpl(
     scrollState.unconsumedXDeltas.collect { delta ->
       val interaction =
         lastAcceptedInteraction
-          ?.takeIf { it !is Interaction.Release }
+          ?.takeUnless { interaction -> interaction is Interaction.Release }
           ?.let { interaction ->
             Interaction.Move(interaction.point.copy(x = interaction.point.x + delta))
           } ?: return@collect
