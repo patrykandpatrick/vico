@@ -99,13 +99,15 @@ public class ScrollHandler(
   }
 
   private inline fun withUpdated(
-    block: (CartesianMeasuringContext, CartesianLayerDimensions, RectF) -> Unit
-  ) {
+    block: (CartesianMeasuringContext, CartesianLayerDimensions, RectF) -> Float
+  ): Float? {
     val context = this.context
     val layerDimensions = this.layerDimensions
     val bounds = this.bounds
-    if (context != null && layerDimensions != null && bounds != null) {
+    return if (context != null && layerDimensions != null && bounds != null) {
       block(context, layerDimensions, bounds)
+    } else {
+      null
     }
   }
 
@@ -161,11 +163,9 @@ public class ScrollHandler(
 
   /** Triggers a scroll. */
   public fun scroll(scroll: Scroll): Float {
-    var scrolledDelta = 0f
-    withUpdated { context, layerDimensions, bounds ->
-      scrolledDelta = scrollBy(scroll.getDelta(context, layerDimensions, bounds, maxValue, value))
-    }
-    return scrolledDelta
+    return withUpdated { context, layerDimensions, bounds ->
+      scrollBy(scroll.getDelta(context, layerDimensions, bounds, maxValue, value))
+    } ?: 0f
   }
 
   /** Triggers an animated scroll. */
