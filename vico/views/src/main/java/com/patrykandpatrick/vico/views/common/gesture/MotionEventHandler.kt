@@ -32,7 +32,7 @@ internal class MotionEventHandler(
   density: Float,
   var consumeMoveEvents: Boolean,
   var scrollEnabled: Boolean = false,
-  private val onPointerState: (Interaction) -> Unit,
+  private val onInteraction: (Interaction) -> Unit,
   private val requestInvalidate: () -> Unit,
 ) {
   private val velocityUnits = (VELOCITY_PIXELS * density).toInt()
@@ -53,7 +53,7 @@ internal class MotionEventHandler(
       MotionEvent.ACTION_DOWN -> {
         scroller.abortAnimation()
         initialX = motionEvent.x
-        onPointerState(Interaction.Press(motionEvent.point))
+        onInteraction(Interaction.Press(motionEvent.point))
         lastX = initialX
         currentX = initialX
         velocityTracker.get().addMovement(motionEvent)
@@ -68,15 +68,16 @@ internal class MotionEventHandler(
           val shouldPerformScroll = totalDragAmount > dragThreshold
           if (shouldPerformScroll && !ignoreEvent) {
             velocityTracker.get().addMovement(motionEvent)
-            scrollHandler.scroll(Scroll.Relative.pixels(lastX - currentX))
-            onPointerState(Interaction.Move(motionEvent.point))
+            if (scrollHandler.scroll(Scroll.Relative.pixels(lastX - currentX)) == 0f) {
+              onInteraction(Interaction.Move(motionEvent.point))
+            }
             requestInvalidate()
             initialX = -dragThreshold
           }
           scrollHandled = shouldPerformScroll.not() || scrollHandler.canScroll(lastX - currentX)
           lastX = motionEvent.x
         } else {
-          onPointerState(Interaction.Move(motionEvent.point))
+          onInteraction(Interaction.Move(motionEvent.point))
           requestInvalidate()
         }
         scrollHandled
@@ -84,7 +85,7 @@ internal class MotionEventHandler(
       MotionEvent.ACTION_CANCEL,
       MotionEvent.ACTION_UP -> {
         totalDragAmount = 0f
-        onPointerState(Interaction.Release(motionEvent.point))
+        onInteraction(Interaction.Release(motionEvent.point))
         velocityTracker.get().apply {
           computeCurrentVelocity(velocityUnits)
           val currentX = scrollHandler.value.toInt()

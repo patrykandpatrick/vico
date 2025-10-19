@@ -115,6 +115,19 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 
   private var previousLayerPaddingHashCode: Int? = null
 
+  private var lastAcceptedInteraction: Interaction? = null
+
+  private val chartScrollListener =
+    object : ScrollHandler.Listener {
+      override fun onValueChanged(old: Float, new: Float) {
+        val delta = old - new
+        val interaction = lastAcceptedInteraction
+        lastAcceptedInteraction = interaction?.moveXBy(delta)
+        measuringContext.pointerPosition = lastAcceptedInteraction?.point
+        invalidate()
+      }
+    }
+
   /**
    * Houses information on the [CartesianChart]’s scroll value. Allows for scroll customization and
    * programmatic scrolling.
@@ -122,8 +135,10 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   public var scrollHandler: ScrollHandler by
     invalidatingObservable(ScrollHandler(themeHandler.scrollEnabled)) { oldValue, newValue ->
       oldValue?.clearUpdated()
+      oldValue?.removeListener(chartScrollListener)
       newValue.postInvalidate = ::postInvalidate
       newValue.postInvalidateOnAnimation = ::postInvalidateOnAnimation
+      newValue.addListener(chartScrollListener)
       measuringContext.scrollEnabled = newValue.scrollEnabled
       measuringContext.zoomEnabled = measuringContext.zoomEnabled && newValue.scrollEnabled
     }
@@ -143,7 +158,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       scroller = scroller,
       consumeMoveEvents = themeHandler.consumeMoveEvents,
       density = resources.displayMetrics.density,
-      onPointerState = ::handleInteraction,
+      onInteraction = ::handleInteraction,
       requestInvalidate = ::invalidate,
     )
 
@@ -344,6 +359,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     if (
       !markedEntries.isNullOrEmpty() && markerController.acceptEvent(interaction, markedEntries)
     ) {
+      lastAcceptedInteraction = interaction
       measuringContext.pointerPosition = interaction.point
       measuringContext.isMarkerVisible =
         markerController.isMarkerVisible(interaction, markedEntries)

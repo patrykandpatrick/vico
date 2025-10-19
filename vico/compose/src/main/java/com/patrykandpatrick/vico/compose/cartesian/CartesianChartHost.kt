@@ -163,7 +163,6 @@ internal fun CartesianChartHostImpl(
   extraStore: ExtraStore = ExtraStore.Empty,
 ) {
   val canvasBounds = remember { RectF() }
-  var lastInteraction by rememberSaveable { mutableStateOf<Interaction?>(null) }
   var lastAcceptedInteraction by rememberSaveable { mutableStateOf<Interaction?>(null) }
   var isMarkerVisible by rememberSaveable { mutableStateOf(false) }
   val measuringContext =
@@ -184,16 +183,28 @@ internal fun CartesianChartHostImpl(
   var previousModelID by remember { ValueWrapper(model.id) }
   val layerDimensions = remember { MutableCartesianLayerDimensions() }
 
-  LaunchedEffect(scrollState.pointerXDeltas) {
-    scrollState.pointerXDeltas.collect { delta ->
-      val event = lastInteraction
-      lastAcceptedInteraction =
-        when (event) {
-          is Interaction.Press -> Interaction.Press(event.point.copy(event.point.x + delta))
-          is Interaction.Move -> Interaction.Move(event.point.copy(event.point.x + delta))
-          else -> lastAcceptedInteraction
-        }
-      lastInteraction = lastAcceptedInteraction
+  LaunchedEffect(scrollState.unconsumedXDeltas) {
+    scrollState.unconsumedXDeltas.collect { delta ->
+      val interaction =
+        lastAcceptedInteraction
+          ?.takeIf { it !is Interaction.Release }
+          ?.let { interaction ->
+            Interaction.Move(interaction.point.copy(x = interaction.point.x + delta))
+          } ?: return@collect
+      val markedEntries = chart.getMarkerTargets(interaction.point)
+      if (
+        markedEntries.isNotEmpty() && chart.markerController.acceptEvent(interaction, markedEntries)
+      ) {
+        lastAcceptedInteraction = interaction
+        isMarkerVisible = chart.markerController.isMarkerVisible(interaction, markedEntries)
+      }
+    }
+  }
+
+  LaunchedEffect(scrollState.consumedXDeltas) {
+    scrollState.consumedXDeltas.collect { delta ->
+      val interaction = lastAcceptedInteraction
+      lastAcceptedInteraction = interaction?.moveXBy(delta)
     }
   }
 
@@ -222,7 +233,6 @@ internal fun CartesianChartHostImpl(
                     isMarkerVisible = chart.markerController.isMarkerVisible(interaction, targets)
                     lastAcceptedInteraction = interaction
                   }
-                  lastInteraction = interaction
                 }
               } else {
                 null

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,7 +57,8 @@ public class VicoScrollState {
   private var layerDimensions: CartesianLayerDimensions? = null
   private var bounds: RectF? = null
   internal val scrollEnabled: Boolean
-  internal val pointerXDeltas = MutableSharedFlow<Float>(extraBufferCapacity = 1)
+  internal val consumedXDeltas = MutableSharedFlow<Float>(extraBufferCapacity = 1)
+  internal val unconsumedXDeltas = MutableSharedFlow<Float>(extraBufferCapacity = 1)
 
   internal val scrollableState = ScrollableState { delta ->
     val oldValue = value
@@ -66,7 +67,7 @@ public class VicoScrollState {
     if (oldValue + delta == value) {
       delta
     } else {
-      pointerXDeltas.tryEmit(consumedValue - delta)
+      unconsumedXDeltas.tryEmit(consumedValue - delta)
       consumedValue
     }
   }
@@ -77,7 +78,7 @@ public class VicoScrollState {
     private set(newValue) {
       val oldValue = value
       _value.floatValue = newValue.coerceIn(0f.rangeWith(maxValue))
-      if (value != oldValue) pointerXDeltas.tryEmit(oldValue - value)
+      if (value != oldValue) consumedXDeltas.tryEmit(oldValue - value)
     }
 
   /** The maximum scroll value (in pixels). */

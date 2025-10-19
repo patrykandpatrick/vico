@@ -26,6 +26,16 @@ import com.patrykandpatrick.vico.multiplatform.common.Point
 public sealed class Interaction {
   public abstract val point: Point
 
+  internal fun moveXBy(deltaX: Float): Interaction =
+    when (this) {
+      is Press -> copy(point = point.copy(x = point.x + deltaX))
+      is Tap -> copy(point = point.copy(x = point.x + deltaX))
+      is LongPress -> copy(point = point.copy(x = point.x + deltaX))
+      is Move -> copy(point = point.copy(x = point.x + deltaX))
+      is Release -> copy(point = point.copy(x = point.x + deltaX))
+      is Zoom -> copy(point = point.copy(x = point.x + deltaX))
+    }
+
   /** A press interaction. */
   public data class Press(override val point: Point) : Interaction()
 

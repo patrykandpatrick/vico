@@ -16,12 +16,25 @@
 
 package com.patrykandpatrick.vico.core.cartesian.marker
 
+import androidx.annotation.RestrictTo
 import com.patrykandpatrick.vico.core.common.Point
 import java.io.Serializable
 
 /** Represents a pointer interaction (such as a press, move, or release). */
 public sealed class Interaction : Serializable {
   public abstract val point: Point
+
+  /** @suppress */
+  @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+  public fun moveXBy(deltaX: Float): Interaction =
+    when (this) {
+      is Press -> copy(point = point.copy(x = point.x + deltaX))
+      is Tap -> copy(point = point.copy(x = point.x + deltaX))
+      is LongPress -> copy(point = point.copy(x = point.x + deltaX))
+      is Move -> copy(point = point.copy(x = point.x + deltaX))
+      is Release -> copy(point = point.copy(x = point.x + deltaX))
+      is Zoom -> copy(point = point.copy(x = point.x + deltaX))
+    }
 
   /** A press interaction. */
   public data class Press(override val point: Point) : Interaction()
