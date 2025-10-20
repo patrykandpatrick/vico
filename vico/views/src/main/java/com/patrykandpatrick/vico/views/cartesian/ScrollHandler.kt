@@ -162,11 +162,10 @@ public class ScrollHandler(
   }
 
   /** Triggers a scroll. */
-  public fun scroll(scroll: Scroll): Float {
-    return withUpdated { context, layerDimensions, bounds ->
+  public fun scroll(scroll: Scroll): Float =
+    withUpdated { context, layerDimensions, bounds ->
       scrollBy(scroll.getDelta(context, layerDimensions, bounds, maxValue, value))
     } ?: 0f
-  }
 
   /** Triggers an animated scroll. */
   public fun animateScroll(
