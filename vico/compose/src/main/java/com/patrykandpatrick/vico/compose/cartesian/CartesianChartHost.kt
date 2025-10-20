@@ -33,6 +33,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.unit.dp
@@ -48,8 +50,8 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartRanges
 import com.patrykandpatrick.vico.core.cartesian.data.MutableCartesianChartRanges
 import com.patrykandpatrick.vico.core.cartesian.data.toImmutable
 import com.patrykandpatrick.vico.core.cartesian.layer.MutableCartesianLayerDimensions
+import com.patrykandpatrick.vico.core.cartesian.marker.Interaction
 import com.patrykandpatrick.vico.core.common.Defaults.CHART_HEIGHT
-import com.patrykandpatrick.vico.core.common.Point
 import com.patrykandpatrick.vico.core.common.ValueWrapper
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.core.common.getValue
@@ -161,7 +163,8 @@ internal fun CartesianChartHostImpl(
   extraStore: ExtraStore = ExtraStore.Empty,
 ) {
   val canvasBounds = remember { RectF() }
-  val pointerPosition = remember { mutableStateOf<Point?>(null) }
+  var lastAcceptedInteraction by rememberSaveable { mutableStateOf<Interaction?>(null) }
+  var isMarkerVisible by rememberSaveable { mutableStateOf(false) }
   val measuringContext =
     rememberCartesianMeasuringContext(
       canvasBounds = canvasBounds,
@@ -172,16 +175,36 @@ internal fun CartesianChartHostImpl(
       zoomEnabled = scrollState.scrollEnabled && zoomState.zoomEnabled,
       layerPadding =
         remember(chart.layerPadding, model.extraStore) { chart.layerPadding(model.extraStore) },
-      pointerPosition = pointerPosition.value,
+      pointerPosition = lastAcceptedInteraction?.point,
+      isMarkerVisible = isMarkerVisible,
     )
 
   val coroutineScope = rememberCoroutineScope()
   var previousModelID by remember { ValueWrapper(model.id) }
   val layerDimensions = remember { MutableCartesianLayerDimensions() }
 
-  LaunchedEffect(scrollState.pointerXDeltas) {
-    scrollState.pointerXDeltas.collect { delta ->
-      pointerPosition.value?.let { point -> pointerPosition.value = point.copy(point.x + delta) }
+  LaunchedEffect(scrollState.unconsumedXDeltas) {
+    scrollState.unconsumedXDeltas.collect { delta ->
+      val interaction =
+        lastAcceptedInteraction
+          ?.takeUnless { interaction -> interaction is Interaction.Release }
+          ?.let { interaction ->
+            Interaction.Move(interaction.point.copy(x = interaction.point.x + delta))
+          } ?: return@collect
+      val markedEntries = chart.getMarkerTargets(interaction.point)
+      if (
+        markedEntries.isNotEmpty() && chart.markerController.acceptEvent(interaction, markedEntries)
+      ) {
+        lastAcceptedInteraction = interaction
+        isMarkerVisible = chart.markerController.isMarkerVisible(interaction, markedEntries)
+      }
+    }
+  }
+
+  LaunchedEffect(scrollState.consumedXDeltas) {
+    scrollState.consumedXDeltas.collect { delta ->
+      val interaction = lastAcceptedInteraction
+      lastAcceptedInteraction = interaction?.moveXBy(delta)
     }
   }
 
@@ -199,9 +222,21 @@ internal fun CartesianChartHostImpl(
         .pointerInput(
           scrollState = scrollState,
           consumeMoveEvents = consumeMoveEvents,
-          onPointerPositionChange =
+          onInteraction =
             remember(chart.marker == null) {
-              if (chart.marker != null) pointerPosition.component2() else null
+              if (chart.marker != null) {
+                { interaction ->
+                  val targets = chart.getMarkerTargets(interaction.point)
+                  if (
+                    targets.isNotEmpty() && chart.markerController.acceptEvent(interaction, targets)
+                  ) {
+                    isMarkerVisible = chart.markerController.isMarkerVisible(interaction, targets)
+                    lastAcceptedInteraction = interaction
+                  }
+                }
+              } else {
+                null
+              }
             },
           onZoom =
             remember(zoomState, scrollState, coroutineScope) {

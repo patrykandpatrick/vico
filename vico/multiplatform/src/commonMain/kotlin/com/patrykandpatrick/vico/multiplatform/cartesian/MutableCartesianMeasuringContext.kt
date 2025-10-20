@@ -40,5 +40,6 @@ internal class MutableCartesianMeasuringContext(
   override var zoomEnabled: Boolean,
   override var layerPadding: CartesianLayerPadding,
   override var pointerPosition: Point?,
+  override var isMarkerVisible: Boolean,
   override val cacheStore: CacheStore = CacheStore(),
 ) : MeasuringContext, CartesianMeasuringContext

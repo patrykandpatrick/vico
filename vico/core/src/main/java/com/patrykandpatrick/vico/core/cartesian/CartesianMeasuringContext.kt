@@ -43,6 +43,9 @@ public interface CartesianMeasuringContext : MeasuringContext {
 
   /** The pointer position. */
   public val pointerPosition: Point?
+
+  /** Whether the marker is visible. */
+  public val isMarkerVisible: Boolean
 }
 
 internal fun CartesianMeasuringContext.getFullXRange(layerDimensions: CartesianLayerDimensions) =

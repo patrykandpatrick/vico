@@ -45,6 +45,7 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
 import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
+import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerController
 import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
 import com.patrykandpatrick.vico.core.common.LegendItem
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
@@ -104,6 +105,7 @@ private fun JetpackComposeDailyDigitalMediaUse(
             },
             padding = insets(top = 16.dp),
           ),
+        markerController = CartesianMarkerController.toggleOnTap(),
       ),
     modelProducer = modelProducer,
     modifier = modifier.height(252.dp),

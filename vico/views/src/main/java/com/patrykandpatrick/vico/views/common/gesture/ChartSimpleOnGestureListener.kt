@@ -16,20 +16,19 @@
 
 package com.patrykandpatrick.vico.views.common.gesture
 
-import android.graphics.RectF
-import android.view.ScaleGestureDetector
+import android.view.GestureDetector
+import android.view.MotionEvent
 
-internal class ChartScaleGestureListener(
-  private val getLayerBounds: () -> RectF?,
-  private val onZoom: (focusX: Float, focusY: Float, zoomChange: Float) -> Unit,
-) : ScaleGestureDetector.OnScaleGestureListener {
-  override fun onScale(detector: ScaleGestureDetector): Boolean {
-    onZoom(detector.focusX, detector.focusY, detector.scaleFactor)
+internal class ChartSimpleOnGestureListener(
+  private val onTap: (x: Float, y: Float) -> Unit,
+  private val onLongPress: (x: Float, y: Float) -> Unit,
+) : GestureDetector.SimpleOnGestureListener() {
+  override fun onSingleTapUp(e: MotionEvent): Boolean {
+    onTap(e.x, e.y)
     return true
   }
 
-  override fun onScaleBegin(detector: ScaleGestureDetector): Boolean =
-    getLayerBounds()?.contains(detector.focusX, detector.focusY) == true
-
-  override fun onScaleEnd(detector: ScaleGestureDetector) = Unit
+  override fun onLongPress(e: MotionEvent) {
+    onLongPress(e.x, e.y)
+  }
 }

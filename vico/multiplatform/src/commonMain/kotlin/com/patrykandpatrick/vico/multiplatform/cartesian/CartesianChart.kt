@@ -45,6 +45,7 @@ import com.patrykandpatrick.vico.multiplatform.cartesian.layer.rememberCandlesti
 import com.patrykandpatrick.vico.multiplatform.cartesian.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.multiplatform.cartesian.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.multiplatform.cartesian.marker.CartesianMarker
+import com.patrykandpatrick.vico.multiplatform.cartesian.marker.CartesianMarkerController
 import com.patrykandpatrick.vico.multiplatform.cartesian.marker.CartesianMarkerVisibilityListener
 import com.patrykandpatrick.vico.multiplatform.common.EmptyPaint
 import com.patrykandpatrick.vico.multiplatform.common.Legend
@@ -76,6 +77,7 @@ internal constructor(
   protected val decorations: List<Decoration> = emptyList(),
   protected val persistentMarkers: (PersistentMarkerScope.(ExtraStore) -> Unit)? = null,
   protected val getXStep: ((CartesianChartModel) -> Double) = { it.getXDeltaGcd() },
+  public val markerController: CartesianMarkerController = CartesianMarkerController.ShowOnPress,
   internal val id: Uuid = Uuid.random(),
   private var previousMarkerTargetHashCode: Int? = null,
   private val persistentMarkerMap: MutableMap<Double, CartesianMarker> = mutableMapOf(),
@@ -198,6 +200,7 @@ internal constructor(
     decorations: List<Decoration> = emptyList(),
     persistentMarkers: (PersistentMarkerScope.(ExtraStore) -> Unit)? = null,
     getXStep: ((CartesianChartModel) -> Double) = { it.getXDeltaGcd() },
+    markerController: CartesianMarkerController = CartesianMarkerController.ShowOnPress,
   ) : this(
     layers = layers,
     startAxis = startAxis,
@@ -212,6 +215,7 @@ internal constructor(
     decorations = decorations,
     persistentMarkers = persistentMarkers,
     getXStep = getXStep,
+    markerController = markerController,
     id = Uuid.random(),
     previousMarkerTargetHashCode = null,
     persistentMarkerMap = mutableMapOf(),
@@ -292,8 +296,9 @@ internal constructor(
       _markerTargets.clear()
       _markerTargets.putAll(sortedMarkerTargetPairs)
       forEachPersistentMarker { marker, targets -> marker.drawUnderLayers(context, targets) }
-      val markerTargets = getMarkerTargets(context, pointerPosition)
-      if (markerTargets.isNotEmpty()) marker?.drawUnderLayers(context, markerTargets)
+      val markerTargets = getMarkerTargets(pointerPosition)
+      val drawMarker = markerTargets.isNotEmpty() && isMarkerVisible
+      if (drawMarker) marker?.drawUnderLayers(context, markerTargets)
       canvas.drawImage(layerBitmap, Offset.Zero, EmptyPaint)
       fadingEdges?.run {
         draw(context)
@@ -303,7 +308,7 @@ internal constructor(
       decorations.forEach { it.drawOverLayers(context) }
       forEachPersistentMarker { marker, targets -> marker.drawOverLayers(context, targets) }
       legend?.draw(context)
-      if (markerTargets.isNotEmpty()) marker?.drawOverLayers(context, markerTargets)
+      if (drawMarker) marker?.drawOverLayers(context, markerTargets)
     }
   }
 
@@ -379,10 +384,8 @@ internal constructor(
     }
   }
 
-  protected open fun getMarkerTargets(
-    context: CartesianDrawingContext,
-    pointerPosition: Point?,
-  ): List<CartesianMarker.Target> {
+  /** Returns the `CartesianMarker.Target`s for `pointerPosition`. */
+  public open fun getMarkerTargets(pointerPosition: Point?): List<CartesianMarker.Target> {
     val marker = marker ?: return emptyList()
     if (pointerPosition == null || markerTargets.isEmpty()) {
       if (previousMarkerTargetHashCode != null) markerVisibilityListener?.onHidden(marker)
@@ -436,6 +439,7 @@ internal constructor(
     decorations: List<Decoration> = this.decorations,
     persistentMarkers: (PersistentMarkerScope.(ExtraStore) -> Unit)? = this.persistentMarkers,
     getXStep: ((CartesianChartModel) -> Double) = this.getXStep,
+    markerController: CartesianMarkerController = CartesianMarkerController.ShowOnPress,
   ): CartesianChart =
     CartesianChart(
       layers = layers,
@@ -451,6 +455,7 @@ internal constructor(
       decorations = decorations,
       persistentMarkers = persistentMarkers,
       getXStep = getXStep,
+      markerController = markerController,
       id = id,
       previousMarkerTargetHashCode = previousMarkerTargetHashCode,
       persistentMarkerMap = persistentMarkerMap,
@@ -473,7 +478,8 @@ internal constructor(
         startAxis == other.startAxis &&
         topAxis == other.topAxis &&
         endAxis == other.endAxis &&
-        bottomAxis == other.bottomAxis
+        bottomAxis == other.bottomAxis &&
+        markerController == other.markerController
 
   override fun hashCode(): Int {
     var result = marker.hashCode()
@@ -490,6 +496,7 @@ internal constructor(
     result = 31 * result + endAxis.hashCode()
     result = 31 * result + bottomAxis.hashCode()
     result = 31 * result + id.hashCode()
+    result = 31 * result + markerController.hashCode()
     return result
   }
 
@@ -521,6 +528,7 @@ internal constructor(
  * @param decorations the [Decoration]s.
  * @param persistentMarkers adds persistent [CartesianMarker]s.
  * @param getXStep defines the _x_ step (the difference between neighboring major _x_ values).
+ * @param markerController controls [marker] visibility.
  * @see rememberCandlestickCartesianLayer
  * @see rememberColumnCartesianLayer
  * @see rememberLineCartesianLayer
@@ -540,6 +548,7 @@ public fun rememberCartesianChart(
   decorations: List<Decoration> = emptyList(),
   persistentMarkers: (PersistentMarkerScope.(ExtraStore) -> Unit)? = null,
   getXStep: ((CartesianChartModel) -> Double) = { it.getXDeltaGcd() },
+  markerController: CartesianMarkerController = CartesianMarkerController.ShowOnPress,
 ): CartesianChart {
   val wrapper = remember { ValueWrapper<CartesianChart?>(null) }
   return remember(
@@ -556,6 +565,7 @@ public fun rememberCartesianChart(
     decorations,
     persistentMarkers,
     getXStep,
+    markerController,
   ) {
     val cartesianChart =
       wrapper.value?.copy(
@@ -572,6 +582,7 @@ public fun rememberCartesianChart(
         decorations = decorations,
         persistentMarkers = persistentMarkers,
         getXStep = getXStep,
+        markerController = markerController,
       )
         ?: CartesianChart(
           layers = layers,
@@ -587,6 +598,7 @@ public fun rememberCartesianChart(
           decorations = decorations,
           persistentMarkers = persistentMarkers,
           getXStep = getXStep,
+          markerController = markerController,
         )
     wrapper.value = cartesianChart
     cartesianChart

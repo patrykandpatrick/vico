@@ -20,7 +20,6 @@ import android.graphics.Canvas
 import android.graphics.RectF
 import androidx.annotation.RestrictTo
 import androidx.compose.runtime.Stable
-import com.patrykandpatrick.vico.core.cartesian.CartesianChart.PersistentMarkerScope
 import com.patrykandpatrick.vico.core.cartesian.axis.Axis
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisManager
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
@@ -39,6 +38,7 @@ import com.patrykandpatrick.vico.core.cartesian.layer.HorizontalCartesianLayerMa
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.layer.MutableCartesianLayerDimensions
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
+import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerController
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerVisibilityListener
 import com.patrykandpatrick.vico.core.common.Legend
 import com.patrykandpatrick.vico.core.common.Point
@@ -51,9 +51,6 @@ import com.patrykandpatrick.vico.core.common.saveLayer
 import java.util.Objects
 import java.util.SortedMap
 import java.util.UUID
-import kotlin.collections.component1
-import kotlin.collections.component2
-import kotlin.collections.set
 import kotlin.math.abs
 
 /** A chart based on a Cartesian coordinate plane, composed of [CartesianLayer]s. */
@@ -76,6 +73,7 @@ private constructor(
   protected val decorations: List<Decoration> = emptyList(),
   protected val persistentMarkers: (PersistentMarkerScope.(ExtraStore) -> Unit)? = null,
   protected val getXStep: ((CartesianChartModel) -> Double) = { it.getXDeltaGcd() },
+  public val markerController: CartesianMarkerController,
   /** @suppress */
   @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) public val id: UUID,
   private var previousMarkerTargetHashCode: Int?,
@@ -205,6 +203,7 @@ private constructor(
    * @param decorations the [Decoration]s.
    * @param persistentMarkers adds persistent [CartesianMarker]s.
    * @param getXStep defines the _x_ step (the difference between neighboring major _x_ values).
+   * @param markerController controls [marker] visibility.
    */
   public constructor(
     vararg layers: CartesianLayer<*>,
@@ -220,6 +219,7 @@ private constructor(
     decorations: List<Decoration> = emptyList(),
     persistentMarkers: (PersistentMarkerScope.(ExtraStore) -> Unit)? = null,
     getXStep: ((CartesianChartModel) -> Double) = { it.getXDeltaGcd() },
+    markerController: CartesianMarkerController = CartesianMarkerController.ShowOnPress,
   ) : this(
     layers = layers,
     startAxis = startAxis,
@@ -234,6 +234,7 @@ private constructor(
     decorations = decorations,
     persistentMarkers = persistentMarkers,
     getXStep = getXStep,
+    markerController = markerController,
     id = UUID.randomUUID(),
     previousMarkerTargetHashCode = null,
     persistentMarkerMap = mutableMapOf(),
@@ -316,8 +317,9 @@ private constructor(
         model.forEachWithLayer(drawingConsumer.apply { this.context = context })
       }
       forEachPersistentMarker { marker, targets -> marker.drawUnderLayers(context, targets) }
-      val markerTargets = getMarkerTargets(context, pointerPosition)
-      if (markerTargets.isNotEmpty()) marker?.drawUnderLayers(context, markerTargets)
+      val markerTargets = getMarkerTargets(pointerPosition)
+      val drawMarker = markerTargets.isNotEmpty() && isMarkerVisible
+      if (drawMarker) marker?.drawUnderLayers(context, markerTargets)
       canvas.drawBitmap(layerBitmap, 0f, 0f, null)
       fadingEdges?.run {
         draw(context)
@@ -327,7 +329,7 @@ private constructor(
       decorations.forEach { it.drawOverLayers(context) }
       forEachPersistentMarker { marker, targets -> marker.drawOverLayers(context, targets) }
       legend?.draw(context)
-      if (markerTargets.isNotEmpty()) marker?.drawOverLayers(context, markerTargets)
+      if (drawMarker) marker?.drawOverLayers(context, markerTargets)
     }
   }
 
@@ -409,10 +411,17 @@ private constructor(
     }
   }
 
+  @Deprecated(
+    "Use `getMarkerTargets(pointerPosition)` instead.",
+    ReplaceWith("getMarkerTargets(pointerPosition)"),
+  )
   protected open fun getMarkerTargets(
     context: CartesianDrawingContext,
     pointerPosition: Point?,
-  ): List<CartesianMarker.Target> {
+  ): List<CartesianMarker.Target> = getMarkerTargets(pointerPosition)
+
+  /** Returns the `CartesianMarker.Target`s for `pointerPosition`. */
+  public open fun getMarkerTargets(pointerPosition: Point?): List<CartesianMarker.Target> {
     val marker = marker ?: return emptyList()
     if (pointerPosition == null || markerTargets.isEmpty()) {
       if (previousMarkerTargetHashCode != null) markerVisibilityListener?.onHidden(marker)
@@ -466,6 +475,7 @@ private constructor(
     decorations: List<Decoration> = this.decorations,
     persistentMarkers: (PersistentMarkerScope.(ExtraStore) -> Unit)? = this.persistentMarkers,
     getXStep: ((CartesianChartModel) -> Double) = this.getXStep,
+    markerController: CartesianMarkerController = this.markerController,
   ): CartesianChart =
     CartesianChart(
       layers = layers,
@@ -481,6 +491,7 @@ private constructor(
       decorations = decorations,
       persistentMarkers = persistentMarkers,
       getXStep = getXStep,
+      markerController = markerController,
       id = id,
       previousMarkerTargetHashCode = previousMarkerTargetHashCode,
       persistentMarkerMap = persistentMarkerMap,
@@ -503,7 +514,8 @@ private constructor(
         startAxis == other.startAxis &&
         topAxis == other.topAxis &&
         endAxis == other.endAxis &&
-        bottomAxis == other.bottomAxis
+        bottomAxis == other.bottomAxis &&
+        markerController == other.markerController
 
   override fun hashCode(): Int {
     var result = marker.hashCode()
@@ -520,6 +532,7 @@ private constructor(
     result = 31 * result + endAxis.hashCode()
     result = 31 * result + bottomAxis.hashCode()
     result = 31 * result + id.hashCode()
+    result = 31 * result + markerController.hashCode()
     return result
   }
 
