@@ -411,15 +411,6 @@ private constructor(
     }
   }
 
-  @Deprecated(
-    "Use `getMarkerTargets(pointerPosition)` instead.",
-    ReplaceWith("getMarkerTargets(pointerPosition)"),
-  )
-  protected open fun getMarkerTargets(
-    context: CartesianDrawingContext,
-    pointerPosition: Point?,
-  ): List<CartesianMarker.Target> = getMarkerTargets(pointerPosition)
-
   /** Returns the `CartesianMarker.Target`s for `pointerPosition`. */
   public open fun getMarkerTargets(pointerPosition: Point?): List<CartesianMarker.Target> {
     val marker = marker ?: return emptyList()
