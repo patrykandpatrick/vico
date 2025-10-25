@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.Canvas
 import com.patrykandpatrick.vico.multiplatform.cartesian.layer.CartesianLayer
 import com.patrykandpatrick.vico.multiplatform.cartesian.layer.CartesianLayerDimensions
 import com.patrykandpatrick.vico.multiplatform.common.DrawingContext
+import com.patrykandpatrick.vico.multiplatform.common.MutableDrawScope
 import kotlin.math.ceil
 
 /** A [DrawingContext] extension with [CartesianChart]-specific data. */
@@ -66,6 +67,7 @@ internal fun CartesianDrawingContext(
   layerBounds: Rect,
   scroll: Float,
   zoom: Float,
+  mutableDrawScope: MutableDrawScope,
 ): CartesianDrawingContext =
   object : CartesianDrawingContext, CartesianMeasuringContext by measuringContext {
     override var canvas = canvas
@@ -77,6 +79,8 @@ internal fun CartesianDrawingContext(
     override val scroll: Float = scroll
 
     override val zoom: Float = zoom
+
+    override val mutableDrawScope: MutableDrawScope = mutableDrawScope
 
     override fun withCanvas(canvas: Canvas, block: () -> Unit) {
       val originalCanvas = this.canvas

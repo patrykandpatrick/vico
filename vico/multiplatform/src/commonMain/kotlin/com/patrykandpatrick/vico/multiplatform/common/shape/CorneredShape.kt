@@ -19,9 +19,9 @@ package com.patrykandpatrick.vico.multiplatform.common.shape
 import androidx.annotation.IntRange
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.patrykandpatrick.vico.multiplatform.common.MeasuringContext
 import com.patrykandpatrick.vico.multiplatform.common.piRad
 import com.patrykandpatrick.vico.multiplatform.common.shape.CorneredShape.CornerTreatment
 import kotlin.math.absoluteValue
@@ -57,8 +57,9 @@ public open class CorneredShape(
     )
   }
 
-  internal fun outline(
-    density: Float,
+  override fun outline(
+    density: Density,
+    isLtr: Boolean,
     path: Path,
     left: Float,
     top: Float,
@@ -70,12 +71,12 @@ public open class CorneredShape(
     if (width == 0f || height == 0f) return
 
     val size = minOf(width, height).absoluteValue
-    val scale = getCornerScale(width, height, density).coerceAtMost(1f)
+    val scale = getCornerScale(width, height, density.density).coerceAtMost(1f)
 
-    val tL = topLeft.getSize(size, density) * scale
-    val tR = topRight.getSize(size, density) * scale
-    val bR = bottomRight.getSize(size, density) * scale
-    val bL = bottomLeft.getSize(size, density) * scale
+    val tL = topLeft.getSize(size, density.density) * scale
+    val tR = topRight.getSize(size, density.density) * scale
+    val bR = bottomRight.getSize(size, density.density) * scale
+    val bL = bottomLeft.getSize(size, density.density) * scale
 
     path.moveTo(left, top + tL)
     topLeft.treatment.createCorner(
@@ -117,17 +118,6 @@ public open class CorneredShape(
       y2 = bottom - bL,
     )
     path.close()
-  }
-
-  override fun outline(
-    context: MeasuringContext,
-    path: Path,
-    left: Float,
-    top: Float,
-    right: Float,
-    bottom: Float,
-  ) {
-    outline(context.density.density, path, left, top, right, bottom)
   }
 
   override fun equals(other: Any?): Boolean =

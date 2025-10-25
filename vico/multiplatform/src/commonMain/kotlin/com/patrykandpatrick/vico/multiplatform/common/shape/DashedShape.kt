@@ -17,10 +17,10 @@
 package com.patrykandpatrick.vico.multiplatform.common.shape
 
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.multiplatform.common.Defaults
-import com.patrykandpatrick.vico.multiplatform.common.MeasuringContext
 import kotlin.math.ceil
 
 /**
@@ -42,7 +42,8 @@ public class DashedShape(
   private var drawGapLength = 0f
 
   override fun outline(
-    context: MeasuringContext,
+    density: Density,
+    isLtr: Boolean,
     path: Path,
     left: Float,
     top: Float,
@@ -50,21 +51,22 @@ public class DashedShape(
     bottom: Float,
   ) {
     if (right - left > bottom - top) {
-      drawHorizontalDashes(context, path, left, top, right, bottom)
+      outlineHorizontalDashes(density, isLtr, path, left, top, right, bottom)
     } else {
-      drawVerticalDashes(context, path, left, top, right, bottom)
+      outlineVerticalDashes(density, isLtr, path, left, top, right, bottom)
     }
   }
 
-  private fun drawHorizontalDashes(
-    context: MeasuringContext,
+  private fun outlineHorizontalDashes(
+    density: Density,
+    isLtr: Boolean,
     path: Path,
     left: Float,
     top: Float,
     right: Float,
     bottom: Float,
   ) {
-    calculateDrawLengths(context, right - left)
+    calculateDrawLengths(density, right - left)
 
     var index = 0
     var drawnLength = 0f
@@ -72,7 +74,8 @@ public class DashedShape(
       drawnLength +=
         if (index % 2 == 0) {
           shape.outline(
-            context = context,
+            density = density,
+            isLtr = isLtr,
             path = path,
             left = left + drawnLength,
             top = top,
@@ -87,15 +90,16 @@ public class DashedShape(
     }
   }
 
-  private fun drawVerticalDashes(
-    context: MeasuringContext,
+  private fun outlineVerticalDashes(
+    density: Density,
+    isLtr: Boolean,
     path: Path,
     left: Float,
     top: Float,
     right: Float,
     bottom: Float,
   ) {
-    calculateDrawLengths(context, bottom - top)
+    calculateDrawLengths(density, bottom - top)
 
     var index = 0
     var drawnLength = 0f
@@ -103,7 +107,8 @@ public class DashedShape(
       drawnLength +=
         if (index % 2 == 0) {
           shape.outline(
-            context = context,
+            density = density,
+            isLtr = isLtr,
             path = path,
             left = left,
             top = top + drawnLength,
@@ -118,8 +123,8 @@ public class DashedShape(
     }
   }
 
-  private fun calculateDrawLengths(context: MeasuringContext, length: Float): Unit =
-    with(context) { calculateDrawLengths(dashLength.pixels, gapLength.pixels, length) }
+  private fun calculateDrawLengths(density: Density, length: Float): Unit =
+    with(density) { calculateDrawLengths(dashLength.toPx(), gapLength.toPx(), length) }
 
   private fun calculateDrawLengths(dashLength: Float, gapLength: Float, length: Float) {
     if (dashLength == 0f && gapLength == 0f) {

@@ -30,6 +30,9 @@ public interface DrawingContext : MeasuringContext {
   /** The [Canvas]. */
   public val canvas: Canvas
 
+  /** The [MutableDrawScope]. */
+  public val mutableDrawScope: MutableDrawScope
+
   /**
    * Updates the value of [DrawingContext.canvas] to [canvas], runs [block], and restores the
    * previous [DrawingContext.canvas] value.

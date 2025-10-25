@@ -16,6 +16,7 @@
 
 package com.patrykandpatrick.vico.multiplatform.cartesian.layer
 
+import androidx.compose.ui.graphics.drawscope.clipRect
 import com.patrykandpatrick.vico.multiplatform.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.multiplatform.cartesian.data.CartesianLayerModel
 import com.patrykandpatrick.vico.multiplatform.common.inClip
@@ -30,13 +31,12 @@ public abstract class BaseCartesianLayer<T : CartesianLayerModel> : CartesianLay
     with(context) {
       margins.clear()
       updateLayerMargins(this, margins, layerDimensions, model)
-      canvas.inClip(
-        left = layerBounds.left - margins.getLeft(isLtr),
-        top = layerBounds.top - margins.top,
-        right = layerBounds.right + margins.getRight(isLtr),
-        bottom = layerBounds.bottom + margins.bottom,
-      ) {
-        drawInternal(context, model)
+      val left = layerBounds.left - margins.getLeft(isLtr)
+      val top = layerBounds.top - margins.top
+      val right = layerBounds.right + margins.getRight(isLtr)
+      val bottom = layerBounds.bottom + margins.bottom
+      mutableDrawScope.clipRect(left, top, right, bottom) {
+        canvas.inClip(left, top, right, bottom) { drawInternal(context, model) }
       }
     }
   }

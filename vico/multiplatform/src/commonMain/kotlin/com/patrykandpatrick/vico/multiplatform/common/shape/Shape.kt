@@ -34,7 +34,8 @@ public fun interface Shape {
    * outline bounds.
    */
   public fun outline(
-    context: MeasuringContext,
+    density: Density,
+    isLtr: Boolean,
     path: Path,
     left: Float,
     top: Float,
@@ -44,7 +45,7 @@ public fun interface Shape {
 
   public companion object {
     /** A rectangle with sharp corners. */
-    public val Rectangle: Shape = Shape { _, path, left, top, right, bottom ->
+    public val Rectangle: Shape = Shape { _, _, path, left, top, right, bottom ->
       path.moveTo(left, top)
       path.lineTo(right, top)
       path.lineTo(right, bottom)
@@ -54,17 +55,28 @@ public fun interface Shape {
   }
 }
 
+internal fun Shape.outline(
+  context: MeasuringContext,
+  path: Path,
+  left: Float,
+  top: Float,
+  right: Float,
+  bottom: Float,
+) {
+  outline(context.density, context.isLtr, path, left, top, right, bottom)
+}
+
 /**
  * Converts this [androidx.compose.ui.graphics.Shape] to an instance of
  * [com.patrykandpatrick.vico.multiplatform.common.shape.Shape].
  */
 public fun androidx.compose.ui.graphics.Shape.toVicoShape(): Shape =
-  Shape { context, path, left, top, right, bottom ->
+  Shape { density, isLtr, path, left, top, right, bottom ->
     val outline =
       createOutline(
         size = Size(width = right - left, height = bottom - top),
-        layoutDirection = if (context.isLtr) LayoutDirection.Ltr else LayoutDirection.Rtl,
-        density = context.density,
+        layoutDirection = if (isLtr) LayoutDirection.Ltr else LayoutDirection.Rtl,
+        density = density,
       )
     when (outline) {
       is Outline.Rectangle ->
@@ -74,8 +86,8 @@ public fun androidx.compose.ui.graphics.Shape.toVicoShape(): Shape =
     }
   }
 
-/** Converts this [CorneredShape] to an instance of [androidx.compose.ui.graphics.Shape]. */
-public fun CorneredShape.toComposeShape(): androidx.compose.ui.graphics.Shape =
+/** Converts this [Shape] to an instance of [androidx.compose.ui.graphics.Shape]. */
+public fun Shape.toComposeShape(): androidx.compose.ui.graphics.Shape =
   object : androidx.compose.ui.graphics.Shape {
     override fun createOutline(
       size: Size,
@@ -84,7 +96,8 @@ public fun CorneredShape.toComposeShape(): androidx.compose.ui.graphics.Shape =
     ): Outline {
       val path = Path()
       outline(
-        density = density.density,
+        density = density,
+        isLtr = layoutDirection == LayoutDirection.Ltr,
         path = path,
         left = 0f,
         top = 0f,

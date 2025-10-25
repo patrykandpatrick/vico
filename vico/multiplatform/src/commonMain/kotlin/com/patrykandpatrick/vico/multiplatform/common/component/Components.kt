@@ -18,6 +18,7 @@ package com.patrykandpatrick.vico.multiplatform.common.component
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
@@ -37,9 +38,10 @@ public fun rememberLineComponent(
   margins: Insets = Insets.Zero,
   strokeFill: Fill = Fill.Transparent,
   strokeThickness: Dp = 0.dp,
+  shadows: List<Shadow> = emptyList(),
 ): LineComponent =
-  remember(fill, shape, thickness, margins, strokeFill, strokeThickness) {
-    LineComponent(fill, thickness, shape, margins, strokeFill, strokeThickness)
+  remember(fill, shape, thickness, margins, strokeFill, strokeThickness, shadows) {
+    LineComponent(fill, thickness, shape, margins, strokeFill, strokeThickness, shadows)
   }
 
 /** Creates and remembers a [ShapeComponent]. */
@@ -50,9 +52,10 @@ public fun rememberShapeComponent(
   margins: Insets = Insets.Zero,
   strokeFill: Fill = Fill.Transparent,
   strokeThickness: Dp = 0.dp,
+  shadows: List<Shadow> = emptyList(),
 ): ShapeComponent =
-  remember(fill, shape, margins, strokeFill, strokeThickness) {
-    ShapeComponent(fill, shape, margins, strokeFill, strokeThickness)
+  remember(fill, shape, margins, strokeFill, strokeThickness, shadows) {
+    ShapeComponent(fill, shape, margins, strokeFill, strokeThickness, shadows)
   }
 
 /** Creates and remembers a [TextComponent]. */
