@@ -17,6 +17,7 @@
 package com.patrykandpatrick.vico.multiplatform.cartesian.axis
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
@@ -58,8 +59,9 @@ public fun rememberAxisLineComponent(
   margins: Insets = Insets.Zero,
   strokeFill: Fill = Fill.Transparent,
   strokeThickness: Dp = 0.dp,
+  shadows: List<Shadow>? = null,
 ): LineComponent =
-  rememberLineComponent(fill, thickness, shape, margins, strokeFill, strokeThickness)
+  rememberLineComponent(fill, thickness, shape, margins, strokeFill, strokeThickness, shadows)
 
 /** A [rememberLineComponent] alias with defaults for [Axis] ticks. */
 @Composable
@@ -70,8 +72,9 @@ public fun rememberAxisTickComponent(
   margins: Insets = Insets.Zero,
   strokeFill: Fill = Fill.Transparent,
   strokeThickness: Dp = 0.dp,
+  shadows: List<Shadow>? = null,
 ): LineComponent =
-  rememberLineComponent(fill, thickness, shape, margins, strokeFill, strokeThickness)
+  rememberLineComponent(fill, thickness, shape, margins, strokeFill, strokeThickness, shadows)
 
 /** A [rememberLineComponent] alias with defaults for [Axis] guidelines. */
 @Composable
@@ -82,5 +85,6 @@ public fun rememberAxisGuidelineComponent(
   margins: Insets = Insets.Zero,
   strokeFill: Fill = Fill.Transparent,
   strokeThickness: Dp = 0.dp,
+  shadows: List<Shadow>? = null,
 ): LineComponent =
-  rememberLineComponent(fill, thickness, shape, margins, strokeFill, strokeThickness)
+  rememberLineComponent(fill, thickness, shape, margins, strokeFill, strokeThickness, shadows)

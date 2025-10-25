@@ -17,6 +17,7 @@
 package com.patrykandpatrick.vico.multiplatform.common.component
 
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.multiplatform.common.Defaults
@@ -35,6 +36,7 @@ import com.patrykandpatrick.vico.multiplatform.common.shape.Shape
  * @param strokeFill the stroke fill.
  * @param strokeThickness the stroke thickness.
  * @property thickness the line thickness.
+ * @param shadows the shadows' properties.
  */
 public open class LineComponent(
   fill: Fill,
@@ -43,7 +45,8 @@ public open class LineComponent(
   margins: Insets = Insets.Zero,
   strokeFill: Fill = Fill.Transparent,
   strokeThickness: Dp = 0.dp,
-) : ShapeComponent(fill, shape, margins, strokeFill, strokeThickness) {
+  shadows: List<Shadow>?,
+) : ShapeComponent(fill, shape, margins, strokeFill, strokeThickness, shadows) {
   /** A convenience function for [draw] that draws the [LineComponent] horizontally. */
   public open fun drawHorizontal(
     context: DrawingContext,
@@ -87,7 +90,9 @@ public open class LineComponent(
     margins: Insets,
     strokeFill: Fill,
     strokeThickness: Dp,
-  ): LineComponent = LineComponent(fill, thickness, shape, margins, strokeFill, strokeThickness)
+    shadows: List<Shadow>?,
+  ): LineComponent =
+    LineComponent(fill, thickness, shape, margins, strokeFill, strokeThickness, shadows)
 
   /** Creates a new [LineComponent] based on this one. */
   public open fun copy(
@@ -97,7 +102,9 @@ public open class LineComponent(
     margins: Insets = this.margins,
     strokeFill: Fill = this.strokeFill,
     strokeThickness: Dp = this.strokeThickness,
-  ): LineComponent = LineComponent(fill, thickness, shape, margins, strokeFill, strokeThickness)
+    shadows: List<Shadow>? = this.shadows,
+  ): LineComponent =
+    LineComponent(fill, thickness, shape, margins, strokeFill, strokeThickness, shadows)
 
   override fun equals(other: Any?): Boolean =
     super.equals(other) && other is LineComponent && thickness == other.thickness
