@@ -59,7 +59,7 @@ public fun rememberAxisLineComponent(
   margins: Insets = Insets.Zero,
   strokeFill: Fill = Fill.Transparent,
   strokeThickness: Dp = 0.dp,
-  shadows: List<Shadow>? = null,
+  shadows: List<Shadow> = emptyList(),
 ): LineComponent =
   rememberLineComponent(fill, thickness, shape, margins, strokeFill, strokeThickness, shadows)
 
@@ -72,7 +72,7 @@ public fun rememberAxisTickComponent(
   margins: Insets = Insets.Zero,
   strokeFill: Fill = Fill.Transparent,
   strokeThickness: Dp = 0.dp,
-  shadows: List<Shadow>? = null,
+  shadows: List<Shadow> = emptyList(),
 ): LineComponent =
   rememberLineComponent(fill, thickness, shape, margins, strokeFill, strokeThickness, shadows)
 
@@ -85,6 +85,6 @@ public fun rememberAxisGuidelineComponent(
   margins: Insets = Insets.Zero,
   strokeFill: Fill = Fill.Transparent,
   strokeThickness: Dp = 0.dp,
-  shadows: List<Shadow>? = null,
+  shadows: List<Shadow> = emptyList(),
 ): LineComponent =
   rememberLineComponent(fill, thickness, shape, margins, strokeFill, strokeThickness, shadows)

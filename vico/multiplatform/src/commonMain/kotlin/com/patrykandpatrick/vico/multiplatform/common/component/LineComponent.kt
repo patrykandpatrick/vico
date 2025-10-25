@@ -45,7 +45,7 @@ public open class LineComponent(
   margins: Insets = Insets.Zero,
   strokeFill: Fill = Fill.Transparent,
   strokeThickness: Dp = 0.dp,
-  shadows: List<Shadow>?,
+  shadows: List<Shadow> = emptyList(),
 ) : ShapeComponent(fill, shape, margins, strokeFill, strokeThickness, shadows) {
   /** A convenience function for [draw] that draws the [LineComponent] horizontally. */
   public open fun drawHorizontal(
@@ -90,7 +90,7 @@ public open class LineComponent(
     margins: Insets,
     strokeFill: Fill,
     strokeThickness: Dp,
-    shadows: List<Shadow>?,
+    shadows: List<Shadow>,
   ): LineComponent =
     LineComponent(fill, thickness, shape, margins, strokeFill, strokeThickness, shadows)
 
@@ -102,7 +102,7 @@ public open class LineComponent(
     margins: Insets = this.margins,
     strokeFill: Fill = this.strokeFill,
     strokeThickness: Dp = this.strokeThickness,
-    shadows: List<Shadow>? = this.shadows,
+    shadows: List<Shadow> = this.shadows,
   ): LineComponent =
     LineComponent(fill, thickness, shape, margins, strokeFill, strokeThickness, shadows)
 

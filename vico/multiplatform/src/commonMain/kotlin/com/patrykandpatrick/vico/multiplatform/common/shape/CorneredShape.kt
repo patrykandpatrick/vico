@@ -22,7 +22,6 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.patrykandpatrick.vico.multiplatform.common.MeasuringContext
 import com.patrykandpatrick.vico.multiplatform.common.piRad
 import com.patrykandpatrick.vico.multiplatform.common.shape.CorneredShape.CornerTreatment
 import kotlin.math.absoluteValue
@@ -119,17 +118,6 @@ public open class CorneredShape(
       y2 = bottom - bL,
     )
     path.close()
-  }
-
-  override fun outline(
-    context: MeasuringContext,
-    path: Path,
-    left: Float,
-    top: Float,
-    right: Float,
-    bottom: Float,
-  ) {
-    outline(context.density, context.isLtr, path, left, top, right, bottom)
   }
 
   override fun equals(other: Any?): Boolean =

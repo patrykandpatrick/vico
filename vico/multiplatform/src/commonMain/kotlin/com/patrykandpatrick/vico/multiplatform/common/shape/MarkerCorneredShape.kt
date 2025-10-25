@@ -18,10 +18,10 @@ package com.patrykandpatrick.vico.multiplatform.common.shape
 
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathOperation
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.multiplatform.common.Defaults.MARKER_TICK_SIZE
-import com.patrykandpatrick.vico.multiplatform.common.MeasuringContext
 import com.patrykandpatrick.vico.multiplatform.common.doubled
 import com.patrykandpatrick.vico.multiplatform.common.half
 
@@ -65,19 +65,20 @@ public open class MarkerCorneredShape(
   )
 
   override fun outline(
-    context: MeasuringContext,
+    density: Density,
+    isLtr: Boolean,
     path: Path,
     left: Float,
     top: Float,
     right: Float,
     bottom: Float,
   ) {
-    with(context) {
-      super.outline(context, path, left, top, right, bottom)
+    with(density) {
+      super.outline(density, isLtr, path, left, top, right, bottom)
 
       val tickX = (right + left).half + (tickX ?: return)
 
-      val tickSize = tickSize.pixels
+      val tickSize = tickSize.toPx()
       val availableCornerSize = minOf(right - left, bottom - top)
       val cornerScale = getCornerScale(right - left, bottom - top, density.density)
 

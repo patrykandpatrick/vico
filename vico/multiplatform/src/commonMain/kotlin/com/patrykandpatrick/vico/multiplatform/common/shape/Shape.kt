@@ -34,21 +34,6 @@ public fun interface Shape {
    * outline bounds.
    */
   public fun outline(
-    context: MeasuringContext,
-    path: Path,
-    left: Float,
-    top: Float,
-    right: Float,
-    bottom: Float,
-  ) {
-    outline(context.density, context.isLtr, path, left, top, right, bottom)
-  }
-
-  /**
-   * Adds an outline of the [Shape] to [path]. [left], [top], [right], and [bottom] define the
-   * outline bounds.
-   */
-  public fun outline(
     density: Density,
     isLtr: Boolean,
     path: Path,
@@ -68,6 +53,17 @@ public fun interface Shape {
       path.close()
     }
   }
+}
+
+internal fun Shape.outline(
+  context: MeasuringContext,
+  path: Path,
+  left: Float,
+  top: Float,
+  right: Float,
+  bottom: Float,
+) {
+  outline(context.density, context.isLtr, path, left, top, right, bottom)
 }
 
 /**

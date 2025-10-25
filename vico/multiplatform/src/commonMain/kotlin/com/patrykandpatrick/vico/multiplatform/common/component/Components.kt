@@ -38,7 +38,7 @@ public fun rememberLineComponent(
   margins: Insets = Insets.Zero,
   strokeFill: Fill = Fill.Transparent,
   strokeThickness: Dp = 0.dp,
-  shadows: List<Shadow>? = null,
+  shadows: List<Shadow> = emptyList(),
 ): LineComponent =
   remember(fill, shape, thickness, margins, strokeFill, strokeThickness, shadows) {
     LineComponent(fill, thickness, shape, margins, strokeFill, strokeThickness, shadows)
@@ -52,7 +52,7 @@ public fun rememberShapeComponent(
   margins: Insets = Insets.Zero,
   strokeFill: Fill = Fill.Transparent,
   strokeThickness: Dp = 0.dp,
-  shadows: List<Shadow>? = null,
+  shadows: List<Shadow> = emptyList(),
 ): ShapeComponent =
   remember(fill, shape, margins, strokeFill, strokeThickness, shadows) {
     ShapeComponent(fill, shape, margins, strokeFill, strokeThickness, shadows)

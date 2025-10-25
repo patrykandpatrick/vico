@@ -31,6 +31,7 @@ import com.patrykandpatrick.vico.multiplatform.common.Fill
 import com.patrykandpatrick.vico.multiplatform.common.Insets
 import com.patrykandpatrick.vico.multiplatform.common.half
 import com.patrykandpatrick.vico.multiplatform.common.shape.Shape
+import com.patrykandpatrick.vico.multiplatform.common.shape.outline
 import com.patrykandpatrick.vico.multiplatform.common.shape.toComposeShape
 
 /**
@@ -49,7 +50,7 @@ public open class ShapeComponent(
   protected val margins: Insets = Insets.Zero,
   public val strokeFill: Fill = Fill.Transparent,
   protected val strokeThickness: Dp = 0.dp,
-  protected val shadows: List<Shadow>? = null,
+  protected val shadows: List<Shadow> = emptyList(),
 ) : Component {
   private val paint = Paint().apply { color = fill.color }
   private val strokePaint =
@@ -60,7 +61,7 @@ public open class ShapeComponent(
 
   protected val path: Path = Path()
 
-  private val shadowPainters: List<DropShadowPainter>? = getShadowPainters(shadows)
+  private val shadowPainters: List<DropShadowPainter> = getShadowPainters(shadows)
 
   internal val effectiveStrokeFill: Fill
     get() = if (strokeFill.color.alpha == 0f) fill else strokeFill
@@ -69,9 +70,9 @@ public open class ShapeComponent(
     require(strokeThickness >= 0.dp) { "`strokeThickness` must be nonnegative." }
   }
 
-  private fun getShadowPainters(shadows: List<Shadow>?) =
-    if (shadows == null) {
-      null
+  private fun getShadowPainters(shadows: List<Shadow>) =
+    if (shadows.isEmpty()) {
+      emptyList()
     } else {
       val composeShape = shape.toComposeShape()
       shadows.map { shadow -> DropShadowPainter(composeShape, shadow) }
@@ -102,12 +103,10 @@ public open class ShapeComponent(
       val height = bottom - top
       applyBrushes(Size(width, height))
       shape.outline(this, path, 0f, 0f, width, height)
-      if (shadowPainters != null) {
+      if (shadowPainters.isNotEmpty()) {
         with(mutableDrawScope) {
           size = Size(width, height)
-          translate(left, top) {
-            shadowPainters.forEach { painter -> with(painter) { draw(size) } }
-          }
+          translate(left, top) { shadowPainters.forEach { with(it) { draw(size) } } }
         }
       }
       canvas.withSave {
@@ -127,7 +126,7 @@ public open class ShapeComponent(
     margins: Insets = this.margins,
     strokeFill: Fill = this.strokeFill,
     strokeThickness: Dp = this.strokeThickness,
-    shadows: List<Shadow>? = this.shadows,
+    shadows: List<Shadow> = this.shadows,
   ): ShapeComponent = ShapeComponent(fill, shape, margins, strokeFill, strokeThickness, shadows)
 
   override fun equals(other: Any?): Boolean =
@@ -146,7 +145,7 @@ public open class ShapeComponent(
     result = 31 * result + margins.hashCode()
     result = 31 * result + strokeFill.hashCode()
     result = 31 * result + strokeThickness.hashCode()
-    result = 31 * result + (shadows?.hashCode() ?: 0)
+    result = 31 * result + shadows.hashCode()
     return result
   }
 }
