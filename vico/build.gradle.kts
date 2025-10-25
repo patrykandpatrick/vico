@@ -34,7 +34,7 @@ dependencies {
 
 dokka {
   pluginsConfiguration.html {
-    footerMessage = "© 2025 Patryk Goworowski and Patrick Michalik"
     customStyleSheets.from("$rootDir/logo-styles.css")
+    footerMessage = "© 2025 Patryk Goworowski and Patrick Michalik"
   }
 }
