@@ -42,7 +42,7 @@ import com.patrykandpatrick.vico.multiplatform.common.shape.toComposeShape
  * @property margins the margins.
  * @property strokeFill the stroke fill.
  * @property strokeThickness the stroke thickness.
- * @property shadows the shadows' properties.
+ * @property shadows the shadow properties.
  */
 public open class ShapeComponent(
   public val fill: Fill = Fill.Black,
@@ -75,7 +75,7 @@ public open class ShapeComponent(
       emptyList()
     } else {
       val composeShape = shape.toComposeShape()
-      shadows.map { shadow -> DropShadowPainter(composeShape, shadow) }
+      shadows.map { DropShadowPainter(composeShape, it) }
     }
 
   protected fun applyBrushes(size: Size) {
