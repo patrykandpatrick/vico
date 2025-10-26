@@ -16,6 +16,7 @@
 
 package com.patrykandpatrick.vico.sample.multiplatform
 
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.TextStyle
@@ -29,12 +30,11 @@ import com.patrykandpatrick.vico.multiplatform.cartesian.marker.rememberDefaultC
 import com.patrykandpatrick.vico.multiplatform.common.Fill
 import com.patrykandpatrick.vico.multiplatform.common.Insets
 import com.patrykandpatrick.vico.multiplatform.common.LayeredComponent
+import com.patrykandpatrick.vico.multiplatform.common.MarkerCornerBasedShape
 import com.patrykandpatrick.vico.multiplatform.common.component.ShapeComponent
 import com.patrykandpatrick.vico.multiplatform.common.component.TextComponent
 import com.patrykandpatrick.vico.multiplatform.common.component.rememberShapeComponent
 import com.patrykandpatrick.vico.multiplatform.common.component.rememberTextComponent
-import com.patrykandpatrick.vico.multiplatform.common.shape.CorneredShape
-import com.patrykandpatrick.vico.multiplatform.common.shape.MarkerCorneredShape
 
 @Composable
 internal fun rememberMarker(
@@ -42,7 +42,7 @@ internal fun rememberMarker(
     DefaultCartesianMarker.ValueFormatter.default(),
   showIndicator: Boolean = true,
 ): CartesianMarker {
-  val labelBackgroundShape = MarkerCorneredShape(CorneredShape.Corner.Rounded)
+  val labelBackgroundShape = MarkerCornerBasedShape(CircleShape)
   val labelBackground =
     rememberShapeComponent(
       fill = Fill(MaterialTheme.colorScheme.background),
@@ -63,7 +63,7 @@ internal fun rememberMarker(
       minWidth = TextComponent.MinWidth.fixed(40.dp),
     )
   val indicatorFrontComponent =
-    rememberShapeComponent(Fill(MaterialTheme.colorScheme.surface), CorneredShape.Pill)
+    rememberShapeComponent(Fill(MaterialTheme.colorScheme.surface), CircleShape)
   val guideline = rememberAxisGuidelineComponent()
   return rememberDefaultCartesianMarker(
     label = label,
@@ -72,10 +72,10 @@ internal fun rememberMarker(
       if (showIndicator) {
         { color ->
           LayeredComponent(
-            back = ShapeComponent(Fill(color.copy(alpha = 0.15f)), CorneredShape.Pill),
+            back = ShapeComponent(Fill(color.copy(alpha = 0.15f)), CircleShape),
             front =
               LayeredComponent(
-                back = ShapeComponent(fill = Fill(color), shape = CorneredShape.Pill),
+                back = ShapeComponent(fill = Fill(color), shape = CircleShape),
                 front = indicatorFrontComponent,
                 padding = Insets(5.dp),
               ),

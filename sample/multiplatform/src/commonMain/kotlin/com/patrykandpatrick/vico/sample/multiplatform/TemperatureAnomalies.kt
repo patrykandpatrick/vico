@@ -17,6 +17,7 @@
 package com.patrykandpatrick.vico.sample.multiplatform
 
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -41,7 +42,6 @@ import com.patrykandpatrick.vico.multiplatform.common.Fill
 import com.patrykandpatrick.vico.multiplatform.common.component.LineComponent
 import com.patrykandpatrick.vico.multiplatform.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.multiplatform.common.data.ExtraStore
-import com.patrykandpatrick.vico.multiplatform.common.shape.CorneredShape
 import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.max
@@ -85,13 +85,13 @@ fun ComposeMultiplatformTemperatureAnomalies(modifier: Modifier = Modifier) {
     rememberLineComponent(
       fill = Fill(Color(0xff0ac285)),
       thickness = 8.dp,
-      shape = CorneredShape.rounded(topLeftPercent = 40, topRightPercent = 40),
+      shape = RoundedCornerShape(topStartPercent = 40, topEndPercent = 40),
     )
   val negativeColumn =
     rememberLineComponent(
       fill = Fill(Color(0xffe8304f)),
       thickness = 8.dp,
-      shape = CorneredShape.rounded(bottomLeftPercent = 40, bottomRightPercent = 40),
+      shape = RoundedCornerShape(bottomStartPercent = 40, bottomEndPercent = 40),
     )
   CartesianChartHost(
     chart =

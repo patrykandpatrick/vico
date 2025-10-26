@@ -17,6 +17,7 @@
 package com.patrykandpatrick.vico.sample.multiplatform
 
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -45,7 +46,6 @@ import com.patrykandpatrick.vico.multiplatform.common.component.rememberLineComp
 import com.patrykandpatrick.vico.multiplatform.common.component.rememberTextComponent
 import com.patrykandpatrick.vico.multiplatform.common.data.ExtraStore
 import com.patrykandpatrick.vico.multiplatform.common.rememberHorizontalLegend
-import com.patrykandpatrick.vico.multiplatform.common.shape.CorneredShape
 import com.patrykandpatrick.vico.multiplatform.common.vicoTheme
 
 private val LegendLabelKey = ExtraStore.Key<Set<String>>()
@@ -107,7 +107,7 @@ fun ComposeMultiplatformDailyDigitalMediaUse(modifier: Modifier = Modifier) {
               extraStore[LegendLabelKey].forEachIndexed { index, label ->
                 add(
                   LegendItem(
-                    ShapeComponent(Fill(columnColors[index]), CorneredShape.Pill),
+                    ShapeComponent(Fill(columnColors[index]), CircleShape),
                     legendItemLabelComponent,
                     label,
                   )

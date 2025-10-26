@@ -34,6 +34,7 @@ import com.patrykandpatrick.vico.multiplatform.cartesian.data.CartesianLayerMode
 import com.patrykandpatrick.vico.multiplatform.cartesian.layer.CartesianLayerDimensions
 import com.patrykandpatrick.vico.multiplatform.cartesian.layer.CartesianLayerMargins
 import com.patrykandpatrick.vico.multiplatform.common.Defaults
+import com.patrykandpatrick.vico.multiplatform.common.MarkerCornerBasedShape
 import com.patrykandpatrick.vico.multiplatform.common.Position
 import com.patrykandpatrick.vico.multiplatform.common.averageOf
 import com.patrykandpatrick.vico.multiplatform.common.component.Component
@@ -45,7 +46,6 @@ import com.patrykandpatrick.vico.multiplatform.common.doubled
 import com.patrykandpatrick.vico.multiplatform.common.format
 import com.patrykandpatrick.vico.multiplatform.common.half
 import com.patrykandpatrick.vico.multiplatform.common.orZero
-import com.patrykandpatrick.vico.multiplatform.common.shape.MarkerCorneredShape
 import kotlin.math.ceil
 import kotlin.math.min
 
@@ -68,10 +68,10 @@ public open class DefaultCartesianMarker(
   protected val guideline: LineComponent? = null,
 ) : CartesianMarker {
 
-  protected val markerCorneredShape: MarkerCorneredShape? =
-    (label.background as? ShapeComponent)?.shape as? MarkerCorneredShape
+  protected val markerCornerBasedShape: MarkerCornerBasedShape? =
+    (label.background as? ShapeComponent)?.shape as? MarkerCornerBasedShape
 
-  protected val tickSize: Dp = markerCorneredShape?.tickSize.orZero
+  protected val tickSize: Dp = markerCornerBasedShape?.tickSize.orZero
 
   override fun drawOverLayers(
     context: CartesianDrawingContext,
@@ -145,19 +145,19 @@ public open class DefaultCartesianMarker(
       val labelBounds = label.getBounds(context, text, layerBounds.width.toInt())
       val halfOfTextWidth = labelBounds.width.half
       val x = overrideXPositionToFit(targetX, layerBounds, halfOfTextWidth)
-      markerCorneredShape?.tickX = targetX - x
-      val tickPosition: MarkerCorneredShape.TickPosition
+      markerCornerBasedShape?.tickX = targetX - x
+      val tickPosition: MarkerCornerBasedShape.TickPosition
       val y: Float
       val verticalPosition: Position.Vertical
       when (labelPosition) {
         LabelPosition.Top -> {
-          tickPosition = MarkerCorneredShape.TickPosition.Bottom
+          tickPosition = MarkerCornerBasedShape.TickPosition.Bottom
           y = context.layerBounds.top - tickSize.pixels
           verticalPosition = Position.Vertical.Top
         }
 
         LabelPosition.Bottom -> {
-          tickPosition = MarkerCorneredShape.TickPosition.Top
+          tickPosition = MarkerCornerBasedShape.TickPosition.Top
           y = context.layerBounds.bottom + tickSize.pixels
           verticalPosition = Position.Vertical.Bottom
         }
@@ -181,8 +181,11 @@ public open class DefaultCartesianMarker(
             labelPosition == LabelPosition.AroundPoint &&
               topPointY - labelBounds.height - tickSize.pixels < context.layerBounds.top
           tickPosition =
-            if (flip) MarkerCorneredShape.TickPosition.Top
-            else MarkerCorneredShape.TickPosition.Bottom
+            if (flip) {
+              MarkerCornerBasedShape.TickPosition.Top
+            } else {
+              MarkerCornerBasedShape.TickPosition.Bottom
+            }
           y = topPointY + (if (flip) 1 else -1) * tickSize.pixels
           verticalPosition = if (flip) Position.Vertical.Bottom else Position.Vertical.Top
         }
@@ -198,12 +201,12 @@ public open class DefaultCartesianMarker(
                 else -> error("Unexpected `CartesianMarker.Target` implementation.")
               }
             }
-          tickPosition = MarkerCorneredShape.TickPosition.Top
+          tickPosition = MarkerCornerBasedShape.TickPosition.Top
           y = bottomPointY + tickSize.pixels
           verticalPosition = Position.Vertical.Bottom
         }
       }
-      markerCorneredShape?.tickPosition = tickPosition
+      markerCornerBasedShape?.tickPosition = tickPosition
 
       label.draw(
         context = context,

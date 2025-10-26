@@ -34,7 +34,7 @@ public open class MarkerCorneredShape(
   bottomLeft: Corner,
   public val tickSizeDp: Float = MARKER_TICK_SIZE,
 ) : CorneredShape(topLeft, topRight, bottomRight, bottomLeft) {
-  /** The tick’s _x_ coordinate. If this is null, the tick isn’t drawn. */
+  /** The tick’s _x_-coordinate. If this is null, the tick isn’t drawn. */
   public var tickX: Float? = null
 
   /** Specifies the tick position. */
@@ -68,38 +68,32 @@ public open class MarkerCorneredShape(
   ) {
     with(context) {
       super.outline(context, path, left, top, right, bottom)
-
-      val tickX = tickX ?: return
-
-      val tickSize = context.dpToPx(tickSizeDp)
+      val tickTipX = tickX ?: return
       val availableCornerSize = minOf(right - left, bottom - top)
       val cornerScale = getCornerScale(right - left, bottom - top, density)
-
-      val minLeft = left + bottomLeft.getSize(availableCornerSize, density) * cornerScale
-      val maxLeft = right - bottomRight.getSize(availableCornerSize, density) * cornerScale
-
-      val coercedTickSize = tickSize.coerceAtMost((maxLeft - minLeft).half.coerceAtLeast(0f))
-
-      (tickX - coercedTickSize)
-        .takeIf { minLeft < maxLeft }
-        ?.coerceIn(minLeft, maxLeft - coercedTickSize.doubled)
-        ?.also { tickBaseLeft ->
-          val tickBaseY =
-            when (tickPosition) {
-              TickPosition.Top -> top
-              TickPosition.Bottom -> bottom
-            }
-          val tickDirection =
-            when (tickPosition) {
-              TickPosition.Top -> -1
-              TickPosition.Bottom -> 1
-            }
-          tickPath.rewind()
-          tickPath.moveTo(tickBaseLeft, tickBaseY)
-          tickPath.lineTo(tickX, tickBaseY + tickDirection * tickSize)
-          tickPath.lineTo(tickBaseLeft + coercedTickSize.doubled, tickBaseY)
+      val minTickBaseX = left + bottomLeft.getSize(availableCornerSize, density) * cornerScale
+      val maxTickBaseX = right - bottomRight.getSize(availableCornerSize, density) * cornerScale
+      if (minTickBaseX >= maxTickBaseX) return
+      val tickSize = context.dpToPx(tickSizeDp)
+      val coercedTickSize = tickSize.coerceAtMost((maxTickBaseX - minTickBaseX).half)
+      val tickBaseLeft =
+        (tickTipX - coercedTickSize).coerceIn(minTickBaseX, maxTickBaseX - coercedTickSize.doubled)
+      val tickBaseY =
+        when (tickPosition) {
+          TickPosition.Top -> top
+          TickPosition.Bottom -> bottom
         }
-
+      val tickDirection =
+        when (tickPosition) {
+          TickPosition.Top -> -1
+          TickPosition.Bottom -> 1
+        }
+      with(tickPath) {
+        rewind()
+        moveTo(tickBaseLeft, tickBaseY)
+        lineTo(tickTipX, tickBaseY + tickDirection * tickSize)
+        lineTo(tickBaseLeft + coercedTickSize.doubled, tickBaseY)
+      }
       path.close()
       path.op(tickPath, Path.Op.UNION)
     }

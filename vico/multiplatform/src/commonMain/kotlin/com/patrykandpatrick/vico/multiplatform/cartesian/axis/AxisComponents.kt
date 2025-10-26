@@ -17,12 +17,15 @@
 package com.patrykandpatrick.vico.multiplatform.cartesian.axis
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.patrykandpatrick.vico.multiplatform.common.DashedShape
 import com.patrykandpatrick.vico.multiplatform.common.Defaults
 import com.patrykandpatrick.vico.multiplatform.common.Fill
 import com.patrykandpatrick.vico.multiplatform.common.Insets
@@ -31,8 +34,6 @@ import com.patrykandpatrick.vico.multiplatform.common.component.LineComponent
 import com.patrykandpatrick.vico.multiplatform.common.component.TextComponent
 import com.patrykandpatrick.vico.multiplatform.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.multiplatform.common.component.rememberTextComponent
-import com.patrykandpatrick.vico.multiplatform.common.shape.DashedShape
-import com.patrykandpatrick.vico.multiplatform.common.shape.Shape
 import com.patrykandpatrick.vico.multiplatform.common.vicoTheme
 
 /** A [rememberTextComponent] alias with defaults for [Axis] labels. */
@@ -55,7 +56,7 @@ public fun rememberAxisLabelComponent(
 public fun rememberAxisLineComponent(
   fill: Fill = Fill(vicoTheme.lineColor),
   thickness: Dp = Defaults.AXIS_LINE_WIDTH.dp,
-  shape: Shape = Shape.Rectangle,
+  shape: Shape = RectangleShape,
   margins: Insets = Insets.Zero,
   strokeFill: Fill = Fill.Transparent,
   strokeThickness: Dp = 0.dp,
@@ -68,7 +69,7 @@ public fun rememberAxisLineComponent(
 public fun rememberAxisTickComponent(
   fill: Fill = Fill(vicoTheme.lineColor),
   thickness: Dp = Defaults.AXIS_LINE_WIDTH.dp,
-  shape: Shape = Shape.Rectangle,
+  shape: Shape = RectangleShape,
   margins: Insets = Insets.Zero,
   strokeFill: Fill = Fill.Transparent,
   strokeThickness: Dp = 0.dp,

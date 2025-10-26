@@ -17,6 +17,8 @@
 package com.patrykandpatrick.vico.multiplatform.common.component
 
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -25,7 +27,6 @@ import com.patrykandpatrick.vico.multiplatform.common.DrawingContext
 import com.patrykandpatrick.vico.multiplatform.common.Fill
 import com.patrykandpatrick.vico.multiplatform.common.Insets
 import com.patrykandpatrick.vico.multiplatform.common.half
-import com.patrykandpatrick.vico.multiplatform.common.shape.Shape
 
 /**
  * Draws lines.
@@ -41,7 +42,7 @@ import com.patrykandpatrick.vico.multiplatform.common.shape.Shape
 public open class LineComponent(
   fill: Fill,
   public val thickness: Dp = Defaults.LINE_COMPONENT_THICKNESS_DP.dp,
-  shape: Shape = Shape.Rectangle,
+  shape: Shape = RectangleShape,
   margins: Insets = Insets.Zero,
   strokeFill: Fill = Fill.Transparent,
   strokeThickness: Dp = 0.dp,

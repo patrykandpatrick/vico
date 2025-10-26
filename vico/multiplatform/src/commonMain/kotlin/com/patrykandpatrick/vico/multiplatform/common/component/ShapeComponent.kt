@@ -20,6 +20,8 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.PaintingStyle
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.shadow.DropShadowPainter
 import androidx.compose.ui.graphics.shadow.Shadow
@@ -30,9 +32,7 @@ import com.patrykandpatrick.vico.multiplatform.common.DrawingContext
 import com.patrykandpatrick.vico.multiplatform.common.Fill
 import com.patrykandpatrick.vico.multiplatform.common.Insets
 import com.patrykandpatrick.vico.multiplatform.common.half
-import com.patrykandpatrick.vico.multiplatform.common.shape.Shape
-import com.patrykandpatrick.vico.multiplatform.common.shape.outline
-import com.patrykandpatrick.vico.multiplatform.common.shape.toComposeShape
+import com.patrykandpatrick.vico.multiplatform.common.outline
 
 /**
  * Draws [Shape]s.
@@ -46,7 +46,7 @@ import com.patrykandpatrick.vico.multiplatform.common.shape.toComposeShape
  */
 public open class ShapeComponent(
   public val fill: Fill = Fill.Black,
-  public val shape: Shape = Shape.Rectangle,
+  public val shape: Shape = RectangleShape,
   protected val margins: Insets = Insets.Zero,
   public val strokeFill: Fill = Fill.Transparent,
   protected val strokeThickness: Dp = 0.dp,
@@ -71,12 +71,7 @@ public open class ShapeComponent(
   }
 
   private fun getShadowPainters(shadows: List<Shadow>) =
-    if (shadows.isEmpty()) {
-      emptyList()
-    } else {
-      val composeShape = shape.toComposeShape()
-      shadows.map { DropShadowPainter(composeShape, it) }
-    }
+    shadows.map { DropShadowPainter(shape, it) }
 
   protected fun applyBrushes(size: Size) {
     fill.brush?.applyTo(size = size, p = paint, alpha = 1f)
@@ -102,7 +97,7 @@ public open class ShapeComponent(
       val width = right - left
       val height = bottom - top
       applyBrushes(Size(width, height))
-      shape.outline(this, path, 0f, 0f, width, height)
+      shape.outline(density, layoutDirection, path, 0f, 0f, width, height)
       if (shadowPainters.isNotEmpty()) {
         with(mutableDrawScope) {
           size = Size(width, height)
