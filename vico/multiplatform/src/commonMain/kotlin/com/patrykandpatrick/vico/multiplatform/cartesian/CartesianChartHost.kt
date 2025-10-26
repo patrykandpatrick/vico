@@ -49,6 +49,7 @@ import com.patrykandpatrick.vico.multiplatform.cartesian.data.toImmutable
 import com.patrykandpatrick.vico.multiplatform.cartesian.layer.MutableCartesianLayerDimensions
 import com.patrykandpatrick.vico.multiplatform.cartesian.marker.Interaction
 import com.patrykandpatrick.vico.multiplatform.common.Defaults.CHART_HEIGHT
+import com.patrykandpatrick.vico.multiplatform.common.MutableDrawScope
 import com.patrykandpatrick.vico.multiplatform.common.ValueWrapper
 import com.patrykandpatrick.vico.multiplatform.common.data.ExtraStore
 import com.patrykandpatrick.vico.multiplatform.common.getValue
@@ -270,6 +271,7 @@ internal fun CartesianChartHostImpl(
         chart.layerBounds,
         scrollState.value,
         zoomState.value,
+        MutableDrawScope(this),
       )
 
     chart.draw(drawingContext)

@@ -20,6 +20,9 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.PaintingStyle
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.drawscope.translate
+import androidx.compose.ui.graphics.shadow.DropShadowPainter
+import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.graphics.withSave
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -28,6 +31,8 @@ import com.patrykandpatrick.vico.multiplatform.common.Fill
 import com.patrykandpatrick.vico.multiplatform.common.Insets
 import com.patrykandpatrick.vico.multiplatform.common.half
 import com.patrykandpatrick.vico.multiplatform.common.shape.Shape
+import com.patrykandpatrick.vico.multiplatform.common.shape.outline
+import com.patrykandpatrick.vico.multiplatform.common.shape.toComposeShape
 
 /**
  * Draws [Shape]s.
@@ -37,6 +42,7 @@ import com.patrykandpatrick.vico.multiplatform.common.shape.Shape
  * @property margins the margins.
  * @property strokeFill the stroke fill.
  * @property strokeThickness the stroke thickness.
+ * @property shadows the shadow properties.
  */
 public open class ShapeComponent(
   public val fill: Fill = Fill.Black,
@@ -44,6 +50,7 @@ public open class ShapeComponent(
   protected val margins: Insets = Insets.Zero,
   public val strokeFill: Fill = Fill.Transparent,
   protected val strokeThickness: Dp = 0.dp,
+  protected val shadows: List<Shadow> = emptyList(),
 ) : Component {
   private val paint = Paint().apply { color = fill.color }
   private val strokePaint =
@@ -54,12 +61,22 @@ public open class ShapeComponent(
 
   protected val path: Path = Path()
 
+  private val shadowPainters: List<DropShadowPainter> = getShadowPainters(shadows)
+
   internal val effectiveStrokeFill: Fill
     get() = if (strokeFill.color.alpha == 0f) fill else strokeFill
 
   init {
     require(strokeThickness >= 0.dp) { "`strokeThickness` must be nonnegative." }
   }
+
+  private fun getShadowPainters(shadows: List<Shadow>) =
+    if (shadows.isEmpty()) {
+      emptyList()
+    } else {
+      val composeShape = shape.toComposeShape()
+      shadows.map { DropShadowPainter(composeShape, it) }
+    }
 
   protected fun applyBrushes(size: Size) {
     fill.brush?.applyTo(size = size, p = paint, alpha = 1f)
@@ -86,6 +103,12 @@ public open class ShapeComponent(
       val height = bottom - top
       applyBrushes(Size(width, height))
       shape.outline(this, path, 0f, 0f, width, height)
+      if (shadowPainters.isNotEmpty()) {
+        with(mutableDrawScope) {
+          size = Size(width, height)
+          translate(left, top) { shadowPainters.forEach { with(it) { draw(size) } } }
+        }
+      }
       canvas.withSave {
         canvas.translate(left, top)
         canvas.drawPath(path, paint)
@@ -103,7 +126,8 @@ public open class ShapeComponent(
     margins: Insets = this.margins,
     strokeFill: Fill = this.strokeFill,
     strokeThickness: Dp = this.strokeThickness,
-  ): ShapeComponent = ShapeComponent(fill, shape, margins, strokeFill, strokeThickness)
+    shadows: List<Shadow> = this.shadows,
+  ): ShapeComponent = ShapeComponent(fill, shape, margins, strokeFill, strokeThickness, shadows)
 
   override fun equals(other: Any?): Boolean =
     this === other ||
@@ -112,7 +136,8 @@ public open class ShapeComponent(
         shape == other.shape &&
         margins == other.margins &&
         strokeFill == other.strokeFill &&
-        strokeThickness == other.strokeThickness
+        strokeThickness == other.strokeThickness &&
+        shadows == other.shadows
 
   override fun hashCode(): Int {
     var result = fill.hashCode()
@@ -120,6 +145,7 @@ public open class ShapeComponent(
     result = 31 * result + margins.hashCode()
     result = 31 * result + strokeFill.hashCode()
     result = 31 * result + strokeThickness.hashCode()
+    result = 31 * result + shadows.hashCode()
     return result
   }
 }
