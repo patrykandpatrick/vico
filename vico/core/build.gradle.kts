@@ -37,10 +37,11 @@ kotlin {
 }
 
 dependencies {
+  compileOnly(platform(libs.composeBom))
+  compileOnly(libs.composeRuntimeAnnotation)
   implementation(libs.androidXAnnotation)
   implementation(libs.coroutinesCore)
   implementation(libs.kotlinStdLib)
-  compileOnly(libs.composeStableMarker)
   testImplementation(libs.jupiter)
   testImplementation(libs.jupiterParams)
   testImplementation(libs.kotlinTest)
