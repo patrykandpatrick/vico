@@ -17,6 +17,7 @@
 package com.patrykandpatrick.vico.multiplatform.common
 
 import androidx.compose.foundation.shape.CornerBasedShape
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Outline
@@ -42,7 +43,7 @@ private fun CornerBasedShape.getTickBaseXRange(
     }
   val (leftSize, rightSize) =
     if (layoutDirection == LayoutDirection.Ltr) startSize to endSize else endSize to startSize
-  return density.run { leftSize.toPx(size, density) to size.width - rightSize.toPx(size, density) }
+  return leftSize.toPx(size, density) to size.width - rightSize.toPx(size, density)
 }
 
 /**
@@ -82,7 +83,7 @@ public open class MarkerCornerBasedShape(
     path.rewind()
     with(path) {
       when (baseOutline) {
-        is Outline.Rectangle -> addRect(Rect(0f, 0f, size.width, size.height))
+        is Outline.Rectangle -> addRect(Rect(Offset.Zero, size))
         is Outline.Rounded -> addRoundRect(baseOutline.roundRect)
         is Outline.Generic -> addPath(baseOutline.path)
       }

@@ -52,9 +52,9 @@ public class DashedShape(
   ): Outline {
     val path = Path()
     if (size.width > size.height) {
-      outlineHorizontalDashes(density, layoutDirection, path, size.width, size.height)
+      outlineHorizontalDashes(density, layoutDirection, path, size)
     } else {
-      outlineVerticalDashes(density, layoutDirection, path, size.width, size.height)
+      outlineVerticalDashes(density, layoutDirection, path, size)
     }
     return Outline.Generic(path)
   }
@@ -63,14 +63,13 @@ public class DashedShape(
     density: Density,
     layoutDirection: LayoutDirection,
     path: Path,
-    right: Float,
-    bottom: Float,
+    size: Size,
   ) {
-    calculateDrawLengths(density, right)
+    calculateDrawLengths(density, size.width)
 
     var index = 0
     var drawnLength = 0f
-    while (right - drawnLength > 0) {
+    while (size.width - drawnLength > 0) {
       drawnLength +=
         if (index % 2 == 0) {
           shape.outline(
@@ -80,7 +79,7 @@ public class DashedShape(
             left = drawnLength,
             top = 0f,
             right = drawnLength + drawDashLength,
-            bottom = bottom,
+            bottom = size.height,
           )
           drawDashLength
         } else {
@@ -94,14 +93,13 @@ public class DashedShape(
     density: Density,
     layoutDirection: LayoutDirection,
     path: Path,
-    right: Float,
-    bottom: Float,
+    size: Size,
   ) {
-    calculateDrawLengths(density, bottom)
+    calculateDrawLengths(density, size.height)
 
     var index = 0
     var drawnLength = 0f
-    while (bottom - drawnLength > 0) {
+    while (size.height - drawnLength > 0) {
       drawnLength +=
         if (index % 2 == 0) {
           shape.outline(
@@ -110,7 +108,7 @@ public class DashedShape(
             path = path,
             left = 0f,
             top = drawnLength,
-            right = right,
+            right = size.width,
             bottom = drawnLength + drawDashLength,
           )
           drawDashLength
