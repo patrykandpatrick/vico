@@ -109,8 +109,7 @@ internal data class SingleAreaFill(
     with(context) {
       paint.color = fill.color
       fill.brush?.applyTo(size = fillBounds.size, p = paint, alpha = 1f)
-      val left = fillBounds.left
-      val top = fillBounds.top
+      val (left, top) = fillBounds
       canvas.withSave {
         canvas.translate(left, top)
         areaPath.translate(Offset(-left, -top))
@@ -131,8 +130,7 @@ internal data class DoubleAreaFill(
     with(context) {
       paint.color = topFill.color
       topFill.brush?.applyTo(size = fillBounds.size, p = paint, alpha = 1f)
-      val left = fillBounds.left
-      val top = fillBounds.top
+      val (left, top) = fillBounds
       canvas.withSave {
         canvas.translate(left, top)
         path.translate(Offset(-left, -top))
@@ -149,8 +147,7 @@ internal data class DoubleAreaFill(
     with(context) {
       paint.color = bottomFill.color
       bottomFill.brush?.applyTo(size = fillBounds.size, p = paint, alpha = 1f)
-      val left = fillBounds.left
-      val top = fillBounds.top
+      val (left, top) = fillBounds
       canvas.withSave {
         canvas.translate(left, top)
         path.translate(Offset(-left, -top))
