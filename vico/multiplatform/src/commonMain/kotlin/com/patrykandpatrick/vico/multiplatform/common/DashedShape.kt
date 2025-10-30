@@ -14,13 +14,17 @@
  * limitations under the License.
  */
 
-package com.patrykandpatrick.vico.multiplatform.common.shape
+package com.patrykandpatrick.vico.multiplatform.common
 
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import com.patrykandpatrick.vico.multiplatform.common.Defaults
 import kotlin.math.ceil
 
 /**
@@ -33,7 +37,7 @@ import kotlin.math.ceil
  * @property fitStrategy the [DashedShape.FitStrategy] to use for the dashes.
  */
 public class DashedShape(
-  public val shape: Shape = Shape.Rectangle,
+  public val shape: Shape = RectangleShape,
   public val dashLength: Dp = Defaults.DASHED_SHAPE_DASH_LENGTH.dp,
   public val gapLength: Dp = Defaults.DASHED_SHAPE_GAP_LENGTH.dp,
   public val fitStrategy: FitStrategy = FitStrategy.Resize,
@@ -41,46 +45,41 @@ public class DashedShape(
   private var drawDashLength = 0f
   private var drawGapLength = 0f
 
-  override fun outline(
+  override fun createOutline(
+    size: Size,
+    layoutDirection: LayoutDirection,
     density: Density,
-    isLtr: Boolean,
-    path: Path,
-    left: Float,
-    top: Float,
-    right: Float,
-    bottom: Float,
-  ) {
-    if (right - left > bottom - top) {
-      outlineHorizontalDashes(density, isLtr, path, left, top, right, bottom)
+  ): Outline {
+    val path = Path()
+    if (size.width > size.height) {
+      outlineHorizontalDashes(density, layoutDirection, path, size)
     } else {
-      outlineVerticalDashes(density, isLtr, path, left, top, right, bottom)
+      outlineVerticalDashes(density, layoutDirection, path, size)
     }
+    return Outline.Generic(path)
   }
 
   private fun outlineHorizontalDashes(
     density: Density,
-    isLtr: Boolean,
+    layoutDirection: LayoutDirection,
     path: Path,
-    left: Float,
-    top: Float,
-    right: Float,
-    bottom: Float,
+    size: Size,
   ) {
-    calculateDrawLengths(density, right - left)
+    calculateDrawLengths(density, size.width)
 
     var index = 0
     var drawnLength = 0f
-    while (right - left - drawnLength > 0) {
+    while (size.width - drawnLength > 0) {
       drawnLength +=
         if (index % 2 == 0) {
           shape.outline(
             density = density,
-            isLtr = isLtr,
+            layoutDirection = layoutDirection,
             path = path,
-            left = left + drawnLength,
-            top = top,
-            right = left + drawnLength + drawDashLength,
-            bottom = bottom,
+            left = drawnLength,
+            top = 0f,
+            right = drawnLength + drawDashLength,
+            bottom = size.height,
           )
           drawDashLength
         } else {
@@ -92,28 +91,25 @@ public class DashedShape(
 
   private fun outlineVerticalDashes(
     density: Density,
-    isLtr: Boolean,
+    layoutDirection: LayoutDirection,
     path: Path,
-    left: Float,
-    top: Float,
-    right: Float,
-    bottom: Float,
+    size: Size,
   ) {
-    calculateDrawLengths(density, bottom - top)
+    calculateDrawLengths(density, size.height)
 
     var index = 0
     var drawnLength = 0f
-    while (bottom - top - drawnLength > 0) {
+    while (size.height - drawnLength > 0) {
       drawnLength +=
         if (index % 2 == 0) {
           shape.outline(
             density = density,
-            isLtr = isLtr,
+            layoutDirection = layoutDirection,
             path = path,
-            left = left,
-            top = top + drawnLength,
-            right = right,
-            bottom = top + drawnLength + drawDashLength,
+            left = 0f,
+            top = drawnLength,
+            right = size.width,
+            bottom = drawnLength + drawDashLength,
           )
           drawDashLength
         } else {

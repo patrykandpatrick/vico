@@ -19,6 +19,7 @@ package com.patrykandpatrick.vico.multiplatform.cartesian.layer
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.multiplatform.cartesian.CartesianDrawingContext
@@ -33,7 +34,6 @@ import com.patrykandpatrick.vico.multiplatform.cartesian.data.CartesianLayerRang
 import com.patrykandpatrick.vico.multiplatform.cartesian.data.MutableCartesianChartRanges
 import com.patrykandpatrick.vico.multiplatform.cartesian.data.getSliceIndices
 import com.patrykandpatrick.vico.multiplatform.cartesian.getVisibleXRange
-import com.patrykandpatrick.vico.multiplatform.cartesian.layer.CandlestickCartesianLayer.Candle
 import com.patrykandpatrick.vico.multiplatform.cartesian.marker.CandlestickCartesianLayerMarkerTarget
 import com.patrykandpatrick.vico.multiplatform.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.multiplatform.common.Defaults
@@ -47,7 +47,6 @@ import com.patrykandpatrick.vico.multiplatform.common.getStart
 import com.patrykandpatrick.vico.multiplatform.common.getValue
 import com.patrykandpatrick.vico.multiplatform.common.half
 import com.patrykandpatrick.vico.multiplatform.common.setValue
-import com.patrykandpatrick.vico.multiplatform.common.shape.Shape
 import kotlin.math.max
 
 /**
@@ -461,7 +460,7 @@ internal fun LineComponent.asWick(): LineComponent =
   copy(
     fill = effectiveStrokeFill,
     thickness = Defaults.WICK_DEFAULT_WIDTH_DP.dp,
-    shape = Shape.Rectangle,
+    shape = RectangleShape,
     strokeThickness = 0.dp,
   )
 

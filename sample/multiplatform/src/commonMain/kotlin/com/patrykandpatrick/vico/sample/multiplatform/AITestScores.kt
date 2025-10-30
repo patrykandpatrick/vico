@@ -17,6 +17,8 @@
 package com.patrykandpatrick.vico.sample.multiplatform
 
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -46,7 +48,6 @@ import com.patrykandpatrick.vico.multiplatform.common.component.rememberShapeCom
 import com.patrykandpatrick.vico.multiplatform.common.component.rememberTextComponent
 import com.patrykandpatrick.vico.multiplatform.common.data.ExtraStore
 import com.patrykandpatrick.vico.multiplatform.common.rememberVerticalLegend
-import com.patrykandpatrick.vico.multiplatform.common.shape.CorneredShape
 import com.patrykandpatrick.vico.multiplatform.common.vicoTheme
 
 private val LegendLabelKey = ExtraStore.Key<Set<String>>()
@@ -77,7 +78,7 @@ private fun rememberHorizontalLine(): HorizontalLine {
       margins = Insets(start = 6.dp),
       padding = Insets(start = 8.dp, top = 2.dp, end = 8.dp, bottom = 4.dp),
       background =
-        rememberShapeComponent(fill, CorneredShape.rounded(bottomLeft = 4.dp, bottomRight = 4.dp)),
+        rememberShapeComponent(fill, RoundedCornerShape(bottomStart = 4.dp, bottomEnd = 4.dp)),
     )
   return remember {
     HorizontalLine(
@@ -112,7 +113,7 @@ fun ComposeMultiplatformAITestScores(modifier: Modifier = Modifier) {
               areaFill = null,
               pointProvider =
                 LineCartesianLayer.PointProvider.single(
-                  LineCartesianLayer.Point(rememberShapeComponent(Fill(color), CorneredShape.Pill))
+                  LineCartesianLayer.Point(rememberShapeComponent(Fill(color), CircleShape))
                 ),
             )
           }
@@ -126,7 +127,7 @@ fun ComposeMultiplatformAITestScores(modifier: Modifier = Modifier) {
             extraStore[LegendLabelKey].forEachIndexed { index, label ->
               add(
                 LegendItem(
-                  ShapeComponent(Fill(lineColors[index]), CorneredShape.Pill),
+                  ShapeComponent(Fill(lineColors[index]), CircleShape),
                   legendItemLabelComponent,
                   label,
                 )
