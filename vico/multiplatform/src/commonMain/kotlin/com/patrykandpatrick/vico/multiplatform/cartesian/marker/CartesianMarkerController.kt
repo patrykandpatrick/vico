@@ -57,7 +57,7 @@ private object ShowOnPressMarkerController : CartesianMarkerController {
 }
 
 private class ToggleOnTapMarkerController : CartesianMarkerController {
-  private var lastMarkedEntries: List<CartesianMarker.Target>? = null
+  private var lastTargets: List<CartesianMarker.Target>? = null
 
   override fun shouldAcceptInteraction(
     interaction: Interaction,
@@ -68,8 +68,8 @@ private class ToggleOnTapMarkerController : CartesianMarkerController {
     interaction: Interaction,
     targets: List<CartesianMarker.Target>,
   ): Boolean {
-    val show = targets != lastMarkedEntries
-    lastMarkedEntries = if (show) targets else null
+    val show = targets != lastTargets
+    lastTargets = if (show) targets else null
     return show
   }
 
