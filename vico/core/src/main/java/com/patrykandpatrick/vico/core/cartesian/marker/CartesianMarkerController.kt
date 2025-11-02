@@ -20,17 +20,17 @@ package com.patrykandpatrick.vico.core.cartesian.marker
 public fun interface CartesianMarkerController {
   /**
    * Indicates whether this [CartesianMarkerController] wants to respond to [interaction]. If `true`
-   * is returned, [isMarkerVisible] is called; otherwise, the marker visibility remains unchanged.
+   * is returned, [shouldShowMarker] is called; otherwise, the marker visibility remains unchanged.
    */
-  public fun acceptEvent(
+  public fun shouldAcceptInteraction(
     interaction: Interaction,
-    markedEntries: List<CartesianMarker.Target>,
+    targets: List<CartesianMarker.Target>,
   ): Boolean = true
 
   /** Whether the marker should be visible. */
-  public fun isMarkerVisible(
+  public fun shouldShowMarker(
     interaction: Interaction,
-    markedEntries: List<CartesianMarker.Target>,
+    targets: List<CartesianMarker.Target>,
   ): Boolean
 
   /** Houses [CartesianMarkerController] singletons and factory functions. */
@@ -44,31 +44,32 @@ public fun interface CartesianMarkerController {
 }
 
 private object ShowOnPressMarkerController : CartesianMarkerController {
-  override fun acceptEvent(interaction: Interaction, markedEntries: List<CartesianMarker.Target>) =
+  override fun shouldAcceptInteraction(
+    interaction: Interaction,
+    targets: List<CartesianMarker.Target>,
+  ) =
     interaction is Interaction.Press ||
       interaction is Interaction.Release ||
       interaction is Interaction.Move
 
-  override fun isMarkerVisible(
-    interaction: Interaction,
-    markedEntries: List<CartesianMarker.Target>,
-  ) = interaction !is Interaction.Release
+  override fun shouldShowMarker(interaction: Interaction, targets: List<CartesianMarker.Target>) =
+    interaction !is Interaction.Release
 }
 
 private class ToggleOnTapMarkerController : CartesianMarkerController {
   private var lastMarkedEntries: List<CartesianMarker.Target>? = null
 
-  override fun acceptEvent(
+  override fun shouldAcceptInteraction(
     interaction: Interaction,
-    markedEntries: List<CartesianMarker.Target>,
+    targets: List<CartesianMarker.Target>,
   ): Boolean = interaction is Interaction.Tap
 
-  override fun isMarkerVisible(
+  override fun shouldShowMarker(
     interaction: Interaction,
-    markedEntries: List<CartesianMarker.Target>,
+    targets: List<CartesianMarker.Target>,
   ): Boolean {
-    val show = markedEntries != lastMarkedEntries
-    lastMarkedEntries = if (show) markedEntries else null
+    val show = targets != lastMarkedEntries
+    lastMarkedEntries = if (show) targets else null
     return show
   }
 

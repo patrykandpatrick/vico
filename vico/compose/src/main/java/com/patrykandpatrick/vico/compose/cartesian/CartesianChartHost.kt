@@ -193,10 +193,11 @@ internal fun CartesianChartHostImpl(
           } ?: return@collect
       val markedEntries = chart.getMarkerTargets(interaction.point)
       if (
-        markedEntries.isNotEmpty() && chart.markerController.acceptEvent(interaction, markedEntries)
+        markedEntries.isNotEmpty() &&
+          chart.markerController.shouldAcceptInteraction(interaction, markedEntries)
       ) {
         lastAcceptedInteraction = interaction
-        isMarkerVisible = chart.markerController.isMarkerVisible(interaction, markedEntries)
+        isMarkerVisible = chart.markerController.shouldShowMarker(interaction, markedEntries)
       }
     }
   }
@@ -228,9 +229,10 @@ internal fun CartesianChartHostImpl(
                 { interaction ->
                   val targets = chart.getMarkerTargets(interaction.point)
                   if (
-                    targets.isNotEmpty() && chart.markerController.acceptEvent(interaction, targets)
+                    targets.isNotEmpty() &&
+                      chart.markerController.shouldAcceptInteraction(interaction, targets)
                   ) {
-                    isMarkerVisible = chart.markerController.isMarkerVisible(interaction, targets)
+                    isMarkerVisible = chart.markerController.shouldShowMarker(interaction, targets)
                     lastAcceptedInteraction = interaction
                   }
                 }

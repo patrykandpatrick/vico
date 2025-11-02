@@ -357,12 +357,13 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     val markedEntries = chart?.getMarkerTargets(interaction.point)
     val markerController = chart?.markerController ?: return
     if (
-      !markedEntries.isNullOrEmpty() && markerController.acceptEvent(interaction, markedEntries)
+      !markedEntries.isNullOrEmpty() &&
+        markerController.shouldAcceptInteraction(interaction, markedEntries)
     ) {
       lastAcceptedInteraction = interaction
       measuringContext.pointerPosition = interaction.point
       measuringContext.isMarkerVisible =
-        markerController.isMarkerVisible(interaction, markedEntries)
+        markerController.shouldShowMarker(interaction, markedEntries)
       invalidate()
     }
   }
