@@ -40,7 +40,7 @@ public class MutableCartesianMeasuringContext(
   override var zoomEnabled: Boolean,
   override var layerPadding: CartesianLayerPadding,
   override var pointerPosition: Point?,
-  override var isMarkerVisible: Boolean,
+  override var isMarkerShown: Boolean,
   cacheStore: CacheStore = CacheStore(),
 ) :
   MutableMeasuringContext(canvasBounds, density, extraStore, isLtr, spToPx, cacheStore),

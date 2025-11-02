@@ -93,7 +93,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       zoomEnabled = false,
       layerPadding = CartesianLayerPadding(),
       pointerPosition = null,
-      isMarkerVisible = false,
+      isMarkerShown = false,
     )
 
   private val scaleGestureListener: ScaleGestureDetector.OnScaleGestureListener =
@@ -362,8 +362,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     ) {
       lastAcceptedInteraction = interaction
       measuringContext.pointerPosition = interaction.point
-      measuringContext.isMarkerVisible =
-        markerController.shouldShowMarker(interaction, markedEntries)
+      measuringContext.isMarkerShown = markerController.shouldShowMarker(interaction, markedEntries)
       invalidate()
     }
   }

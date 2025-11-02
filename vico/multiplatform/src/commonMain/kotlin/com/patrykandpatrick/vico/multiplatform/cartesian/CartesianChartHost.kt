@@ -160,7 +160,7 @@ internal fun CartesianChartHostImpl(
 ) {
   var lastAcceptedInteraction by
     rememberSaveable(saver = Interaction.Saver) { mutableStateOf(null) }
-  var isMarkerVisible by rememberSaveable { mutableStateOf(false) }
+  var isMarkerShown by rememberSaveable { mutableStateOf(false) }
   val measuringContext =
     rememberCartesianMeasuringContext(
       extraStore = extraStore,
@@ -171,7 +171,7 @@ internal fun CartesianChartHostImpl(
       layerPadding =
         remember(chart.layerPadding, model.extraStore) { chart.layerPadding(model.extraStore) },
       pointerPosition = lastAcceptedInteraction?.point,
-      isMarkerVisible = isMarkerVisible,
+      isMarkerShown = isMarkerShown,
     )
 
   val coroutineScope = rememberCoroutineScope()
@@ -192,7 +192,7 @@ internal fun CartesianChartHostImpl(
           chart.markerController.shouldAcceptInteraction(interaction, markedEntries)
       ) {
         lastAcceptedInteraction = interaction
-        isMarkerVisible = chart.markerController.shouldShowMarker(interaction, markedEntries)
+        isMarkerShown = chart.markerController.shouldShowMarker(interaction, markedEntries)
       }
     }
   }
@@ -227,7 +227,7 @@ internal fun CartesianChartHostImpl(
                     targets.isNotEmpty() &&
                       chart.markerController.shouldAcceptInteraction(interaction, targets)
                   ) {
-                    isMarkerVisible = chart.markerController.shouldShowMarker(interaction, targets)
+                    isMarkerShown = chart.markerController.shouldShowMarker(interaction, targets)
                     lastAcceptedInteraction = interaction
                   }
                 }

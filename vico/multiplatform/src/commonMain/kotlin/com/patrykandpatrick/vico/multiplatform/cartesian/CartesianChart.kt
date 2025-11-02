@@ -297,7 +297,7 @@ internal constructor(
       _markerTargets.putAll(sortedMarkerTargetPairs)
       forEachPersistentMarker { marker, targets -> marker.drawUnderLayers(context, targets) }
       val markerTargets = getMarkerTargets(pointerPosition)
-      val drawMarker = markerTargets.isNotEmpty() && isMarkerVisible
+      val drawMarker = markerTargets.isNotEmpty() && isMarkerShown
       if (drawMarker) marker?.drawUnderLayers(context, markerTargets)
       canvas.drawImage(layerBitmap, Offset.Zero, EmptyPaint)
       fadingEdges?.run {

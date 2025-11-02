@@ -52,8 +52,8 @@ public interface CartesianMeasuringContext : MeasuringContext {
   /** The pointer position. */
   public val pointerPosition: Point?
 
-  /** Whether the marker is visible. */
-  public val isMarkerVisible: Boolean
+  /** Whether the marker is shown. */
+  public val isMarkerShown: Boolean
 }
 
 internal fun CartesianMeasuringContext.getFullXRange(layerDimensions: CartesianLayerDimensions) =
@@ -72,7 +72,7 @@ internal fun rememberCartesianMeasuringContext(
   zoomEnabled: Boolean,
   layerPadding: CartesianLayerPadding,
   pointerPosition: Point?,
-  isMarkerVisible: Boolean,
+  isMarkerShown: Boolean,
 ): MutableCartesianMeasuringContext {
   val fontFamilyResolver = LocalFontFamilyResolver.current
   val density = LocalDensity.current
@@ -89,7 +89,7 @@ internal fun rememberCartesianMeasuringContext(
     zoomEnabled,
     layerPadding,
     pointerPosition,
-    isMarkerVisible,
+    isMarkerShown,
     cacheStore,
   ) {
     MutableCartesianMeasuringContext(
@@ -104,7 +104,7 @@ internal fun rememberCartesianMeasuringContext(
       zoomEnabled = zoomEnabled,
       layerPadding = layerPadding,
       pointerPosition = pointerPosition,
-      isMarkerVisible = isMarkerVisible,
+      isMarkerShown = isMarkerShown,
       cacheStore = cacheStore,
     )
   }
