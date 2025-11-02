@@ -362,8 +362,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     ) {
       lastAcceptedInteraction = interaction
       measuringContext.pointerPosition = interaction.point
-      measuringContext.isMarkerShown =
-        markerController.shouldShowMarker(interaction, markedEntries)
+      measuringContext.isMarkerShown = markerController.shouldShowMarker(interaction, markedEntries)
       invalidate()
     }
   }
