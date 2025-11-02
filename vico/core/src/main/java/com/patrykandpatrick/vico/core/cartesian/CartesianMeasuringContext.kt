@@ -44,7 +44,7 @@ public interface CartesianMeasuringContext : MeasuringContext {
   /** The pointer position. */
   public val pointerPosition: Point?
 
-  /** Whether the marker is visible. */
+  /** Whether the marker is shown. */
   public val isMarkerShown: Boolean
 }
 
