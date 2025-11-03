@@ -15,7 +15,7 @@ jobs:
         with:
           distribution: zulu
           java-version: 17
-      - uses: gradle/actions/setup-gradle@v4
+      - uses: gradle/actions/setup-gradle@v5
       - run: |
           git config --global user.email "96002241+patrykandpatrickbot@users.noreply.github.com"
           git config --global user.name "Patryk & Patrick Bot"
