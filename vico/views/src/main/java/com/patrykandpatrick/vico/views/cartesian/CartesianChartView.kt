@@ -360,9 +360,10 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       !markedEntries.isNullOrEmpty() &&
         markerController.shouldAcceptInteraction(interaction, markedEntries)
     ) {
-      lastAcceptedInteraction = interaction
-      measuringContext.pointerPosition = interaction.point
-      measuringContext.isMarkerShown = markerController.shouldShowMarker(interaction, markedEntries)
+      val shouldShow = markerController.shouldShowMarker(interaction, markedEntries)
+      lastAcceptedInteraction = if (shouldShow) interaction else null
+      measuringContext.pointerPosition = lastAcceptedInteraction?.point
+      measuringContext.isMarkerShown = shouldShow
       invalidate()
     }
   }
