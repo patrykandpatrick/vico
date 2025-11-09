@@ -24,8 +24,12 @@ import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayerPadding
 import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
+import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerVisibilityListener
+import com.patrykandpatrick.vico.core.cartesian.marker.ColumnCartesianLayerMarkerTarget
+import com.patrykandpatrick.vico.core.cartesian.marker.LineCartesianLayerMarkerTarget
 import com.patrykandpatrick.vico.core.common.Fill
+import com.patrykandpatrick.vico.core.common.Point
 import com.patrykandpatrick.vico.core.common.component.LineComponent
 import io.mockk.MockKAnnotations
 import io.mockk.every
@@ -76,6 +80,62 @@ public class CartesianChartTest {
 
     Assertions.assertNotEquals(chart, copiedChart)
     Assertions.assertNotEquals(chart.hashCode(), copiedChart.hashCode())
+  }
+
+  @Test
+  public fun `Given marker targets from multiple layers at the same x position with slightly different canvasX values, when getMarkerTargets is called, then all targets are returned`() {
+    // Create a custom chart that exposes markerTargets for testing
+    val chart = object : CartesianChart(
+      LineCartesianLayer(
+        lineProvider = LineCartesianLayer.LineProvider.series(
+          LineCartesianLayer.Line(LineCartesianLayer.LineFill.single(Fill.Black))
+        )
+      ),
+      ColumnCartesianLayer(
+        columnProvider = ColumnCartesianLayer.ColumnProvider.series(LineComponent(Fill.Black))
+      ),
+      marker = object : CartesianMarker {
+        override fun drawOverLayers(
+          context: CartesianDrawingContext,
+          targets: List<CartesianMarker.Target>
+        ) {}
+      }
+    ) {
+      @Suppress("UNCHECKED_CAST")
+      fun setTestMarkerTargets(targets: Map<Double, List<CartesianMarker.Target>>) {
+        (markerTargets as MutableMap<Double, MutableList<CartesianMarker.Target>>).clear()
+        targets.forEach { (x, targetList) ->
+          (markerTargets as MutableMap<Double, MutableList<CartesianMarker.Target>>)
+            .getOrPut(x) { mutableListOf() }
+            .addAll(targetList)
+        }
+      }
+    }
+
+    // Create test targets from different layers at the same x position
+    // with slightly different canvasX values (simulating floating point precision differences)
+    val lineTarget = object : LineCartesianLayerMarkerTarget {
+      override val x: Double = 5.0
+      override val canvasX: Float = 100.0f
+      override val points: List<LineCartesianLayerMarkerTarget.Point> = emptyList()
+    }
+
+    val columnTarget = object : ColumnCartesianLayerMarkerTarget {
+      override val x: Double = 5.0
+      override val canvasX: Float = 100.0001f  // Slightly different canvasX
+      override val columns: List<ColumnCartesianLayerMarkerTarget.Column> = emptyList()
+    }
+
+    // Set up the marker targets
+    chart.setTestMarkerTargets(mapOf(5.0 to listOf(lineTarget, columnTarget)))
+
+    // Get marker targets at a pointer position near the targets
+    val result = chart.getMarkerTargets(Point(100.0f, 50.0f))
+
+    // Both targets should be returned
+    Assertions.assertEquals(2, result.size)
+    Assertions.assertTrue(result.any { it is LineCartesianLayerMarkerTarget })
+    Assertions.assertTrue(result.any { it is ColumnCartesianLayerMarkerTarget })
   }
 
   private companion object {
