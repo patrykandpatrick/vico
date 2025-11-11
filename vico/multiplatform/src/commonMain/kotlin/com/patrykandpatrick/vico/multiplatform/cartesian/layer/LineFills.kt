@@ -23,6 +23,7 @@ import com.patrykandpatrick.vico.multiplatform.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.multiplatform.cartesian.axis.Axis
 import com.patrykandpatrick.vico.multiplatform.common.Fill
 import com.patrykandpatrick.vico.multiplatform.common.data.ExtraStore
+import com.patrykandpatrick.vico.multiplatform.common.extendBy
 
 internal data class SingleLineFill(val fill: Fill) : LineCartesianLayer.LineFill {
   private val paint = Paint().apply { color = fill.color }
@@ -33,11 +34,9 @@ internal data class SingleLineFill(val fill: Fill) : LineCartesianLayer.LineFill
     verticalAxisPosition: Axis.Position.Vertical?,
   ) {
     with(context) {
-      fill.brush?.applyTo(size = layerBounds.size, p = paint, alpha = 1f)
-      canvas.withSave {
-        canvas.translate(layerBounds.left, layerBounds.top)
-        canvas.drawRect(0f, 0f, layerBounds.width, layerBounds.height, paint)
-      }
+      val drawBounds = layerBounds.extendBy(top = halfLineThickness, bottom = halfLineThickness)
+      fill.brush?.applyTo(size = drawBounds.size, p = paint, alpha = 1f)
+      canvas.drawRect(drawBounds, paint)
     }
   }
 }
