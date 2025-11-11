@@ -270,10 +270,21 @@ protected constructor(
     tickCenterY: Float,
   ): Unit =
     with(context) {
+      val offsetFromTickCenterY = getOffsetFromTickCenterY()
       val textBounds =
         labelComponent
-          .getBounds(context = this, text = label, rotationDegrees = labelRotationDegrees)
-          .apply { translate(labelX, tickCenterY - center.y) }
+          .getBounds(
+            context = this,
+            text = label,
+            rotationDegrees = labelRotationDegrees,
+            verticalPosition = verticalLabelPosition,
+          )
+          .run {
+            translate(
+              labelX - if (areLabelsOutsideAtStartOrInsideAtEnd) width else 0f,
+              tickCenterY + offsetFromTickCenterY - height / 2,
+            )
+          }
 
       if (
         horizontalLabelPosition == Outside ||
@@ -288,13 +299,20 @@ protected constructor(
           context = this,
           text = label,
           x = labelX,
-          y = tickCenterY,
+          y = tickCenterY + offsetFromTickCenterY,
           horizontalPosition = textHorizontalPosition,
           verticalPosition = verticalLabelPosition,
           rotationDegrees = labelRotationDegrees,
           maxWidth = (maxLabelWidth ?: (layerBounds.width.half - this.tickLength)).toInt(),
         )
       }
+    }
+
+  private fun CartesianMeasuringContext.getOffsetFromTickCenterY() =
+    when (verticalLabelPosition) {
+      Position.Vertical.Top -> -tickThickness.half
+      Position.Vertical.Center -> 0f
+      Position.Vertical.Bottom -> tickThickness.half
     }
 
   protected fun CartesianMeasuringContext.getTickLeftX(): Float {

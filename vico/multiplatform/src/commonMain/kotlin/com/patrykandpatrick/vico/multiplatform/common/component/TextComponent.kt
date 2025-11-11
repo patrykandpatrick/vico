@@ -37,6 +37,7 @@ import com.patrykandpatrick.vico.multiplatform.common.Insets
 import com.patrykandpatrick.vico.multiplatform.common.MeasuringContext
 import com.patrykandpatrick.vico.multiplatform.common.Position
 import com.patrykandpatrick.vico.multiplatform.common.bounds
+import com.patrykandpatrick.vico.multiplatform.common.component.TextComponent.MinWidth.Companion.text
 import com.patrykandpatrick.vico.multiplatform.common.data.CacheStore
 import com.patrykandpatrick.vico.multiplatform.common.extendBy
 import com.patrykandpatrick.vico.multiplatform.common.half
@@ -292,6 +293,7 @@ public open class TextComponent(
     maxHeight: Int = DEF_LAYOUT_SIZE,
     rotationDegrees: Float = 0f,
     pad: Boolean = text == null,
+    verticalPosition: Position.Vertical = Position.Vertical.Center,
   ): Rect =
     with(context) {
       var measuredText = text ?: ""
@@ -307,6 +309,11 @@ public open class TextComponent(
           0f,
           getBaseWidth(maxWidth, maxHeight, rotationDegrees, layout) + padding.horizontal.pixels,
           layout.size.height.toFloat() + padding.vertical.pixels,
+        )
+        .translate(
+          0f,
+          verticalPosition.getTextTopPosition(context, 0f, layout.size.height.toFloat()) +
+            layout.size.height.toFloat().half,
         )
         .rotate(rotationDegrees)
         .extendBy(right = margins.horizontal.pixels, bottom = margins.vertical.pixels)
