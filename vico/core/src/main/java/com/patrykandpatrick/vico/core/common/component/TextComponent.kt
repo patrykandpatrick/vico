@@ -35,7 +35,6 @@ import com.patrykandpatrick.vico.core.common.Insets
 import com.patrykandpatrick.vico.core.common.MeasuringContext
 import com.patrykandpatrick.vico.core.common.Position
 import com.patrykandpatrick.vico.core.common.bounds
-import com.patrykandpatrick.vico.core.common.component.TextComponent.MinWidth.Companion.text
 import com.patrykandpatrick.vico.core.common.copy
 import com.patrykandpatrick.vico.core.common.data.CacheStore
 import com.patrykandpatrick.vico.core.common.half
@@ -302,7 +301,6 @@ public open class TextComponent(
     maxHeight: Int = DEF_LAYOUT_SIZE,
     rotationDegrees: Float = 0f,
     pad: Boolean = text == null,
-    verticalPosition: Position.Vertical = Position.Vertical.Center,
   ): RectF =
     with(context) {
       var measuredText = text ?: ""
@@ -314,11 +312,6 @@ public open class TextComponent(
       }
       val layout = getLayout(this, measuredText, maxWidth, maxHeight, rotationDegrees)
       layout.bounds
-        .translate(
-          0f,
-          verticalPosition.getTextTopPosition(context, 0f, layout.heightWithSpacingAddition) +
-            layout.heightWithSpacingAddition / 2,
-        )
         .apply {
           right =
             getBaseWidth(maxWidth, maxHeight, rotationDegrees, layout) + padding.horizontalDp.pixels

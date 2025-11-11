@@ -271,16 +271,17 @@ protected constructor(
       val offsetFromTickCenterY = getOffsetFromTickCenterY()
       val textBounds =
         labelComponent
-          .getBounds(
-            context = this,
-            text = label,
-            rotationDegrees = labelRotationDegrees,
-            verticalPosition = verticalLabelPosition,
-          )
+          .getBounds(context = this, text = label, rotationDegrees = labelRotationDegrees)
           .apply {
             translate(
-              labelX - if (areLabelsOutsideAtStartOrInsideAtEnd) width() else 0f,
-              tickCenterY + offsetFromTickCenterY - height() / 2,
+              x = labelX - if (areLabelsOutsideAtStartOrInsideAtEnd) width() else 0f,
+              y =
+                tickCenterY + offsetFromTickCenterY -
+                  when (verticalLabelPosition) {
+                    Position.Vertical.Top -> height()
+                    Position.Vertical.Center -> height().half
+                    Position.Vertical.Bottom -> 0f
+                  },
             )
           }
 
