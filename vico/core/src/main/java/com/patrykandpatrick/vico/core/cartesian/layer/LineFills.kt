@@ -35,9 +35,9 @@ internal data class SingleLineFill(val fill: Fill) : LineCartesianLayer.LineFill
         fill.shaderProvider?.getShader(
           this,
           layerBounds.left,
-          layerBounds.top,
+          layerBounds.top - halfLineThickness,
           layerBounds.right,
-          layerBounds.bottom,
+          layerBounds.bottom + halfLineThickness,
         )
       canvas.drawPaint(paint)
     }
