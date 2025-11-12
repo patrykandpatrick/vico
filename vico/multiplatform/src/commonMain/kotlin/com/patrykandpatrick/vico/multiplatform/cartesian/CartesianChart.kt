@@ -515,7 +515,7 @@ internal constructor(
   protected companion object {
     public val cacheKeyNamespace: CacheStore.KeyNamespace = CacheStore.KeyNamespace()
 
-    private const val CANVAS_X_DISTANCE_TOLERANCE = 0.001f
+    private const val CANVAS_X_DISTANCE_TOLERANCE = 0.5f
   }
 }
 
