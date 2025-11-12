@@ -404,7 +404,7 @@ internal constructor(
         targets = canvasXTargets
         previousDistance = minDistance
       } else {
-        targets = targets + canvasXTargets
+        targets += canvasXTargets
       }
     }
     val targetHashCode = targets.hashCode()
