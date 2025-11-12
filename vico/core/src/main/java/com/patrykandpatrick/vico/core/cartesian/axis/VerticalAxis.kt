@@ -21,6 +21,8 @@ import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis.HorizontalLabelPosition.Inside
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis.HorizontalLabelPosition.Outside
+import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis.ItemPlacer.Companion.count
+import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis.ItemPlacer.Companion.step
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.formatForAxis
@@ -266,10 +268,22 @@ protected constructor(
     tickCenterY: Float,
   ): Unit =
     with(context) {
+      val offsetFromTickCenterY = getOffsetFromTickCenterY()
       val textBounds =
         labelComponent
           .getBounds(context = this, text = label, rotationDegrees = labelRotationDegrees)
-          .apply { translate(labelX, tickCenterY - centerY()) }
+          .apply {
+            translate(
+              x = labelX - if (areLabelsOutsideAtStartOrInsideAtEnd) width() else 0f,
+              y =
+                tickCenterY + offsetFromTickCenterY -
+                  when (verticalLabelPosition) {
+                    Position.Vertical.Top -> height()
+                    Position.Vertical.Center -> height().half
+                    Position.Vertical.Bottom -> 0f
+                  },
+            )
+          }
 
       if (
         horizontalLabelPosition == Outside ||
@@ -284,13 +298,20 @@ protected constructor(
           context = this,
           text = label,
           x = labelX,
-          y = tickCenterY,
+          y = tickCenterY + offsetFromTickCenterY,
           horizontalPosition = textHorizontalPosition,
           verticalPosition = verticalLabelPosition,
           rotationDegrees = labelRotationDegrees,
           maxWidth = (maxLabelWidth ?: (layerBounds.width().half - tickLength)).toInt(),
         )
       }
+    }
+
+  private fun CartesianMeasuringContext.getOffsetFromTickCenterY() =
+    when (verticalLabelPosition) {
+      Position.Vertical.Top -> -tickThickness.half
+      Position.Vertical.Center -> 0f
+      Position.Vertical.Bottom -> tickThickness.half
     }
 
   protected fun CartesianMeasuringContext.getTickLeftX(): Float {
