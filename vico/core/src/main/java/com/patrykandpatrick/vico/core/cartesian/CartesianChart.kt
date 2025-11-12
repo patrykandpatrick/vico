@@ -422,11 +422,17 @@ private constructor(
     var targets = emptyList<CartesianMarker.Target>()
     var previousDistance = Float.POSITIVE_INFINITY
     for (xTargets in markerTargets.values) {
-      val (distance, canvasXTargets) =
-        xTargets.groupBy { abs(pointerPosition.x - it.canvasX) }.minBy { it.key }
-      if (distance > previousDistance) break
-      targets = canvasXTargets
-      previousDistance = distance
+      val grouped = xTargets.groupBy { abs(pointerPosition.x - it.canvasX) }
+      val minDistance = grouped.keys.min()
+      if (minDistance > previousDistance) break
+      val canvasXTargets =
+        grouped.filterKeys { abs(it - minDistance) <= CANVAS_X_DISTANCE_TOLERANCE }.values.flatten()
+      if (minDistance < previousDistance) {
+        targets = canvasXTargets
+        previousDistance = minDistance
+      } else {
+        targets += canvasXTargets
+      }
     }
     val targetHashCode = targets.hashCode()
     if (previousMarkerTargetHashCode == null) {
@@ -535,5 +541,7 @@ private constructor(
 
   protected companion object {
     public val cacheKeyNamespace: CacheStore.KeyNamespace = CacheStore.KeyNamespace()
+
+    private const val CANVAS_X_DISTANCE_TOLERANCE = 0.25f
   }
 }
