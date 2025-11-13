@@ -78,3 +78,16 @@ public fun MutableCartesianLayerDimensions.scale(factor: Float) {
     unscalableEndPadding,
   )
 }
+
+/** @suppress */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+public fun MutableCartesianLayerDimensions.copyScaled(
+  factor: Float
+): MutableCartesianLayerDimensions =
+  MutableCartesianLayerDimensions(
+    factor * xSpacing,
+    factor * scalableStartPadding,
+    factor * scalableEndPadding,
+    unscalableStartPadding,
+    unscalableEndPadding,
+  )
