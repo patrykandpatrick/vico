@@ -144,13 +144,16 @@ public class VicoZoomState {
   }
 
   internal suspend fun zoom(factor: Float, centroidX: Float, scroll: Float, bounds: RectF) {
-    overridden = true
-    val oldValue = value
-    value *= factor
-    if (value == oldValue) return
-    val transformationAxisX = scroll + centroidX - bounds.left
-    val zoomedTransformationAxisX = transformationAxisX * (value / oldValue)
-    _pendingScroll.emit(Scroll.Relative.pixels(zoomedTransformationAxisX - transformationAxisX))
+    withUpdated { _, layerDimensions, _ ->
+      overridden = true
+      val oldValue = value
+      value *= factor
+      if (value == oldValue) return@withUpdated
+      val transformationAxisX =
+        scroll + centroidX - bounds.left - layerDimensions.unscalableStartPadding
+      val zoomedTransformationAxisX = transformationAxisX * (value / oldValue)
+      _pendingScroll.emit(Scroll.Relative.pixels(zoomedTransformationAxisX - transformationAxisX))
+    }
   }
 
   internal companion object {
