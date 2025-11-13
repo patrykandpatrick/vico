@@ -149,6 +149,7 @@ public class VicoZoomState {
       val oldValue = value
       value *= factor
       if (value == oldValue) return@withUpdated
+      layerDimensions.scale(value)
       val transformationAxisX =
         scroll + centroidX - bounds.left - layerDimensions.unscalableStartPadding
       val zoomedTransformationAxisX = transformationAxisX * (value / oldValue)

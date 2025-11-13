@@ -211,7 +211,10 @@ internal fun CartesianChartHostImpl(
   }
 
   LaunchedEffect(zoomState, scrollState) {
-    zoomState.pendingScroll.collect { scrollState.scroll(it) }
+    zoomState.pendingScroll.collect { scroll ->
+      scrollState.update(measuringContext, chart.layerBounds, layerDimensions)
+      scrollState.scroll(scroll)
+    }
   }
 
   DisposableEffect(scrollState) { onDispose { scrollState.clearUpdated() } }
