@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -42,6 +43,15 @@ kotlin {
     }
   }
   jvm("desktop")
+  js {
+    browser()
+    binaries.executable()
+  }
+  @OptIn(ExperimentalWasmDsl::class)
+  wasmJs {
+    browser()
+    binaries.executable()
+  }
   sourceSets {
     commonMain.dependencies {
       api(project(":vico:multiplatform"))
