@@ -384,9 +384,9 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
         postInvalidateOnAnimation()
       }
 
-      zoomHandler.consumePendingScroll(scrollHandler::scroll)
       zoomHandler.update(measuringContext, layerDimensions, chart.layerBounds, scrollHandler.value)
       scrollHandler.update(measuringContext, chart.layerBounds, layerDimensions)
+      zoomHandler.consumePendingScroll(scrollHandler::scroll)
 
       val drawingContext =
         CartesianDrawingContext(
