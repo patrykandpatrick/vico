@@ -147,11 +147,19 @@ public class VicoScrollState {
     this.context = context
     this.layerDimensions = layerDimensions
     this.bounds = bounds
-    maxValue = context.getMaxScrollDistance(bounds.width, layerDimensions)
+    updateMaxValue(context, bounds.width, layerDimensions)
     if (!initialScrollHandled) {
       value = initialScroll.getValue(context, layerDimensions, bounds, maxValue)
       initialScrollHandled = true
     }
+  }
+
+  internal fun updateMaxValue(
+    context: CartesianMeasuringContext,
+    boundsWidth: Float,
+    layerDimensions: CartesianLayerDimensions,
+  ) {
+    maxValue = context.getMaxScrollDistance(boundsWidth, layerDimensions)
   }
 
   internal suspend fun autoScroll(model: CartesianChartModel, oldModel: CartesianChartModel?) {

@@ -212,7 +212,7 @@ internal fun CartesianChartHostImpl(
 
   LaunchedEffect(zoomState, scrollState) {
     zoomState.pendingScroll.collect { scroll ->
-      scrollState.update(measuringContext, chart.layerBounds, layerDimensions)
+      scrollState.updateMaxValue(measuringContext, chart.layerBounds.width(), layerDimensions)
       scrollState.scroll(scroll)
     }
   }
