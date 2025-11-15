@@ -123,7 +123,9 @@ public class ZoomHandler(
       val transformationAxisX =
         scroll + centroidX - bounds.left - layerDimensions.unscalableStartPadding
       val zoomedTransformationAxisX = transformationAxisX * (value / oldValue)
-      pendingScroll.add(Scroll.Absolute.pixels(scroll + zoomedTransformationAxisX - transformationAxisX))
+      pendingScroll.add(
+        Scroll.Absolute.pixels(scroll + zoomedTransformationAxisX - transformationAxisX)
+      )
       invalidate?.invoke()
     }
   }
