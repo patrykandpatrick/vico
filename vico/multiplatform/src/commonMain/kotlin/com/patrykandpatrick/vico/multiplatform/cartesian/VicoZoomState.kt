@@ -26,6 +26,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.center
 import com.patrykandpatrick.vico.multiplatform.cartesian.layer.MutableCartesianLayerDimensions
+import com.patrykandpatrick.vico.multiplatform.cartesian.layer.copyScaled
 import com.patrykandpatrick.vico.multiplatform.cartesian.layer.scale
 import com.patrykandpatrick.vico.multiplatform.common.Defaults
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -44,7 +45,7 @@ public class VicoZoomState {
   private var layerDimensions: MutableCartesianLayerDimensions? = null
   private var bounds: Rect? = null
   private var scroll = 0f
-  private val _pendingScroll = MutableSharedFlow<Scroll>()
+  private val _pendingScroll = MutableSharedFlow<Pair<Scroll, Float>>()
   internal val pendingScroll = _pendingScroll.asSharedFlow()
 
   /** The current zoom factor. */
@@ -106,7 +107,7 @@ public class VicoZoomState {
     withUpdated { context, layerDimensions, bounds ->
       val newValue = zoom.getValue(context, layerDimensions, bounds)
       if (newValue != value) {
-        zoom(newValue / value, context.canvasSize.center.x, scroll, bounds)
+        zoom(newValue / value, context.canvasSize.center.x, scroll)
       }
     }
   }
@@ -140,16 +141,20 @@ public class VicoZoomState {
     layerDimensions.scale(value)
   }
 
-  internal suspend fun zoom(factor: Float, centroidX: Float, scroll: Float, bounds: Rect) {
-    withUpdated { _, layerDimensions, _ ->
+  internal suspend fun zoom(factor: Float, centroidX: Float, scroll: Float) {
+    withUpdated { context, layerDimensions, bounds ->
       overridden = true
       val oldValue = value
       value *= factor
       if (value == oldValue) return@withUpdated
+      val maxScrollDistance =
+        context.getMaxScrollDistance(bounds.width, layerDimensions.copyScaled(value / oldValue))
       val transformationAxisX =
         scroll + centroidX - bounds.left - layerDimensions.unscalableStartPadding
       val zoomedTransformationAxisX = transformationAxisX * (value / oldValue)
-      _pendingScroll.emit(Scroll.Relative.pixels(zoomedTransformationAxisX - transformationAxisX))
+      _pendingScroll.emit(
+        Scroll.Relative.pixels(zoomedTransformationAxisX - transformationAxisX) to maxScrollDistance
+      )
     }
   }
 

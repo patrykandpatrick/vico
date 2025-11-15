@@ -74,3 +74,14 @@ internal fun MutableCartesianLayerDimensions.scale(factor: Float) {
     unscalableEndPadding,
   )
 }
+
+internal fun MutableCartesianLayerDimensions.copyScaled(
+  factor: Float
+): MutableCartesianLayerDimensions =
+  MutableCartesianLayerDimensions(
+    factor * xSpacing,
+    factor * scalableStartPadding,
+    factor * scalableEndPadding,
+    unscalableStartPadding,
+    unscalableEndPadding,
+  )

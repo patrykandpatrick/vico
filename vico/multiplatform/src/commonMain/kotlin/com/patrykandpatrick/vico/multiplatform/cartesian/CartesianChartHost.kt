@@ -30,7 +30,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -206,12 +205,13 @@ internal fun CartesianChartHostImpl(
   }
 
   LaunchedEffect(zoomState, scrollState) {
-    zoomState.pendingScroll.collect { scrollState.scroll(it) }
+    zoomState.pendingScroll.collect { (scroll, maxValue) ->
+      scrollState.maxValue = maxValue
+      scrollState.scroll(scroll)
+    }
   }
 
   DisposableEffect(scrollState) { onDispose { scrollState.clearUpdated() } }
-
-  val layerBounds = rememberUpdatedState(chart.layerBounds)
 
   Canvas(
     modifier =
@@ -241,9 +241,7 @@ internal fun CartesianChartHostImpl(
             remember(zoomState, scrollState, coroutineScope) {
               if (zoomState.zoomEnabled) {
                 { factor, centroid ->
-                  coroutineScope.launch {
-                    zoomState.zoom(factor, centroid.x, scrollState.value, layerBounds.value)
-                  }
+                  coroutineScope.launch { zoomState.zoom(factor, centroid.x, scrollState.value) }
                 }
               } else {
                 null
