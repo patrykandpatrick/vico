@@ -27,9 +27,8 @@ body:
       options:
         - Android
         - iOS
-        - Windows
-        - macOS
-        - Linux
+        - Desktop
+        - Web
   - type: input
     attributes:
       label: Platform version(s)
