@@ -37,6 +37,7 @@ import com.patrykandpatrick.vico.multiplatform.common.data.MutableExtraStore
 import com.patrykandpatrick.vico.multiplatform.common.gcdWith
 import com.patrykandpatrick.vico.multiplatform.common.getValue
 import com.patrykandpatrick.vico.multiplatform.common.rememberWrappedValue
+import com.patrykandpatrick.vico.multiplatform.common.runBlocking
 import com.patrykandpatrick.vico.multiplatform.common.setValue
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
@@ -48,7 +49,6 @@ import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 
 /** Stores a [CartesianChart]’s data. */
@@ -227,7 +227,8 @@ private fun LaunchRegistration(
   isInPreview: Boolean,
   block: () -> () -> Unit,
 ) {
-  if (isInPreview) {
+  val runBlocking = runBlocking
+  if (isInPreview && runBlocking != null) {
     runBlocking(getCoroutineContext(isPreview = true)) { block() }
   } else {
     LaunchedEffect(chartID, animateIn) {
