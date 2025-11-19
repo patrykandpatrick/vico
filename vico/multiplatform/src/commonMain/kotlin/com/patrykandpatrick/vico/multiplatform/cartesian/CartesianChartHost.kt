@@ -22,7 +22,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -283,5 +283,5 @@ internal fun CartesianChartHostImpl(
 
 @Composable
 private fun CartesianChartHostBox(modifier: Modifier, content: @Composable BoxScope.() -> Unit) {
-  Box(modifier = modifier.height(CHART_HEIGHT.dp).fillMaxWidth(), content = content)
+  Box(modifier = modifier.heightIn(max = CHART_HEIGHT.dp).fillMaxWidth(), content = content)
 }
