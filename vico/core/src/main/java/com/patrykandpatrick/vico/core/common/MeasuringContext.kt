@@ -23,7 +23,11 @@ import com.patrykandpatrick.vico.core.common.data.ExtraStore
 
 /** Holds data used for measuring and drawing. */
 public interface MeasuringContext {
+  /** The size of the [Canvas]. */
+  public val canvasSize: Size
+
   /** The bounds of the [Canvas]. */
+  @Deprecated("Use `canvasSize`; `canvasBounds.left` and `canvasBounds.top` are always zero.")
   public val canvasBounds: RectF
 
   /** The number of pixels corresponding to one density-independent pixel. */

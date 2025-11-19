@@ -41,28 +41,26 @@ internal class AxisManager {
 
   fun setAxesBounds(
     context: CartesianMeasuringContext,
-    canvasBounds: RectF,
     layerBounds: RectF,
     layerMargins: CartesianLayerMargins,
   ) {
-    startAxis?.setStartAxisBounds(context, canvasBounds, layerBounds, layerMargins)
-    topAxis?.setTopAxisBounds(context, canvasBounds, layerMargins)
-    endAxis?.setEndAxisBounds(context, canvasBounds, layerBounds, layerMargins)
-    bottomAxis?.setBottomAxisBounds(context, canvasBounds, layerBounds, layerMargins)
+    startAxis?.setStartAxisBounds(context, layerBounds, layerMargins)
+    topAxis?.setTopAxisBounds(context, layerMargins)
+    endAxis?.setEndAxisBounds(context, layerBounds, layerMargins)
+    bottomAxis?.setBottomAxisBounds(context, layerBounds, layerMargins)
     setRestrictedBounds()
   }
 
   private fun Axis<Axis.Position.Vertical.Start>.setStartAxisBounds(
     context: CartesianMeasuringContext,
-    canvasBounds: RectF,
     layerBounds: RectF,
     layerMargins: CartesianLayerMargins,
   ) {
     with(context) {
       setBounds(
-        left = if (isLtr) canvasBounds.left else canvasBounds.right - layerMargins.start,
+        left = if (isLtr) 0f else canvasSize.width - layerMargins.start,
         top = layerBounds.top,
-        right = if (isLtr) canvasBounds.left + layerMargins.start else canvasBounds.right,
+        right = if (isLtr) layerMargins.start else canvasSize.width,
         bottom = layerBounds.bottom,
       )
     }
@@ -70,30 +68,28 @@ internal class AxisManager {
 
   private fun Axis<Axis.Position.Horizontal.Top>.setTopAxisBounds(
     context: CartesianMeasuringContext,
-    canvasBounds: RectF,
     layerMargins: CartesianLayerMargins,
   ) {
     with(context) {
       setBounds(
-        left = canvasBounds.left + if (isLtr) layerMargins.start else layerMargins.end,
-        top = canvasBounds.top,
-        right = canvasBounds.right - if (isLtr) layerMargins.end else layerMargins.start,
-        bottom = canvasBounds.top + layerMargins.top,
+        left = if (isLtr) layerMargins.start else layerMargins.end,
+        top = 0f,
+        right = canvasSize.width - if (isLtr) layerMargins.end else layerMargins.start,
+        bottom = layerMargins.top,
       )
     }
   }
 
   private fun Axis<Axis.Position.Vertical.End>.setEndAxisBounds(
     context: CartesianMeasuringContext,
-    canvasBounds: RectF,
     layerBounds: RectF,
     layerMargins: CartesianLayerMargins,
   ) {
     with(context) {
       setBounds(
-        left = if (isLtr) canvasBounds.right - layerMargins.end else canvasBounds.left,
+        left = if (isLtr) canvasSize.width - layerMargins.end else 0f,
         top = layerBounds.top,
-        right = if (isLtr) canvasBounds.right else canvasBounds.left + layerMargins.end,
+        right = if (isLtr) canvasSize.width else layerMargins.end,
         bottom = layerBounds.bottom,
       )
     }
@@ -101,15 +97,14 @@ internal class AxisManager {
 
   private fun Axis<Axis.Position.Horizontal.Bottom>.setBottomAxisBounds(
     context: CartesianMeasuringContext,
-    canvasBounds: RectF,
     layerBounds: RectF,
     layerMargins: CartesianLayerMargins,
   ) {
     with(context) {
       setBounds(
-        left = canvasBounds.left + if (isLtr) layerMargins.start else layerMargins.end,
+        left = if (isLtr) layerMargins.start else layerMargins.end,
         top = layerBounds.bottom,
-        right = canvasBounds.right - if (isLtr) layerMargins.end else layerMargins.start,
+        right = canvasSize.width - if (isLtr) layerMargins.end else layerMargins.start,
         bottom = layerBounds.bottom + layerMargins.bottom,
       )
     }

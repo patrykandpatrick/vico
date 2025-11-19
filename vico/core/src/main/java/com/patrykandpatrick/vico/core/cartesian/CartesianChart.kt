@@ -41,6 +41,7 @@ import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerController
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerVisibilityListener
 import com.patrykandpatrick.vico.core.common.Legend
+import com.patrykandpatrick.vico.core.common.Offset
 import com.patrykandpatrick.vico.core.common.Point
 import com.patrykandpatrick.vico.core.common.data.CacheStore
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
@@ -278,22 +279,22 @@ private constructor(
       marginUpdaters.forEach { updater ->
         updater.updateLayerMargins(context, layerMargins, layerDimensions, model)
       }
-      val legendHeight = legend?.getHeight(context, canvasBounds.width()).orZero
-      val freeHeight = canvasBounds.height() - layerMargins.vertical - legendHeight
+      val legendHeight = legend?.getHeight(context, canvasSize.width).orZero
+      val freeHeight = canvasSize.height - layerMargins.vertical - legendHeight
       marginUpdaters.forEach { updater ->
         updater.updateHorizontalLayerMargins(context, layerMargins, freeHeight, model)
       }
       setLayerBounds(
-        canvasBounds.left + layerMargins.getLeft(isLtr),
-        canvasBounds.top + layerMargins.top,
-        canvasBounds.right - layerMargins.getRight(isLtr),
-        canvasBounds.bottom - layerMargins.bottom - legendHeight,
+        layerMargins.getLeft(isLtr),
+        layerMargins.top,
+        canvasSize.width - layerMargins.getRight(isLtr),
+        canvasSize.height - layerMargins.bottom - legendHeight,
       )
-      axisManager.setAxesBounds(context, canvasBounds, layerBounds, layerMargins)
+      axisManager.setAxesBounds(context, layerBounds, layerMargins)
       legend?.setBounds(
-        left = canvasBounds.left,
+        left = 0f,
         top = layerBounds.bottom + layerMargins.bottom,
-        right = canvasBounds.right,
+        right = canvasSize.width,
         bottom = layerBounds.bottom + layerMargins.bottom + legendHeight,
       )
     }
@@ -306,9 +307,10 @@ private constructor(
 
   /** @suppress */
   @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-  public fun draw(context: CartesianDrawingContext) {
+  public fun draw(context: CartesianDrawingContext, offset: Offset = Offset.Zero) {
     with(context) {
       val canvasSaveCount = if (fadingEdges != null) canvas.saveLayer() else -1
+      canvas.translate(offset.x, offset.y)
       axisManager.drawUnderLayers(context)
       decorations.forEach { it.drawUnderLayers(context) }
       val layerBitmap = getBitmap(cacheKeyNamespace)

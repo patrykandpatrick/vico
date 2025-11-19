@@ -392,7 +392,7 @@ protected constructor(
           )
         }
         is Size.Fixed -> size.valueDp.pixels
-        is Size.Fraction -> canvasBounds.width() * size.fraction
+        is Size.Fraction -> canvasSize.width * size.fraction
         is Size.Text ->
           label
             ?.getWidth(context = this, text = size.text, rotationDegrees = labelRotationDegrees)
