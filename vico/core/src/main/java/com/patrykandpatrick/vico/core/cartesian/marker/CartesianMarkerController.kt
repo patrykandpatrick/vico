@@ -36,24 +36,44 @@ public fun interface CartesianMarkerController {
   /** Houses [CartesianMarkerController] singletons and factory functions. */
   public companion object {
     /** Shows the [CartesianMarker] on press. */
-    public val ShowOnPress: CartesianMarkerController = ShowOnPressMarkerController
+    public val ShowOnPress: CartesianMarkerController
+      get() = ShowOnPressMarkerController()
 
     /** Toggles the visibility of the [CartesianMarker] on tap. */
     public fun toggleOnTap(): CartesianMarkerController = ToggleOnTapMarkerController()
   }
 }
 
-private object ShowOnPressMarkerController : CartesianMarkerController {
+private class ShowOnPressMarkerController : CartesianMarkerController {
+  private var isPressed: Boolean = false
+
   override fun shouldAcceptInteraction(
     interaction: Interaction,
     targets: List<CartesianMarker.Target>,
-  ) =
-    interaction is Interaction.Press ||
-      interaction is Interaction.Release ||
-      interaction is Interaction.Move
+  ): Boolean {
+    val shouldAccept =
+      when (interaction) {
+        is Interaction.Press -> true
+        is Interaction.Move -> isPressed
+        is Interaction.Release -> isPressed
+        else -> false
+      }
+
+    when (interaction) {
+      is Interaction.Press -> isPressed = true
+      is Interaction.Release -> isPressed = false
+      else -> {}
+    }
+
+    return shouldAccept
+  }
 
   override fun shouldShowMarker(interaction: Interaction, targets: List<CartesianMarker.Target>) =
     interaction !is Interaction.Release
+
+  override fun hashCode() = 41
+
+  override fun equals(other: Any?) = other === this || other is ShowOnPressMarkerController
 }
 
 private class ToggleOnTapMarkerController : CartesianMarkerController {
