@@ -100,7 +100,7 @@ public fun Shape.toDrawable(
       return result
     }
 
-    @Deprecated("`Drawable#getOpacity` is deprecated.")
+    @Deprecated("`Drawable.getOpacity` is deprecated.")
     override fun getOpacity() = PixelFormat.TRANSLUCENT
 
     override fun getIntrinsicWidth() = intrinsicWidth
