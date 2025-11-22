@@ -36,8 +36,15 @@ public fun interface CartesianMarkerController {
   /** Houses [CartesianMarkerController] singletons and factory functions. */
   public companion object {
     /** Shows the [CartesianMarker] on press. */
+    @Deprecated(
+      "Use showOnPress() instead. This property creates a new instance on each access.",
+      ReplaceWith("showOnPress()"),
+    )
     public val ShowOnPress: CartesianMarkerController
-      get() = ShowOnPressMarkerController()
+      get() = showOnPress()
+
+    /** Shows the [CartesianMarker] on press. */
+    public fun showOnPress(): CartesianMarkerController = ShowOnPressMarkerController()
 
     /** Toggles the visibility of the [CartesianMarker] on tap. */
     public fun toggleOnTap(): CartesianMarkerController = ToggleOnTapMarkerController()
@@ -45,33 +52,29 @@ public fun interface CartesianMarkerController {
 }
 
 private class ShowOnPressMarkerController : CartesianMarkerController {
-  private var isPressed: Boolean = false
+  private var isPressed = false
 
   override fun shouldAcceptInteraction(
     interaction: Interaction,
     targets: List<CartesianMarker.Target>,
-  ): Boolean {
-    val shouldAccept =
-      when (interaction) {
-        is Interaction.Press -> true
-        is Interaction.Move -> isPressed
-        is Interaction.Release -> isPressed
-        else -> false
-      }
-
+  ): Boolean =
     when (interaction) {
-      is Interaction.Press -> isPressed = true
-      is Interaction.Release -> isPressed = false
-      else -> {}
+      is Interaction.Press -> {
+        isPressed = true
+        true
+      }
+      is Interaction.Move -> isPressed
+      is Interaction.Release -> {
+        isPressed = false
+        true
+      }
+      else -> false
     }
-
-    return shouldAccept
-  }
 
   override fun shouldShowMarker(interaction: Interaction, targets: List<CartesianMarker.Target>) =
     interaction !is Interaction.Release
 
-  override fun hashCode() = 41
+  override fun hashCode() = 31
 
   override fun equals(other: Any?) = other === this || other is ShowOnPressMarkerController
 }
