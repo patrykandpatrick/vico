@@ -35,7 +35,6 @@ import com.patrykandpatrick.vico.multiplatform.cartesian.data.ColumnCartesianLay
 import com.patrykandpatrick.vico.multiplatform.cartesian.data.columnSeries
 import com.patrykandpatrick.vico.multiplatform.cartesian.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.multiplatform.cartesian.layer.rememberColumnCartesianLayer
-import com.patrykandpatrick.vico.multiplatform.cartesian.marker.CartesianMarkerController
 import com.patrykandpatrick.vico.multiplatform.cartesian.marker.DefaultCartesianMarker
 import com.patrykandpatrick.vico.multiplatform.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.multiplatform.cartesian.rememberVicoScrollState
@@ -108,7 +107,6 @@ fun ComposeMultiplatformTemperatureAnomalies(modifier: Modifier = Modifier) {
         startAxis = VerticalAxis.rememberStart(valueFormatter = StartAxisValueFormatter),
         bottomAxis = HorizontalAxis.rememberBottom(labelRotationDegrees = 45f),
         marker = rememberMarker(MarkerValueFormatter),
-        markerController = CartesianMarkerController.ShowOnHover,
       ),
     modelProducer = modelProducer,
     modifier = modifier.height(234.dp),
