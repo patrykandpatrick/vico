@@ -36,24 +36,60 @@ public fun interface CartesianMarkerController {
   /** Houses [CartesianMarkerController] singletons and factory functions. */
   public companion object {
     /** Shows the [CartesianMarker] on press. */
-    public val ShowOnPress: CartesianMarkerController = ShowOnPressMarkerController
+    @Deprecated(
+      "Use `showOnPress()` instead. This property creates a new instance on each access.",
+      ReplaceWith("showOnPress()"),
+    )
+    public val ShowOnPress: CartesianMarkerController
+      get() = showOnPress()
+
+    /** Shows the [CartesianMarker] on press. */
+    public fun showOnPress(): CartesianMarkerController = ShowOnPressMarkerController()
+
+    /** Shows the [CartesianMarker] on hover. */
+    public val ShowOnHover: CartesianMarkerController = ShowOnHoverMarkerController
 
     /** Toggles the visibility of the [CartesianMarker] on tap. */
     public fun toggleOnTap(): CartesianMarkerController = ToggleOnTapMarkerController()
   }
 }
 
-private object ShowOnPressMarkerController : CartesianMarkerController {
+private class ShowOnPressMarkerController : CartesianMarkerController {
+  private var isPressed = false
+
   override fun shouldAcceptInteraction(
     interaction: Interaction,
     targets: List<CartesianMarker.Target>,
   ) =
-    interaction is Interaction.Press ||
-      interaction is Interaction.Release ||
-      interaction is Interaction.Move
+    when (interaction) {
+      is Interaction.Press -> {
+        isPressed = true
+        true
+      }
+      is Interaction.Move -> isPressed
+      is Interaction.Release -> {
+        isPressed = false
+        true
+      }
+      else -> false
+    }
 
   override fun shouldShowMarker(interaction: Interaction, targets: List<CartesianMarker.Target>) =
     interaction !is Interaction.Release
+
+  override fun hashCode() = 31
+
+  override fun equals(other: Any?) = other === this || other is ShowOnPressMarkerController
+}
+
+private object ShowOnHoverMarkerController : CartesianMarkerController {
+  override fun shouldAcceptInteraction(
+    interaction: Interaction,
+    targets: List<CartesianMarker.Target>,
+  ) = interaction is Interaction.Enter || interaction is Interaction.Exit
+
+  override fun shouldShowMarker(interaction: Interaction, targets: List<CartesianMarker.Target>) =
+    interaction is Interaction.Enter
 }
 
 private class ToggleOnTapMarkerController : CartesianMarkerController {

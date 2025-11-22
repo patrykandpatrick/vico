@@ -219,7 +219,7 @@ private constructor(
     decorations: List<Decoration> = emptyList(),
     persistentMarkers: (PersistentMarkerScope.(ExtraStore) -> Unit)? = null,
     getXStep: ((CartesianChartModel) -> Double) = { it.getXDeltaGcd() },
-    markerController: CartesianMarkerController = CartesianMarkerController.ShowOnPress,
+    markerController: CartesianMarkerController = CartesianMarkerController.showOnPress(),
   ) : this(
     layers = layers,
     startAxis = startAxis,

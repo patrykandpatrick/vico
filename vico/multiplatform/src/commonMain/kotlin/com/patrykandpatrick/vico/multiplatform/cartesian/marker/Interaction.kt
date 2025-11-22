@@ -34,6 +34,8 @@ public sealed class Interaction {
       is Move -> copy(point.copy(x = point.x + deltaX))
       is Release -> copy(point.copy(x = point.x + deltaX))
       is Zoom -> copy(point.copy(x = point.x + deltaX))
+      is Enter,
+      is Exit -> this
     }
 
   /** A press interaction. */
@@ -54,6 +56,12 @@ public sealed class Interaction {
   /** A zoom interaction. */
   public data class Zoom(override val point: Point) : Interaction()
 
+  /** An enter interaction. */
+  public data class Enter(override val point: Point) : Interaction()
+
+  /** A exit interaction. */
+  public data class Exit(override val point: Point) : Interaction()
+
   internal companion object {
     internal val Saver: Saver<MutableState<Interaction?>, Any> =
       listSaver(
@@ -66,6 +74,8 @@ public sealed class Interaction {
             is Move -> listOf("Move", event.point.x, event.point.y)
             is Release -> listOf("Release", event.point.x, event.point.y)
             is Zoom -> listOf("Zoom", event.point.x, event.point.y)
+            is Enter -> listOf("Enter", event.point.x, event.point.y)
+            is Exit -> listOf("Exit", event.point.x, event.point.y)
             else -> emptyList()
           }
         },
@@ -80,6 +90,8 @@ public sealed class Interaction {
             "Move" -> Move(point)
             "Release" -> Release(point)
             "Zoom" -> Zoom(point)
+            "Enter" -> Enter(point)
+            "Exit" -> Exit(point)
             else -> error("Unknown Interaction type: $type")
           }.let(::mutableStateOf)
         },
