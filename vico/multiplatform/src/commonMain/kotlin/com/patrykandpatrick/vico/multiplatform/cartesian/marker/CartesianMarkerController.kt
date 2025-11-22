@@ -37,7 +37,7 @@ public fun interface CartesianMarkerController {
   public companion object {
     /** Shows the [CartesianMarker] on press. */
     @Deprecated(
-      "Use showOnPress() instead. This property creates a new instance on each access.",
+      "Use `showOnPress()` instead. This property creates a new instance on each access.",
       ReplaceWith("showOnPress()"),
     )
     public val ShowOnPress: CartesianMarkerController
@@ -60,7 +60,7 @@ private class ShowOnPressMarkerController : CartesianMarkerController {
   override fun shouldAcceptInteraction(
     interaction: Interaction,
     targets: List<CartesianMarker.Target>,
-  ): Boolean =
+  ) =
     when (interaction) {
       is Interaction.Press -> {
         isPressed = true

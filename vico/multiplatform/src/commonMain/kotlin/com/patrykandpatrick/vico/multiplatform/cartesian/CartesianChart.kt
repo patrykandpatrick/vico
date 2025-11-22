@@ -77,7 +77,7 @@ internal constructor(
   protected val decorations: List<Decoration> = emptyList(),
   protected val persistentMarkers: (PersistentMarkerScope.(ExtraStore) -> Unit)? = null,
   protected val getXStep: ((CartesianChartModel) -> Double) = { it.getXDeltaGcd() },
-  public val markerController: CartesianMarkerController = CartesianMarkerController.ShowOnPress,
+  public val markerController: CartesianMarkerController = CartesianMarkerController.showOnPress(),
   internal val id: Uuid = Uuid.random(),
   private var previousMarkerTargetHashCode: Int? = null,
   private val persistentMarkerMap: MutableMap<Double, CartesianMarker> = mutableMapOf(),
@@ -200,7 +200,7 @@ internal constructor(
     decorations: List<Decoration> = emptyList(),
     persistentMarkers: (PersistentMarkerScope.(ExtraStore) -> Unit)? = null,
     getXStep: ((CartesianChartModel) -> Double) = { it.getXDeltaGcd() },
-    markerController: CartesianMarkerController = CartesianMarkerController.ShowOnPress,
+    markerController: CartesianMarkerController = CartesianMarkerController.showOnPress(),
   ) : this(
     layers = layers,
     startAxis = startAxis,
@@ -445,7 +445,7 @@ internal constructor(
     decorations: List<Decoration> = this.decorations,
     persistentMarkers: (PersistentMarkerScope.(ExtraStore) -> Unit)? = this.persistentMarkers,
     getXStep: ((CartesianChartModel) -> Double) = this.getXStep,
-    markerController: CartesianMarkerController = CartesianMarkerController.ShowOnPress,
+    markerController: CartesianMarkerController = CartesianMarkerController.showOnPress(),
   ): CartesianChart =
     CartesianChart(
       layers = layers,
@@ -556,7 +556,7 @@ public fun rememberCartesianChart(
   decorations: List<Decoration> = emptyList(),
   persistentMarkers: (PersistentMarkerScope.(ExtraStore) -> Unit)? = null,
   getXStep: ((CartesianChartModel) -> Double) = { it.getXDeltaGcd() },
-  markerController: CartesianMarkerController = CartesianMarkerController.ShowOnPress,
+  markerController: CartesianMarkerController = CartesianMarkerController.showOnPress(),
 ): CartesianChart {
   val wrapper = remember { ValueWrapper<CartesianChart?>(null) }
   return remember(
