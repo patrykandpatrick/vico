@@ -65,7 +65,18 @@ public fun interface CartesianMarkerController {
   /** Houses [CartesianMarkerController] singletons and factory functions. */
   public companion object {
     /** Shows the [CartesianMarker] on press. */
+    @Deprecated(
+      "Use `showOnPress()` instead. This property creates a new instance on each access.",
+      ReplaceWith("showOnPress()"),
+    )
+    public val ShowOnPress: CartesianMarkerController
+      get() = showOnPress()
+
+    /** Shows the [CartesianMarker] on press. */
     public fun showOnPress(): CartesianMarkerController = ShowOnPressMarkerController()
+
+    /** Shows the [CartesianMarker] on hover. */
+    public val ShowOnHover: CartesianMarkerController = ShowOnHoverMarkerController
 
     /** Toggles the visibility of the [CartesianMarker] on tap. */
     public fun toggleOnTap(): CartesianMarkerController = ToggleOnTapMarkerController()
@@ -117,6 +128,16 @@ private class ShowOnPressMarkerController : CartesianMarkerController {
 
   override fun equals(other: Any?) =
     other === this || other is ShowOnPressMarkerController && isPressed == other.isPressed
+}
+
+private object ShowOnHoverMarkerController : CartesianMarkerController {
+  override fun shouldAcceptInteraction(
+    interaction: Interaction,
+    targets: List<CartesianMarker.Target>,
+  ) = interaction is Interaction.Enter || interaction is Interaction.Exit
+
+  override fun shouldShowMarker(interaction: Interaction, targets: List<CartesianMarker.Target>) =
+    interaction is Interaction.Enter
 }
 
 private class ToggleOnTapMarkerController : CartesianMarkerController {

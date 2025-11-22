@@ -69,6 +69,11 @@ internal fun Modifier.pointerInput(
               if (consumeMoveEvents) changes.consume()
               onInteraction(Interaction.Move(pointerPosition))
             }
+            event.type == PointerEventType.Enter ->
+              onInteraction(Interaction.Enter(pointerPosition))
+            event.type == PointerEventType.Move && scrollState.scrollEnabled ->
+              onInteraction(Interaction.Enter(pointerPosition))
+            event.type == PointerEventType.Exit -> onInteraction(Interaction.Exit(pointerPosition))
           }
         }
       }
