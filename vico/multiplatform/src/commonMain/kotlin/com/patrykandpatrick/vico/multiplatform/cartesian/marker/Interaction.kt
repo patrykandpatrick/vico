@@ -59,7 +59,7 @@ public sealed class Interaction {
   /** An enter interaction. */
   public data class Enter(override val point: Point) : Interaction()
 
-  /** A exit interaction. */
+  /** An exit interaction. */
   public data class Exit(override val point: Point) : Interaction()
 
   internal companion object {
