@@ -62,7 +62,7 @@ body:
       multiple: true
       options:
         - 2.3.6
-        - 2.4.0-alpha.1
+        - 2.4.0-alpha.2
         - 1.16.1
     validations:
       required: true
