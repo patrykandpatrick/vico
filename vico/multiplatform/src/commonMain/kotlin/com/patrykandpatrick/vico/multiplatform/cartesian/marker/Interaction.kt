@@ -39,4 +39,10 @@ public sealed class Interaction {
 
   /** A zoom interaction. */
   public data class Zoom(override val point: Point) : Interaction()
+
+  /** An enter interaction. */
+  public data class Enter(override val point: Point) : Interaction()
+
+  /** A exit interaction. */
+  public data class Exit(override val point: Point) : Interaction()
 }
