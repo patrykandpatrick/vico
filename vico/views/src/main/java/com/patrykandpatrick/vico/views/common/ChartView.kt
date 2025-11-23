@@ -220,7 +220,9 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
         }
     }
     if (!acceptMotionEvents) return false
-    if (actionMasked == MotionEvent.ACTION_UP) acceptMotionEvents = false
+    if (actionMasked == MotionEvent.ACTION_UP || actionMasked == MotionEvent.ACTION_CANCEL) {
+      acceptMotionEvents = false
+    }
     transform(motionEventMatrix)
     return true
   }
