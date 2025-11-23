@@ -319,7 +319,7 @@ private constructor(
         model.forEachWithLayer(drawingConsumer.apply { this.context = context })
       }
       forEachPersistentMarker { marker, targets -> marker.drawUnderLayers(context, targets) }
-      val markerTargets = getMarkerTargets(markerX, getVisibleXRange())
+      val markerTargets = getMarkerTargets(markerX)
       val drawMarker = markerTargets.isNotEmpty()
       if (drawMarker) marker?.drawUnderLayers(context, markerTargets)
       canvas.drawBitmap(layerBitmap, 0f, 0f, null)
@@ -414,63 +414,59 @@ private constructor(
   }
 
   /** Returns the `CartesianMarker.Target`s for `pointerPosition`. */
-  @Deprecated("Use the overload with the `x` parameter instead.")
-  public open fun getMarkerTargets(pointerPosition: Point?): List<CartesianMarker.Target> {
-    val marker = marker ?: return emptyList()
+  @Deprecated("Use the overload with the `x` parameter.")
+  public open fun getMarkerTargets(pointerPosition: Point?): List<CartesianMarker.Target> =
     if (pointerPosition == null || markerTargets.isEmpty()) {
-      if (previousMarkerTargetHashCode != null) markerVisibilityListener?.onHidden(marker)
-      previousMarkerTargetHashCode = null
-      return emptyList()
-    }
-    var targets = emptyList<CartesianMarker.Target>()
-    var previousDistance = Float.POSITIVE_INFINITY
-    for (xTargets in markerTargets.values) {
-      val grouped = xTargets.groupBy { abs(pointerPosition.x - it.canvasX) }
-      val minDistance = grouped.keys.min()
-      if (minDistance > previousDistance) break
-      val canvasXTargets =
-        grouped.filterKeys { abs(it - minDistance) <= CANVAS_X_DISTANCE_TOLERANCE }.values.flatten()
-      if (minDistance < previousDistance) {
-        targets = canvasXTargets
-        previousDistance = minDistance
-      } else {
-        targets += canvasXTargets
+      emptyList()
+    } else {
+      var targets = emptyList<CartesianMarker.Target>()
+      var previousDistance = Float.POSITIVE_INFINITY
+      for (xTargets in markerTargets.values) {
+        val grouped = xTargets.groupBy { abs(pointerPosition.x - it.canvasX) }
+        val minDistance = grouped.keys.min()
+        if (minDistance > previousDistance) break
+        val canvasXTargets =
+          grouped
+            .filterKeys { abs(it - minDistance) <= CANVAS_X_DISTANCE_TOLERANCE }
+            .values
+            .flatten()
+        if (minDistance < previousDistance) {
+          targets = canvasXTargets
+          previousDistance = minDistance
+        } else {
+          targets += canvasXTargets
+        }
       }
+      targets
     }
-    val targetHashCode = targets.hashCode()
-    if (previousMarkerTargetHashCode == null) {
-      markerVisibilityListener?.onShown(marker, targets)
-    } else if (targetHashCode != previousMarkerTargetHashCode) {
-      markerVisibilityListener?.onUpdated(marker, targets)
-    }
-    previousMarkerTargetHashCode = targetHashCode
-    return targets
-  }
 
   /** Returns the `CartesianMarker.Target`s for `x`. */
   public open fun getMarkerTargets(
     x: Double?,
     visibleXRange: ClosedFloatingPointRange<Double>,
-  ): List<CartesianMarker.Target> {
-    val marker = marker ?: return emptyList()
-    return if (x == null || markerTargets.isEmpty()) {
-      if (previousMarkerTargetHashCode != null) markerVisibilityListener?.onHidden(marker)
-      previousMarkerTargetHashCode = null
+  ): List<CartesianMarker.Target> =
+    if (x == null || x !in visibleXRange || markerTargets.isEmpty()) {
       emptyList()
     } else {
       var targets = emptyList<CartesianMarker.Target>()
       var previousDelta = Double.POSITIVE_INFINITY
       for ((key, keyTargets) in markerTargets) {
         val delta = abs(key - x)
-        when {
-          delta > previousDelta || x !in visibleXRange -> break
-          delta < previousDelta -> {
-            targets = keyTargets
-            previousDelta = delta
-          }
-          else -> targets = keyTargets
-        }
+        if (delta > previousDelta) break
+        targets = keyTargets
+        previousDelta = delta
       }
+      targets
+    }
+
+  private fun getMarkerTargets(x: Double?): List<CartesianMarker.Target> {
+    val marker = marker ?: return emptyList()
+    return if (x == null || markerTargets.isEmpty()) {
+      if (previousMarkerTargetHashCode != null) markerVisibilityListener?.onHidden(marker)
+      previousMarkerTargetHashCode = null
+      emptyList()
+    } else {
+      val targets = markerTargets[x] ?: return emptyList()
       val targetHashCode = targets.hashCode()
       if (previousMarkerTargetHashCode == null) {
         markerVisibilityListener?.onShown(marker, targets)

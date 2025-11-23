@@ -91,7 +91,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 
   private val motionEventMatrix: Matrix = Matrix()
 
-  private var acceptMotionEvents = false
+  private var shouldAcceptMotionEvents = false
 
   /** Whether to run an initial animation when the [ChartView] is created. */
   public var animateIn: Boolean = true
@@ -211,19 +211,24 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     measuringContext?.isLtr = layoutDirection == LAYOUT_DIRECTION_LTR
   }
 
-  protected fun MotionEvent.translateOrReject(): Boolean {
+  override fun onTouchEvent(event: MotionEvent): Boolean {
+    val superHandled = super.onTouchEvent(event)
+    event.transform(motionEventMatrix)
+    return superHandled
+  }
+
+  protected fun MotionEvent.shouldAccept(): Boolean {
     if (actionMasked == MotionEvent.ACTION_DOWN) {
-      acceptMotionEvents =
+      shouldAcceptMotionEvents =
         (0..<pointerCount).all { index ->
           getX(index) in offset.x..offset.x + canvasSize.width &&
             getY(index) in offset.y..offset.y + canvasSize.height
         }
     }
-    if (!acceptMotionEvents) return false
+    if (!shouldAcceptMotionEvents) return false
     if (actionMasked == MotionEvent.ACTION_UP || actionMasked == MotionEvent.ACTION_CANCEL) {
-      acceptMotionEvents = false
+      shouldAcceptMotionEvents = false
     }
-    transform(motionEventMatrix)
     return true
   }
 }

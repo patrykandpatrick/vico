@@ -48,9 +48,8 @@ private object ShowOnPressMarkerController : CartesianMarkerController {
     interaction: Interaction,
     targets: List<CartesianMarker.Target>,
   ) =
-    interaction is Interaction.Press ||
-      interaction is Interaction.Release ||
-      interaction is Interaction.Move
+    (interaction is Interaction.Press || interaction is Interaction.Move) && targets.isNotEmpty() ||
+      interaction is Interaction.Release
 
   override fun shouldShowMarker(interaction: Interaction, targets: List<CartesianMarker.Target>) =
     interaction !is Interaction.Release
@@ -62,7 +61,7 @@ private class ToggleOnTapMarkerController : CartesianMarkerController {
   override fun shouldAcceptInteraction(
     interaction: Interaction,
     targets: List<CartesianMarker.Target>,
-  ) = interaction is Interaction.Tap
+  ) = interaction is Interaction.Tap && targets.isNotEmpty()
 
   override fun shouldShowMarker(
     interaction: Interaction,

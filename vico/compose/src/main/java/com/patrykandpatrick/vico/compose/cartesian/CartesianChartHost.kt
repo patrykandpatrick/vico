@@ -166,7 +166,7 @@ internal fun CartesianChartHostImpl(
 ) {
   val canvasSize = remember { MutableSize() }
   var markerX by rememberSaveable { mutableStateOf<Double?>(null) }
-  var pointerPosition by remember { mutableStateOf<Point?>(null) }
+  var pointerPosition by rememberSaveable { mutableStateOf<Point?>(null) }
   val measuringContext =
     rememberCartesianMeasuringContext(
       canvasSize = canvasSize,
@@ -201,11 +201,9 @@ internal fun CartesianChartHostImpl(
           x,
           measuringContext.getVisibleXRange(layerDimensions, chart.layerBounds, scrollState.value),
         )
-      if (
-        targets.isNotEmpty() && chart.markerController.shouldAcceptInteraction(interaction, targets)
-      ) {
+      if (chart.markerController.shouldAcceptInteraction(interaction, targets)) {
         val shouldShow = chart.markerController.shouldShowMarker(interaction, targets)
-        markerX = if (shouldShow) x else null
+        markerX = if (shouldShow) targets.firstOrNull()?.x else null
       }
     }
   }

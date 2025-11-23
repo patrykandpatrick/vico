@@ -311,7 +311,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
         Point(event.x, event.y)
       }
     val superHandled = super.onTouchEvent(event)
-    if (!isEnabled || !event.translateOrReject()) return superHandled
+    if (!isEnabled || !event.shouldAccept()) return superHandled
     val scaleHandled =
       if (zoomHandler.zoomEnabled && event.pointerCount > 1 && scrollHandler.scrollEnabled) {
         scaleGestureDetector.onTouchEvent(event)
@@ -365,11 +365,9 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
         x,
         measuringContext.getVisibleXRange(layerDimensions, chart.layerBounds, scrollHandler.value),
       )
-    if (
-      targets.isNotEmpty() && chart.markerController.shouldAcceptInteraction(interaction, targets)
-    ) {
+    if (chart.markerController.shouldAcceptInteraction(interaction, targets)) {
       val shouldShow = chart.markerController.shouldShowMarker(interaction, targets)
-      measuringContext.markerX = if (shouldShow) x else null
+      measuringContext.markerX = if (shouldShow) targets.firstOrNull()?.x else null
       invalidate()
     }
   }

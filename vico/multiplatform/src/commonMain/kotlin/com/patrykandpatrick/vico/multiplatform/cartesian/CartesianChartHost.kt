@@ -30,6 +30,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -161,7 +162,8 @@ internal fun CartesianChartHostImpl(
   extraStore: ExtraStore = ExtraStore.Empty,
 ) {
   var markerX by rememberSaveable { mutableStateOf<Double?>(null) }
-  val pointerPosition = remember { ValueWrapper<Point?>(null) }
+  var pointerPosition by
+    rememberSaveable(saver = Saver({ it.value }, ::ValueWrapper)) { ValueWrapper<Point?>(null) }
   val measuringContext =
     rememberCartesianMeasuringContext(
       extraStore = extraStore,
@@ -179,7 +181,7 @@ internal fun CartesianChartHostImpl(
   val layerDimensions = remember { MutableCartesianLayerDimensions() }
 
   fun onInteraction(interaction: Interaction) {
-    pointerPosition.value = if (interaction is Interaction.Release) null else interaction.point
+    pointerPosition = if (interaction is Interaction.Release) null else interaction.point
     if (chart.marker != null) {
       val x =
         measuringContext.pointerPositionToX(
@@ -194,18 +196,16 @@ internal fun CartesianChartHostImpl(
           x,
           measuringContext.getVisibleXRange(layerDimensions, chart.layerBounds, scrollState.value),
         )
-      if (
-        targets.isNotEmpty() && chart.markerController.shouldAcceptInteraction(interaction, targets)
-      ) {
+      if (chart.markerController.shouldAcceptInteraction(interaction, targets)) {
         val shouldShow = chart.markerController.shouldShowMarker(interaction, targets)
-        markerX = if (shouldShow) x else null
+        markerX = if (shouldShow) targets.firstOrNull()?.x else null
       }
     }
   }
 
   LaunchedEffect(scrollState.consumedXDeltas, scrollState.unconsumedXDeltas) {
     merge(scrollState.consumedXDeltas, scrollState.unconsumedXDeltas).collect { delta ->
-      pointerPosition.value?.let { point ->
+      pointerPosition?.let { point ->
         onInteraction(Interaction.Move(point.copy(x = point.x + delta)))
       }
     }

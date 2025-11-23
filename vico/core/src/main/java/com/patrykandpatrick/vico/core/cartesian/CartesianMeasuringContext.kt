@@ -62,7 +62,7 @@ internal fun CartesianMeasuringContext.getFullXRange(layerDimensions: CartesianL
     start..end
   }
 
-/* @suppress */
+/** @suppress */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public fun CartesianMeasuringContext.getVisibleXRange(
   layerDimensions: CartesianLayerDimensions,

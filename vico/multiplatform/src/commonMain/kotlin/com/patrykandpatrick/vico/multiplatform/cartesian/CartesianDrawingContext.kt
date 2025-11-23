@@ -52,7 +52,7 @@ internal fun CartesianMeasuringContext.getMaxScrollDistance(
 internal fun CartesianDrawingContext.getMaxScrollDistance() =
   getMaxScrollDistance(layerBounds.width, layerDimensions)
 
-internal fun CartesianDrawingContext.getVisibleXRange(): ClosedFloatingPointRange<Double> =
+internal fun CartesianDrawingContext.getVisibleXRange() =
   getVisibleXRange(layerDimensions, layerBounds, scroll)
 
 internal fun CartesianDrawingContext(
