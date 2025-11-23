@@ -44,7 +44,7 @@ public interface CartesianMeasuringContext : MeasuringContext {
   public val layerPadding: CartesianLayerPadding
 
   /** The pointer position. */
-  @Deprecated("Use `markerX`") public val pointerPosition: Point?
+  @Deprecated("Use `markerX`.") public val pointerPosition: Point?
 
   /** The marker’s _x_-value. */
   public val markerX: Double?

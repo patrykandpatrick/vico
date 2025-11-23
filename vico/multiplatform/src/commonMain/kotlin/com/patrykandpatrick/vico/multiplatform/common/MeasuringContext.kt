@@ -72,7 +72,7 @@ public fun MeasuringContext.pointerPositionToX(
   ranges: CartesianChartRanges,
 ): Double {
   val drawingStart =
-    layerBounds.getStart(isLtr) + (layoutDirectionMultiplier * layerDimensions.startPadding)
+    layerBounds.getStart(isLtr) + layoutDirectionMultiplier * layerDimensions.startPadding
   val pointerX = pointerPosition.x - drawingStart + scrollValue
   return ranges.minX + pointerX / layerDimensions.xSpacing
 }
