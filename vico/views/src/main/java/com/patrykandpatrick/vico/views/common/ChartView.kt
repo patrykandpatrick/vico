@@ -212,16 +212,15 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   }
 
   protected fun MotionEvent.translateOrReject(): Boolean {
-    val action = action and MotionEvent.ACTION_MASK
-    if (action == MotionEvent.ACTION_DOWN) {
+    if (actionMasked == MotionEvent.ACTION_DOWN) {
       acceptMotionEvents =
-        (0..pointerCount - 1).all { index ->
+        (0..<pointerCount).all { index ->
           getX(index) in offset.x..offset.x + canvasSize.width &&
             getY(index) in offset.y..offset.y + canvasSize.height
         }
     }
     if (!acceptMotionEvents) return false
-    if (action == MotionEvent.ACTION_UP) acceptMotionEvents = false
+    if (actionMasked == MotionEvent.ACTION_UP) acceptMotionEvents = false
     transform(motionEventMatrix)
     return true
   }
