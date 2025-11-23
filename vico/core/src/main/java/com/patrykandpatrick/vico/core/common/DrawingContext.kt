@@ -43,11 +43,12 @@ public fun DrawingContext(
   canvas: Canvas,
   density: Float = 1f,
   isLtr: Boolean = true,
-  canvasBounds: RectF = RectF(0f, 0f, canvas.width.toFloat(), canvas.height.toFloat()),
   spToPx: (Float) -> Float = { it },
 ): DrawingContext =
   object : DrawingContext {
-    override val canvasBounds: RectF = canvasBounds
+    override val canvasSize: Size = MutableSize(canvas.width.toFloat(), canvas.height.toFloat())
+
+    override val canvasBounds: RectF = RectF(0f, 0f, canvasSize.width, canvasSize.height)
 
     override var canvas: Canvas = canvas
 
@@ -73,8 +74,8 @@ internal fun DrawingContext.getBitmap(
   cacheKeyNamespace: CacheStore.KeyNamespace,
   vararg cacheKeyComponents: Any,
 ): Bitmap {
-  val width = canvasBounds.width().roundToInt()
-  val height = canvasBounds.height().roundToInt()
+  val width = canvasSize.width.roundToInt()
+  val height = canvasSize.height.roundToInt()
   return cacheStore
     .getOrNull<Bitmap>(cacheKeyNamespace, *cacheKeyComponents, width, height)
     ?.apply { eraseColor(Color.TRANSPARENT) }

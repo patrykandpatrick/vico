@@ -17,7 +17,6 @@
 package com.patrykandpatrick.vico.compose.cartesian
 
 import android.annotation.SuppressLint
-import android.graphics.RectF
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
@@ -51,10 +50,10 @@ import com.patrykandpatrick.vico.core.cartesian.data.toImmutable
 import com.patrykandpatrick.vico.core.cartesian.layer.MutableCartesianLayerDimensions
 import com.patrykandpatrick.vico.core.cartesian.marker.Interaction
 import com.patrykandpatrick.vico.core.common.Defaults.CHART_HEIGHT
+import com.patrykandpatrick.vico.core.common.MutableSize
 import com.patrykandpatrick.vico.core.common.ValueWrapper
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.core.common.getValue
-import com.patrykandpatrick.vico.core.common.set
 import com.patrykandpatrick.vico.core.common.setValue
 import kotlinx.coroutines.launch
 
@@ -161,12 +160,12 @@ internal fun CartesianChartHostImpl(
   previousModel: CartesianChartModel? = null,
   extraStore: ExtraStore = ExtraStore.Empty,
 ) {
-  val canvasBounds = remember { RectF() }
+  val canvasSize = remember { MutableSize() }
   var lastAcceptedInteraction by rememberSaveable { mutableStateOf<Interaction?>(null) }
   var isMarkerShown by rememberSaveable { mutableStateOf(false) }
   val measuringContext =
     rememberCartesianMeasuringContext(
-      canvasBounds = canvasBounds,
+      canvasSize = canvasSize,
       extraStore = extraStore,
       model = model,
       ranges = ranges,
@@ -256,7 +255,8 @@ internal fun CartesianChartHostImpl(
   ) {
     val canvas = drawContext.canvas.nativeCanvas
     if (canvas.width == 0 || canvas.height == 0) return@Canvas
-    canvasBounds.set(left = 0, top = 0, right = size.width, bottom = size.height)
+    canvasSize.width = size.width
+    canvasSize.height = size.height
 
     layerDimensions.clear()
     chart.prepare(measuringContext, layerDimensions)
