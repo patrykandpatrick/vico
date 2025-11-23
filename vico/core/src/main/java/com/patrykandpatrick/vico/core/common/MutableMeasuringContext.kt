@@ -24,12 +24,16 @@ import com.patrykandpatrick.vico.core.common.data.ExtraStore
 /** @suppress */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public open class MutableMeasuringContext(
-  override val canvasBounds: RectF,
+  override val canvasSize: Size,
   override var density: Float,
   override val extraStore: ExtraStore,
   override var isLtr: Boolean,
   private var spToPx: (Float) -> Float,
   override val cacheStore: CacheStore = CacheStore(),
 ) : MeasuringContext {
+  @Deprecated("`MeasuringContext.canvasBounds` is deprecated.")
+  override val canvasBounds: RectF
+    get() = RectF(0f, 0f, canvasSize.width, canvasSize.height)
+
   override fun spToPx(sp: Float): Float = spToPx.invoke(sp)
 }

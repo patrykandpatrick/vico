@@ -82,7 +82,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 
   override val measuringContext: MutableCartesianMeasuringContext =
     MutableCartesianMeasuringContext(
-      canvasBounds = canvasBounds,
+      canvasSize = canvasSize,
       density = context.density,
       extraStore = ExtraStore.Empty,
       isLtr = context.isLtr,
@@ -314,7 +314,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 
   override fun onTouchEvent(event: MotionEvent): Boolean {
     val superHandled = super.onTouchEvent(event)
-    if (!isEnabled) return superHandled
+    if (!isEnabled || !event.translateOrReject()) return superHandled
     val scaleHandled =
       if (zoomHandler.zoomEnabled && event.pointerCount > 1 && scrollHandler.scrollEnabled) {
         scaleGestureDetector.onTouchEvent(event)
@@ -398,7 +398,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
           zoomHandler.value,
         )
 
-      chart.draw(drawingContext)
+      chart.draw(drawingContext, offset)
       measuringContext.reset()
     }
   }

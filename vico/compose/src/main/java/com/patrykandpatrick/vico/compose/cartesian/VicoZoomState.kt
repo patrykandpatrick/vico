@@ -33,6 +33,7 @@ import com.patrykandpatrick.vico.core.cartesian.layer.MutableCartesianLayerDimen
 import com.patrykandpatrick.vico.core.cartesian.layer.copyScaled
 import com.patrykandpatrick.vico.core.cartesian.layer.scale
 import com.patrykandpatrick.vico.core.common.Defaults
+import com.patrykandpatrick.vico.core.common.half
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 
@@ -110,9 +111,7 @@ public class VicoZoomState {
   public suspend fun zoom(zoom: Zoom) {
     withUpdated { context, layerDimensions, bounds ->
       val newValue = zoom.getValue(context, layerDimensions, bounds)
-      if (newValue != value) {
-        zoom(newValue / value, context.canvasBounds.centerX(), scroll)
-      }
+      if (newValue != value) zoom(newValue / value, context.canvasSize.width.half, scroll)
     }
   }
 

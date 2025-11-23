@@ -25,6 +25,7 @@ import com.patrykandpatrick.vico.core.cartesian.Zoom
 import com.patrykandpatrick.vico.core.cartesian.layer.MutableCartesianLayerDimensions
 import com.patrykandpatrick.vico.core.cartesian.layer.scale
 import com.patrykandpatrick.vico.core.common.Defaults
+import com.patrykandpatrick.vico.core.common.half
 
 /**
  * Houses information on a [CartesianChart]’s zoom factor. Allows for zoom customization.
@@ -71,9 +72,7 @@ public class ZoomHandler(
   public fun zoom(zoom: Zoom) {
     withUpdated { context, layerDimensions, bounds ->
       val newValue = zoom.getValue(context, layerDimensions, bounds)
-      if (newValue != value) {
-        zoom(newValue / value, context.canvasBounds.centerX(), scroll, bounds)
-      }
+      if (newValue != value) zoom(newValue / value, context.canvasSize.width.half, scroll, bounds)
     }
   }
 
