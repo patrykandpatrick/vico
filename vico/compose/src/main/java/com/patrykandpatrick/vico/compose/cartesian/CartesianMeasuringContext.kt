@@ -42,6 +42,7 @@ internal fun rememberCartesianMeasuringContext(
   zoomEnabled: Boolean,
   layerPadding: CartesianLayerPadding,
   pointerPosition: Point?,
+  markedValue: Double?,
   isMarkerShown: Boolean,
 ): CartesianMeasuringContext {
   val density = LocalDensity.current
@@ -58,6 +59,7 @@ internal fun rememberCartesianMeasuringContext(
     zoomEnabled,
     layerPadding,
     pointerPosition,
+    markedValue,
     cacheStore,
     isMarkerShown,
   ) {
@@ -73,6 +75,7 @@ internal fun rememberCartesianMeasuringContext(
       zoomEnabled = zoomEnabled,
       layerPadding = layerPadding,
       pointerPosition = pointerPosition,
+      markedValue = markedValue,
       cacheStore = cacheStore,
       isMarkerShown = isMarkerShown,
     )

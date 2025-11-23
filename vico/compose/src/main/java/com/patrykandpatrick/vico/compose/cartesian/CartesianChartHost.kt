@@ -54,6 +54,7 @@ import com.patrykandpatrick.vico.core.common.MutableSize
 import com.patrykandpatrick.vico.core.common.ValueWrapper
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.core.common.getValue
+import com.patrykandpatrick.vico.core.common.getXValueForPointerPosition
 import com.patrykandpatrick.vico.core.common.setValue
 import kotlinx.coroutines.launch
 
@@ -162,6 +163,7 @@ internal fun CartesianChartHostImpl(
 ) {
   val canvasSize = remember { MutableSize() }
   var lastAcceptedInteraction by rememberSaveable { mutableStateOf<Interaction?>(null) }
+  var markedValue by rememberSaveable { mutableStateOf<Double?>(null) }
   var isMarkerShown by rememberSaveable { mutableStateOf(false) }
   val measuringContext =
     rememberCartesianMeasuringContext(
@@ -174,6 +176,7 @@ internal fun CartesianChartHostImpl(
       layerPadding =
         remember(chart.layerPadding, model.extraStore) { chart.layerPadding(model.extraStore) },
       pointerPosition = lastAcceptedInteraction?.point,
+      markedValue = markedValue,
       isMarkerShown = isMarkerShown,
     )
 
@@ -227,7 +230,15 @@ internal fun CartesianChartHostImpl(
             remember(chart.marker == null) {
               if (chart.marker != null) {
                 { interaction ->
-                  val targets = chart.getMarkerTargets(interaction.point)
+                  val value =
+                    measuringContext.getXValueForPointerPosition(
+                      interaction.point,
+                      layerDimensions,
+                      chart.layerBounds,
+                      scrollState.value,
+                      ranges,
+                    )
+                  val targets = chart.getMarkerTargets(value)
                   if (
                     targets.isNotEmpty() &&
                       chart.markerController.shouldAcceptInteraction(interaction, targets)
@@ -235,6 +246,7 @@ internal fun CartesianChartHostImpl(
                     val shouldShow = chart.markerController.shouldShowMarker(interaction, targets)
                     isMarkerShown = shouldShow
                     lastAcceptedInteraction = if (shouldShow) interaction else null
+                    markedValue = if (shouldShow) value else null
                   }
                 }
               } else {

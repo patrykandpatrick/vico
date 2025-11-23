@@ -44,6 +44,7 @@ import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.NEW_PRODUCER_ERROR_MESSAGE
 import com.patrykandpatrick.vico.core.common.Point
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
+import com.patrykandpatrick.vico.core.common.getXValueForPointerPosition
 import com.patrykandpatrick.vico.core.common.spToPx
 import com.patrykandpatrick.vico.views.R
 import com.patrykandpatrick.vico.views.common.ChartView
@@ -93,6 +94,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       zoomEnabled = false,
       layerPadding = CartesianLayerPadding(),
       pointerPosition = null,
+      markedValue = null,
       isMarkerShown = false,
     )
 
@@ -360,6 +362,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   }
 
   private fun handleInteraction(interaction: Interaction) {
+    val chart = chart
     val markedEntries = chart?.getMarkerTargets(interaction.point)
     val markerController = chart?.markerController ?: return
     if (
@@ -369,6 +372,16 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       val shouldShow = markerController.shouldShowMarker(interaction, markedEntries)
       lastAcceptedInteraction = if (shouldShow) interaction else null
       measuringContext.pointerPosition = lastAcceptedInteraction?.point
+      measuringContext.markedValue =
+        lastAcceptedInteraction?.point?.let { point ->
+          measuringContext.getXValueForPointerPosition(
+            point,
+            layerDimensions,
+            chart.layerBounds,
+            scrollHandler.value,
+            ranges,
+          )
+        }
       measuringContext.isMarkerShown = shouldShow
       invalidate()
     }

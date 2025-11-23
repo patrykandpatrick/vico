@@ -319,7 +319,7 @@ private constructor(
         model.forEachWithLayer(drawingConsumer.apply { this.context = context })
       }
       forEachPersistentMarker { marker, targets -> marker.drawUnderLayers(context, targets) }
-      val markerTargets = getMarkerTargets(pointerPosition)
+      val markerTargets = getMarkerTargets(markedValue)
       val drawMarker = markerTargets.isNotEmpty() && isMarkerShown
       if (drawMarker) marker?.drawUnderLayers(context, markerTargets)
       canvas.drawBitmap(layerBitmap, 0f, 0f, null)
@@ -410,6 +410,26 @@ private constructor(
   ) {
     persistentMarkerMap.forEach { (x, marker) ->
       markerTargets[x]?.also { targets -> block(marker, targets) }
+    }
+  }
+
+  /** Returns the `CartesianMarker.Target`s for `value`. */
+  public open fun getMarkerTargets(value: Double?): List<CartesianMarker.Target> {
+    val marker = marker ?: return emptyList()
+    return if (value == null || markerTargets.isEmpty()) {
+      if (previousMarkerTargetHashCode != null) markerVisibilityListener?.onHidden(marker)
+      previousMarkerTargetHashCode = null
+      emptyList()
+    } else {
+      val targets = markerTargets[value] ?: emptyList()
+      val targetHashCode = targets.hashCode()
+      if (previousMarkerTargetHashCode == null) {
+        markerVisibilityListener?.onShown(marker, targets)
+      } else if (targetHashCode != previousMarkerTargetHashCode) {
+        markerVisibilityListener?.onUpdated(marker, targets)
+      }
+      previousMarkerTargetHashCode = targetHashCode
+      targets
     }
   }
 
