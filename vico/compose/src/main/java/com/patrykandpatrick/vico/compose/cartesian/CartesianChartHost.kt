@@ -207,7 +207,7 @@ internal fun CartesianChartHostImpl(
 
   LaunchedEffect(scrollState.consumedXDeltas, scrollState.unconsumedXDeltas) {
     merge(scrollState.consumedXDeltas, scrollState.unconsumedXDeltas).collect { delta ->
-      pointerPosition?.also { point ->
+      pointerPosition?.let { point ->
         onInteraction(Interaction.Move(point.copy(x = point.x + delta)))
       }
     }

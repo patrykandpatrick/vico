@@ -414,10 +414,7 @@ private constructor(
   }
 
   /** Returns the `CartesianMarker.Target`s for `pointerPosition`. */
-  @Deprecated(
-    message = "Use the overload with `x` parameter instead.",
-    replaceWith = ReplaceWith("getMarkerTargets(x)"),
-  )
+  @Deprecated("Use the overload with `x` parameter instead.")
   public open fun getMarkerTargets(pointerPosition: Point?): List<CartesianMarker.Target> {
     val marker = marker ?: return emptyList()
     if (pointerPosition == null || markerTargets.isEmpty()) {
