@@ -39,8 +39,9 @@ public class MutableCartesianMeasuringContext(
   override var scrollEnabled: Boolean,
   override var zoomEnabled: Boolean,
   override var layerPadding: CartesianLayerPadding,
+  @Deprecated("`CartesianMeasuringContext.pointerPosition` is deprecated.")
   override var pointerPosition: Point?,
-  override var isMarkerShown: Boolean,
+  override var markerX: Double?,
   cacheStore: CacheStore = CacheStore(),
 ) :
   MutableMeasuringContext(canvasSize, density, extraStore, isLtr, spToPx, cacheStore),

@@ -49,10 +49,13 @@ import com.patrykandpatrick.vico.multiplatform.cartesian.layer.MutableCartesianL
 import com.patrykandpatrick.vico.multiplatform.cartesian.marker.Interaction
 import com.patrykandpatrick.vico.multiplatform.common.Defaults.CHART_HEIGHT
 import com.patrykandpatrick.vico.multiplatform.common.MutableDrawScope
+import com.patrykandpatrick.vico.multiplatform.common.Point
 import com.patrykandpatrick.vico.multiplatform.common.ValueWrapper
 import com.patrykandpatrick.vico.multiplatform.common.data.ExtraStore
 import com.patrykandpatrick.vico.multiplatform.common.getValue
+import com.patrykandpatrick.vico.multiplatform.common.pointerPositionToX
 import com.patrykandpatrick.vico.multiplatform.common.setValue
+import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.launch
 
 /**
@@ -157,9 +160,8 @@ internal fun CartesianChartHostImpl(
   previousModel: CartesianChartModel? = null,
   extraStore: ExtraStore = ExtraStore.Empty,
 ) {
-  var lastAcceptedInteraction by
-    rememberSaveable(saver = Interaction.Saver) { mutableStateOf(null) }
-  var isMarkerShown by rememberSaveable { mutableStateOf(false) }
+  var markerX by rememberSaveable { mutableStateOf<Double?>(null) }
+  val pointerPosition = remember { ValueWrapper<Point?>(null) }
   val measuringContext =
     rememberCartesianMeasuringContext(
       extraStore = extraStore,
@@ -169,38 +171,39 @@ internal fun CartesianChartHostImpl(
       zoomEnabled = scrollState.scrollEnabled && zoomState.zoomEnabled,
       layerPadding =
         remember(chart.layerPadding, model.extraStore) { chart.layerPadding(model.extraStore) },
-      pointerPosition = lastAcceptedInteraction?.point,
-      isMarkerShown = isMarkerShown,
+      markerX = markerX,
     )
 
   val coroutineScope = rememberCoroutineScope()
   var previousModelID by remember { ValueWrapper(model.id) }
   val layerDimensions = remember { MutableCartesianLayerDimensions() }
 
-  LaunchedEffect(scrollState.unconsumedXDeltas) {
-    scrollState.unconsumedXDeltas.collect { delta ->
-      val interaction =
-        lastAcceptedInteraction
-          ?.takeUnless { interaction -> interaction is Interaction.Release }
-          ?.let { interaction ->
-            Interaction.Move(interaction.point.copy(x = interaction.point.x + delta))
-          } ?: return@collect
-      val markedEntries = chart.getMarkerTargets(interaction.point)
+  fun onInteraction(interaction: Interaction) {
+    pointerPosition.value = if (interaction is Interaction.Release) null else interaction.point
+    if (chart.marker != null) {
+      val x =
+        measuringContext.pointerPositionToX(
+          interaction.point,
+          layerDimensions,
+          chart.layerBounds,
+          scrollState.value,
+          ranges,
+        )
+      val targets = chart.getMarkerTargets(x)
       if (
-        markedEntries.isNotEmpty() &&
-          chart.markerController.shouldAcceptInteraction(interaction, markedEntries)
+        targets.isNotEmpty() && chart.markerController.shouldAcceptInteraction(interaction, targets)
       ) {
-        val shouldShow = chart.markerController.shouldShowMarker(interaction, markedEntries)
-        isMarkerShown = shouldShow
-        lastAcceptedInteraction = if (shouldShow) interaction else null
+        val shouldShow = chart.markerController.shouldShowMarker(interaction, targets)
+        markerX = if (shouldShow) x else null
       }
     }
   }
 
-  LaunchedEffect(scrollState.consumedXDeltas) {
-    scrollState.consumedXDeltas.collect { delta ->
-      val interaction = lastAcceptedInteraction
-      lastAcceptedInteraction = interaction?.moveXBy(delta)
+  LaunchedEffect(scrollState.consumedXDeltas, scrollState.unconsumedXDeltas) {
+    merge(scrollState.consumedXDeltas, scrollState.unconsumedXDeltas).collect { delta ->
+      pointerPosition.value?.also { point ->
+        onInteraction(Interaction.Move(point.copy(x = point.x + delta)))
+      }
     }
   }
 
@@ -219,24 +222,7 @@ internal fun CartesianChartHostImpl(
         .pointerInput(
           scrollState = scrollState,
           consumeMoveEvents = consumeMoveEvents,
-          onInteraction =
-            remember(chart.marker == null) {
-              if (chart.marker != null) {
-                { interaction ->
-                  val targets = chart.getMarkerTargets(interaction.point)
-                  if (
-                    targets.isNotEmpty() &&
-                      chart.markerController.shouldAcceptInteraction(interaction, targets)
-                  ) {
-                    val shouldShow = chart.markerController.shouldShowMarker(interaction, targets)
-                    isMarkerShown = shouldShow
-                    lastAcceptedInteraction = if (shouldShow) interaction else null
-                  }
-                }
-              } else {
-                null
-              }
-            },
+          onInteraction = ::onInteraction,
           onZoom =
             remember(zoomState, scrollState, coroutineScope) {
               if (zoomState.zoomEnabled) {

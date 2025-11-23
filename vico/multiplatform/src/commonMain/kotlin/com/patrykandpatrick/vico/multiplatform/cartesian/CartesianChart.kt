@@ -49,14 +49,12 @@ import com.patrykandpatrick.vico.multiplatform.cartesian.marker.CartesianMarkerC
 import com.patrykandpatrick.vico.multiplatform.cartesian.marker.CartesianMarkerVisibilityListener
 import com.patrykandpatrick.vico.multiplatform.common.EmptyPaint
 import com.patrykandpatrick.vico.multiplatform.common.Legend
-import com.patrykandpatrick.vico.multiplatform.common.Point
 import com.patrykandpatrick.vico.multiplatform.common.ValueWrapper
 import com.patrykandpatrick.vico.multiplatform.common.data.CacheStore
 import com.patrykandpatrick.vico.multiplatform.common.data.ExtraStore
 import com.patrykandpatrick.vico.multiplatform.common.data.MutableExtraStore
 import com.patrykandpatrick.vico.multiplatform.common.getBitmap
 import com.patrykandpatrick.vico.multiplatform.common.orZero
-import kotlin.math.abs
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
@@ -296,8 +294,8 @@ internal constructor(
       _markerTargets.clear()
       _markerTargets.putAll(sortedMarkerTargetPairs)
       forEachPersistentMarker { marker, targets -> marker.drawUnderLayers(context, targets) }
-      val markerTargets = getMarkerTargets(pointerPosition)
-      val drawMarker = markerTargets.isNotEmpty() && isMarkerShown
+      val markerTargets = getMarkerTargets(markerX)
+      val drawMarker = markerTargets.isNotEmpty()
       if (drawMarker) marker?.drawUnderLayers(context, markerTargets)
       canvas.drawImage(layerBitmap, Offset.Zero, EmptyPaint)
       fadingEdges?.run {
@@ -384,37 +382,24 @@ internal constructor(
     }
   }
 
-  /** Returns the `CartesianMarker.Target`s for `pointerPosition`. */
-  public open fun getMarkerTargets(pointerPosition: Point?): List<CartesianMarker.Target> {
+  /** Returns the `CartesianMarker.Target`s for `x`. */
+  public open fun getMarkerTargets(x: Double?): List<CartesianMarker.Target> {
     val marker = marker ?: return emptyList()
-    if (pointerPosition == null || markerTargets.isEmpty()) {
+    return if (x == null || markerTargets.isEmpty()) {
       if (previousMarkerTargetHashCode != null) markerVisibilityListener?.onHidden(marker)
       previousMarkerTargetHashCode = null
-      return emptyList()
-    }
-    var targets = emptyList<CartesianMarker.Target>()
-    var previousDistance = Float.POSITIVE_INFINITY
-    for (xTargets in markerTargets.values) {
-      val grouped = xTargets.groupBy { abs(pointerPosition.x - it.canvasX) }
-      val minDistance = grouped.keys.min()
-      if (minDistance > previousDistance) break
-      val canvasXTargets =
-        grouped.filterKeys { abs(it - minDistance) <= CANVAS_X_DISTANCE_TOLERANCE }.values.flatten()
-      if (minDistance < previousDistance) {
-        targets = canvasXTargets
-        previousDistance = minDistance
-      } else {
-        targets += canvasXTargets
+      emptyList()
+    } else {
+      val targets = markerTargets[x] ?: emptyList()
+      val targetHashCode = targets.hashCode()
+      if (previousMarkerTargetHashCode == null) {
+        markerVisibilityListener?.onShown(marker, targets)
+      } else if (targetHashCode != previousMarkerTargetHashCode) {
+        markerVisibilityListener?.onUpdated(marker, targets)
       }
+      previousMarkerTargetHashCode = targetHashCode
+      targets
     }
-    val targetHashCode = targets.hashCode()
-    if (previousMarkerTargetHashCode == null) {
-      markerVisibilityListener?.onShown(marker, targets)
-    } else if (targetHashCode != previousMarkerTargetHashCode) {
-      markerVisibilityListener?.onUpdated(marker, targets)
-    }
-    previousMarkerTargetHashCode = targetHashCode
-    return targets
   }
 
   protected inline fun <reified T : CartesianLayerModel> MutableList<CartesianLayerModel>.consume(

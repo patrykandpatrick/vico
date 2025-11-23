@@ -16,12 +16,16 @@
 
 package com.patrykandpatrick.vico.multiplatform.common
 
+import androidx.annotation.RestrictTo
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
+import com.patrykandpatrick.vico.multiplatform.cartesian.data.CartesianChartRanges
+import com.patrykandpatrick.vico.multiplatform.cartesian.layer.CartesianLayerDimensions
 import com.patrykandpatrick.vico.multiplatform.common.data.CacheStore
 import com.patrykandpatrick.vico.multiplatform.common.data.ExtraStore
 
@@ -56,4 +60,20 @@ public interface MeasuringContext {
   /** 1 if [isLtr] is true; −1 otherwise. */
   public val layoutDirectionMultiplier: Int
     get() = if (isLtr) 1 else -1
+}
+
+/** @suppress */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+public fun MeasuringContext.pointerPositionToX(
+  pointerPosition: Point,
+  layerDimensions: CartesianLayerDimensions,
+  layerBounds: Rect,
+  scrollValue: Float,
+  ranges: CartesianChartRanges,
+): Double {
+  val drawingStart =
+    layerBounds.getStart(isLtr) + (layoutDirectionMultiplier * layerDimensions.startPadding) -
+      layerDimensions.xSpacing.half
+  val pointerX = pointerPosition.x - drawingStart + scrollValue
+  return ranges.minX + (pointerX / layerDimensions.xSpacing).toInt().toDouble()
 }

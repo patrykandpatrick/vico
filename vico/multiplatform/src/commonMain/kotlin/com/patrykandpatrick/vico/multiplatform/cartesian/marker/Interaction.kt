@@ -16,25 +16,11 @@
 
 package com.patrykandpatrick.vico.multiplatform.cartesian.marker
 
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.Saver
-import androidx.compose.runtime.saveable.listSaver
 import com.patrykandpatrick.vico.multiplatform.common.Point
 
 /** Represents a pointer interaction (such as a press, move, or release). */
 public sealed class Interaction {
   public abstract val point: Point
-
-  internal fun moveXBy(deltaX: Float): Interaction =
-    when (this) {
-      is Press -> copy(point.copy(x = point.x + deltaX))
-      is Tap -> copy(point.copy(x = point.x + deltaX))
-      is LongPress -> copy(point.copy(x = point.x + deltaX))
-      is Move -> copy(point.copy(x = point.x + deltaX))
-      is Release -> copy(point.copy(x = point.x + deltaX))
-      is Zoom -> copy(point.copy(x = point.x + deltaX))
-    }
 
   /** A press interaction. */
   public data class Press(override val point: Point) : Interaction()
@@ -53,36 +39,4 @@ public sealed class Interaction {
 
   /** A zoom interaction. */
   public data class Zoom(override val point: Point) : Interaction()
-
-  internal companion object {
-    internal val Saver: Saver<MutableState<Interaction?>, Any> =
-      listSaver(
-        save = { eventState ->
-          val event = eventState.value
-          when (event) {
-            is Press -> listOf("Press", event.point.x, event.point.y)
-            is Tap -> listOf("Tap", event.point.x, event.point.y)
-            is LongPress -> listOf("LongPress", event.point.x, event.point.y)
-            is Move -> listOf("Move", event.point.x, event.point.y)
-            is Release -> listOf("Release", event.point.x, event.point.y)
-            is Zoom -> listOf("Zoom", event.point.x, event.point.y)
-            else -> emptyList()
-          }
-        },
-        restore = { list ->
-          if (list.isEmpty()) return@listSaver mutableStateOf(null)
-          val type = list[0] as String
-          val point = Point(list[1] as Float, list[2] as Float)
-          when (type) {
-            "Press" -> Press(point)
-            "Tap" -> Tap(point)
-            "LongPress" -> LongPress(point)
-            "Move" -> Move(point)
-            "Release" -> Release(point)
-            "Zoom" -> Zoom(point)
-            else -> error("Unknown Interaction type: $type")
-          }.let(::mutableStateOf)
-        },
-      )
-  }
 }

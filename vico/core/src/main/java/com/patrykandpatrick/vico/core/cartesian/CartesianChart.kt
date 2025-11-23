@@ -319,8 +319,8 @@ private constructor(
         model.forEachWithLayer(drawingConsumer.apply { this.context = context })
       }
       forEachPersistentMarker { marker, targets -> marker.drawUnderLayers(context, targets) }
-      val markerTargets = getMarkerTargets(pointerPosition)
-      val drawMarker = markerTargets.isNotEmpty() && isMarkerShown
+      val markerTargets = getMarkerTargets(markerX)
+      val drawMarker = markerTargets.isNotEmpty()
       if (drawMarker) marker?.drawUnderLayers(context, markerTargets)
       canvas.drawBitmap(layerBitmap, 0f, 0f, null)
       fadingEdges?.run {
@@ -414,6 +414,10 @@ private constructor(
   }
 
   /** Returns the `CartesianMarker.Target`s for `pointerPosition`. */
+  @Deprecated(
+    message = "Use the overload with `x` parameter instead.",
+    replaceWith = ReplaceWith("getMarkerTargets(x)"),
+  )
   public open fun getMarkerTargets(pointerPosition: Point?): List<CartesianMarker.Target> {
     val marker = marker ?: return emptyList()
     if (pointerPosition == null || markerTargets.isEmpty()) {
@@ -444,6 +448,26 @@ private constructor(
     }
     previousMarkerTargetHashCode = targetHashCode
     return targets
+  }
+
+  /** Returns the `CartesianMarker.Target`s for `x`. */
+  public open fun getMarkerTargets(x: Double?): List<CartesianMarker.Target> {
+    val marker = marker ?: return emptyList()
+    return if (x == null || markerTargets.isEmpty()) {
+      if (previousMarkerTargetHashCode != null) markerVisibilityListener?.onHidden(marker)
+      previousMarkerTargetHashCode = null
+      emptyList()
+    } else {
+      val targets = markerTargets[x] ?: emptyList()
+      val targetHashCode = targets.hashCode()
+      if (previousMarkerTargetHashCode == null) {
+        markerVisibilityListener?.onShown(marker, targets)
+      } else if (targetHashCode != previousMarkerTargetHashCode) {
+        markerVisibilityListener?.onUpdated(marker, targets)
+      }
+      previousMarkerTargetHashCode = targetHashCode
+      targets
+    }
   }
 
   protected inline fun <reified T : CartesianLayerModel> MutableList<CartesianLayerModel>.consume(

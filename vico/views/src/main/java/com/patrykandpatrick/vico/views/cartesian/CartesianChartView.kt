@@ -44,6 +44,7 @@ import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.NEW_PRODUCER_ERROR_MESSAGE
 import com.patrykandpatrick.vico.core.common.Point
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
+import com.patrykandpatrick.vico.core.common.pointerPositionToX
 import com.patrykandpatrick.vico.core.common.spToPx
 import com.patrykandpatrick.vico.views.R
 import com.patrykandpatrick.vico.views.common.ChartView
@@ -93,7 +94,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       zoomEnabled = false,
       layerPadding = CartesianLayerPadding(),
       pointerPosition = null,
-      isMarkerShown = false,
+      markerX = null,
     )
 
   private val scaleGestureListener: ScaleGestureDetector.OnScaleGestureListener =
@@ -115,19 +116,6 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 
   private var previousLayerPaddingHashCode: Int? = null
 
-  private var lastAcceptedInteraction: Interaction? = null
-
-  private val chartScrollListener =
-    object : ScrollHandler.Listener {
-      override fun onValueChanged(old: Float, new: Float) {
-        val delta = old - new
-        val interaction = lastAcceptedInteraction
-        lastAcceptedInteraction = interaction?.moveXBy(delta)
-        measuringContext.pointerPosition = lastAcceptedInteraction?.point
-        invalidate()
-      }
-    }
-
   /**
    * Houses information on the [CartesianChart]’s scroll value. Allows for scroll customization and
    * programmatic scrolling.
@@ -135,10 +123,8 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   public var scrollHandler: ScrollHandler by
     invalidatingObservable(ScrollHandler(themeHandler.scrollEnabled)) { oldValue, newValue ->
       oldValue?.clearUpdated()
-      oldValue?.removeListener(chartScrollListener)
       newValue.postInvalidate = ::postInvalidate
       newValue.postInvalidateOnAnimation = ::postInvalidateOnAnimation
-      newValue.addListener(chartScrollListener)
       measuringContext.scrollEnabled = newValue.scrollEnabled
       measuringContext.zoomEnabled = measuringContext.zoomEnabled && newValue.scrollEnabled
     }
@@ -313,6 +299,16 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   }
 
   override fun onTouchEvent(event: MotionEvent): Boolean {
+    @Suppress("DEPRECATION")
+    measuringContext.pointerPosition =
+      if (
+        event.actionMasked == MotionEvent.ACTION_UP ||
+          event.actionMasked == MotionEvent.ACTION_CANCEL
+      ) {
+        null
+      } else {
+        Point(event.x, event.y)
+      }
     val superHandled = super.onTouchEvent(event)
     if (!isEnabled || !event.translateOrReject()) return superHandled
     val scaleHandled =
@@ -354,16 +350,21 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   }
 
   private fun handleInteraction(interaction: Interaction) {
-    val markedEntries = chart?.getMarkerTargets(interaction.point)
-    val markerController = chart?.markerController ?: return
+    val chart = chart ?: return
+    val x =
+      measuringContext.pointerPositionToX(
+        interaction.point,
+        layerDimensions,
+        chart.layerBounds,
+        scrollHandler.value,
+        ranges,
+      )
+    val targets = chart.getMarkerTargets(x)
     if (
-      !markedEntries.isNullOrEmpty() &&
-        markerController.shouldAcceptInteraction(interaction, markedEntries)
+      targets.isNotEmpty() && chart.markerController.shouldAcceptInteraction(interaction, targets)
     ) {
-      val shouldShow = markerController.shouldShowMarker(interaction, markedEntries)
-      lastAcceptedInteraction = if (shouldShow) interaction else null
-      measuringContext.pointerPosition = lastAcceptedInteraction?.point
-      measuringContext.isMarkerShown = shouldShow
+      val shouldShow = chart.markerController.shouldShowMarker(interaction, targets)
+      measuringContext.markerX = if (shouldShow) x else null
       invalidate()
     }
   }

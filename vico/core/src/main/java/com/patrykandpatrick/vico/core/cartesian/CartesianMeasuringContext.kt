@@ -42,10 +42,15 @@ public interface CartesianMeasuringContext : MeasuringContext {
   public val layerPadding: CartesianLayerPadding
 
   /** The pointer position. */
-  public val pointerPosition: Point?
+  @Deprecated("") public val pointerPosition: Point?
+
+  /** The marker’s _x_-value. */
+  public val markerX: Double?
 
   /** Whether the marker is shown. */
+  @Deprecated("Use `markerX != null`.")
   public val isMarkerShown: Boolean
+    get() = markerX != null
 }
 
 internal fun CartesianMeasuringContext.getFullXRange(layerDimensions: CartesianLayerDimensions) =
