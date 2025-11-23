@@ -20,8 +20,9 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
 import android.content.Context
-import android.graphics.RectF
+import android.graphics.Matrix
 import android.util.AttributeSet
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Interpolator
@@ -31,9 +32,11 @@ import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
 import com.patrykandpatrick.vico.core.common.Animation
 import com.patrykandpatrick.vico.core.common.MutableMeasuringContext
+import com.patrykandpatrick.vico.core.common.MutableOffset
+import com.patrykandpatrick.vico.core.common.MutableSize
+import com.patrykandpatrick.vico.core.common.Offset
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.core.common.data.MutableExtraStore
-import com.patrykandpatrick.vico.core.common.set
 import com.patrykandpatrick.vico.core.common.spToPx
 import kotlin.coroutines.EmptyCoroutineContext
 import kotlinx.coroutines.CoroutineScope
@@ -48,11 +51,11 @@ public abstract class ChartView<M>
 @JvmOverloads
 constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) :
   FrameLayout(context, attrs, defStyleAttr) {
-  protected val canvasBounds: RectF = RectF()
+  protected val canvasSize: MutableSize = MutableSize()
 
   protected open val measuringContext: MutableMeasuringContext =
     MutableMeasuringContext(
-      canvasBounds,
+      canvasSize,
       context.density,
       ExtraStore.Empty,
       context.isLtr,
@@ -81,6 +84,14 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   protected var isAnimationFrameGenerationRunning: Boolean = false
 
   protected var placeholder: View? = null
+
+  private val _offset: MutableOffset = MutableOffset()
+
+  protected val offset: Offset = _offset
+
+  private val motionEventMatrix: Matrix = Matrix()
+
+  private var acceptMotionEvents = false
 
   /** Whether to run an initial animation when the [ChartView] is created. */
   public var animateIn: Boolean = true
@@ -140,12 +151,12 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
       MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY),
     )
-    canvasBounds.set(
-      left = paddingLeft,
-      top = paddingTop,
-      right = width - paddingRight,
-      bottom = height - paddingBottom,
-    )
+
+    canvasSize.width = (width - paddingLeft - paddingRight).toFloat()
+    canvasSize.height = (height - paddingTop - paddingBottom).toFloat()
+    _offset.x = paddingLeft.toFloat()
+    _offset.y = paddingTop.toFloat()
+    motionEventMatrix.setTranslate(-offset.x, -offset.y)
   }
 
   protected fun startAnimation(transformModel: suspend (key: Any, fraction: Float) -> Unit) {
@@ -198,6 +209,22 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     `MutableMeasuringContext` instantiation. */
     @Suppress("UNNECESSARY_SAFE_CALL")
     measuringContext?.isLtr = layoutDirection == LAYOUT_DIRECTION_LTR
+  }
+
+  protected fun MotionEvent.translateOrReject(): Boolean {
+    if (actionMasked == MotionEvent.ACTION_DOWN) {
+      acceptMotionEvents =
+        (0..<pointerCount).all { index ->
+          getX(index) in offset.x..offset.x + canvasSize.width &&
+            getY(index) in offset.y..offset.y + canvasSize.height
+        }
+    }
+    if (!acceptMotionEvents) return false
+    if (actionMasked == MotionEvent.ACTION_UP || actionMasked == MotionEvent.ACTION_CANCEL) {
+      acceptMotionEvents = false
+    }
+    transform(motionEventMatrix)
+    return true
   }
 }
 

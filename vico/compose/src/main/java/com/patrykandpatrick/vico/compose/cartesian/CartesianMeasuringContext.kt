@@ -16,7 +16,6 @@
 
 package com.patrykandpatrick.vico.compose.cartesian
 
-import android.graphics.RectF
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalDensity
@@ -29,12 +28,13 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartRanges
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayerPadding
 import com.patrykandpatrick.vico.core.common.Point
+import com.patrykandpatrick.vico.core.common.Size
 import com.patrykandpatrick.vico.core.common.data.CacheStore
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
 
 @Composable
 internal fun rememberCartesianMeasuringContext(
-  canvasBounds: RectF,
+  canvasSize: Size,
   extraStore: ExtraStore,
   model: CartesianChartModel,
   ranges: CartesianChartRanges,
@@ -48,7 +48,7 @@ internal fun rememberCartesianMeasuringContext(
   val isLtr = LocalLayoutDirection.current == LayoutDirection.Ltr
   val cacheStore = remember { CacheStore() }
   return remember(
-    canvasBounds,
+    canvasSize,
     density,
     extraStore,
     isLtr,
@@ -62,7 +62,7 @@ internal fun rememberCartesianMeasuringContext(
     isMarkerShown,
   ) {
     MutableCartesianMeasuringContext(
-      canvasBounds = canvasBounds,
+      canvasSize = canvasSize,
       density = density.density,
       extraStore = extraStore,
       isLtr = isLtr,

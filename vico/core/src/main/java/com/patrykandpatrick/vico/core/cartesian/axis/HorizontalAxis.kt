@@ -498,11 +498,11 @@ protected constructor(
               titleComponentHeight +
               (if (position == Axis.Position.Horizontal.Bottom) lineThickness else 0f) +
               tickLength)
-            .coerceAtMost(canvasBounds.height() / MAX_HEIGHT_DIVISOR)
+            .coerceAtMost(canvasSize.height / MAX_HEIGHT_DIVISOR)
             .coerceIn(size.minDp.pixels, size.maxDp.pixels)
         }
         is Size.Fixed -> size.valueDp.pixels
-        is Size.Fraction -> canvasBounds.height() * size.fraction
+        is Size.Fraction -> canvasSize.height * size.fraction
         is Size.Text ->
           label
             ?.getHeight(context = this, text = size.text, rotationDegrees = labelRotationDegrees)
