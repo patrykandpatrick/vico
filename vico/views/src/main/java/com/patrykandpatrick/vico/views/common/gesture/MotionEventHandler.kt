@@ -82,6 +82,17 @@ internal class MotionEventHandler(
         }
         scrollHandled
       }
+      MotionEvent.ACTION_HOVER_ENTER,
+      MotionEvent.ACTION_HOVER_MOVE -> {
+        onInteraction(Interaction.Enter(motionEvent.point))
+        requestInvalidate()
+        true
+      }
+      MotionEvent.ACTION_HOVER_EXIT -> {
+        onInteraction(Interaction.Exit(motionEvent.point, isWithinBounds = false /* TODO */))
+        requestInvalidate()
+        true
+      }
       MotionEvent.ACTION_CANCEL,
       MotionEvent.ACTION_UP -> {
         totalDragAmount = 0f

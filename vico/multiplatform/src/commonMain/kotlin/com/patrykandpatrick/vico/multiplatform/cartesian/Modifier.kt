@@ -49,6 +49,7 @@ internal fun Modifier.pointerInput(
     )
     .pointerInput(onZoom, onInteraction) {
       awaitPointerEventScope {
+        var isHovering = false
         while (true) {
           val event = awaitPointerEvent()
           val pointerPosition = event.changes.first().position.toPoint()
@@ -61,18 +62,28 @@ internal fun Modifier.pointerInput(
             onInteraction == null -> continue
             event.type == PointerEventType.Press ->
               onInteraction(Interaction.Press(pointerPosition))
-            event.type == PointerEventType.Release ->
+            event.type == PointerEventType.Release -> {
+              isHovering = true
               onInteraction(Interaction.Release(pointerPosition))
+            }
             event.type == PointerEventType.Move && !scrollState.scrollEnabled -> {
               val changes = event.changes.first()
               if (consumeMoveEvents) changes.consume()
               onInteraction(Interaction.Move(pointerPosition))
             }
-            event.type == PointerEventType.Enter ->
+            event.type == PointerEventType.Enter -> {
+              isHovering = true
               onInteraction(Interaction.Enter(pointerPosition))
-            event.type == PointerEventType.Move && scrollState.scrollEnabled ->
+            }
+            event.type == PointerEventType.Move && scrollState.scrollEnabled && isHovering ->
               onInteraction(Interaction.Enter(pointerPosition))
-            event.type == PointerEventType.Exit -> onInteraction(Interaction.Exit(pointerPosition))
+            event.type == PointerEventType.Exit -> {
+              val isWithinBounds =
+                pointerPosition.x in 0f..size.width.toFloat() &&
+                  pointerPosition.y in 0f..size.height.toFloat()
+              isHovering = isWithinBounds
+              onInteraction(Interaction.Exit(pointerPosition, isWithinBounds))
+            }
           }
         }
       }

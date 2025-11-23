@@ -34,6 +34,8 @@ public sealed class Interaction : Serializable {
       is Move -> copy(point.copy(x = point.x + deltaX))
       is Release -> copy(point.copy(x = point.x + deltaX))
       is Zoom -> copy(point.copy(x = point.x + deltaX))
+      is Enter,
+      is Exit -> this
     }
 
   /** A press interaction. */
@@ -53,4 +55,10 @@ public sealed class Interaction : Serializable {
 
   /** A zoom interaction. */
   public data class Zoom(override val point: Point) : Interaction()
+
+  /** An enter interaction. */
+  public data class Enter(override val point: Point) : Interaction()
+
+  /** An exit interaction. */
+  public data class Exit(override val point: Point, val isWithinBounds: Boolean) : Interaction()
 }

@@ -312,6 +312,12 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     }
   }
 
+  override fun onHoverEvent(event: MotionEvent): Boolean {
+    val superHandled = super.onHoverEvent(event)
+    if (!isEnabled) return superHandled
+    return motionEventHandler.handleMotionEvent(event, scrollHandler)
+  }
+
   override fun onTouchEvent(event: MotionEvent): Boolean {
     val superHandled = super.onTouchEvent(event)
     if (!isEnabled || !event.translateOrReject()) return superHandled

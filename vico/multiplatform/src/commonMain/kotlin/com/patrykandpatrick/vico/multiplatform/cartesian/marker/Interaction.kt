@@ -60,14 +60,13 @@ public sealed class Interaction {
   public data class Enter(override val point: Point) : Interaction()
 
   /** An exit interaction. */
-  public data class Exit(override val point: Point) : Interaction()
+  public data class Exit(override val point: Point, val isWithinBounds: Boolean) : Interaction()
 
   internal companion object {
     internal val Saver: Saver<MutableState<Interaction?>, Any> =
       listSaver(
         save = { eventState ->
-          val event = eventState.value
-          when (event) {
+          when (val event = eventState.value) {
             is Press -> listOf("Press", event.point.x, event.point.y)
             is Tap -> listOf("Tap", event.point.x, event.point.y)
             is LongPress -> listOf("LongPress", event.point.x, event.point.y)
@@ -75,7 +74,7 @@ public sealed class Interaction {
             is Release -> listOf("Release", event.point.x, event.point.y)
             is Zoom -> listOf("Zoom", event.point.x, event.point.y)
             is Enter -> listOf("Enter", event.point.x, event.point.y)
-            is Exit -> listOf("Exit", event.point.x, event.point.y)
+            is Exit -> listOf("Exit", event.point.x, event.point.y, event.isWithinBounds)
             else -> emptyList()
           }
         },
@@ -91,7 +90,7 @@ public sealed class Interaction {
             "Release" -> Release(point)
             "Zoom" -> Zoom(point)
             "Enter" -> Enter(point)
-            "Exit" -> Exit(point)
+            "Exit" -> Exit(point, list[3] as Boolean)
             else -> error("Unknown Interaction type: $type")
           }.let(::mutableStateOf)
         },

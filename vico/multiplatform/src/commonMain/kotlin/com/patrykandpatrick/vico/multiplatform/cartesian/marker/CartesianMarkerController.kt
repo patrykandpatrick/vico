@@ -47,7 +47,7 @@ public fun interface CartesianMarkerController {
     public fun showOnPress(): CartesianMarkerController = ShowOnPressMarkerController()
 
     /** Shows the [CartesianMarker] on hover. */
-    public val ShowOnHover: CartesianMarkerController = ShowOnHoverMarkerController
+    public fun showOnHover(): CartesianMarkerController = ShowOnHoverMarkerController()
 
     /** Toggles the visibility of the [CartesianMarker] on tap. */
     public fun toggleOnTap(): CartesianMarkerController = ToggleOnTapMarkerController()
@@ -82,14 +82,21 @@ private class ShowOnPressMarkerController : CartesianMarkerController {
   override fun equals(other: Any?) = other === this || other is ShowOnPressMarkerController
 }
 
-private object ShowOnHoverMarkerController : CartesianMarkerController {
-  override fun shouldAcceptInteraction(
+private class ShowOnHoverMarkerController : CartesianMarkerController {
+  private var isHovering = false
+
+  override fun shouldShowMarker(
     interaction: Interaction,
     targets: List<CartesianMarker.Target>,
-  ) = interaction is Interaction.Enter || interaction is Interaction.Exit
-
-  override fun shouldShowMarker(interaction: Interaction, targets: List<CartesianMarker.Target>) =
-    interaction is Interaction.Enter
+  ): Boolean {
+    isHovering =
+      when (interaction) {
+        is Interaction.Enter -> true
+        is Interaction.Exit -> interaction.isWithinBounds
+        else -> isHovering
+      }
+    return isHovering
+  }
 }
 
 private class ToggleOnTapMarkerController : CartesianMarkerController {
