@@ -16,6 +16,8 @@
 
 package com.patrykandpatrick.vico.core.cartesian
 
+import android.graphics.RectF
+import androidx.annotation.RestrictTo
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartRanges
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayer
@@ -59,3 +61,17 @@ internal fun CartesianMeasuringContext.getFullXRange(layerDimensions: CartesianL
     val end = ranges.maxX + endPadding / xSpacing * ranges.xStep
     start..end
   }
+
+/* @suppress */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+public fun CartesianMeasuringContext.getVisibleXRange(
+  layerDimensions: CartesianLayerDimensions,
+  layerBounds: RectF,
+  scroll: Float,
+): ClosedFloatingPointRange<Double> {
+  val fullRange = getFullXRange(layerDimensions)
+  val start =
+    fullRange.start + layoutDirectionMultiplier * scroll / layerDimensions.xSpacing * ranges.xStep
+  val end = start + layerBounds.width() / layerDimensions.xSpacing * ranges.xStep
+  return start..end
+}

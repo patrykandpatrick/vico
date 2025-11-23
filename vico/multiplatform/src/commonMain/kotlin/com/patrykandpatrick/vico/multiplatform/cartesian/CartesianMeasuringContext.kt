@@ -18,6 +18,7 @@ package com.patrykandpatrick.vico.multiplatform.cartesian
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFontFamilyResolver
@@ -101,4 +102,16 @@ internal fun rememberCartesianMeasuringContext(
       cacheStore = cacheStore,
     )
   }
+}
+
+internal fun CartesianMeasuringContext.getVisibleXRange(
+  layerDimensions: CartesianLayerDimensions,
+  layerBounds: Rect,
+  scroll: Float,
+): ClosedFloatingPointRange<Double> {
+  val fullRange = getFullXRange(layerDimensions)
+  val start =
+    fullRange.start + layoutDirectionMultiplier * scroll / layerDimensions.xSpacing * ranges.xStep
+  val end = start + layerBounds.width / layerDimensions.xSpacing * ranges.xStep
+  return start..end
 }

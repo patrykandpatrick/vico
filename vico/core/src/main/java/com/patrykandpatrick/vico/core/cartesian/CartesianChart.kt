@@ -319,7 +319,7 @@ private constructor(
         model.forEachWithLayer(drawingConsumer.apply { this.context = context })
       }
       forEachPersistentMarker { marker, targets -> marker.drawUnderLayers(context, targets) }
-      val markerTargets = getMarkerTargets(markerX)
+      val markerTargets = getMarkerTargets(markerX, getVisibleXRange())
       val drawMarker = markerTargets.isNotEmpty()
       if (drawMarker) marker?.drawUnderLayers(context, markerTargets)
       canvas.drawBitmap(layerBitmap, 0f, 0f, null)
@@ -448,14 +448,29 @@ private constructor(
   }
 
   /** Returns the `CartesianMarker.Target`s for `x`. */
-  public open fun getMarkerTargets(x: Double?): List<CartesianMarker.Target> {
+  public open fun getMarkerTargets(
+    x: Double?,
+    visibleXRange: ClosedFloatingPointRange<Double>,
+  ): List<CartesianMarker.Target> {
     val marker = marker ?: return emptyList()
     return if (x == null || markerTargets.isEmpty()) {
       if (previousMarkerTargetHashCode != null) markerVisibilityListener?.onHidden(marker)
       previousMarkerTargetHashCode = null
       emptyList()
     } else {
-      val targets = markerTargets[x] ?: emptyList()
+      var targets = emptyList<CartesianMarker.Target>()
+      var previousDelta = Double.POSITIVE_INFINITY
+      for ((key, keyTargets) in markerTargets) {
+        val delta = abs(key - x)
+        when {
+          delta > previousDelta || x !in visibleXRange -> break
+          delta < previousDelta -> {
+            targets = keyTargets
+            previousDelta = delta
+          }
+          else -> targets = keyTargets
+        }
+      }
       val targetHashCode = targets.hashCode()
       if (previousMarkerTargetHashCode == null) {
         markerVisibilityListener?.onShown(marker, targets)

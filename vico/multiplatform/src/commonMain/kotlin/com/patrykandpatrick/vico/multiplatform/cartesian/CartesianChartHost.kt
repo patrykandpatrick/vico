@@ -189,7 +189,11 @@ internal fun CartesianChartHostImpl(
           scrollState.value,
           ranges,
         )
-      val targets = chart.getMarkerTargets(x)
+      val targets =
+        chart.getMarkerTargets(
+          x,
+          measuringContext.getVisibleXRange(layerDimensions, chart.layerBounds, scrollState.value),
+        )
       if (
         targets.isNotEmpty() && chart.markerController.shouldAcceptInteraction(interaction, targets)
       ) {

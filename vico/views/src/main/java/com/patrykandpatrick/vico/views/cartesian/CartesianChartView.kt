@@ -37,6 +37,7 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartRanges
 import com.patrykandpatrick.vico.core.cartesian.data.MutableCartesianChartRanges
 import com.patrykandpatrick.vico.core.cartesian.data.RandomCartesianModelGenerator
 import com.patrykandpatrick.vico.core.cartesian.data.toImmutable
+import com.patrykandpatrick.vico.core.cartesian.getVisibleXRange
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayerPadding
 import com.patrykandpatrick.vico.core.cartesian.layer.MutableCartesianLayerDimensions
 import com.patrykandpatrick.vico.core.cartesian.marker.Interaction
@@ -359,7 +360,11 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
         scrollHandler.value,
         ranges,
       )
-    val targets = chart.getMarkerTargets(x)
+    val targets =
+      chart.getMarkerTargets(
+        x,
+        measuringContext.getVisibleXRange(layerDimensions, chart.layerBounds, scrollHandler.value),
+      )
     if (
       targets.isNotEmpty() && chart.markerController.shouldAcceptInteraction(interaction, targets)
     ) {
