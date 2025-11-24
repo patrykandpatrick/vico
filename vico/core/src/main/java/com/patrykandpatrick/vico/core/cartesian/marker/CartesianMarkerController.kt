@@ -27,6 +27,14 @@ public fun interface CartesianMarkerController {
     targets: List<CartesianMarker.Target>,
   ): Boolean = true
 
+  // TODO This helps resolve an issue where hover interactions are not properly tracked.
+  // TODO With `ShowOnHoverMarkerController`, when the chart is scrolled, we need to re-emit the
+  // TODO latest `Enter` interaction to ensure the marker updates its position correctly.
+  public fun interceptInteraction(
+    interaction: Interaction,
+    targets: List<CartesianMarker.Target>,
+  ): Interaction = interaction
+
   /** Whether the marker should be visible. */
   public fun shouldShowMarker(
     interaction: Interaction,
@@ -36,23 +44,88 @@ public fun interface CartesianMarkerController {
   /** Houses [CartesianMarkerController] singletons and factory functions. */
   public companion object {
     /** Shows the [CartesianMarker] on press. */
-    public val ShowOnPress: CartesianMarkerController = ShowOnPressMarkerController
+    @Deprecated(
+      "Use `showOnPress()` instead. This property creates a new instance on each access.",
+      ReplaceWith("showOnPress()"),
+    )
+    public val ShowOnPress: CartesianMarkerController
+      get() = showOnPress()
+
+    /** Shows the [CartesianMarker] on press. */
+    public fun showOnPress(): CartesianMarkerController = ShowOnPressMarkerController()
+
+    /** Shows the [CartesianMarker] on hover. */
+    public fun showOnHover(): CartesianMarkerController = ShowOnHoverMarkerController()
 
     /** Toggles the visibility of the [CartesianMarker] on tap. */
     public fun toggleOnTap(): CartesianMarkerController = ToggleOnTapMarkerController()
   }
 }
 
-private object ShowOnPressMarkerController : CartesianMarkerController {
+private class ShowOnPressMarkerController : CartesianMarkerController {
+  private var isPressed = false
+
   override fun shouldAcceptInteraction(
     interaction: Interaction,
     targets: List<CartesianMarker.Target>,
   ) =
-    (interaction is Interaction.Press || interaction is Interaction.Move) && targets.isNotEmpty() ||
-      interaction is Interaction.Release
+    when (interaction) {
+      is Interaction.Press -> {
+        isPressed = targets.isNotEmpty()
+        true
+      }
+      is Interaction.Move -> isPressed
+      is Interaction.Release -> {
+        isPressed = false
+        true
+      }
+      else -> false
+    }
 
   override fun shouldShowMarker(interaction: Interaction, targets: List<CartesianMarker.Target>) =
     interaction !is Interaction.Release
+
+  override fun hashCode() = 31
+
+  override fun equals(other: Any?) = other === this || other is ShowOnPressMarkerController
+}
+
+private class ShowOnHoverMarkerController : CartesianMarkerController {
+  private var isHovering = false
+
+  private var lastEnterInteraction: Interaction.Enter? = null
+
+  override fun shouldAcceptInteraction(
+    interaction: Interaction,
+    targets: List<CartesianMarker.Target>,
+  ): Boolean {
+    lastEnterInteraction =
+      when (interaction) {
+        is Interaction.Enter -> interaction
+        is Interaction.Exit -> null
+        else -> lastEnterInteraction
+      }
+    return interaction is Interaction.Enter ||
+      interaction is Interaction.Exit ||
+      interaction is Interaction.Press
+  }
+
+  override fun interceptInteraction(
+    interaction: Interaction,
+    targets: List<CartesianMarker.Target>,
+  ): Interaction = lastEnterInteraction ?: interaction
+
+  override fun shouldShowMarker(
+    interaction: Interaction,
+    targets: List<CartesianMarker.Target>,
+  ): Boolean {
+    when (interaction) {
+      is Interaction.Enter -> isHovering = targets.isNotEmpty()
+      is Interaction.Exit -> isHovering = interaction.isInsideChartBounds
+      else -> Unit
+    }
+    return isHovering
+  }
 }
 
 private class ToggleOnTapMarkerController : CartesianMarkerController {

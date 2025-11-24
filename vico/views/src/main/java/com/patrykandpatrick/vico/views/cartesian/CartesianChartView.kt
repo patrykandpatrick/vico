@@ -37,6 +37,7 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartRanges
 import com.patrykandpatrick.vico.core.cartesian.data.MutableCartesianChartRanges
 import com.patrykandpatrick.vico.core.cartesian.data.RandomCartesianModelGenerator
 import com.patrykandpatrick.vico.core.cartesian.data.toImmutable
+import com.patrykandpatrick.vico.core.cartesian.getDelta
 import com.patrykandpatrick.vico.core.cartesian.getVisibleXRange
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayerPadding
 import com.patrykandpatrick.vico.core.cartesian.layer.MutableCartesianLayerDimensions
@@ -116,6 +117,8 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   private val layerDimensions = MutableCartesianLayerDimensions()
 
   private var previousLayerPaddingHashCode: Int? = null
+
+  private var lastPointerPosition: Point? = null
 
   /**
    * Houses information on the [CartesianChart]’s scroll value. Allows for scroll customization and
@@ -299,6 +302,12 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     }
   }
 
+  override fun onHoverEvent(event: MotionEvent): Boolean {
+    val superHandled = super.onHoverEvent(event)
+    if (!isEnabled) return superHandled
+    return motionEventHandler.handleMotionEvent(event, scrollHandler)
+  }
+
   override fun onTouchEvent(event: MotionEvent): Boolean {
     @Suppress("DEPRECATION")
     measuringContext.pointerPosition =
@@ -351,7 +360,9 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   }
 
   private fun handleInteraction(interaction: Interaction) {
+    if (measuringContext.ranges is CartesianChartRanges.Empty) return
     val chart = chart ?: return
+    lastPointerPosition = if (interaction is Interaction.Release) null else interaction.point
     val x =
       measuringContext.pointerPositionToX(
         interaction.point,
@@ -369,6 +380,22 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       val shouldShow = chart.markerController.shouldShowMarker(interaction, targets)
       measuringContext.markerX = if (shouldShow) targets.firstOrNull()?.x else null
       invalidate()
+    } else {
+      // TODO Improve this logic, to make it more universal.
+      val interceptedInteraction = chart.markerController.interceptInteraction(interaction, targets)
+      if (interceptedInteraction !== interaction) {
+        handleInteraction(interceptedInteraction)
+      }
+    }
+  }
+
+  override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+    super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+    motionEventHandler.chartBounds.apply {
+      top = offset.x
+      left = offset.y
+      right = offset.x + canvasSize.width
+      bottom = offset.y + canvasSize.height
     }
   }
 
@@ -384,13 +411,32 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 
       motionEventHandler.scrollEnabled = scrollHandler.scrollEnabled
       if (scroller.computeScrollOffset()) {
-        scrollHandler.scroll(Scroll.Absolute.pixels(scroller.currX.toFloat()))
+        val delta = scroller.currX.toFloat()
+        scrollHandler.scroll(Scroll.Absolute.pixels(delta))
+        lastPointerPosition?.let { point ->
+          // TODO the marker doesn't show on hover during fling.
+          handleInteraction(Interaction.Move(point.copy(x = point.x + delta)))
+        }
         postInvalidateOnAnimation()
       }
 
       zoomHandler.update(measuringContext, layerDimensions, chart.layerBounds, scrollHandler.value)
       scrollHandler.update(measuringContext, chart.layerBounds, layerDimensions)
-      zoomHandler.consumePendingScroll(scrollHandler::scroll)
+      zoomHandler.consumePendingScroll { scroll ->
+        scrollHandler.scroll(scroll)
+        // TODO WIP
+        lastPointerPosition?.let { point ->
+          val scrollDelta =
+            scroll.getDelta(
+              measuringContext,
+              layerDimensions,
+              chart.layerBounds,
+              scrollHandler.maxValue,
+              scrollHandler.value,
+            )
+          handleInteraction(Interaction.Move(point.copy(x = point.x + scrollDelta)))
+        }
+      }
 
       val drawingContext =
         CartesianDrawingContext(
