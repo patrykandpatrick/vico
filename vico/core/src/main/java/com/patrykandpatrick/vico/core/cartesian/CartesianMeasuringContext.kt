@@ -16,6 +16,8 @@
 
 package com.patrykandpatrick.vico.core.cartesian
 
+import android.graphics.RectF
+import androidx.annotation.RestrictTo
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartRanges
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayer
@@ -42,10 +44,15 @@ public interface CartesianMeasuringContext : MeasuringContext {
   public val layerPadding: CartesianLayerPadding
 
   /** The pointer position. */
-  public val pointerPosition: Point?
+  @Deprecated("Use `markerX`.") public val pointerPosition: Point?
+
+  /** The marker’s _x_-value. */
+  public val markerX: Double?
 
   /** Whether the marker is shown. */
+  @Deprecated("Use `markerX != null`.")
   public val isMarkerShown: Boolean
+    get() = markerX != null
 }
 
 internal fun CartesianMeasuringContext.getFullXRange(layerDimensions: CartesianLayerDimensions) =
@@ -54,3 +61,17 @@ internal fun CartesianMeasuringContext.getFullXRange(layerDimensions: CartesianL
     val end = ranges.maxX + endPadding / xSpacing * ranges.xStep
     start..end
   }
+
+/** @suppress */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+public fun CartesianMeasuringContext.getVisibleXRange(
+  layerDimensions: CartesianLayerDimensions,
+  layerBounds: RectF,
+  scroll: Float,
+): ClosedFloatingPointRange<Double> {
+  val fullRange = getFullXRange(layerDimensions)
+  val start =
+    fullRange.start + layoutDirectionMultiplier * scroll / layerDimensions.xSpacing * ranges.xStep
+  val end = start + layerBounds.width() / layerDimensions.xSpacing * ranges.xStep
+  return start..end
+}

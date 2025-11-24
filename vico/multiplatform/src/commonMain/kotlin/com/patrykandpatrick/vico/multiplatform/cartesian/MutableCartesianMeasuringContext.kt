@@ -24,7 +24,6 @@ import com.patrykandpatrick.vico.multiplatform.cartesian.data.CartesianChartMode
 import com.patrykandpatrick.vico.multiplatform.cartesian.data.CartesianChartRanges
 import com.patrykandpatrick.vico.multiplatform.cartesian.layer.CartesianLayerPadding
 import com.patrykandpatrick.vico.multiplatform.common.MeasuringContext
-import com.patrykandpatrick.vico.multiplatform.common.Point
 import com.patrykandpatrick.vico.multiplatform.common.data.CacheStore
 import com.patrykandpatrick.vico.multiplatform.common.data.ExtraStore
 
@@ -39,7 +38,6 @@ internal class MutableCartesianMeasuringContext(
   override var scrollEnabled: Boolean,
   override var zoomEnabled: Boolean,
   override var layerPadding: CartesianLayerPadding,
-  override var pointerPosition: Point?,
-  override var isMarkerShown: Boolean,
+  override var markerX: Double?,
   override val cacheStore: CacheStore = CacheStore(),
 ) : MeasuringContext, CartesianMeasuringContext

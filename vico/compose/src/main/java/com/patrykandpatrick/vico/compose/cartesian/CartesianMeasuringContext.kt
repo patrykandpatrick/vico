@@ -42,7 +42,7 @@ internal fun rememberCartesianMeasuringContext(
   zoomEnabled: Boolean,
   layerPadding: CartesianLayerPadding,
   pointerPosition: Point?,
-  isMarkerShown: Boolean,
+  markerX: Double?,
 ): CartesianMeasuringContext {
   val density = LocalDensity.current
   val isLtr = LocalLayoutDirection.current == LayoutDirection.Ltr
@@ -58,8 +58,8 @@ internal fun rememberCartesianMeasuringContext(
     zoomEnabled,
     layerPadding,
     pointerPosition,
+    markerX,
     cacheStore,
-    isMarkerShown,
   ) {
     MutableCartesianMeasuringContext(
       canvasSize = canvasSize,
@@ -73,8 +73,8 @@ internal fun rememberCartesianMeasuringContext(
       zoomEnabled = zoomEnabled,
       layerPadding = layerPadding,
       pointerPosition = pointerPosition,
+      markerX = markerX,
       cacheStore = cacheStore,
-      isMarkerShown = isMarkerShown,
     )
   }
 }

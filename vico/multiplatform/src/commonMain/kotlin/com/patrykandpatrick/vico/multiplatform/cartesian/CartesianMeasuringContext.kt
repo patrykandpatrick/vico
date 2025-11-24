@@ -18,6 +18,7 @@ package com.patrykandpatrick.vico.multiplatform.cartesian
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFontFamilyResolver
@@ -28,7 +29,6 @@ import com.patrykandpatrick.vico.multiplatform.cartesian.layer.CartesianLayer
 import com.patrykandpatrick.vico.multiplatform.cartesian.layer.CartesianLayerDimensions
 import com.patrykandpatrick.vico.multiplatform.cartesian.layer.CartesianLayerPadding
 import com.patrykandpatrick.vico.multiplatform.common.MeasuringContext
-import com.patrykandpatrick.vico.multiplatform.common.Point
 import com.patrykandpatrick.vico.multiplatform.common.data.CacheStore
 import com.patrykandpatrick.vico.multiplatform.common.data.ExtraStore
 
@@ -49,11 +49,8 @@ public interface CartesianMeasuringContext : MeasuringContext {
   /** Stores the [CartesianLayer] padding values. */
   public val layerPadding: CartesianLayerPadding
 
-  /** The pointer position. */
-  public val pointerPosition: Point?
-
-  /** Whether the marker is shown. */
-  public val isMarkerShown: Boolean
+  /** The marker’s _x_-value. */
+  public val markerX: Double?
 }
 
 internal fun CartesianMeasuringContext.getFullXRange(layerDimensions: CartesianLayerDimensions) =
@@ -71,8 +68,7 @@ internal fun rememberCartesianMeasuringContext(
   scrollEnabled: Boolean,
   zoomEnabled: Boolean,
   layerPadding: CartesianLayerPadding,
-  pointerPosition: Point?,
-  isMarkerShown: Boolean,
+  markerX: Double?,
 ): MutableCartesianMeasuringContext {
   val fontFamilyResolver = LocalFontFamilyResolver.current
   val density = LocalDensity.current
@@ -88,8 +84,7 @@ internal fun rememberCartesianMeasuringContext(
     scrollEnabled,
     zoomEnabled,
     layerPadding,
-    pointerPosition,
-    isMarkerShown,
+    markerX,
     cacheStore,
   ) {
     MutableCartesianMeasuringContext(
@@ -103,9 +98,20 @@ internal fun rememberCartesianMeasuringContext(
       scrollEnabled = scrollEnabled,
       zoomEnabled = zoomEnabled,
       layerPadding = layerPadding,
-      pointerPosition = pointerPosition,
-      isMarkerShown = isMarkerShown,
+      markerX = markerX,
       cacheStore = cacheStore,
     )
   }
+}
+
+internal fun CartesianMeasuringContext.getVisibleXRange(
+  layerDimensions: CartesianLayerDimensions,
+  layerBounds: Rect,
+  scroll: Float,
+): ClosedFloatingPointRange<Double> {
+  val fullRange = getFullXRange(layerDimensions)
+  val start =
+    fullRange.start + layoutDirectionMultiplier * scroll / layerDimensions.xSpacing * ranges.xStep
+  val end = start + layerBounds.width / layerDimensions.xSpacing * ranges.xStep
+  return start..end
 }
