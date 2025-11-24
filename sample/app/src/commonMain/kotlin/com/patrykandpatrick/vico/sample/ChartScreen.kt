@@ -43,7 +43,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -58,7 +58,7 @@ import androidx.navigation.NavController
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun ChartScreen(navController: NavController, uiFrameworkID: Int, initialChartID: Int) {
-  var chartID by remember { mutableIntStateOf(initialChartID) }
+  var chartID by rememberSaveable { mutableIntStateOf(initialChartID) }
   val charts = Charts.all.getValue(UIFramework.entries[uiFrameworkID])
   val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
   val lifecycle = LocalLifecycleOwner.current.lifecycle
