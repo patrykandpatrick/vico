@@ -17,6 +17,7 @@
 package com.patrykandpatrick.vico.views.common.gesture
 
 import android.annotation.SuppressLint
+import android.graphics.RectF
 import android.view.MotionEvent
 import android.view.VelocityTracker
 import android.widget.OverScroller
@@ -34,6 +35,7 @@ internal class MotionEventHandler(
   var scrollEnabled: Boolean = false,
   private val onInteraction: (Interaction) -> Unit,
   private val requestInvalidate: () -> Unit,
+  internal val chartBounds: RectF = RectF(),
 ) {
   private val velocityUnits = (VELOCITY_PIXELS * density).toInt()
   private val dragThreshold = DRAG_THRESHOLD_PIXELS * density
@@ -43,6 +45,7 @@ internal class MotionEventHandler(
   private var velocityTracker = VelocityTrackerHelper()
   private var lastEventPointerCount = 0
   private var totalDragAmount: Float = 0f
+  private var isHoverActive = false
 
   fun handleMotionEvent(motionEvent: MotionEvent, scrollHandler: ScrollHandler): Boolean {
     val ignoreEvent =
@@ -91,6 +94,20 @@ internal class MotionEventHandler(
           requestInvalidate()
         }
         scrollHandled
+      }
+      MotionEvent.ACTION_HOVER_ENTER,
+      MotionEvent.ACTION_HOVER_MOVE -> {
+        isHoverActive = true
+        onInteraction(Interaction.Enter(motionEvent.point))
+        requestInvalidate()
+        true
+      }
+      MotionEvent.ACTION_HOVER_EXIT -> {
+        val isInsideChartBounds = chartBounds.contains(motionEvent.x, motionEvent.y)
+        isHoverActive = isInsideChartBounds
+        onInteraction(Interaction.Exit(motionEvent.point, isInsideChartBounds))
+        requestInvalidate()
+        true
       }
       MotionEvent.ACTION_CANCEL,
       MotionEvent.ACTION_UP -> {

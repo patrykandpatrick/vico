@@ -307,6 +307,12 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     }
   }
 
+  override fun onHoverEvent(event: MotionEvent): Boolean {
+    val superHandled = super.onHoverEvent(event)
+    if (!isEnabled) return superHandled
+    return motionEventHandler.handleMotionEvent(event, scrollHandler)
+  }
+
   override fun onTouchEvent(event: MotionEvent): Boolean {
     @Suppress("DEPRECATION")
     measuringContext.pointerPosition =
@@ -382,6 +388,16 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     }
   }
 
+  override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+    super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+    motionEventHandler.chartBounds.apply {
+      top = offset.x
+      left = offset.y
+      right = offset.x + canvasSize.width
+      bottom = offset.y + canvasSize.height
+    }
+  }
+
   private fun handleViewportChange(reason: CartesianMarkerController.ViewportChangeReason) {
     val chart = chart
     val lastAcceptedInteraction = lastAcceptedInteraction
@@ -394,24 +410,24 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   override fun dispatchDraw(canvas: Canvas) {
     super.dispatchDraw(canvas)
 
-    withChartAndModel { chart, model ->
+    withChartAndModel { chart, _ ->
       measuringContext.reset()
       layerDimensions.clear()
       chart.prepare(measuringContext, layerDimensions)
 
       if (chart.layerBounds.isEmpty) return@withChartAndModel
 
+      var viewportChangeReason: CartesianMarkerController.ViewportChangeReason? = null
       motionEventHandler.scrollEnabled = scrollHandler.scrollEnabled
       if (scroller.computeScrollOffset()) {
         val delta = scroller.currX.toFloat()
         val consumedDelta = scrollHandler.scroll(Scroll.Absolute.pixels(delta))
-        val reason =
+        viewportChangeReason =
           if (scrollHandler.isAutoScrolling) {
             CartesianMarkerController.ViewportChangeReason.AutoScroll(consumedDelta)
           } else {
             CartesianMarkerController.ViewportChangeReason.Scroll(consumedDelta)
           }
-        handleViewportChange(reason)
         postInvalidateOnAnimation()
       }
 
@@ -419,7 +435,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       scrollHandler.update(measuringContext, chart.layerBounds, layerDimensions)
       zoomHandler.consumePendingScroll { scroll ->
         val delta = scrollHandler.scroll(scroll)
-        handleViewportChange(CartesianMarkerController.ViewportChangeReason.Scroll(delta))
+        viewportChangeReason = CartesianMarkerController.ViewportChangeReason.Scroll(delta)
       }
 
       val drawingContext =
@@ -433,6 +449,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
         )
 
       chart.draw(drawingContext, offset)
+      viewportChangeReason?.also(::handleViewportChange)
       measuringContext.reset()
     }
   }
