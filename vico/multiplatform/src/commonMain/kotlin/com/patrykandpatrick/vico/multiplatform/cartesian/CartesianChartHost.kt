@@ -199,6 +199,13 @@ internal fun CartesianChartHostImpl(
       if (chart.markerController.shouldAcceptInteraction(interaction, targets)) {
         val shouldShow = chart.markerController.shouldShowMarker(interaction, targets)
         markerX = if (shouldShow) targets.firstOrNull()?.x else null
+      } else {
+        // TODO Improve this logic, to make it more universal.
+        val interceptedInteraction =
+          chart.markerController.interceptInteraction(interaction, targets)
+        if (interceptedInteraction !== interaction) {
+          onInteraction(interceptedInteraction)
+        }
       }
     }
   }
