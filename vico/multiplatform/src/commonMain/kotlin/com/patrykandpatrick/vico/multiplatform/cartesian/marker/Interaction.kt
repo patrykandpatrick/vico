@@ -48,7 +48,8 @@ public sealed class Interaction {
   public data class Enter(override val point: Point) : Interaction()
 
   /** An exit interaction. */
-  public data class Exit(override val point: Point) : Interaction()
+  public data class Exit(override val point: Point, val isInsideChartBounds: Boolean) :
+    Interaction()
 
   internal companion object {
     internal val Saver: Saver<MutableState<Interaction?>, Any> =

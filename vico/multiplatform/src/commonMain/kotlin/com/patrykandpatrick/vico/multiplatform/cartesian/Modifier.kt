@@ -22,8 +22,10 @@ import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.unit.toSize
 import com.patrykandpatrick.vico.multiplatform.cartesian.marker.Interaction
 import com.patrykandpatrick.vico.multiplatform.common.Point
 import com.patrykandpatrick.vico.multiplatform.common.detectZoomGestures
@@ -50,9 +52,11 @@ internal fun Modifier.pointerInput(
     )
     .pointerInput(onZoom, onInteraction) {
       awaitPointerEventScope {
+        var isHoverActive = false
         while (true) {
           val event = awaitPointerEvent()
-          val pointerPosition = event.changes.first().position.toPoint()
+          val position = event.changes.first().position
+          val pointerPosition = position.toPoint()
           when {
             event.type == PointerEventType.Scroll && scrollState.scrollEnabled && onZoom != null ->
               onZoom(
@@ -69,11 +73,17 @@ internal fun Modifier.pointerInput(
               if (consumeMoveEvents) changes.consume()
               onInteraction(Interaction.Move(pointerPosition))
             }
-            event.type == PointerEventType.Enter ->
+            event.type == PointerEventType.Enter -> {
+              isHoverActive = true
               onInteraction(Interaction.Enter(pointerPosition))
-            event.type == PointerEventType.Move && scrollState.scrollEnabled ->
-              onInteraction(Interaction.Enter(pointerPosition))
-            event.type == PointerEventType.Exit -> onInteraction(Interaction.Exit(pointerPosition))
+            }
+            event.type == PointerEventType.Move && scrollState.scrollEnabled && isHoverActive ->
+              onInteraction(Interaction.Move(pointerPosition))
+            event.type == PointerEventType.Exit -> {
+              val isInsideChartBounds = Rect(Offset.Zero, size.toSize()).contains(position)
+              isHoverActive = isInsideChartBounds
+              onInteraction(Interaction.Exit(pointerPosition, isInsideChartBounds))
+            }
           }
         }
       }
