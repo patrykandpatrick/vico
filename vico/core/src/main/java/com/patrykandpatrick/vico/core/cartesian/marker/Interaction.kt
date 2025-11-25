@@ -40,4 +40,7 @@ public sealed class Interaction : Serializable {
 
   /** A zoom interaction. */
   public data class Zoom(override val point: Point) : Interaction()
+
+  /** TODO */
+  public data class Update(override val point: Point) : Interaction()
 }

@@ -37,6 +37,7 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartRanges
 import com.patrykandpatrick.vico.core.cartesian.data.MutableCartesianChartRanges
 import com.patrykandpatrick.vico.core.cartesian.data.RandomCartesianModelGenerator
 import com.patrykandpatrick.vico.core.cartesian.data.toImmutable
+import com.patrykandpatrick.vico.core.cartesian.getDelta
 import com.patrykandpatrick.vico.core.cartesian.getVisibleXRange
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayerPadding
 import com.patrykandpatrick.vico.core.cartesian.layer.MutableCartesianLayerDimensions
@@ -116,6 +117,8 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   private val layerDimensions = MutableCartesianLayerDimensions()
 
   private var previousLayerPaddingHashCode: Int? = null
+
+  private var lastAcceptedInteraction: Interaction? = null
 
   /**
    * Houses information on the [CartesianChart]’s scroll value. Allows for scroll customization and
@@ -262,6 +265,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     _model = model
     updatePlaceholderVisibility()
     tryInvalidate(chart, model, updateRanges)
+    emitUpdateInteraction()
     if (model != null && oldModel?.id != model.id && isInEditMode.not()) {
       handler?.post { scrollHandler.autoScroll(model, oldModel) }
     }
@@ -351,6 +355,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   }
 
   private fun handleInteraction(interaction: Interaction) {
+    if (measuringContext.ranges is CartesianChartRanges.Empty) return
     val chart = chart ?: return
     val x =
       measuringContext.pointerPositionToX(
@@ -367,8 +372,17 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       )
     if (chart.markerController.shouldAcceptInteraction(interaction, targets)) {
       val shouldShow = chart.markerController.shouldShowMarker(interaction, targets)
+      lastAcceptedInteraction = interaction
       measuringContext.markerX = if (shouldShow) targets.firstOrNull()?.x else null
       invalidate()
+    }
+  }
+
+  private fun emitUpdateInteraction(updatePoint: (Point) -> Point = { it }) {
+    val chart = chart ?: return
+    lastAcceptedInteraction?.let { interaction ->
+      val updateInteraction = Interaction.Update(updatePoint(interaction.point))
+      handleInteraction(chart.markerController.processUpdateInteraction(updateInteraction))
     }
   }
 
@@ -384,13 +398,30 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 
       motionEventHandler.scrollEnabled = scrollHandler.scrollEnabled
       if (scroller.computeScrollOffset()) {
-        scrollHandler.scroll(Scroll.Absolute.pixels(scroller.currX.toFloat()))
+        val delta = scroller.currX.toFloat()
+        // TODO Test if this works as intended
+        scrollHandler.scroll(Scroll.Absolute.pixels(delta))
+        emitUpdateInteraction { it.copy(it.x + delta) }
         postInvalidateOnAnimation()
       }
 
       zoomHandler.update(measuringContext, layerDimensions, chart.layerBounds, scrollHandler.value)
       scrollHandler.update(measuringContext, chart.layerBounds, layerDimensions)
-      zoomHandler.consumePendingScroll(scrollHandler::scroll)
+      zoomHandler.consumePendingScroll { scroll ->
+        // TODO Test if this works as intended
+        scrollHandler.scroll(scroll)
+        emitUpdateInteraction { point ->
+          val scrollDelta =
+            scroll.getDelta(
+              measuringContext,
+              layerDimensions,
+              chart.layerBounds,
+              scrollHandler.maxValue,
+              scrollHandler.value,
+            )
+          point.copy(x = point.x + scrollDelta)
+        }
+      }
 
       val drawingContext =
         CartesianDrawingContext(
