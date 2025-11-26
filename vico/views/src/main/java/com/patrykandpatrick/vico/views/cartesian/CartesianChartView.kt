@@ -445,19 +445,29 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     Bundle().apply {
       scrollHandler.saveInstanceState(this)
       zoomHandler.saveInstanceState(this)
+      putSerializable(INTERACTION_KEY, lastAcceptedInteraction)
+      measuringContext.markerX?.let { putDouble(MARKER_X_KEY, it) }
       putParcelable(SUPER_STATE_KEY, super.onSaveInstanceState())
     }
 
+  @Suppress("DEPRECATION")
   override fun onRestoreInstanceState(state: Parcelable?) {
     var superState = state
     if (state is Bundle) {
       scrollHandler.restoreInstanceState(state)
       zoomHandler.restoreInstanceState(state)
+      lastAcceptedInteraction = state.getSerializable(INTERACTION_KEY) as? Interaction
+      measuringContext.markerX =
+        if (state.containsKey(MARKER_X_KEY)) {
+          state.getDouble(MARKER_X_KEY)
+        } else {
+          null
+        }
       superState =
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
           state.getParcelable(SUPER_STATE_KEY, BaseSavedState::class.java)
         } else {
-          @Suppress("DEPRECATION") state.getParcelable(SUPER_STATE_KEY)
+          state.getParcelable(SUPER_STATE_KEY)
         }
     }
     super.onRestoreInstanceState(superState)
@@ -473,6 +483,8 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 
   private companion object {
     const val SUPER_STATE_KEY = "superState"
+    const val INTERACTION_KEY = "lastAcceptedInteraction"
+    const val MARKER_X_KEY = "markerX"
   }
 }
 
