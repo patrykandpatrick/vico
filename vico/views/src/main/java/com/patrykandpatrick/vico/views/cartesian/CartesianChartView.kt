@@ -41,6 +41,7 @@ import com.patrykandpatrick.vico.core.cartesian.getDelta
 import com.patrykandpatrick.vico.core.cartesian.getVisibleXRange
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayerPadding
 import com.patrykandpatrick.vico.core.cartesian.layer.MutableCartesianLayerDimensions
+import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerController
 import com.patrykandpatrick.vico.core.cartesian.marker.Interaction
 import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.NEW_PRODUCER_ERROR_MESSAGE
@@ -107,7 +108,11 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   private val onGestureListener: ChartSimpleOnGestureListener =
     ChartSimpleOnGestureListener(
       onTap = { x, y -> handleInteraction(Interaction.Tap(Point(x, y))) },
-      onLongPress = { x, y -> handleInteraction(Interaction.LongPress(Point(x, y))) },
+      onLongPress = { x, y ->
+        if (chart?.markerController?.isLongPressSupported == true) {
+          handleInteraction(Interaction.LongPress(Point(x, y)))
+        }
+      },
     )
 
   private val gestureDetector = GestureDetector(context, onGestureListener)
@@ -265,7 +270,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     _model = model
     updatePlaceholderVisibility()
     tryInvalidate(chart, model, updateRanges)
-    emitUpdateInteraction()
+    handleViewportChange(CartesianMarkerController.ViewportChangeReason.DataUpdate)
     if (model != null && oldModel?.id != model.id && isInEditMode.not()) {
       handler?.post { scrollHandler.autoScroll(model, oldModel) }
     }
@@ -378,12 +383,13 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     }
   }
 
-  private fun emitUpdateInteraction(updatePoint: (Point) -> Point = { it }) {
-    val chart = chart ?: return
-    lastAcceptedInteraction?.let { interaction ->
-      val updateInteraction = Interaction.Update(updatePoint(interaction.point))
-      handleInteraction(chart.markerController.processUpdateInteraction(updateInteraction))
-    }
+  private fun handleViewportChange(reason: CartesianMarkerController.ViewportChangeReason) {
+    val chart = chart
+    val lastAcceptedInteraction = lastAcceptedInteraction
+    if (chart == null || lastAcceptedInteraction == null) return
+    chart.markerController
+      .onViewportChange(lastAcceptedInteraction, reason)
+      ?.let(::handleInteraction)
   }
 
   override fun dispatchDraw(canvas: Canvas) {
@@ -399,28 +405,23 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       motionEventHandler.scrollEnabled = scrollHandler.scrollEnabled
       if (scroller.computeScrollOffset()) {
         val delta = scroller.currX.toFloat()
-        // TODO Test if this works as intended
         scrollHandler.scroll(Scroll.Absolute.pixels(delta))
-        emitUpdateInteraction { it.copy(it.x + delta) }
+        val reason =
+          if (scrollHandler.isAutoScrolling) {
+            CartesianMarkerController.ViewportChangeReason.AutoScroll(delta)
+          } else {
+            CartesianMarkerController.ViewportChangeReason.Scroll(delta)
+          }
+        handleViewportChange(reason)
         postInvalidateOnAnimation()
       }
 
       zoomHandler.update(measuringContext, layerDimensions, chart.layerBounds, scrollHandler.value)
       scrollHandler.update(measuringContext, chart.layerBounds, layerDimensions)
       zoomHandler.consumePendingScroll { scroll ->
-        // TODO Test if this works as intended
         scrollHandler.scroll(scroll)
-        emitUpdateInteraction { point ->
-          val scrollDelta =
-            scroll.getDelta(
-              measuringContext,
-              layerDimensions,
-              chart.layerBounds,
-              scrollHandler.maxValue,
-              scrollHandler.value,
-            )
-          point.copy(x = point.x + scrollDelta)
-        }
+        val delta = scroll.getDelta(chart)
+        handleViewportChange(CartesianMarkerController.ViewportChangeReason.Scroll(delta))
       }
 
       val drawingContext =
@@ -480,6 +481,15 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     val model = model ?: return
     block(chart, model)
   }
+
+  private fun Scroll.getDelta(chart: CartesianChart) =
+    getDelta(
+      measuringContext,
+      layerDimensions,
+      chart.layerBounds,
+      scrollHandler.maxValue,
+      scrollHandler.value,
+    )
 
   private companion object {
     const val SUPER_STATE_KEY = "superState"

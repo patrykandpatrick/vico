@@ -16,6 +16,8 @@
 
 package com.patrykandpatrick.vico.views.cartesian
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.animation.TimeInterpolator
 import android.animation.ValueAnimator
 import android.graphics.RectF
@@ -58,6 +60,8 @@ public class ScrollHandler(
   private var bounds: RectF? = null
   internal var postInvalidate: (() -> Unit)? = null
   internal var postInvalidateOnAnimation: (() -> Unit)? = null
+  public var isAutoScrolling: Boolean = false
+    private set
 
   private val animator =
     ValueAnimator.ofFloat(Animation.range.start, Animation.range.endInclusive).apply {
@@ -116,7 +120,12 @@ public class ScrollHandler(
 
   internal fun autoScroll(model: CartesianChartModel, oldModel: CartesianChartModel?) {
     if (!autoScrollCondition.shouldScroll(oldModel, model)) return
-    animateScroll(autoScroll, autoScrollDuration, autoScrollInterpolator)
+    animateScroll(
+      scroll = autoScroll,
+      duration = autoScrollDuration,
+      interpolator = autoScrollInterpolator,
+      isAutoScroll = true,
+    )
   }
 
   internal fun saveInstanceState(bundle: Bundle) {
@@ -144,7 +153,12 @@ public class ScrollHandler(
     return value - oldValue
   }
 
-  private fun animateScrollBy(delta: Float, duration: Long, interpolator: TimeInterpolator): Float {
+  private fun animateScrollBy(
+    delta: Float,
+    duration: Long,
+    interpolator: TimeInterpolator,
+    isAutoScroll: Boolean,
+  ): Float {
     val oldValue = value
     val limitedDelta = delta.coerceIn((-value).rangeWith(maxValue - value))
     with(animator) {
@@ -152,6 +166,21 @@ public class ScrollHandler(
       removeAllUpdateListeners()
       this.interpolator = interpolator
       this.duration = duration
+      this.addListener(
+        object : AnimatorListenerAdapter() {
+          override fun onAnimationStart(animation: Animator) {
+            isAutoScrolling = isAutoScroll
+          }
+
+          override fun onAnimationCancel(animation: Animator) {
+            isAutoScrolling = false
+          }
+
+          override fun onAnimationEnd(animation: Animator) {
+            isAutoScrolling = false
+          }
+        }
+      )
       addUpdateListener { animator ->
         scrollBy(oldValue + animator.animatedFraction * limitedDelta - value)
         postInvalidateOnAnimation?.invoke()
@@ -172,12 +201,14 @@ public class ScrollHandler(
     scroll: Scroll,
     duration: Long = Animation.DIFF_DURATION.toLong(),
     interpolator: TimeInterpolator = AccelerateDecelerateInterpolator(),
+    isAutoScroll: Boolean = false,
   ) {
     withUpdated { context, layerDimensions, bounds ->
       animateScrollBy(
         scroll.getDelta(context, layerDimensions, bounds, maxValue, value),
         duration,
         interpolator,
+        isAutoScroll,
       )
     }
   }

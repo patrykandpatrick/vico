@@ -47,13 +47,12 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartRanges
 import com.patrykandpatrick.vico.core.cartesian.data.MutableCartesianChartRanges
 import com.patrykandpatrick.vico.core.cartesian.data.toImmutable
-import com.patrykandpatrick.vico.core.cartesian.getDelta
 import com.patrykandpatrick.vico.core.cartesian.getVisibleXRange
 import com.patrykandpatrick.vico.core.cartesian.layer.MutableCartesianLayerDimensions
+import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerController
 import com.patrykandpatrick.vico.core.cartesian.marker.Interaction
 import com.patrykandpatrick.vico.core.common.Defaults.CHART_HEIGHT
 import com.patrykandpatrick.vico.core.common.MutableSize
-import com.patrykandpatrick.vico.core.common.Point
 import com.patrykandpatrick.vico.core.common.ValueWrapper
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.core.common.getValue
@@ -209,34 +208,36 @@ internal fun CartesianChartHostImpl(
     }
   }
 
-  fun emitUpdateInteraction(updatePoint: (Point) -> Point = { it }) {
-    lastAcceptedInteraction?.let { interaction ->
-      val updateInteraction = Interaction.Update(updatePoint(interaction.point))
-      onInteraction(chart.markerController.processUpdateInteraction(updateInteraction))
+  fun onViewportChange(reason: CartesianMarkerController.ViewportChangeReason) {
+    lastAcceptedInteraction?.let { lastAcceptedInteraction ->
+      chart.markerController.onViewportChange(lastAcceptedInteraction, reason)?.let(::onInteraction)
     }
   }
 
-  LaunchedEffect(model) { emitUpdateInteraction() }
+  LaunchedEffect(model) {
+    onViewportChange(CartesianMarkerController.ViewportChangeReason.DataUpdate)
+  }
 
   LaunchedEffect(scrollState.consumedXDeltas, scrollState.unconsumedXDeltas) {
-    merge(scrollState.consumedXDeltas, scrollState.unconsumedXDeltas).collect { delta ->
-      emitUpdateInteraction { it.copy(x = it.x + delta) }
+    merge(scrollState.consumedXDeltas, scrollState.unconsumedXDeltas).collect { (delta, trigger) ->
+      val reason =
+        when (trigger) {
+          VicoScrollState.ScrollTrigger.User ->
+            CartesianMarkerController.ViewportChangeReason.Scroll(delta)
+          VicoScrollState.ScrollTrigger.Auto ->
+            CartesianMarkerController.ViewportChangeReason.AutoScroll(delta)
+        }
+      onViewportChange(reason)
     }
   }
 
   LaunchedEffect(zoomState, scrollState) {
     zoomState.pendingScroll.collect { (scroll, maxValue) ->
       scrollState.maxValue = maxValue
-      scrollState.scroll(scroll)
-      val delta =
-        scroll.getDelta(
-          measuringContext,
-          layerDimensions,
-          chart.layerBounds,
-          maxValue,
-          scrollState.value,
-        )
-      emitUpdateInteraction { it.copy(x = it.x + delta) }
+      val scrollDelta = scrollState.scroll(scroll)
+      if (scrollDelta != 0f) {
+        onViewportChange(CartesianMarkerController.ViewportChangeReason.Zoom(scrollDelta))
+      }
     }
   }
 
@@ -259,6 +260,7 @@ internal fun CartesianChartHostImpl(
                 null
               }
             },
+          longPressEnabled = chart.markerController.isLongPressSupported,
         )
   ) {
     val canvas = drawContext.canvas.nativeCanvas

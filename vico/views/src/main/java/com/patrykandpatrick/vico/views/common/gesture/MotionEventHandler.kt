@@ -49,6 +49,10 @@ internal class MotionEventHandler(
       motionEvent.pointerCount > 1 || lastEventPointerCount > motionEvent.pointerCount
     lastEventPointerCount = motionEvent.pointerCount
 
+    if (ignoreEvent) {
+      onInteraction(Interaction.Release(motionEvent.point))
+    }
+
     return when (motionEvent.action and MotionEvent.ACTION_MASK) {
       MotionEvent.ACTION_DOWN -> {
         scroller.abortAnimation()
@@ -73,11 +77,17 @@ internal class MotionEventHandler(
             }
             requestInvalidate()
             initialX = -dragThreshold
+          } else if (ignoreEvent) {
+            onInteraction(Interaction.Release(motionEvent.point))
           }
           scrollHandled = shouldPerformScroll.not() || scrollHandler.canScroll(lastX - currentX)
           lastX = motionEvent.x
         } else {
-          onInteraction(Interaction.Move(motionEvent.point))
+          if (ignoreEvent) {
+            onInteraction(Interaction.Release(motionEvent.point))
+          } else {
+            onInteraction(Interaction.Move(motionEvent.point))
+          }
           requestInvalidate()
         }
         scrollHandled
