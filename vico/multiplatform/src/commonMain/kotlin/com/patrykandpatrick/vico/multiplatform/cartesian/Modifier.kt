@@ -40,9 +40,10 @@ internal fun Modifier.pointerInput(
   onInteraction: ((Interaction) -> Unit)?,
   onZoom: ((Float, Offset) -> Unit)?,
   consumeMoveEvents: Boolean,
+  longPressEnabled: Boolean,
 ) =
   scrollable(
-      state = scrollState.scrollableState,
+      state = scrollState.vicoScrollableState.scrollableState,
       orientation = Orientation.Horizontal,
       enabled = scrollState.scrollEnabled,
       reverseDirection = true,
@@ -59,9 +60,9 @@ internal fun Modifier.pointerInput(
                 event.changes.first().position,
               )
             onInteraction == null -> continue
-            event.type == PointerEventType.Press ->
+            event.type == PointerEventType.Press && event.changes.size == 1 ->
               onInteraction(Interaction.Press(pointerPosition))
-            event.type == PointerEventType.Release ->
+            event.type == PointerEventType.Release || event.type == PointerEventType.Press ->
               onInteraction(Interaction.Release(pointerPosition))
             event.type == PointerEventType.Move && !scrollState.scrollEnabled -> {
               val changes = event.changes.first()
@@ -74,9 +75,14 @@ internal fun Modifier.pointerInput(
     }
     .then(
       if (onInteraction != null) {
-        Modifier.pointerInput(onInteraction) {
+        Modifier.pointerInput(onInteraction, longPressEnabled) {
           detectTapGestures(
-            onLongPress = { onInteraction(Interaction.LongPress(it.toPoint())) },
+            onLongPress =
+              if (longPressEnabled) {
+                { onInteraction(Interaction.LongPress(it.toPoint())) }
+              } else {
+                null
+              },
             onTap = { onInteraction(Interaction.Tap(it.toPoint())) },
           )
         }

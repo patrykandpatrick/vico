@@ -18,6 +18,23 @@ package com.patrykandpatrick.vico.multiplatform.cartesian.marker
 
 /** Controls [CartesianMarker] visibility. */
 public fun interface CartesianMarkerController {
+  /** Whether this [CartesianMarkerController] wants to handle long presses. */
+  public val isLongPressSupported: Boolean
+    get() = true
+
+  /**
+   * Called when the viewport changes due to scrolling, auto-scrolling, zooming, or data updates.
+   * Allows updating the last accepted [Interaction] accordingly.
+   *
+   * @param lastAcceptedInteraction The last accepted interaction.
+   * @param reason The reason for the viewport change.
+   * @return An updated [Interaction] or `null` to keep the last accepted interaction unchanged.
+   */
+  public fun onViewportChange(
+    lastAcceptedInteraction: Interaction,
+    reason: ViewportChangeReason,
+  ): Interaction? = null
+
   /**
    * Indicates whether this [CartesianMarkerController] wants to respond to [interaction]. If `true`
    * is returned, [shouldShowMarker] is called; otherwise, the marker visibility remains unchanged.
@@ -33,30 +50,78 @@ public fun interface CartesianMarkerController {
     targets: List<CartesianMarker.Target>,
   ): Boolean
 
+  public sealed class ViewportChangeReason {
+    public open val scrollDelta: Float = 0f
+
+    public data class Scroll(public override val scrollDelta: Float) : ViewportChangeReason()
+
+    public data class AutoScroll(public override val scrollDelta: Float) : ViewportChangeReason()
+
+    public data class Zoom(public override val scrollDelta: Float) : ViewportChangeReason()
+
+    public data object DataUpdate : ViewportChangeReason()
+  }
+
   /** Houses [CartesianMarkerController] singletons and factory functions. */
   public companion object {
     /** Shows the [CartesianMarker] on press. */
-    public val ShowOnPress: CartesianMarkerController = ShowOnPressMarkerController
+    public fun showOnPress(): CartesianMarkerController = ShowOnPressMarkerController()
 
     /** Toggles the visibility of the [CartesianMarker] on tap. */
     public fun toggleOnTap(): CartesianMarkerController = ToggleOnTapMarkerController()
   }
 }
 
-private object ShowOnPressMarkerController : CartesianMarkerController {
+private class ShowOnPressMarkerController : CartesianMarkerController {
+  private var isPressed = false
+
+  override val isLongPressSupported: Boolean = false
+
   override fun shouldAcceptInteraction(
     interaction: Interaction,
     targets: List<CartesianMarker.Target>,
   ) =
-    (interaction is Interaction.Press || interaction is Interaction.Move) && targets.isNotEmpty() ||
-      interaction is Interaction.Release
+    when (interaction) {
+      is Interaction.Press -> {
+        isPressed = true
+        true
+      }
+
+      is Interaction.Move -> isPressed
+      is Interaction.Release -> {
+        isPressed = false
+        true
+      }
+
+      else -> false
+    }
+
+  override fun onViewportChange(
+    lastAcceptedInteraction: Interaction,
+    reason: CartesianMarkerController.ViewportChangeReason,
+  ): Interaction? =
+    when (reason) {
+      is CartesianMarkerController.ViewportChangeReason.Scroll ->
+        Interaction.Move(
+          lastAcceptedInteraction.point.copy(
+            x = lastAcceptedInteraction.point.x + reason.scrollDelta
+          )
+        )
+      else -> lastAcceptedInteraction
+    }
 
   override fun shouldShowMarker(interaction: Interaction, targets: List<CartesianMarker.Target>) =
     interaction !is Interaction.Release
+
+  override fun hashCode() = 31
+
+  override fun equals(other: Any?) = other === this || other is ShowOnPressMarkerController
 }
 
 private class ToggleOnTapMarkerController : CartesianMarkerController {
   private var lastTargets: List<CartesianMarker.Target>? = null
+
+  override val isLongPressSupported: Boolean = false
 
   override fun shouldAcceptInteraction(
     interaction: Interaction,
