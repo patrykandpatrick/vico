@@ -40,6 +40,7 @@ import com.patrykandpatrick.vico.core.cartesian.data.toImmutable
 import com.patrykandpatrick.vico.core.cartesian.getVisibleXRange
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayerPadding
 import com.patrykandpatrick.vico.core.cartesian.layer.MutableCartesianLayerDimensions
+import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerController
 import com.patrykandpatrick.vico.core.cartesian.marker.Interaction
 import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.NEW_PRODUCER_ERROR_MESSAGE
@@ -106,7 +107,11 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   private val onGestureListener: ChartSimpleOnGestureListener =
     ChartSimpleOnGestureListener(
       onTap = { x, y -> handleInteraction(Interaction.Tap(Point(x, y))) },
-      onLongPress = { x, y -> handleInteraction(Interaction.LongPress(Point(x, y))) },
+      onLongPress = { x, y ->
+        if (chart?.markerController?.isLongPressSupported == true) {
+          handleInteraction(Interaction.LongPress(Point(x, y)))
+        }
+      },
     )
 
   private val gestureDetector = GestureDetector(context, onGestureListener)
@@ -116,6 +121,8 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   private val layerDimensions = MutableCartesianLayerDimensions()
 
   private var previousLayerPaddingHashCode: Int? = null
+
+  private var lastAcceptedInteraction: Interaction? = null
 
   /**
    * Houses information on the [CartesianChart]’s scroll value. Allows for scroll customization and
@@ -262,6 +269,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     _model = model
     updatePlaceholderVisibility()
     tryInvalidate(chart, model, updateRanges)
+    handleViewportChange(CartesianMarkerController.ViewportChangeReason.DataUpdate)
     if (model != null && oldModel?.id != model.id && isInEditMode.not()) {
       handler?.post { scrollHandler.autoScroll(model, oldModel) }
     }
@@ -351,6 +359,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   }
 
   private fun handleInteraction(interaction: Interaction) {
+    if (measuringContext.ranges is CartesianChartRanges.Empty) return
     val chart = chart ?: return
     val x =
       measuringContext.pointerPositionToX(
@@ -367,9 +376,19 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       )
     if (chart.markerController.shouldAcceptInteraction(interaction, targets)) {
       val shouldShow = chart.markerController.shouldShowMarker(interaction, targets)
+      lastAcceptedInteraction = interaction
       measuringContext.markerX = if (shouldShow) targets.firstOrNull()?.x else null
       invalidate()
     }
+  }
+
+  private fun handleViewportChange(reason: CartesianMarkerController.ViewportChangeReason) {
+    val chart = chart
+    val lastAcceptedInteraction = lastAcceptedInteraction
+    if (chart == null || lastAcceptedInteraction == null) return
+    chart.markerController
+      .onViewportChange(lastAcceptedInteraction, reason)
+      ?.let(::handleInteraction)
   }
 
   override fun dispatchDraw(canvas: Canvas) {
@@ -384,13 +403,24 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 
       motionEventHandler.scrollEnabled = scrollHandler.scrollEnabled
       if (scroller.computeScrollOffset()) {
-        scrollHandler.scroll(Scroll.Absolute.pixels(scroller.currX.toFloat()))
+        val delta = scroller.currX.toFloat()
+        val consumedDelta = scrollHandler.scroll(Scroll.Absolute.pixels(delta))
+        val reason =
+          if (scrollHandler.isAutoScrolling) {
+            CartesianMarkerController.ViewportChangeReason.AutoScroll(consumedDelta)
+          } else {
+            CartesianMarkerController.ViewportChangeReason.Scroll(consumedDelta)
+          }
+        handleViewportChange(reason)
         postInvalidateOnAnimation()
       }
 
       zoomHandler.update(measuringContext, layerDimensions, chart.layerBounds, scrollHandler.value)
       scrollHandler.update(measuringContext, chart.layerBounds, layerDimensions)
-      zoomHandler.consumePendingScroll(scrollHandler::scroll)
+      zoomHandler.consumePendingScroll { scroll ->
+        val delta = scrollHandler.scroll(scroll)
+        handleViewportChange(CartesianMarkerController.ViewportChangeReason.Scroll(delta))
+      }
 
       val drawingContext =
         CartesianDrawingContext(
@@ -414,19 +444,29 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     Bundle().apply {
       scrollHandler.saveInstanceState(this)
       zoomHandler.saveInstanceState(this)
+      putSerializable(INTERACTION_KEY, lastAcceptedInteraction)
+      measuringContext.markerX?.let { putDouble(MARKER_X_KEY, it) }
       putParcelable(SUPER_STATE_KEY, super.onSaveInstanceState())
     }
 
+  @Suppress("DEPRECATION")
   override fun onRestoreInstanceState(state: Parcelable?) {
     var superState = state
     if (state is Bundle) {
       scrollHandler.restoreInstanceState(state)
       zoomHandler.restoreInstanceState(state)
+      lastAcceptedInteraction = state.getSerializable(INTERACTION_KEY) as? Interaction
+      measuringContext.markerX =
+        if (state.containsKey(MARKER_X_KEY)) {
+          state.getDouble(MARKER_X_KEY)
+        } else {
+          null
+        }
       superState =
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
           state.getParcelable(SUPER_STATE_KEY, BaseSavedState::class.java)
         } else {
-          @Suppress("DEPRECATION") state.getParcelable(SUPER_STATE_KEY)
+          state.getParcelable(SUPER_STATE_KEY)
         }
     }
     super.onRestoreInstanceState(superState)
@@ -442,6 +482,8 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 
   private companion object {
     const val SUPER_STATE_KEY = "superState"
+    const val INTERACTION_KEY = "lastAcceptedInteraction"
+    const val MARKER_X_KEY = "markerX"
   }
 }
 
