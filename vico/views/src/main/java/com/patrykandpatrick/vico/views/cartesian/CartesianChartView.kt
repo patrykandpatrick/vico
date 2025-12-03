@@ -37,7 +37,6 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartRanges
 import com.patrykandpatrick.vico.core.cartesian.data.MutableCartesianChartRanges
 import com.patrykandpatrick.vico.core.cartesian.data.RandomCartesianModelGenerator
 import com.patrykandpatrick.vico.core.cartesian.data.toImmutable
-import com.patrykandpatrick.vico.core.cartesian.getDelta
 import com.patrykandpatrick.vico.core.cartesian.getVisibleXRange
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayerPadding
 import com.patrykandpatrick.vico.core.cartesian.layer.MutableCartesianLayerDimensions
@@ -405,12 +404,12 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       motionEventHandler.scrollEnabled = scrollHandler.scrollEnabled
       if (scroller.computeScrollOffset()) {
         val delta = scroller.currX.toFloat()
-        scrollHandler.scroll(Scroll.Absolute.pixels(delta))
+        val consumedDelta = scrollHandler.scroll(Scroll.Absolute.pixels(delta))
         val reason =
           if (scrollHandler.isAutoScrolling) {
-            CartesianMarkerController.ViewportChangeReason.AutoScroll(delta)
+            CartesianMarkerController.ViewportChangeReason.AutoScroll(consumedDelta)
           } else {
-            CartesianMarkerController.ViewportChangeReason.Scroll(delta)
+            CartesianMarkerController.ViewportChangeReason.Scroll(consumedDelta)
           }
         handleViewportChange(reason)
         postInvalidateOnAnimation()
@@ -419,8 +418,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       zoomHandler.update(measuringContext, layerDimensions, chart.layerBounds, scrollHandler.value)
       scrollHandler.update(measuringContext, chart.layerBounds, layerDimensions)
       zoomHandler.consumePendingScroll { scroll ->
-        scrollHandler.scroll(scroll)
-        val delta = scroll.getDelta(chart)
+        val delta = scrollHandler.scroll(scroll)
         handleViewportChange(CartesianMarkerController.ViewportChangeReason.Scroll(delta))
       }
 
@@ -481,15 +479,6 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     val model = model ?: return
     block(chart, model)
   }
-
-  private fun Scroll.getDelta(chart: CartesianChart) =
-    getDelta(
-      measuringContext,
-      layerDimensions,
-      chart.layerBounds,
-      scrollHandler.maxValue,
-      scrollHandler.value,
-    )
 
   private companion object {
     const val SUPER_STATE_KEY = "superState"

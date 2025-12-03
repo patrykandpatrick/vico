@@ -78,7 +78,7 @@ public class VicoScrollState {
     internal set(newMaxValue) {
       if (newMaxValue == maxValue) return
       _maxValue.floatValue = newMaxValue
-      setValue(value, ScrollTrigger.User)
+      setValue(value, ScrollTrigger.Auto)
     }
 
   internal constructor(

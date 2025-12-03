@@ -119,9 +119,10 @@ private class ShowOnPressMarkerController : CartesianMarkerController {
   override fun shouldShowMarker(interaction: Interaction, targets: List<CartesianMarker.Target>) =
     interaction !is Interaction.Release
 
-  override fun hashCode() = 31
+  override fun hashCode() = isPressed.hashCode()
 
-  override fun equals(other: Any?) = other === this || other is ShowOnPressMarkerController
+  override fun equals(other: Any?) =
+    other === this || other is ShowOnPressMarkerController && isPressed == other.isPressed
 }
 
 private class ToggleOnTapMarkerController : CartesianMarkerController {

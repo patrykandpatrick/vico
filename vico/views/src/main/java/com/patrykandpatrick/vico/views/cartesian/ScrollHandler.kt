@@ -164,6 +164,7 @@ public class ScrollHandler(
     with(animator) {
       cancel()
       removeAllUpdateListeners()
+      removeAllListeners()
       this.interpolator = interpolator
       this.duration = duration
       this.addListener(
