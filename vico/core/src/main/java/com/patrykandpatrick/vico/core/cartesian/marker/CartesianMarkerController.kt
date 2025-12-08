@@ -108,16 +108,7 @@ private class ShowOnPressMarkerController : CartesianMarkerController {
   override fun onViewportChange(
     lastAcceptedInteraction: Interaction,
     reason: CartesianMarkerController.ViewportChangeReason,
-  ): Interaction? =
-    when (reason) {
-      is CartesianMarkerController.ViewportChangeReason.Scroll ->
-        Interaction.Move(
-          lastAcceptedInteraction.point.copy(
-            x = lastAcceptedInteraction.point.x + reason.scrollDelta
-          )
-        )
-      else -> lastAcceptedInteraction
-    }
+  ): Interaction = lastAcceptedInteraction
 
   override fun shouldShowMarker(interaction: Interaction, targets: List<CartesianMarker.Target>) =
     interaction !is Interaction.Release
