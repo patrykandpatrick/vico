@@ -46,7 +46,7 @@ import com.patrykandpatrick.vico.multiplatform.cartesian.data.component4
 import com.patrykandpatrick.vico.multiplatform.cartesian.data.defaultCartesianDiffAnimationSpec
 import com.patrykandpatrick.vico.multiplatform.cartesian.data.toImmutable
 import com.patrykandpatrick.vico.multiplatform.cartesian.layer.MutableCartesianLayerDimensions
-import com.patrykandpatrick.vico.multiplatform.cartesian.marker.CartesianMarkerController
+import com.patrykandpatrick.vico.multiplatform.cartesian.marker.CartesianMarkerController.Lock
 import com.patrykandpatrick.vico.multiplatform.cartesian.marker.Interaction
 import com.patrykandpatrick.vico.multiplatform.common.Defaults.CHART_HEIGHT
 import com.patrykandpatrick.vico.multiplatform.common.MutableDrawScope
@@ -202,36 +202,23 @@ internal fun CartesianChartHostImpl(
     }
   }
 
-  fun onViewportChange(reason: CartesianMarkerController.ViewportChangeReason) {
-    lastAcceptedInteraction?.let { lastAcceptedInteraction ->
-      chart.markerController.onViewportChange(lastAcceptedInteraction, reason)?.let(::onInteraction)
-    }
+  fun onViewportChange() {
+    lastAcceptedInteraction
+      ?.takeIf { chart.markerController.lock == Lock.ScrollPosition }
+      ?.let(::onInteraction)
   }
 
-  LaunchedEffect(model) {
-    onViewportChange(CartesianMarkerController.ViewportChangeReason.DataUpdate)
-  }
+  LaunchedEffect(model) { onViewportChange() }
 
   LaunchedEffect(scrollState.consumedXDeltas, scrollState.unconsumedXDeltas) {
-    merge(scrollState.consumedXDeltas, scrollState.unconsumedXDeltas).collect { (delta, trigger) ->
-      val reason =
-        when (trigger) {
-          VicoScrollState.ScrollTrigger.User ->
-            CartesianMarkerController.ViewportChangeReason.Scroll(delta)
-          VicoScrollState.ScrollTrigger.Auto ->
-            CartesianMarkerController.ViewportChangeReason.AutoScroll(delta)
-        }
-      onViewportChange(reason)
-    }
+    merge(scrollState.consumedXDeltas, scrollState.unconsumedXDeltas).collect { onViewportChange() }
   }
 
   LaunchedEffect(zoomState, scrollState) {
     zoomState.pendingScroll.collect { (scroll, maxValue) ->
       scrollState.maxValue = maxValue
-      val scrollDelta = scrollState.scroll(scroll)
-      if (scrollDelta != 0f) {
-        onViewportChange(CartesianMarkerController.ViewportChangeReason.Zoom(scrollDelta))
-      }
+      scrollState.scroll(scroll)
+      onViewportChange()
     }
   }
 

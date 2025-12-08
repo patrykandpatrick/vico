@@ -22,10 +22,9 @@ import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.unit.toSize
+import androidx.compose.ui.unit.IntSize
 import com.patrykandpatrick.vico.multiplatform.cartesian.marker.Interaction
 import com.patrykandpatrick.vico.multiplatform.common.Point
 import com.patrykandpatrick.vico.multiplatform.common.detectZoomGestures
@@ -45,7 +44,7 @@ internal fun Modifier.pointerInput(
   longPressEnabled: Boolean,
 ) =
   scrollable(
-      state = scrollState.vicoScrollableState.scrollableState,
+      state = scrollState.scrollableState,
       orientation = Orientation.Horizontal,
       enabled = scrollState.scrollEnabled,
       reverseDirection = true,
@@ -80,7 +79,7 @@ internal fun Modifier.pointerInput(
             event.type == PointerEventType.Move && scrollState.scrollEnabled && isHoverActive ->
               onInteraction(Interaction.Move(pointerPosition))
             event.type == PointerEventType.Exit -> {
-              val isInsideChartBounds = Rect(Offset.Zero, size.toSize()).contains(position)
+              val isInsideChartBounds = position.fits(size)
               isHoverActive = isInsideChartBounds
               onInteraction(Interaction.Exit(pointerPosition, isInsideChartBounds))
             }
@@ -118,3 +117,5 @@ internal fun Modifier.pointerInput(
       }
     )
     .extraPointerInput(scrollState)
+
+private fun Offset.fits(size: IntSize) = x >= 0f && x <= size.width && y >= 0f && y <= size.height

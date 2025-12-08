@@ -22,18 +22,9 @@ public fun interface CartesianMarkerController {
   public val isLongPressSupported: Boolean
     get() = true
 
-  /**
-   * Called when the viewport changes due to scrolling, auto-scrolling, zooming, or data updates.
-   * Allows updating the last accepted [Interaction] accordingly.
-   *
-   * @param lastAcceptedInteraction The last accepted interaction.
-   * @param reason The reason for the viewport change.
-   * @return An updated [Interaction] or `null` to keep the last accepted interaction unchanged.
-   */
-  public fun onViewportChange(
-    lastAcceptedInteraction: Interaction,
-    reason: ViewportChangeReason,
-  ): Interaction? = null
+  /** The lock to use for the marker. */
+  public val lock: Lock
+    get() = Lock.ScrollPosition
 
   /**
    * Indicates whether this [CartesianMarkerController] wants to respond to [interaction]. If `true`
@@ -50,28 +41,16 @@ public fun interface CartesianMarkerController {
     targets: List<CartesianMarker.Target>,
   ): Boolean
 
-  public sealed class ViewportChangeReason {
-    public open val scrollDelta: Float = 0f
-
-    public data class Scroll(public override val scrollDelta: Float) : ViewportChangeReason()
-
-    public data class AutoScroll(public override val scrollDelta: Float) : ViewportChangeReason()
-
-    public data class Zoom(public override val scrollDelta: Float) : ViewportChangeReason()
-
-    public data object DataUpdate : ViewportChangeReason()
+  /** Defines what the marker is locked to. */
+  public enum class Lock {
+    /** The marker is locked to an x-position. */
+    XPosition,
+    /** The marker is locked to the scroll position. */
+    ScrollPosition,
   }
 
   /** Houses [CartesianMarkerController] singletons and factory functions. */
   public companion object {
-    /** Shows the [CartesianMarker] on press. */
-    @Deprecated(
-      "Use `showOnPress()` instead. This property creates a new instance on each access.",
-      ReplaceWith("showOnPress()"),
-    )
-    public val ShowOnPress: CartesianMarkerController
-      get() = showOnPress()
-
     /** Shows the [CartesianMarker] on press. */
     public fun showOnPress(): CartesianMarkerController = ShowOnPressMarkerController()
 
@@ -107,11 +86,6 @@ private class ShowOnPressMarkerController : CartesianMarkerController {
       else -> false
     }
 
-  override fun onViewportChange(
-    lastAcceptedInteraction: Interaction,
-    reason: CartesianMarkerController.ViewportChangeReason,
-  ): Interaction = lastAcceptedInteraction
-
   override fun shouldShowMarker(interaction: Interaction, targets: List<CartesianMarker.Target>) =
     interaction !is Interaction.Release
 
@@ -133,11 +107,6 @@ private class ShowOnHoverMarkerController : CartesianMarkerController {
       interaction is Interaction.Press ||
       interaction is Interaction.Move
 
-  override fun onViewportChange(
-    lastAcceptedInteraction: Interaction,
-    reason: CartesianMarkerController.ViewportChangeReason,
-  ): Interaction = lastAcceptedInteraction
-
   override fun shouldShowMarker(
     interaction: Interaction,
     targets: List<CartesianMarker.Target>,
@@ -149,12 +118,19 @@ private class ShowOnHoverMarkerController : CartesianMarkerController {
     }
     return isHovering
   }
+
+  override fun hashCode() = isHovering.hashCode()
+
+  override fun equals(other: Any?) =
+    other === this || other is ShowOnHoverMarkerController && isHovering == other.isHovering
 }
 
 private class ToggleOnTapMarkerController : CartesianMarkerController {
   private var lastTargets: List<CartesianMarker.Target>? = null
 
   override val isLongPressSupported: Boolean = false
+
+  override val lock: CartesianMarkerController.Lock = CartesianMarkerController.Lock.XPosition
 
   override fun shouldAcceptInteraction(
     interaction: Interaction,

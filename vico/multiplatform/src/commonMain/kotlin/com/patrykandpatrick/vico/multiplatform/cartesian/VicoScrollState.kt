@@ -19,6 +19,10 @@ package com.patrykandpatrick.vico.multiplatform.cartesian
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.MutatePriority
+import androidx.compose.foundation.gestures.ScrollableState
+import androidx.compose.foundation.gestures.animateScrollBy
+import androidx.compose.foundation.gestures.scrollBy
+import androidx.compose.foundation.gestures.stopScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableFloatState
 import androidx.compose.runtime.mutableFloatStateOf
@@ -47,24 +51,29 @@ public class VicoScrollState {
   private var layerDimensions: CartesianLayerDimensions? = null
   private var bounds: Rect? = null
   internal val scrollEnabled: Boolean
-  internal val consumedXDeltas = MutableSharedFlow<ScrollDelta>(extraBufferCapacity = 1)
-  internal val unconsumedXDeltas = MutableSharedFlow<ScrollDelta>(extraBufferCapacity = 1)
+  internal val consumedXDeltas = MutableSharedFlow<Float>(extraBufferCapacity = 1)
+  internal val unconsumedXDeltas = MutableSharedFlow<Float>(extraBufferCapacity = 1)
 
-  internal val vicoScrollableState = VicoScrollableState { delta, trigger ->
+  internal val scrollableState = ScrollableState { delta ->
     val oldValue = value
-    setValue(value + delta, trigger)
+    value += delta
     val consumedValue = value - oldValue
     if (oldValue + delta == value) {
       delta
     } else {
-      unconsumedXDeltas.tryEmit(ScrollDelta(consumedValue - delta, trigger))
+      unconsumedXDeltas.tryEmit(consumedValue - delta)
       consumedValue
     }
   }
 
   /** The current scroll value (in pixels). */
-  public val value: Float
+  public var value: Float
     get() = _value.floatValue
+    private set(newValue) {
+      val oldValue = value
+      _value.floatValue = newValue.coerceIn(0f.rangeWith(maxValue))
+      if (value != oldValue) consumedXDeltas.tryEmit(oldValue - value)
+    }
 
   /** The maximum scroll value (in pixels). */
   public var maxValue: Float
@@ -72,7 +81,7 @@ public class VicoScrollState {
     internal set(newMaxValue) {
       if (newMaxValue == maxValue) return
       _maxValue.floatValue = newMaxValue
-      setValue(value, ScrollTrigger.Auto)
+      value = value
     }
 
   internal constructor(
@@ -119,22 +128,14 @@ public class VicoScrollState {
     initialScrollHandled = false,
   )
 
-  private fun setValue(newValue: Float, trigger: ScrollTrigger) {
-    val oldValue = value
-    _value.floatValue = newValue.coerceIn(0f.rangeWith(maxValue))
-    if (value != oldValue) consumedXDeltas.tryEmit(ScrollDelta(oldValue - value, trigger))
-  }
-
-  private inline fun <T> withUpdated(
-    block: (CartesianMeasuringContext, CartesianLayerDimensions, Rect) -> T?
-  ): T? {
+  private inline fun withUpdated(
+    block: (CartesianMeasuringContext, CartesianLayerDimensions, Rect) -> Unit
+  ) {
     val context = this.context
     val layerDimensions = this.layerDimensions
     val bounds = this.bounds
-    return if (context != null && layerDimensions != null && bounds != null) {
+    if (context != null && layerDimensions != null && bounds != null) {
       block(context, layerDimensions, bounds)
-    } else {
-      null
     }
   }
 
@@ -148,20 +149,16 @@ public class VicoScrollState {
     this.bounds = bounds
     maxValue = context.getMaxScrollDistance(bounds.width, layerDimensions)
     if (!initialScrollHandled) {
-      setValue(
-        initialScroll.getValue(context, layerDimensions, bounds, maxValue),
-        ScrollTrigger.Auto,
-      )
+      value = initialScroll.getValue(context, layerDimensions, bounds, maxValue)
       initialScrollHandled = true
     }
   }
 
   internal suspend fun autoScroll(model: CartesianChartModel, oldModel: CartesianChartModel?) {
     if (!autoScrollCondition.shouldScroll(oldModel, model)) return
-    if (vicoScrollableState.isScrollInProgress) {
-      vicoScrollableState.stopScroll(MutatePriority.PreventUserInput)
-    }
-    animateScroll(autoScroll, autoScrollAnimationSpec, ScrollTrigger.Auto)
+    if (scrollableState.isScrollInProgress)
+      scrollableState.stopScroll(MutatePriority.PreventUserInput)
+    animateScroll(autoScroll, autoScrollAnimationSpec)
   }
 
   internal fun clearUpdated() {
@@ -171,34 +168,20 @@ public class VicoScrollState {
   }
 
   /** Triggers a scroll. */
-  public suspend fun scroll(scroll: Scroll, trigger: ScrollTrigger = ScrollTrigger.User): Float =
+  public suspend fun scroll(scroll: Scroll) {
     withUpdated { context, layerDimensions, bounds ->
-      vicoScrollableState.scrollBy(
-        scroll.getDelta(context, layerDimensions, bounds, maxValue, value),
-        trigger,
-      )
-    } ?: 0f
-
-  /** Triggers an animated scroll. */
-  public suspend fun animateScroll(
-    scroll: Scroll,
-    animationSpec: AnimationSpec<Float> = spring(),
-    trigger: ScrollTrigger = ScrollTrigger.User,
-  ) {
-    withUpdated { context, layerDimensions, bounds ->
-      vicoScrollableState.animateScrollBy(
-        scroll.getDelta(context, layerDimensions, bounds, maxValue, value),
-        animationSpec,
-        trigger,
-      )
+      scrollableState.scrollBy(scroll.getDelta(context, layerDimensions, bounds, maxValue, value))
     }
   }
 
-  public data class ScrollDelta(val delta: Float, val trigger: ScrollTrigger)
-
-  public enum class ScrollTrigger {
-    User,
-    Auto,
+  /** Triggers an animated scroll. */
+  public suspend fun animateScroll(scroll: Scroll, animationSpec: AnimationSpec<Float> = spring()) {
+    withUpdated { context, layerDimensions, bounds ->
+      scrollableState.animateScrollBy(
+        scroll.getDelta(context, layerDimensions, bounds, maxValue, value),
+        animationSpec,
+      )
+    }
   }
 
   internal companion object {
