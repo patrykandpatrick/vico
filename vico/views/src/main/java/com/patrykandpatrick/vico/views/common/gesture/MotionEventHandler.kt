@@ -52,10 +52,6 @@ internal class MotionEventHandler(
       motionEvent.pointerCount > 1 || lastEventPointerCount > motionEvent.pointerCount
     lastEventPointerCount = motionEvent.pointerCount
 
-    if (ignoreEvent) {
-      onInteraction(Interaction.Release(motionEvent.point))
-    }
-
     return when (motionEvent.action and MotionEvent.ACTION_MASK) {
       MotionEvent.ACTION_DOWN -> {
         scroller.abortAnimation()
