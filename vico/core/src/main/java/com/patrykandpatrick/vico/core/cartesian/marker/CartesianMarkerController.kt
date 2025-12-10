@@ -19,12 +19,12 @@ package com.patrykandpatrick.vico.core.cartesian.marker
 /** Controls [CartesianMarker] visibility. */
 public fun interface CartesianMarkerController {
   /** Whether this [CartesianMarkerController] wants to handle long presses. */
-  public val isLongPressSupported: Boolean
+  public val acceptsLongPress: Boolean
     get() = true
 
   /** The lock to use for the marker. */
   public val lock: Lock
-    get() = Lock.ScrollPosition
+    get() = Lock.Position
 
   /**
    * Indicates whether this [CartesianMarkerController] wants to respond to [interaction]. If `true`
@@ -44,10 +44,10 @@ public fun interface CartesianMarkerController {
   /** Defines what the marker is locked to. */
   public enum class Lock {
     /** The marker is locked to an x-position. */
-    XPosition,
+    X,
 
-    /** The marker is locked to the scroll position. */
-    ScrollPosition,
+    /** The marker is locked to the position on screen. */
+    Position,
   }
 
   /** Houses [CartesianMarkerController] singletons and factory functions. */
@@ -74,7 +74,7 @@ public fun interface CartesianMarkerController {
 private class ShowOnPressMarkerController : CartesianMarkerController {
   private var isPressed = false
 
-  override val isLongPressSupported: Boolean = false
+  override val acceptsLongPress: Boolean = false
 
   override fun shouldAcceptInteraction(
     interaction: Interaction,
@@ -135,9 +135,9 @@ private class ShowOnHoverMarkerController : CartesianMarkerController {
 private class ToggleOnTapMarkerController : CartesianMarkerController {
   private var lastTargets: List<CartesianMarker.Target>? = null
 
-  override val isLongPressSupported: Boolean = false
+  override val acceptsLongPress: Boolean = false
 
-  override val lock: CartesianMarkerController.Lock = CartesianMarkerController.Lock.XPosition
+  override val lock: CartesianMarkerController.Lock = CartesianMarkerController.Lock.X
 
   override fun shouldAcceptInteraction(
     interaction: Interaction,

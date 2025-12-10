@@ -210,7 +210,7 @@ internal fun CartesianChartHostImpl(
 
   fun onViewportChange() {
     lastAcceptedInteraction
-      ?.takeIf { chart.markerController.lock == Lock.ScrollPosition }
+      ?.takeIf { chart.markerController.lock == Lock.Position }
       ?.let(::onInteraction)
   }
 
@@ -247,7 +247,7 @@ internal fun CartesianChartHostImpl(
                 null
               }
             },
-          longPressEnabled = chart.markerController.isLongPressSupported,
+          longPressEnabled = chart.markerController.acceptsLongPress,
         )
   ) {
     val canvas = drawContext.canvas.nativeCanvas

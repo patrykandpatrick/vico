@@ -108,7 +108,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     ChartSimpleOnGestureListener(
       onTap = { x, y -> handleInteraction(Interaction.Tap(Point(x, y))) },
       onLongPress = { x, y ->
-        if (chart?.markerController?.isLongPressSupported == true) {
+        if (chart?.markerController?.acceptsLongPress == true) {
           handleInteraction(Interaction.LongPress(Point(x, y)))
         }
       },
@@ -399,7 +399,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   }
 
   private fun handleViewportChange() {
-    if (chart?.markerController?.lock == Lock.ScrollPosition) {
+    if (chart?.markerController?.lock == Lock.Position) {
       lastAcceptedInteraction?.let(::handleInteraction)
     }
   }
@@ -441,7 +441,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
         )
 
       chart.draw(drawingContext, offset)
-      if (viewportChange && chart.markerController.lock == Lock.ScrollPosition) {
+      if (viewportChange && chart.markerController.lock == Lock.Position) {
         lastAcceptedInteraction?.let(::handleInteraction)
       }
       measuringContext.reset()
