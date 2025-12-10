@@ -52,7 +52,7 @@ public sealed class Interaction {
     Interaction()
 
   internal companion object {
-    internal val Saver: Saver<MutableState<Interaction?>, Any> =
+   val Saver =
       listSaver(
         save = { eventState ->
           val event = eventState.value
