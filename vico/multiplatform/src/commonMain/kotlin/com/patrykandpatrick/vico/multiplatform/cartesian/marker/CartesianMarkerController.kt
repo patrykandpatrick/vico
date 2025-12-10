@@ -65,7 +65,7 @@ public fun interface CartesianMarkerController {
 private class ShowOnPressMarkerController : CartesianMarkerController {
   private var isPressed = false
 
-  override val acceptsLongPress: Boolean = false
+  override val acceptsLongPress = false
 
   override fun shouldAcceptInteraction(
     interaction: Interaction,
@@ -101,7 +101,7 @@ private class ShowOnHoverMarkerController : CartesianMarkerController {
   override fun shouldAcceptInteraction(
     interaction: Interaction,
     targets: List<CartesianMarker.Target>,
-  ): Boolean =
+  ) =
     interaction is Interaction.Enter ||
       interaction is Interaction.Exit ||
       interaction is Interaction.Press ||
@@ -114,7 +114,7 @@ private class ShowOnHoverMarkerController : CartesianMarkerController {
     when (interaction) {
       is Interaction.Enter -> isHovering = targets.isNotEmpty()
       is Interaction.Exit -> isHovering = interaction.isInsideChartBounds
-      else -> Unit
+      else -> {}
     }
     return isHovering
   }
@@ -128,9 +128,9 @@ private class ShowOnHoverMarkerController : CartesianMarkerController {
 private class ToggleOnTapMarkerController : CartesianMarkerController {
   private var lastTargets: List<CartesianMarker.Target>? = null
 
-  override val acceptsLongPress: Boolean = false
+  override val acceptsLongPress = false
 
-  override val lock: CartesianMarkerController.Lock = CartesianMarkerController.Lock.X
+  override val lock = CartesianMarkerController.Lock.X
 
   override fun shouldAcceptInteraction(
     interaction: Interaction,

@@ -177,7 +177,7 @@ internal fun CartesianChartHostImpl(
       zoomEnabled = scrollState.scrollEnabled && zoomState.zoomEnabled,
       layerPadding =
         remember(chart.layerPadding, model.extraStore) { chart.layerPadding(model.extraStore) },
-      pointerPosition = lastAcceptedInteraction?.takeIf { it !is Interaction.Release }?.point,
+      pointerPosition = lastAcceptedInteraction?.takeUnless { it is Interaction.Release }?.point,
       markerX = markerX,
     )
 

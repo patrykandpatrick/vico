@@ -18,7 +18,6 @@ package com.patrykandpatrick.vico.multiplatform.cartesian.marker
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.listSaver
 import com.patrykandpatrick.vico.multiplatform.common.Point
 
@@ -52,8 +51,8 @@ public sealed class Interaction {
     Interaction()
 
   internal companion object {
-    internal val Saver: Saver<MutableState<Interaction?>, Any> =
-      listSaver(
+    val Saver =
+      listSaver<MutableState<Interaction?>, Any>(
         save = { eventState ->
           val event = eventState.value
           when (event) {
