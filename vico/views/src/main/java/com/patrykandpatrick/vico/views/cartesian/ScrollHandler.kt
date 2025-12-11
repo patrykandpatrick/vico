@@ -58,10 +58,9 @@ public class ScrollHandler(
   private var context: CartesianMeasuringContext? = null
   private var layerDimensions: CartesianLayerDimensions? = null
   private var bounds: RectF? = null
+  private var isAutoScrolling: Boolean = false
   internal var postInvalidate: (() -> Unit)? = null
   internal var postInvalidateOnAnimation: (() -> Unit)? = null
-  public var isAutoScrolling: Boolean = false
-    private set
 
   private val animator =
     ValueAnimator.ofFloat(Animation.range.start, Animation.range.endInclusive).apply {
@@ -120,12 +119,14 @@ public class ScrollHandler(
 
   internal fun autoScroll(model: CartesianChartModel, oldModel: CartesianChartModel?) {
     if (!autoScrollCondition.shouldScroll(oldModel, model)) return
-    animateScroll(
-      scroll = autoScroll,
-      duration = autoScrollDuration,
-      interpolator = autoScrollInterpolator,
-      isAutoScroll = true,
-    )
+    withUpdated { context, layerDimensions, bounds ->
+      animateScrollBy(
+        delta = autoScroll.getDelta(context, layerDimensions, bounds, maxValue, value),
+        duration = autoScrollDuration,
+        interpolator = autoScrollInterpolator,
+        isAutoScroll = true,
+      )
+    }
   }
 
   internal fun saveInstanceState(bundle: Bundle) {
@@ -157,7 +158,7 @@ public class ScrollHandler(
     delta: Float,
     duration: Long,
     interpolator: TimeInterpolator,
-    isAutoScroll: Boolean,
+    isAutoScroll: Boolean = false,
   ): Float {
     val oldValue = value
     val limitedDelta = delta.coerceIn((-value).rangeWith(maxValue - value))
@@ -202,14 +203,12 @@ public class ScrollHandler(
     scroll: Scroll,
     duration: Long = Animation.DIFF_DURATION.toLong(),
     interpolator: TimeInterpolator = AccelerateDecelerateInterpolator(),
-    isAutoScroll: Boolean = false,
   ) {
     withUpdated { context, layerDimensions, bounds ->
       animateScrollBy(
         scroll.getDelta(context, layerDimensions, bounds, maxValue, value),
         duration,
         interpolator,
-        isAutoScroll,
       )
     }
   }

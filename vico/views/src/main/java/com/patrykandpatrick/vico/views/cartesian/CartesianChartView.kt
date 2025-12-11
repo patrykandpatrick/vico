@@ -460,19 +460,15 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       putParcelable(SUPER_STATE_KEY, super.onSaveInstanceState())
     }
 
-  @Suppress("DEPRECATION")
   override fun onRestoreInstanceState(state: Parcelable?) {
     var superState = state
     if (state is Bundle) {
       scrollHandler.restoreInstanceState(state)
       zoomHandler.restoreInstanceState(state)
-      lastAcceptedInteraction = state.getSerializable(INTERACTION_KEY) as? Interaction
+      lastAcceptedInteraction =
+        @Suppress("DEPRECATION") state.getSerializable(INTERACTION_KEY) as? Interaction
       measuringContext.markerX =
-        if (state.containsKey(MARKER_X_KEY)) {
-          state.getDouble(MARKER_X_KEY)
-        } else {
-          null
-        }
+        if (state.containsKey(MARKER_X_KEY)) state.getDouble(MARKER_X_KEY) else null
       superState =
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
           state.getParcelable(SUPER_STATE_KEY, BaseSavedState::class.java)
