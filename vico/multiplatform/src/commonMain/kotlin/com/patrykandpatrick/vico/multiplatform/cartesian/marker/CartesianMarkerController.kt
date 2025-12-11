@@ -24,7 +24,7 @@ public fun interface CartesianMarkerController {
 
   /** The lock to use for the marker. */
   public val lock: Lock
-    get() = Lock.Position
+    get() = Lock.X
 
   /**
    * Indicates whether this [CartesianMarkerController] wants to respond to [interaction]. If `true`
@@ -67,6 +67,8 @@ private class ShowOnPressMarkerController : CartesianMarkerController {
 
   override val acceptsLongPress = false
 
+  override val lock = CartesianMarkerController.Lock.Position
+
   override fun shouldAcceptInteraction(
     interaction: Interaction,
     targets: List<CartesianMarker.Target>,
@@ -98,6 +100,8 @@ private class ShowOnPressMarkerController : CartesianMarkerController {
 private class ShowOnHoverMarkerController : CartesianMarkerController {
   private var isHovering = false
 
+  override val lock = CartesianMarkerController.Lock.Position
+
   override fun shouldAcceptInteraction(
     interaction: Interaction,
     targets: List<CartesianMarker.Target>,
@@ -113,7 +117,7 @@ private class ShowOnHoverMarkerController : CartesianMarkerController {
   ): Boolean {
     when (interaction) {
       is Interaction.Enter -> isHovering = targets.isNotEmpty()
-      is Interaction.Exit -> isHovering = interaction.isInsideChartBounds
+      is Interaction.Exit -> isHovering = interaction.isInBounds
       else -> {}
     }
     return isHovering
@@ -129,8 +133,6 @@ private class ToggleOnTapMarkerController : CartesianMarkerController {
   private var lastTargets: List<CartesianMarker.Target>? = null
 
   override val acceptsLongPress = false
-
-  override val lock = CartesianMarkerController.Lock.X
 
   override fun shouldAcceptInteraction(
     interaction: Interaction,

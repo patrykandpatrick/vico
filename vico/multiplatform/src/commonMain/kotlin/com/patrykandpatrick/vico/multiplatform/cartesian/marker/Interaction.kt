@@ -47,8 +47,7 @@ public sealed class Interaction {
   public data class Enter(override val point: Point) : Interaction()
 
   /** An exit interaction. */
-  public data class Exit(override val point: Point, val isInsideChartBounds: Boolean) :
-    Interaction()
+  public data class Exit(override val point: Point, val isInBounds: Boolean) : Interaction()
 
   internal companion object {
     val Saver =
@@ -63,7 +62,7 @@ public sealed class Interaction {
             is Release -> listOf("Release", event.point.x, event.point.y)
             is Zoom -> listOf("Zoom", event.point.x, event.point.y)
             is Enter -> listOf("Enter", event.point.x, event.point.y)
-            is Exit -> listOf("Exit", event.point.x, event.point.y, event.isInsideChartBounds)
+            is Exit -> listOf("Exit", event.point.x, event.point.y, event.isInBounds)
             else -> emptyList()
           }
         },
