@@ -21,7 +21,7 @@ Use this document to track automation and custom agents related to the Vico proj
   - Assemble Android sample apps (debug): `./gradlew :sample:app:assembleDebug` (other examples: `:sample:compose:assembleDebug`, `:sample:views:assembleDebug`).
 - Docs & guidance:
   - Public guide: https://guide.vico.patrykandpatrick.com.
-  - Replace `<PROJECT_GUIDANCE_URL>` below with your internal agents handbook if different.
+  - Internal handbook: <PROJECT_GUIDANCE_URL> (replace with your org’s link if different).
 
 ## Agent usage notes
 
