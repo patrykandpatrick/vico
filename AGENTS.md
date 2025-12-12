@@ -9,4 +9,3 @@ For each agent, include:
 2. **Purpose** – what the agent is responsible for.
 3. **Owner** – who maintains or monitors the agent.
 4. **Notes** – any setup details or links to relevant resources.
-
