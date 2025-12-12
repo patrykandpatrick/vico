@@ -2,7 +2,7 @@
 
 Use this document to track automation and custom agents related to the Vico project.
 
-For context and instructions for coding agents, see the project guidance at [TODO: replace with actual agents guidance URL, e.g., https://example.com/agents-guidance]. If your organization hosts this internally (e.g., https://agents.md), link to that location. Capture any project-specific guidance here, including:
+For context and instructions for coding agents, see the project guidance at [PLACEHOLDER: agents-guidance-url] (for example, https://example.com/agents-guidance or an internal site such as https://agents.md). Capture any project-specific guidance here, including:
 - When and how the agent should be invoked.
 - Inputs the agent expects and outputs it produces.
 - Constraints, safeguards, and escalation paths.
