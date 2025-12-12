@@ -18,10 +18,10 @@ Use this document to track automation and custom agents related to the Vico proj
   - Build scripts: root `build.gradle.kts` and per-module `build.gradle.kts`; settings in `settings.gradle.kts`.
 - Build & test:
   - Run the full test suite: `./gradlew check`.
-  - Assemble Android sample apps (debug): `./gradlew :sample:app:assembleDebug` (other examples: `:sample:compose:assembleDebug`, `:sample:views:assembleDebug`).
+  - Assemble Android sample apps (debug): `./gradlew :sample:app:assembleDebug` (other examples: `:sample:compose:assembleDebug`, `:sample:views:assembleDebug`, `:sample:multiplatform:assembleDebug`).
 - Docs & guidance:
   - Public guide: https://guide.vico.patrykandpatrick.com.
-  - Internal handbook: add your org’s agents handbook link here if applicable.
+  - Internal handbook: add your org’s agents handbook link here if applicable (e.g., https://internal.example.com/agents).
 
 ## Agent usage notes
 
