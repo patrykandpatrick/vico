@@ -2,7 +2,7 @@
 
 Use this document to track automation and custom agents related to the Vico project.
 
-TODO: replace `[URL_TO_BE_REPLACED]` below with the actual project guidance link before relying on this document.
+TODO: replace both instances of `[URL_TO_BE_REPLACED]` below with the actual project guidance link before relying on this document.
 For context and instructions for coding agents, see the project guidance at [URL_TO_BE_REPLACED]. Capture any project-specific guidance here, including:
 - When and how the agent should be invoked.
 - Inputs the agent expects and outputs it produces.
