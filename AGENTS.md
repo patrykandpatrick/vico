@@ -5,8 +5,16 @@ Use this document to track automation and custom agents related to the Vico proj
 ## Quick reference for coding agents
 
 - Codebase layout (Gradle multi-module):
-  - `vico/` — core library modules: `core` (base charting), `compose`/`compose-m2`/`compose-m3` (Jetpack Compose bindings), `multiplatform`/`multiplatform-m2`/`multiplatform-m3` (KMP variants), `views` (Android Views).
-  - `sample/` — sample apps: `app` (Android), `compose`, `multiplatform`, `views`.
+  - `vico/` — core library modules:
+    - `core` — base charting.
+    - `compose`, `compose-m2`, `compose-m3` — Jetpack Compose bindings.
+    - `multiplatform`, `multiplatform-m2`, `multiplatform-m3` — KMP variants.
+    - `views` — Android Views.
+  - `sample/` — sample apps:
+    - `app` — Android app.
+    - `compose` — Jetpack Compose demo.
+    - `multiplatform` — KMP demo.
+    - `views` — Android Views demo.
   - Build scripts: root `build.gradle.kts` and per-module `build.gradle.kts`; settings in `settings.gradle.kts`.
 - Build & test:
   - Run the full test suite: `./gradlew check`.
