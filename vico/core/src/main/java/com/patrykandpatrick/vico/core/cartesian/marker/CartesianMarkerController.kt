@@ -22,7 +22,11 @@ public fun interface CartesianMarkerController {
   public val acceptsLongPress: Boolean
     get() = true
 
-  /** The lock to use for the marker. */
+  /**
+   * The lock that determines whether the marker retains its x-value or its screen position when the
+   * x-value corresponding to that position changes for non-gesture reasons (for example, an
+   * automatic scroll or a CartesianChartModel update).
+   */
   public val lock: Lock
     get() = Lock.X
 
@@ -41,12 +45,15 @@ public fun interface CartesianMarkerController {
     targets: List<CartesianMarker.Target>,
   ): Boolean
 
-  /** Defines what the marker is locked to. */
+  /**
+   * Defines what is retained when the marker’s x-value changes for a reason other than a
+   * gesture-initiated scroll.
+   */
   public enum class Lock {
-    /** The marker is locked to an x-position. */
+    /** The marker retains its x-value, and its on-screen position moves accordingly. */
     X,
 
-    /** The marker is locked to the position on screen. */
+    /** The marker retains its on-screen position, and the x-value updates accordingly. */
     Position,
   }
 
