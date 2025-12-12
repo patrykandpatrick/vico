@@ -23,8 +23,8 @@ public fun interface CartesianMarkerController {
     get() = true
 
   /**
-   * The lock that determines whether the marker retains its x-value or its screen position when the
-   * x-value corresponding to that position changes for non-gesture reasons (for example, an
+   * The lock that determines whether the marker retains its _x_-value or its on-screen position when
+   * the _x_-value corresponding to that position changes for non-gesture reasons (for example, an
    * automatic scroll or a CartesianChartModel update).
    */
   public val lock: Lock
@@ -46,13 +46,13 @@ public fun interface CartesianMarkerController {
   ): Boolean
 
   /**
-   * Defines what is retained when the marker’s x-value changes for a reason other than a
+   * Defines what is retained when the marker’s _x_-value changes for a reason other than a
    * gesture-initiated scroll.
    */
   public enum class Lock {
-    /** The marker retains its x-value, and its on-screen position moves accordingly. */
+    /** The marker retains its _x_-value, and its on-screen position moves accordingly. */
     X,
-    /** The marker retains its on-screen position, and the x-value updates accordingly. */
+    /** The marker retains its on-screen position, and the _x_-value updates accordingly. */
     Position,
   }
 
