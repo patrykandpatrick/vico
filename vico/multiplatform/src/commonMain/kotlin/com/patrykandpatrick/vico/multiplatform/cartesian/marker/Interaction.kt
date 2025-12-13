@@ -16,6 +16,9 @@
 
 package com.patrykandpatrick.vico.multiplatform.cartesian.marker
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.listSaver
 import com.patrykandpatrick.vico.multiplatform.common.Point
 
 /** Represents a pointer interaction (such as a press, move, or release). */
@@ -39,4 +42,46 @@ public sealed class Interaction {
 
   /** A zoom interaction. */
   public data class Zoom(override val point: Point) : Interaction()
+
+  /** An enter interaction. */
+  public data class Enter(override val point: Point) : Interaction()
+
+  /** An exit interaction. */
+  public data class Exit(override val point: Point, val isInBounds: Boolean) : Interaction()
+
+  internal companion object {
+    val Saver =
+      listSaver<MutableState<Interaction?>, Any>(
+        save = { eventState ->
+          val event = eventState.value
+          when (event) {
+            is Press -> listOf("Press", event.point.x, event.point.y)
+            is Tap -> listOf("Tap", event.point.x, event.point.y)
+            is LongPress -> listOf("LongPress", event.point.x, event.point.y)
+            is Move -> listOf("Move", event.point.x, event.point.y)
+            is Release -> listOf("Release", event.point.x, event.point.y)
+            is Zoom -> listOf("Zoom", event.point.x, event.point.y)
+            is Enter -> listOf("Enter", event.point.x, event.point.y)
+            is Exit -> listOf("Exit", event.point.x, event.point.y, event.isInBounds)
+            else -> emptyList()
+          }
+        },
+        restore = { list ->
+          if (list.isEmpty()) return@listSaver mutableStateOf(null)
+          val type = list[0] as String
+          val point = Point(list[1] as Float, list[2] as Float)
+          when (type) {
+            "Press" -> Press(point)
+            "Tap" -> Tap(point)
+            "LongPress" -> LongPress(point)
+            "Move" -> Move(point)
+            "Release" -> Release(point)
+            "Zoom" -> Zoom(point)
+            "Enter" -> Enter(point)
+            "Exit" -> Exit(point, list[3] as Boolean)
+            else -> error("Unknown Interaction type: $type")
+          }.let(::mutableStateOf)
+        },
+      )
+  }
 }

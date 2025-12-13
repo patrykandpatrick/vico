@@ -16,8 +16,22 @@
 
 package com.patrykandpatrick.vico.core.cartesian.marker
 
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
+
 /** Controls [CartesianMarker] visibility. */
 public fun interface CartesianMarkerController {
+  /** Whether this [CartesianMarkerController] wants to handle long presses. */
+  public val acceptsLongPress: Boolean
+    get() = true
+
+  /**
+   * Specifies whether the marker retains its _x_-value or its on-screen position when the _x_-value
+   * corresponding to its position changes for non-gesture reasons (for example, an automatic scroll
+   * or a [CartesianChartModel] update).
+   */
+  public val lock: Lock
+    get() = Lock.X
+
   /**
    * Indicates whether this [CartesianMarkerController] wants to respond to [interaction]. If `true`
    * is returned, [shouldShowMarker] is called; otherwise, the marker visibility remains unchanged.
@@ -33,17 +47,74 @@ public fun interface CartesianMarkerController {
     targets: List<CartesianMarker.Target>,
   ): Boolean
 
+  /**
+   * Specifies whether a marker retains its _x_-value or its on-screen position when the _x_-value
+   * corresponding to its position changes for non-gesture reasons (for example, an automatic scroll
+   * or a [CartesianChartModel] update).
+   */
+  public enum class Lock {
+    /** The marker retains its _x_-value, and its on-screen position moves accordingly. */
+    X,
+
+    /** The marker retains its on-screen position, and the _x_-value updates accordingly. */
+    Position,
+  }
+
   /** Houses [CartesianMarkerController] singletons and factory functions. */
   public companion object {
     /** Shows the [CartesianMarker] on press. */
-    public val ShowOnPress: CartesianMarkerController = ShowOnPressMarkerController
+    @Deprecated("Use `showOnPress()`.", ReplaceWith("showOnPress()"))
+    public val ShowOnPress: CartesianMarkerController = DeprecatedShowOnPressMarkerController
+
+    /** Shows the [CartesianMarker] on press. */
+    public fun showOnPress(): CartesianMarkerController = ShowOnPressMarkerController()
+
+    /** Shows the [CartesianMarker] on hover. */
+    public fun showOnHover(): CartesianMarkerController = ShowOnHoverMarkerController()
 
     /** Toggles the visibility of the [CartesianMarker] on tap. */
     public fun toggleOnTap(): CartesianMarkerController = ToggleOnTapMarkerController()
   }
 }
 
-private object ShowOnPressMarkerController : CartesianMarkerController {
+private class ShowOnPressMarkerController : CartesianMarkerController {
+  private var isPressed = false
+
+  override val acceptsLongPress = false
+
+  override val lock = CartesianMarkerController.Lock.Position
+
+  override fun shouldAcceptInteraction(
+    interaction: Interaction,
+    targets: List<CartesianMarker.Target>,
+  ) =
+    when (interaction) {
+      is Interaction.Press -> {
+        isPressed = true
+        true
+      }
+      is Interaction.Move -> isPressed
+      is Interaction.Release -> {
+        isPressed = false
+        true
+      }
+      else -> false
+    }
+
+  override fun shouldShowMarker(interaction: Interaction, targets: List<CartesianMarker.Target>) =
+    interaction !is Interaction.Release
+
+  override fun hashCode() = isPressed.hashCode()
+
+  override fun equals(other: Any?) =
+    other === this || other is ShowOnPressMarkerController && isPressed == other.isPressed
+}
+
+private object DeprecatedShowOnPressMarkerController : CartesianMarkerController {
+  override val acceptsLongPress = false
+
+  override val lock = CartesianMarkerController.Lock.Position
+
   override fun shouldAcceptInteraction(
     interaction: Interaction,
     targets: List<CartesianMarker.Target>,
@@ -55,8 +126,42 @@ private object ShowOnPressMarkerController : CartesianMarkerController {
     interaction !is Interaction.Release
 }
 
+private class ShowOnHoverMarkerController : CartesianMarkerController {
+  private var isHovering = false
+
+  override val lock = CartesianMarkerController.Lock.Position
+
+  override fun shouldAcceptInteraction(
+    interaction: Interaction,
+    targets: List<CartesianMarker.Target>,
+  ) =
+    interaction is Interaction.Enter ||
+      interaction is Interaction.Exit ||
+      interaction is Interaction.Press ||
+      interaction is Interaction.Move
+
+  override fun shouldShowMarker(
+    interaction: Interaction,
+    targets: List<CartesianMarker.Target>,
+  ): Boolean {
+    when (interaction) {
+      is Interaction.Enter -> isHovering = targets.isNotEmpty()
+      is Interaction.Exit -> isHovering = interaction.isInBounds
+      else -> {}
+    }
+    return isHovering
+  }
+
+  override fun hashCode() = isHovering.hashCode()
+
+  override fun equals(other: Any?) =
+    other === this || other is ShowOnHoverMarkerController && isHovering == other.isHovering
+}
+
 private class ToggleOnTapMarkerController : CartesianMarkerController {
   private var lastTargets: List<CartesianMarker.Target>? = null
+
+  override val acceptsLongPress = false
 
   override fun shouldAcceptInteraction(
     interaction: Interaction,

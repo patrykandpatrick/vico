@@ -40,4 +40,10 @@ public sealed class Interaction : Serializable {
 
   /** A zoom interaction. */
   public data class Zoom(override val point: Point) : Interaction()
+
+  /** An enter interaction. */
+  public data class Enter(override val point: Point) : Interaction()
+
+  /** An exit interaction. */
+  public data class Exit(override val point: Point, val isInBounds: Boolean) : Interaction()
 }
