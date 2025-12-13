@@ -49,10 +49,10 @@ import com.patrykandpatrick.vico.core.cartesian.data.MutableCartesianChartRanges
 import com.patrykandpatrick.vico.core.cartesian.data.toImmutable
 import com.patrykandpatrick.vico.core.cartesian.getVisibleXRange
 import com.patrykandpatrick.vico.core.cartesian.layer.MutableCartesianLayerDimensions
+import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerController.Lock
 import com.patrykandpatrick.vico.core.cartesian.marker.Interaction
 import com.patrykandpatrick.vico.core.common.Defaults.CHART_HEIGHT
 import com.patrykandpatrick.vico.core.common.MutableSize
-import com.patrykandpatrick.vico.core.common.Point
 import com.patrykandpatrick.vico.core.common.ValueWrapper
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.core.common.getValue
@@ -166,7 +166,7 @@ internal fun CartesianChartHostImpl(
 ) {
   val canvasSize = remember { MutableSize() }
   var markerX by rememberSaveable { mutableStateOf<Double?>(null) }
-  var pointerPosition by rememberSaveable { mutableStateOf<Point?>(null) }
+  var lastAcceptedInteraction by rememberSaveable { mutableStateOf<Interaction?>(null) }
   val measuringContext =
     rememberCartesianMeasuringContext(
       canvasSize = canvasSize,
@@ -177,7 +177,7 @@ internal fun CartesianChartHostImpl(
       zoomEnabled = scrollState.scrollEnabled && zoomState.zoomEnabled,
       layerPadding =
         remember(chart.layerPadding, model.extraStore) { chart.layerPadding(model.extraStore) },
-      pointerPosition = pointerPosition,
+      pointerPosition = lastAcceptedInteraction?.takeUnless { it is Interaction.Release }?.point,
       markerX = markerX,
     )
 
@@ -186,7 +186,6 @@ internal fun CartesianChartHostImpl(
   val layerDimensions = remember { MutableCartesianLayerDimensions() }
 
   fun onInteraction(interaction: Interaction) {
-    pointerPosition = if (interaction is Interaction.Release) null else interaction.point
     if (chart.marker != null) {
       val x =
         measuringContext.pointerPositionToX(
@@ -203,23 +202,29 @@ internal fun CartesianChartHostImpl(
         )
       if (chart.markerController.shouldAcceptInteraction(interaction, targets)) {
         val shouldShow = chart.markerController.shouldShowMarker(interaction, targets)
+        lastAcceptedInteraction = interaction
         markerX = if (shouldShow) targets.firstOrNull()?.x else null
       }
     }
   }
 
+  fun onViewportChange() {
+    lastAcceptedInteraction
+      ?.takeIf { chart.markerController.lock == Lock.Position }
+      ?.let(::onInteraction)
+  }
+
+  LaunchedEffect(model) { onViewportChange() }
+
   LaunchedEffect(scrollState.consumedXDeltas, scrollState.unconsumedXDeltas) {
-    merge(scrollState.consumedXDeltas, scrollState.unconsumedXDeltas).collect { delta ->
-      pointerPosition?.let { point ->
-        onInteraction(Interaction.Move(point.copy(x = point.x + delta)))
-      }
-    }
+    merge(scrollState.consumedXDeltas, scrollState.unconsumedXDeltas).collect { onViewportChange() }
   }
 
   LaunchedEffect(zoomState, scrollState) {
     zoomState.pendingScroll.collect { (scroll, maxValue) ->
       scrollState.maxValue = maxValue
       scrollState.scroll(scroll)
+      onViewportChange()
     }
   }
 
@@ -242,6 +247,7 @@ internal fun CartesianChartHostImpl(
                 null
               }
             },
+          longPressEnabled = chart.markerController.acceptsLongPress,
         )
   ) {
     val canvas = drawContext.canvas.nativeCanvas

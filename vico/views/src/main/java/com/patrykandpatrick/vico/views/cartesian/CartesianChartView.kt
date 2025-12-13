@@ -40,6 +40,7 @@ import com.patrykandpatrick.vico.core.cartesian.data.toImmutable
 import com.patrykandpatrick.vico.core.cartesian.getVisibleXRange
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayerPadding
 import com.patrykandpatrick.vico.core.cartesian.layer.MutableCartesianLayerDimensions
+import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerController.Lock
 import com.patrykandpatrick.vico.core.cartesian.marker.Interaction
 import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.NEW_PRODUCER_ERROR_MESSAGE
@@ -106,7 +107,11 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   private val onGestureListener: ChartSimpleOnGestureListener =
     ChartSimpleOnGestureListener(
       onTap = { x, y -> handleInteraction(Interaction.Tap(Point(x, y))) },
-      onLongPress = { x, y -> handleInteraction(Interaction.LongPress(Point(x, y))) },
+      onLongPress = { x, y ->
+        if (chart?.markerController?.acceptsLongPress == true) {
+          handleInteraction(Interaction.LongPress(Point(x, y)))
+        }
+      },
     )
 
   private val gestureDetector = GestureDetector(context, onGestureListener)
@@ -116,6 +121,8 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   private val layerDimensions = MutableCartesianLayerDimensions()
 
   private var previousLayerPaddingHashCode: Int? = null
+
+  private var lastAcceptedInteraction: Interaction? = null
 
   /**
    * Houses information on the [CartesianChart]’s scroll value. Allows for scroll customization and
@@ -262,6 +269,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     _model = model
     updatePlaceholderVisibility()
     tryInvalidate(chart, model, updateRanges)
+    handleViewportChange()
     if (model != null && oldModel?.id != model.id && isInEditMode.not()) {
       handler?.post { scrollHandler.autoScroll(model, oldModel) }
     }
@@ -297,6 +305,12 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       tryInvalidate(chart = chart, model = model, updateRanges = false)
       onChange(oldValue, newValue)
     }
+  }
+
+  override fun onHoverEvent(event: MotionEvent): Boolean {
+    val superHandled = super.onHoverEvent(event)
+    if (!isEnabled) return superHandled
+    return motionEventHandler.handleMotionEvent(event, scrollHandler)
   }
 
   override fun onTouchEvent(event: MotionEvent): Boolean {
@@ -351,6 +365,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   }
 
   private fun handleInteraction(interaction: Interaction) {
+    if (measuringContext.ranges is CartesianChartRanges.Empty) return
     val chart = chart ?: return
     val x =
       measuringContext.pointerPositionToX(
@@ -367,30 +382,53 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       )
     if (chart.markerController.shouldAcceptInteraction(interaction, targets)) {
       val shouldShow = chart.markerController.shouldShowMarker(interaction, targets)
+      lastAcceptedInteraction = interaction
       measuringContext.markerX = if (shouldShow) targets.firstOrNull()?.x else null
       invalidate()
+    }
+  }
+
+  override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+    super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+    motionEventHandler.chartBounds.apply {
+      left = offset.x
+      top = offset.y
+      right = offset.x + canvasSize.width
+      bottom = offset.y + canvasSize.height
+    }
+  }
+
+  private fun handleViewportChange() {
+    if (chart?.markerController?.lock == Lock.Position) {
+      lastAcceptedInteraction?.let(::handleInteraction)
     }
   }
 
   override fun dispatchDraw(canvas: Canvas) {
     super.dispatchDraw(canvas)
 
-    withChartAndModel { chart, model ->
+    withChartAndModel { chart, _ ->
       measuringContext.reset()
       layerDimensions.clear()
       chart.prepare(measuringContext, layerDimensions)
 
       if (chart.layerBounds.isEmpty) return@withChartAndModel
 
+      var viewportChange = false
       motionEventHandler.scrollEnabled = scrollHandler.scrollEnabled
       if (scroller.computeScrollOffset()) {
-        scrollHandler.scroll(Scroll.Absolute.pixels(scroller.currX.toFloat()))
+        val delta = scroller.currX.toFloat()
+        scrollHandler.scroll(Scroll.Absolute.pixels(delta))
+        viewportChange = true
         postInvalidateOnAnimation()
       }
 
       zoomHandler.update(measuringContext, layerDimensions, chart.layerBounds, scrollHandler.value)
       scrollHandler.update(measuringContext, chart.layerBounds, layerDimensions)
-      zoomHandler.consumePendingScroll(scrollHandler::scroll)
+      zoomHandler.consumePendingScroll { scroll ->
+        scrollHandler.scroll(scroll)
+        viewportChange = true
+      }
 
       val drawingContext =
         CartesianDrawingContext(
@@ -403,6 +441,9 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
         )
 
       chart.draw(drawingContext, offset)
+      if (viewportChange && chart.markerController.lock == Lock.Position) {
+        lastAcceptedInteraction?.let(::handleInteraction)
+      }
       measuringContext.reset()
     }
   }
@@ -414,6 +455,8 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     Bundle().apply {
       scrollHandler.saveInstanceState(this)
       zoomHandler.saveInstanceState(this)
+      putSerializable(INTERACTION_KEY, lastAcceptedInteraction)
+      measuringContext.markerX?.let { putDouble(MARKER_X_KEY, it) }
       putParcelable(SUPER_STATE_KEY, super.onSaveInstanceState())
     }
 
@@ -422,11 +465,15 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     if (state is Bundle) {
       scrollHandler.restoreInstanceState(state)
       zoomHandler.restoreInstanceState(state)
+      lastAcceptedInteraction =
+        @Suppress("DEPRECATION") state.getSerializable(INTERACTION_KEY) as? Interaction
+      measuringContext.markerX =
+        if (state.containsKey(MARKER_X_KEY)) state.getDouble(MARKER_X_KEY) else null
       superState =
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
           state.getParcelable(SUPER_STATE_KEY, BaseSavedState::class.java)
         } else {
-          @Suppress("DEPRECATION") state.getParcelable(SUPER_STATE_KEY)
+          state.getParcelable(SUPER_STATE_KEY)
         }
     }
     super.onRestoreInstanceState(superState)
@@ -442,6 +489,8 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 
   private companion object {
     const val SUPER_STATE_KEY = "superState"
+    const val INTERACTION_KEY = "lastAcceptedInteraction"
+    const val MARKER_X_KEY = "markerX"
   }
 }
 

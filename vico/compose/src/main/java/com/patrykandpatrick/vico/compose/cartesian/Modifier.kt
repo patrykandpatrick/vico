@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.unit.IntSize
 import com.patrykandpatrick.vico.compose.common.detectZoomGestures
 import com.patrykandpatrick.vico.core.cartesian.marker.Interaction
 import com.patrykandpatrick.vico.core.common.Point
@@ -36,6 +37,7 @@ internal fun Modifier.pointerInput(
   onInteraction: ((Interaction) -> Unit)?,
   onZoom: ((Float, Offset) -> Unit)?,
   consumeMoveEvents: Boolean,
+  longPressEnabled: Boolean,
 ) =
   scrollable(
       state = scrollState.scrollableState,
@@ -45,27 +47,37 @@ internal fun Modifier.pointerInput(
     )
     .pointerInput(onZoom, onInteraction) {
       awaitPointerEventScope {
+        var isHoverActive = false
         while (true) {
           val event = awaitPointerEvent()
-          val pointerPosition = event.changes.first().position.toPoint()
+          val position = event.changes.first().position
+          val pointerPosition = position.toPoint()
           when {
             event.type == PointerEventType.Scroll && scrollState.scrollEnabled && onZoom != null ->
               onZoom(
                 1 - event.changes.first().scrollDelta.y * BASE_SCROLL_ZOOM_DELTA,
                 event.changes.first().position,
               )
-
             onInteraction == null -> continue
-            event.type == PointerEventType.Press ->
+            event.type == PointerEventType.Press && event.changes.size == 1 ->
               onInteraction(Interaction.Press(pointerPosition))
-
-            event.type == PointerEventType.Release ->
+            event.type == PointerEventType.Release || event.type == PointerEventType.Press ->
               onInteraction(Interaction.Release(pointerPosition))
-
             event.type == PointerEventType.Move && !scrollState.scrollEnabled -> {
               val changes = event.changes.first()
               if (consumeMoveEvents) changes.consume()
               onInteraction(Interaction.Move(pointerPosition))
+            }
+            event.type == PointerEventType.Enter -> {
+              isHoverActive = true
+              onInteraction(Interaction.Enter(pointerPosition))
+            }
+            event.type == PointerEventType.Move && scrollState.scrollEnabled && isHoverActive ->
+              onInteraction(Interaction.Move(pointerPosition))
+            event.type == PointerEventType.Exit -> {
+              val isInsideChartBounds = position.fits(size)
+              isHoverActive = isInsideChartBounds
+              onInteraction(Interaction.Exit(pointerPosition, isInsideChartBounds))
             }
           }
         }
@@ -73,9 +85,14 @@ internal fun Modifier.pointerInput(
     }
     .then(
       if (onInteraction != null) {
-        Modifier.pointerInput(onInteraction) {
+        Modifier.pointerInput(onInteraction, longPressEnabled) {
           detectTapGestures(
-            onLongPress = { onInteraction(Interaction.LongPress(it.toPoint())) },
+            onLongPress =
+              if (longPressEnabled) {
+                { onInteraction(Interaction.LongPress(it.toPoint())) }
+              } else {
+                null
+              },
             onTap = { onInteraction(Interaction.Tap(it.toPoint())) },
           )
         }
@@ -95,3 +112,5 @@ internal fun Modifier.pointerInput(
         Modifier
       }
     )
+
+private fun Offset.fits(size: IntSize) = x >= 0f && x <= size.width && y >= 0f && y <= size.height

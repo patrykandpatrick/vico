@@ -30,7 +30,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -47,10 +46,10 @@ import com.patrykandpatrick.vico.multiplatform.cartesian.data.component4
 import com.patrykandpatrick.vico.multiplatform.cartesian.data.defaultCartesianDiffAnimationSpec
 import com.patrykandpatrick.vico.multiplatform.cartesian.data.toImmutable
 import com.patrykandpatrick.vico.multiplatform.cartesian.layer.MutableCartesianLayerDimensions
+import com.patrykandpatrick.vico.multiplatform.cartesian.marker.CartesianMarkerController.Lock
 import com.patrykandpatrick.vico.multiplatform.cartesian.marker.Interaction
 import com.patrykandpatrick.vico.multiplatform.common.Defaults.CHART_HEIGHT
 import com.patrykandpatrick.vico.multiplatform.common.MutableDrawScope
-import com.patrykandpatrick.vico.multiplatform.common.Point
 import com.patrykandpatrick.vico.multiplatform.common.ValueWrapper
 import com.patrykandpatrick.vico.multiplatform.common.data.ExtraStore
 import com.patrykandpatrick.vico.multiplatform.common.getValue
@@ -162,8 +161,8 @@ internal fun CartesianChartHostImpl(
   extraStore: ExtraStore = ExtraStore.Empty,
 ) {
   var markerX by rememberSaveable { mutableStateOf<Double?>(null) }
-  var pointerPosition by
-    rememberSaveable(saver = Saver({ it.value }, ::ValueWrapper)) { ValueWrapper<Point?>(null) }
+  var lastAcceptedInteraction by
+    rememberSaveable(saver = Interaction.Saver) { mutableStateOf(null) }
   val measuringContext =
     rememberCartesianMeasuringContext(
       extraStore = extraStore,
@@ -181,7 +180,6 @@ internal fun CartesianChartHostImpl(
   val layerDimensions = remember { MutableCartesianLayerDimensions() }
 
   fun onInteraction(interaction: Interaction) {
-    pointerPosition = if (interaction is Interaction.Release) null else interaction.point
     if (chart.marker != null) {
       val x =
         measuringContext.pointerPositionToX(
@@ -198,23 +196,29 @@ internal fun CartesianChartHostImpl(
         )
       if (chart.markerController.shouldAcceptInteraction(interaction, targets)) {
         val shouldShow = chart.markerController.shouldShowMarker(interaction, targets)
+        lastAcceptedInteraction = interaction
         markerX = if (shouldShow) targets.firstOrNull()?.x else null
       }
     }
   }
 
+  fun onViewportChange() {
+    lastAcceptedInteraction
+      ?.takeIf { chart.markerController.lock == Lock.Position }
+      ?.let(::onInteraction)
+  }
+
+  LaunchedEffect(model) { onViewportChange() }
+
   LaunchedEffect(scrollState.consumedXDeltas, scrollState.unconsumedXDeltas) {
-    merge(scrollState.consumedXDeltas, scrollState.unconsumedXDeltas).collect { delta ->
-      pointerPosition?.let { point ->
-        onInteraction(Interaction.Move(point.copy(x = point.x + delta)))
-      }
-    }
+    merge(scrollState.consumedXDeltas, scrollState.unconsumedXDeltas).collect { onViewportChange() }
   }
 
   LaunchedEffect(zoomState, scrollState) {
     zoomState.pendingScroll.collect { (scroll, maxValue) ->
       scrollState.maxValue = maxValue
       scrollState.scroll(scroll)
+      onViewportChange()
     }
   }
 
@@ -237,6 +241,7 @@ internal fun CartesianChartHostImpl(
                 null
               }
             },
+          longPressEnabled = chart.markerController.acceptsLongPress,
         )
   ) {
     if (size.isEmpty()) return@Canvas
