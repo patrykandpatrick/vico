@@ -30,6 +30,7 @@ import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStart
 import com.patrykandpatrick.vico.compose.cartesian.cartesianLayerPadding
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.layer.stacked
+import com.patrykandpatrick.vico.compose.cartesian.marker.rememberToggleOnTap
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
@@ -105,7 +106,7 @@ private fun JetpackComposeDailyDigitalMediaUse(
             },
             padding = insets(top = 16.dp),
           ),
-        markerController = CartesianMarkerController.toggleOnTap(),
+        markerController = CartesianMarkerController.rememberToggleOnTap(),
       ),
     modelProducer = modelProducer,
     modifier = modifier.height(252.dp),

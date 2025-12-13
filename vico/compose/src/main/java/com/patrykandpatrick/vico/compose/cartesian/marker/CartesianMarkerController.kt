@@ -23,14 +23,22 @@ import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerController
 /** Creates and remembers a [CartesianMarkerController] that shows the marker on press. */
 @Composable
 public fun CartesianMarkerController.Companion.rememberShowOnPress(): CartesianMarkerController =
-  remember { showOnPress() }
+  remember {
+    showOnPress()
+  }
 
 /** Creates and remembers a [CartesianMarkerController] that shows the marker on hover. */
 @Composable
 public fun CartesianMarkerController.Companion.rememberShowOnHover(): CartesianMarkerController =
-  remember { showOnHover() }
+  remember {
+    showOnHover()
+  }
 
-/** Creates and remembers a [CartesianMarkerController] that toggles the marker visibility on tap. */
+/**
+ * Creates and remembers a [CartesianMarkerController] that toggles the marker visibility on tap.
+ */
 @Composable
 public fun CartesianMarkerController.Companion.rememberToggleOnTap(): CartesianMarkerController =
-  remember { toggleOnTap() }
+  remember {
+    toggleOnTap()
+  }

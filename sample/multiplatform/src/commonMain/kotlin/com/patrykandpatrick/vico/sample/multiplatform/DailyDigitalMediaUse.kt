@@ -116,7 +116,7 @@ fun ComposeMultiplatformDailyDigitalMediaUse(modifier: Modifier = Modifier) {
             },
             padding = Insets(top = 16.dp),
           ),
-        markerController = CartesianMarkerController.toggleOnTap(),
+        markerController = CartesianMarkerController.rememberToggleOnTap(),
       ),
     modelProducer = modelProducer,
     modifier = modifier.height(248.dp),
