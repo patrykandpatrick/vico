@@ -558,7 +558,7 @@ public fun rememberCartesianChart(
   decorations: List<Decoration> = emptyList(),
   persistentMarkers: (PersistentMarkerScope.(ExtraStore) -> Unit)? = null,
   getXStep: ((CartesianChartModel) -> Double) = { it.getXDeltaGcd() },
-  markerController: CartesianMarkerController = CartesianMarkerController.showOnPress(),
+  markerController: CartesianMarkerController = CartesianMarkerController.rememberShowOnPress(),
 ): CartesianChart {
   val wrapper = remember { ValueWrapper<CartesianChart?>(null) }
   return remember(

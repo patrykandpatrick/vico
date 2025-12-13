@@ -66,13 +66,13 @@ public fun interface CartesianMarkerController {
     @Deprecated("Use `showOnPress()`.", ReplaceWith("showOnPress()"))
     public val ShowOnPress: CartesianMarkerController = DeprecatedShowOnPressMarkerController
 
-    /** Shows the [CartesianMarker] on press. */
+    /** Creates a [CartesianMarkerController] that shows the marker on press. */
     public fun showOnPress(): CartesianMarkerController = ShowOnPressMarkerController()
 
-    /** Shows the [CartesianMarker] on hover. */
+    /** Creates a [CartesianMarkerController] that shows the marker on hover. */
     public fun showOnHover(): CartesianMarkerController = ShowOnHoverMarkerController()
 
-    /** Toggles the visibility of the [CartesianMarker] on tap. */
+    /** Creates a [CartesianMarkerController] that toggles the marker visibility on tap. */
     public fun toggleOnTap(): CartesianMarkerController = ToggleOnTapMarkerController()
   }
 }

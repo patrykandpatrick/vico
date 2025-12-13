@@ -16,6 +16,8 @@
 
 package com.patrykandpatrick.vico.multiplatform.cartesian.marker
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import com.patrykandpatrick.vico.multiplatform.cartesian.data.CartesianChartModel
 
 /** Controls [CartesianMarker] visibility. */
@@ -61,14 +63,28 @@ public fun interface CartesianMarkerController {
 
   /** Houses [CartesianMarkerController] singletons and factory functions. */
   public companion object {
-    /** Shows the [CartesianMarker] on press. */
-    public fun showOnPress(): CartesianMarkerController = ShowOnPressMarkerController()
+    internal fun showOnPress(): CartesianMarkerController = ShowOnPressMarkerController()
 
-    /** Shows the [CartesianMarker] on hover. */
-    public fun showOnHover(): CartesianMarkerController = ShowOnHoverMarkerController()
+    /** Creates and remembers a [CartesianMarkerController] that shows the marker on press. */
+    @Composable
+    public fun rememberShowOnPress(): CartesianMarkerController = remember {
+      ShowOnPressMarkerController()
+    }
 
-    /** Toggles the visibility of the [CartesianMarker] on tap. */
-    public fun toggleOnTap(): CartesianMarkerController = ToggleOnTapMarkerController()
+    /** Creates and remembers a [CartesianMarkerController] that shows the marker on hover. */
+    @Composable
+    public fun rememberShowOnHover(): CartesianMarkerController = remember {
+      ShowOnHoverMarkerController()
+    }
+
+    /**
+     * Creates and remembers a [CartesianMarkerController] that toggles the marker visibility on
+     * tap.
+     */
+    @Composable
+    public fun rememberToggleOnTap(): CartesianMarkerController = remember {
+      ToggleOnTapMarkerController()
+    }
   }
 }
 
