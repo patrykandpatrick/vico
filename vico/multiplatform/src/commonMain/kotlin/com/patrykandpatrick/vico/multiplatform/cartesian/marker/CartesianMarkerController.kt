@@ -50,7 +50,7 @@ public fun interface CartesianMarkerController {
   /**
    * Specifies whether the marker retains its _x_-value or its on-screen position when the _x_-value
    * corresponding to its position changes for non-gesture reasons (for example, an automatic scroll
-   * or a CartesianChartModel update).
+   * or a [CartesianChartModel] update).
    */
   public enum class Lock {
     /** The marker retains its _x_-value, and its on-screen position moves accordingly. */
