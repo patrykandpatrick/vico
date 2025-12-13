@@ -16,13 +16,19 @@
 
 package com.patrykandpatrick.vico.multiplatform.cartesian.marker
 
+import com.patrykandpatrick.vico.multiplatform.cartesian.data.CartesianChartModel
+
 /** Controls [CartesianMarker] visibility. */
 public fun interface CartesianMarkerController {
   /** Whether this [CartesianMarkerController] wants to handle long presses. */
   public val acceptsLongPress: Boolean
     get() = true
 
-  /** The lock to use for the marker. */
+  /**
+   * Specifies whether the marker retains its _x_-value or its on-screen position when the _x_-value
+   * corresponding to its position changes for non-gesture reasons (for example, an automatic scroll
+   * or a [CartesianChartModel] update).
+   */
   public val lock: Lock
     get() = Lock.X
 
@@ -41,11 +47,15 @@ public fun interface CartesianMarkerController {
     targets: List<CartesianMarker.Target>,
   ): Boolean
 
-  /** Defines what the marker is locked to. */
+  /**
+   * Specifies whether a marker retains its _x_-value or its on-screen position when the _x_-value
+   * corresponding to its position changes for non-gesture reasons (for example, an automatic scroll
+   * or a [CartesianChartModel] update).
+   */
   public enum class Lock {
-    /** The marker is locked to an x-position. */
+    /** The marker retains its _x_-value, and its on-screen position moves accordingly. */
     X,
-    /** The marker is locked to the position on screen. */
+    /** The marker retains its on-screen position, and the _x_-value updates accordingly. */
     Position,
   }
 
