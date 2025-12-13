@@ -68,7 +68,7 @@ public fun interface CartesianMarkerController {
     /** Creates and remembers a [CartesianMarkerController] that shows the marker on press. */
     @Composable
     public fun rememberShowOnPress(): CartesianMarkerController =
-      remember { showOnPress() }
+      remember { ShowOnPressMarkerController() }
 
     /** Creates and remembers a [CartesianMarkerController] that shows the marker on hover. */
     @Composable
