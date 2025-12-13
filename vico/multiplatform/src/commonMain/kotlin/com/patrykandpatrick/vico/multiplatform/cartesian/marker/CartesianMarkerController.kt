@@ -16,6 +16,8 @@
 
 package com.patrykandpatrick.vico.multiplatform.cartesian.marker
 
+import com.patrykandpatrick.vico.multiplatform.cartesian.data.CartesianChartModel
+
 /** Controls [CartesianMarker] visibility. */
 public fun interface CartesianMarkerController {
   /** Whether this [CartesianMarkerController] wants to handle long presses. */
