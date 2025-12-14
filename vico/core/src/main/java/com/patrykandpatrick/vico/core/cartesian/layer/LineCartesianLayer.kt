@@ -457,6 +457,7 @@ protected constructor(
   ) {
     if (canvasX <= layerBounds.left - 1 || canvasX >= layerBounds.right + 1) return
     val limitedCanvasY = canvasY.coerceIn(layerBounds.top, layerBounds.bottom)
+    if (limitedCanvasY.isNaN()) return
     _markerTargets
       .getOrPut(entry.x) { listOf(MutableLineCartesianLayerMarkerTarget(entry.x, canvasX)) }
       .first()
