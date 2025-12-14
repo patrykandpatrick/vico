@@ -47,7 +47,6 @@ internal fun Modifier.pointerInput(
     )
     .pointerInput(onZoom, onInteraction) {
       awaitPointerEventScope {
-        var isHoverActive = false
         while (true) {
           val event = awaitPointerEvent()
           val position = event.changes.first().position
@@ -68,15 +67,12 @@ internal fun Modifier.pointerInput(
               if (consumeMoveEvents) changes.consume()
               onInteraction(Interaction.Move(pointerPosition))
             }
-            event.type == PointerEventType.Enter -> {
-              isHoverActive = true
+            event.type == PointerEventType.Enter ->
               onInteraction(Interaction.Enter(pointerPosition))
-            }
-            event.type == PointerEventType.Move && scrollState.scrollEnabled && isHoverActive ->
+            event.type == PointerEventType.Move && scrollState.scrollEnabled ->
               onInteraction(Interaction.Move(pointerPosition))
             event.type == PointerEventType.Exit -> {
               val isInsideChartBounds = position.fits(size)
-              isHoverActive = isInsideChartBounds
               onInteraction(Interaction.Exit(pointerPosition, isInsideChartBounds))
             }
           }
