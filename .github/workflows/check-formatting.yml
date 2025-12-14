@@ -1,6 +1,8 @@
 name: Check formatting
 on:
   push:
+    branches:
+      - master
   pull_request:
 jobs:
   check-formatting:
