@@ -116,7 +116,7 @@ All workflows run on `push` and `pull_request`:
 ## Important Notes
 
 1. **Architecture:** The project currently maintains two parallel implementations:
-   - `vico/core`, `vico/compose`, `vico/views`: Android-only implementation (View-based core).
+   - `vico/core`, `vico/compose`, `vico/views`: Android-only implementation (core uses `android.graphics` APIs shared by both Views and Compose).
    - `vico/multiplatform`: Multiplatform implementation (Pure Compose core). When making changes,
      check if they need to be applied to both implementations.
 2. **Explicit API mode:** All library modules use `explicitApi()` - public API must have explicit
