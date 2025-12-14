@@ -45,7 +45,6 @@ internal class MotionEventHandler(
   private var velocityTracker = VelocityTrackerHelper()
   private var lastEventPointerCount = 0
   private var totalDragAmount: Float = 0f
-  private var isHoverActive = false
 
   fun handleMotionEvent(motionEvent: MotionEvent, scrollHandler: ScrollHandler): Boolean {
     val ignoreEvent =
@@ -93,14 +92,12 @@ internal class MotionEventHandler(
       }
       MotionEvent.ACTION_HOVER_ENTER,
       MotionEvent.ACTION_HOVER_MOVE -> {
-        isHoverActive = true
         onInteraction(Interaction.Enter(motionEvent.point))
         requestInvalidate()
         true
       }
       MotionEvent.ACTION_HOVER_EXIT -> {
         val isInsideChartBounds = chartBounds.contains(motionEvent.x, motionEvent.y)
-        isHoverActive = isInsideChartBounds
         onInteraction(Interaction.Exit(motionEvent.point, isInsideChartBounds))
         requestInvalidate()
         true
