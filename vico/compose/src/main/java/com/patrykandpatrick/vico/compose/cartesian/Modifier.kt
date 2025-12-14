@@ -40,7 +40,7 @@ internal fun Modifier.pointerInput(
   longPressEnabled: Boolean,
 ) =
   scrollable(
-      state = scrollState.scrollableState,
+      state = scrollState.vicoScrollableState.scrollableState,
       orientation = Orientation.Horizontal,
       enabled = scrollState.scrollEnabled,
       reverseDirection = true,

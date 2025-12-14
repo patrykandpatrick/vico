@@ -40,7 +40,7 @@ import com.patrykandpatrick.vico.core.cartesian.data.toImmutable
 import com.patrykandpatrick.vico.core.cartesian.getVisibleXRange
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayerPadding
 import com.patrykandpatrick.vico.core.cartesian.layer.MutableCartesianLayerDimensions
-import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerController.Lock
+import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerController
 import com.patrykandpatrick.vico.core.cartesian.marker.Interaction
 import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.NEW_PRODUCER_ERROR_MESSAGE
@@ -269,7 +269,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     _model = model
     updatePlaceholderVisibility()
     tryInvalidate(chart, model, updateRanges)
-    handleViewportChange()
+    handleViewportChange(CartesianMarkerController.ViewportChangeReason.DataUpdate)
     if (model != null && oldModel?.id != model.id && isInEditMode.not()) {
       handler?.post { scrollHandler.autoScroll(model, oldModel) }
     }
@@ -398,10 +398,13 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     }
   }
 
-  private fun handleViewportChange() {
-    if (chart?.markerController?.lock == Lock.Position) {
-      lastAcceptedInteraction?.let(::handleInteraction)
-    }
+  private fun handleViewportChange(reason: CartesianMarkerController.ViewportChangeReason) {
+    val chart = chart
+    val lastAcceptedInteraction = lastAcceptedInteraction
+    if (chart == null || lastAcceptedInteraction == null) return
+    chart.markerController
+      .onViewportChange(lastAcceptedInteraction, reason)
+      ?.let(::handleInteraction)
   }
 
   override fun dispatchDraw(canvas: Canvas) {
@@ -414,20 +417,25 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 
       if (chart.layerBounds.isEmpty) return@withChartAndModel
 
-      var viewportChange = false
+      var viewportChangeReason: CartesianMarkerController.ViewportChangeReason? = null
       motionEventHandler.scrollEnabled = scrollHandler.scrollEnabled
       if (scroller.computeScrollOffset()) {
         val delta = scroller.currX.toFloat()
-        scrollHandler.scroll(Scroll.Absolute.pixels(delta))
-        viewportChange = true
+        val consumedDelta = scrollHandler.scroll(Scroll.Absolute.pixels(delta))
+        viewportChangeReason =
+          if (scrollHandler.isAutoScrolling) {
+            CartesianMarkerController.ViewportChangeReason.AutoScroll(consumedDelta)
+          } else {
+            CartesianMarkerController.ViewportChangeReason.Scroll(consumedDelta)
+          }
         postInvalidateOnAnimation()
       }
 
       zoomHandler.update(measuringContext, layerDimensions, chart.layerBounds, scrollHandler.value)
       scrollHandler.update(measuringContext, chart.layerBounds, layerDimensions)
       zoomHandler.consumePendingScroll { scroll ->
-        scrollHandler.scroll(scroll)
-        viewportChange = true
+        val delta = scrollHandler.scroll(scroll)
+        viewportChangeReason = CartesianMarkerController.ViewportChangeReason.Zoom(delta)
       }
 
       val drawingContext =
@@ -441,9 +449,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
         )
 
       chart.draw(drawingContext, offset)
-      if (viewportChange && chart.markerController.lock == Lock.Position) {
-        lastAcceptedInteraction?.let(::handleInteraction)
-      }
+      viewportChangeReason?.also(::handleViewportChange)
       measuringContext.reset()
     }
   }

@@ -18,7 +18,6 @@ package com.patrykandpatrick.vico.multiplatform.cartesian.marker
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import com.patrykandpatrick.vico.multiplatform.cartesian.data.CartesianChartModel
 
 /** Controls [CartesianMarker] visibility. */
 public fun interface CartesianMarkerController {
@@ -27,12 +26,17 @@ public fun interface CartesianMarkerController {
     get() = true
 
   /**
-   * Specifies whether the marker retains its _x_-value or its on-screen position when the _x_-value
-   * corresponding to its position changes for non-gesture reasons (for example, an automatic scroll
-   * or a [CartesianChartModel] update).
+   * Called when the viewport changes due to scrolling, auto-scrolling, zooming, or data updates.
+   * Allows updating the last accepted [Interaction] accordingly.
+   *
+   * @param lastAcceptedInteraction The last accepted interaction.
+   * @param reason The reason for the viewport change.
+   * @return An updated [Interaction] or `null` to keep the last accepted interaction unchanged.
    */
-  public val lock: Lock
-    get() = Lock.X
+  public fun onViewportChange(
+    lastAcceptedInteraction: Interaction,
+    reason: ViewportChangeReason,
+  ): Interaction? = null
 
   /**
    * Indicates whether this [CartesianMarkerController] wants to respond to [interaction]. If `true`
@@ -49,16 +53,16 @@ public fun interface CartesianMarkerController {
     targets: List<CartesianMarker.Target>,
   ): Boolean
 
-  /**
-   * Specifies whether a marker retains its _x_-value or its on-screen position when the _x_-value
-   * corresponding to its position changes for non-gesture reasons (for example, an automatic scroll
-   * or a [CartesianChartModel] update).
-   */
-  public enum class Lock {
-    /** The marker retains its _x_-value, and its on-screen position moves accordingly. */
-    X,
-    /** The marker retains its on-screen position, and the _x_-value updates accordingly. */
-    Position,
+  public sealed class ViewportChangeReason {
+    public open val scrollDelta: Float = 0f
+
+    public data class Scroll(public override val scrollDelta: Float) : ViewportChangeReason()
+
+    public data class AutoScroll(public override val scrollDelta: Float) : ViewportChangeReason()
+
+    public data class Zoom(public override val scrollDelta: Float) : ViewportChangeReason()
+
+    public data object DataUpdate : ViewportChangeReason()
   }
 
   /** Houses [CartesianMarkerController] singletons and factory functions. */
@@ -93,8 +97,6 @@ private class ShowOnPressMarkerController : CartesianMarkerController {
 
   override val acceptsLongPress = false
 
-  override val lock = CartesianMarkerController.Lock.Position
-
   override fun shouldAcceptInteraction(
     interaction: Interaction,
     targets: List<CartesianMarker.Target>,
@@ -114,6 +116,20 @@ private class ShowOnPressMarkerController : CartesianMarkerController {
       else -> false
     }
 
+  override fun onViewportChange(
+    lastAcceptedInteraction: Interaction,
+    reason: CartesianMarkerController.ViewportChangeReason,
+  ): Interaction? =
+    when (reason) {
+      is CartesianMarkerController.ViewportChangeReason.Scroll ->
+        Interaction.Move(
+          lastAcceptedInteraction.point.copy(
+            x = lastAcceptedInteraction.point.x + reason.scrollDelta
+          )
+        )
+      else -> lastAcceptedInteraction
+    }
+
   override fun shouldShowMarker(interaction: Interaction, targets: List<CartesianMarker.Target>) =
     interaction !is Interaction.Release
 
@@ -126,8 +142,6 @@ private class ShowOnPressMarkerController : CartesianMarkerController {
 private class ShowOnHoverMarkerController : CartesianMarkerController {
   private var isHovering = false
 
-  override val lock = CartesianMarkerController.Lock.Position
-
   override fun shouldAcceptInteraction(
     interaction: Interaction,
     targets: List<CartesianMarker.Target>,
@@ -136,6 +150,11 @@ private class ShowOnHoverMarkerController : CartesianMarkerController {
       interaction is Interaction.Exit ||
       interaction is Interaction.Press ||
       interaction is Interaction.Move
+
+  override fun onViewportChange(
+    lastAcceptedInteraction: Interaction,
+    reason: CartesianMarkerController.ViewportChangeReason,
+  ): Interaction = lastAcceptedInteraction
 
   override fun shouldShowMarker(
     interaction: Interaction,
