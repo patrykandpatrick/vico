@@ -16,7 +16,7 @@ lifecycleRuntime = "2.9.5"
 material = "1.13.0"
 materialIcons = "1.7.3"
 mavenPublish = "0.34.0"
-mockK = "1.14.6"
+mockK = "1.14.7"
 testCore = "1.7.0"
 
 [libraries]
