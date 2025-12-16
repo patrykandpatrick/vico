@@ -31,6 +31,8 @@ import com.patrykandpatrick.vico.multiplatform.cartesian.layer.scale
 import com.patrykandpatrick.vico.multiplatform.common.Defaults
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 /** Houses information on a [CartesianChart]’s zoom factor. Allows for zoom customization. */
 public class VicoZoomState {
@@ -47,6 +49,7 @@ public class VicoZoomState {
   private var scroll = 0f
   private val _pendingScroll = MutableSharedFlow<Pair<Scroll, Float>>()
   internal val pendingScroll = _pendingScroll.asSharedFlow()
+  private val zoomMutex = Mutex()
 
   /** The current zoom factor. */
   public var value: Float
@@ -107,7 +110,7 @@ public class VicoZoomState {
     withUpdated { context, layerDimensions, bounds ->
       val newValue = zoom.getValue(context, layerDimensions, bounds)
       if (newValue != value) {
-        zoom(newValue / value, context.canvasSize.center.x, scroll)
+        zoom(newValue / value, context.canvasSize.center.x) { scroll }
       }
     }
   }
@@ -141,21 +144,24 @@ public class VicoZoomState {
     layerDimensions.scale(value)
   }
 
-  internal suspend fun zoom(factor: Float, centroidX: Float, scroll: Float) {
-    withUpdated { context, layerDimensions, bounds ->
-      overridden = true
-      val oldValue = value
-      value *= factor
-      if (value == oldValue) return@withUpdated
-      val maxScrollDistance =
-        context.getMaxScrollDistance(bounds.width, layerDimensions.copyScaled(value / oldValue))
-      val transformationAxisX =
-        scroll + centroidX - bounds.left - layerDimensions.unscalableStartPadding
-      val zoomedTransformationAxisX = transformationAxisX * (value / oldValue)
-      _pendingScroll.emit(
-        Scroll.Absolute.pixels(scroll + zoomedTransformationAxisX - transformationAxisX) to
-          maxScrollDistance
-      )
+  internal suspend fun zoom(factor: Float, centroidX: Float, scroll: () -> Float) {
+    zoomMutex.withLock {
+      withUpdated { context, layerDimensions, bounds ->
+        overridden = true
+        val oldValue = value
+        value *= factor
+        if (value == oldValue) return@withUpdated
+        val scroll = scroll()
+        val maxScrollDistance =
+          context.getMaxScrollDistance(bounds.width, layerDimensions.copyScaled(value / oldValue))
+        val transformationAxisX =
+          scroll + centroidX - bounds.left - layerDimensions.unscalableStartPadding
+        val zoomedTransformationAxisX = transformationAxisX * (value / oldValue)
+        _pendingScroll.emit(
+          Scroll.Absolute.pixels(scroll + zoomedTransformationAxisX - transformationAxisX) to
+            maxScrollDistance
+        )
+      }
     }
   }
 

@@ -30,6 +30,7 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.snapshotFlow
 import com.patrykandpatrick.vico.core.cartesian.AutoScrollCondition
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
@@ -40,6 +41,7 @@ import com.patrykandpatrick.vico.core.cartesian.getMaxScrollDistance
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayerDimensions
 import com.patrykandpatrick.vico.core.common.rangeWith
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.first
 
 /**
  * Houses information on a [CartesianChart]’s scroll value. Allows for scroll customization and
@@ -71,6 +73,8 @@ public class VicoScrollState {
       consumedValue
     }
   }
+
+  private val isScrollInProgress = snapshotFlow { scrollableState.isScrollInProgress }
 
   /** The current scroll value (in pixels). */
   public var value: Float
@@ -175,7 +179,16 @@ public class VicoScrollState {
 
   /** Triggers a scroll. */
   public suspend fun scroll(scroll: Scroll) {
+    isScrollInProgress.first { !it }
     withUpdated { context, layerDimensions, bounds ->
+      scrollableState.scrollBy(scroll.getDelta(context, layerDimensions, bounds, maxValue, value))
+    }
+  }
+
+  internal suspend fun scroll(scroll: Scroll, maxScroll: Float) {
+    isScrollInProgress.first { !it }
+    withUpdated { context, layerDimensions, bounds ->
+      maxValue = maxScroll
       scrollableState.scrollBy(scroll.getDelta(context, layerDimensions, bounds, maxValue, value))
     }
   }
