@@ -17,7 +17,7 @@
 plugins { id("com.vanniktech.maven.publish") }
 
 mavenPublishing {
-  publishToMavenCentral()
+  publishToMavenCentral(automaticRelease = true)
   signAllPublications()
   pom {
     name = "Vico"
