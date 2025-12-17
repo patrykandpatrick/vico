@@ -229,8 +229,7 @@ internal fun CartesianChartHostImpl(
 
   LaunchedEffect(zoomState, scrollState) {
     zoomState.pendingScroll.collect { (scroll, maxValue) ->
-      scrollState.maxValue = maxValue
-      scrollState.scroll(scroll)
+      scrollState.scroll(scroll, maxValue)
       onViewportChange()
     }
   }
@@ -248,7 +247,7 @@ internal fun CartesianChartHostImpl(
             remember(zoomState, scrollState, coroutineScope) {
               if (zoomState.zoomEnabled) {
                 { factor, centroid ->
-                  coroutineScope.launch { zoomState.zoom(factor, centroid.x, scrollState.value) }
+                  coroutineScope.launch { zoomState.zoom(factor, centroid.x) { scrollState.value } }
                 }
               } else {
                 null

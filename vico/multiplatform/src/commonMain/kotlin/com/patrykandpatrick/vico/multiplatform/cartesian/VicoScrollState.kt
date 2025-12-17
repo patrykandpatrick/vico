@@ -29,11 +29,13 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.geometry.Rect
 import com.patrykandpatrick.vico.multiplatform.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.multiplatform.cartesian.layer.CartesianLayerDimensions
 import com.patrykandpatrick.vico.multiplatform.common.rangeWith
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.first
 
 /**
  * Houses information on a [CartesianChart]’s scroll value. Allows for scroll customization and
@@ -65,6 +67,8 @@ public class VicoScrollState {
       consumedValue
     }
   }
+
+  private val isScrollInProgress = snapshotFlow { scrollableState.isScrollInProgress }
 
   /** The current scroll value (in pixels). */
   public var value: Float
@@ -169,6 +173,15 @@ public class VicoScrollState {
 
   /** Triggers a scroll. */
   public suspend fun scroll(scroll: Scroll) {
+    isScrollInProgress.first { !it }
+    withUpdated { context, layerDimensions, bounds ->
+      scrollableState.scrollBy(scroll.getDelta(context, layerDimensions, bounds, maxValue, value))
+    }
+  }
+
+  internal suspend fun scroll(scroll: Scroll, maxScroll: Float) {
+    isScrollInProgress.first { !it }
+    maxValue = maxScroll
     withUpdated { context, layerDimensions, bounds ->
       scrollableState.scrollBy(scroll.getDelta(context, layerDimensions, bounds, maxValue, value))
     }
