@@ -179,33 +179,40 @@ internal fun CartesianChartHostImpl(
   var previousModelID by remember { ValueWrapper(model.id) }
   val layerDimensions = remember { MutableCartesianLayerDimensions() }
 
-  fun onInteraction(interaction: Interaction) {
-    if (chart.marker != null) {
-      val x =
-        measuringContext.pointerPositionToX(
-          interaction.point,
-          layerDimensions,
-          chart.layerBounds,
-          scrollState.value,
-          ranges,
-        )
-      val targets =
-        chart.getMarkerTargets(
-          x,
-          measuringContext.getVisibleXRange(layerDimensions, chart.layerBounds, scrollState.value),
-        )
-      if (chart.markerController.shouldAcceptInteraction(interaction, targets)) {
-        val shouldShow = chart.markerController.shouldShowMarker(interaction, targets)
-        lastAcceptedInteraction = interaction
-        markerX = if (shouldShow) targets.firstOrNull()?.x else null
+  val onInteraction =
+    remember(chart, measuringContext, layerDimensions, scrollState, ranges) {
+      { interaction: Interaction ->
+        if (chart.marker != null) {
+          val x =
+            measuringContext.pointerPositionToX(
+              interaction.point,
+              layerDimensions,
+              chart.layerBounds,
+              scrollState.value,
+              ranges,
+            )
+          val targets =
+            chart.getMarkerTargets(
+              x,
+              measuringContext.getVisibleXRange(
+                layerDimensions,
+                chart.layerBounds,
+                scrollState.value,
+              ),
+            )
+          if (chart.markerController.shouldAcceptInteraction(interaction, targets)) {
+            val shouldShow = chart.markerController.shouldShowMarker(interaction, targets)
+            lastAcceptedInteraction = interaction
+            markerX = if (shouldShow) targets.firstOrNull()?.x else null
+          }
+        }
       }
     }
-  }
 
   fun onViewportChange() {
     lastAcceptedInteraction
       ?.takeIf { chart.markerController.lock == Lock.Position }
-      ?.let(::onInteraction)
+      ?.let(onInteraction)
   }
 
   LaunchedEffect(model) { onViewportChange() }
@@ -230,7 +237,7 @@ internal fun CartesianChartHostImpl(
         .pointerInput(
           scrollState = scrollState,
           consumeMoveEvents = consumeMoveEvents,
-          onInteraction = ::onInteraction,
+          onInteraction = onInteraction,
           onZoom =
             remember(zoomState, scrollState, coroutineScope) {
               if (zoomState.zoomEnabled) {
