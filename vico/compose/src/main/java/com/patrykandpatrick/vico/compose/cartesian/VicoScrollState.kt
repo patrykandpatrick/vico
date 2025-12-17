@@ -187,8 +187,8 @@ public class VicoScrollState {
 
   internal suspend fun scroll(scroll: Scroll, maxScroll: Float) {
     isScrollInProgress.first { !it }
+    maxValue = maxScroll
     withUpdated { context, layerDimensions, bounds ->
-      maxValue = maxScroll
       scrollableState.scrollBy(scroll.getDelta(context, layerDimensions, bounds, maxValue, value))
     }
   }
