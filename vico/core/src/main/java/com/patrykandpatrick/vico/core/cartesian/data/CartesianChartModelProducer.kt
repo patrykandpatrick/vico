@@ -65,19 +65,15 @@ public class CartesianChartModelProducer {
   }
 
   private fun getModel(partials: List<CartesianLayerModel.Partial>, extraStore: ExtraStore) =
-    if (partials.hashCode() == cachedModelPartialHashCode) {
-      cachedModel?.copy(extraStore)
-    } else {
-      if (partials.isNotEmpty()) {
-          CartesianChartModel(partials.map { it.complete(extraStore) }, extraStore)
-        } else {
-          null
-        }
-        .also { model ->
-          cachedModel = model
-          cachedModelPartialHashCode = partials.hashCode()
-        }
-    }
+    if (partials.isNotEmpty()) {
+        CartesianChartModel(partials.map { it.complete(extraStore) }, extraStore)
+      } else {
+        null
+      }
+      .also { model ->
+        cachedModel = model
+        cachedModelPartialHashCode = partials.hashCode()
+      }
 
   private suspend fun transform(
     key: Any,
@@ -135,6 +131,28 @@ public class CartesianChartModelProducer {
     updateReceivers.remove(key)
   }
 
+  public fun getCachedData(
+    updateRanges: (CartesianChartModel) -> CartesianChartRanges,
+    hostExtraStore: ExtraStore,
+  ): CachedData? =
+    cachedModel?.let { model -> CachedData(model, updateRanges(model), hostExtraStore.copy()) }
+
+  /** Holds cached data: the [CartesianChartModel], [CartesianChartRanges], and [ExtraStore]. */
+  public class CachedData(
+    public val model: CartesianChartModel,
+    public val ranges: CartesianChartRanges,
+    public val extraStore: ExtraStore,
+  ) {
+    /** The [CartesianChartModel]. */
+    public operator fun component1(): CartesianChartModel = model
+
+    /** The [CartesianChartRanges]. */
+    public operator fun component2(): CartesianChartRanges = ranges
+
+    /** The [ExtraStore]. */
+    public operator fun component3(): ExtraStore = extraStore
+  }
+
   /**
    * (1) Creates a [Transaction], (2) invokes [block], and (3) runs a data update, returning once
    * the update is complete. Between steps 2 and 3, if there’s already an update in progress, the
@@ -182,10 +200,15 @@ public class CartesianChartModelProducer {
       transactionExtraStore: ExtraStore,
     ) {
       cancelAnimation()
-      val model = getModel(partials, transactionExtraStore)
-      val ranges = updateRanges(model)
-      prepareForTransformation(model, hostExtraStore, ranges)
-      startAnimation { key, fraction -> transform(key, fraction, model, ranges) }
+      if (partials.hashCode() == cachedModelPartialHashCode) {
+        val model = cachedModel?.copy(transactionExtraStore)
+        onUpdate(model, updateRanges(model), hostExtraStore.copy())
+      } else {
+        val model = getModel(partials, transactionExtraStore)
+        val ranges = updateRanges(model)
+        prepareForTransformation(model, hostExtraStore, ranges)
+        startAnimation { key, fraction -> transform(key, fraction, model, ranges) }
+      }
     }
   }
 

@@ -71,6 +71,10 @@ internal fun CartesianChartModelProducer.collectAsState(
   val isInPreview = LocalInspectionMode.current
   val scope = rememberCoroutineScope { getCoroutineContext(isInPreview) }
   val chartState = rememberWrappedValue(chart)
+  remember {
+    getCachedData({ model -> ranges.also { chartState.value.updateRanges(it, model) } }, extraStore)
+      ?.let { (model, ranges, extraStore) -> dataState.set(model, ranges, extraStore) }
+  }
   LaunchRegistration(chart.id, animateIn, isInPreview) {
     var mainAnimationJob: Job? = null
     var animationFrameJob: Job? = null
