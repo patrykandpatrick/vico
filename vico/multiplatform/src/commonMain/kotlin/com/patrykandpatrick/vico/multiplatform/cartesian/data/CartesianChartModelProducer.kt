@@ -123,11 +123,7 @@ public class CartesianChartModelProducer {
     updateReceivers.remove(key)
   }
 
-  /**
-   * Returns the cached data if it’s available and the producer is not currently being updated.
-   * Otherwise, returns `null`.
-   */
-  public fun getCachedData(
+  internal fun getCachedData(
     updateRanges: (CartesianChartModel?) -> CartesianChartRanges,
     hostExtraStore: ExtraStore,
   ): CachedData? =
@@ -143,20 +139,16 @@ public class CartesianChartModelProducer {
       null
     }
 
-  /** Holds cached data: the [CartesianChartModel], [CartesianChartRanges], and [ExtraStore]. */
-  public class CachedData(
-    public val model: CartesianChartModel,
-    public val ranges: CartesianChartRanges,
-    public val extraStore: ExtraStore,
+  internal class CachedData(
+    val model: CartesianChartModel,
+    val ranges: CartesianChartRanges,
+    val extraStore: ExtraStore,
   ) {
-    /** The [CartesianChartModel]. */
-    public operator fun component1(): CartesianChartModel = model
+    operator fun component1(): CartesianChartModel = model
 
-    /** The [CartesianChartRanges]. */
-    public operator fun component2(): CartesianChartRanges = ranges
+    operator fun component2(): CartesianChartRanges = ranges
 
-    /** The [ExtraStore]. */
-    public operator fun component3(): ExtraStore = extraStore
+    operator fun component3(): ExtraStore = extraStore
   }
 
   /**
