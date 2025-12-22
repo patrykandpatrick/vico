@@ -63,19 +63,15 @@ public class CartesianChartModelProducer {
   }
 
   private fun getModel(partials: List<CartesianLayerModel.Partial>, extraStore: ExtraStore) =
-    if (partials.hashCode() == cachedModelPartialHashCode) {
-      cachedModel?.copy(extraStore)
-    } else {
-      if (partials.isNotEmpty()) {
-          CartesianChartModel(partials.map { it.complete(extraStore) }, extraStore)
-        } else {
-          null
-        }
-        .also { model ->
-          cachedModel = model
-          cachedModelPartialHashCode = partials.hashCode()
-        }
-    }
+    if (partials.isNotEmpty()) {
+        CartesianChartModel(partials.map { it.complete(extraStore) }, extraStore)
+      } else {
+        null
+      }
+      .also { model ->
+        cachedModel = model
+        cachedModelPartialHashCode = partials.hashCode()
+      }
 
   private suspend fun transform(
     key: Any,
@@ -127,6 +123,10 @@ public class CartesianChartModelProducer {
     updateReceivers.remove(key)
   }
 
+  /**
+   * Returns the cached data if it’s available and the producer is not currently being updated.
+   * Otherwise, returns `null`.
+   */
   public fun getCachedData(
     updateRanges: (CartesianChartModel?) -> CartesianChartRanges,
     hostExtraStore: ExtraStore,

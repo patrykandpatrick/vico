@@ -131,6 +131,10 @@ public class CartesianChartModelProducer {
     updateReceivers.remove(key)
   }
 
+  /**
+   * Returns the cached data if it’s available and the producer is not currently being updated.
+   * Otherwise, returns `null`.
+   */
   public fun getCachedData(
     updateRanges: (CartesianChartModel?) -> CartesianChartRanges,
     hostExtraStore: ExtraStore,
