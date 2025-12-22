@@ -138,9 +138,21 @@ internal fun CartesianChartModelProducer.collectAsState(
   val isInPreview = LocalInspectionMode.current
   val scope = rememberCoroutineScope { getCoroutineContext(isInPreview) }
   val chartState = rememberWrappedValue(chart)
+
+  fun updateRanges(model: CartesianChartModel?): CartesianChartRanges {
+    ranges.reset()
+    return if (model != null) {
+      chartState.value.updateRanges(ranges, model)
+      ranges.toImmutable()
+    } else {
+      CartesianChartRanges.Empty
+    }
+  }
+
   remember {
-    getCachedData({ model -> ranges.also { chartState.value.updateRanges(it, model) } }, extraStore)
-      ?.let { (model, ranges, extraStore) -> dataState.set(model, ranges, extraStore) }
+    getCachedData(::updateRanges, extraStore)?.let { (model, ranges, extraStore) ->
+      dataState.set(model, ranges, extraStore)
+    }
   }
   LaunchRegistration(chart.id, animateIn, isInPreview) {
     var mainAnimationJob: Job? = null
@@ -201,15 +213,7 @@ internal fun CartesianChartModelProducer.collectAsState(
         },
         transform = { extraStore, fraction -> chartState.value.transform(extraStore, fraction) },
         hostExtraStore = extraStore,
-        updateRanges = { model ->
-          ranges.reset()
-          if (model != null) {
-            chartState.value.updateRanges(ranges, model)
-            ranges.toImmutable()
-          } else {
-            CartesianChartRanges.Empty
-          }
-        },
+        updateRanges = ::updateRanges,
       ) { model, ranges, extraStore ->
         dataState.set(model, ranges, extraStore)
       }

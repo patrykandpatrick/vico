@@ -16,6 +16,7 @@
 
 package com.patrykandpatrick.vico.compose.cartesian
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.tween
@@ -29,6 +30,7 @@ import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartData
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartDataState
 import com.patrykandpatrick.vico.compose.common.rememberWrappedValue
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartRanges
 import com.patrykandpatrick.vico.core.cartesian.data.MutableCartesianChartRanges
@@ -55,6 +57,7 @@ import kotlinx.coroutines.withContext
 internal val defaultCartesianDiffAnimationSpec: AnimationSpec<Float> =
   tween(durationMillis = Animation.DIFF_DURATION)
 
+@SuppressLint("RememberReturnType")
 @Composable
 internal fun CartesianChartModelProducer.collectAsState(
   chart: CartesianChart,
@@ -71,9 +74,21 @@ internal fun CartesianChartModelProducer.collectAsState(
   val isInPreview = LocalInspectionMode.current
   val scope = rememberCoroutineScope { getCoroutineContext(isInPreview) }
   val chartState = rememberWrappedValue(chart)
+
+  fun updateRanges(model: CartesianChartModel?): CartesianChartRanges {
+    ranges.reset()
+    return if (model != null) {
+      chartState.value.updateRanges(ranges, model)
+      ranges.toImmutable()
+    } else {
+      CartesianChartRanges.Empty
+    }
+  }
+
   remember {
-    getCachedData({ model -> ranges.also { chartState.value.updateRanges(it, model) } }, extraStore)
-      ?.let { (model, ranges, extraStore) -> dataState.set(model, ranges, extraStore) }
+    getCachedData(::updateRanges, extraStore)?.let { (model, ranges, extraStore) ->
+      dataState.set(model, ranges, extraStore)
+    }
   }
   LaunchRegistration(chart.id, animateIn, isInPreview) {
     var mainAnimationJob: Job? = null
@@ -134,15 +149,7 @@ internal fun CartesianChartModelProducer.collectAsState(
         },
         transform = { extraStore, fraction -> chartState.value.transform(extraStore, fraction) },
         hostExtraStore = extraStore,
-        updateRanges = { model ->
-          ranges.reset()
-          if (model != null) {
-            chartState.value.updateRanges(ranges, model)
-            ranges.toImmutable()
-          } else {
-            CartesianChartRanges.Empty
-          }
-        },
+        updateRanges = ::updateRanges,
       ) { model, ranges, extraStore ->
         dataState.set(model, ranges, extraStore)
       }

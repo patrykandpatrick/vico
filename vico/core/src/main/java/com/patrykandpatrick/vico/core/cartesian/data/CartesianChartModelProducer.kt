@@ -132,14 +132,17 @@ public class CartesianChartModelProducer {
   }
 
   public fun getCachedData(
-    updateRanges: (CartesianChartModel) -> CartesianChartRanges,
+    updateRanges: (CartesianChartModel?) -> CartesianChartRanges,
     hostExtraStore: ExtraStore,
   ): CachedData? =
     if (mutex.tryLock()) {
-      val result =
+      try {
         cachedModel?.let { model -> CachedData(model, updateRanges(model), hostExtraStore.copy()) }
-      mutex.unlock()
-      result
+      } catch (_: Exception) {
+        null
+      } finally {
+        mutex.unlock()
+      }
     } else {
       null
     }
