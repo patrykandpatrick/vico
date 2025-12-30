@@ -208,7 +208,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     }
   }
 
-  private fun restoreCachedModelData(): CartesianChartModel? =
+  private fun restoreCachedModelData() =
     modelProducer?.getCachedData(::updateRanges, extraStore)?.let { (model, ranges, extraStore) ->
       setModel(model)
       measuringContext.extraStore = extraStore
