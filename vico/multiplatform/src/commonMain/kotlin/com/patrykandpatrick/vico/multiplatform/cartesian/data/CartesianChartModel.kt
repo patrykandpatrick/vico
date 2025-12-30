@@ -110,6 +110,12 @@ public class CartesianChartModel {
   public fun copy(extraStore: ExtraStore): CartesianChartModel =
     CartesianChartModel(models.map { it.copy(extraStore) }, id, width, extraStore)
 
+  override fun equals(other: Any?): Boolean =
+    this === other ||
+      other is CartesianChartModel && models == other.models && extraStore == other.extraStore
+
+  override fun hashCode(): Int = 31 * models.hashCode() + extraStore.hashCode()
+
   /** Creates an immutable copy of this [CartesianChartModel]. */
   public fun toImmutable(): CartesianChartModel = this
 
@@ -149,9 +155,10 @@ internal fun CartesianChartModelProducer.collectAsState(
     }
   }
 
-  remember {
+  val restoredModel = remember {
     getCachedData(::updateRanges, extraStore)?.let { (model, ranges, extraStore) ->
       dataState.set(model, ranges, extraStore)
+      model
     }
   }
   LaunchRegistration(chart.id, animateIn, isInPreview) {
@@ -200,6 +207,7 @@ internal fun CartesianChartModelProducer.collectAsState(
     scope.launch {
       registerForUpdates(
         key = chartState.value.id,
+        restoredModel = restoredModel,
         cancelAnimation = {
           mainAnimationJob?.cancelAndJoin()
           animationFrameJob?.cancelAndJoin()

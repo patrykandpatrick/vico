@@ -16,7 +16,6 @@
 
 package com.patrykandpatrick.vico.compose.cartesian
 
-import android.annotation.SuppressLint
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.tween
@@ -57,7 +56,6 @@ import kotlinx.coroutines.withContext
 internal val defaultCartesianDiffAnimationSpec: AnimationSpec<Float> =
   tween(durationMillis = Animation.DIFF_DURATION)
 
-@SuppressLint("RememberReturnType")
 @Composable
 internal fun CartesianChartModelProducer.collectAsState(
   chart: CartesianChart,
@@ -85,9 +83,10 @@ internal fun CartesianChartModelProducer.collectAsState(
     }
   }
 
-  remember {
+  val restoredModel = remember {
     getCachedData(::updateRanges, extraStore)?.let { (model, ranges, extraStore) ->
       dataState.set(model, ranges, extraStore)
+      model
     }
   }
   LaunchRegistration(chart.id, animateIn, isInPreview) {
@@ -136,6 +135,7 @@ internal fun CartesianChartModelProducer.collectAsState(
     scope.launch {
       registerForUpdates(
         key = chartState.value.id,
+        restoredModel = restoredModel,
         cancelAnimation = {
           mainAnimationJob?.cancelAndJoin()
           animationFrameJob?.cancelAndJoin()

@@ -178,10 +178,11 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     }
 
   private fun registerForUpdates() {
-    restoreCachedModelData()
+    val restoredModel = restoreCachedModelData()
     coroutineScope?.launch {
       modelProducer?.registerForUpdates(
         key = this@CartesianChartView,
+        restoredModel = restoredModel,
         cancelAnimation = {
           handler?.post(animator::cancel)
           animationFrameJob?.cancelAndJoin()
@@ -207,13 +208,13 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     }
   }
 
-  private fun restoreCachedModelData() {
+  private fun restoreCachedModelData(): CartesianChartModel? =
     modelProducer?.getCachedData(::updateRanges, extraStore)?.let { (model, ranges, extraStore) ->
       setModel(model)
       measuringContext.extraStore = extraStore
       measuringContext.ranges = ranges
+      model
     }
-  }
 
   private fun updateRanges(model: CartesianChartModel?): CartesianChartRanges {
     ranges.reset()

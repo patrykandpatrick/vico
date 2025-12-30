@@ -81,6 +81,12 @@ public class CartesianChartModel {
   public fun copy(extraStore: ExtraStore): CartesianChartModel =
     CartesianChartModel(models.map { it.copy(extraStore) }, id, width, extraStore)
 
+  override fun equals(other: Any?): Boolean =
+    this === other ||
+      other is CartesianChartModel && models == other.models && extraStore == other.extraStore
+
+  override fun hashCode(): Int = 31 * models.hashCode() + extraStore.hashCode()
+
   /** Creates an immutable copy of this [CartesianChartModel]. */
   public fun toImmutable(): CartesianChartModel = this
 

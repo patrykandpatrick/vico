@@ -94,6 +94,7 @@ public class CartesianChartModelProducer {
   @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
   public suspend fun registerForUpdates(
     key: Any,
+    restoredModel: CartesianChartModel?,
     cancelAnimation: suspend () -> Unit,
     startAnimation: (transformModel: suspend (key: Any, fraction: Float) -> Unit) -> Unit,
     prepareForTransformation:
@@ -116,7 +117,7 @@ public class CartesianChartModelProducer {
         )
       mutex.withLock {
         updateReceivers[key] = receiver
-        receiver.handleUpdate(lastPartials, lastTransactionExtraStore)
+        receiver.handleUpdate(lastPartials, lastTransactionExtraStore, restoredModel)
       }
     }
   }
@@ -208,10 +209,12 @@ public class CartesianChartModelProducer {
     suspend fun handleUpdate(
       partials: List<CartesianLayerModel.Partial>,
       transactionExtraStore: ExtraStore,
+      restoredModel: CartesianChartModel? = null,
     ) {
       cancelAnimation()
       if (partials.hashCode() == cachedModelPartialHashCode) {
         val model = cachedModel?.copy(transactionExtraStore)
+        if (model == restoredModel) return
         onUpdate(model, updateRanges(model), hostExtraStore.copy())
       } else {
         val model = getModel(partials, transactionExtraStore)
