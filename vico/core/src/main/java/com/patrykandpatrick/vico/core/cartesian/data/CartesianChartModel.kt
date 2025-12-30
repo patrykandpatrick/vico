@@ -23,12 +23,13 @@ import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.core.common.gcdWith
 
 /** Stores a [CartesianChart]’s data. */
+@Suppress("DEPRECATION")
 public class CartesianChartModel {
   /** The [CartesianLayerModel]s. */
   public val models: List<CartesianLayerModel>
 
   /** Identifies this [CartesianChartModel] in terms of the [CartesianLayerModel.id]s. */
-  public val id: Int
+  @Deprecated("Use `equals` and `hashCode`.") public val id: Int
 
   /**
    * Expresses the size of this [CartesianChartModel] in terms of the range of the _x_ values

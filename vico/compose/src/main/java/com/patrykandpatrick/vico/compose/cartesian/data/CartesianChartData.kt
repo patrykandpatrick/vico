@@ -49,7 +49,7 @@ internal class CartesianChartDataState : State<CartesianChartData> {
 
   fun set(model: CartesianChartModel?, ranges: CartesianChartRanges, extraStore: ExtraStore) {
     val currentModel = value.model
-    if (model?.id != currentModel?.id) previousModel = currentModel
+    if (model != currentModel) previousModel = currentModel
     value = CartesianChartData(model, previousModel, ranges, extraStore)
   }
 }

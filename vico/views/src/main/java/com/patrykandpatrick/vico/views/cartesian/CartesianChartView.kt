@@ -282,7 +282,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     updatePlaceholderVisibility()
     tryInvalidate(chart, model, updateRanges)
     handleViewportChange()
-    if (model != null && oldModel?.id != model.id && isInEditMode.not()) {
+    if (model != null && oldModel != model && isInEditMode.not()) {
       handler?.post { scrollHandler.autoScroll(model, oldModel) }
     }
   }

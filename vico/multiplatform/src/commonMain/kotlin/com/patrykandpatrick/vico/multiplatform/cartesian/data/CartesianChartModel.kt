@@ -56,9 +56,6 @@ public class CartesianChartModel {
   /** The [CartesianLayerModel]s. */
   public val models: List<CartesianLayerModel>
 
-  /** Identifies this [CartesianChartModel] in terms of the [CartesianLayerModel.id]s. */
-  public val id: Int
-
   /**
    * Expresses the size of this [CartesianChartModel] in terms of the range of the _x_ values
    * covered.
@@ -79,19 +76,12 @@ public class CartesianChartModel {
     extraStore: ExtraStore,
   ) : this(
     models = models,
-    id = models.map { it.id }.hashCode(),
     width = models.maxOf { it.maxX } - models.minOf { it.minX },
     extraStore = extraStore,
   )
 
-  internal constructor(
-    models: List<CartesianLayerModel>,
-    id: Int,
-    width: Double,
-    extraStore: ExtraStore,
-  ) {
+  internal constructor(models: List<CartesianLayerModel>, width: Double, extraStore: ExtraStore) {
     this.models = models
-    this.id = id
     this.width = width
     this.extraStore = extraStore
   }
@@ -108,7 +98,7 @@ public class CartesianChartModel {
    * to the [CartesianLayerModel]s.
    */
   public fun copy(extraStore: ExtraStore): CartesianChartModel =
-    CartesianChartModel(models.map { it.copy(extraStore) }, id, width, extraStore)
+    CartesianChartModel(models.map { it.copy(extraStore) }, width, extraStore)
 
   override fun equals(other: Any?): Boolean =
     this === other ||
@@ -121,7 +111,7 @@ public class CartesianChartModel {
 
   internal companion object {
     val Empty: CartesianChartModel =
-      CartesianChartModel(models = emptyList(), id = 0, width = 0.0, extraStore = ExtraStore.Empty)
+      CartesianChartModel(models = emptyList(), width = 0.0, extraStore = ExtraStore.Empty)
   }
 }
 

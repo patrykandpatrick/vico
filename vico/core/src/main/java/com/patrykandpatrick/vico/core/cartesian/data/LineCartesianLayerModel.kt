@@ -28,6 +28,7 @@ public class LineCartesianLayerModel : CartesianLayerModel {
   /** The series (lists of [Entry] instances). */
   public val series: List<List<Entry>>
 
+  @Deprecated("Use `series.hashCode()`.", replaceWith = ReplaceWith("series.hashCode()"))
   override val id: Int
 
   override val minX: Double

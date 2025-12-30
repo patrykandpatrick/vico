@@ -24,8 +24,6 @@ import kotlin.math.abs
 
 /** Stores a [CartesianLayer]’s data. */
 public interface CartesianLayerModel {
-  /** Identifies this [CartesianLayerModel]. */
-  public val id: Int
 
   /** The minimum _x_ value. */
   public val minX: Double

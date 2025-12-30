@@ -28,8 +28,6 @@ public class LineCartesianLayerModel : CartesianLayerModel {
   /** The series (lists of [Entry] instances). */
   public val series: List<List<Entry>>
 
-  override val id: Int
-
   override val minX: Double
 
   override val maxX: Double
@@ -52,7 +50,6 @@ public class LineCartesianLayerModel : CartesianLayerModel {
     this.entries = this.series.flatten()
     val xRange = this.series.rangeOfPair { it.first().x to it.last().x }
     val yRange = entries.rangeOf { it.y }
-    this.id = this.series.hashCode()
     this.minX = xRange.start
     this.maxX = xRange.endInclusive
     this.minY = yRange.start
@@ -63,7 +60,6 @@ public class LineCartesianLayerModel : CartesianLayerModel {
   private constructor(
     entries: List<Entry>,
     series: List<List<Entry>>,
-    id: Int,
     minX: Double,
     maxX: Double,
     minY: Double,
@@ -72,7 +68,6 @@ public class LineCartesianLayerModel : CartesianLayerModel {
   ) {
     this.entries = entries
     this.series = series
-    this.id = id
     this.minX = minX
     this.maxX = maxX
     this.minY = minY
@@ -83,13 +78,12 @@ public class LineCartesianLayerModel : CartesianLayerModel {
   override fun getXDeltaGcd(): Double = entries.getXDeltaGcd()
 
   override fun copy(extraStore: ExtraStore): CartesianLayerModel =
-    LineCartesianLayerModel(entries, series, id, minX, maxX, minY, maxY, extraStore)
+    LineCartesianLayerModel(entries, series, minX, maxX, minY, maxY, extraStore)
 
   override fun equals(other: Any?): Boolean =
     this === other ||
       other is LineCartesianLayerModel &&
         series == other.series &&
-        id == other.id &&
         minX == other.minX &&
         maxX == other.maxX &&
         minY == other.minY &&
@@ -98,7 +92,6 @@ public class LineCartesianLayerModel : CartesianLayerModel {
 
   override fun hashCode(): Int {
     var result = series.hashCode()
-    result = 31 * result + id
     result = 31 * result + minX.hashCode()
     result = 31 * result + maxX.hashCode()
     result = 31 * result + minY.hashCode()

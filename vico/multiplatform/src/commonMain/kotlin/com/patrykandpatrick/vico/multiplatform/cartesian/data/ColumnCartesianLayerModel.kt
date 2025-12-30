@@ -28,8 +28,6 @@ public class ColumnCartesianLayerModel : CartesianLayerModel {
   /** The series (lists of [Entry] instances). */
   public val series: List<List<Entry>>
 
-  override val id: Int
-
   override val minX: Double
 
   override val maxX: Double
@@ -59,7 +57,6 @@ public class ColumnCartesianLayerModel : CartesianLayerModel {
     val xRange = this.series.rangeOfPair { it.first().x to it.last().x }
     val yRange = entries.rangeOf { it.y }
     val aggregateYRange = entries.getAggregateYRange()
-    this.id = this.series.hashCode()
     this.minX = xRange.start
     this.maxX = xRange.endInclusive
     this.minY = yRange.start
@@ -72,7 +69,6 @@ public class ColumnCartesianLayerModel : CartesianLayerModel {
   private constructor(
     entries: List<Entry>,
     series: List<List<Entry>>,
-    id: Int,
     minX: Double,
     maxX: Double,
     minY: Double,
@@ -83,7 +79,6 @@ public class ColumnCartesianLayerModel : CartesianLayerModel {
   ) {
     this.entries = entries
     this.series = series
-    this.id = id
     this.minX = minX
     this.maxX = maxX
     this.minY = minY
@@ -99,7 +94,6 @@ public class ColumnCartesianLayerModel : CartesianLayerModel {
     ColumnCartesianLayerModel(
       entries,
       series,
-      id,
       minX,
       maxX,
       minY,
@@ -113,7 +107,6 @@ public class ColumnCartesianLayerModel : CartesianLayerModel {
     this === other ||
       other is ColumnCartesianLayerModel &&
         series == other.series &&
-        id == other.id &&
         minX == other.minX &&
         maxX == other.maxX &&
         minY == other.minY &&
@@ -124,7 +117,6 @@ public class ColumnCartesianLayerModel : CartesianLayerModel {
 
   override fun hashCode(): Int {
     var result = series.hashCode()
-    result = 31 * result + id
     result = 31 * result + minX.hashCode()
     result = 31 * result + maxX.hashCode()
     result = 31 * result + minY.hashCode()
