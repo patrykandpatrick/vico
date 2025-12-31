@@ -29,7 +29,7 @@ public class CartesianChartModel {
   public val models: List<CartesianLayerModel>
 
   /** Identifies this [CartesianChartModel] in terms of the [CartesianLayerModel.id]s. */
-  @Deprecated("Use `equals` and `hashCode`.") public val id: Int
+  @Deprecated("No longer used.") public val id: Int
 
   /**
    * Expresses the size of this [CartesianChartModel] in terms of the range of the _x_ values

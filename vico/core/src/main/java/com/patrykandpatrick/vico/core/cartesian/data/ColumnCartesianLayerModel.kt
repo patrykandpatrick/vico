@@ -28,7 +28,7 @@ public class ColumnCartesianLayerModel : CartesianLayerModel {
   /** The series (lists of [Entry] instances). */
   public val series: List<List<Entry>>
 
-  @Deprecated("Use `series.hashCode()`.", ReplaceWith("series.hashCode()")) override val id: Int
+  @Deprecated("No longer used.") override val id: Int
 
   override val minX: Double
 
