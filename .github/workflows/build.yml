@@ -17,7 +17,7 @@ jobs:
           ./gradlew build -x lint -x test
           cd sample/app/build/outputs/apk/debug
           mv app-debug.apk android-sample-debug.apk
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v6
         with:
           name: android-sample-debug
           path: sample/app/build/outputs/apk/debug/android-sample-debug.apk
