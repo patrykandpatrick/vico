@@ -56,9 +56,6 @@ public class CartesianChartModel {
   /** The [CartesianLayerModel]s. */
   public val models: List<CartesianLayerModel>
 
-  /** Identifies this [CartesianChartModel] in terms of the [CartesianLayerModel.id]s. */
-  public val id: Int
-
   /**
    * Expresses the size of this [CartesianChartModel] in terms of the range of the _x_ values
    * covered.
@@ -79,19 +76,12 @@ public class CartesianChartModel {
     extraStore: ExtraStore,
   ) : this(
     models = models,
-    id = models.map { it.id }.hashCode(),
     width = models.maxOf { it.maxX } - models.minOf { it.minX },
     extraStore = extraStore,
   )
 
-  internal constructor(
-    models: List<CartesianLayerModel>,
-    id: Int,
-    width: Double,
-    extraStore: ExtraStore,
-  ) {
+  internal constructor(models: List<CartesianLayerModel>, width: Double, extraStore: ExtraStore) {
     this.models = models
-    this.id = id
     this.width = width
     this.extraStore = extraStore
   }
@@ -108,14 +98,20 @@ public class CartesianChartModel {
    * to the [CartesianLayerModel]s.
    */
   public fun copy(extraStore: ExtraStore): CartesianChartModel =
-    CartesianChartModel(models.map { it.copy(extraStore) }, id, width, extraStore)
+    CartesianChartModel(models.map { it.copy(extraStore) }, width, extraStore)
+
+  override fun equals(other: Any?): Boolean =
+    this === other ||
+      other is CartesianChartModel && models == other.models && extraStore == other.extraStore
+
+  override fun hashCode(): Int = 31 * models.hashCode() + extraStore.hashCode()
 
   /** Creates an immutable copy of this [CartesianChartModel]. */
   public fun toImmutable(): CartesianChartModel = this
 
   internal companion object {
     val Empty: CartesianChartModel =
-      CartesianChartModel(models = emptyList(), id = 0, width = 0.0, extraStore = ExtraStore.Empty)
+      CartesianChartModel(models = emptyList(), width = 0.0, extraStore = ExtraStore.Empty)
   }
 }
 
@@ -138,6 +134,23 @@ internal fun CartesianChartModelProducer.collectAsState(
   val isInPreview = LocalInspectionMode.current
   val scope = rememberCoroutineScope { getCoroutineContext(isInPreview) }
   val chartState = rememberWrappedValue(chart)
+
+  fun updateRanges(model: CartesianChartModel?): CartesianChartRanges {
+    ranges.reset()
+    return if (model != null) {
+      chartState.value.updateRanges(ranges, model)
+      ranges.toImmutable()
+    } else {
+      CartesianChartRanges.Empty
+    }
+  }
+
+  val restoredModel = remember {
+    getCachedData(::updateRanges, extraStore)?.let { (model, ranges, extraStore) ->
+      dataState.set(model, ranges, extraStore)
+      model
+    }
+  }
   LaunchRegistration(chart.id, animateIn, isInPreview) {
     var mainAnimationJob: Job? = null
     var animationFrameJob: Job? = null
@@ -184,6 +197,7 @@ internal fun CartesianChartModelProducer.collectAsState(
     scope.launch {
       registerForUpdates(
         key = chartState.value.id,
+        restoredModel = restoredModel,
         cancelAnimation = {
           mainAnimationJob?.cancelAndJoin()
           animationFrameJob?.cancelAndJoin()
@@ -197,15 +211,7 @@ internal fun CartesianChartModelProducer.collectAsState(
         },
         transform = { extraStore, fraction -> chartState.value.transform(extraStore, fraction) },
         hostExtraStore = extraStore,
-        updateRanges = { model ->
-          ranges.reset()
-          if (model != null) {
-            chartState.value.updateRanges(ranges, model)
-            ranges.toImmutable()
-          } else {
-            CartesianChartRanges.Empty
-          }
-        },
+        updateRanges = ::updateRanges,
       ) { model, ranges, extraStore ->
         dataState.set(model, ranges, extraStore)
       }

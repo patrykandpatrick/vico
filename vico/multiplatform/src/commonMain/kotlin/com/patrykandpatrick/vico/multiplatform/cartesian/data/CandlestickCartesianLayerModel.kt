@@ -25,8 +25,6 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
   /** The series (list of [Entry] instances). */
   public val series: List<Entry>
 
-  override val id: Int
-
   override val minX: Double
 
   override val maxX: Double
@@ -43,7 +41,6 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
     require(series.isNotEmpty()) { "Series can’t be empty." }
     this.series = series.sortedBy { it.x }
     val yRange = this.series.rangeOfPair { it.low to it.high }
-    this.id = series.hashCode()
     this.minX = this.series.first().x
     this.maxX = this.series.last().x
     this.minY = yRange.start
@@ -53,7 +50,6 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
 
   private constructor(
     series: List<Entry>,
-    id: Int,
     minX: Double,
     maxX: Double,
     minY: Double,
@@ -61,7 +57,6 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
     extraStore: ExtraStore,
   ) {
     this.series = series
-    this.id = id
     this.minX = minX
     this.maxX = maxX
     this.minY = minY
@@ -72,13 +67,12 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
   override fun getXDeltaGcd(): Double = series.getXDeltaGcd()
 
   override fun copy(extraStore: ExtraStore): CartesianLayerModel =
-    CandlestickCartesianLayerModel(series, id, minX, maxX, minY, maxY, extraStore)
+    CandlestickCartesianLayerModel(series, minX, maxX, minY, maxY, extraStore)
 
   override fun equals(other: Any?): Boolean =
     this === other ||
       other is CandlestickCartesianLayerModel &&
         series == other.series &&
-        id == other.id &&
         minX == other.minX &&
         maxX == other.maxX &&
         minY == other.minY &&
@@ -87,7 +81,6 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
 
   override fun hashCode(): Int {
     var result = series.hashCode()
-    result = 31 * result + id
     result = 31 * result + minX.hashCode()
     result = 31 * result + maxX.hashCode()
     result = 31 * result + minY.hashCode()

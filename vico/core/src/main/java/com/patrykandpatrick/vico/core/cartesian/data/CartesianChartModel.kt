@@ -23,12 +23,13 @@ import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.core.common.gcdWith
 
 /** Stores a [CartesianChart]’s data. */
+@Suppress("DEPRECATION")
 public class CartesianChartModel {
   /** The [CartesianLayerModel]s. */
   public val models: List<CartesianLayerModel>
 
   /** Identifies this [CartesianChartModel] in terms of the [CartesianLayerModel.id]s. */
-  public val id: Int
+  @Deprecated("No longer used.") public val id: Int
 
   /**
    * Expresses the size of this [CartesianChartModel] in terms of the range of the _x_ values
@@ -80,6 +81,12 @@ public class CartesianChartModel {
    */
   public fun copy(extraStore: ExtraStore): CartesianChartModel =
     CartesianChartModel(models.map { it.copy(extraStore) }, id, width, extraStore)
+
+  override fun equals(other: Any?): Boolean =
+    this === other ||
+      other is CartesianChartModel && models == other.models && extraStore == other.extraStore
+
+  override fun hashCode(): Int = 31 * models.hashCode() + extraStore.hashCode()
 
   /** Creates an immutable copy of this [CartesianChartModel]. */
   public fun toImmutable(): CartesianChartModel = this

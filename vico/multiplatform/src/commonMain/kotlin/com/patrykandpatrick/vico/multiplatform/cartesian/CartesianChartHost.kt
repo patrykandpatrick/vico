@@ -176,7 +176,7 @@ internal fun CartesianChartHostImpl(
     )
 
   val coroutineScope = rememberCoroutineScope()
-  var previousModelID by remember { ValueWrapper(model.id) }
+  var lastHandledModel by remember { ValueWrapper(model) }
   val layerDimensions = remember { MutableCartesianLayerDimensions() }
 
   val onInteraction =
@@ -261,9 +261,9 @@ internal fun CartesianChartHostImpl(
     zoomState.update(measuringContext, layerDimensions, chart.layerBounds, scrollState.value)
     scrollState.update(measuringContext, chart.layerBounds, layerDimensions)
 
-    if (model.id != previousModelID) {
+    if (model != lastHandledModel) {
       coroutineScope.launch { scrollState.autoScroll(model, previousModel) }
-      previousModelID = model.id
+      lastHandledModel = model
     }
 
     val drawingContext =

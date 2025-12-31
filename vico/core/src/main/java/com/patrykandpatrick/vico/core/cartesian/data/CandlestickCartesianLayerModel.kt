@@ -25,7 +25,7 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
   /** The series (list of [Entry] instances). */
   public val series: List<Entry>
 
-  override val id: Int
+  @Deprecated("No longer used.") override val id: Int
 
   override val minX: Double
 

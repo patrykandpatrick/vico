@@ -63,19 +63,15 @@ public class CartesianChartModelProducer {
   }
 
   private fun getModel(partials: List<CartesianLayerModel.Partial>, extraStore: ExtraStore) =
-    if (partials.hashCode() == cachedModelPartialHashCode) {
-      cachedModel?.copy(extraStore)
-    } else {
-      if (partials.isNotEmpty()) {
-          CartesianChartModel(partials.map { it.complete(extraStore) }, extraStore)
-        } else {
-          null
-        }
-        .also { model ->
-          cachedModel = model
-          cachedModelPartialHashCode = partials.hashCode()
-        }
-    }
+    if (partials.isNotEmpty()) {
+        CartesianChartModel(partials.map { it.complete(extraStore) }, extraStore)
+      } else {
+        null
+      }
+      .also { model ->
+        cachedModel = model
+        cachedModelPartialHashCode = partials.hashCode()
+      }
 
   private suspend fun transform(
     key: Any,
@@ -94,6 +90,7 @@ public class CartesianChartModelProducer {
 
   internal suspend fun registerForUpdates(
     key: Any,
+    restoredModel: CartesianChartModel?,
     cancelAnimation: suspend () -> Unit,
     startAnimation: (transformModel: suspend (key: Any, fraction: Float) -> Unit) -> Unit,
     prepareForTransformation:
@@ -116,7 +113,7 @@ public class CartesianChartModelProducer {
         )
       mutex.withLock {
         updateReceivers[key] = receiver
-        receiver.handleUpdate(lastPartials, lastTransactionExtraStore)
+        receiver.handleUpdate(lastPartials, lastTransactionExtraStore, restoredModel)
       }
     }
   }
@@ -125,6 +122,34 @@ public class CartesianChartModelProducer {
 
   internal fun unregisterFromUpdates(key: Any) {
     updateReceivers.remove(key)
+  }
+
+  internal fun getCachedData(
+    updateRanges: (CartesianChartModel?) -> CartesianChartRanges,
+    hostExtraStore: ExtraStore,
+  ) =
+    if (mutex.tryLock()) {
+      try {
+        cachedModel?.let { model -> CachedData(model, updateRanges(model), hostExtraStore.copy()) }
+      } catch (_: Exception) {
+        null
+      } finally {
+        mutex.unlock()
+      }
+    } else {
+      null
+    }
+
+  internal class CachedData(
+    val model: CartesianChartModel,
+    val ranges: CartesianChartRanges,
+    val extraStore: ExtraStore,
+  ) {
+    operator fun component1(): CartesianChartModel = model
+
+    operator fun component2(): CartesianChartRanges = ranges
+
+    operator fun component3(): ExtraStore = extraStore
   }
 
   /**
@@ -172,12 +197,19 @@ public class CartesianChartModelProducer {
     suspend fun handleUpdate(
       partials: List<CartesianLayerModel.Partial>,
       transactionExtraStore: ExtraStore,
+      restoredModel: CartesianChartModel? = null,
     ) {
       cancelAnimation()
-      val model = getModel(partials, transactionExtraStore + hostExtraStore)
-      val ranges = updateRanges(model)
-      prepareForTransformation(model, hostExtraStore, ranges)
-      startAnimation { key, fraction -> transform(key, fraction, model, ranges) }
+      if (partials.hashCode() == cachedModelPartialHashCode) {
+        val model = cachedModel?.copy(transactionExtraStore)
+        if (model == restoredModel) return
+        onUpdate(model, updateRanges(model), hostExtraStore.copy())
+      } else {
+        val model = getModel(partials, transactionExtraStore)
+        val ranges = updateRanges(model)
+        prepareForTransformation(model, hostExtraStore, ranges)
+        startAnimation { key, fraction -> transform(key, fraction, model, ranges) }
+      }
     }
   }
 

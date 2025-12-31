@@ -178,9 +178,11 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     }
 
   private fun registerForUpdates() {
+    val restoredModel = restoreCachedModelData()
     coroutineScope?.launch {
       modelProducer?.registerForUpdates(
         key = this@CartesianChartView,
+        restoredModel = restoredModel,
         cancelAnimation = {
           handler?.post(animator::cancel)
           animationFrameJob?.cancelAndJoin()
@@ -194,15 +196,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
         },
         transform = { extraStore, fraction -> chart?.transform(extraStore, fraction) },
         hostExtraStore = extraStore,
-        updateRanges = { model ->
-          ranges.reset()
-          if (model != null) {
-            chart?.updateRanges(ranges, model)
-            ranges.toImmutable()
-          } else {
-            CartesianChartRanges.Empty
-          }
-        },
+        updateRanges = ::updateRanges,
       ) { model, ranges, extraStore ->
         post {
           setModel(model = model, updateRanges = false)
@@ -211,6 +205,24 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
           postInvalidateOnAnimation()
         }
       }
+    }
+  }
+
+  private fun restoreCachedModelData() =
+    modelProducer?.getCachedData(::updateRanges, extraStore)?.let { (model, ranges, extraStore) ->
+      setModel(model)
+      measuringContext.extraStore = extraStore
+      measuringContext.ranges = ranges
+      model
+    }
+
+  private fun updateRanges(model: CartesianChartModel?): CartesianChartRanges {
+    ranges.reset()
+    return if (model != null) {
+      chart?.updateRanges(ranges, model)
+      ranges.toImmutable()
+    } else {
+      CartesianChartRanges.Empty
     }
   }
 
@@ -270,7 +282,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     updatePlaceholderVisibility()
     tryInvalidate(chart, model, updateRanges)
     handleViewportChange()
-    if (model != null && oldModel?.id != model.id && isInEditMode.not()) {
+    if (model != null && oldModel != model && isInEditMode.not()) {
       handler?.post { scrollHandler.autoScroll(model, oldModel) }
     }
   }

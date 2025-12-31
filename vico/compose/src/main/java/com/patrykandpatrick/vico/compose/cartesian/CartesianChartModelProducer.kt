@@ -29,6 +29,7 @@ import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartData
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartDataState
 import com.patrykandpatrick.vico.compose.common.rememberWrappedValue
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartRanges
 import com.patrykandpatrick.vico.core.cartesian.data.MutableCartesianChartRanges
@@ -71,6 +72,23 @@ internal fun CartesianChartModelProducer.collectAsState(
   val isInPreview = LocalInspectionMode.current
   val scope = rememberCoroutineScope { getCoroutineContext(isInPreview) }
   val chartState = rememberWrappedValue(chart)
+
+  fun updateRanges(model: CartesianChartModel?): CartesianChartRanges {
+    ranges.reset()
+    return if (model != null) {
+      chartState.value.updateRanges(ranges, model)
+      ranges.toImmutable()
+    } else {
+      CartesianChartRanges.Empty
+    }
+  }
+
+  val restoredModel = remember {
+    getCachedData(::updateRanges, extraStore)?.let { (model, ranges, extraStore) ->
+      dataState.set(model, ranges, extraStore)
+      model
+    }
+  }
   LaunchRegistration(chart.id, animateIn, isInPreview) {
     var mainAnimationJob: Job? = null
     var animationFrameJob: Job? = null
@@ -117,6 +135,7 @@ internal fun CartesianChartModelProducer.collectAsState(
     scope.launch {
       registerForUpdates(
         key = chartState.value.id,
+        restoredModel = restoredModel,
         cancelAnimation = {
           mainAnimationJob?.cancelAndJoin()
           animationFrameJob?.cancelAndJoin()
@@ -130,15 +149,7 @@ internal fun CartesianChartModelProducer.collectAsState(
         },
         transform = { extraStore, fraction -> chartState.value.transform(extraStore, fraction) },
         hostExtraStore = extraStore,
-        updateRanges = { model ->
-          ranges.reset()
-          if (model != null) {
-            chartState.value.updateRanges(ranges, model)
-            ranges.toImmutable()
-          } else {
-            CartesianChartRanges.Empty
-          }
-        },
+        updateRanges = ::updateRanges,
       ) { model, ranges, extraStore ->
         dataState.set(model, ranges, extraStore)
       }

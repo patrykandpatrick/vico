@@ -25,7 +25,12 @@ import kotlin.math.abs
 /** Stores a [CartesianLayer]’s data. */
 public interface CartesianLayerModel {
   /** Identifies this [CartesianLayerModel]. */
+  @Deprecated(
+    "No longer used. If overriding this, remove the override, and implement `equals` and " +
+      "`hashCode` instead."
+  )
   public val id: Int
+    get() = 0
 
   /** The minimum _x_ value. */
   public val minX: Double
