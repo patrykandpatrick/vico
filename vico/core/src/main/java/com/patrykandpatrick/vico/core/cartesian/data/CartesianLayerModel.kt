@@ -26,7 +26,8 @@ import kotlin.math.abs
 public interface CartesianLayerModel {
   /** Identifies this [CartesianLayerModel]. */
   @Deprecated(
-    "No longer used. If overriding this, remove the override, and implement equals and hashCode instead."
+    "No longer used. If overriding this, remove the override, and implement `equals` and " +
+      "`hashCode` instead."
   )
   public val id: Int
     get() = 0
