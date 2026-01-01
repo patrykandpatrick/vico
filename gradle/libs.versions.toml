@@ -15,7 +15,7 @@ kotlin = "2.2.21"
 lifecycleRuntime = "2.9.6"
 material = "1.13.0"
 materialIcons = "1.7.3"
-mavenPublish = "0.34.0"
+mavenPublish = "0.35.0"
 mockK = "1.14.7"
 testCore = "1.7.0"
 
