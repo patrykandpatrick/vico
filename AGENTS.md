@@ -125,7 +125,7 @@ All workflows run on `push` and `pull_request`:
 3. **Dependency Management:** Use `gradle/libs.versions.toml` for managing dependencies and
    versions.
 4. **JVM Target:** JVM 11 for all modules.
-5. **Android SDK:** compileSdk=36, minSdk=21 (defined in `Versions.kt`).
+5. **Android SDK:** compileSdk=36, minSdk=23 (defined in `Versions.kt`).
 6. **Multiplatform targets:** Android, iOS (arm64, x64, simulatorArm64), Desktop (JVM), JS, WASM.
 7. **Test framework:** JUnit 5 (Jupiter) with MockK for mocking.
 
