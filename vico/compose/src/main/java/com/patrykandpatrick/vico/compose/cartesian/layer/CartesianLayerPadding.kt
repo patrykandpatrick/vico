@@ -14,21 +14,13 @@
  * limitations under the License.
  */
 
-package com.patrykandpatrick.vico.compose.cartesian
+package com.patrykandpatrick.vico.compose.cartesian.layer
 
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayerPadding
 
 /** Creates a [CartesianLayerPadding] instance. */
-@Deprecated(
-  message = "Use `com.patrykandpatrick.vico.compose.cartesian.layer.cartesianLayerPadding`.",
-  replaceWith =
-    ReplaceWith(
-      "cartesianLayerPadding(scalableStart, scalableEnd, unscalableStart, unscalableEnd)",
-      "com.patrykandpatrick.vico.compose.cartesian.layer.cartesianLayerPadding",
-    ),
-)
 public fun cartesianLayerPadding(
   scalableStart: Dp = 0.dp,
   scalableEnd: Dp = 0.dp,
