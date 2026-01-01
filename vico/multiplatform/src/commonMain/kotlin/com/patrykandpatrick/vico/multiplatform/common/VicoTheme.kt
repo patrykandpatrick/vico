@@ -24,7 +24,9 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import com.patrykandpatrick.vico.multiplatform.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.multiplatform.cartesian.axis.VerticalAxis
+import com.patrykandpatrick.vico.multiplatform.cartesian.layer.CandlestickCartesianLayer
 import com.patrykandpatrick.vico.multiplatform.cartesian.layer.ColumnCartesianLayer
+import com.patrykandpatrick.vico.multiplatform.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.multiplatform.common.VicoTheme.Companion.Dark
 import com.patrykandpatrick.vico.multiplatform.common.VicoTheme.Companion.Light
 import com.patrykandpatrick.vico.multiplatform.common.component.LineComponent
