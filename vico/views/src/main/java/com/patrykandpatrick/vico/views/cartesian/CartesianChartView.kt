@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2026 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,28 +27,14 @@ import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.View
 import android.widget.OverScroller
-import com.patrykandpatrick.vico.core.cartesian.CartesianChart
-import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
-import com.patrykandpatrick.vico.core.cartesian.MutableCartesianMeasuringContext
-import com.patrykandpatrick.vico.core.cartesian.Scroll
-import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
-import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
-import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartRanges
-import com.patrykandpatrick.vico.core.cartesian.data.MutableCartesianChartRanges
-import com.patrykandpatrick.vico.core.cartesian.data.RandomCartesianModelGenerator
-import com.patrykandpatrick.vico.core.cartesian.data.toImmutable
-import com.patrykandpatrick.vico.core.cartesian.getVisibleXRange
+import com.patrykandpatrick.vico.core.cartesian.*
+import com.patrykandpatrick.vico.core.cartesian.data.*
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayerPadding
 import com.patrykandpatrick.vico.core.cartesian.layer.MutableCartesianLayerDimensions
-import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerController
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerController.Lock
 import com.patrykandpatrick.vico.core.cartesian.marker.Interaction
-import com.patrykandpatrick.vico.core.common.Defaults
-import com.patrykandpatrick.vico.core.common.NEW_PRODUCER_ERROR_MESSAGE
-import com.patrykandpatrick.vico.core.common.Point
+import com.patrykandpatrick.vico.core.common.*
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
-import com.patrykandpatrick.vico.core.common.pointerPositionToX
-import com.patrykandpatrick.vico.core.common.spToPx
 import com.patrykandpatrick.vico.views.R
 import com.patrykandpatrick.vico.views.common.ChartView
 import com.patrykandpatrick.vico.views.common.density
@@ -58,7 +44,7 @@ import com.patrykandpatrick.vico.views.common.gesture.ChartSimpleOnGestureListen
 import com.patrykandpatrick.vico.views.common.gesture.MotionEventHandler
 import com.patrykandpatrick.vico.views.common.isLtr
 import com.patrykandpatrick.vico.views.common.theme.ThemeHandler
-import java.util.Objects
+import java.util.*
 import kotlin.math.abs
 import kotlin.properties.Delegates.observable
 import kotlin.properties.ReadWriteProperty
@@ -159,9 +145,12 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 
   /**
    * Whether to consume move touch events when scroll is disabled and [CartesianChart.marker] is not
-   * null. This property is deprecated; use [CartesianMarkerController.consumesMoveEvents] instead.
+   * null.
    */
-  @Deprecated("Use `CartesianMarkerController.consumesMoveEvents`.")
+  @Deprecated(
+    "Use either the `consumeMoveEvents` parameter of `CartesianMarkerController.showOnPress` or " +
+      "`CartesianMarkerController.consumeMoveEvents`."
+  )
   public var consumeMoveEvents: Boolean by motionEventHandler::consumeMoveEvents
 
   /** The [CartesianChart] displayed by this [View]. */
@@ -351,7 +340,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     val hasMarker = chart?.marker != null
     @Suppress("DEPRECATION")
     val shouldConsumeMoveEvents =
-      consumeMoveEvents || chart?.markerController?.consumesMoveEvents == true
+      chart?.markerController?.consumeMoveEvents == true || consumeMoveEvents
     when {
       shouldConsumeMoveEvents && !scrollHandler.scrollEnabled && hasMarker -> {
         parent.requestDisallowInterceptTouchEvent(true)

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-  ~ Copyright 2025 by Patryk Goworowski and Patrick Michalik.
+  ~ Copyright 2026 by Patryk Goworowski and Patrick Michalik.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -212,8 +212,8 @@
         <!-- Whether to enable zooming. -->
         <attr name="zoomEnabled" format="boolean" />
 
-        <!-- Equivalent to `CartesianChartView.consumeMoveEvents`. Deprecated; use
-        `CartesianMarkerController.consumesMoveEvents` instead. -->
+        <!-- Equivalent to `CartesianChartView.consumeMoveEvents`. Deprecated; use either the `consumeMoveEvents`
+        parameter of `CartesianMarkerController.showOnPress` or `CartesianMarkerController.consumeMoveEvents`. -->
         <attr name="consumeMoveEvents" format="boolean" />
     </declare-styleable>
 
