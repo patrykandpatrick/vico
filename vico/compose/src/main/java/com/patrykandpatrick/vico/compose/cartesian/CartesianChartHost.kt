@@ -49,7 +49,6 @@ import com.patrykandpatrick.vico.core.cartesian.data.MutableCartesianChartRanges
 import com.patrykandpatrick.vico.core.cartesian.data.toImmutable
 import com.patrykandpatrick.vico.core.cartesian.getVisibleXRange
 import com.patrykandpatrick.vico.core.cartesian.layer.MutableCartesianLayerDimensions
-import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerController
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerController.Lock
 import com.patrykandpatrick.vico.core.cartesian.marker.Interaction
 import com.patrykandpatrick.vico.core.common.Defaults.CHART_HEIGHT
@@ -94,7 +93,15 @@ public fun CartesianChartHost(
 
   CartesianChartHostBox(modifier) {
     if (model != null) {
-      CartesianChartHostImpl(chart, model, scrollState, zoomState, ranges, previousModel, extraStore)
+      CartesianChartHostImpl(
+        chart,
+        model,
+        scrollState,
+        zoomState,
+        ranges,
+        previousModel,
+        extraStore,
+      )
     } else {
       placeholder()
     }
