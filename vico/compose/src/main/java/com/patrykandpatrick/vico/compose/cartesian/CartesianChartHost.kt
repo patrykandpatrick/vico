@@ -187,8 +187,8 @@ internal fun CartesianChartHostImpl(
 
   val onInteraction =
     remember(chart, measuringContext, layerDimensions, scrollState, ranges) {
-      { interaction: Interaction ->
-        if (chart.marker != null) {
+      if (chart.marker != null) {
+        { interaction: Interaction ->
           val x =
             measuringContext.pointerPositionToX(
               interaction.point,
@@ -212,13 +212,15 @@ internal fun CartesianChartHostImpl(
             markerX = if (shouldShow) targets.firstOrNull()?.x else null
           }
         }
+      } else {
+        null
       }
     }
 
   fun onViewportChange() {
     lastAcceptedInteraction
       ?.takeIf { chart.markerController.lock == Lock.Position }
-      ?.let(onInteraction)
+      ?.let { onInteraction?.invoke(it) }
   }
 
   LaunchedEffect(model) { onViewportChange() }
