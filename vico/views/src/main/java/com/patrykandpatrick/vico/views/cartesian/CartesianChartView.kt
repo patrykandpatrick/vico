@@ -40,6 +40,7 @@ import com.patrykandpatrick.vico.core.cartesian.data.toImmutable
 import com.patrykandpatrick.vico.core.cartesian.getVisibleXRange
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayerPadding
 import com.patrykandpatrick.vico.core.cartesian.layer.MutableCartesianLayerDimensions
+import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerController
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerController.Lock
 import com.patrykandpatrick.vico.core.cartesian.marker.Interaction
 import com.patrykandpatrick.vico.core.common.Defaults
@@ -158,8 +159,9 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 
   /**
    * Whether to consume move touch events when scroll is disabled and [CartesianChart.marker] is not
-   * null.
+   * null. This property is deprecated; use [CartesianMarkerController.consumesMoveEvents] instead.
    */
+  @Deprecated("Use `CartesianMarkerController.consumesMoveEvents`.")
   public var consumeMoveEvents: Boolean by motionEventHandler::consumeMoveEvents
 
   /** The [CartesianChart] displayed by this [View]. */
@@ -347,8 +349,11 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     val touchHandled = motionEventHandler.handleMotionEvent(event, scrollHandler)
     val gestureHandled = gestureDetector.onTouchEvent(event)
     val hasMarker = chart?.marker != null
+    @Suppress("DEPRECATION")
+    val shouldConsumeMoveEvents =
+      consumeMoveEvents || chart?.markerController?.consumesMoveEvents == true
     when {
-      consumeMoveEvents && !scrollHandler.scrollEnabled && hasMarker -> {
+      shouldConsumeMoveEvents && !scrollHandler.scrollEnabled && hasMarker -> {
         parent.requestDisallowInterceptTouchEvent(true)
       }
 

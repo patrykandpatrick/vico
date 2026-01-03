@@ -34,6 +34,10 @@ public fun interface CartesianMarkerController {
   public val lock: Lock
     get() = Lock.X
 
+  /** Whether to consume move touch events when scroll is disabled and the marker is enabled. */
+  public val consumesMoveEvents: Boolean
+    get() = false
+
   /**
    * Indicates whether this [CartesianMarkerController] wants to respond to [interaction]. If `true`
    * is returned, [shouldShowMarker] is called; otherwise, the marker visibility remains unchanged.
@@ -63,12 +67,15 @@ public fun interface CartesianMarkerController {
 
   /** Houses [CartesianMarkerController] singletons and factory functions. */
   public companion object {
-    internal fun showOnPress(): CartesianMarkerController = ShowOnPressMarkerController()
+    internal fun showOnPress(consumesMoveEvents: Boolean = false): CartesianMarkerController =
+      ShowOnPressMarkerController(consumesMoveEvents)
 
     /** Creates and remembers a [CartesianMarkerController] that shows the marker on press. */
     @Composable
-    public fun rememberShowOnPress(): CartesianMarkerController = remember {
-      ShowOnPressMarkerController()
+    public fun rememberShowOnPress(
+      consumesMoveEvents: Boolean = false
+    ): CartesianMarkerController = remember(consumesMoveEvents) {
+      ShowOnPressMarkerController(consumesMoveEvents)
     }
 
     /** Creates and remembers a [CartesianMarkerController] that shows the marker on hover. */
@@ -88,7 +95,8 @@ public fun interface CartesianMarkerController {
   }
 }
 
-private class ShowOnPressMarkerController : CartesianMarkerController {
+private class ShowOnPressMarkerController(override val consumesMoveEvents: Boolean) :
+  CartesianMarkerController {
   private var isPressed = false
 
   override val acceptsLongPress = false
@@ -117,10 +125,13 @@ private class ShowOnPressMarkerController : CartesianMarkerController {
   override fun shouldShowMarker(interaction: Interaction, targets: List<CartesianMarker.Target>) =
     interaction !is Interaction.Release
 
-  override fun hashCode() = isPressed.hashCode()
+  override fun hashCode() = 31 * isPressed.hashCode() + consumesMoveEvents.hashCode()
 
   override fun equals(other: Any?) =
-    other === this || other is ShowOnPressMarkerController && isPressed == other.isPressed
+    other === this ||
+      other is ShowOnPressMarkerController &&
+        isPressed == other.isPressed &&
+        consumesMoveEvents == other.consumesMoveEvents
 }
 
 private class ShowOnHoverMarkerController : CartesianMarkerController {

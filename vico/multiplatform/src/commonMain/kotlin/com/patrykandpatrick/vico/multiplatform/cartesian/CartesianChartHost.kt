@@ -46,6 +46,7 @@ import com.patrykandpatrick.vico.multiplatform.cartesian.data.component4
 import com.patrykandpatrick.vico.multiplatform.cartesian.data.defaultCartesianDiffAnimationSpec
 import com.patrykandpatrick.vico.multiplatform.cartesian.data.toImmutable
 import com.patrykandpatrick.vico.multiplatform.cartesian.layer.MutableCartesianLayerDimensions
+import com.patrykandpatrick.vico.multiplatform.cartesian.marker.CartesianMarkerController
 import com.patrykandpatrick.vico.multiplatform.cartesian.marker.CartesianMarkerController.Lock
 import com.patrykandpatrick.vico.multiplatform.cartesian.marker.Interaction
 import com.patrykandpatrick.vico.multiplatform.common.Defaults.CHART_HEIGHT
@@ -64,15 +65,13 @@ import kotlinx.coroutines.launch
  * @param chart the [CartesianChart].
  * @param modelProducer creates and updates the [CartesianChartModel].
  * @param modifier the modifier to be applied to the chart.
- * @param scrollState houses information on the [CartesianChart]’s scroll value. Allows for scroll
+ * @param scrollState houses information on the [CartesianChart]'s scroll value. Allows for scroll
  *   customization and programmatic scrolling.
- * @param zoomState houses information on the [CartesianChart]’s zoom factor. Allows for zoom
+ * @param zoomState houses information on the [CartesianChart]'s zoom factor. Allows for zoom
  *   customization.
  * @param animationSpec the [AnimationSpec] for difference animations.
  * @param animateIn whether to run an initial animation when the [CartesianChartHost] enters
  *   composition. The animation is skipped for previews.
- * @param consumeMoveEvents whether to consume move touch events when scroll is disabled and
- *   [CartesianChart.marker] is not null.
  * @param placeholder shown when no [CartesianChartModel] is available.
  */
 @Composable
@@ -84,7 +83,6 @@ public fun CartesianChartHost(
   zoomState: VicoZoomState = rememberDefaultVicoZoomState(scrollState.scrollEnabled),
   animationSpec: AnimationSpec<Float>? = defaultCartesianDiffAnimationSpec,
   animateIn: Boolean = true,
-  consumeMoveEvents: Boolean = false,
   placeholder: @Composable BoxScope.() -> Unit = {},
 ) {
   val mutableRanges = remember { MutableCartesianChartRanges() }
@@ -93,19 +91,89 @@ public fun CartesianChartHost(
 
   CartesianChartHostBox(modifier) {
     if (model != null) {
-      CartesianChartHostImpl(
-        chart,
-        model,
-        scrollState,
-        zoomState,
-        ranges,
-        consumeMoveEvents,
-        previousModel,
-        extraStore,
-      )
+      CartesianChartHostImpl(chart, model, scrollState, zoomState, ranges, previousModel, extraStore)
     } else {
       placeholder()
     }
+  }
+}
+
+/**
+ * Displays a [CartesianChart].
+ *
+ * @param chart the [CartesianChart].
+ * @param modelProducer creates and updates the [CartesianChartModel].
+ * @param modifier the modifier to be applied to the chart.
+ * @param scrollState houses information on the [CartesianChart]'s scroll value. Allows for scroll
+ *   customization and programmatic scrolling.
+ * @param zoomState houses information on the [CartesianChart]'s zoom factor. Allows for zoom
+ *   customization.
+ * @param animationSpec the [AnimationSpec] for difference animations.
+ * @param animateIn whether to run an initial animation when the [CartesianChartHost] enters
+ *   composition. The animation is skipped for previews.
+ * @param consumeMoveEvents whether to consume move touch events when scroll is disabled and
+ *   [CartesianChart.marker] is not null.
+ * @param placeholder shown when no [CartesianChartModel] is available.
+ */
+@Deprecated(
+  "Use the overload without `consumeMoveEvents`. Use `CartesianMarkerController.consumesMoveEvents` " +
+    "instead.",
+  ReplaceWith(
+    "CartesianChartHost(chart, modelProducer, modifier, scrollState, zoomState, animationSpec, " +
+      "animateIn, placeholder)"
+  ),
+)
+@Composable
+public fun CartesianChartHost(
+  chart: CartesianChart,
+  modelProducer: CartesianChartModelProducer,
+  modifier: Modifier = Modifier,
+  scrollState: VicoScrollState = rememberVicoScrollState(),
+  zoomState: VicoZoomState = rememberDefaultVicoZoomState(scrollState.scrollEnabled),
+  animationSpec: AnimationSpec<Float>? = defaultCartesianDiffAnimationSpec,
+  animateIn: Boolean = true,
+  @Suppress("UNUSED_PARAMETER") consumeMoveEvents: Boolean,
+  placeholder: @Composable BoxScope.() -> Unit = {},
+) {
+  CartesianChartHost(
+    chart,
+    modelProducer,
+    modifier,
+    scrollState,
+    zoomState,
+    animationSpec,
+    animateIn,
+    placeholder,
+  )
+}
+
+/**
+ * Displays a [CartesianChart]. This function accepts a [CartesianChartModel]. For dynamic data, use
+ * the function overload that accepts a [CartesianChartModelProducer] instance.
+ *
+ * @param chart the [CartesianChart].
+ * @param model the [CartesianChartModel].
+ * @param modifier the modifier to be applied to the chart.
+ * @param scrollState houses information on the [CartesianChart]'s scroll value. Allows for scroll
+ *   customization and programmatic scrolling.
+ * @param zoomState houses information on the [CartesianChart]'s zoom factor. Allows for zoom
+ *   customization.
+ */
+@Composable
+public fun CartesianChartHost(
+  chart: CartesianChart,
+  model: CartesianChartModel,
+  modifier: Modifier = Modifier,
+  scrollState: VicoScrollState = rememberVicoScrollState(),
+  zoomState: VicoZoomState = rememberDefaultVicoZoomState(scrollState.scrollEnabled),
+) {
+  val ranges = remember { MutableCartesianChartRanges() }
+  remember(chart, model) {
+    ranges.reset()
+    chart.updateRanges(ranges, model)
+  }
+  CartesianChartHostBox(modifier) {
+    CartesianChartHostImpl(chart, model, scrollState, zoomState, ranges.toImmutable())
   }
 }
 
@@ -116,13 +184,18 @@ public fun CartesianChartHost(
  * @param chart the [CartesianChart].
  * @param model the [CartesianChartModel].
  * @param modifier the modifier to be applied to the chart.
- * @param scrollState houses information on the [CartesianChart]’s scroll value. Allows for scroll
+ * @param scrollState houses information on the [CartesianChart]'s scroll value. Allows for scroll
  *   customization and programmatic scrolling.
- * @param zoomState houses information on the [CartesianChart]’s zoom factor. Allows for zoom
+ * @param zoomState houses information on the [CartesianChart]'s zoom factor. Allows for zoom
  *   customization.
  * @param consumeMoveEvents whether to consume move touch events when scroll is disabled and
  *   [CartesianChart.marker] is not null.
  */
+@Deprecated(
+  "Use the overload without `consumeMoveEvents`. Use `CartesianMarkerController.consumesMoveEvents` " +
+    "instead.",
+  ReplaceWith("CartesianChartHost(chart, model, modifier, scrollState, zoomState)"),
+)
 @Composable
 public fun CartesianChartHost(
   chart: CartesianChart,
@@ -130,23 +203,9 @@ public fun CartesianChartHost(
   modifier: Modifier = Modifier,
   scrollState: VicoScrollState = rememberVicoScrollState(),
   zoomState: VicoZoomState = rememberDefaultVicoZoomState(scrollState.scrollEnabled),
-  consumeMoveEvents: Boolean = false,
+  @Suppress("UNUSED_PARAMETER") consumeMoveEvents: Boolean,
 ) {
-  val ranges = remember { MutableCartesianChartRanges() }
-  remember(chart, model) {
-    ranges.reset()
-    chart.updateRanges(ranges, model)
-  }
-  CartesianChartHostBox(modifier) {
-    CartesianChartHostImpl(
-      chart,
-      model,
-      scrollState,
-      zoomState,
-      ranges.toImmutable(),
-      consumeMoveEvents,
-    )
-  }
+  CartesianChartHost(chart, model, modifier, scrollState, zoomState)
 }
 
 @Composable
@@ -156,7 +215,6 @@ internal fun CartesianChartHostImpl(
   scrollState: VicoScrollState,
   zoomState: VicoZoomState,
   ranges: CartesianChartRanges,
-  consumeMoveEvents: Boolean,
   previousModel: CartesianChartModel? = null,
   extraStore: ExtraStore = ExtraStore.Empty,
 ) {
@@ -237,7 +295,7 @@ internal fun CartesianChartHostImpl(
       Modifier.fillMaxSize()
         .pointerInput(
           scrollState = scrollState,
-          consumeMoveEvents = consumeMoveEvents,
+          consumeMoveEvents = chart.markerController.consumesMoveEvents,
           onInteraction = onInteraction,
           onZoom =
             remember(zoomState, scrollState, coroutineScope) {

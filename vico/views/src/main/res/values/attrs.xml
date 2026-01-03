@@ -212,7 +212,8 @@
         <!-- Whether to enable zooming. -->
         <attr name="zoomEnabled" format="boolean" />
 
-        <!-- Equivalent to `CartesianChartView.consumeMoveEvents`. -->
+        <!-- Equivalent to `CartesianChartView.consumeMoveEvents`. Deprecated; use
+        `CartesianMarkerController.consumesMoveEvents` instead. -->
         <attr name="consumeMoveEvents" format="boolean" />
     </declare-styleable>
 

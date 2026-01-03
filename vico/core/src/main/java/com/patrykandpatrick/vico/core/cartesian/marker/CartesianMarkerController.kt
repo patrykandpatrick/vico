@@ -32,6 +32,10 @@ public fun interface CartesianMarkerController {
   public val lock: Lock
     get() = Lock.X
 
+  /** Whether to consume move touch events when scroll is disabled and the marker is enabled. */
+  public val consumesMoveEvents: Boolean
+    get() = false
+
   /**
    * Indicates whether this [CartesianMarkerController] wants to respond to [interaction]. If `true`
    * is returned, [shouldShowMarker] is called; otherwise, the marker visibility remains unchanged.
@@ -67,7 +71,8 @@ public fun interface CartesianMarkerController {
     public val ShowOnPress: CartesianMarkerController = DeprecatedShowOnPressMarkerController
 
     /** Creates a [CartesianMarkerController] that shows the marker on press. */
-    public fun showOnPress(): CartesianMarkerController = ShowOnPressMarkerController()
+    public fun showOnPress(consumesMoveEvents: Boolean = false): CartesianMarkerController =
+      ShowOnPressMarkerController(consumesMoveEvents)
 
     /** Creates a [CartesianMarkerController] that shows the marker on hover. */
     public fun showOnHover(): CartesianMarkerController = ShowOnHoverMarkerController()
@@ -77,7 +82,8 @@ public fun interface CartesianMarkerController {
   }
 }
 
-private class ShowOnPressMarkerController : CartesianMarkerController {
+private class ShowOnPressMarkerController(override val consumesMoveEvents: Boolean) :
+  CartesianMarkerController {
   private var isPressed = false
 
   override val acceptsLongPress = false
@@ -104,10 +110,13 @@ private class ShowOnPressMarkerController : CartesianMarkerController {
   override fun shouldShowMarker(interaction: Interaction, targets: List<CartesianMarker.Target>) =
     interaction !is Interaction.Release
 
-  override fun hashCode() = isPressed.hashCode()
+  override fun hashCode() = 31 * isPressed.hashCode() + consumesMoveEvents.hashCode()
 
   override fun equals(other: Any?) =
-    other === this || other is ShowOnPressMarkerController && isPressed == other.isPressed
+    other === this ||
+      other is ShowOnPressMarkerController &&
+        isPressed == other.isPressed &&
+        consumesMoveEvents == other.consumesMoveEvents
 }
 
 private object DeprecatedShowOnPressMarkerController : CartesianMarkerController {
