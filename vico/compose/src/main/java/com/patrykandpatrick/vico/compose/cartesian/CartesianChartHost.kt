@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2026 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,20 +19,9 @@ package com.patrykandpatrick.vico.compose.cartesian
 import android.annotation.SuppressLint
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.foundation.layout.*
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.unit.dp
@@ -42,24 +31,63 @@ import com.patrykandpatrick.vico.compose.cartesian.data.component3
 import com.patrykandpatrick.vico.compose.cartesian.data.component4
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
-import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
-import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
-import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartRanges
-import com.patrykandpatrick.vico.core.cartesian.data.MutableCartesianChartRanges
-import com.patrykandpatrick.vico.core.cartesian.data.toImmutable
+import com.patrykandpatrick.vico.core.cartesian.data.*
 import com.patrykandpatrick.vico.core.cartesian.getVisibleXRange
 import com.patrykandpatrick.vico.core.cartesian.layer.MutableCartesianLayerDimensions
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerController.Lock
 import com.patrykandpatrick.vico.core.cartesian.marker.Interaction
+import com.patrykandpatrick.vico.core.common.*
 import com.patrykandpatrick.vico.core.common.Defaults.CHART_HEIGHT
-import com.patrykandpatrick.vico.core.common.MutableSize
-import com.patrykandpatrick.vico.core.common.ValueWrapper
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
-import com.patrykandpatrick.vico.core.common.getValue
-import com.patrykandpatrick.vico.core.common.pointerPositionToX
-import com.patrykandpatrick.vico.core.common.setValue
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.launch
+
+/**
+ * Displays a [CartesianChart].
+ *
+ * @param chart the [CartesianChart].
+ * @param modelProducer creates and updates the [CartesianChartModel].
+ * @param modifier the modifier to be applied to the chart.
+ * @param scrollState houses information on the [CartesianChart]’s scroll value. Allows for scroll
+ *   customization and programmatic scrolling.
+ * @param zoomState houses information on the [CartesianChart]’s zoom factor. Allows for zoom
+ *   customization.
+ * @param animationSpec the [AnimationSpec] for difference animations.
+ * @param animateIn whether to run an initial animation when the [CartesianChartHost] enters
+ *   composition. The animation is skipped for previews.
+ * @param placeholder shown when no [CartesianChartModel] is available.
+ */
+@Composable
+public fun CartesianChartHost(
+  chart: CartesianChart,
+  modelProducer: CartesianChartModelProducer,
+  modifier: Modifier = Modifier,
+  scrollState: VicoScrollState = rememberVicoScrollState(),
+  zoomState: VicoZoomState = rememberDefaultVicoZoomState(scrollState.scrollEnabled),
+  animationSpec: AnimationSpec<Float>? = defaultCartesianDiffAnimationSpec,
+  animateIn: Boolean = true,
+  placeholder: @Composable BoxScope.() -> Unit = {},
+) {
+  val mutableRanges = remember { MutableCartesianChartRanges() }
+  val modelWrapper by modelProducer.collectAsState(chart, animationSpec, animateIn, mutableRanges)
+  val (model, previousModel, ranges, extraStore) = modelWrapper
+
+  CartesianChartHostBox(modifier) {
+    if (model != null) {
+      CartesianChartHostImpl(
+        chart = chart,
+        model = model,
+        scrollState = scrollState,
+        zoomState = zoomState,
+        ranges = ranges,
+        previousModel = previousModel,
+        extraStore = extraStore,
+      )
+    } else {
+      placeholder()
+    }
+  }
+}
 
 /**
  * Displays a [CartesianChart].
@@ -78,6 +106,11 @@ import kotlinx.coroutines.launch
  *   [CartesianChart.marker] is not null.
  * @param placeholder shown when no [CartesianChartModel] is available.
  */
+@Deprecated(
+  "Instead of the `consumeMoveEvents` parameter of `CartesianChartHost`, use either the " +
+    "`consumeMoveEvents` parameter of `CartesianMarkerController.rememberShowOnPress` or " +
+    "`CartesianMarkerController.consumeMoveEvents`."
+)
 @Composable
 public fun CartesianChartHost(
   chart: CartesianChart,
@@ -87,7 +120,7 @@ public fun CartesianChartHost(
   zoomState: VicoZoomState = rememberDefaultVicoZoomState(scrollState.scrollEnabled),
   animationSpec: AnimationSpec<Float>? = defaultCartesianDiffAnimationSpec,
   animateIn: Boolean = true,
-  consumeMoveEvents: Boolean = false,
+  consumeMoveEvents: Boolean,
   placeholder: @Composable BoxScope.() -> Unit = {},
 ) {
   val mutableRanges = remember { MutableCartesianChartRanges() }
@@ -123,8 +156,6 @@ public fun CartesianChartHost(
  *   customization and programmatic scrolling.
  * @param zoomState houses information on the [CartesianChart]’s zoom factor. Allows for zoom
  *   customization.
- * @param consumeMoveEvents whether to consume move touch events when scroll is disabled and
- *   [CartesianChart.marker] is not null.
  */
 @Composable
 @SuppressLint("RememberReturnType")
@@ -134,7 +165,45 @@ public fun CartesianChartHost(
   modifier: Modifier = Modifier,
   scrollState: VicoScrollState = rememberVicoScrollState(),
   zoomState: VicoZoomState = rememberDefaultVicoZoomState(scrollState.scrollEnabled),
-  consumeMoveEvents: Boolean = false,
+) {
+  val ranges = remember { MutableCartesianChartRanges() }
+  remember(chart, model) {
+    ranges.reset()
+    chart.updateRanges(ranges, model)
+  }
+  CartesianChartHostBox(modifier) {
+    CartesianChartHostImpl(chart, model, scrollState, zoomState, ranges.toImmutable())
+  }
+}
+
+/**
+ * Displays a [CartesianChart]. This function accepts a [CartesianChartModel]. For dynamic data, use
+ * the function overload that accepts a [CartesianChartModelProducer] instance.
+ *
+ * @param chart the [CartesianChart].
+ * @param model the [CartesianChartModel].
+ * @param modifier the modifier to be applied to the chart.
+ * @param scrollState houses information on the [CartesianChart]’s scroll value. Allows for scroll
+ *   customization and programmatic scrolling.
+ * @param zoomState houses information on the [CartesianChart]’s zoom factor. Allows for zoom
+ *   customization.
+ * @param consumeMoveEvents whether to consume move touch events when scroll is disabled and
+ *   [CartesianChart.marker] is not null.
+ */
+@Deprecated(
+  "Instead of the `consumeMoveEvents` parameter of `CartesianChartHost`, use either the " +
+    "`consumeMoveEvents` parameter of `CartesianMarkerController.rememberShowOnPress` or " +
+    "`CartesianMarkerController.consumeMoveEvents`."
+)
+@Composable
+@SuppressLint("RememberReturnType")
+public fun CartesianChartHost(
+  chart: CartesianChart,
+  model: CartesianChartModel,
+  modifier: Modifier = Modifier,
+  scrollState: VicoScrollState = rememberVicoScrollState(),
+  zoomState: VicoZoomState = rememberDefaultVicoZoomState(scrollState.scrollEnabled),
+  consumeMoveEvents: Boolean,
 ) {
   val ranges = remember { MutableCartesianChartRanges() }
   remember(chart, model) {
@@ -160,7 +229,7 @@ internal fun CartesianChartHostImpl(
   scrollState: VicoScrollState,
   zoomState: VicoZoomState,
   ranges: CartesianChartRanges,
-  consumeMoveEvents: Boolean,
+  consumeMoveEvents: Boolean = false,
   previousModel: CartesianChartModel? = null,
   extraStore: ExtraStore = ExtraStore.Empty,
 ) {
@@ -243,7 +312,7 @@ internal fun CartesianChartHostImpl(
       Modifier.fillMaxSize()
         .pointerInput(
           scrollState = scrollState,
-          consumeMoveEvents = consumeMoveEvents,
+          consumeMoveEvents = chart.markerController.consumeMoveEvents || consumeMoveEvents,
           onInteraction = onInteraction,
           onZoom =
             remember(zoomState, scrollState, coroutineScope) {

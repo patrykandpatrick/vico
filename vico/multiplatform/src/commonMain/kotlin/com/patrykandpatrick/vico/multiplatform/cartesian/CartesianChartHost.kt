@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2026 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,43 +18,18 @@ package com.patrykandpatrick.vico.multiplatform.cartesian
 
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.foundation.layout.*
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.patrykandpatrick.vico.multiplatform.cartesian.data.CartesianChartModel
-import com.patrykandpatrick.vico.multiplatform.cartesian.data.CartesianChartModelProducer
-import com.patrykandpatrick.vico.multiplatform.cartesian.data.CartesianChartRanges
-import com.patrykandpatrick.vico.multiplatform.cartesian.data.MutableCartesianChartRanges
-import com.patrykandpatrick.vico.multiplatform.cartesian.data.collectAsState
-import com.patrykandpatrick.vico.multiplatform.cartesian.data.component1
-import com.patrykandpatrick.vico.multiplatform.cartesian.data.component2
-import com.patrykandpatrick.vico.multiplatform.cartesian.data.component3
-import com.patrykandpatrick.vico.multiplatform.cartesian.data.component4
-import com.patrykandpatrick.vico.multiplatform.cartesian.data.defaultCartesianDiffAnimationSpec
-import com.patrykandpatrick.vico.multiplatform.cartesian.data.toImmutable
+import com.patrykandpatrick.vico.multiplatform.cartesian.data.*
 import com.patrykandpatrick.vico.multiplatform.cartesian.layer.MutableCartesianLayerDimensions
 import com.patrykandpatrick.vico.multiplatform.cartesian.marker.CartesianMarkerController.Lock
 import com.patrykandpatrick.vico.multiplatform.cartesian.marker.Interaction
+import com.patrykandpatrick.vico.multiplatform.common.*
 import com.patrykandpatrick.vico.multiplatform.common.Defaults.CHART_HEIGHT
-import com.patrykandpatrick.vico.multiplatform.common.MutableDrawScope
-import com.patrykandpatrick.vico.multiplatform.common.ValueWrapper
 import com.patrykandpatrick.vico.multiplatform.common.data.ExtraStore
-import com.patrykandpatrick.vico.multiplatform.common.getValue
-import com.patrykandpatrick.vico.multiplatform.common.pointerPositionToX
-import com.patrykandpatrick.vico.multiplatform.common.setValue
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.launch
 
@@ -71,8 +46,6 @@ import kotlinx.coroutines.launch
  * @param animationSpec the [AnimationSpec] for difference animations.
  * @param animateIn whether to run an initial animation when the [CartesianChartHost] enters
  *   composition. The animation is skipped for previews.
- * @param consumeMoveEvents whether to consume move touch events when scroll is disabled and
- *   [CartesianChart.marker] is not null.
  * @param placeholder shown when no [CartesianChartModel] is available.
  */
 @Composable
@@ -84,7 +57,6 @@ public fun CartesianChartHost(
   zoomState: VicoZoomState = rememberDefaultVicoZoomState(scrollState.scrollEnabled),
   animationSpec: AnimationSpec<Float>? = defaultCartesianDiffAnimationSpec,
   animateIn: Boolean = true,
-  consumeMoveEvents: Boolean = false,
   placeholder: @Composable BoxScope.() -> Unit = {},
 ) {
   val mutableRanges = remember { MutableCartesianChartRanges() }
@@ -99,7 +71,6 @@ public fun CartesianChartHost(
         scrollState,
         zoomState,
         ranges,
-        consumeMoveEvents,
         previousModel,
         extraStore,
       )
@@ -120,8 +91,6 @@ public fun CartesianChartHost(
  *   customization and programmatic scrolling.
  * @param zoomState houses information on the [CartesianChart]’s zoom factor. Allows for zoom
  *   customization.
- * @param consumeMoveEvents whether to consume move touch events when scroll is disabled and
- *   [CartesianChart.marker] is not null.
  */
 @Composable
 public fun CartesianChartHost(
@@ -130,7 +99,6 @@ public fun CartesianChartHost(
   modifier: Modifier = Modifier,
   scrollState: VicoScrollState = rememberVicoScrollState(),
   zoomState: VicoZoomState = rememberDefaultVicoZoomState(scrollState.scrollEnabled),
-  consumeMoveEvents: Boolean = false,
 ) {
   val ranges = remember { MutableCartesianChartRanges() }
   remember(chart, model) {
@@ -138,14 +106,7 @@ public fun CartesianChartHost(
     chart.updateRanges(ranges, model)
   }
   CartesianChartHostBox(modifier) {
-    CartesianChartHostImpl(
-      chart,
-      model,
-      scrollState,
-      zoomState,
-      ranges.toImmutable(),
-      consumeMoveEvents,
-    )
+    CartesianChartHostImpl(chart, model, scrollState, zoomState, ranges.toImmutable())
   }
 }
 
@@ -156,7 +117,6 @@ internal fun CartesianChartHostImpl(
   scrollState: VicoScrollState,
   zoomState: VicoZoomState,
   ranges: CartesianChartRanges,
-  consumeMoveEvents: Boolean,
   previousModel: CartesianChartModel? = null,
   extraStore: ExtraStore = ExtraStore.Empty,
 ) {
@@ -237,7 +197,7 @@ internal fun CartesianChartHostImpl(
       Modifier.fillMaxSize()
         .pointerInput(
           scrollState = scrollState,
-          consumeMoveEvents = consumeMoveEvents,
+          consumeMoveEvents = chart.markerController.consumeMoveEvents,
           onInteraction = onInteraction,
           onZoom =
             remember(zoomState, scrollState, coroutineScope) {

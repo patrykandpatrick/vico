@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2026 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,15 +66,12 @@ internal fun Modifier.pointerInput(
               onInteraction(Interaction.Press(pointerPosition))
             event.type == PointerEventType.Release || event.type == PointerEventType.Press ->
               onInteraction(Interaction.Release(pointerPosition))
-            event.type == PointerEventType.Move && !scrollState.scrollEnabled -> {
-              val changes = event.changes.first()
-              if (consumeMoveEvents) changes.consume()
+            event.type == PointerEventType.Move -> {
+              if (consumeMoveEvents && !scrollState.scrollEnabled) event.changes.first().consume()
               onInteraction(Interaction.Move(pointerPosition))
             }
             event.type == PointerEventType.Enter ->
               onInteraction(Interaction.Enter(pointerPosition))
-            event.type == PointerEventType.Move && scrollState.scrollEnabled ->
-              onInteraction(Interaction.Move(pointerPosition))
             event.type == PointerEventType.Exit -> {
               val isInsideChartBounds = position.fits(size)
               onInteraction(Interaction.Exit(pointerPosition, isInsideChartBounds))

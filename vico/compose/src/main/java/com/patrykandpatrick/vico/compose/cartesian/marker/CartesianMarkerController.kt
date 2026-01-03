@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2026 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,12 +20,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerController
 
-/** Creates and remembers a [CartesianMarkerController] that shows the marker on press. */
+/**
+ * Creates and remembers a [CartesianMarkerController] that shows the marker on press.
+ * [consumeMoveEvents] defines whether to consume move touch events when scroll is disabled.
+ */
 @Composable
-public fun CartesianMarkerController.Companion.rememberShowOnPress(): CartesianMarkerController =
-  remember {
-    showOnPress()
-  }
+public fun CartesianMarkerController.Companion.rememberShowOnPress(
+  consumeMoveEvents: Boolean = false
+): CartesianMarkerController = remember(consumeMoveEvents) { showOnPress(consumeMoveEvents) }
 
 /** Creates and remembers a [CartesianMarkerController] that shows the marker on hover. */
 @Composable
