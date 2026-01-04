@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2026 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,22 +21,21 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidViewBinding
-import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
-import com.patrykandpatrick.vico.core.cartesian.axis.Axis
-import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
-import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
-import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
-import com.patrykandpatrick.vico.core.cartesian.data.CartesianLayerRangeProvider
-import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
-import com.patrykandpatrick.vico.core.cartesian.data.candlestickSeries
-import com.patrykandpatrick.vico.core.cartesian.layer.CandlestickCartesianLayer
-import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
-import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.sample.views.databinding.GoldPricesBinding
+import com.patrykandpatrick.vico.views.cartesian.CartesianMeasuringContext
+import com.patrykandpatrick.vico.views.cartesian.axis.Axis
+import com.patrykandpatrick.vico.views.cartesian.axis.HorizontalAxis
+import com.patrykandpatrick.vico.views.cartesian.axis.VerticalAxis
+import com.patrykandpatrick.vico.views.cartesian.data.CartesianChartModelProducer
+import com.patrykandpatrick.vico.views.cartesian.data.CartesianLayerRangeProvider
+import com.patrykandpatrick.vico.views.cartesian.data.CartesianValueFormatter
+import com.patrykandpatrick.vico.views.cartesian.data.candlestickSeries
+import com.patrykandpatrick.vico.views.cartesian.layer.CandlestickCartesianLayer
+import com.patrykandpatrick.vico.views.cartesian.marker.DefaultCartesianMarker
+import com.patrykandpatrick.vico.views.common.data.ExtraStore
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
-import java.util.Locale
-import java.util.TimeZone
+import java.util.*
 import kotlin.math.ceil
 import kotlin.math.floor
 

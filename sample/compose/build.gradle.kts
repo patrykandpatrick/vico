@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2026 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,26 +14,46 @@
  * limitations under the License.
  */
 
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
   id("com.android.library")
-  id("kotlin-android")
+  id("org.jetbrains.compose")
+  id("org.jetbrains.kotlin.multiplatform")
   id("org.jetbrains.kotlin.plugin.compose")
 }
 
 android {
   configure()
-  namespace = "com.patrykandpatrick.vico.sample.compose"
+  namespace = "com.patrykandpatrick.vico.sample.multiplatform"
 }
 
-kotlin { compilerOptions { jvmTarget = JvmTarget.JVM_11 } }
-
-dependencies {
-  debugImplementation(libs.composeUITooling)
-  implementation(platform(libs.composeBom))
-  implementation(libs.androidXCore)
-  implementation(libs.composeMaterial3)
-  implementation(libs.composePreview)
-  implementation(project(":vico:compose"))
+kotlin {
+  androidTarget { compilerOptions { jvmTarget = JvmTarget.JVM_11 } }
+  listOf(iosX64(), iosArm64(), iosSimulatorArm64()).forEach { iosTarget ->
+    iosTarget.binaries.framework {
+      baseName = project.name
+      isStatic = true
+    }
+  }
+  jvm("desktop")
+  js {
+    browser()
+    binaries.executable()
+  }
+  @OptIn(ExperimentalWasmDsl::class)
+  wasmJs {
+    browser()
+    binaries.executable()
+  }
+  sourceSets {
+    commonMain.dependencies {
+      implementation(compose.foundation)
+      implementation(compose.ui)
+      implementation(compose.material3)
+      implementation(libs.kotlinDateTime)
+      implementation(project(":vico:compose"))
+    }
+  }
 }

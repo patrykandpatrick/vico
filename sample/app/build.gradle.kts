@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2026 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -71,7 +71,6 @@ kotlin {
       implementation(libs.activityCompose)
       implementation(libs.material)
       implementation(project(":sample:compose"))
-      implementation(project(":sample:multiplatform"))
       implementation(project(":sample:views"))
     }
     commonMain.dependencies {
@@ -79,7 +78,7 @@ kotlin {
       implementation(libs.composeNavigation)
       implementation(libs.lifecycleRuntime)
       implementation(libs.materialIcons)
-      implementation(project(":sample:multiplatform"))
+      implementation(project(":sample:compose"))
     }
     val desktopMain by getting
     desktopMain.dependencies { implementation(compose.desktop.currentOs) }

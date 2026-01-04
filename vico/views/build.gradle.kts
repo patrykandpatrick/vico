@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2026 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +17,10 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
+  `dokka-convention`
   `publishing-convention`
   id("com.android.library")
   id("kotlin-android")
-  `dokka-convention`
 }
 
 android {
@@ -30,13 +30,23 @@ android {
 
 kotlin {
   explicitApi()
-  compilerOptions { jvmTarget = JvmTarget.JVM_11 }
+  compilerOptions {
+    jvmTarget = JvmTarget.JVM_11
+    freeCompilerArgs.add("-Xannotation-default-target=param-property")
+  }
 }
 
 dependencies {
-  api(project(":vico:core"))
+  implementation(libs.androidXAnnotation)
   implementation(libs.androidXCore)
   implementation(libs.appcompat)
+  implementation(libs.coroutinesCore)
   implementation(libs.kotlinStdLib)
+  implementation(libs.kotlinStdLib)
+  testImplementation(libs.jupiter)
+  testImplementation(libs.jupiterParams)
   testImplementation(libs.kotlinTest)
+  testImplementation(libs.kotlinTest)
+  testImplementation(libs.mockK)
+  testImplementation(libs.testCore)
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2026 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,10 +25,6 @@ dependencies {
   dokka(project(":vico:compose"))
   dokka(project(":vico:compose-m2"))
   dokka(project(":vico:compose-m3"))
-  dokka(project(":vico:core"))
-  dokka(project(":vico:multiplatform"))
-  dokka(project(":vico:multiplatform-m2"))
-  dokka(project(":vico:multiplatform-m3"))
   dokka(project(":vico:views"))
 }
 
