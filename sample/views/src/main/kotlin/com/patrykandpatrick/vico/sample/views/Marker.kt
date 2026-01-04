@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2026 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,18 +19,18 @@ package com.patrykandpatrick.vico.sample.views
 import android.content.Context
 import android.text.Layout
 import androidx.core.content.ContextCompat
-import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
-import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
-import com.patrykandpatrick.vico.core.common.Fill
-import com.patrykandpatrick.vico.core.common.Insets
-import com.patrykandpatrick.vico.core.common.LayeredComponent
-import com.patrykandpatrick.vico.core.common.component.LineComponent
-import com.patrykandpatrick.vico.core.common.component.ShapeComponent
-import com.patrykandpatrick.vico.core.common.component.TextComponent
-import com.patrykandpatrick.vico.core.common.copyColor
-import com.patrykandpatrick.vico.core.common.shape.CorneredShape
-import com.patrykandpatrick.vico.core.common.shape.DashedShape
-import com.patrykandpatrick.vico.core.common.shape.MarkerCorneredShape
+import androidx.core.graphics.ColorUtils
+import com.patrykandpatrick.vico.views.cartesian.marker.CartesianMarker
+import com.patrykandpatrick.vico.views.cartesian.marker.DefaultCartesianMarker
+import com.patrykandpatrick.vico.views.common.Fill
+import com.patrykandpatrick.vico.views.common.Insets
+import com.patrykandpatrick.vico.views.common.LayeredComponent
+import com.patrykandpatrick.vico.views.common.component.LineComponent
+import com.patrykandpatrick.vico.views.common.component.ShapeComponent
+import com.patrykandpatrick.vico.views.common.component.TextComponent
+import com.patrykandpatrick.vico.views.common.shape.CorneredShape
+import com.patrykandpatrick.vico.views.common.shape.DashedShape
+import com.patrykandpatrick.vico.views.common.shape.MarkerCorneredShape
 
 internal fun getMarker(
   context: Context,
@@ -69,7 +69,8 @@ internal fun getMarker(
       if (showIndicator) {
         { color ->
           LayeredComponent(
-            back = ShapeComponent(Fill(color.copyColor(alpha = 0.15f)), CorneredShape.Pill),
+            back =
+              ShapeComponent(Fill(ColorUtils.setAlphaComponent(color, 38)), CorneredShape.Pill),
             front =
               LayeredComponent(
                 back = ShapeComponent(Fill(color), CorneredShape.Pill),
