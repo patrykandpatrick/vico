@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2026 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,12 +18,11 @@ plugins { `kotlin-dsl` }
 
 dependencies {
   implementation(libs.androidApplication)
-  implementation(libs.androidLibrary)
+  implementation(libs.androidKotlinMultiplatformLibrary)
   implementation(libs.composeCompiler)
   implementation(libs.composeMultiplatform)
   implementation(libs.dokka)
   implementation(libs.kotlinAndroid)
-  implementation(libs.kotlinMultiplatform)
   implementation(libs.mavenPublish)
   implementation(libs.serialization)
 }

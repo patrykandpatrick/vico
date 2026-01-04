@@ -14,27 +14,23 @@
  * limitations under the License.
  */
 
+import com.android.build.api.dsl.androidLibrary
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
   `dokka-convention`
   `publishing-convention`
-  id("com.android.library")
+  id("com.android.kotlin.multiplatform.library")
   id("org.jetbrains.compose")
   id("org.jetbrains.kotlin.multiplatform")
   id("org.jetbrains.kotlin.plugin.compose")
 }
 
-android {
-  configure()
-  namespace = moduleNamespace
-}
-
 kotlin {
-  androidTarget {
-    compilerOptions { jvmTarget = JvmTarget.JVM_11 }
-    publishLibraryVariants("release")
+  @Suppress("UnstableApiUsage")
+  androidLibrary {
+    configure()
+    namespace = moduleNamespace
   }
   listOf(iosX64(), iosArm64(), iosSimulatorArm64()).forEach { target ->
     target.binaries.framework {
