@@ -22,7 +22,7 @@ vico/                           # Root project
 │   ├── compose-m3/             # Material 3 theming for Compose
 │   └── views/                  # Android Views library
 ├── sample/                     # Sample applications
-│   ├── app/                    # Multiplatform sample app (Android, iOS, Desktop, Web, WASM)
+│   ├── app/                    # Multiplatform sample app (Android, iOS, Desktop, Web)
 │   ├── compose/                # Android Compose samples
 │   └── views/                  # Android Views samples
 ├── buildSrc/                   # Gradle convention plugins and versions
@@ -110,7 +110,7 @@ All workflows run on `push` and `pull_request`:
 ## Important Notes
 
 1. **Architecture:** The project currently maintains two parallel implementations:
-    - `vico/compose` is the primary Compose Multiplatform implementation (Android, iOS, Desktop, JS,
+    - `vico/compose` is the primary Compose Multiplatform implementation (Android, iOS, Desktop,
       WASM). Material 2/3 modules build on top of it.
     - `vico/views` is an Android Views-only implementation. Determine whether changes need to be
       applied to both the Compose and Views stacks.
