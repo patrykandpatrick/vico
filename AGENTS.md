@@ -102,7 +102,7 @@ All workflows run on `push` and `pull_request`:
 | Compose shared code        | `vico/compose/src/commonMain/kotlin/`                               |
 | Compose Android code       | `vico/compose/src/androidMain/kotlin/`                              |
 | Material theming (M2/M3)   | `vico/compose-m2`, `vico/compose-m3`                                |
-| Android Views components   | `vico/views/src/main/java/`                                         |
+| Android Views components   | `vico/views/src/main/kotlin/`                                       |
 | Unit tests (Views)         | `vico/views/src/test/java/`                                         |
 | Dependency versions        | `gradle/libs.versions.toml`                                         |
 | Build versions             | `buildSrc/src/main/kotlin/Versions.kt`                              |
