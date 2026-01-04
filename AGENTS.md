@@ -17,18 +17,13 @@ Vico is a powerful and extensible multiplatform chart library written in Kotlin.
 ```
 vico/                           # Root project
 ├── vico/                       # Main library modules
-│   ├── core/                   # Core library (Android-only, shared logic for Views/Compose)
-│   ├── compose/                # Jetpack Compose support (depends on core)
+│   ├── compose/                # Compose Multiplatform library (core implementation)
 │   ├── compose-m2/             # Material 2 theming for Compose
 │   ├── compose-m3/             # Material 3 theming for Compose
-│   ├── views/                  # Android Views support
-│   ├── multiplatform/          # Compose Multiplatform support (independent implementation)
-│   ├── multiplatform-m2/       # Material 2 for multiplatform
-│   └── multiplatform-m3/       # Material 3 for multiplatform
+│   └── views/                  # Android Views library
 ├── sample/                     # Sample applications
 │   ├── app/                    # Multiplatform sample app (Android, iOS, Desktop, Web)
-│   ├── compose/                # Android Compose samples
-│   ├── multiplatform/          # Shared multiplatform sample code
+│   ├── compose/                # Shared multiplatform sample code
 │   └── views/                  # Android Views samples
 ├── buildSrc/                   # Gradle convention plugins and versions
 │   └── src/main/kotlin/
@@ -57,7 +52,7 @@ vico/                           # Root project
 ```
 
 **Time:** ~30-60 seconds  
-Tests are located in `vico/core/src/test/java/`.
+Tests are located in `vico/views/src/test/java/`.
 
 ### Format Code (ktfmt)
 
@@ -102,24 +97,23 @@ All workflows run on `push` and `pull_request`:
 
 ## Key Source Locations
 
-| Component                  | Path                                                                |
-| -------------------------- | ------------------------------------------------------------------- |
-| Android Core classes       | `vico/core/src/main/java/com/patrykandpatrick/vico/core/cartesian/` |
-| Android Common utilities   | `vico/core/src/main/java/com/patrykandpatrick/vico/core/common/`    |
-| Android Compose components | `vico/compose/src/main/java/`                                       |
-| Multiplatform Core classes | `vico/multiplatform/src/commonMain/kotlin/`                         |
-| Android Views components   | `vico/views/src/main/java/`                                         |
-| Unit tests (Android Core)  | `vico/core/src/test/java/`                                          |
-| Dependency versions        | `gradle/libs.versions.toml`                                         |
-| Build versions             | `buildSrc/src/main/kotlin/Versions.kt`                              |
+| Component                | Path                                   |
+| ------------------------ | -------------------------------------- |
+| Compose shared code      | `vico/compose/src/commonMain/kotlin/`  |
+| Compose Android code     | `vico/compose/src/androidMain/kotlin/` |
+| Material theming (M2/M3) | `vico/compose-m2`, `vico/compose-m3`   |
+| Android Views components | `vico/views/src/main/kotlin/`          |
+| Unit tests (Views)       | `vico/views/src/test/kotlin/`          |
+| Dependency versions      | `gradle/libs.versions.toml`            |
+| Build versions           | `buildSrc/src/main/kotlin/Versions.kt` |
 
 ## Important Notes
 
 1. **Architecture:** The project currently maintains two parallel implementations:
-    - `vico/core`, `vico/compose`, `vico/views`: Android-only implementation (`vico/core` uses
-      `android.graphics` APIs).
-    - `vico/multiplatform`: Multiplatform implementation (Pure Compose core). When making changes,
-      check if they need to be applied to both implementations.
+    - `vico/compose` is the primary Compose Multiplatform implementation (Android, iOS, Desktop,
+      WASM). Material 2/3 modules build on top of it.
+    - `vico/views` is an Android Views-only implementation. Determine whether changes need to be
+      applied to both the Compose and Views stacks.
 2. **Explicit API mode:** All library modules use `explicitApi()` - public API must have explicit
    visibility modifiers.
 3. **Dependency Management:** Use `gradle/libs.versions.toml` for managing dependencies and
