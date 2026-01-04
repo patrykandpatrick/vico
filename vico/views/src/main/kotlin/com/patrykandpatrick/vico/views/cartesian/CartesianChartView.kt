@@ -1,0 +1,481 @@
+/*
+ * Copyright 2026 by Patryk Goworowski and Patrick Michalik.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.patrykandpatrick.vico.views.cartesian
+
+import android.content.Context
+import android.graphics.Canvas
+import android.os.Build
+import android.os.Bundle
+import android.os.Parcelable
+import android.util.AttributeSet
+import android.view.GestureDetector
+import android.view.MotionEvent
+import android.view.ScaleGestureDetector
+import android.view.View
+import android.widget.OverScroller
+import com.patrykandpatrick.vico.views.R
+import com.patrykandpatrick.vico.views.cartesian.data.*
+import com.patrykandpatrick.vico.views.cartesian.layer.CartesianLayerPadding
+import com.patrykandpatrick.vico.views.cartesian.layer.MutableCartesianLayerDimensions
+import com.patrykandpatrick.vico.views.cartesian.marker.CartesianMarkerController.Lock
+import com.patrykandpatrick.vico.views.cartesian.marker.Interaction
+import com.patrykandpatrick.vico.views.common.*
+import com.patrykandpatrick.vico.views.common.data.ExtraStore
+import com.patrykandpatrick.vico.views.common.gesture.ChartScaleGestureListener
+import com.patrykandpatrick.vico.views.common.gesture.ChartSimpleOnGestureListener
+import com.patrykandpatrick.vico.views.common.gesture.MotionEventHandler
+import com.patrykandpatrick.vico.views.common.theme.ThemeHandler
+import java.util.*
+import kotlin.math.abs
+import kotlin.properties.Delegates.observable
+import kotlin.properties.ReadWriteProperty
+import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.launch
+
+/** Displays a [CartesianChart]. */
+public open class CartesianChartView
+@JvmOverloads
+constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) :
+  ChartView<CartesianChartModel>(context, attrs, defStyleAttr) {
+  private val themeHandler: ThemeHandler = ThemeHandler(context, attrs)
+
+  private val scroller = OverScroller(context)
+
+  private val ranges = MutableCartesianChartRanges()
+
+  private var _model: CartesianChartModel? = null
+
+  override var model: CartesianChartModel?
+    get() = _model
+    set(value) {
+      setModel(value)
+    }
+
+  private val _measuringContext =
+    MutableCartesianMeasuringContext(
+      canvasSize = canvasSize,
+      density = context.density,
+      extraStore = ExtraStore.Empty,
+      isLtr = context.isLtr,
+      spToPx = context::spToPx,
+      model = CartesianChartModel.Empty,
+      ranges = CartesianChartRanges.Empty,
+      scrollEnabled = false,
+      zoomEnabled = false,
+      layerPadding = CartesianLayerPadding(),
+      markerX = null,
+    )
+
+  override val measuringContext: CartesianMeasuringContext = _measuringContext
+
+  private val scaleGestureListener: ScaleGestureDetector.OnScaleGestureListener =
+    ChartScaleGestureListener(getLayerBounds = { chart?.layerBounds }, onZoom = ::handleZoom)
+
+  private val scaleGestureDetector = ScaleGestureDetector(context, scaleGestureListener)
+
+  private val onGestureListener: ChartSimpleOnGestureListener =
+    ChartSimpleOnGestureListener(
+      onTap = { x, y -> handleInteraction(Interaction.Tap(Point(x, y))) },
+      onLongPress = { x, y ->
+        if (chart?.markerController?.acceptsLongPress == true) {
+          handleInteraction(Interaction.LongPress(Point(x, y)))
+        }
+      },
+    )
+
+  private val gestureDetector = GestureDetector(context, onGestureListener)
+
+  private var scrollDirectionResolved = false
+
+  private val layerDimensions = MutableCartesianLayerDimensions()
+
+  private var previousLayerPaddingHashCode: Int? = null
+
+  private var lastAcceptedInteraction: Interaction? = null
+
+  /**
+   * Houses information on the [CartesianChart]’s scroll value. Allows for scroll customization and
+   * programmatic scrolling.
+   */
+  public var scrollHandler: ScrollHandler by
+    invalidatingObservable(ScrollHandler(themeHandler.scrollEnabled)) { oldValue, newValue ->
+      oldValue?.clearUpdated()
+      newValue.postInvalidate = ::postInvalidate
+      newValue.postInvalidateOnAnimation = ::postInvalidateOnAnimation
+      _measuringContext.scrollEnabled = newValue.scrollEnabled
+      _measuringContext.zoomEnabled = measuringContext.zoomEnabled && newValue.scrollEnabled
+    }
+
+  /** Houses information on the [CartesianChart]’s zoom factor. Allows for zoom customization. */
+  public var zoomHandler: ZoomHandler by
+    invalidatingObservable(
+      ZoomHandler.default(themeHandler.zoomEnabled, scrollHandler.scrollEnabled)
+    ) { oldValue, newValue ->
+      oldValue?.clearUpdated()
+      newValue.invalidate = ::invalidate
+      _measuringContext.zoomEnabled = newValue.zoomEnabled && measuringContext.scrollEnabled
+    }
+
+  private val motionEventHandler =
+    MotionEventHandler(
+      scroller = scroller,
+      density = resources.displayMetrics.density,
+      onInteraction = ::handleInteraction,
+      requestInvalidate = ::invalidate,
+    )
+
+  /** The [CartesianChart] displayed by this [View]. */
+  public var chart: CartesianChart? by
+    observable(themeHandler.chart) { _, _, newValue ->
+      tryInvalidate(chart = newValue, model = model, updateRanges = true)
+    }
+
+  /** Creates and updates the [CartesianChartModel]. */
+  public var modelProducer: CartesianChartModelProducer? = null
+    set(value) {
+      if (field === value) return
+      check(field == null) { NEW_PRODUCER_ERROR_MESSAGE }
+      field = value
+      if (isAttachedToWindow) registerForUpdates()
+    }
+
+  private fun registerForUpdates() {
+    val restoredModel = restoreCachedModelData()
+    coroutineScope?.launch {
+      modelProducer?.registerForUpdates(
+        key = this@CartesianChartView,
+        restoredModel = restoredModel,
+        cancelAnimation = {
+          handler?.post(animator::cancel)
+          animationFrameJob?.cancelAndJoin()
+          finalAnimationFrameJob?.cancelAndJoin()
+          isAnimationRunning = false
+          isAnimationFrameGenerationRunning = false
+        },
+        startAnimation = ::startAnimation,
+        prepareForTransformation = { model, extraStore, ranges ->
+          chart?.prepareForTransformation(model, extraStore, ranges)
+        },
+        transform = { extraStore, fraction -> chart?.transform(extraStore, fraction) },
+        hostExtraStore = extraStore,
+        updateRanges = ::updateRanges,
+      ) { model, ranges, extraStore ->
+        post {
+          setModel(model = model, updateRanges = false)
+          _measuringContext.extraStore = extraStore
+          _measuringContext.ranges = ranges
+          postInvalidateOnAnimation()
+        }
+      }
+    }
+  }
+
+  private fun restoreCachedModelData() =
+    modelProducer?.getCachedData(::updateRanges, extraStore)?.let { (model, ranges, extraStore) ->
+      setModel(model)
+      _measuringContext.extraStore = extraStore
+      _measuringContext.ranges = ranges
+      model
+    }
+
+  private fun updateRanges(model: CartesianChartModel?): CartesianChartRanges {
+    ranges.reset()
+    return if (model != null) {
+      chart?.updateRanges(ranges, model)
+      ranges.toImmutable()
+    } else {
+      CartesianChartRanges.Empty
+    }
+  }
+
+  override fun onAttachedToWindow() {
+    super.onAttachedToWindow()
+    if (modelProducer?.isRegistered(key = this) != true) registerForUpdates()
+  }
+
+  override fun onDetachedFromWindow() {
+    super.onDetachedFromWindow()
+    modelProducer?.unregisterFromUpdates(key = this)
+    scrollHandler.clearUpdated()
+  }
+
+  init {
+    if (isInEditMode && attrs != null) {
+      context.obtainStyledAttributes(attrs, R.styleable.CartesianChartView, defStyleAttr, 0).use {
+        typedArray ->
+        val minX =
+          typedArray.getInteger(
+            R.styleable.CartesianChartView_previewMinX,
+            RandomCartesianModelGenerator.defaultX.first,
+          )
+        val maxX =
+          typedArray.getInteger(
+            R.styleable.CartesianChartView_previewMaxX,
+            RandomCartesianModelGenerator.defaultX.last,
+          )
+        val minY =
+          if (typedArray.hasValue(R.styleable.CartesianChartView_previewMinY)) {
+            typedArray.getFloat(R.styleable.CartesianChartView_previewMinY, 0f).toDouble()
+          } else {
+            RandomCartesianModelGenerator.defaultY.start
+          }
+        val maxY =
+          if (typedArray.hasValue(R.styleable.CartesianChartView_previewMaxY)) {
+            typedArray.getFloat(R.styleable.CartesianChartView_previewMaxY, 0f).toDouble()
+          } else {
+            RandomCartesianModelGenerator.defaultY.endInclusive
+          }
+        model =
+          RandomCartesianModelGenerator.getRandomModel(
+            typedArray.getInt(R.styleable.CartesianChartView_previewColumnSeriesCount, 1),
+            typedArray.getInt(R.styleable.CartesianChartView_previewLineSeriesCount, 1),
+            minX..maxX,
+            minY..maxY,
+          )
+      }
+    }
+  }
+
+  override fun shouldShowPlaceholder(): Boolean = model == null
+
+  private fun setModel(model: CartesianChartModel?, updateRanges: Boolean = true) {
+    val oldModel = _model
+    _model = model
+    updatePlaceholderVisibility()
+    tryInvalidate(chart, model, updateRanges)
+    handleViewportChange()
+    if (model != null && oldModel != model && isInEditMode.not()) {
+      handler?.post { scrollHandler.autoScroll(model, oldModel) }
+    }
+  }
+
+  protected fun tryInvalidate(
+    chart: CartesianChart?,
+    model: CartesianChartModel?,
+    updateRanges: Boolean,
+  ) {
+    _measuringContext.model = model ?: return
+    if (chart != null) {
+      val layerPaddingHashCode = Objects.hash(chart.layerPadding, model.extraStore)
+      if (layerPaddingHashCode != previousLayerPaddingHashCode) {
+        _measuringContext.layerPadding = chart.layerPadding(model.extraStore)
+        previousLayerPaddingHashCode = layerPaddingHashCode
+      }
+      if (updateRanges) {
+        ranges.reset()
+        chart.updateRanges(ranges, model)
+        _measuringContext.ranges = ranges.toImmutable()
+      }
+    }
+    if (isAttachedToWindow) invalidate()
+  }
+
+  protected inline fun <T> invalidatingObservable(
+    initialValue: T,
+    crossinline onChange: (T?, T) -> Unit = { _, _ -> },
+  ): ReadWriteProperty<Any?, T> {
+    onChange(null, initialValue)
+    return observable(initialValue) { _, oldValue, newValue ->
+      tryInvalidate(chart = chart, model = model, updateRanges = false)
+      onChange(oldValue, newValue)
+    }
+  }
+
+  override fun onHoverEvent(event: MotionEvent): Boolean {
+    val superHandled = super.onHoverEvent(event)
+    if (!isEnabled) return superHandled
+    return motionEventHandler.handleMotionEvent(event, scrollHandler)
+  }
+
+  override fun onTouchEvent(event: MotionEvent): Boolean {
+    val superHandled = super.onTouchEvent(event)
+    if (!isEnabled || !event.shouldAccept()) return superHandled
+    val scaleHandled =
+      if (zoomHandler.zoomEnabled && event.pointerCount > 1 && scrollHandler.scrollEnabled) {
+        scaleGestureDetector.onTouchEvent(event)
+      } else {
+        false
+      }
+    val touchHandled = motionEventHandler.handleMotionEvent(event, scrollHandler)
+    val gestureHandled = gestureDetector.onTouchEvent(event)
+    val hasMarker = chart?.marker != null
+    when {
+      chart?.markerController?.consumeMoveEvents == true &&
+        !scrollHandler.scrollEnabled &&
+        hasMarker -> {
+        parent.requestDisallowInterceptTouchEvent(true)
+      }
+
+      scrollDirectionResolved.not() && event.historySize > 0 -> {
+        scrollDirectionResolved = true
+        parent.requestDisallowInterceptTouchEvent(
+          event.movedXDistance > event.movedYDistance || event.pointerCount > 1
+        )
+      }
+
+      event.isUpOrCancel() -> {
+        scrollDirectionResolved = false
+      }
+    }
+
+    return touchHandled || scaleHandled || superHandled || gestureHandled
+  }
+
+  private fun MotionEvent.isUpOrCancel(): Boolean =
+    actionMasked == MotionEvent.ACTION_UP || actionMasked == MotionEvent.ACTION_CANCEL
+
+  private fun handleZoom(focusX: Float, focusY: Float, zoomChange: Float) {
+    val chart = chart ?: return
+    zoomHandler.zoom(zoomChange, focusX, scrollHandler.value, chart.layerBounds)
+    handleInteraction(Interaction.Zoom(Point(focusX, focusY)))
+  }
+
+  private fun handleInteraction(interaction: Interaction) {
+    if (measuringContext.ranges is CartesianChartRanges.Empty) return
+    val chart = chart ?: return
+    val x =
+      measuringContext.pointerPositionToX(
+        interaction.point,
+        layerDimensions,
+        chart.layerBounds,
+        scrollHandler.value,
+        ranges,
+      )
+    val targets =
+      chart.getMarkerTargets(
+        x,
+        measuringContext.getVisibleXRange(layerDimensions, chart.layerBounds, scrollHandler.value),
+      )
+    if (chart.markerController.shouldAcceptInteraction(interaction, targets)) {
+      val shouldShow = chart.markerController.shouldShowMarker(interaction, targets)
+      lastAcceptedInteraction = interaction
+      _measuringContext.markerX = if (shouldShow) targets.firstOrNull()?.x else null
+      invalidate()
+    }
+  }
+
+  override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+    super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+    motionEventHandler.chartBounds.apply {
+      left = offset.x
+      top = offset.y
+      right = offset.x + canvasSize.width
+      bottom = offset.y + canvasSize.height
+    }
+  }
+
+  private fun handleViewportChange() {
+    if (chart?.markerController?.lock == Lock.Position) {
+      lastAcceptedInteraction?.let(::handleInteraction)
+    }
+  }
+
+  override fun dispatchDraw(canvas: Canvas) {
+    super.dispatchDraw(canvas)
+
+    withChartAndModel { chart, _ ->
+      measuringContext.reset()
+      layerDimensions.clear()
+      chart.prepare(measuringContext, layerDimensions)
+
+      if (chart.layerBounds.isEmpty) return@withChartAndModel
+
+      var viewportChange = false
+      motionEventHandler.scrollEnabled = scrollHandler.scrollEnabled
+      if (scroller.computeScrollOffset()) {
+        val delta = scroller.currX.toFloat()
+        scrollHandler.scroll(Scroll.Absolute.pixels(delta))
+        viewportChange = true
+        postInvalidateOnAnimation()
+      }
+
+      zoomHandler.update(measuringContext, layerDimensions, chart.layerBounds, scrollHandler.value)
+      scrollHandler.update(measuringContext, chart.layerBounds, layerDimensions)
+      zoomHandler.consumePendingScroll { scroll ->
+        scrollHandler.scroll(scroll)
+        viewportChange = true
+      }
+
+      val drawingContext =
+        CartesianDrawingContext(
+          measuringContext,
+          canvas,
+          layerDimensions,
+          chart.layerBounds,
+          scrollHandler.value,
+          zoomHandler.value,
+        )
+
+      chart.draw(drawingContext, offset)
+      if (viewportChange && chart.markerController.lock == Lock.Position) {
+        lastAcceptedInteraction?.let(::handleInteraction)
+      }
+      measuringContext.reset()
+    }
+  }
+
+  override fun getChartDesiredHeight(widthMeasureSpec: Int, heightMeasureSpec: Int): Int =
+    Defaults.CHART_HEIGHT.dpInt
+
+  override fun onSaveInstanceState(): Parcelable =
+    Bundle().apply {
+      scrollHandler.saveInstanceState(this)
+      zoomHandler.saveInstanceState(this)
+      putSerializable(INTERACTION_KEY, lastAcceptedInteraction)
+      measuringContext.markerX?.let { putDouble(MARKER_X_KEY, it) }
+      putParcelable(SUPER_STATE_KEY, super.onSaveInstanceState())
+    }
+
+  override fun onRestoreInstanceState(state: Parcelable?) {
+    var superState = state
+    if (state is Bundle) {
+      scrollHandler.restoreInstanceState(state)
+      zoomHandler.restoreInstanceState(state)
+      lastAcceptedInteraction =
+        @Suppress("DEPRECATION") state.getSerializable(INTERACTION_KEY) as? Interaction
+      _measuringContext.markerX =
+        if (state.containsKey(MARKER_X_KEY)) state.getDouble(MARKER_X_KEY) else null
+      superState =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+          state.getParcelable(SUPER_STATE_KEY, BaseSavedState::class.java)
+        } else {
+          state.getParcelable(SUPER_STATE_KEY)
+        }
+    }
+    super.onRestoreInstanceState(superState)
+  }
+
+  private inline fun withChartAndModel(
+    block: (chart: CartesianChart, model: CartesianChartModel) -> Unit
+  ) {
+    val chart = chart ?: return
+    val model = model ?: return
+    block(chart, model)
+  }
+
+  private companion object {
+    const val SUPER_STATE_KEY = "superState"
+    const val INTERACTION_KEY = "lastAcceptedInteraction"
+    const val MARKER_X_KEY = "markerX"
+  }
+}
+
+internal val MotionEvent.movedXDistance: Float
+  get() = if (historySize > 0) abs(x - getHistoricalX(historySize - 1)) else 0f
+
+internal val MotionEvent.movedYDistance: Float
+  get() = if (historySize > 0) abs(y - getHistoricalY(historySize - 1)) else 0f

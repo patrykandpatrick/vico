@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2026 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,16 +22,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import androidx.core.graphics.ColorUtils
-import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
-import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
-import com.patrykandpatrick.vico.core.cartesian.data.CartesianLayerRangeProvider
-import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
-import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
-import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
-import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
-import com.patrykandpatrick.vico.core.common.Fill
-import com.patrykandpatrick.vico.core.common.shader.ShaderProvider
 import com.patrykandpatrick.vico.sample.views.databinding.ElectricCarSalesBinding
+import com.patrykandpatrick.vico.views.cartesian.axis.VerticalAxis
+import com.patrykandpatrick.vico.views.cartesian.data.CartesianChartModelProducer
+import com.patrykandpatrick.vico.views.cartesian.data.CartesianLayerRangeProvider
+import com.patrykandpatrick.vico.views.cartesian.data.CartesianValueFormatter
+import com.patrykandpatrick.vico.views.cartesian.data.lineSeries
+import com.patrykandpatrick.vico.views.cartesian.layer.LineCartesianLayer
+import com.patrykandpatrick.vico.views.cartesian.marker.DefaultCartesianMarker
+import com.patrykandpatrick.vico.views.common.Fill
+import com.patrykandpatrick.vico.views.common.shader.ShaderProvider
 import java.text.DecimalFormat
 
 private val x = (2010..2023).toList()

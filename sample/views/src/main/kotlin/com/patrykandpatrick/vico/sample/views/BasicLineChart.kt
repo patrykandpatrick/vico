@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2026 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,9 +21,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidViewBinding
-import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
-import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
 import com.patrykandpatrick.vico.sample.views.databinding.BasicLineChartBinding
+import com.patrykandpatrick.vico.views.cartesian.data.CartesianChartModelProducer
+import com.patrykandpatrick.vico.views.cartesian.data.lineSeries
 
 @Composable
 fun ViewBasicLineChart(modifier: Modifier) {

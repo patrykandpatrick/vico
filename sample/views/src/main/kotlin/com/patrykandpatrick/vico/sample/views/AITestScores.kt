@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2026 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,22 +25,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import androidx.core.content.ContextCompat
-import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
-import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
-import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
-import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
-import com.patrykandpatrick.vico.core.cartesian.decoration.HorizontalLine
-import com.patrykandpatrick.vico.core.common.Fill
-import com.patrykandpatrick.vico.core.common.Insets
-import com.patrykandpatrick.vico.core.common.LegendItem
-import com.patrykandpatrick.vico.core.common.Position
-import com.patrykandpatrick.vico.core.common.VerticalLegend
-import com.patrykandpatrick.vico.core.common.component.LineComponent
-import com.patrykandpatrick.vico.core.common.component.ShapeComponent
-import com.patrykandpatrick.vico.core.common.component.TextComponent
-import com.patrykandpatrick.vico.core.common.data.ExtraStore
-import com.patrykandpatrick.vico.core.common.shape.CorneredShape
 import com.patrykandpatrick.vico.sample.views.databinding.AiTestScoresBinding
+import com.patrykandpatrick.vico.views.cartesian.CartesianDrawingContext
+import com.patrykandpatrick.vico.views.cartesian.CartesianMeasuringContext
+import com.patrykandpatrick.vico.views.cartesian.data.CartesianChartModelProducer
+import com.patrykandpatrick.vico.views.cartesian.data.lineSeries
+import com.patrykandpatrick.vico.views.cartesian.decoration.HorizontalLine
+import com.patrykandpatrick.vico.views.common.*
+import com.patrykandpatrick.vico.views.common.component.LineComponent
+import com.patrykandpatrick.vico.views.common.component.ShapeComponent
+import com.patrykandpatrick.vico.views.common.component.TextComponent
+import com.patrykandpatrick.vico.views.common.data.ExtraStore
+import com.patrykandpatrick.vico.views.common.shape.CorneredShape
 
 private val data =
   mapOf<String, Map<Int, Number>>(

@@ -1,0 +1,218 @@
+/*
+ * Copyright 2026 by Patryk Goworowski and Patrick Michalik.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.patrykandpatrick.vico.views.cartesian.data
+
+import com.patrykandpatrick.vico.views.common.data.ExtraStore
+import com.patrykandpatrick.vico.views.common.data.MutableExtraStore
+import java.util.concurrent.ConcurrentHashMap
+import kotlin.coroutines.AbstractCoroutineContextElement
+import kotlin.coroutines.CoroutineContext
+import kotlinx.coroutines.*
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+
+/** Creates [CartesianChartModel]s and handles difference animations. */
+public class CartesianChartModelProducer {
+  private var lastPartials = emptyList<CartesianLayerModel.Partial>()
+  private var lastTransactionExtraStore = MutableExtraStore()
+  private var cachedModel: CartesianChartModel? = null
+  private var cachedModelPartialHashCode: Int? = null
+  private val mutex = Mutex()
+  private val updateReceivers = ConcurrentHashMap<Any, UpdateReceiver>()
+
+  private suspend fun update(
+    partials: List<CartesianLayerModel.Partial>,
+    transactionExtraStore: MutableExtraStore,
+  ) {
+    coroutineScope {
+      mutex.withLock {
+        val immutablePartials = partials.toList()
+        if (
+          immutablePartials == this@CartesianChartModelProducer.lastPartials &&
+            transactionExtraStore == this@CartesianChartModelProducer.lastTransactionExtraStore
+        ) {
+          return@coroutineScope
+        }
+        updateReceivers.values
+          .map { launch { it.handleUpdate(immutablePartials, transactionExtraStore) } }
+          .joinAll()
+        lastPartials = immutablePartials
+        lastTransactionExtraStore = transactionExtraStore
+      }
+    }
+  }
+
+  private fun getModel(partials: List<CartesianLayerModel.Partial>, extraStore: ExtraStore) =
+    if (partials.isNotEmpty()) {
+        CartesianChartModel(partials.map { it.complete(extraStore) }, extraStore)
+      } else {
+        null
+      }
+      .also { model ->
+        cachedModel = model
+        cachedModelPartialHashCode = partials.hashCode()
+      }
+
+  private suspend fun transform(
+    key: Any,
+    fraction: Float,
+    model: CartesianChartModel?,
+    ranges: CartesianChartRanges,
+  ) {
+    with(updateReceivers[key] ?: return) {
+      withContext(getDispatcher()) {
+        transform(hostExtraStore, fraction)
+        currentCoroutineContext().ensureActive()
+        onUpdate(model, ranges, hostExtraStore.copy())
+      }
+    }
+  }
+
+  internal suspend fun registerForUpdates(
+    key: Any,
+    restoredModel: CartesianChartModel?,
+    cancelAnimation: suspend () -> Unit,
+    startAnimation: (transformModel: suspend (key: Any, fraction: Float) -> Unit) -> Unit,
+    prepareForTransformation:
+      (CartesianChartModel?, MutableExtraStore, CartesianChartRanges) -> Unit,
+    transform: suspend (MutableExtraStore, Float) -> Unit,
+    hostExtraStore: MutableExtraStore,
+    updateRanges: (CartesianChartModel?) -> CartesianChartRanges,
+    onUpdate: (CartesianChartModel?, CartesianChartRanges, ExtraStore) -> Unit,
+  ) {
+    withContext(getDispatcher()) {
+      val receiver =
+        UpdateReceiver(
+          cancelAnimation,
+          startAnimation,
+          onUpdate,
+          hostExtraStore,
+          prepareForTransformation,
+          transform,
+          updateRanges,
+        )
+      mutex.withLock {
+        updateReceivers[key] = receiver
+        receiver.handleUpdate(lastPartials, lastTransactionExtraStore, restoredModel)
+      }
+    }
+  }
+
+  internal fun isRegistered(key: Any): Boolean = updateReceivers.containsKey(key)
+
+  internal fun unregisterFromUpdates(key: Any) {
+    updateReceivers.remove(key)
+  }
+
+  internal fun getCachedData(
+    updateRanges: (CartesianChartModel?) -> CartesianChartRanges,
+    hostExtraStore: ExtraStore,
+  ): CachedData? =
+    if (mutex.tryLock()) {
+      try {
+        cachedModel?.let { model -> CachedData(model, updateRanges(model), hostExtraStore.copy()) }
+      } catch (_: Exception) {
+        null
+      } finally {
+        mutex.unlock()
+      }
+    } else {
+      null
+    }
+
+  internal class CachedData(
+    val model: CartesianChartModel,
+    val ranges: CartesianChartRanges,
+    val extraStore: ExtraStore,
+  ) {
+    operator fun component1(): CartesianChartModel = model
+
+    operator fun component2(): CartesianChartRanges = ranges
+
+    operator fun component3(): ExtraStore = extraStore
+  }
+
+  /**
+   * (1) Creates a [Transaction], (2) invokes [block], and (3) runs a data update, returning once
+   * the update is complete. Between steps 2 and 3, if there’s already an update in progress, the
+   * current coroutine is suspended until the ongoing update’s completion.
+   */
+  public suspend fun runTransaction(block: Transaction.() -> Unit) {
+    withContext(Dispatchers.Default) { Transaction().also(block).commit() }
+  }
+
+  /** Handles data updates. This is used via [runTransaction]. */
+  public inner class Transaction internal constructor() {
+    private val newPartials = mutableListOf<CartesianLayerModel.Partial>()
+    private val newExtraStore = MutableExtraStore()
+
+    /** Adds a [CartesianLayerModel.Partial]. */
+    public fun add(partial: CartesianLayerModel.Partial) {
+      newPartials.add(partial)
+    }
+
+    /**
+     * Allows for adding auxiliary values, which can later be retrieved via
+     * [CartesianChartModel.extraStore].
+     */
+    public fun extras(block: (MutableExtraStore) -> Unit) {
+      block(newExtraStore)
+    }
+
+    internal suspend fun commit() {
+      update(newPartials, newExtraStore)
+    }
+  }
+
+  private inner class UpdateReceiver(
+    val cancelAnimation: suspend () -> Unit,
+    val startAnimation: (transformModel: suspend (key: Any, fraction: Float) -> Unit) -> Unit,
+    val onUpdate: (CartesianChartModel?, CartesianChartRanges, ExtraStore) -> Unit,
+    val hostExtraStore: MutableExtraStore,
+    val prepareForTransformation:
+      (CartesianChartModel?, MutableExtraStore, CartesianChartRanges) -> Unit,
+    val transform: suspend (MutableExtraStore, Float) -> Unit,
+    val updateRanges: (CartesianChartModel?) -> CartesianChartRanges,
+  ) {
+    suspend fun handleUpdate(
+      partials: List<CartesianLayerModel.Partial>,
+      transactionExtraStore: ExtraStore,
+      restoredModel: CartesianChartModel? = null,
+    ) {
+      cancelAnimation()
+      if (partials.hashCode() == cachedModelPartialHashCode) {
+        val model = cachedModel?.copy(transactionExtraStore)
+        if (model == restoredModel) return
+        onUpdate(model, updateRanges(model), hostExtraStore.copy())
+      } else {
+        val model = getModel(partials, transactionExtraStore)
+        val ranges = updateRanges(model)
+        prepareForTransformation(model, hostExtraStore, ranges)
+        startAnimation { key, fraction -> transform(key, fraction, model, ranges) }
+      }
+    }
+  }
+
+  private suspend fun getDispatcher(): CoroutineDispatcher {
+    val context = currentCoroutineContext()
+    return if (context[PreviewContextKey] != null) Dispatchers.Unconfined else Dispatchers.Default
+  }
+}
+
+internal object PreviewContextKey : CoroutineContext.Key<PreviewContext>
+
+internal object PreviewContext : AbstractCoroutineContextElement(PreviewContextKey)

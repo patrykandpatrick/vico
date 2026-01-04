@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2026 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,15 +24,15 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidViewBinding
-import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
-import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
-import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
-import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
-import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
-import com.patrykandpatrick.vico.core.cartesian.marker.ColumnCartesianLayerMarkerTarget
-import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
-import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.sample.views.databinding.RockMetalRatiosBinding
+import com.patrykandpatrick.vico.views.cartesian.axis.HorizontalAxis
+import com.patrykandpatrick.vico.views.cartesian.axis.VerticalAxis
+import com.patrykandpatrick.vico.views.cartesian.data.CartesianChartModelProducer
+import com.patrykandpatrick.vico.views.cartesian.data.CartesianValueFormatter
+import com.patrykandpatrick.vico.views.cartesian.data.columnSeries
+import com.patrykandpatrick.vico.views.cartesian.marker.ColumnCartesianLayerMarkerTarget
+import com.patrykandpatrick.vico.views.cartesian.marker.DefaultCartesianMarker
+import com.patrykandpatrick.vico.views.common.data.ExtraStore
 import java.text.DecimalFormat
 
 private val data =
