@@ -1,6 +1,6 @@
 [versions]
 activity = "1.12.2"
-agp = "8.13.2"
+agp = "8.12.0"
 androidXAnnotation = "1.9.1"
 androidXCore = "1.17.0"
 appcompat = "1.7.1"
@@ -8,21 +8,25 @@ composeBom = "2025.12.01"
 composeMultiplatform = "1.9.3"
 composeNavigation = "2.9.1"
 coroutines = "1.10.2"
+customViewPooling = "1.1.0"
 dateTime = "0.7.1"
 dokka = "2.1.0"
+emoji2 = "1.6.0"
 jupiter = "6.0.1"
 kotlin = "2.3.0"
 lifecycleRuntime = "2.9.6"
+lifecycleViewModel = "2.10.0"
 material = "1.13.0"
 materialIcons = "1.7.3"
 mavenPublish = "0.35.0"
 mockK = "1.14.7"
 testCore = "1.7.0"
+uiTooling = "1.10.0"
 
 [libraries]
 activityCompose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity" }
 androidApplication = { group = "com.android.application", name = "com.android.application.gradle.plugin", version.ref = "agp" }
-androidLibrary = { group = "com.android.library", name = "com.android.library.gradle.plugin", version.ref = "agp" }
+androidKotlinMultiplatformLibrary = { group = "com.android.kotlin.multiplatform.library", name = "com.android.kotlin.multiplatform.library.gradle.plugin", version.ref = "agp" }
 androidXAnnotation = { group = "androidx.annotation", name = "annotation", version.ref = "androidXAnnotation" }
 androidXCore = { group = "androidx.core", name = "core-ktx", version.ref = "androidXCore" }
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
@@ -36,10 +40,11 @@ composeNavigation = { group = "org.jetbrains.androidx.navigation", name = "navig
 composePreview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 composeRuntimeAnnotation = { group = "androidx.compose.runtime", name = "runtime-annotation" }
 composeUI = { group = "androidx.compose.ui", name = "ui" }
-composeUITooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 composeViewBinding = { group = "androidx.compose.ui", name = "ui-viewbinding" }
 coroutinesCore = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
+customViewPooling = { group = "androidx.customview", name = "customview-poolingcontainer", version.ref = "customViewPooling" }
 dokka = { group = "org.jetbrains.dokka", name = "dokka-gradle-plugin", version.ref = "dokka" }
+emoji2 = { group = "androidx.emoji2", name = "emoji2", version.ref = "emoji2" }
 jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "jupiter" }
 jupiterParams = { module = "org.junit.jupiter:junit-jupiter-params", version.ref = "jupiter" }
 kotlinAndroid = { group = "org.jetbrains.kotlin.android", name = "org.jetbrains.kotlin.android.gradle.plugin", version.ref = "kotlin" }
@@ -48,6 +53,7 @@ kotlinStdLib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version
 kotlinTest = { group = "org.jetbrains.kotlin", name = "kotlin-test", version.ref = "kotlin" }
 kotlinDateTime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "dateTime" }
 lifecycleRuntime = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycleRuntime" }
+lifecycleViewModel = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycleViewModel" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 materialIcons = { group = "org.jetbrains.compose.material", name = "material-icons-core", version.ref = "materialIcons" }
 mavenPublish = { group = "com.vanniktech.maven.publish", name = "com.vanniktech.maven.publish.gradle.plugin", version.ref = "mavenPublish" }

@@ -14,23 +14,22 @@
  * limitations under the License.
  */
 
+import com.android.build.api.dsl.androidLibrary
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-  id("com.android.library")
+  id("com.android.kotlin.multiplatform.library")
   id("org.jetbrains.compose")
   id("org.jetbrains.kotlin.multiplatform")
   id("org.jetbrains.kotlin.plugin.compose")
 }
 
-android {
-  configure()
-  namespace = "com.patrykandpatrick.vico.sample.compose"
-}
-
 kotlin {
-  androidTarget { compilerOptions { jvmTarget = JvmTarget.JVM_11 } }
+  @Suppress("UnstableApiUsage")
+  androidLibrary {
+    configure()
+    namespace = "com.patrykandpatrick.vico.sample.compose"
+  }
   listOf(iosX64(), iosArm64(), iosSimulatorArm64()).forEach { iosTarget ->
     iosTarget.binaries.framework {
       baseName = project.name
@@ -48,7 +47,15 @@ kotlin {
     binaries.executable()
   }
   sourceSets {
+    androidMain.dependencies {
+      compileOnly(compose.uiTooling)
+      compileOnly(libs.customViewPooling)
+      compileOnly(libs.lifecycleViewModel)
+      compileOnly(libs.activityCompose)
+      compileOnly(libs.emoji2)
+    }
     commonMain.dependencies {
+      implementation(compose.components.uiToolingPreview)
       implementation(compose.foundation)
       implementation(compose.ui)
       implementation(compose.material3)

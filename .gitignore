@@ -1,4 +1,9 @@
 *.iml
+*.xcodeproj/*
+!*.xcodeproj/project.pbxproj
+!*.xcodeproj/project.xcworkspace/
+!*.xcodeproj/xcshareddata/
+!*.xcworkspace/contents.xcworkspacedata
 .DS_Store
 .cxx/
 .externalNativeBuild/
@@ -9,3 +14,5 @@
 /captures/
 /local.properties
 build/
+xcshareddata/WorkspaceSettings.xcsettings
+xcuserdata/

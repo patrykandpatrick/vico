@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2026 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
+import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryTarget
 import com.android.build.gradle.LibraryExtension
 import org.gradle.api.JavaVersion
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 fun LibraryExtension.configure() {
   buildTypes {
@@ -30,4 +32,10 @@ fun LibraryExtension.configure() {
   }
   compileSdk = Versions.COMPILE_SDK
   defaultConfig { minSdk = Versions.MIN_SDK }
+}
+
+fun KotlinMultiplatformAndroidLibraryTarget.configure() {
+  compilerOptions { jvmTarget.set(JvmTarget.JVM_11) }
+  compileSdk = Versions.COMPILE_SDK
+  minSdk = Versions.MIN_SDK
 }
