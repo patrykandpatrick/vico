@@ -74,5 +74,5 @@ public fun MeasuringContext.pointerPositionToX(
   val drawingStart =
     layerBounds.getStart(isLtr) + layoutDirectionMultiplier * layerDimensions.startPadding
   val pointerX = pointerPosition.x - drawingStart + scrollValue
-  return ranges.minX + pointerX / layerDimensions.xSpacing
+  return ranges.minX + pointerX * ranges.xStep / layerDimensions.xSpacing
 }
