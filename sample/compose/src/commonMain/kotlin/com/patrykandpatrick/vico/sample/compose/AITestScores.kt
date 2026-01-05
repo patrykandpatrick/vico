@@ -44,6 +44,7 @@ import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.common.data.ExtraStore
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 private val LegendLabelKey = ExtraStore.Key<Set<String>>()
 
@@ -87,15 +88,7 @@ private fun rememberHorizontalLine(): HorizontalLine {
 }
 
 @Composable
-fun ComposeAITestScores(modifier: Modifier = Modifier) {
-  val modelProducer = remember { CartesianChartModelProducer() }
-  LaunchedEffect(Unit) {
-    modelProducer.runTransaction {
-      // Learn more: https://patrykandpatrick.com/z5ah6v.
-      lineSeries { data.forEach { (_, map) -> series(map.keys, map.values) } }
-      extras { extraStore -> extraStore[LegendLabelKey] = data.keys }
-    }
-  }
+private fun ComposeAITestScores(modelProducer: CartesianChartModelProducer, modifier: Modifier = Modifier) {
   val lineColors = listOf(Color(0xff916cda), Color(0xffd877d8), Color(0xfff094bb))
   val legendItemLabelComponent = rememberTextComponent(TextStyle(vicoTheme.textColor, 12.sp))
   CartesianChartHost(
@@ -138,4 +131,32 @@ fun ComposeAITestScores(modifier: Modifier = Modifier) {
     modifier.height(294.dp),
     rememberVicoScrollState(scrollEnabled = false),
   )
+}
+
+@Composable
+fun ComposeAITestScores(modifier: Modifier = Modifier) {
+  val modelProducer = remember { CartesianChartModelProducer() }
+  LaunchedEffect(Unit) {
+    modelProducer.runTransaction {
+      // Learn more: https://patrykandpatrick.com/z5ah6v.
+      lineSeries { data.forEach { (_, map) -> series(map.keys, map.values) } }
+      extras { extraStore -> extraStore[LegendLabelKey] = data.keys }
+    }
+  }
+  ComposeAITestScores(modelProducer, modifier)
+}
+
+@Composable
+@Preview
+private fun ComposeAITestScoresPreview() {
+  val modelProducer = remember { CartesianChartModelProducer() }
+  // Use `runBlocking` only for previews, which don’t support asynchronous execution.
+  runBlocking?.invoke {
+    modelProducer.runTransaction {
+      // Learn more: https://patrykandpatrick.com/z5ah6v.
+      lineSeries { data.forEach { (_, map) -> series(map.keys, map.values) } }
+      extras { extraStore -> extraStore[LegendLabelKey] = data.keys }
+    }
+  }
+  PreviewBox { ComposeAITestScores(modelProducer) }
 }
