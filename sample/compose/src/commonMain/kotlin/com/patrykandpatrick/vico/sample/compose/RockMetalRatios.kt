@@ -42,6 +42,7 @@ import com.patrykandpatrick.vico.compose.cartesian.rememberVicoScrollState
 import com.patrykandpatrick.vico.compose.common.Fill
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.common.data.ExtraStore
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 private const val Y_DIVISOR = 1000
 
@@ -76,15 +77,10 @@ private val data =
   mapOf("Ag" to 22378, "Mo" to 4478, "U" to 3624, "Sn" to 2231, "Li" to 1634, "W" to 1081)
 
 @Composable
-fun ComposeRockMetalRatios(modifier: Modifier = Modifier) {
-  val modelProducer = remember { CartesianChartModelProducer() }
-  LaunchedEffect(Unit) {
-    modelProducer.runTransaction {
-      // Learn more: https://patrykandpatrick.com/3aqy4o.
-      columnSeries { series(data.values) }
-      extras { it[BottomAxisLabelKey] = data.keys.toList() }
-    }
-  }
+private fun ComposeRockMetalRatios(
+  modelProducer: CartesianChartModelProducer,
+  modifier: Modifier = Modifier,
+) {
   CartesianChartHost(
     chart =
       rememberCartesianChart(
@@ -106,4 +102,32 @@ fun ComposeRockMetalRatios(modifier: Modifier = Modifier) {
     modifier = modifier.height(216.dp),
     scrollState = rememberVicoScrollState(scrollEnabled = false),
   )
+}
+
+@Composable
+fun ComposeRockMetalRatios(modifier: Modifier = Modifier) {
+  val modelProducer = remember { CartesianChartModelProducer() }
+  LaunchedEffect(Unit) {
+    modelProducer.runTransaction {
+      // Learn more: https://patrykandpatrick.com/3aqy4o.
+      columnSeries { series(data.values) }
+      extras { it[BottomAxisLabelKey] = data.keys.toList() }
+    }
+  }
+  ComposeRockMetalRatios(modelProducer, modifier)
+}
+
+@Composable
+@Preview
+private fun ComposeRockMetalRatiosPreview() {
+  val modelProducer = remember { CartesianChartModelProducer() }
+  // Use `runBlocking` only for previews, which don’t support asynchronous execution.
+  runBlocking?.invoke {
+    modelProducer.runTransaction {
+      // Learn more: https://patrykandpatrick.com/3aqy4o.
+      columnSeries { series(data.values) }
+      extras { it[BottomAxisLabelKey] = data.keys.toList() }
+    }
+  }
+  PreviewBox { ComposeRockMetalRatios(modelProducer) }
 }

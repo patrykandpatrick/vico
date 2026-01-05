@@ -43,6 +43,7 @@ import com.patrykandpatrick.vico.compose.common.component.ShapeComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.common.data.ExtraStore
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 private val LegendLabelKey = ExtraStore.Key<Set<String>>()
 
@@ -62,15 +63,10 @@ private val y =
   )
 
 @Composable
-fun ComposeDailyDigitalMediaUse(modifier: Modifier = Modifier) {
-  val modelProducer = remember { CartesianChartModelProducer() }
-  LaunchedEffect(Unit) {
-    modelProducer.runTransaction {
-      // Learn more: https://patrykandpatrick.com/3aqy4o.
-      columnSeries { y.values.forEach { series(x, it) } }
-      extras { it[LegendLabelKey] = y.keys }
-    }
-  }
+private fun ComposeDailyDigitalMediaUse(
+  modelProducer: CartesianChartModelProducer,
+  modifier: Modifier = Modifier,
+) {
   val columnColors = listOf(Color(0xff6438a7), Color(0xff3490de), Color(0xff73e8dc))
   val legendItemLabelComponent = rememberTextComponent(TextStyle(vicoTheme.textColor))
   CartesianChartHost(
@@ -118,4 +114,32 @@ fun ComposeDailyDigitalMediaUse(modifier: Modifier = Modifier) {
     modifier = modifier.height(248.dp),
     zoomState = rememberVicoZoomState(zoomEnabled = false),
   )
+}
+
+@Composable
+fun ComposeDailyDigitalMediaUse(modifier: Modifier = Modifier) {
+  val modelProducer = remember { CartesianChartModelProducer() }
+  LaunchedEffect(Unit) {
+    modelProducer.runTransaction {
+      // Learn more: https://patrykandpatrick.com/3aqy4o.
+      columnSeries { y.values.forEach { series(x, it) } }
+      extras { it[LegendLabelKey] = y.keys }
+    }
+  }
+  ComposeDailyDigitalMediaUse(modelProducer, modifier)
+}
+
+@Composable
+@Preview
+private fun ComposeDailyDigitalMediaUsePreview() {
+  val modelProducer = remember { CartesianChartModelProducer() }
+  // Use `runBlocking` only for previews, which don’t support asynchronous execution.
+  runBlocking?.invoke {
+    modelProducer.runTransaction {
+      // Learn more: https://patrykandpatrick.com/3aqy4o.
+      columnSeries { y.values.forEach { series(x, it) } }
+      extras { it[LegendLabelKey] = y.keys }
+    }
+  }
+  PreviewBox { ComposeDailyDigitalMediaUse(modelProducer) }
 }
