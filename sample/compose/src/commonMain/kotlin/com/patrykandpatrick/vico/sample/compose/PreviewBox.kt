@@ -26,6 +26,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun PreviewBox(content: @Composable BoxScope.() -> Unit) {
+internal fun PreviewBox(content: @Composable BoxScope.() -> Unit) {
   Box(modifier = Modifier.background(Color.White).padding(16.dp), content = content)
 }

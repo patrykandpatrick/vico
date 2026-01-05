@@ -95,7 +95,7 @@ fun ComposeElectricCarSales(modifier: Modifier = Modifier) {
 @Preview
 private fun ComposeElectricCarSalesPreview() {
   val modelProducer = remember { CartesianChartModelProducer() }
-  // Use `runBlocking` only for previews, which don't support asynchronous execution.
+  // Use `runBlocking` only for previews, which don’t support asynchronous execution.
   runBlocking?.invoke {
     modelProducer.runTransaction {
       // Learn more: https://patrykandpatrick.com/z5ah6v.
