@@ -41,6 +41,7 @@ import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.max
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 private const val RANGE_PROVIDER_BASE = 0.1
 
@@ -69,14 +70,10 @@ private fun getColumnProvider(positive: LineComponent, negative: LineComponent) 
   }
 
 @Composable
-fun ComposeTemperatureAnomalies(modifier: Modifier = Modifier) {
-  val modelProducer = remember { CartesianChartModelProducer() }
-  LaunchedEffect(Unit) {
-    modelProducer.runTransaction {
-      // Learn more: https://patrykandpatrick.com/3aqy4o.
-      columnSeries { series(x, y) }
-    }
-  }
+private fun ComposeTemperatureAnomalies(
+  modelProducer: CartesianChartModelProducer,
+  modifier: Modifier = Modifier,
+) {
   val positiveColumn =
     rememberLineComponent(
       fill = Fill(Color(0xff0ac285)),
@@ -108,6 +105,32 @@ fun ComposeTemperatureAnomalies(modifier: Modifier = Modifier) {
     modifier = modifier.height(234.dp),
     scrollState = rememberVicoScrollState(initialScroll = Scroll.Absolute.End),
   )
+}
+
+@Composable
+fun ComposeTemperatureAnomalies(modifier: Modifier = Modifier) {
+  val modelProducer = remember { CartesianChartModelProducer() }
+  LaunchedEffect(Unit) {
+    modelProducer.runTransaction {
+      // Learn more: https://patrykandpatrick.com/3aqy4o.
+      columnSeries { series(x, y) }
+    }
+  }
+  ComposeTemperatureAnomalies(modelProducer, modifier)
+}
+
+@Composable
+@Preview
+private fun ComposeTemperatureAnomaliesPreview() {
+  val modelProducer = remember { CartesianChartModelProducer() }
+  // Use `runBlocking` only for previews, which don't support asynchronous execution.
+  runBlocking?.invoke {
+    modelProducer.runTransaction {
+      // Learn more: https://patrykandpatrick.com/3aqy4o.
+      columnSeries { series(x, y) }
+    }
+  }
+  PreviewBox { ComposeTemperatureAnomalies(modelProducer) }
 }
 
 private val x = (1940..2024).toList()

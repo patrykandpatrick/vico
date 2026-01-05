@@ -38,6 +38,7 @@ import com.patrykandpatrick.vico.compose.cartesian.marker.DefaultCartesianMarker
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoScrollState
 import com.patrykandpatrick.vico.compose.common.Fill
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 private val RangeProvider = CartesianLayerRangeProvider.fixed(maxY = 100.0)
 private val StartAxisValueFormatter = CartesianValueFormatter.decimal(suffix = "%")
@@ -46,14 +47,10 @@ private val x = (2010..2023).toList()
 private val y = listOf<Number>(0.28, 1.4, 3.1, 5.8, 15, 22, 29, 39, 49, 56, 75, 86, 89, 93)
 
 @Composable
-fun ComposeElectricCarSales(modifier: Modifier = Modifier) {
-  val modelProducer = remember { CartesianChartModelProducer() }
-  LaunchedEffect(Unit) {
-    modelProducer.runTransaction {
-      // Learn more: https://patrykandpatrick.com/z5ah6v.
-      lineSeries { series(x, y) }
-    }
-  }
+private fun ComposeElectricCarSales(
+  modelProducer: CartesianChartModelProducer,
+  modifier: Modifier = Modifier,
+) {
   val lineColor = Color(0xffa485e0)
   CartesianChartHost(
     rememberCartesianChart(
@@ -80,4 +77,30 @@ fun ComposeElectricCarSales(modifier: Modifier = Modifier) {
     modifier.height(216.dp),
     rememberVicoScrollState(scrollEnabled = false),
   )
+}
+
+@Composable
+fun ComposeElectricCarSales(modifier: Modifier = Modifier) {
+  val modelProducer = remember { CartesianChartModelProducer() }
+  LaunchedEffect(Unit) {
+    modelProducer.runTransaction {
+      // Learn more: https://patrykandpatrick.com/z5ah6v.
+      lineSeries { series(x, y) }
+    }
+  }
+  ComposeElectricCarSales(modelProducer, modifier)
+}
+
+@Composable
+@Preview
+private fun ComposeElectricCarSalesPreview() {
+  val modelProducer = remember { CartesianChartModelProducer() }
+  // Use `runBlocking` only for previews, which don't support asynchronous execution.
+  runBlocking?.invoke {
+    modelProducer.runTransaction {
+      // Learn more: https://patrykandpatrick.com/z5ah6v.
+      lineSeries { series(x, y) }
+    }
+  }
+  PreviewBox { ComposeElectricCarSales(modelProducer) }
 }

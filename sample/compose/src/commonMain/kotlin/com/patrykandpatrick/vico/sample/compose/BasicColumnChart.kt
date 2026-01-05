@@ -27,16 +27,13 @@ import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModelProdu
 import com.patrykandpatrick.vico.compose.cartesian.data.columnSeries
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
-fun ComposeBasicColumnChart(modifier: Modifier = Modifier) {
-  val modelProducer = remember { CartesianChartModelProducer() }
-  LaunchedEffect(Unit) {
-    modelProducer.runTransaction {
-      // Learn more: https://patrykandpatrick.com/3aqy4o.
-      columnSeries { series(5, 6, 5, 2, 11, 8, 5, 2, 15, 11, 8, 13, 12, 10, 2, 7) }
-    }
-  }
+private fun ComposeBasicColumnChart(
+  modelProducer: CartesianChartModelProducer,
+  modifier: Modifier = Modifier,
+) {
   CartesianChartHost(
     chart =
       rememberCartesianChart(
@@ -47,4 +44,30 @@ fun ComposeBasicColumnChart(modifier: Modifier = Modifier) {
     modelProducer = modelProducer,
     modifier = modifier,
   )
+}
+
+@Composable
+fun ComposeBasicColumnChart(modifier: Modifier = Modifier) {
+  val modelProducer = remember { CartesianChartModelProducer() }
+  LaunchedEffect(Unit) {
+    modelProducer.runTransaction {
+      // Learn more: https://patrykandpatrick.com/3aqy4o.
+      columnSeries { series(5, 6, 5, 2, 11, 8, 5, 2, 15, 11, 8, 13, 12, 10, 2, 7) }
+    }
+  }
+  ComposeBasicColumnChart(modelProducer, modifier)
+}
+
+@Composable
+@Preview
+private fun ComposeBasicColumnChartPreview() {
+  val modelProducer = remember { CartesianChartModelProducer() }
+  // Use `runBlocking` only for previews, which don't support asynchronous execution.
+  runBlocking?.invoke {
+    modelProducer.runTransaction {
+      // Learn more: https://patrykandpatrick.com/3aqy4o.
+      columnSeries { series(5, 6, 5, 2, 11, 8, 5, 2, 15, 11, 8, 13, 12, 10, 2, 7) }
+    }
+  }
+  PreviewBox { ComposeBasicColumnChart(modelProducer) }
 }

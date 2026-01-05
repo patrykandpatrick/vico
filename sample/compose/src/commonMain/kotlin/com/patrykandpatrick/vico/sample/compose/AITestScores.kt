@@ -88,7 +88,10 @@ private fun rememberHorizontalLine(): HorizontalLine {
 }
 
 @Composable
-private fun ComposeAITestScores(modelProducer: CartesianChartModelProducer, modifier: Modifier = Modifier) {
+private fun ComposeAITestScores(
+  modelProducer: CartesianChartModelProducer,
+  modifier: Modifier = Modifier,
+) {
   val lineColors = listOf(Color(0xff916cda), Color(0xffd877d8), Color(0xfff094bb))
   val legendItemLabelComponent = rememberTextComponent(TextStyle(vicoTheme.textColor, 12.sp))
   CartesianChartHost(

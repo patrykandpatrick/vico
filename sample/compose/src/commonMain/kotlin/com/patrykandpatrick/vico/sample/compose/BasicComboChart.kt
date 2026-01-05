@@ -35,18 +35,13 @@ import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLa
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.common.Fill
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
-fun ComposeBasicComboChart(modifier: Modifier = Modifier) {
-  val modelProducer = remember { CartesianChartModelProducer() }
-  LaunchedEffect(Unit) {
-    modelProducer.runTransaction {
-      // Learn more: https://patrykandpatrick.com/3aqy4o.
-      columnSeries { series(4, 15, 5, 8, 10, 15, 9, 10, 7, 9, 10, 12, 2, 9, 5, 14) }
-      // Learn more: https://patrykandpatrick.com/z5ah6v.
-      lineSeries { series(1, 5, 4, 7, 3, 14, 5, 9, 9, 14, 7, 13, 14, 4, 10, 12) }
-    }
-  }
+private fun ComposeBasicComboChart(
+  modelProducer: CartesianChartModelProducer,
+  modifier: Modifier = Modifier,
+) {
   CartesianChartHost(
     rememberCartesianChart(
       rememberColumnCartesianLayer(
@@ -65,4 +60,34 @@ fun ComposeBasicComboChart(modifier: Modifier = Modifier) {
     modelProducer,
     modifier,
   )
+}
+
+@Composable
+fun ComposeBasicComboChart(modifier: Modifier = Modifier) {
+  val modelProducer = remember { CartesianChartModelProducer() }
+  LaunchedEffect(Unit) {
+    modelProducer.runTransaction {
+      // Learn more: https://patrykandpatrick.com/3aqy4o.
+      columnSeries { series(4, 15, 5, 8, 10, 15, 9, 10, 7, 9, 10, 12, 2, 9, 5, 14) }
+      // Learn more: https://patrykandpatrick.com/z5ah6v.
+      lineSeries { series(1, 5, 4, 7, 3, 14, 5, 9, 9, 14, 7, 13, 14, 4, 10, 12) }
+    }
+  }
+  ComposeBasicComboChart(modelProducer, modifier)
+}
+
+@Composable
+@Preview
+private fun ComposeBasicComboChartPreview() {
+  val modelProducer = remember { CartesianChartModelProducer() }
+  // Use `runBlocking` only for previews, which don't support asynchronous execution.
+  runBlocking?.invoke {
+    modelProducer.runTransaction {
+      // Learn more: https://patrykandpatrick.com/3aqy4o.
+      columnSeries { series(4, 15, 5, 8, 10, 15, 9, 10, 7, 9, 10, 12, 2, 9, 5, 14) }
+      // Learn more: https://patrykandpatrick.com/z5ah6v.
+      lineSeries { series(1, 5, 4, 7, 3, 14, 5, 9, 9, 14, 7, 13, 14, 4, 10, 12) }
+    }
+  }
+  PreviewBox { ComposeBasicComboChart(modelProducer) }
 }

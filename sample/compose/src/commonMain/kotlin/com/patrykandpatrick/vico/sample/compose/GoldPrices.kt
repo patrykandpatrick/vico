@@ -39,6 +39,7 @@ import kotlin.math.ceil
 import kotlin.math.floor
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.format.Padding
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 private const val Y_STEP = 10.0
 
@@ -74,14 +75,10 @@ private val BottomAxisValueFormatter =
 private val MarkerValueFormatter = DefaultCartesianMarker.ValueFormatter.default(prefix = "$")
 
 @Composable
-fun ComposeGoldPrices(modifier: Modifier = Modifier) {
-  val modelProducer = remember { CartesianChartModelProducer() }
-  LaunchedEffect(Unit) {
-    modelProducer.runTransaction {
-      // Learn more: https://patrykandpatrick.com/r8d20v.
-      candlestickSeries(x, opening, closing, low, high)
-    }
-  }
+private fun ComposeGoldPrices(
+  modelProducer: CartesianChartModelProducer,
+  modifier: Modifier = Modifier,
+) {
   CartesianChartHost(
     rememberCartesianChart(
       rememberCandlestickCartesianLayer(rangeProvider = RangeProvider),
@@ -97,6 +94,32 @@ fun ComposeGoldPrices(modifier: Modifier = Modifier) {
     modelProducer,
     modifier.height(216.dp),
   )
+}
+
+@Composable
+fun ComposeGoldPrices(modifier: Modifier = Modifier) {
+  val modelProducer = remember { CartesianChartModelProducer() }
+  LaunchedEffect(Unit) {
+    modelProducer.runTransaction {
+      // Learn more: https://patrykandpatrick.com/r8d20v.
+      candlestickSeries(x, opening, closing, low, high)
+    }
+  }
+  ComposeGoldPrices(modelProducer, modifier)
+}
+
+@Composable
+@Preview
+private fun ComposeGoldPricesPreview() {
+  val modelProducer = remember { CartesianChartModelProducer() }
+  // Use `runBlocking` only for previews, which don't support asynchronous execution.
+  runBlocking?.invoke {
+    modelProducer.runTransaction {
+      // Learn more: https://patrykandpatrick.com/r8d20v.
+      candlestickSeries(x, opening, closing, low, high)
+    }
+  }
+  PreviewBox { ComposeGoldPrices(modelProducer) }
 }
 
 private val x = (0..16).toList() + (18..23).toList()
