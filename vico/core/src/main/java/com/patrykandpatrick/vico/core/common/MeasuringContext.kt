@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2026 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -84,5 +84,5 @@ public fun MeasuringContext.pointerPositionToX(
   val drawingStart =
     layerBounds.getStart(isLtr) + layoutDirectionMultiplier * layerDimensions.startPadding
   val pointerX = pointerPosition.x - drawingStart + scrollValue
-  return ranges.minX + pointerX / layerDimensions.xSpacing
+  return ranges.minX + pointerX * ranges.xStep / layerDimensions.xSpacing
 }
