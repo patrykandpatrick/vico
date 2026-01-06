@@ -60,7 +60,7 @@ public interface Axis<P : Axis.Position> :
   public fun updateAxisDimensions(
     context: CartesianDrawingContext,
     axisDimensions: MutableAxisDimensions,
-  ) {}
+  )
 
   /** Specifies the position of an [Axis]. */
   public sealed interface Position {
