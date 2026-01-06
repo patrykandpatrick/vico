@@ -52,7 +52,7 @@ public abstract class BaseAxis<P : Axis.Position>(
   protected val guideline: LineComponent?,
   protected val size: Size,
   protected val titleComponent: TextComponent?,
-  protected val title: ((ExtraStore) -> CharSequence?)?,
+  protected val title: ((ExtraStore) -> CharSequence)?,
 ) : Axis<P> {
   private val restrictedBounds: MutableList<Rect> = mutableListOf()
 
