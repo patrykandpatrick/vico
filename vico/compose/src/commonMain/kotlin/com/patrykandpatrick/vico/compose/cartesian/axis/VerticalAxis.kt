@@ -69,7 +69,7 @@ protected constructor(
   public val itemPlacer: ItemPlacer,
   size: Size,
   titleComponent: TextComponent?,
-  title: CharSequence?,
+  title: ((ExtraStore) -> CharSequence?)?,
 ) :
   BaseAxis<P>(
     line,
@@ -110,7 +110,7 @@ protected constructor(
     guideline: LineComponent?,
     itemPlacer: ItemPlacer,
     titleComponent: TextComponent?,
-    title: CharSequence?,
+    title: ((ExtraStore) -> CharSequence?)?,
   ) : this(
     position,
     line,
@@ -228,7 +228,7 @@ protected constructor(
         )
       }
 
-      title?.let { title ->
+      title?.invoke(extraStore)?.let { title ->
         titleComponent?.draw(
           context = this,
           text = title,
@@ -370,6 +370,7 @@ protected constructor(
         is Size.Auto -> {
           val titleComponentWidth =
             title
+              ?.invoke(extraStore)
               ?.let { title ->
                 titleComponent?.getWidth(
                   context = this,
@@ -451,7 +452,7 @@ protected constructor(
     itemPlacer: ItemPlacer = this.itemPlacer,
     size: Size = this.size,
     titleComponent: TextComponent? = this.titleComponent,
-    title: CharSequence? = this.title,
+    title: ((ExtraStore) -> CharSequence?)? = this.title,
   ): VerticalAxis<P> =
     VerticalAxis(
       position,
@@ -606,7 +607,7 @@ protected constructor(
       itemPlacer: ItemPlacer = remember { step() },
       size: Size = Size.Auto(),
       titleComponent: TextComponent? = null,
-      title: CharSequence? = null,
+      title: ((ExtraStore) -> CharSequence?)? = null,
     ): VerticalAxis<Axis.Position.Vertical.Start> =
       remember(
         line,
@@ -656,7 +657,7 @@ protected constructor(
       itemPlacer: ItemPlacer = remember { step() },
       size: Size = Size.Auto(),
       titleComponent: TextComponent? = null,
-      title: CharSequence? = null,
+      title: ((ExtraStore) -> CharSequence?)? = null,
     ): VerticalAxis<Axis.Position.Vertical.End> =
       remember(
         line,
