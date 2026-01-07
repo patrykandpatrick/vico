@@ -24,6 +24,7 @@ import com.patrykandpatrick.vico.compose.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.compose.common.MeasuringContext
 import com.patrykandpatrick.vico.compose.common.component.LineComponent
 import com.patrykandpatrick.vico.compose.common.component.TextComponent
+import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 import com.patrykandpatrick.vico.compose.common.orZero
 import com.patrykandpatrick.vico.compose.common.setAll
 
@@ -39,7 +40,7 @@ import com.patrykandpatrick.vico.compose.common.setAll
  * @property guideline used for the guidelines.
  * @property size determines how the [BaseAxis] sizes itself.
  * @property titleComponent the title [TextComponent].
- * @property title the title text.
+ * @property title returns the title text.
  */
 public abstract class BaseAxis<P : Axis.Position>(
   protected val line: LineComponent?,
@@ -51,7 +52,7 @@ public abstract class BaseAxis<P : Axis.Position>(
   protected val guideline: LineComponent?,
   protected val size: Size,
   protected val titleComponent: TextComponent?,
-  protected val title: CharSequence?,
+  protected val title: (ExtraStore) -> CharSequence?,
 ) : Axis<P> {
   private val restrictedBounds: MutableList<Rect> = mutableListOf()
 

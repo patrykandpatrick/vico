@@ -32,6 +32,7 @@ import com.patrykandpatrick.vico.views.cartesian.layer.CartesianLayerPadding
 import com.patrykandpatrick.vico.views.common.Defaults
 import com.patrykandpatrick.vico.views.common.Defaults.FADING_EDGE_VISIBILITY_THRESHOLD_DP
 import com.patrykandpatrick.vico.views.common.Position
+import com.patrykandpatrick.vico.views.common.data.ExtraStore
 import com.patrykandpatrick.vico.views.common.hasFlag
 import com.patrykandpatrick.vico.views.common.shape.DashedShape
 
@@ -149,7 +150,8 @@ internal class ThemeHandler(private val context: Context, attrs: AttributeSet?) 
         } else {
           null
         }
-      val title = axisStyle.getString(R.styleable.AxisStyle_title)
+      val title =
+        axisStyle.getString(R.styleable.AxisStyle_title).let { title -> { _: ExtraStore -> title } }
       @Suppress("UNCHECKED_CAST")
       when (position) {
         is Axis.Position.Horizontal ->

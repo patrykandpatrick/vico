@@ -57,7 +57,7 @@ protected constructor(
   public val itemPlacer: ItemPlacer,
   size: Size,
   titleComponent: TextComponent?,
-  title: CharSequence?,
+  title: (ExtraStore) -> CharSequence?,
 ) :
   BaseAxis<P>(
     line,
@@ -90,7 +90,7 @@ protected constructor(
     guideline: LineComponent?,
     itemPlacer: ItemPlacer,
     titleComponent: TextComponent?,
-    title: CharSequence?,
+    title: (ExtraStore) -> CharSequence?,
   ) : this(
     position,
     line,
@@ -223,7 +223,7 @@ protected constructor(
           },
       )
 
-      title?.let { title ->
+      title(model.extraStore)?.let { title ->
         titleComponent?.draw(
           context = this,
           x = bounds.centerX(),
@@ -467,7 +467,7 @@ protected constructor(
         is Size.Auto -> {
           val labelHeight = getMaxLabelHeight(layerDimensions, fullXRange, maxLabelWidth)
           val titleComponentHeight =
-            title
+            title(model.extraStore)
               ?.let { title ->
                 titleComponent?.getHeight(
                   context = context,
@@ -544,7 +544,7 @@ protected constructor(
     itemPlacer: ItemPlacer = this.itemPlacer,
     size: Size = this.size,
     titleComponent: TextComponent? = this.titleComponent,
-    title: CharSequence? = this.title,
+    title: (ExtraStore) -> CharSequence? = this.title,
   ): HorizontalAxis<P> =
     HorizontalAxis(
       position,
@@ -703,7 +703,7 @@ protected constructor(
       itemPlacer: ItemPlacer = ItemPlacer.aligned(),
       size: Size = Size.Auto(),
       titleComponent: TextComponent? = null,
-      title: CharSequence? = null,
+      title: (ExtraStore) -> CharSequence? = { null },
     ): HorizontalAxis<Axis.Position.Horizontal.Top> =
       HorizontalAxis(
         Axis.Position.Horizontal.Top,
@@ -732,7 +732,7 @@ protected constructor(
       itemPlacer: ItemPlacer = ItemPlacer.aligned(),
       size: Size = Size.Auto(),
       titleComponent: TextComponent? = null,
-      title: CharSequence? = null,
+      title: (ExtraStore) -> CharSequence? = { null },
     ): HorizontalAxis<Axis.Position.Horizontal.Bottom> =
       HorizontalAxis(
         Axis.Position.Horizontal.Bottom,
