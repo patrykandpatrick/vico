@@ -150,7 +150,8 @@ internal class ThemeHandler(private val context: Context, attrs: AttributeSet?) 
         } else {
           null
         }
-      val title = axisStyle.getString(R.styleable.AxisStyle_title)?.let { { _: ExtraStore -> it } }
+      val title: (ExtraStore) -> CharSequence? =
+        axisStyle.getString(R.styleable.AxisStyle_title)?.let { { _: ExtraStore -> it } } ?: { null }
       @Suppress("UNCHECKED_CAST")
       when (position) {
         is Axis.Position.Horizontal ->
