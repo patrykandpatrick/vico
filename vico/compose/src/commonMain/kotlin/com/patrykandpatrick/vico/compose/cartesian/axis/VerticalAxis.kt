@@ -369,8 +369,7 @@ protected constructor(
       when (size) {
         is Size.Auto -> {
           val titleComponentWidth =
-            title
-              ?.invoke(model.extraStore)
+            title(model.extraStore)
               ?.let { title ->
                 titleComponent?.getWidth(
                   context = this,

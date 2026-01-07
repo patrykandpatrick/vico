@@ -474,8 +474,7 @@ protected constructor(
         is Size.Auto -> {
           val labelHeight = getMaxLabelHeight(layerDimensions, fullXRange, maxLabelWidth)
           val titleComponentHeight =
-            title
-              ?.invoke(model.extraStore)
+            title(model.extraStore)
               ?.let { title ->
                 titleComponent?.getHeight(
                   context = context,
