@@ -109,7 +109,9 @@ internal inline fun <T : CartesianLayerModel.Entry> List<T>.forEachIn(
   }
   start = (start - padding).coerceAtLeast(0)
   end = (end + padding).coerceAtMost(lastIndex)
-  (start..end).forEach { action(this[it], getOrNull(it + 1)) }
+  for (i in start..end) {
+    action(this[i], getOrNull(i + 1))
+  }
 }
 
 internal fun <T : CartesianLayerModel.Entry> List<T>.getSliceIndices(
