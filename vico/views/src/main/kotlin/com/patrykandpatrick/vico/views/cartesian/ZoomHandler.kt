@@ -104,6 +104,10 @@ public class ZoomHandler(
 
     val minValue = minZoom.getValue(context, layerDimensions, bounds)
     val maxValue = maxZoom.getValue(context, layerDimensions, bounds)
+    require(maxValue >= minValue) {
+      "The zoom factor produced by `maxZoom` ($maxValue) must be no smaller than that produced " +
+        "by `minZoom` ($minValue)."
+    }
     valueRange = minValue..maxValue
     if (!overridden) value = initialZoom.getValue(context, layerDimensions, bounds)
     layerDimensions.scale(value)
