@@ -99,8 +99,8 @@ internal fun CartesianValueFormatter.formatForAxis(
 ): CharSequence =
   format(context, value, verticalAxisPosition).also {
     check(it.isNotBlank()) {
-      "`CartesianValueFormatter.format` returned a blank string. Use " +
-        "`HorizontalAxis.ItemPlacer` and `VerticalAxis.ItemPlacer`, not blank strings, to " +
-        "control which x and y values are labeled."
+      "`CartesianValueFormatter.format` returned a blank string. Use `HorizontalAxis.ItemPlacer` " +
+        "and `VerticalAxis.ItemPlacer`, not blank strings, to control which x- and y-values are " +
+        "labeled."
     }
   }
