@@ -133,13 +133,14 @@ protected constructor(
     axisDimensions: MutableAxisDimensions,
   ) {
     with(context) {
-      val lineExtensionLength = if (itemPlacer.getShiftTopLines(this)) tickThickness else 0f
+      val topExtension = if (itemPlacer.getShiftTopLines(this)) tickThickness else 0f
+      val bottomExtension = tickThickness
 
       axisDimensions.lineBounds.set(
         if (position.isLeft(this)) bounds.right - lineThickness else bounds.left,
-        bounds.top - lineExtensionLength,
+        bounds.top - topExtension,
         if (position.isLeft(this)) bounds.right else bounds.left + lineThickness,
-        bounds.bottom + lineExtensionLength,
+        bounds.bottom + bottomExtension,
       )
     }
   }
@@ -177,7 +178,8 @@ protected constructor(
             y = centerY,
           )
       }
-      val lineExtensionLength = if (itemPlacer.getShiftTopLines(this)) tickThickness else 0f
+      val topExtension = if (itemPlacer.getShiftTopLines(this)) tickThickness else 0f
+      val bottomExtension = tickThickness
       line?.drawVertical(
         context = context,
         x =
@@ -186,8 +188,8 @@ protected constructor(
           } else {
             bounds.left + lineThickness.half
           },
-        top = bounds.top - lineExtensionLength,
-        bottom = bounds.bottom + lineExtensionLength,
+        top = bounds.top - topExtension,
+        bottom = bounds.bottom + bottomExtension,
       )
     }
   }
