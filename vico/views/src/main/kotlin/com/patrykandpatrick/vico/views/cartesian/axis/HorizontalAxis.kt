@@ -476,10 +476,7 @@ protected constructor(
                 )
               }
               .orZero
-          (labelHeight +
-              titleComponentHeight +
-              (if (position == Axis.Position.Horizontal.Bottom) lineThickness else 0f) +
-              tickLength)
+          (labelHeight + titleComponentHeight + lineThickness + tickLength)
             .coerceAtMost(canvasSize.height / MAX_HEIGHT_DIVISOR)
             .coerceIn(size.minDp.pixels, size.maxDp.pixels)
         }
