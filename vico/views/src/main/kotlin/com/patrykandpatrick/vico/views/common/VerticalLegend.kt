@@ -44,6 +44,7 @@ public open class VerticalLegend<M : MeasuringContext, D : DrawingContext>(
   override fun getHeight(context: M, maxWidth: Float): Float =
     with(context) {
       itemManager.addItems(this)
+      if (itemManager.itemList.isEmpty()) return@with 0f
       itemManager.itemList.fold(0f) { sum, item ->
         sum +
           max(
