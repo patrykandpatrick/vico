@@ -32,6 +32,7 @@ dependencyResolutionManagement {
 rootProject.name = "Vico"
 
 include(
+  "sample:android-app",
   "sample:app",
   "sample:compose",
   "sample:views",

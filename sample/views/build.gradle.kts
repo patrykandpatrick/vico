@@ -28,7 +28,7 @@ android {
   namespace = "com.patrykandpatrick.vico.sample.views"
 }
 
-kotlin { compilerOptions { jvmTarget = JvmTarget.JVM_11 } }
+kotlin { compilerOptions { jvmTarget = JvmTarget.JVM_21 } }
 
 dependencies {
   implementation(platform(libs.composeBom))

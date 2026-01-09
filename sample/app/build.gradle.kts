@@ -14,42 +14,24 @@
  * limitations under the License.
  */
 
+import com.android.build.api.dsl.androidLibrary
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-  id("com.android.application")
+  id("com.android.kotlin.multiplatform.library")
   id("org.jetbrains.compose")
   id("org.jetbrains.kotlin.multiplatform")
   id("org.jetbrains.kotlin.plugin.compose")
   kotlin("plugin.serialization")
 }
 
-android {
-  buildTypes {
-    release {
-      isMinifyEnabled = false
-      proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"))
-    }
-  }
-  compileOptions {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
-  }
-  compileSdk = Versions.COMPILE_SDK
-  defaultConfig {
-    minSdk = Versions.MIN_SDK
-    targetSdk = Versions.COMPILE_SDK
-    versionName = Versions.VICO
-  }
-  namespace = "com.patrykandpatrick.vico"
-}
-
-dependencies { debugImplementation(compose.uiTooling) }
-
 kotlin {
-  androidTarget { compilerOptions { jvmTarget = JvmTarget.JVM_11 } }
+  @Suppress("UnstableApiUsage")
+  androidLibrary {
+    configure()
+    namespace = "com.patrykandpatrick.vico.sample.compose"
+  }
   listOf(iosX64(), iosArm64(), iosSimulatorArm64()).forEach { iosTarget ->
     iosTarget.binaries.framework {
       baseName = "Sample"
@@ -68,8 +50,6 @@ kotlin {
   }
   sourceSets {
     androidMain.dependencies {
-      implementation(libs.activityCompose)
-      implementation(libs.material)
       implementation(project(":sample:compose"))
       implementation(project(":sample:views"))
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2026 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package com.patrykandpatrick.vico.sample
+package com.patrykandpatrick.vico.com.patrykandpatrick.vico.sample
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import com.patrykandpatrick.vico.sample.SampleApp
 
 internal class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {

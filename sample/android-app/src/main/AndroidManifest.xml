@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <!--
-  ~ Copyright 2025 by Patryk Goworowski and Patrick Michalik.
+  ~ Copyright 2026 by Patryk Goworowski and Patrick Michalik.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@
         android:theme="@style/Theme.Material3.DayNight.NoActionBar"
         tools:targetApi="36">
         <activity
-            android:name="com.patrykandpatrick.vico.sample.MainActivity"
+            android:name="com.patrykandpatrick.vico.com.patrykandpatrick.vico.sample.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

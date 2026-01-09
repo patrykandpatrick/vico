@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryTarget
-import com.android.build.gradle.LibraryExtension
-import org.gradle.api.JavaVersion
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+plugins {
+  id("com.android.application")
+  id("org.jetbrains.compose")
+  id("org.jetbrains.kotlin.plugin.compose")
+  kotlin("android")
+}
 
-fun LibraryExtension.configure() {
+android {
   buildTypes {
     release {
       isMinifyEnabled = false
@@ -31,11 +33,19 @@ fun LibraryExtension.configure() {
     targetCompatibility = JavaVersion.VERSION_21
   }
   compileSdk = Versions.COMPILE_SDK
-  defaultConfig { minSdk = Versions.MIN_SDK }
+  defaultConfig {
+    minSdk = Versions.MIN_SDK
+    targetSdk = Versions.COMPILE_SDK
+    versionName = Versions.VICO
+  }
+  namespace = "com.patrykandpatrick.vico"
 }
 
-fun KotlinMultiplatformAndroidLibraryTarget.configure() {
-  compilerOptions { jvmTarget.set(JvmTarget.JVM_21) }
-  compileSdk = Versions.COMPILE_SDK
-  minSdk = Versions.MIN_SDK
+kotlin { jvmToolchain(21) }
+
+dependencies {
+  implementation(project(":sample:app"))
+  implementation(libs.activityCompose)
+  implementation(libs.material)
+  debugImplementation(compose.uiTooling)
 }
