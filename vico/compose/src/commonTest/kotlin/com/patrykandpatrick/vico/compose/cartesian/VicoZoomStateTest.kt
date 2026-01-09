@@ -40,23 +40,23 @@ class VicoZoomStateTest {
   fun `When maxZoom produces smaller factor than minZoom, then IllegalArgumentException is thrown`() {
     val minZoom = Zoom.fixed(2f)
     val maxZoom = Zoom.fixed(1f)
-    val zoomState = VicoZoomState(zoomEnabled = true, initialZoom = minZoom, minZoom = minZoom, maxZoom = maxZoom)
+    val zoomState =
+      VicoZoomState(zoomEnabled = true, initialZoom = minZoom, minZoom = minZoom, maxZoom = maxZoom)
 
     val exception =
       assertFailsWith<IllegalArgumentException> {
         zoomState.update(context, layerDimensions, bounds, 0f)
       }
 
-    assertTrue(
-      exception.message!!.contains("maxZoom") && exception.message!!.contains("minZoom")
-    )
+    assertTrue(exception.message!!.contains("maxZoom") && exception.message!!.contains("minZoom"))
   }
 
   @Test
   fun `When maxZoom produces equal factor as minZoom, then no exception is thrown`() {
     val minZoom = Zoom.fixed(1f)
     val maxZoom = Zoom.fixed(1f)
-    val zoomState = VicoZoomState(zoomEnabled = true, initialZoom = minZoom, minZoom = minZoom, maxZoom = maxZoom)
+    val zoomState =
+      VicoZoomState(zoomEnabled = true, initialZoom = minZoom, minZoom = minZoom, maxZoom = maxZoom)
 
     zoomState.update(context, layerDimensions, bounds, 0f)
 
@@ -67,7 +67,8 @@ class VicoZoomStateTest {
   fun `When maxZoom produces greater factor than minZoom, then no exception is thrown`() {
     val minZoom = Zoom.fixed(1f)
     val maxZoom = Zoom.fixed(2f)
-    val zoomState = VicoZoomState(zoomEnabled = true, initialZoom = minZoom, minZoom = minZoom, maxZoom = maxZoom)
+    val zoomState =
+      VicoZoomState(zoomEnabled = true, initialZoom = minZoom, minZoom = minZoom, maxZoom = maxZoom)
 
     zoomState.update(context, layerDimensions, bounds, 0f)
 

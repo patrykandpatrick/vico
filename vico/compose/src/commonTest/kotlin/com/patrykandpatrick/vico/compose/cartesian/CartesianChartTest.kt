@@ -61,7 +61,8 @@ class CartesianChartTest {
   fun `Given CartesianChart is copied with changes, when it is compared to the original, then they are NOT equal`() {
     val chart = getCartesianChart()
 
-    val copiedChart = chart.copy(layerPadding = { CartesianLayerPadding(10.dp, 10.dp, 10.dp, 10.dp) })
+    val copiedChart =
+      chart.copy(layerPadding = { CartesianLayerPadding(10.dp, 10.dp, 10.dp, 10.dp) })
 
     assertNotEquals(chart, copiedChart)
     assertNotEquals(chart.hashCode(), copiedChart.hashCode())
