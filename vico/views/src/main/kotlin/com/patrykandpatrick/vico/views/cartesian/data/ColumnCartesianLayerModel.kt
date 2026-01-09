@@ -128,7 +128,9 @@ public class ColumnCartesianLayerModel : CartesianLayerModel {
   }
 
   override fun toString(): String =
-    "ColumnCartesianLayerModel(series=$series, minX=$minX, maxX=$maxX, minY=$minY, maxY=$maxY, minAggregateY=$minAggregateY, maxAggregateY=$maxAggregateY)"
+    "ColumnCartesianLayerModel(" +
+      "series=$series, minX=$minX, maxX=$maxX, minY=$minY, maxY=$maxY, " +
+      "minAggregateY=$minAggregateY, maxAggregateY=$maxAggregateY)"
 
   /** Represents a column of height [y] at [x]. */
   public class Entry internal constructor(override val x: Double, public val y: Double) :

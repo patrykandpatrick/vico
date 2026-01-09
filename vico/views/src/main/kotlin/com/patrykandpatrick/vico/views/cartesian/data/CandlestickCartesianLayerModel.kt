@@ -181,7 +181,9 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
     }
 
     override fun toString(): String =
-      "Entry(x=$x, opening=$opening, closing=$closing, low=$low, high=$high, absoluteChange=$absoluteChange, relativeChange=$relativeChange)"
+      "Entry(" +
+        "x=$x, opening=$opening, closing=$closing, low=$low, high=$high, " +
+        "absoluteChange=$absoluteChange, relativeChange=$relativeChange)"
   }
 
   /**
