@@ -134,7 +134,7 @@ internal class AxisManager {
     axisCache.forEach { axis -> axis.drawOverLayers(context, axisDimensions) }
   }
 
-  private fun <S, T : Axis<S>?> cacheInList(): ReadWriteProperty<AxisManager, T?> =
+  private fun <S : Axis.Position, T : Axis<S>?> cacheInList(): ReadWriteProperty<AxisManager, T?> =
     object : ReadWriteProperty<AxisManager, T?> {
       var field: T? = null
 
