@@ -34,8 +34,10 @@ import com.patrykandpatrick.vico.views.common.data.MutableExtraStore
 internal class FakeCartesianMeasuringContext : CartesianMeasuringContext {
   override val model: CartesianChartModel
     get() = throw NotImplementedError()
+
   override val ranges: CartesianChartRanges
     get() = throw NotImplementedError()
+
   override val scrollEnabled: Boolean = false
   override val zoomEnabled: Boolean = false
   override val layerPadding: CartesianLayerPadding = CartesianLayerPadding()
@@ -44,9 +46,12 @@ internal class FakeCartesianMeasuringContext : CartesianMeasuringContext {
   override val density: Float = 1f
   override val extraStore: ExtraStore
     get() = throw NotImplementedError()
+
   override val cacheStore: CacheStore
     get() = throw NotImplementedError()
+
   override val isLtr: Boolean = true
+
   override fun spToPx(sp: Float): Float = sp * density
 }
 

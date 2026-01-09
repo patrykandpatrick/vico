@@ -17,6 +17,7 @@
 package com.patrykandpatrick.vico.compose.cartesian
 
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModel
@@ -28,26 +29,28 @@ import com.patrykandpatrick.vico.compose.cartesian.layer.CartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.layer.CartesianLayerPadding
 import com.patrykandpatrick.vico.compose.cartesian.layer.MutableCartesianLayerDimensions
 import com.patrykandpatrick.vico.compose.cartesian.marker.CartesianMarker
+import com.patrykandpatrick.vico.compose.common.data.CacheStore
+import com.patrykandpatrick.vico.compose.common.data.ExtraStore
+import com.patrykandpatrick.vico.compose.common.data.MutableExtraStore
 
 internal class FakeCartesianMeasuringContext : CartesianMeasuringContext {
   override val model: CartesianChartModel
     get() = throw NotImplementedError()
-
   override val ranges: CartesianChartRanges
     get() = throw NotImplementedError()
-
   override val scrollEnabled: Boolean = false
   override val zoomEnabled: Boolean = false
   override val layerPadding: CartesianLayerPadding = CartesianLayerPadding()
   override val markerX: Double? = null
   override val canvasSize: Size = Size(100f, 100f)
-  override val density: Float = 1f
+  override val density: Density = Density(1f, 1f)
   override val isLtr: Boolean = true
   override val layoutDirection: LayoutDirection = LayoutDirection.Ltr
-  override val spToPx: Density
+  override val fontFamilyResolver: FontFamily.Resolver
     get() = throw NotImplementedError()
-
-  override val fontFamilyResolver: androidx.compose.ui.text.font.FontFamily.Resolver
+  override val extraStore: ExtraStore
+    get() = throw NotImplementedError()
+  override val cacheStore: CacheStore
     get() = throw NotImplementedError()
 }
 
@@ -72,20 +75,10 @@ internal class FakeLineCartesianLayer : CartesianLayer<LineCartesianLayerModel> 
   override fun prepareForTransformation(
     model: LineCartesianLayerModel?,
     ranges: CartesianChartRanges,
-    extraStore: com.patrykandpatrick.vico.compose.common.data.ExtraStore,
+    extraStore: MutableExtraStore,
   ) {}
 
-  override suspend fun transform(
-    extraStore: com.patrykandpatrick.vico.compose.common.data.ExtraStore,
-    fraction: Float,
-  ) {}
-
-  override fun updateLayerMargins(
-    context: CartesianMeasuringContext,
-    layerMargins: CartesianLayerMargins,
-    layerDimensions: CartesianLayerDimensions,
-    model: LineCartesianLayerModel,
-  ) {}
+  override suspend fun transform(extraStore: MutableExtraStore, fraction: Float) {}
 
   override fun equals(other: Any?) = other is FakeLineCartesianLayer
 
@@ -111,20 +104,10 @@ internal class FakeColumnCartesianLayer : CartesianLayer<ColumnCartesianLayerMod
   override fun prepareForTransformation(
     model: ColumnCartesianLayerModel?,
     ranges: CartesianChartRanges,
-    extraStore: com.patrykandpatrick.vico.compose.common.data.ExtraStore,
+    extraStore: MutableExtraStore,
   ) {}
 
-  override suspend fun transform(
-    extraStore: com.patrykandpatrick.vico.compose.common.data.ExtraStore,
-    fraction: Float,
-  ) {}
-
-  override fun updateLayerMargins(
-    context: CartesianMeasuringContext,
-    layerMargins: CartesianLayerMargins,
-    layerDimensions: CartesianLayerDimensions,
-    model: ColumnCartesianLayerModel,
-  ) {}
+  override suspend fun transform(extraStore: MutableExtraStore, fraction: Float) {}
 
   override fun equals(other: Any?) = other is FakeColumnCartesianLayer
 
