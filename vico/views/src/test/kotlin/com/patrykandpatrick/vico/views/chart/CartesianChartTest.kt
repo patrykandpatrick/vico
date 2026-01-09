@@ -22,8 +22,8 @@ import com.patrykandpatrick.vico.views.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.views.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.views.common.data.ExtraStore
 import com.patrykandpatrick.vico.views.common.data.MutableExtraStore
+import kotlin.test.Test
 import kotlin.test.assertEquals
-import org.junit.jupiter.api.Test
 
 class CartesianChartTest {
 

@@ -30,13 +30,15 @@ import com.patrykandpatrick.vico.views.common.component.LineComponent
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.mockkConstructor
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
+import kotlin.test.assertNotSame
 
 class CartesianChartTest {
 
-  @BeforeEach
+  @BeforeTest
   fun setUp() {
     MockKAnnotations.init(this, relaxUnitFun = true)
     mockkConstructor(Paint::class)
@@ -54,8 +56,8 @@ class CartesianChartTest {
     val chart1 = getCartesianChart()
     val chart2 = getCartesianChart()
 
-    Assertions.assertNotSame(chart1, chart2)
-    Assertions.assertNotSame(chart1.hashCode(), chart2.hashCode())
+    assertNotSame(chart1, chart2)
+    assertNotSame(chart1.hashCode(), chart2.hashCode())
   }
 
   @Test
@@ -64,8 +66,8 @@ class CartesianChartTest {
 
     val copiedChart = chart.copy()
 
-    Assertions.assertEquals(chart, copiedChart)
-    Assertions.assertEquals(chart.hashCode(), copiedChart.hashCode())
+    assertEquals(chart, copiedChart)
+    assertEquals(chart.hashCode(), copiedChart.hashCode())
   }
 
   @Test
@@ -74,8 +76,8 @@ class CartesianChartTest {
 
     val copiedChart = chart.copy(layerPadding = { CartesianLayerPadding(10f, 10f, 10f, 10f) })
 
-    Assertions.assertNotEquals(chart, copiedChart)
-    Assertions.assertNotEquals(chart.hashCode(), copiedChart.hashCode())
+    assertNotEquals(chart, copiedChart)
+    assertNotEquals(chart.hashCode(), copiedChart.hashCode())
   }
 
   private companion object {
