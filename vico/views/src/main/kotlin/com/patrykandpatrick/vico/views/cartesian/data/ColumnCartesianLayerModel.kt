@@ -127,6 +127,11 @@ public class ColumnCartesianLayerModel : CartesianLayerModel {
     return result
   }
 
+  override fun toString(): String =
+    "ColumnCartesianLayerModel(" +
+      "series=$series, minX=$minX, maxX=$maxX, minY=$minY, maxY=$maxY, " +
+      "minAggregateY=$minAggregateY, maxAggregateY=$maxAggregateY)"
+
   /** Represents a column of height [y] at [x]. */
   public class Entry internal constructor(override val x: Double, public val y: Double) :
     CartesianLayerModel.Entry {
@@ -136,6 +141,8 @@ public class ColumnCartesianLayerModel : CartesianLayerModel {
       this === other || other is Entry && x == other.x && y == other.y
 
     override fun hashCode(): Int = 31 * x.hashCode() + y.hashCode()
+
+    override fun toString(): String = "Entry(x=$x, y=$y)"
   }
 
   /**
