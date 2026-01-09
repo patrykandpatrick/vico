@@ -86,7 +86,7 @@ public open class TextComponent(
    * @param maxHeight the maximum height available for the text (in pixels).
    * @param rotationDegrees the rotation of the text (in degrees).
    */
-  public fun draw(
+  public open fun draw(
     context: DrawingContext,
     text: CharSequence,
     x: Float,
