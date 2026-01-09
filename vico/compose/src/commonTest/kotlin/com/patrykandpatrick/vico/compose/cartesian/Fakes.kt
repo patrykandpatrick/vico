@@ -36,8 +36,10 @@ import com.patrykandpatrick.vico.compose.common.data.MutableExtraStore
 internal class FakeCartesianMeasuringContext : CartesianMeasuringContext {
   override val model: CartesianChartModel
     get() = throw NotImplementedError()
+
   override val ranges: CartesianChartRanges
     get() = throw NotImplementedError()
+
   override val scrollEnabled: Boolean = false
   override val zoomEnabled: Boolean = false
   override val layerPadding: CartesianLayerPadding = CartesianLayerPadding()
@@ -48,8 +50,10 @@ internal class FakeCartesianMeasuringContext : CartesianMeasuringContext {
   override val layoutDirection: LayoutDirection = LayoutDirection.Ltr
   override val fontFamilyResolver: FontFamily.Resolver
     get() = throw NotImplementedError()
+
   override val extraStore: ExtraStore
     get() = throw NotImplementedError()
+
   override val cacheStore: CacheStore
     get() = throw NotImplementedError()
 }
