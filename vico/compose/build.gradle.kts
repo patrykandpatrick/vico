@@ -57,6 +57,10 @@ kotlin {
       implementation(libs.coroutinesCore)
       implementation(libs.kotlinStdLib)
     }
+    commonTest.dependencies {
+      implementation(libs.kotlinTest)
+      implementation(libs.mockK)
+    }
   }
   explicitApi()
   compilerOptions { freeCompilerArgs.add("-Xannotation-default-target=param-property") }
