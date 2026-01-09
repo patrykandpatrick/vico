@@ -23,14 +23,14 @@ import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import kotlin.math.sqrt
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class RectFExtensionsTest {
   @MockK private lateinit var rect: RectF
 
-  @BeforeEach
+  @BeforeTest
   fun setUp() {
     MockKAnnotations.init(this)
     every { rect.width() } answers { rect.right - rect.left }
@@ -53,9 +53,9 @@ class RectFExtensionsTest {
     val originalCenterX = rect.centerX()
     val originalCenterY = rect.centerY()
     rect.rotate(45f)
-    Assertions.assertEquals(squareDiagonalWidth, rect.width())
-    Assertions.assertEquals(originalCenterX, rect.centerX())
-    Assertions.assertEquals(originalCenterY, rect.centerY())
+    assertEquals(squareDiagonalWidth, rect.width())
+    assertEquals(originalCenterX, rect.centerX())
+    assertEquals(originalCenterY, rect.centerY())
   }
 
   @Test
@@ -66,10 +66,10 @@ class RectFExtensionsTest {
     val bottom = 10f
     rect.set(left, top, right, bottom)
     rect.rotate(180f)
-    Assertions.assertEquals(left, rect.left)
-    Assertions.assertEquals(top, rect.top)
-    Assertions.assertEquals(right, rect.right)
-    Assertions.assertEquals(bottom, rect.bottom)
+    assertEquals(left, rect.left)
+    assertEquals(top, rect.top)
+    assertEquals(right, rect.right)
+    assertEquals(bottom, rect.bottom)
   }
 
   @Test
@@ -78,7 +78,7 @@ class RectFExtensionsTest {
     val height = 10f
     rect.set(0, 0, width, height)
     rect.rotate(90f)
-    Assertions.assertEquals(rect.width(), height)
-    Assertions.assertEquals(rect.height(), width)
+    assertEquals(rect.width(), height)
+    assertEquals(rect.height(), width)
   }
 }

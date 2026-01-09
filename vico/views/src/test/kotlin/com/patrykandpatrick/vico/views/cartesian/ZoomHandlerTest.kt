@@ -20,16 +20,18 @@ import android.graphics.RectF
 import com.patrykandpatrick.vico.views.cartesian.layer.MutableCartesianLayerDimensions
 import io.mockk.MockKAnnotations
 import io.mockk.impl.annotations.MockK
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
+import kotlin.test.assertTrue
 
 class ZoomHandlerTest {
   @MockK private lateinit var context: CartesianMeasuringContext
   @MockK private lateinit var layerDimensions: MutableCartesianLayerDimensions
   @MockK private lateinit var bounds: RectF
 
-  @BeforeEach
+  @BeforeTest
   fun setUp() {
     MockKAnnotations.init(this, relaxed = true)
   }
@@ -41,13 +43,11 @@ class ZoomHandlerTest {
     val zoomHandler = ZoomHandler(minZoom = minZoom, maxZoom = maxZoom)
 
     val exception =
-      Assertions.assertThrows(IllegalArgumentException::class.java) {
+      assertFailsWith<IllegalArgumentException> {
         zoomHandler.update(context, layerDimensions, bounds, 0f)
       }
 
-    Assertions.assertTrue(
-      exception.message!!.contains("maxZoom") && exception.message!!.contains("minZoom")
-    )
+    assertTrue(exception.message!!.contains("maxZoom") && exception.message!!.contains("minZoom"))
   }
 
   @Test
@@ -58,7 +58,7 @@ class ZoomHandlerTest {
 
     zoomHandler.update(context, layerDimensions, bounds, 0f)
 
-    Assertions.assertEquals(1f..1f, zoomHandler.valueRange)
+    assertEquals(1f..1f, zoomHandler.valueRange)
   }
 
   @Test
@@ -69,6 +69,6 @@ class ZoomHandlerTest {
 
     zoomHandler.update(context, layerDimensions, bounds, 0f)
 
-    Assertions.assertEquals(1f..2f, zoomHandler.valueRange)
+    assertEquals(1f..2f, zoomHandler.valueRange)
   }
 }
