@@ -23,7 +23,9 @@ import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 import com.patrykandpatrick.vico.compose.common.data.MutableExtraStore
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.uuid.ExperimentalUuidApi
 
+@OptIn(ExperimentalUuidApi::class)
 class CartesianChartTest {
 
   private val marker =

@@ -16,22 +16,21 @@
 
 package com.patrykandpatrick.vico.compose.cartesian
 
-import androidx.compose.ui.graphics.Color
-import com.patrykandpatrick.vico.compose.cartesian.axis.HorizontalAxis
-import com.patrykandpatrick.vico.compose.cartesian.axis.VerticalAxis
+import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.cartesian.layer.CartesianLayerPadding
 import com.patrykandpatrick.vico.compose.cartesian.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.marker.CartesianMarkerVisibilityListener
-import com.patrykandpatrick.vico.compose.common.component.LineComponent
-import com.patrykandpatrick.vico.compose.common.fill
 import io.mockk.MockKAnnotations
+import io.mockk.mockk
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 import kotlin.test.assertNotSame
+import kotlin.uuid.ExperimentalUuidApi
 
+@OptIn(ExperimentalUuidApi::class)
 class CartesianChartTest {
 
   @BeforeTest
@@ -62,7 +61,7 @@ class CartesianChartTest {
   fun `Given CartesianChart is copied with changes, when it is compared to the original, then they are NOT equal`() {
     val chart = getCartesianChart()
 
-    val copiedChart = chart.copy(layerPadding = { CartesianLayerPadding(10f, 10f, 10f, 10f) })
+    val copiedChart = chart.copy(layerPadding = { CartesianLayerPadding(10.dp, 10.dp, 10.dp, 10.dp) })
 
     assertNotEquals(chart, copiedChart)
     assertNotEquals(chart.hashCode(), copiedChart.hashCode())
@@ -71,19 +70,9 @@ class CartesianChartTest {
   private companion object {
     fun getCartesianChart(): CartesianChart =
       CartesianChart(
-        LineCartesianLayer(
-          lineProvider =
-            LineCartesianLayer.LineProvider.series(
-              LineCartesianLayer.Line(LineCartesianLayer.LineFill.single(Color.Black.fill))
-            )
-        ),
-        ColumnCartesianLayer(
-          columnProvider = ColumnCartesianLayer.ColumnProvider.series(LineComponent(Color.Black.fill))
-        ),
-        startAxis = VerticalAxis.start(LineComponent(Color.Black.fill)),
-        bottomAxis = HorizontalAxis.bottom(LineComponent(Color.Black.fill)),
+        mockk<LineCartesianLayer>(relaxed = true),
+        mockk<ColumnCartesianLayer>(relaxed = true),
         markerVisibilityListener = object : CartesianMarkerVisibilityListener {},
-        fadingEdges = FadingEdges(),
       )
   }
 }
