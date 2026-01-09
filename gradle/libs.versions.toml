@@ -12,7 +12,6 @@ customViewPooling = "1.1.0"
 dateTime = "0.7.1"
 dokka = "2.1.0"
 emoji2 = "1.6.0"
-jupiter = "6.0.2"
 kotlin = "2.3.0"
 lifecycleRuntime = "2.9.6"
 lifecycleViewModel = "2.10.0"
@@ -20,7 +19,6 @@ material = "1.13.0"
 materialIcons = "1.7.3"
 mavenPublish = "0.35.0"
 mockK = "1.14.7"
-testCore = "1.7.0"
 uiTooling = "1.10.0"
 
 [libraries]
@@ -45,8 +43,6 @@ coroutinesCore = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-c
 customViewPooling = { group = "androidx.customview", name = "customview-poolingcontainer", version.ref = "customViewPooling" }
 dokka = { group = "org.jetbrains.dokka", name = "dokka-gradle-plugin", version.ref = "dokka" }
 emoji2 = { group = "androidx.emoji2", name = "emoji2", version.ref = "emoji2" }
-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "jupiter" }
-jupiterParams = { module = "org.junit.jupiter:junit-jupiter-params", version.ref = "jupiter" }
 kotlinAndroid = { group = "org.jetbrains.kotlin.android", name = "org.jetbrains.kotlin.android.gradle.plugin", version.ref = "kotlin" }
 kotlinMultiplatform = { group = "org.jetbrains.kotlin.multiplatform", name = "org.jetbrains.kotlin.multiplatform.gradle.plugin", version.ref = "kotlin" }
 kotlinStdLib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlin" }
@@ -59,4 +55,3 @@ materialIcons = { group = "org.jetbrains.compose.material", name = "material-ico
 mavenPublish = { group = "com.vanniktech.maven.publish", name = "com.vanniktech.maven.publish.gradle.plugin", version.ref = "mavenPublish" }
 mockK = { group = "io.mockk", name = "mockk", version.ref = "mockK" }
 serialization = { group = "org.jetbrains.kotlin.plugin.serialization", name = "org.jetbrains.kotlin.plugin.serialization.gradle.plugin", version.ref = "kotlin" }
-testCore = { group = "androidx.test", name = "core-ktx", version.ref = "testCore" }

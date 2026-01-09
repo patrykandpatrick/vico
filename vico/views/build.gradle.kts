@@ -42,11 +42,6 @@ dependencies {
   implementation(libs.appcompat)
   implementation(libs.coroutinesCore)
   implementation(libs.kotlinStdLib)
-  implementation(libs.kotlinStdLib)
-  testImplementation(libs.jupiter)
-  testImplementation(libs.jupiterParams)
-  testImplementation(libs.kotlinTest)
   testImplementation(libs.kotlinTest)
   testImplementation(libs.mockK)
-  testImplementation(libs.testCore)
 }
