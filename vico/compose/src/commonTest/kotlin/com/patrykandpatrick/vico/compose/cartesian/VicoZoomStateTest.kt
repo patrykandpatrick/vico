@@ -17,24 +17,15 @@
 package com.patrykandpatrick.vico.compose.cartesian
 
 import androidx.compose.ui.geometry.Rect
-import com.patrykandpatrick.vico.compose.cartesian.layer.MutableCartesianLayerDimensions
-import io.mockk.MockKAnnotations
-import io.mockk.impl.annotations.MockK
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 
 class VicoZoomStateTest {
-  @MockK private lateinit var context: CartesianMeasuringContext
-  @MockK private lateinit var layerDimensions: MutableCartesianLayerDimensions
-  @MockK private lateinit var bounds: Rect
-
-  @BeforeTest
-  fun setUp() {
-    MockKAnnotations.init(this, relaxed = true)
-  }
+  private val context = FakeCartesianMeasuringContext()
+  private val layerDimensions = FakeMutableCartesianLayerDimensions()
+  private val bounds = Rect(0f, 0f, 100f, 100f)
 
   @Test
   fun `When maxZoom produces smaller factor than minZoom, then IllegalArgumentException is thrown`() {

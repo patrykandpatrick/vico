@@ -18,15 +18,19 @@ package com.patrykandpatrick.vico.views.model
 
 import com.patrykandpatrick.vico.views.cartesian.data.CartesianLayerModel
 import com.patrykandpatrick.vico.views.cartesian.data.getXDeltaGcd
-import io.mockk.every
-import io.mockk.mockk
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class XDeltaGcdTest {
   private fun getEntries(vararg x: Number) =
     x.map { value ->
-      mockk<CartesianLayerModel.Entry> { every { this@mockk.x } returns value.toDouble() }
+      object : CartesianLayerModel.Entry {
+        override val x: Double = value.toDouble()
+
+        override fun equals(other: Any?) = false
+
+        override fun hashCode() = 0
+      }
     }
 
   @Test

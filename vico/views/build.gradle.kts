@@ -45,6 +45,4 @@ dependencies {
   implementation(libs.kotlinStdLib)
   testImplementation(libs.kotlinTest)
   testImplementation(libs.kotlinTest)
-  testImplementation(libs.mockK)
-  testImplementation(libs.testCore)
 }

@@ -16,40 +16,14 @@
 
 package com.patrykandpatrick.vico.views.cartesian
 
-import android.graphics.Paint
-import android.graphics.RectF
-import android.graphics.Xfermode
-import com.patrykandpatrick.vico.views.cartesian.axis.HorizontalAxis
-import com.patrykandpatrick.vico.views.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.views.cartesian.layer.CartesianLayerPadding
-import com.patrykandpatrick.vico.views.cartesian.layer.ColumnCartesianLayer
-import com.patrykandpatrick.vico.views.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.views.cartesian.marker.CartesianMarkerVisibilityListener
-import com.patrykandpatrick.vico.views.common.Fill
-import com.patrykandpatrick.vico.views.common.component.LineComponent
-import io.mockk.MockKAnnotations
-import io.mockk.every
-import io.mockk.mockkConstructor
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 import kotlin.test.assertNotSame
 
 class CartesianChartTest {
-
-  @BeforeTest
-  fun setUp() {
-    MockKAnnotations.init(this, relaxUnitFun = true)
-    mockkConstructor(Paint::class)
-    every { anyConstructed<Paint>().setColor(any()) } returns Unit
-    every { anyConstructed<Paint>().setXfermode(any()) } returns Xfermode()
-    every { anyConstructed<Paint>().style = any() } returns Unit
-    every { anyConstructed<Paint>().strokeCap = any() } returns Unit
-    mockkConstructor(RectF::class)
-    every { anyConstructed<RectF>() == any() } returns true
-    every { anyConstructed<RectF>().hashCode() } returns 0
-  }
 
   @Test
   fun `Given two the same CartesianChart instances are created, when they are compared, then they are NOT equal`() {
@@ -83,19 +57,9 @@ class CartesianChartTest {
   private companion object {
     fun getCartesianChart(): CartesianChart =
       CartesianChart(
-        LineCartesianLayer(
-          lineProvider =
-            LineCartesianLayer.LineProvider.series(
-              LineCartesianLayer.Line(LineCartesianLayer.LineFill.single(Fill.Black))
-            )
-        ),
-        ColumnCartesianLayer(
-          columnProvider = ColumnCartesianLayer.ColumnProvider.series(LineComponent(Fill.Black))
-        ),
-        startAxis = VerticalAxis.start(LineComponent(Fill.Black)),
-        bottomAxis = HorizontalAxis.bottom(LineComponent(Fill.Black)),
+        FakeLineCartesianLayer(),
+        FakeColumnCartesianLayer(),
         markerVisibilityListener = object : CartesianMarkerVisibilityListener {},
-        fadingEdges = FadingEdges(),
       )
   }
 }

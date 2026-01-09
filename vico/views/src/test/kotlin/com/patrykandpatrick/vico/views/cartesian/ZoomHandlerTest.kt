@@ -17,24 +17,15 @@
 package com.patrykandpatrick.vico.views.cartesian
 
 import android.graphics.RectF
-import com.patrykandpatrick.vico.views.cartesian.layer.MutableCartesianLayerDimensions
-import io.mockk.MockKAnnotations
-import io.mockk.impl.annotations.MockK
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 
 class ZoomHandlerTest {
-  @MockK private lateinit var context: CartesianMeasuringContext
-  @MockK private lateinit var layerDimensions: MutableCartesianLayerDimensions
-  @MockK private lateinit var bounds: RectF
-
-  @BeforeTest
-  fun setUp() {
-    MockKAnnotations.init(this, relaxed = true)
-  }
+  private val context = FakeCartesianMeasuringContext()
+  private val layerDimensions = FakeMutableCartesianLayerDimensions()
+  private val bounds = RectF(0f, 0f, 100f, 100f)
 
   @Test
   fun `When maxZoom produces smaller factor than minZoom, then IllegalArgumentException is thrown`() {

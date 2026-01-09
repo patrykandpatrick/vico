@@ -18,12 +18,7 @@ package com.patrykandpatrick.vico.compose.cartesian
 
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.cartesian.layer.CartesianLayerPadding
-import com.patrykandpatrick.vico.compose.cartesian.layer.ColumnCartesianLayer
-import com.patrykandpatrick.vico.compose.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.marker.CartesianMarkerVisibilityListener
-import io.mockk.MockKAnnotations
-import io.mockk.mockk
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
@@ -32,11 +27,6 @@ import kotlin.uuid.ExperimentalUuidApi
 
 @OptIn(ExperimentalUuidApi::class)
 class CartesianChartTest {
-
-  @BeforeTest
-  fun setUp() {
-    MockKAnnotations.init(this, relaxUnitFun = true)
-  }
 
   @Test
   fun `Given two the same CartesianChart instances are created, when they are compared, then they are NOT equal`() {
@@ -71,8 +61,8 @@ class CartesianChartTest {
   private companion object {
     fun getCartesianChart(): CartesianChart =
       CartesianChart(
-        mockk<LineCartesianLayer>(relaxed = true),
-        mockk<ColumnCartesianLayer>(relaxed = true),
+        FakeLineCartesianLayer(),
+        FakeColumnCartesianLayer(),
         markerVisibilityListener = object : CartesianMarkerVisibilityListener {},
       )
   }

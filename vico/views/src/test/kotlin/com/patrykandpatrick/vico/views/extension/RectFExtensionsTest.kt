@@ -18,37 +18,15 @@ package com.patrykandpatrick.vico.views.extension
 
 import android.graphics.RectF
 import com.patrykandpatrick.vico.views.common.rotate
-import com.patrykandpatrick.vico.views.common.set
-import io.mockk.MockKAnnotations
-import io.mockk.every
-import io.mockk.impl.annotations.MockK
 import kotlin.math.sqrt
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class RectFExtensionsTest {
-  @MockK private lateinit var rect: RectF
-
-  @BeforeTest
-  fun setUp() {
-    MockKAnnotations.init(this)
-    every { rect.width() } answers { rect.right - rect.left }
-    every { rect.height() } answers { rect.bottom - rect.top }
-    every { rect.centerX() } answers { (rect.right + rect.left) / 2 }
-    every { rect.centerY() } answers { (rect.bottom + rect.top) / 2 }
-    every { rect.set(any(), any(), any(), any()) } answers
-      {
-        rect.left = args[0] as Float
-        rect.top = args[1] as Float
-        rect.right = args[2] as Float
-        rect.bottom = args[3] as Float
-      }
-  }
 
   @Test
   fun `When square is rotated 45 degrees, width increases to diagonal`() {
-    rect.set(0f, 0f, 10f, 10f)
+    val rect = RectF(0f, 0f, 10f, 10f)
     val squareDiagonalWidth = rect.width() * sqrt(2f)
     val originalCenterX = rect.centerX()
     val originalCenterY = rect.centerY()
@@ -64,7 +42,7 @@ class RectFExtensionsTest {
     val top = 0f
     val right = 10f
     val bottom = 10f
-    rect.set(left, top, right, bottom)
+    val rect = RectF(left, top, right, bottom)
     rect.rotate(180f)
     assertEquals(left, rect.left)
     assertEquals(top, rect.top)
@@ -76,7 +54,7 @@ class RectFExtensionsTest {
   fun `When RectF is rotated 90 degrees, width and height are swapped`() {
     val width = 5f
     val height = 10f
-    rect.set(0, 0, width, height)
+    val rect = RectF(0f, 0f, width, height)
     rect.rotate(90f)
     assertEquals(rect.width(), height)
     assertEquals(rect.height(), width)
