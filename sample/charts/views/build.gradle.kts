@@ -17,31 +17,23 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-  `dokka-convention`
-  `publishing-convention`
   id("com.android.library")
   id("kotlin-android")
+  id("org.jetbrains.kotlin.plugin.compose")
 }
 
 android {
   configure()
-  namespace = moduleNamespace
+  buildFeatures { viewBinding = true }
+  namespace = "com.patrykandpatrick.vico.sample.charts.views"
 }
 
-kotlin {
-  explicitApi()
-  compilerOptions {
-    jvmTarget = JvmTarget.JVM_11
-    freeCompilerArgs.add("-Xannotation-default-target=param-property")
-  }
-}
+kotlin { compilerOptions { jvmTarget = JvmTarget.JVM_11 } }
 
 dependencies {
-  implementation(libs.androidXAnnotation)
-  implementation(libs.androidXCore)
+  implementation(platform(libs.composeBom))
   implementation(libs.appcompat)
-  implementation(libs.coroutinesCore)
-  implementation(libs.kotlinStdLib)
-  testImplementation(libs.kotlinTest)
-  testImplementation(libs.mockK)
+  implementation(libs.composeUI)
+  implementation(libs.composeViewBinding)
+  implementation(project(":vico:views"))
 }

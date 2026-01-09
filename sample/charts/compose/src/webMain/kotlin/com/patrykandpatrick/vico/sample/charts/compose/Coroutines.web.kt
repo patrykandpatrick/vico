@@ -14,31 +14,9 @@
  * limitations under the License.
  */
 
-pluginManagement.repositories {
-  google()
-  gradlePluginPortal()
-  mavenCentral()
-}
+package com.patrykandpatrick.vico.sample.charts.compose
 
-@Suppress("UnstableApiUsage")
-dependencyResolutionManagement {
-  repositories {
-    google()
-    mavenCentral()
-    mavenLocal()
-  }
-}
+import kotlinx.coroutines.CoroutineScope
 
-rootProject.name = "Vico"
-
-include(
-  "sample:android",
-  "sample:app",
-  "sample:charts:compose",
-  "sample:charts:views",
-  "vico",
-  "vico:compose",
-  "vico:compose-m2",
-  "vico:compose-m3",
-  "vico:views",
-)
+internal actual val runBlocking: ((suspend CoroutineScope.() -> Unit) -> Unit)?
+  get() = null

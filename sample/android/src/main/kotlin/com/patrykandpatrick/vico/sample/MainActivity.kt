@@ -14,31 +14,18 @@
  * limitations under the License.
  */
 
-pluginManagement.repositories {
-  google()
-  gradlePluginPortal()
-  mavenCentral()
-}
+package com.patrykandpatrick.vico.sample
 
-@Suppress("UnstableApiUsage")
-dependencyResolutionManagement {
-  repositories {
-    google()
-    mavenCentral()
-    mavenLocal()
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import com.patrykandpatrick.vico.sample.app.SampleApp
+
+internal class MainActivity : ComponentActivity() {
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    enableEdgeToEdge()
+    setContent { SampleApp() }
   }
 }
-
-rootProject.name = "Vico"
-
-include(
-  "sample:android",
-  "sample:app",
-  "sample:charts:compose",
-  "sample:charts:views",
-  "vico",
-  "vico:compose",
-  "vico:compose-m2",
-  "vico:compose-m3",
-  "vico:views",
-)
