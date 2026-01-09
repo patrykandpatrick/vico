@@ -89,6 +89,9 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
     return result
   }
 
+  override fun toString(): String =
+    "CandlestickCartesianLayerModel(series=$series, minX=$minX, maxX=$maxX, minY=$minY, maxY=$maxY)"
+
   /** Represents an [Entry]’s absolute or relative price change. */
   public enum class Change {
     Bullish,
@@ -176,6 +179,9 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
       result = 31 * result + relativeChange.hashCode()
       return result
     }
+
+    override fun toString(): String =
+      "Entry(x=$x, opening=$opening, closing=$closing, low=$low, high=$high, absoluteChange=$absoluteChange, relativeChange=$relativeChange)"
   }
 
   /**

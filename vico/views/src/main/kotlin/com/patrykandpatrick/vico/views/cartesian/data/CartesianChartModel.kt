@@ -76,6 +76,9 @@ public class CartesianChartModel {
 
   override fun hashCode(): Int = 31 * models.hashCode() + extraStore.hashCode()
 
+  override fun toString(): String =
+    "CartesianChartModel(models=$models, width=$width, extraStore=$extraStore)"
+
   /** Creates an immutable copy of this [CartesianChartModel]. */
   public fun toImmutable(): CartesianChartModel = this
 

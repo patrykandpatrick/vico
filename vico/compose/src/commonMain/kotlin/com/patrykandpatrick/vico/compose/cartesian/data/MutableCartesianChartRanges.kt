@@ -68,6 +68,9 @@ public class MutableCartesianChartRanges : CartesianChartRanges {
     xStep = 1.0
   }
 
+  override fun toString(): String =
+    "MutableCartesianChartRanges(minX=$minX, maxX=$maxX, xStep=$xStep, yRanges=$yRanges)"
+
   /** A mutable implementation of [CartesianChartRanges.YRange]. */
   public class MutableYRange(override var minY: Double, override var maxY: Double) :
     CartesianChartRanges.YRange {
@@ -82,6 +85,8 @@ public class MutableCartesianChartRanges : CartesianChartRanges {
       this.minY = min(this.minY, minY)
       this.maxY = max(this.maxY, maxY)
     }
+
+    override fun toString(): String = "MutableYRange(minY=$minY, maxY=$maxY, length=$length)"
   }
 }
 
@@ -94,4 +99,7 @@ internal fun MutableCartesianChartRanges.toImmutable(): CartesianChartRanges =
 
     override fun getYRange(axisPosition: Axis.Position.Vertical?): CartesianChartRanges.YRange =
       yRanges[axisPosition] ?: yRanges.getValue(null)
+
+    override fun toString(): String =
+      "CartesianChartRanges(minX=$minX, maxX=$maxX, xStep=$xStep, yRanges=$yRanges)"
   }

@@ -100,6 +100,9 @@ public class LineCartesianLayerModel : CartesianLayerModel {
     return result
   }
 
+  override fun toString(): String =
+    "LineCartesianLayerModel(series=$series, minX=$minX, maxX=$maxX, minY=$minY, maxY=$maxY)"
+
   /** Represents a line node at ([x], [y]). */
   public class Entry internal constructor(override val x: Double, public val y: Double) :
     CartesianLayerModel.Entry {
@@ -109,6 +112,8 @@ public class LineCartesianLayerModel : CartesianLayerModel {
       this === other || other is Entry && x == other.x && y == other.y
 
     override fun hashCode(): Int = 31 * x.hashCode() + y.hashCode()
+
+    override fun toString(): String = "Entry(x=$x, y=$y)"
   }
 
   /**
