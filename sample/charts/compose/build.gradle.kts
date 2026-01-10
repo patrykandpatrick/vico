@@ -15,7 +15,6 @@
  */
 
 import com.android.build.api.dsl.androidLibrary
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 
 plugins {
@@ -23,18 +22,17 @@ plugins {
   id("org.jetbrains.compose")
   id("org.jetbrains.kotlin.multiplatform")
   id("org.jetbrains.kotlin.plugin.compose")
-  kotlin("plugin.serialization")
 }
 
 kotlin {
   @Suppress("UnstableApiUsage")
   androidLibrary {
     configure()
-    namespace = "com.patrykandpatrick.vico.sample.app"
+    namespace = "com.patrykandpatrick.vico.sample.charts.compose"
   }
   listOf(iosX64(), iosArm64(), iosSimulatorArm64()).forEach { iosTarget ->
     iosTarget.binaries.framework {
-      baseName = "Sample"
+      baseName = project.name
       isStatic = true
     }
   }
@@ -49,25 +47,20 @@ kotlin {
     binaries.executable()
   }
   sourceSets {
-    androidMain.dependencies { implementation(project(":sample:charts:views")) }
-    commonMain.dependencies {
-      implementation(compose.material3)
-      implementation(libs.composeNavigation)
-      implementation(libs.lifecycleRuntime)
-      implementation(libs.materialIcons)
-      implementation(project(":sample:charts:compose"))
+    androidMain.dependencies {
+      compileOnly(compose.uiTooling)
+      compileOnly(libs.customViewPooling)
+      compileOnly(libs.lifecycleViewModel)
+      compileOnly(libs.activityCompose)
+      compileOnly(libs.emoji2)
     }
-    val desktopMain by getting
-    desktopMain.dependencies { implementation(compose.desktop.currentOs) }
-  }
-}
-
-compose.desktop {
-  application {
-    mainClass = "com.patrykandpatrick.vico.sample.app.MainKt"
-    nativeDistributions {
-      packageName = "com.patrykandpatrick.vico.sample"
-      targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
+    commonMain.dependencies {
+      implementation(compose.components.uiToolingPreview)
+      implementation(compose.foundation)
+      implementation(compose.ui)
+      implementation(compose.material3)
+      implementation(libs.kotlinDateTime)
+      implementation(project(":vico:compose"))
     }
   }
 }

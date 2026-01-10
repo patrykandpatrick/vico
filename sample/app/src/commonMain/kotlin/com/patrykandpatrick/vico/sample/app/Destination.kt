@@ -14,31 +14,12 @@
  * limitations under the License.
  */
 
-pluginManagement.repositories {
-  google()
-  gradlePluginPortal()
-  mavenCentral()
+package com.patrykandpatrick.vico.sample.app
+
+import kotlinx.serialization.Serializable
+
+sealed interface Destination {
+  @Serializable object ChartList : Destination
+
+  @Serializable class Chart(val uiFrameworkID: Int, val initialChartID: Int) : Destination
 }
-
-@Suppress("UnstableApiUsage")
-dependencyResolutionManagement {
-  repositories {
-    google()
-    mavenCentral()
-    mavenLocal()
-  }
-}
-
-rootProject.name = "Vico"
-
-include(
-  "sample:android",
-  "sample:app",
-  "sample:charts:compose",
-  "sample:charts:views",
-  "vico",
-  "vico:compose",
-  "vico:compose-m2",
-  "vico:compose-m3",
-  "vico:views",
-)

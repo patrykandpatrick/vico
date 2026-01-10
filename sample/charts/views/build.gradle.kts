@@ -14,31 +14,26 @@
  * limitations under the License.
  */
 
-pluginManagement.repositories {
-  google()
-  gradlePluginPortal()
-  mavenCentral()
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
+plugins {
+  id("com.android.library")
+  id("kotlin-android")
+  id("org.jetbrains.kotlin.plugin.compose")
 }
 
-@Suppress("UnstableApiUsage")
-dependencyResolutionManagement {
-  repositories {
-    google()
-    mavenCentral()
-    mavenLocal()
-  }
+android {
+  configure()
+  buildFeatures { viewBinding = true }
+  namespace = "com.patrykandpatrick.vico.sample.charts.views"
 }
 
-rootProject.name = "Vico"
+kotlin { compilerOptions { jvmTarget = JvmTarget.JVM_11 } }
 
-include(
-  "sample:android",
-  "sample:app",
-  "sample:charts:compose",
-  "sample:charts:views",
-  "vico",
-  "vico:compose",
-  "vico:compose-m2",
-  "vico:compose-m3",
-  "vico:views",
-)
+dependencies {
+  implementation(platform(libs.composeBom))
+  implementation(libs.appcompat)
+  implementation(libs.composeUI)
+  implementation(libs.composeViewBinding)
+  implementation(project(":vico:views"))
+}

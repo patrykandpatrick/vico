@@ -14,31 +14,7 @@
  * limitations under the License.
  */
 
-pluginManagement.repositories {
-  google()
-  gradlePluginPortal()
-  mavenCentral()
-}
+package com.patrykandpatrick.vico.sample.app
 
-@Suppress("UnstableApiUsage")
-dependencyResolutionManagement {
-  repositories {
-    google()
-    mavenCentral()
-    mavenLocal()
-  }
-}
-
-rootProject.name = "Vico"
-
-include(
-  "sample:android",
-  "sample:app",
-  "sample:charts:compose",
-  "sample:charts:views",
-  "vico",
-  "vico:compose",
-  "vico:compose-m2",
-  "vico:compose-m3",
-  "vico:views",
-)
+actual val Charts.overridden: LinkedHashMap<UIFramework, List<Chart>>?
+  get() = null
