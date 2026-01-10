@@ -15,9 +15,9 @@ jobs:
       - uses: gradle/actions/setup-gradle@v5
       - run: |
           ./gradlew build -x lint -x test
-          cd sample/app/build/outputs/apk/debug
-          mv app-debug.apk android-sample-debug.apk
+          cd sample/android/build/outputs/apk/debug
+          mv android-debug.apk android-sample-debug.apk
       - uses: actions/upload-artifact@v6
         with:
           name: android-sample-debug
-          path: sample/app/build/outputs/apk/debug/android-sample-debug.apk
+          path: sample/android/build/outputs/apk/debug/android-sample-debug.apk
