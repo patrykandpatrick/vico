@@ -19,7 +19,7 @@ jobs:
       - run: |
           git config --global user.email "96002241+patrykandpatrickbot@users.noreply.github.com"
           git config --global user.name "Patryk & Patrick Bot"
-          git clone https://${{ secrets.BOT_PAT }}@github.com/patrykandpatrick/vico-api-reference
+          git clone https://${{ secrets.BOT_PAT }}@github.com/patrykandpatrick/api.vico.patrykandpatrick.com
           cd ${{ github.workspace }}/vico
           VERSION_NAME=$(grep -oP "(?<=const val VICO = \")[^\"]*" buildSrc/src/main/kotlin/Versions.kt)
           echo "VERSION_NAME=$VERSION_NAME" >> $GITHUB_ENV
@@ -41,11 +41,11 @@ jobs:
           cd ${{ github.workspace }}/vico
           git remote set-url origin https://patrykandpatrickbot:${{ secrets.BOT_PAT }}@github.com/patrykandpatrick/vico
           ./gradlew dokkaGenerate
-          API_REFERENCE_DESTINATION=${{ github.workspace }}/vico-api-reference/$(if $IS_PRERELEASE; then echo $VERSION_NAME; else echo stable; fi)
+          API_REFERENCE_DESTINATION=${{ github.workspace }}/api.vico.patrykandpatrick.com/$(if $IS_PRERELEASE; then echo $VERSION_NAME; else echo stable; fi)
           rm -fr $API_REFERENCE_DESTINATION/*
           cp -R ${{ github.workspace }}/vico/vico/build/dokka/html/. $API_REFERENCE_DESTINATION
-          cd ${{ github.workspace }}/vico-api-reference
-          git remote set-url origin https://patrykandpatrickbot:${{ secrets.BOT_PAT }}@github.com/patrykandpatrick/vico-api-reference
+          cd ${{ github.workspace }}/api.vico.patrykandpatrick.com
+          git remote set-url origin https://patrykandpatrickbot:${{ secrets.BOT_PAT }}@github.com/patrykandpatrick/api.vico.patrykandpatrick.com
           git add -A
           git diff --staged --quiet HEAD || git commit -m "Update API reference"
           git push origin
