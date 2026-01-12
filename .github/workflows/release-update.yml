@@ -41,7 +41,7 @@ jobs:
           cd ${{ github.workspace }}/vico
           git remote set-url origin https://patrykandpatrickbot:${{ secrets.BOT_PAT }}@github.com/patrykandpatrick/vico
           ./gradlew dokkaGenerate
-          API_REFERENCE_DESTINATION=${{ github.workspace }}/api.vico.patrykandpatrick.com/$(if $IS_PRERELEASE; then echo $VERSION_NAME; else echo stable; fi)
+          API_REFERENCE_DESTINATION=${{ github.workspace }}/api.vico.patrykandpatrick.com/$(if $IS_PRERELEASE; then echo v$VERSION_NAME; else echo stable; fi)
           rm -fr $API_REFERENCE_DESTINATION/*
           cp -R ${{ github.workspace }}/vico/vico/build/dokka/html/. $API_REFERENCE_DESTINATION
           cd ${{ github.workspace }}/api.vico.patrykandpatrick.com
