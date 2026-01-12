@@ -15,6 +15,7 @@
  */
 
 import com.android.build.api.dsl.androidLibrary
+import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 
 plugins {
@@ -31,6 +32,8 @@ kotlin {
   androidLibrary {
     configure()
     namespace = moduleNamespace
+    // Host-side JVM tests (not device/instrumentation). We use this for MockK-based tests.
+    withHostTest { isIncludeAndroidResources = true }
   }
   listOf(iosX64(), iosArm64(), iosSimulatorArm64()).forEach { target ->
     target.binaries.framework {
@@ -57,7 +60,27 @@ kotlin {
       implementation(libs.coroutinesCore)
       implementation(libs.kotlinStdLib)
     }
+    // Keep Kotlin test APIs in `commonTest` so target-specific test source sets inherit them.
+    commonTest.dependencies { implementation(libs.kotlinTest) }
+    // MockK isn’t multiplatform, so host-side JVM tests get it here.
+    val androidHostTest by getting { dependencies { implementation(libs.mockK) } }
   }
   explicitApi()
   compilerOptions { freeCompilerArgs.add("-Xannotation-default-target=param-property") }
+}
+
+/*
+ * Ensure `./gradlew test` includes this module’s test suite. In this module, the JVM-capable tests
+ * live under Android host tests.
+ */
+val testTask = tasks.findByName("test")
+
+if (testTask != null) {
+  testTask.dependsOn("testAndroidHostTest")
+} else {
+  tasks.register("test") {
+    group = LifecycleBasePlugin.VERIFICATION_GROUP
+    description = "Runs the vico-compose test suite on the JVM (Android host tests)."
+    dependsOn("testAndroidHostTest")
+  }
 }
