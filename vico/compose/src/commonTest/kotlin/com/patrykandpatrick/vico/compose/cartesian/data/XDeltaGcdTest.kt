@@ -1,0 +1,57 @@
+/*
+ * Copyright 2026 by Patryk Goworowski and Patrick Michalik.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.patrykandpatrick.vico.compose.cartesian.data
+
+import kotlin.test.Test
+import kotlin.test.assertEquals
+
+class XDeltaGcdTest {
+  private data class Entry(override val x: Double) : CartesianLayerModel.Entry
+
+  private fun getEntries(vararg x: Number): List<CartesianLayerModel.Entry> =
+    x.map { value -> Entry(value.toDouble()) }
+
+  @Test
+  fun `Ensure 1 is returned for empty collection`() {
+    assertEquals(1.0, getEntries().getXDeltaGcd())
+  }
+
+  @Test
+  fun `Ensure 1 is returned for single number`() {
+    assertEquals(1.0, getEntries(4).getXDeltaGcd())
+  }
+
+  @Test
+  fun `Ensure 2 is returned for multiples of 2`() {
+    assertEquals(2.0, getEntries(0, 2, 4, 6).getXDeltaGcd())
+  }
+
+  @Test
+  fun `Ensure 1 is returned for primes`() {
+    assertEquals(1.0, getEntries(2, 3, 5, 7).getXDeltaGcd())
+  }
+
+  @Test
+  fun `Ensure one half is returned for multiples of one half`() {
+    assertEquals(0.5, getEntries(0, 0.5, 1, 1.5).getXDeltaGcd())
+  }
+
+  @Test
+  fun `Ensure 3 is returned for shuffled multiples of 3`() {
+    assertEquals(3.0, getEntries(12, 3, 6, 21).getXDeltaGcd())
+  }
+}
