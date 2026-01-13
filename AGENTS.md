@@ -52,7 +52,8 @@ vico/                           # Root project
 ```
 
 **Time:** ~30-60 seconds  
-Tests are located in `vico/views/src/test/kotlin/`.
+Tests are located in `vico/views/src/test/kotlin/` and
+`vico/compose/src/{commonTest,androidHostTest}/kotlin/`.
 
 ### Format Code (ktfmt)
 
@@ -101,6 +102,8 @@ All workflows run on `push` and `pull_request`:
 | ------------------------ | -------------------------------------- |
 | Compose shared code      | `vico/compose/src/commonMain/kotlin/`  |
 | Compose Android code     | `vico/compose/src/androidMain/kotlin/` |
+| Compose tests (common)   | `vico/compose/src/commonTest/kotlin/`  |
+| Compose tests (host)     | `vico/compose/src/androidHostTest/kotlin/` |
 | Material theming (M2/M3) | `vico/compose-m2`, `vico/compose-m3`   |
 | Android Views components | `vico/views/src/main/kotlin/`          |
 | Unit tests (Views)       | `vico/views/src/test/kotlin/`          |
