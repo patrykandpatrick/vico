@@ -98,17 +98,17 @@ All workflows run on `push` and `pull_request`:
 
 ## Key Source Locations
 
-| Component                | Path                                   |
-| ------------------------ | -------------------------------------- |
-| Compose shared code      | `vico/compose/src/commonMain/kotlin/`  |
-| Compose Android code     | `vico/compose/src/androidMain/kotlin/` |
-| Compose tests (common)   | `vico/compose/src/commonTest/kotlin/`  |
+| Component                | Path                                       |
+| ------------------------ | ------------------------------------------ |
+| Compose shared code      | `vico/compose/src/commonMain/kotlin/`      |
+| Compose Android code     | `vico/compose/src/androidMain/kotlin/`     |
+| Compose tests (common)   | `vico/compose/src/commonTest/kotlin/`      |
 | Compose tests (host)     | `vico/compose/src/androidHostTest/kotlin/` |
-| Material theming (M2/M3) | `vico/compose-m2`, `vico/compose-m3`   |
-| Android Views components | `vico/views/src/main/kotlin/`          |
-| Unit tests (Views)       | `vico/views/src/test/kotlin/`          |
-| Dependency versions      | `gradle/libs.versions.toml`            |
-| Build versions           | `buildSrc/src/main/kotlin/Versions.kt` |
+| Material theming (M2/M3) | `vico/compose-m2`, `vico/compose-m3`       |
+| Android Views components | `vico/views/src/main/kotlin/`              |
+| Unit tests (Views)       | `vico/views/src/test/kotlin/`              |
+| Dependency versions      | `gradle/libs.versions.toml`                |
+| Build versions           | `buildSrc/src/main/kotlin/Versions.kt`     |
 
 ## Important Notes
 
