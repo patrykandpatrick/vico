@@ -285,8 +285,8 @@ private constructor(
     with(context) {
       val canvasSaveCount = if (fadingEdges != null) canvas.saveLayer() else -1
       canvas.translate(offset.x, offset.y)
-      axisManager.drawUnderLayers(context)
       decorations.forEach { it.drawUnderLayers(context) }
+      axisManager.drawUnderLayers(context)
       val layerBitmap = getBitmap(cacheKeyNamespace)
       layerCanvas.setBitmap(layerBitmap)
       withCanvas(layerCanvas) {

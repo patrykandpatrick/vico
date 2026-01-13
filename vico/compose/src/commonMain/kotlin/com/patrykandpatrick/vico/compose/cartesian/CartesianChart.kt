@@ -269,8 +269,8 @@ internal constructor(
   internal fun draw(context: CartesianDrawingContext) {
     with(context) {
       if (fadingEdges != null) canvas.saveLayer(Rect(Offset.Zero, canvasSize), EmptyPaint)
-      axisManager.drawUnderLayers(context)
       decorations.forEach { it.drawUnderLayers(context) }
+      axisManager.drawUnderLayers(context)
       val (layerBitmap, layerCanvas) = getBitmap(cacheKeyNamespace)
       withCanvas(layerCanvas) {
         model.forEachWithLayer(drawingConsumer.apply { this.context = context })
