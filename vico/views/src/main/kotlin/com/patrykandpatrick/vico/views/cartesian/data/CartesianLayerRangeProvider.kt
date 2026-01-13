@@ -74,6 +74,14 @@ public interface CartesianLayerRangeProvider {
         this.maxY ?: super.getMaxY(minY, maxY, extraStore)
     }
 
+    /** Keeps the intrinsic ranges. */
+    public val Intrinsic: CartesianLayerRangeProvider =
+      object : CartesianLayerRangeProvider {
+        override fun getMinY(minY: Double, maxY: Double, extraStore: ExtraStore) = minY
+
+        override fun getMaxY(minY: Double, maxY: Double, extraStore: ExtraStore) = maxY
+      }
+
     /** Uses dynamic rounding. */
     public fun auto(): CartesianLayerRangeProvider = Auto
 
