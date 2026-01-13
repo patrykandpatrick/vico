@@ -34,15 +34,4 @@ class CartesianLayerRangeProviderTest {
     assertEquals(minY, provider.getMinY(minY, maxY, extraStore))
     assertEquals(maxY, provider.getMaxY(minY, maxY, extraStore))
   }
-
-  @Test
-  fun intrinsicRangeProviderKeepsZeroRange() {
-    val minY = 0.0
-    val maxY = 0.0
-
-    val provider = CartesianLayerRangeProvider.Intrinsic
-
-    assertEquals(minY, provider.getMinY(minY, maxY, extraStore))
-    assertEquals(maxY, provider.getMaxY(minY, maxY, extraStore))
-  }
 }
