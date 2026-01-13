@@ -52,7 +52,7 @@ vico/                           # Root project
 ```
 
 **Time:** ~30-60 seconds  
-Tests are located in `vico/views/src/test/java/`.
+Tests are located in `vico/views/src/test/kotlin/`.
 
 ### Format Code (ktfmt)
 
