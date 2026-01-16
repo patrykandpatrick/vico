@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-import com.android.build.api.dsl.androidLibrary
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 
 plugins {
   id("com.android.kotlin.multiplatform.library")
-  id("org.jetbrains.compose")
   id("org.jetbrains.kotlin.multiplatform")
+  id("org.jetbrains.compose")
   id("org.jetbrains.kotlin.plugin.compose")
   kotlin("plugin.serialization")
 }
 
 kotlin {
-  @Suppress("UnstableApiUsage")
+  jvmToolchain(11)
   androidLibrary {
-    configure()
+    compileSdk = Versions.COMPILE_SDK
+    minSdk = Versions.MIN_SDK
     namespace = "com.patrykandpatrick.vico.sample.app"
   }
   listOf(iosX64(), iosArm64(), iosSimulatorArm64()).forEach { iosTarget ->

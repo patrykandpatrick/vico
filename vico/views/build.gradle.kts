@@ -20,7 +20,6 @@ plugins {
   `dokka-convention`
   `publishing-convention`
   id("com.android.library")
-  id("kotlin-android")
 }
 
 android {
