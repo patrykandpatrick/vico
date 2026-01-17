@@ -17,6 +17,7 @@
 import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryTarget
 import com.android.build.api.dsl.LibraryExtension as AndroidLibraryExtension
 import org.gradle.api.JavaVersion
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 fun AndroidLibraryExtension.configure() {
   buildTypes {
@@ -34,6 +35,7 @@ fun AndroidLibraryExtension.configure() {
 }
 
 fun KotlinMultiplatformAndroidLibraryTarget.configure() {
+  compilerOptions { jvmTarget.set(JvmTarget.JVM_11) }
   compileSdk = Versions.COMPILE_SDK
   minSdk = Versions.MIN_SDK
 }
