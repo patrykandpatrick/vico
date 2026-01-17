@@ -19,8 +19,8 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 
 plugins {
   id("com.android.kotlin.multiplatform.library")
-  id("org.jetbrains.kotlin.multiplatform")
   id("org.jetbrains.compose")
+  id("org.jetbrains.kotlin.multiplatform")
   id("org.jetbrains.kotlin.plugin.compose")
   kotlin("plugin.serialization")
 }
@@ -28,8 +28,7 @@ plugins {
 kotlin {
   jvmToolchain(11)
   androidLibrary {
-    compileSdk = Versions.COMPILE_SDK
-    minSdk = Versions.MIN_SDK
+    configure()
     namespace = "com.patrykandpatrick.vico.sample.app"
   }
   listOf(iosX64(), iosArm64(), iosSimulatorArm64()).forEach { iosTarget ->
