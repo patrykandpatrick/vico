@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import com.android.build.api.dsl.androidLibrary
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 
 plugins {
@@ -27,7 +26,6 @@ plugins {
 }
 
 kotlin {
-  @Suppress("UnstableApiUsage")
   androidLibrary {
     configure()
     namespace = moduleNamespace

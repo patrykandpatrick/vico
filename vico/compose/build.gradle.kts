@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import com.android.build.api.dsl.androidLibrary
-import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 
 plugins {
@@ -28,11 +26,9 @@ plugins {
 }
 
 kotlin {
-  @Suppress("UnstableApiUsage")
   androidLibrary {
     configure()
     namespace = moduleNamespace
-    // Host-side JVM tests (not device/instrumentation). We use this for MockK-based tests.
     withHostTest { isIncludeAndroidResources = true }
   }
   listOf(iosX64(), iosArm64(), iosSimulatorArm64()).forEach { target ->
