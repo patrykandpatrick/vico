@@ -20,7 +20,6 @@ plugins {
   `dokka-convention`
   `publishing-convention`
   id("com.android.library")
-  id("kotlin-android")
 }
 
 android {
@@ -43,5 +42,6 @@ dependencies {
   implementation(libs.coroutinesCore)
   implementation(libs.kotlinStdLib)
   testImplementation(libs.kotlinTest)
+  testImplementation(libs.kotlinTestJunit5)
   testImplementation(libs.mockK)
 }
