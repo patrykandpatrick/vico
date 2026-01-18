@@ -49,9 +49,9 @@ kotlin {
   }
   sourceSets {
     commonMain.dependencies {
-      implementation(compose.foundation)
-      implementation(compose.runtime)
-      implementation(compose.ui)
+      implementation(libs.composeMppFoundation)
+      implementation(libs.composeMppRuntime)
+      implementation(libs.composeMppUi)
       implementation(libs.androidXAnnotation)
       implementation(libs.coroutinesCore)
       implementation(libs.kotlinStdLib)

@@ -6,6 +6,7 @@ androidXCore = "1.17.0"
 appcompat = "1.7.1"
 composeBom = "2026.01.00"
 composeMultiplatform = "1.10.0"
+composeMppMaterial3 = "1.9.0"
 composeNavigation = "2.9.1"
 coroutines = "1.10.2"
 customViewPooling = "1.1.0"
@@ -33,6 +34,15 @@ composeCompiler = { group = "org.jetbrains.kotlin.plugin.compose", name = "org.j
 composeFoundation = { group = "androidx.compose.foundation", name = "foundation" }
 composeMaterial = { group = "androidx.compose.material", name = "material" }
 composeMaterial3 = { group = "androidx.compose.material3", name = "material3" }
+composeMppComponentsUiToolingPreview = { group = "org.jetbrains.compose.components", name = "components-ui-tooling-preview", version.ref = "composeMultiplatform" }
+composeMppDesktop = { group = "org.jetbrains.compose.desktop", name = "desktop-jvm", version.ref = "composeMultiplatform" }
+composeMppFoundation = { group = "org.jetbrains.compose.foundation", name = "foundation", version.ref = "composeMultiplatform" }
+composeMppMaterial = { group = "org.jetbrains.compose.material", name = "material", version.ref = "composeMultiplatform" }
+composeMppMaterial3 = { group = "org.jetbrains.compose.material3", name = "material3", version.ref = "composeMppMaterial3" }
+composeMppRuntime = { group = "org.jetbrains.compose.runtime", name = "runtime", version.ref = "composeMultiplatform" }
+composeMppUi = { group = "org.jetbrains.compose.ui", name = "ui", version.ref = "composeMultiplatform" }
+composeMppUiTooling = { group = "org.jetbrains.compose.ui", name = "ui-tooling", version.ref = "composeMultiplatform" }
+composeMppUiToolingPreview = { group = "org.jetbrains.compose.ui", name = "ui-tooling-preview", version.ref = "composeMultiplatform" }
 composeMultiplatform = { group = "org.jetbrains.compose", name = "compose-gradle-plugin", version.ref = "composeMultiplatform" }
 composeNavigation = { group = "org.jetbrains.androidx.navigation", name = "navigation-compose", version.ref = "composeNavigation" }
 composePreview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }

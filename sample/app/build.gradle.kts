@@ -49,14 +49,14 @@ kotlin {
   sourceSets {
     androidMain.dependencies { implementation(project(":sample:charts:views")) }
     commonMain.dependencies {
-      implementation(compose.material3)
+      implementation(libs.composeMppMaterial3)
       implementation(libs.composeNavigation)
       implementation(libs.lifecycleRuntime)
       implementation(libs.materialIcons)
       implementation(project(":sample:charts:compose"))
     }
     val desktopMain by getting
-    desktopMain.dependencies { implementation(compose.desktop.currentOs) }
+    desktopMain.dependencies { implementation(libs.composeMppDesktop) }
   }
 }
 

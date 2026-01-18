@@ -48,5 +48,5 @@ dependencies {
   implementation(project(":sample:app"))
   implementation(libs.activityCompose)
   implementation(libs.material)
-  debugImplementation(compose.uiTooling)
+  debugImplementation(libs.composeMppUiTooling)
 }

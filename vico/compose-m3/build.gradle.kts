@@ -49,7 +49,7 @@ kotlin {
   sourceSets {
     commonMain.dependencies {
       api(project(":vico:compose"))
-      implementation(compose.material3)
+      implementation(libs.composeMppMaterial3)
     }
   }
   explicitApi()
