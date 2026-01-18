@@ -9,14 +9,11 @@ composeMaterial3 = "1.9.0"
 composeMaterialIcons = "1.7.3"
 composeNavigation = "2.9.1"
 coroutines = "1.10.2"
-customViewPooling = "1.1.0"
 dateTime = "0.7.1"
 dokka = "2.1.0"
-emoji2 = "1.6.0"
 jetpackComposeBom = "2026.01.00"
 kotlin = "2.3.0"
 lifecycleRuntime = "2.9.6"
-lifecycleViewModel = "2.10.0"
 material = "1.13.0"
 mavenPublish = "0.35.0"
 mockK = "1.14.7"
@@ -30,7 +27,6 @@ androidXCore = { group = "androidx.core", name = "core-ktx", version.ref = "andr
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 compose = { group = "org.jetbrains.compose", name = "compose-gradle-plugin", version.ref = "compose" }
 composeCompiler = { group = "org.jetbrains.kotlin.plugin.compose", name = "org.jetbrains.kotlin.plugin.compose.gradle.plugin", version.ref = "kotlin" }
-composeComponentsUIToolingPreview = { group = "org.jetbrains.compose.components", name = "components-ui-tooling-preview", version.ref = "compose" }
 composeDesktop = { group = "org.jetbrains.compose.desktop", name = "desktop-jvm", version.ref = "compose" }
 composeFoundation = { group = "org.jetbrains.compose.foundation", name = "foundation", version.ref = "compose" }
 composeMaterial = { group = "org.jetbrains.compose.material", name = "material", version.ref = "compose" }
@@ -40,10 +36,9 @@ composeNavigation = { group = "org.jetbrains.androidx.navigation", name = "navig
 composeRuntime = { group = "org.jetbrains.compose.runtime", name = "runtime", version.ref = "compose" }
 composeUI = { group = "org.jetbrains.compose.ui", name = "ui", version.ref = "compose" }
 composeUITooling = { group = "org.jetbrains.compose.ui", name = "ui-tooling", version.ref = "compose" }
+composeUIToolingPreview = { group = "org.jetbrains.compose.ui", name = "ui-tooling-preview", version.ref = "compose" }
 coroutinesCore = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
-customViewPooling = { group = "androidx.customview", name = "customview-poolingcontainer", version.ref = "customViewPooling" }
 dokka = { group = "org.jetbrains.dokka", name = "dokka-gradle-plugin", version.ref = "dokka" }
-emoji2 = { group = "androidx.emoji2", name = "emoji2", version.ref = "emoji2" }
 jetpackComposeBom = { group = "androidx.compose", name = "compose-bom", version.ref = "jetpackComposeBom" }
 jetpackComposeUI = { group = "androidx.compose.ui", name = "ui" }
 jetpackComposeViewBinding = { group = "androidx.compose.ui", name = "ui-viewbinding" }
@@ -53,7 +48,6 @@ kotlinStdLib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version
 kotlinTest = { group = "org.jetbrains.kotlin", name = "kotlin-test", version.ref = "kotlin" }
 kotlinTestJunit5 = { group = "org.jetbrains.kotlin", name = "kotlin-test-junit5", version.ref = "kotlin" }
 lifecycleRuntime = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycleRuntime" }
-lifecycleViewModel = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycleViewModel" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 mavenPublish = { group = "com.vanniktech.maven.publish", name = "com.vanniktech.maven.publish.gradle.plugin", version.ref = "mavenPublish" }
 mockK = { group = "io.mockk", name = "mockk", version.ref = "mockK" }

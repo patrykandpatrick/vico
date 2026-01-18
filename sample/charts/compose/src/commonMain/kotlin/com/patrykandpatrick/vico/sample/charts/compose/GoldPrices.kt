@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.CartesianMeasuringContext
@@ -39,7 +40,6 @@ import kotlin.math.ceil
 import kotlin.math.floor
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.format.Padding
-import org.jetbrains.compose.ui.tooling.preview.Preview
 
 private const val Y_STEP = 10.0
 

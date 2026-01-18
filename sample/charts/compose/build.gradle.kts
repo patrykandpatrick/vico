@@ -45,15 +45,9 @@ kotlin {
     binaries.executable()
   }
   sourceSets {
-    androidMain.dependencies {
-      compileOnly(libs.activityCompose)
-      compileOnly(libs.composeUITooling)
-      compileOnly(libs.customViewPooling)
-      compileOnly(libs.emoji2)
-      compileOnly(libs.lifecycleViewModel)
-    }
+    androidMain.dependencies { implementation(libs.composeUITooling) }
     commonMain.dependencies {
-      implementation(libs.composeComponentsUIToolingPreview)
+      implementation(libs.composeUIToolingPreview)
       implementation(libs.composeFoundation)
       implementation(libs.composeMaterial3)
       implementation(libs.composeUI)
