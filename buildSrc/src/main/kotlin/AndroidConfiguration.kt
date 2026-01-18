@@ -15,11 +15,11 @@
  */
 
 import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryTarget
-import com.android.build.api.dsl.LibraryExtension as AndroidLibraryExtension
+import com.android.build.api.dsl.LibraryExtension
 import org.gradle.api.JavaVersion
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
-fun AndroidLibraryExtension.configure() {
+fun LibraryExtension.configure() {
   buildTypes {
     release {
       isMinifyEnabled = false
