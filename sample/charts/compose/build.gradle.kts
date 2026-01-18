@@ -46,17 +46,17 @@ kotlin {
   }
   sourceSets {
     androidMain.dependencies {
-      compileOnly(libs.composeMppUiTooling)
-      compileOnly(libs.customViewPooling)
-      compileOnly(libs.lifecycleViewModel)
       compileOnly(libs.activityCompose)
+      compileOnly(libs.composeUITooling)
+      compileOnly(libs.customViewPooling)
       compileOnly(libs.emoji2)
+      compileOnly(libs.lifecycleViewModel)
     }
     commonMain.dependencies {
-      implementation(libs.composeMppComponentsUiToolingPreview)
-      implementation(libs.composeMppFoundation)
-      implementation(libs.composeMppUi)
-      implementation(libs.composeMppMaterial3)
+      implementation(libs.composeComponentsUIToolingPreview)
+      implementation(libs.composeFoundation)
+      implementation(libs.composeMaterial3)
+      implementation(libs.composeUI)
       implementation(libs.kotlinDateTime)
       implementation(project(":vico:compose"))
     }
