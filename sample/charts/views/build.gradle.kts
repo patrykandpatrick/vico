@@ -30,9 +30,9 @@ android {
 kotlin { compilerOptions { jvmTarget = JvmTarget.JVM_11 } }
 
 dependencies {
-  implementation(platform(libs.composeBom))
   implementation(libs.appcompat)
-  implementation(libs.composeUI)
-  implementation(libs.composeViewBinding)
+  implementation(platform(libs.jetpackComposeBom))
+  implementation(libs.jetpackComposeUI)
+  implementation(libs.jetpackComposeViewBinding)
   implementation(project(":vico:views"))
 }
