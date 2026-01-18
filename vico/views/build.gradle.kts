@@ -42,5 +42,6 @@ dependencies {
   implementation(libs.coroutinesCore)
   implementation(libs.kotlinStdLib)
   testImplementation(libs.kotlinTest)
+  testImplementation(libs.kotlinTestJunit5)
   testImplementation(libs.mockK)
 }
