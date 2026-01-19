@@ -200,16 +200,15 @@ public class CartesianChartModelProducer {
       restoredModel: CartesianChartModel? = null,
     ) {
       cancelAnimation()
-      if (partials.hashCode() == cachedModelPartialHashCode) {
-        val model = cachedModel?.copy(transactionExtraStore)
-        if (model == restoredModel) return
-        onUpdate(model, updateRanges(model), hostExtraStore.copy())
-      } else {
-        val model = getModel(partials, transactionExtraStore)
-        val ranges = updateRanges(model)
-        prepareForTransformation(model, hostExtraStore, ranges)
-        startAnimation { key, fraction -> transform(key, fraction, model, ranges) }
-      }
+      val model =
+        if (partials.hashCode() == cachedModelPartialHashCode) {
+          cachedModel?.copy(transactionExtraStore)?.takeUnless { it == restoredModel } ?: return
+        } else {
+          getModel(partials, transactionExtraStore)
+        }
+      val ranges = updateRanges(model)
+      prepareForTransformation(model, hostExtraStore, ranges)
+      startAnimation { key, fraction -> transform(key, fraction, model, ranges) }
     }
   }
 
