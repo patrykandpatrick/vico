@@ -140,11 +140,11 @@ internal fun CartesianChartHostImpl(
   val layerDimensions = remember { MutableCartesianLayerDimensions() }
 
   val onInteraction =
-    remember(chart, measuringContext, layerDimensions, scrollState, ranges) {
+    remember(chart, layerDimensions, scrollState, ranges) {
       if (chart.marker != null) {
         { interaction: Interaction ->
           val x =
-            measuringContext.pointerPositionToX(
+            measuringContext.value.pointerPositionToX(
               interaction.point,
               layerDimensions,
               chart.layerBounds,
@@ -154,7 +154,7 @@ internal fun CartesianChartHostImpl(
           val targets =
             chart.getMarkerTargets(
               x,
-              measuringContext.getVisibleXRange(
+              measuringContext.value.getVisibleXRange(
                 layerDimensions,
                 chart.layerBounds,
                 scrollState.value,
@@ -213,15 +213,15 @@ internal fun CartesianChartHostImpl(
         )
   ) {
     if (size.isEmpty()) return@Canvas
-    measuringContext.canvasSize = size
+    measuringContext.value.canvasSize = size
 
     layerDimensions.clear()
-    chart.prepare(measuringContext, layerDimensions)
+    chart.prepare(measuringContext.value, layerDimensions)
 
     if (chart.layerBounds.isEmpty) return@Canvas
 
-    zoomState.update(measuringContext, layerDimensions, chart.layerBounds, scrollState.value)
-    scrollState.update(measuringContext, chart.layerBounds, layerDimensions)
+    zoomState.update(measuringContext.value, layerDimensions, chart.layerBounds, scrollState.value)
+    scrollState.update(measuringContext.value, chart.layerBounds, layerDimensions)
 
     if (model != lastHandledModel) {
       coroutineScope.launch { scrollState.autoScroll(model, previousModel) }
@@ -230,7 +230,7 @@ internal fun CartesianChartHostImpl(
 
     val drawingContext =
       CartesianDrawingContext(
-        measuringContext,
+        measuringContext.value,
         drawContext.canvas,
         layerDimensions,
         chart.layerBounds,
@@ -240,7 +240,7 @@ internal fun CartesianChartHostImpl(
       )
 
     chart.draw(drawingContext)
-    measuringContext.cacheStore.purge()
+    measuringContext.value.cacheStore.purge()
   }
 }
 

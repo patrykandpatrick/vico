@@ -17,7 +17,9 @@
 package com.patrykandpatrick.vico.multiplatform.cartesian
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.platform.LocalDensity
@@ -69,39 +71,41 @@ internal fun rememberCartesianMeasuringContext(
   zoomEnabled: Boolean,
   layerPadding: CartesianLayerPadding,
   markerX: Double?,
-): MutableCartesianMeasuringContext {
+): State<MutableCartesianMeasuringContext> {
   val fontFamilyResolver = LocalFontFamilyResolver.current
   val density = LocalDensity.current
   val layoutDirection = LocalLayoutDirection.current
   val cacheStore = remember { CacheStore() }
-  return remember(
-    fontFamilyResolver,
-    density,
-    extraStore,
-    layoutDirection,
-    model,
-    ranges,
-    scrollEnabled,
-    zoomEnabled,
-    layerPadding,
-    markerX,
-    cacheStore,
-  ) {
-    MutableCartesianMeasuringContext(
-      canvasSize = Size.Zero,
-      fontFamilyResolver = fontFamilyResolver,
-      density = density,
-      extraStore = extraStore,
-      layoutDirection = layoutDirection,
-      model = model,
-      ranges = ranges,
-      scrollEnabled = scrollEnabled,
-      zoomEnabled = zoomEnabled,
-      layerPadding = layerPadding,
-      markerX = markerX,
-      cacheStore = cacheStore,
-    )
-  }
+  val cartesianMeasuringContext =
+    remember(
+      fontFamilyResolver,
+      density,
+      extraStore,
+      layoutDirection,
+      model,
+      ranges,
+      scrollEnabled,
+      zoomEnabled,
+      layerPadding,
+      markerX,
+      cacheStore,
+    ) {
+      MutableCartesianMeasuringContext(
+        canvasSize = Size.Zero,
+        fontFamilyResolver = fontFamilyResolver,
+        density = density,
+        extraStore = extraStore,
+        layoutDirection = layoutDirection,
+        model = model,
+        ranges = ranges,
+        scrollEnabled = scrollEnabled,
+        zoomEnabled = zoomEnabled,
+        layerPadding = layerPadding,
+        markerX = markerX,
+        cacheStore = cacheStore,
+      )
+    }
+  return rememberUpdatedState(cartesianMeasuringContext)
 }
 
 internal fun CartesianMeasuringContext.getVisibleXRange(
