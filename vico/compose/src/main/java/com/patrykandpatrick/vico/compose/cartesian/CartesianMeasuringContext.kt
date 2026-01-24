@@ -17,12 +17,13 @@
 package com.patrykandpatrick.vico.compose.cartesian
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.sp
-import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
 import com.patrykandpatrick.vico.core.cartesian.MutableCartesianMeasuringContext
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartRanges
@@ -43,38 +44,40 @@ internal fun rememberCartesianMeasuringContext(
   layerPadding: CartesianLayerPadding,
   pointerPosition: Point?,
   markerX: Double?,
-): CartesianMeasuringContext {
+): State<MutableCartesianMeasuringContext> {
   val density = LocalDensity.current
   val isLtr = LocalLayoutDirection.current == LayoutDirection.Ltr
   val cacheStore = remember { CacheStore() }
-  return remember(
-    canvasSize,
-    density,
-    extraStore,
-    isLtr,
-    model,
-    ranges,
-    scrollEnabled,
-    zoomEnabled,
-    layerPadding,
-    pointerPosition,
-    markerX,
-    cacheStore,
-  ) {
-    MutableCartesianMeasuringContext(
-      canvasSize = canvasSize,
-      density = density.density,
-      extraStore = extraStore,
-      isLtr = isLtr,
-      spToPx = density.run { { it.sp.toPx() } },
-      model = model,
-      ranges = ranges,
-      scrollEnabled = scrollEnabled,
-      zoomEnabled = zoomEnabled,
-      layerPadding = layerPadding,
-      pointerPosition = pointerPosition,
-      markerX = markerX,
-      cacheStore = cacheStore,
-    )
-  }
+  val cartesianMeasuringContext =
+    remember(
+      canvasSize,
+      density,
+      extraStore,
+      isLtr,
+      model,
+      ranges,
+      scrollEnabled,
+      zoomEnabled,
+      layerPadding,
+      pointerPosition,
+      markerX,
+      cacheStore,
+    ) {
+      MutableCartesianMeasuringContext(
+        canvasSize = canvasSize,
+        density = density.density,
+        extraStore = extraStore,
+        isLtr = isLtr,
+        spToPx = density.run { { it.sp.toPx() } },
+        model = model,
+        ranges = ranges,
+        scrollEnabled = scrollEnabled,
+        zoomEnabled = zoomEnabled,
+        layerPadding = layerPadding,
+        pointerPosition = pointerPosition,
+        markerX = markerX,
+        cacheStore = cacheStore,
+      )
+    }
+  return rememberUpdatedState(cartesianMeasuringContext)
 }
