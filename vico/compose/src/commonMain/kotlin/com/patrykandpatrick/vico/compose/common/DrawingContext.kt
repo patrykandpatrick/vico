@@ -18,7 +18,6 @@ package com.patrykandpatrick.vico.compose.common
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.geometry.toRect
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.ImageBitmap
@@ -40,8 +39,10 @@ public interface DrawingContext : MeasuringContext {
   public fun withCanvas(canvas: Canvas, block: () -> Unit)
 }
 
+private val saveLayerPaint = Paint()
+
 internal fun DrawingContext.saveLayer(opacity: Float) =
-  canvas.saveLayer(Rect(Offset.Zero, canvasSize), Paint().apply { alpha = opacity })
+  canvas.saveLayer(Rect(Offset.Zero, canvasSize), saveLayerPaint.apply { alpha = opacity })
 
 private val clearPaint = Paint().apply { blendMode = BlendMode.Clear }
 
@@ -51,7 +52,7 @@ internal fun DrawingContext.getBitmap(
 ) =
   cacheStore
     .getOrNull<Pair<ImageBitmap, Canvas>>(cacheKeyNamespace, *cacheKeyComponents, canvasSize)
-    ?.apply { second.drawRect(canvasSize.toRect(), clearPaint) }
+    ?.apply { with(canvasSize) { second.drawRect(0f, 0f, width, height, clearPaint) } }
     ?: ImageBitmap(canvasSize.width.toInt(), canvasSize.height.toInt())
       .let { it to Canvas(it) }
       .also { pair ->

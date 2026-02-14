@@ -20,6 +20,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.PathOperation
 import androidx.compose.ui.graphics.withSave
 import com.patrykandpatrick.vico.compose.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.compose.cartesian.axis.Axis
@@ -62,7 +63,8 @@ internal abstract class BaseAreaFill(open val splitY: (ExtraStore) -> Number) :
           lineTo(areaBounds.getStart(isLtr), layerBounds.bottom)
           close()
         }
-        onTopAreasCreated(this, areaPath.and(clipPath), fillBounds)
+        areaPath.op(areaPath, clipPath, PathOperation.Intersect)
+        onTopAreasCreated(this, areaPath, fillBounds)
       }
       if (canvasSplitY < layerBounds.bottom) {
         clipPath.rewind()
@@ -75,7 +77,8 @@ internal abstract class BaseAreaFill(open val splitY: (ExtraStore) -> Number) :
           lineTo(areaBounds.getStart(isLtr), layerBounds.top)
           close()
         }
-        onBottomAreasCreated(this, areaPath.and(clipPath), fillBounds)
+        areaPath.op(areaPath, clipPath, PathOperation.Intersect)
+        onBottomAreasCreated(this, areaPath, fillBounds)
       }
       onAreasCreated(this, layerBounds)
     }
