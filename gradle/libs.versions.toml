@@ -15,7 +15,7 @@ jetpackComposeBom = "2026.02.00"
 kotlin = "2.3.10"
 lifecycleRuntime = "2.9.6"
 material = "1.13.0"
-mavenPublish = "0.35.0"
+mavenPublish = "0.36.0"
 mockK = "1.14.9"
 
 [libraries]
