@@ -18,6 +18,7 @@ package com.patrykandpatrick.vico.views.cartesian.layer
 
 import android.graphics.*
 import androidx.annotation.FloatRange
+import androidx.core.graphics.get
 import com.patrykandpatrick.vico.views.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.views.cartesian.CartesianMeasuringContext
 import com.patrykandpatrick.vico.views.cartesian.axis.Axis
@@ -101,6 +102,26 @@ protected constructor(
         areaFill?.draw(context, path, halfThickness, verticalAxisPosition)
         lineCanvas.drawPath(path, linePaint)
         withCanvas(fillCanvas) { fill.draw(context, halfThickness, verticalAxisPosition) }
+      }
+    }
+
+    /** The [LineFill]’s solid color, or `null` if the [LineFill] has no single solid color. */
+    public val fillColor: Int?
+      get() = (fill as? SingleLineFill)?.takeIf { it.fill.shaderProvider == null }?.fill?.color
+
+    /** Draws the line. */
+    public fun draw(
+      context: CartesianDrawingContext,
+      path: Path,
+      color: Int,
+      verticalAxisPosition: Axis.Position.Vertical?,
+    ) {
+      with(context) {
+        stroke.apply(this, linePaint)
+        val halfThickness = stroke.thicknessDp.pixels.half
+        areaFill?.draw(context, path, halfThickness, verticalAxisPosition)
+        linePaint.color = color
+        canvas.drawPath(path, linePaint)
       }
     }
   }
@@ -398,17 +419,24 @@ protected constructor(
 
         canvas.saveLayer(opacity = drawingModel?.opacity ?: 1f)
 
-        val lineBitmap = getBitmap(cacheKeyNamespace, seriesIndex, "line")
-        lineCanvas.setBitmap(lineBitmap)
-        val lineFillBitmap = getBitmap(cacheKeyNamespace, seriesIndex, "lineFill")
-        lineFillCanvas.setBitmap(lineFillBitmap)
-        line.draw(context, linePath, lineCanvas, lineFillCanvas, verticalAxisPosition)
-        lineCanvas.drawBitmap(lineFillBitmap, 0f, 0f, srcInPaint)
-        canvas.drawBitmap(lineBitmap, 0f, 0f, null)
-
-        forEachPointInBounds(series, drawingStart, pointInfoMap) { entry, x, y, _, _ ->
-          updateMarkerTargets(entry, x, y, lineFillBitmap)
+        line.fillColor?.let { color ->
+          line.draw(context, linePath, color, verticalAxisPosition)
+          forEachPointInBounds(series, drawingStart, pointInfoMap) { entry, x, y, _, _ ->
+            updateMarkerTargets(entry, x, y, color)
+          }
         }
+          ?: run {
+            val lineBitmap = getBitmap(cacheKeyNamespace, seriesIndex, "line")
+            lineCanvas.setBitmap(lineBitmap)
+            val lineFillBitmap = getBitmap(cacheKeyNamespace, seriesIndex, "lineFill")
+            lineFillCanvas.setBitmap(lineFillBitmap)
+            line.draw(context, linePath, lineCanvas, lineFillCanvas, verticalAxisPosition)
+            lineCanvas.drawBitmap(lineFillBitmap, 0f, 0f, srcInPaint)
+            canvas.drawBitmap(lineBitmap, 0f, 0f, null)
+            forEachPointInBounds(series, drawingStart, pointInfoMap) { entry, x, y, _, _ ->
+              updateMarkerTargets(entry, x, y, lineFillBitmap)
+            }
+          }
 
         drawPointsAndDataLabels(line, series, seriesIndex, drawingStart, pointInfoMap)
 
@@ -432,13 +460,27 @@ protected constructor(
       LineCartesianLayerMarkerTarget.Point(
         entry,
         limitedCanvasY,
-        lineFillBitmap.getPixel(
+        lineFillBitmap[
           canvasX
             .roundToInt()
             .coerceIn(ceil(layerBounds.left).toInt(), layerBounds.right.toInt() - 1),
           limitedCanvasY.roundToInt(),
-        ),
+        ],
       )
+  }
+
+  protected open fun CartesianDrawingContext.updateMarkerTargets(
+    entry: LineCartesianLayerModel.Entry,
+    canvasX: Float,
+    canvasY: Float,
+    color: Int,
+  ) {
+    if (canvasX <= layerBounds.left - 1 || canvasX >= layerBounds.right + 1) return
+    val limitedCanvasY = canvasY.coerceIn(layerBounds.top, layerBounds.bottom)
+    _markerTargets
+      .getOrPut(entry.x) { listOf(MutableLineCartesianLayerMarkerTarget(entry.x, canvasX)) }
+      .first()
+      .points += LineCartesianLayerMarkerTarget.Point(entry, limitedCanvasY, color)
   }
 
   protected open fun CartesianDrawingContext.drawPointsAndDataLabels(

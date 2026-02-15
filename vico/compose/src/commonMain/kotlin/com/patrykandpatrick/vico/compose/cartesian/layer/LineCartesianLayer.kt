@@ -111,6 +111,26 @@ protected constructor(
         withCanvas(fillCanvas) { fill.draw(context, halfThickness, verticalAxisPosition) }
       }
     }
+
+    /** The [LineFill]’s solid [Color], or `null` if the [LineFill] has no single solid [Color]. */
+    public val fillColor: Color?
+      get() = (fill as? SingleLineFill)?.takeIf { it.fill.brush == null }?.fill?.color
+
+    /** Draws the line. */
+    public fun draw(
+      context: CartesianDrawingContext,
+      path: Path,
+      color: Color,
+      verticalAxisPosition: Axis.Position.Vertical?,
+    ) {
+      with(context) {
+        stroke.apply(this, linePaint)
+        val halfThickness = stroke.thickness.pixels.half
+        areaFill?.draw(context, path, halfThickness, verticalAxisPosition)
+        linePaint.color = color
+        canvas.drawPath(path, linePaint)
+      }
+    }
   }
 
   /** Draws a [LineCartesianLayer] line’s fill. */
@@ -402,15 +422,23 @@ protected constructor(
 
         saveLayer(opacity = drawingModel?.opacity ?: 1f)
 
-        val (lineBitmap, lineCanvas) = getBitmap(cacheKeyNamespace, seriesIndex, "line")
-        val (lineFillBitmap, lineFillCanvas) = getBitmap(cacheKeyNamespace, seriesIndex, "lineFill")
-        line.draw(context, linePath, lineCanvas, lineFillCanvas, verticalAxisPosition)
-        lineCanvas.drawImage(lineFillBitmap, Offset.Zero, srcInPaint)
-        canvas.drawImage(lineBitmap, Offset.Zero, EmptyPaint)
-
-        forEachPointInBounds(series, drawingStart, pointInfoMap) { entry, x, y, _, _ ->
-          updateMarkerTargets(entry, x, y, lineFillBitmap)
+        line.fillColor?.let { color ->
+          line.draw(context, linePath, color, verticalAxisPosition)
+          forEachPointInBounds(series, drawingStart, pointInfoMap) { entry, x, y, _, _ ->
+            updateMarkerTargets(entry, x, y, color)
+          }
         }
+          ?: run {
+            val (lineBitmap, lineCanvas) = getBitmap(cacheKeyNamespace, seriesIndex, "line")
+            val (lineFillBitmap, lineFillCanvas) =
+              getBitmap(cacheKeyNamespace, seriesIndex, "lineFill")
+            line.draw(context, linePath, lineCanvas, lineFillCanvas, verticalAxisPosition)
+            lineCanvas.drawImage(lineFillBitmap, Offset.Zero, srcInPaint)
+            canvas.drawImage(lineBitmap, Offset.Zero, EmptyPaint)
+            forEachPointInBounds(series, drawingStart, pointInfoMap) { entry, x, y, _, _ ->
+              updateMarkerTargets(entry, x, y, lineFillBitmap)
+            }
+          }
 
         drawPointsAndDataLabels(line, series, seriesIndex, drawingStart, pointInfoMap)
 
@@ -441,6 +469,20 @@ protected constructor(
           limitedCanvasY.roundToInt(),
         ),
       )
+  }
+
+  protected open fun CartesianDrawingContext.updateMarkerTargets(
+    entry: LineCartesianLayerModel.Entry,
+    canvasX: Float,
+    canvasY: Float,
+    color: Color,
+  ) {
+    if (canvasX <= layerBounds.left - 1 || canvasX >= layerBounds.right + 1) return
+    val limitedCanvasY = canvasY.coerceIn(layerBounds.top, layerBounds.bottom)
+    _markerTargets
+      .getOrPut(entry.x) { listOf(MutableLineCartesianLayerMarkerTarget(entry.x, canvasX)) }
+      .first()
+      .points += LineCartesianLayerMarkerTarget.Point(entry, limitedCanvasY, color)
   }
 
   protected open fun CartesianDrawingContext.drawPointsAndDataLabels(
