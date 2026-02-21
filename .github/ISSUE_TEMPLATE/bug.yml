@@ -61,9 +61,8 @@ body:
       description: For outdated versions, try updating Vico first.
       multiple: true
       options:
+        - 3.0.0
         - 2.4.3
-        - 3.0.0-beta.4
-        - 1.16.1
     validations:
       required: true
   - type: textarea
