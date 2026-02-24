@@ -35,4 +35,14 @@ internal inline fun Canvas.inClip(
 internal fun Canvas.saveLayer(): Int = saveLayer(0f, 0f, width.toFloat(), height.toFloat(), null)
 
 internal fun Canvas.saveLayer(opacity: Float): Int =
-  saveLayerAlpha(0f, 0f, width.toFloat(), height.toFloat(), (opacity * MAX_HEX_VALUE).roundToInt())
+  if (opacity != 1f) {
+    saveLayerAlpha(
+      0f,
+      0f,
+      width.toFloat(),
+      height.toFloat(),
+      (opacity * MAX_HEX_VALUE).roundToInt(),
+    )
+  } else {
+    save()
+  }
