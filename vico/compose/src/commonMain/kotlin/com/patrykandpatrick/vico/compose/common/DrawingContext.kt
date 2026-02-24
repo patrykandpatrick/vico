@@ -42,7 +42,11 @@ public interface DrawingContext : MeasuringContext {
 private val saveLayerPaint = Paint()
 
 internal fun DrawingContext.saveLayer(opacity: Float) =
-  canvas.saveLayer(Rect(Offset.Zero, canvasSize), saveLayerPaint.apply { alpha = opacity })
+  if (opacity != 1f) {
+    canvas.saveLayer(Rect(Offset.Zero, canvasSize), saveLayerPaint.apply { alpha = opacity })
+  } else {
+    canvas.save()
+  }
 
 private val clearPaint = Paint().apply { blendMode = BlendMode.Clear }
 
