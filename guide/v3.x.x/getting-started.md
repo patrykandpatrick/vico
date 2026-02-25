@@ -19,7 +19,7 @@ Add only the modules you need.
 
 ```toml
 [versions]
-vico = "3.0.0"
+vico = "3.0.1"
 
 [libraries]
 # Compose Multiplatform
