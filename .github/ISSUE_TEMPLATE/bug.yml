@@ -61,7 +61,7 @@ body:
       description: For outdated versions, try updating Vico first.
       multiple: true
       options:
-        - 3.0.0
+        - 3.0.1
         - 2.4.3
     validations:
       required: true
