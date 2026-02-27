@@ -1,0 +1,64 @@
+name: Bug issue compliance check
+on:
+  issues:
+    types: [opened, labeled]
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: Issue number to check
+        required: true
+        type: number
+jobs:
+  check-compliance:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.action == 'opened' && contains(github.event.issue.labels.*.name, 'bug')) ||
+      (github.event.action == 'labeled' && github.event.label.name == 'bug')
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      id-token: write
+      issues: write
+    steps:
+      - name: Resolve issue number
+        id: issue
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "number=${{ github.event.inputs.issue_number }}" >> $GITHUB_OUTPUT
+          else
+            echo "number=${{ github.event.issue.number }}" >> $GITHUB_OUTPUT
+          fi
+      - uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          settings: |
+            {
+              "permissions": {
+                "allow": ["Bash(*)"]
+              }
+            }
+          prompt: |
+            Check whether GitHub issue #${{ steps.issue.outputs.number }} in this repository complies with the bug report template requirements.
+
+            Start by fetching the issue:
+            gh issue view ${{ steps.issue.outputs.number }} --repo ${{ github.repository }} --json title,body,author
+
+            The issue body is rendered from a GitHub issue form, where each field appears as a `### Field name` section heading followed by the submitted value.
+
+            Assess the issue on these criteria:
+
+            1. **Is it actually a bug report?** The issue must describe confirmed incorrect behavior, not ask a question, request a feature, or seek usage help.
+
+            2. **Example** — The template asks for a minimal reproducible example or the name of an affected sample chart. Does the submission genuinely satisfy that?
+
+            3. **How to reproduce** — The template asks for steps to reproduce the bug using the provided example. Does the submission genuinely satisfy that?
+
+            **If the issue is compliant:** Do nothing. Output a brief summary confirming compliance.
+
+            **If the issue is NOT compliant:**
+            1. Post a comment on the issue using `gh issue comment` that:
+               - Addresses the author by their GitHub username (@username)
+               - Clearly lists each requirement that is not met and what needs to be provided
+               - Explains that the issue has been closed, and asks them to address the problems and post a new comment so the team can take another look
+            2. Close the issue as not planned: `gh issue close ${{ steps.issue.outputs.number }} --repo ${{ github.repository }} --reason "not planned"`
+          claude_args: --max-turns 5 --model claude-opus-4-6
