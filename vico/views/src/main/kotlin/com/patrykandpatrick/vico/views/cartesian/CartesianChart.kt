@@ -400,7 +400,7 @@ private constructor(
       targets
     }
 
-  private fun getMarkerTargets(x: Double?, targetIndex: Int?): List<CartesianMarker.Target> {
+  private fun getMarkerTargets(x: Double?, seriesIndex: Int?): List<CartesianMarker.Target> {
     val marker = marker ?: return emptyList()
     return if (x == null || markerTargets.isEmpty()) {
       if (previousMarkerTargetHashCode != null) markerVisibilityListener?.onHidden(marker)
@@ -409,9 +409,9 @@ private constructor(
     } else {
       val allTargets = markerTargets[x] ?: return emptyList()
       val targets =
-        if (targetIndex != null) {
+        if (seriesIndex != null) {
           val target =
-            allTargets.getOrNull(targetIndex)
+            allTargets.getOrNull(seriesIndex)
               ?: return run {
                 if (previousMarkerTargetHashCode != null) markerVisibilityListener?.onHidden(marker)
                 previousMarkerTargetHashCode = null

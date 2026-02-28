@@ -16,6 +16,7 @@
 
 package com.patrykandpatrick.vico.compose.cartesian
 
+import androidx.annotation.RestrictTo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.remember
@@ -54,8 +55,8 @@ public interface CartesianMeasuringContext : MeasuringContext {
   /** The marker’s _x_-value. */
   public val markerX: Double?
 
-  /** The marker’s series index. */
   public val markerSeriesIndex: Int?
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) get
 }
 
 internal fun CartesianMeasuringContext.getFullXRange(layerDimensions: CartesianLayerDimensions) =

@@ -17,6 +17,7 @@
 package com.patrykandpatrick.vico.views.cartesian
 
 import android.graphics.RectF
+import androidx.annotation.RestrictTo
 import com.patrykandpatrick.vico.views.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.views.cartesian.data.CartesianChartRanges
 import com.patrykandpatrick.vico.views.cartesian.layer.CartesianLayer
@@ -44,8 +45,8 @@ public interface CartesianMeasuringContext : MeasuringContext {
   /** The marker’s _x_-value. */
   public val markerX: Double?
 
-  /** The marker’s series index. */
   public val markerSeriesIndex: Int?
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) get
 }
 
 internal fun CartesianMeasuringContext.getFullXRange(layerDimensions: CartesianLayerDimensions) =
