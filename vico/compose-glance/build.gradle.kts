@@ -14,24 +14,27 @@
  * limitations under the License.
  */
 
-plugins { `dokka-convention` }
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
-subprojects {
-  group = "com.patrykandpatrick.vico"
-  version = Versions.VICO
+plugins {
+  `dokka-convention`
+  `publishing-convention`
+  id("com.android.library")
+  id("org.jetbrains.compose")
+  id("org.jetbrains.kotlin.plugin.compose")
+}
+
+android {
+  configure()
+  namespace = moduleNamespace
+}
+
+kotlin {
+  explicitApi()
+  compilerOptions { jvmTarget = JvmTarget.JVM_11 }
 }
 
 dependencies {
-  dokka(project(":vico:compose"))
-  dokka(project(":vico:compose-glance"))
-  dokka(project(":vico:compose-m2"))
-  dokka(project(":vico:compose-m3"))
-  dokka(project(":vico:views"))
-}
-
-dokka {
-  pluginsConfiguration.html {
-    customStyleSheets.from("$rootDir/logo-styles.css")
-    footerMessage = "© 2025 Patryk Goworowski and Patrick Michalik"
-  }
+  api(project(":vico:compose"))
+  implementation(libs.glanceAppWidget)
 }

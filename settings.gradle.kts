@@ -38,6 +38,7 @@ include(
   "sample:charts:views",
   "vico",
   "vico:compose",
+  "vico:compose-glance",
   "vico:compose-m2",
   "vico:compose-m3",
   "vico:views",
