@@ -1,4 +1,4 @@
-name: Bug issue compliance check
+name: Validate bug report
 on:
   issues:
     types: [opened, labeled]
@@ -9,11 +9,18 @@ on:
         required: true
         type: number
 jobs:
-  check-compliance:
+  validate-bug-report:
     if: >-
       github.event_name == 'workflow_dispatch' ||
-      (github.event.action == 'opened' && contains(github.event.issue.labels.*.name, 'bug')) ||
-      (github.event.action == 'labeled' && github.event.label.name == 'bug')
+      (
+        github.event.issue.author_association != 'OWNER' &&
+        github.event.issue.author_association != 'MEMBER' &&
+        github.event.issue.author_association != 'COLLABORATOR' &&
+        (
+          (github.event.action == 'opened' && contains(github.event.issue.labels.*.name, 'bug')) ||
+          (github.event.action == 'labeled' && github.event.label.name == 'bug')
+        )
+      )
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions:
