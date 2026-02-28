@@ -25,11 +25,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.cartesian.data.*
 import com.patrykandpatrick.vico.compose.cartesian.layer.MutableCartesianLayerDimensions
+import com.patrykandpatrick.vico.compose.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.compose.cartesian.marker.CartesianMarkerController.Lock
 import com.patrykandpatrick.vico.compose.cartesian.marker.Interaction
 import com.patrykandpatrick.vico.compose.common.*
 import com.patrykandpatrick.vico.compose.common.Defaults.CHART_HEIGHT
 import com.patrykandpatrick.vico.compose.common.data.ExtraStore
+import kotlin.math.abs
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.launch
 
@@ -121,6 +123,7 @@ internal fun CartesianChartHostImpl(
   extraStore: ExtraStore = ExtraStore.Empty,
 ) {
   var markerX by rememberSaveable { mutableStateOf<Double?>(null) }
+  var markerSeriesIndex by rememberSaveable { mutableStateOf<Int?>(null) }
   var lastAcceptedInteraction by
     rememberSaveable(saver = Interaction.Saver) { mutableStateOf(null) }
   val measuringContext =
@@ -133,6 +136,7 @@ internal fun CartesianChartHostImpl(
       layerPadding =
         remember(chart.layerPadding, model.extraStore) { chart.layerPadding(model.extraStore) },
       markerX = markerX,
+      markerSeriesIndex = markerSeriesIndex,
     )
 
   val coroutineScope = rememberCoroutineScope()
@@ -160,10 +164,32 @@ internal fun CartesianChartHostImpl(
                 scrollState.value,
               ),
             )
-          if (chart.markerController.shouldAcceptInteraction(interaction, targets)) {
-            val shouldShow = chart.markerController.shouldShowMarker(interaction, targets)
+          val narrowedTargets: List<CartesianMarker.Target>
+          val seriesIndex: Int?
+          if (targets.isNotEmpty()) {
+            val closestIndex =
+              targets.indices.minBy { abs(targets[it].canvasX - interaction.point.x) }
+            if (targets.distinctBy { it.canvasX }.size > 1) {
+              narrowedTargets = listOf(targets[closestIndex])
+              seriesIndex = closestIndex
+            } else {
+              narrowedTargets = targets
+              seriesIndex = null
+            }
+          } else {
+            narrowedTargets = targets
+            seriesIndex = null
+          }
+          if (chart.markerController.shouldAcceptInteraction(interaction, narrowedTargets)) {
+            val shouldShow = chart.markerController.shouldShowMarker(interaction, narrowedTargets)
             lastAcceptedInteraction = interaction
-            markerX = if (shouldShow) targets.firstOrNull()?.x else null
+            if (shouldShow && narrowedTargets.isNotEmpty()) {
+              markerX = narrowedTargets.first().x
+              markerSeriesIndex = seriesIndex
+            } else {
+              markerX = null
+              markerSeriesIndex = null
+            }
           }
         }
       } else {

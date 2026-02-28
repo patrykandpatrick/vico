@@ -36,6 +36,7 @@ internal class MutableCartesianMeasuringContext(
   override var zoomEnabled: Boolean,
   override var layerPadding: CartesianLayerPadding,
   override var markerX: Double?,
+  override var markerSeriesIndex: Int?,
   cacheStore: CacheStore = CacheStore(),
 ) :
   MutableMeasuringContext(canvasSize, density, extraStore, isLtr, spToPx, cacheStore),

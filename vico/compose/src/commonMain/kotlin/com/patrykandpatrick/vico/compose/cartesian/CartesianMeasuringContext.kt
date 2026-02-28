@@ -53,6 +53,9 @@ public interface CartesianMeasuringContext : MeasuringContext {
 
   /** The marker’s _x_-value. */
   public val markerX: Double?
+
+  /** The marker’s series index. */
+  public val markerSeriesIndex: Int?
 }
 
 internal fun CartesianMeasuringContext.getFullXRange(layerDimensions: CartesianLayerDimensions) =
@@ -71,6 +74,7 @@ internal fun rememberCartesianMeasuringContext(
   zoomEnabled: Boolean,
   layerPadding: CartesianLayerPadding,
   markerX: Double?,
+  markerSeriesIndex: Int?,
 ): State<MutableCartesianMeasuringContext> {
   val fontFamilyResolver = LocalFontFamilyResolver.current
   val density = LocalDensity.current
@@ -88,6 +92,7 @@ internal fun rememberCartesianMeasuringContext(
       zoomEnabled,
       layerPadding,
       markerX,
+      markerSeriesIndex,
       cacheStore,
     ) {
       MutableCartesianMeasuringContext(
@@ -102,6 +107,7 @@ internal fun rememberCartesianMeasuringContext(
         zoomEnabled = zoomEnabled,
         layerPadding = layerPadding,
         markerX = markerX,
+        markerSeriesIndex = markerSeriesIndex,
         cacheStore = cacheStore,
       )
     }

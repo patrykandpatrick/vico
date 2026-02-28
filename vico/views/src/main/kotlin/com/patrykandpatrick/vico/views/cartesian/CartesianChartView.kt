@@ -31,6 +31,7 @@ import com.patrykandpatrick.vico.views.R
 import com.patrykandpatrick.vico.views.cartesian.data.*
 import com.patrykandpatrick.vico.views.cartesian.layer.CartesianLayerPadding
 import com.patrykandpatrick.vico.views.cartesian.layer.MutableCartesianLayerDimensions
+import com.patrykandpatrick.vico.views.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.views.cartesian.marker.CartesianMarkerController.Lock
 import com.patrykandpatrick.vico.views.cartesian.marker.Interaction
 import com.patrykandpatrick.vico.views.common.*
@@ -78,6 +79,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       zoomEnabled = false,
       layerPadding = CartesianLayerPadding(),
       markerX = null,
+      markerSeriesIndex = null,
     )
 
   override val measuringContext: CartesianMeasuringContext = _measuringContext
@@ -360,10 +362,31 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
         x,
         measuringContext.getVisibleXRange(layerDimensions, chart.layerBounds, scrollHandler.value),
       )
-    if (chart.markerController.shouldAcceptInteraction(interaction, targets)) {
-      val shouldShow = chart.markerController.shouldShowMarker(interaction, targets)
+    val narrowedTargets: List<CartesianMarker.Target>
+    val seriesIndex: Int?
+    if (targets.isNotEmpty()) {
+      val closestIndex = targets.indices.minBy { abs(targets[it].canvasX - interaction.point.x) }
+      if (targets.distinctBy { it.canvasX }.size > 1) {
+        narrowedTargets = listOf(targets[closestIndex])
+        seriesIndex = closestIndex
+      } else {
+        narrowedTargets = targets
+        seriesIndex = null
+      }
+    } else {
+      narrowedTargets = targets
+      seriesIndex = null
+    }
+    if (chart.markerController.shouldAcceptInteraction(interaction, narrowedTargets)) {
+      val shouldShow = chart.markerController.shouldShowMarker(interaction, narrowedTargets)
       lastAcceptedInteraction = interaction
-      _measuringContext.markerX = if (shouldShow) targets.firstOrNull()?.x else null
+      if (shouldShow && narrowedTargets.isNotEmpty()) {
+        _measuringContext.markerX = narrowedTargets.first().x
+        _measuringContext.markerSeriesIndex = seriesIndex
+      } else {
+        _measuringContext.markerX = null
+        _measuringContext.markerSeriesIndex = null
+      }
       invalidate()
     }
   }
@@ -437,6 +460,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       zoomHandler.saveInstanceState(this)
       putSerializable(INTERACTION_KEY, lastAcceptedInteraction)
       measuringContext.markerX?.let { putDouble(MARKER_X_KEY, it) }
+      measuringContext.markerSeriesIndex?.let { putInt(MARKER_SERIES_INDEX_KEY, it) }
       putParcelable(SUPER_STATE_KEY, super.onSaveInstanceState())
     }
 
@@ -449,6 +473,12 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
         @Suppress("DEPRECATION") state.getSerializable(INTERACTION_KEY) as? Interaction
       _measuringContext.markerX =
         if (state.containsKey(MARKER_X_KEY)) state.getDouble(MARKER_X_KEY) else null
+      _measuringContext.markerSeriesIndex =
+        if (state.containsKey(MARKER_SERIES_INDEX_KEY)) {
+          state.getInt(MARKER_SERIES_INDEX_KEY)
+        } else {
+          null
+        }
       superState =
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
           state.getParcelable(SUPER_STATE_KEY, BaseSavedState::class.java)
@@ -471,6 +501,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     const val SUPER_STATE_KEY = "superState"
     const val INTERACTION_KEY = "lastAcceptedInteraction"
     const val MARKER_X_KEY = "markerX"
+    const val MARKER_SERIES_INDEX_KEY = "markerSeriesIndex"
   }
 }
 

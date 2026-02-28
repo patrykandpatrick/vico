@@ -43,6 +43,9 @@ public interface CartesianMeasuringContext : MeasuringContext {
 
   /** The marker’s _x_-value. */
   public val markerX: Double?
+
+  /** The marker’s series index. */
+  public val markerSeriesIndex: Int?
 }
 
 internal fun CartesianMeasuringContext.getFullXRange(layerDimensions: CartesianLayerDimensions) =
