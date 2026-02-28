@@ -36,5 +36,6 @@ kotlin {
 
 dependencies {
   api(project(":vico:compose"))
+  api(project(":vico:views"))
   implementation(libs.glanceAppWidget)
 }
