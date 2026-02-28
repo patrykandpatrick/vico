@@ -50,6 +50,7 @@ internal actual fun Modifier.extraPointerInput(scrollState: VicoScrollState): Mo
           AnimationState(scrollState.value, velocity).animateDecay(animationSpec) {
             launch { scrollState.scroll(Scroll.Absolute.pixels(value)) }
           }
+          scrollState.performSnap()
         }
     },
     reverseDirection = true,
