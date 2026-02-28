@@ -1,4 +1,4 @@
-name: Bug issue compliance check
+name: Validate bug report
 on:
   issues:
     types: [opened, labeled]
@@ -9,7 +9,7 @@ on:
         required: true
         type: number
 jobs:
-  check-compliance:
+  validate-bug-report:
     if: >-
       github.event_name == 'workflow_dispatch' ||
       (
