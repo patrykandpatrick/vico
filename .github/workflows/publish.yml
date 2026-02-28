@@ -1,8 +1,8 @@
-name: Release update
+name: Publish
 on:
   workflow_dispatch:
 jobs:
-  release-update:
+  publish:
     runs-on: ubuntu-latest
     if: github.repository == 'patrykandpatrick/vico'
     permissions:
