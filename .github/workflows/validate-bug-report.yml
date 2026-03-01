@@ -53,7 +53,7 @@ jobs:
 
             1. **Is it actually a bug report?** The issue must describe confirmed incorrect behavior, not ask a question, request a feature, or seek usage help.
 
-            2. **Example** — The template asks for a minimal reproducible example or the name of an affected sample chart. Does the submission genuinely satisfy that?
+            2. **Example** — The template asks for a minimal reproducible example or the name of an affected sample chart. If the submission includes code, it must be self-contained: all referenced variables, functions, and types must be defined or clearly indicated as placeholders, and every API call must include its required arguments. A code snippet with undefined variables, missing parameters, or incomplete setup doesn't count as a minimal reproducible example.
 
             3. **How to reproduce** — The template asks for steps to reproduce the bug using the provided example. Does the submission genuinely satisfy that?
 
