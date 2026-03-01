@@ -103,6 +103,8 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 
   private var scrollDirectionResolved = false
 
+  private var wasUserScrolling = false
+
   private val layerDimensions = MutableCartesianLayerDimensions()
 
   private var previousLayerPaddingHashCode: Int? = null
@@ -306,6 +308,13 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   override fun onTouchEvent(event: MotionEvent): Boolean {
     val superHandled = super.onTouchEvent(event)
     if (!isEnabled || !event.shouldAccept()) return superHandled
+    if (
+      scrollHandler.scrollEnabled &&
+        event.actionMasked == MotionEvent.ACTION_MOVE &&
+        scrollHandler.snapScrollX != null
+    ) {
+      wasUserScrolling = true
+    }
     val scaleHandled =
       if (zoomHandler.zoomEnabled && event.pointerCount > 1 && scrollHandler.scrollEnabled) {
         scaleGestureDetector.onTouchEvent(event)
@@ -419,11 +428,15 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 
       var viewportChange = false
       motionEventHandler.scrollEnabled = scrollHandler.scrollEnabled
-      if (scroller.computeScrollOffset()) {
+      val isScrollerRunning = scroller.computeScrollOffset()
+      if (isScrollerRunning) {
         val delta = scroller.currX.toFloat()
         scrollHandler.scroll(Scroll.Absolute.pixels(delta))
         viewportChange = true
         postInvalidateOnAnimation()
+      } else if (wasUserScrolling) {
+        wasUserScrolling = false
+        scrollHandler.performSnap()
       }
 
       zoomHandler.update(measuringContext, layerDimensions, chart.layerBounds, scrollHandler.value)

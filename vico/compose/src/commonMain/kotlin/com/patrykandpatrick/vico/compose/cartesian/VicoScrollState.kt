@@ -30,6 +30,7 @@ import androidx.compose.ui.geometry.Rect
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.compose.cartesian.layer.CartesianLayerDimensions
 import com.patrykandpatrick.vico.compose.common.rangeWith
+import kotlin.math.roundToInt
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.first
 
@@ -49,6 +50,7 @@ public class VicoScrollState {
   private var layerDimensions: CartesianLayerDimensions? = null
   private var bounds: Rect? = null
   internal val scrollEnabled: Boolean
+  internal val snapScrollX: Double?
   internal val consumedXDeltas = MutableSharedFlow<Float>(extraBufferCapacity = 1)
   internal val unconsumedXDeltas = MutableSharedFlow<Float>(extraBufferCapacity = 1)
 
@@ -90,6 +92,7 @@ public class VicoScrollState {
     autoScroll: Scroll,
     autoScrollCondition: AutoScrollCondition,
     autoScrollAnimationSpec: AnimationSpec<Float>,
+    snapScrollX: Double?,
     value: Float,
     initialScrollHandled: Boolean,
   ) {
@@ -98,6 +101,7 @@ public class VicoScrollState {
     this.autoScroll = autoScroll
     this.autoScrollCondition = autoScrollCondition
     this.autoScrollAnimationSpec = autoScrollAnimationSpec
+    this.snapScrollX = snapScrollX
     _value = mutableFloatStateOf(value)
     this.initialScrollHandled = initialScrollHandled
   }
@@ -111,6 +115,8 @@ public class VicoScrollState {
    * @param autoScroll represents the scroll value or delta for automatic scrolling.
    * @param autoScrollCondition defines when an automatic scroll should occur.
    * @param autoScrollAnimationSpec the [AnimationSpec] for automatic scrolling.
+   * @param snapScrollX if not null, the scroll will snap to multiples of this _x_-axis window
+   *   width after the user stops scrolling.
    */
   public constructor(
     scrollEnabled: Boolean,
@@ -118,12 +124,14 @@ public class VicoScrollState {
     autoScroll: Scroll,
     autoScrollCondition: AutoScrollCondition,
     autoScrollAnimationSpec: AnimationSpec<Float>,
+    snapScrollX: Double? = null,
   ) : this(
     scrollEnabled = scrollEnabled,
     initialScroll = initialScroll,
     autoScroll = autoScroll,
     autoScrollCondition = autoScrollCondition,
     autoScrollAnimationSpec = autoScrollAnimationSpec,
+    snapScrollX = snapScrollX,
     value = 0f,
     initialScrollHandled = false,
   )
@@ -193,6 +201,24 @@ public class VicoScrollState {
     }
   }
 
+  internal fun getSnapDelta(): Float? {
+    val snapScrollX = snapScrollX ?: return null
+    val context = this.context ?: return null
+    val layerDimensions = this.layerDimensions ?: return null
+    val windowPx =
+      (snapScrollX / context.ranges.xStep).toFloat() * layerDimensions.xSpacing
+    if (windowPx <= 0f) return null
+    val snapTarget =
+      ((value / windowPx).roundToInt() * windowPx).coerceIn(0f.rangeWith(maxValue))
+    val delta = snapTarget - value
+    return if (delta == 0f) null else delta
+  }
+
+  internal suspend fun performSnap(animationSpec: AnimationSpec<Float> = spring()) {
+    val delta = getSnapDelta() ?: return
+    scrollableState.animateScrollBy(delta, animationSpec)
+  }
+
   internal companion object {
     fun Saver(
       scrollEnabled: Boolean,
@@ -200,6 +226,7 @@ public class VicoScrollState {
       autoScroll: Scroll,
       autoScrollCondition: AutoScrollCondition,
       autoScrollAnimationSpec: AnimationSpec<Float>,
+      snapScrollX: Double?,
     ) =
       Saver<VicoScrollState, Pair<Float, Boolean>>(
         save = { it.value to it.initialScrollHandled },
@@ -210,6 +237,7 @@ public class VicoScrollState {
             autoScroll,
             autoScrollCondition,
             autoScrollAnimationSpec,
+            snapScrollX,
             value,
             initialScrollHandled,
           )
@@ -218,7 +246,12 @@ public class VicoScrollState {
   }
 }
 
-/** Creates and remembers a [VicoScrollState] instance. */
+/**
+ * Creates and remembers a [VicoScrollState] instance.
+ *
+ * @param snapScrollX if not null, the scroll will snap to multiples of this _x_-axis window width
+ *   after the user stops scrolling.
+ */
 @Composable
 public fun rememberVicoScrollState(
   scrollEnabled: Boolean = true,
@@ -226,6 +259,7 @@ public fun rememberVicoScrollState(
   autoScroll: Scroll = initialScroll,
   autoScrollCondition: AutoScrollCondition = AutoScrollCondition.Never,
   autoScrollAnimationSpec: AnimationSpec<Float> = spring(),
+  snapScrollX: Double? = null,
 ): VicoScrollState =
   rememberSaveable(
     scrollEnabled,
@@ -233,14 +267,22 @@ public fun rememberVicoScrollState(
     autoScroll,
     autoScrollCondition,
     autoScrollAnimationSpec,
+    snapScrollX,
     saver =
-      remember(scrollEnabled, initialScroll, autoScrollCondition, autoScrollAnimationSpec) {
+      remember(
+        scrollEnabled,
+        initialScroll,
+        autoScrollCondition,
+        autoScrollAnimationSpec,
+        snapScrollX,
+      ) {
         VicoScrollState.Saver(
           scrollEnabled,
           initialScroll,
           autoScroll,
           autoScrollCondition,
           autoScrollAnimationSpec,
+          snapScrollX,
         )
       },
   ) {
@@ -250,5 +292,6 @@ public fun rememberVicoScrollState(
       autoScroll,
       autoScrollCondition,
       autoScrollAnimationSpec,
+      snapScrollX,
     )
   }
