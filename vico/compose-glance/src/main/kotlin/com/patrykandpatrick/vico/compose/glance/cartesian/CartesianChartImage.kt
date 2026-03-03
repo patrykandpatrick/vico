@@ -29,23 +29,19 @@ import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
 import androidx.glance.LocalSize
 import androidx.glance.layout.ContentScale
+import com.patrykandpatrick.vico.compose.cartesian.CartesianChart
+import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.compose.cartesian.renderToImageBitmap
-import com.patrykandpatrick.vico.views.cartesian.renderToBitmap
 import kotlin.math.roundToInt
-import com.patrykandpatrick.vico.compose.cartesian.CartesianChart as ComposeCartesianChart
-import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModel as ComposeCartesianChartModel
-import com.patrykandpatrick.vico.views.cartesian.CartesianChart as ViewsCartesianChart
-import com.patrykandpatrick.vico.views.cartesian.data.CartesianChartModel as ViewsCartesianChartModel
 
 /**
- * Displays a Compose-based [CartesianChart][ComposeCartesianChart] as a static image in a Glance
- * app widget.
+ * Displays a [CartesianChart] as a static image in a Glance app widget.
  *
  * The chart is rendered off-screen to a bitmap and displayed via Glance's [Image]. Since Glance
  * doesn't support Compose Canvas, this is the recommended approach for showing charts in widgets.
  *
- * @param chart the [CartesianChart][ComposeCartesianChart].
- * @param model the [CartesianChartModel][ComposeCartesianChartModel].
+ * @param chart the [CartesianChart].
+ * @param model the [CartesianChartModel].
  * @param contentDescription the content description for accessibility.
  * @param modifier the [GlanceModifier] to be applied.
  * @param size the desired chart size. Defaults to the widget size provided by Glance's [LocalSize].
@@ -53,15 +49,15 @@ import com.patrykandpatrick.vico.views.cartesian.data.CartesianChartModel as Vie
  */
 @androidx.compose.runtime.Composable
 public fun CartesianChartImage(
-  chart: ComposeCartesianChart,
-  model: ComposeCartesianChartModel,
+  chart: CartesianChart,
+  model: CartesianChartModel,
   contentDescription: String?,
   modifier: GlanceModifier = GlanceModifier,
   size: DpSize = LocalSize.current,
   contentScale: ContentScale = ContentScale.Fit,
 ) {
   val context = LocalContext.current
-  val bitmap = renderComposeChartToBitmap(context, chart, model, size)
+  val bitmap = renderCartesianChartToBitmap(context, chart, model, size)
   Image(
     provider = ImageProvider(bitmap),
     contentDescription = contentDescription,
@@ -70,43 +66,10 @@ public fun CartesianChartImage(
   )
 }
 
-/**
- * Displays a Views-based [CartesianChart][ViewsCartesianChart] as a static image in a Glance app
- * widget.
- *
- * The chart is rendered off-screen to a bitmap and displayed via Glance's [Image]. Since Glance
- * doesn't support Compose Canvas, this is the recommended approach for showing charts in widgets.
- *
- * @param chart the [CartesianChart][ViewsCartesianChart].
- * @param model the [CartesianChartModel][ViewsCartesianChartModel].
- * @param contentDescription the content description for accessibility.
- * @param modifier the [GlanceModifier] to be applied.
- * @param size the desired chart size. Defaults to the widget size provided by Glance's [LocalSize].
- * @param contentScale how the chart image should be scaled within its bounds.
- */
-@androidx.compose.runtime.Composable
-public fun CartesianChartImage(
-  chart: ViewsCartesianChart,
-  model: ViewsCartesianChartModel,
-  contentDescription: String?,
-  modifier: GlanceModifier = GlanceModifier,
-  size: DpSize = LocalSize.current,
-  contentScale: ContentScale = ContentScale.Fit,
-) {
-  val context = LocalContext.current
-  val bitmap = renderViewsChartToBitmap(context, chart, model, size)
-  Image(
-    provider = ImageProvider(bitmap),
-    contentDescription = contentDescription,
-    modifier = modifier,
-    contentScale = contentScale,
-  )
-}
-
-private fun renderComposeChartToBitmap(
+private fun renderCartesianChartToBitmap(
   context: Context,
-  chart: ComposeCartesianChart,
-  model: ComposeCartesianChartModel,
+  chart: CartesianChart,
+  model: CartesianChartModel,
   size: DpSize,
 ): android.graphics.Bitmap {
   val resources = context.resources
@@ -123,17 +86,4 @@ private fun renderComposeChartToBitmap(
   return chart
     .renderToImageBitmap(model, widthPx, heightPx, fontFamilyResolver, density, layoutDirection)
     .asAndroidBitmap()
-}
-
-private fun renderViewsChartToBitmap(
-  context: Context,
-  chart: ViewsCartesianChart,
-  model: ViewsCartesianChartModel,
-  size: DpSize,
-): android.graphics.Bitmap {
-  val resources = context.resources
-  val density = resources.displayMetrics.density
-  val widthPx = (size.width.value * density).roundToInt().coerceAtLeast(1)
-  val heightPx = (size.height.value * density).roundToInt().coerceAtLeast(1)
-  return chart.renderToBitmap(context, model, widthPx, heightPx)
 }

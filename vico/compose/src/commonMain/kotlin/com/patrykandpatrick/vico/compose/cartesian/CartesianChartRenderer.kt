@@ -73,6 +73,7 @@ public fun CartesianChart.renderToImageBitmap(
       zoomEnabled = false,
       layerPadding = layerPadding(model.extraStore),
       markerX = null,
+      markerSeriesIndex = null,
       cacheStore = cacheStore,
     )
 
