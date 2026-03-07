@@ -27,6 +27,7 @@ import com.patrykandpatrick.vico.views.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.views.cartesian.layer.CartesianLayerDimensions
 import com.patrykandpatrick.vico.views.common.Animation
 import com.patrykandpatrick.vico.views.common.rangeWith
+import kotlin.math.roundToInt
 
 /**
  * Houses information on a [CartesianChart]’s scroll value. Allows for scroll customization and
@@ -38,6 +39,8 @@ import com.patrykandpatrick.vico.views.common.rangeWith
  * @property autoScrollCondition defines when an automatic scroll should be performed.
  * @property autoScrollInterpolator the [TimeInterpolator] for automatic scrolling.
  * @property autoScrollDuration the animation duration for automatic scrolling.
+ * @property snapScrollX if not null, the scroll will snap to multiples of this _x_-axis window
+ *   width after the user stops scrolling.
  */
 public class ScrollHandler(
   internal val scrollEnabled: Boolean = true,
@@ -46,6 +49,7 @@ public class ScrollHandler(
   private val autoScrollCondition: AutoScrollCondition = AutoScrollCondition.Never,
   private val autoScrollInterpolator: TimeInterpolator = AccelerateDecelerateInterpolator(),
   private val autoScrollDuration: Long = Animation.DIFF_DURATION.toLong(),
+  public val snapScrollX: Double? = null,
 ) {
   private val scrollListeners = mutableSetOf<Listener>()
   private var initialScrollHandled = false
@@ -205,6 +209,23 @@ public class ScrollHandler(
         interpolator,
       )
     }
+  }
+
+  internal fun performSnap(
+    duration: Long = Animation.DIFF_DURATION.toLong(),
+    interpolator: TimeInterpolator = AccelerateDecelerateInterpolator(),
+  ) {
+    val snapScrollX = snapScrollX ?: return
+    val context = this.context ?: return
+    val layerDimensions = this.layerDimensions ?: return
+    val windowPx =
+      (snapScrollX / context.ranges.xStep).toFloat() * layerDimensions.xSpacing
+    if (windowPx <= 0f) return
+    val snapTarget =
+      ((value / windowPx).roundToInt() * windowPx).coerceIn(0f.rangeWith(maxValue))
+    val delta = snapTarget - value
+    if (delta == 0f) return
+    animateScrollBy(delta, duration, interpolator)
   }
 
   /** Adds the provided [Listener]. */
