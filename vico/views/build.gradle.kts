@@ -22,6 +22,8 @@ plugins {
   id("com.android.library")
 }
 
+dokka { dokkaSourceSets.register("main") { sourceRoots.from("src/main/kotlin") } }
+
 android {
   configure()
   namespace = moduleNamespace
