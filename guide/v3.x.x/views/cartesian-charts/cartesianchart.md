@@ -9,11 +9,11 @@ metaLinks:
 
 ## Anatomy
 
-[`CartesianChart`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian/-cartesian-chart/) draws charts based on Cartesian coordinate planes. Any such chart includes one or more [`CartesianLayer`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.layer/-cartesian-layer/)s. The `CartesianLayer`s are stacked, and each one has its own data.
+[`CartesianChart`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian/-cartesian-chart/) draws a chart based on a Cartesian coordinate plane. The chart includes one or more data layers, drawn by [`CartesianLayer`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.layer/-cartesian-layer/) instances. Each layer has its own data.
 
 ## Ranges
 
-A `CartesianChart`’s _x_- and _y_-ranges depend on those reported by its `CartesianLayer`s. The _x_-range is the narrowest one that includes all `CartesianLayer`s’ _x_-ranges. By default, there’s an analogously determined shared _y_-range, but two separate _y_-ranges can also be introduced.
+A chart’s _x_- and _y_-ranges depend on those reported by its layers. The _x_-range is the narrowest one that includes all layers’ _x_-ranges. By default, there’s an analogously determined shared _y_-range, but two separate _y_-ranges can also be introduced.
 
 _x_- and _y_-range customization is discussed in [a later subsection](cartesianlayer.md#cartesianlayerrangeprovider).
 
