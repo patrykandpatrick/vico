@@ -13,10 +13,10 @@ jobs:
     if: >-
       github.event_name == 'workflow_dispatch' ||
       (
-        github.event.issue.author_association != 'OWNER' &&
-        github.event.issue.author_association != 'MEMBER' &&
-        github.event.issue.author_association != 'COLLABORATOR' &&
-        github.event.action == 'labeled' && github.event.label.name == 'bug'
+      github.event.issue.author_association != 'OWNER' &&
+      github.event.issue.author_association != 'MEMBER' &&
+      github.event.issue.author_association != 'COLLABORATOR' &&
+      github.event.action == 'labeled' && github.event.label.name == 'bug'
       )
     runs-on: ubuntu-latest
     timeout-minutes: 5
