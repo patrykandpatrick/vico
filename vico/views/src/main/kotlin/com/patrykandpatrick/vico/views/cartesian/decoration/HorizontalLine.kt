@@ -95,8 +95,10 @@ public class HorizontalLine(
   override fun equals(other: Any?): Boolean =
     this === other ||
       other is HorizontalLine &&
+        y == other.y &&
         line == other.line &&
         labelComponent == other.labelComponent &&
+        label == other.label &&
         horizontalLabelPosition == other.horizontalLabelPosition &&
         verticalLabelPosition == other.verticalLabelPosition &&
         labelRotationDegrees == other.labelRotationDegrees &&
