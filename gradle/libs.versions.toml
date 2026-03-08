@@ -11,6 +11,7 @@ composeNavigation = "2.9.2"
 coroutines = "1.10.2"
 dateTime = "0.7.1"
 dokka = "2.1.0"
+glance = "1.1.1"
 jetpackComposeBom = "2026.02.01"
 kotlin = "2.3.10"
 lifecycleRuntime = "2.9.6"
@@ -39,6 +40,7 @@ composeUITooling = { group = "org.jetbrains.compose.ui", name = "ui-tooling", ve
 composeUIToolingPreview = { group = "org.jetbrains.compose.ui", name = "ui-tooling-preview", version.ref = "compose" }
 coroutinesCore = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
 dokka = { group = "org.jetbrains.dokka", name = "dokka-gradle-plugin", version.ref = "dokka" }
+glanceAppWidget = { group = "androidx.glance", name = "glance-appwidget", version.ref = "glance" }
 jetpackComposeBom = { group = "androidx.compose", name = "compose-bom", version.ref = "jetpackComposeBom" }
 jetpackComposeUI = { group = "androidx.compose.ui", name = "ui" }
 jetpackComposeViewBinding = { group = "androidx.compose.ui", name = "ui-viewbinding" }
