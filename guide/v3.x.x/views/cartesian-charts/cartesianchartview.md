@@ -2,9 +2,9 @@
 
 ## Overview
 
-[`CartesianChartView`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian/-cartesian-chart-view/) is the entry point for Cartesian charts in the view system. It accepts a `CartesianChart` and a `CartesianChartModelProducer`, facilitates their communication, and displays the `CartesianChart`. It also handles scroll and zoom and shows a placeholder when no data is available.
+[`CartesianChartView`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian/-cartesian-chart-view/) is the entry point for Cartesian charts in the view system. It accepts [`CartesianChart`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian/-cartesian-chart/) and [`CartesianChartModelProducer`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.data/-cartesian-chart-model-producer/) instances, facilitates communication between them, and displays the chart. It also handles scroll and zoom and shows a placeholder when no data is available.
 
-`CartesianChartView` automatically creates a `CartesianChart` when the `layers` attribute is used:
+`CartesianChartView` automatically creates a chart when the `layers` attribute is used:
 
 ```xml
 <style name="ChartStyle">
@@ -19,13 +19,13 @@
     <!-- ... --> />
 ```
 
-Use [`CartesianChartView.chart`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian/-cartesian-chart-view/chart) property to get a reference to this `CartesianChart`. Also use it to apply a programmatically created `CartesianChart`:
+Use the [`CartesianChartView.chart`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian/-cartesian-chart-view/chart) property to get a reference to this chart. Also use it to apply a chart created programmatically:
 
 ```kt
 cartesianChartView.chart = CartesianChart(/* ... */)
 ```
 
-You can add multiple `CartesianLayer`s by separating their names with pipes:
+You can add multiple layers by separating their names with pipes:
 
 ```xml
 <style name="ChartStyle">
@@ -58,7 +58,7 @@ There are XML attributes for toggling scroll and zoom:
     <!-- ... --> />
 ```
 
-More advanced customization is performed via [`ScrollHandler`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian/-scroll-handler/) and [`ZoomHandler`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian/-zoom-handler/):
+More advanced customization uses [`ScrollHandler`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian/-scroll-handler/) and [`ZoomHandler`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian/-zoom-handler/):
 
 ```kt
 val scrollHandler = ScrollHandler(/* ... */)
@@ -70,7 +70,7 @@ cartesianChartView.scrollHandler = scrollHandler
 cartesianChartView.zoomHandler = zoomHandler
 ```
 
-[`Scroll`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian/-scroll/), split into [`Scroll.Absolute`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian/-scroll/-absolute/) and [`Scroll.Relative`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian/-scroll/-relative/), is used to represent scroll values—either absolute (from zero) or relative (from the current value). The following factory functions are available:
+[`Scroll`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian/-scroll/) represents scroll values—either absolute (from zero) or relative (from the current value). [`Scroll.Absolute`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian/-scroll/-absolute/) and [`Scroll.Relative`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian/-scroll/-relative/) cover the two cases. The following factory functions are available:
 
 * [`Scroll.Absolute.pixels`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian/-scroll/-absolute/-companion/pixels)
 * [`Scroll.Absolute.x`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian/-scroll/-absolute/-companion/x)
@@ -82,7 +82,7 @@ cartesianChartView.zoomHandler = zoomHandler
 * [`AutoScrollCondition.Never`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian/-auto-scroll-condition/-companion/-never) (default)
 * [`AutoScrollCondition.OnModelGrowth`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian/-auto-scroll-condition/-companion/-on-model-growth)
 
-[`Zoom`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian/-zoom/) is used to define zoom factors. The following singletons and factory functions are available:
+[`Zoom`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian/-zoom/) defines zoom factors. The following singletons and factory functions are available:
 
 * [`Zoom.Content`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian/-zoom/-companion/-content)
 * [`Zoom.max`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian/-zoom/-companion/max)
@@ -90,7 +90,7 @@ cartesianChartView.zoomHandler = zoomHandler
 * [`Zoom.fixed`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian/-zoom/-companion/fixed)
 * [`Zoom.x`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian/-zoom/-companion/x)
 
-While the built-in implementations cover the majority of use cases, you can create your own for advanced behavior.
+While the built-in implementations cover the majority of use cases, you can create custom implementations of `Scroll`, `AutoScrollCondition`, and `Zoom` for more advanced behavior.
 
 ## Sample charts
 

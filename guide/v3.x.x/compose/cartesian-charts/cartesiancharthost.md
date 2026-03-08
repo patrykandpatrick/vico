@@ -9,7 +9,7 @@ metaLinks:
 
 ## Overview
 
-[`CartesianChartHost`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-cartesian-chart-host) is the entry point for Cartesian charts. It accepts a `CartesianChart` and a `CartesianChartModelProducer`, facilitates their communication, and displays the `CartesianChart`. It also handles scroll and zoom and shows a placeholder when no data is available.
+[`CartesianChartHost`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-cartesian-chart-host) is the entry point for Cartesian charts. It accepts [`CartesianChart`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-cartesian-chart/) and [`CartesianChartModelProducer`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-chart-model-producer/) instances, facilitates communication between them, and displays the chart. It also handles scroll and zoom and shows a placeholder when no data is available.
 
 ```kt
 CartesianChartHost(rememberCartesianChart(/* ... */), modelProducer, /* ... */)
@@ -17,14 +17,14 @@ CartesianChartHost(rememberCartesianChart(/* ... */), modelProducer, /* ... */)
 
 ## Scroll
 
-`CartesianChartHost` accepts instances of [`VicoScrollState`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-vico-scroll-state/), enabling scroll customization and programmatic scrolling. Use [`rememberVicoScrollState`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/remember-vico-scroll-state) to instantiate this class:
+`CartesianChartHost` accepts [`VicoScrollState`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-vico-scroll-state/) instances, enabling scroll customization and programmatic scrolling. Use [`rememberVicoScrollState`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/remember-vico-scroll-state) to instantiate `VicoScrollState`:
 
 ```kt
 val scrollState = rememberVicoScrollState(/* ... */)
 CartesianChartHost(scrollState = scrollState, /* ... */)
 ```
 
-[`Scroll`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-scroll/), split into [`Scroll.Absolute`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-scroll/-absolute/) and [`Scroll.Relative`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-scroll/-relative/), is used to represent scroll values—either absolute (from zero) or relative (from the current value). The following factory functions are available:
+[`Scroll`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-scroll/) represents scroll values—either absolute (from zero) or relative (from the current value). [`Scroll.Absolute`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-scroll/-absolute/) and [`Scroll.Relative`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-scroll/-relative/) cover the two cases. The following factory functions are available:
 
 * [`Scroll.Absolute.pixels`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-scroll/-absolute/-companion/pixels)
 * [`Scroll.Absolute.x`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-scroll/-absolute/-companion/x)
@@ -40,14 +40,14 @@ You can create custom implementations of `Scroll` and `AutoScrollCondition` for 
 
 ## Zoom
 
-`CartesianChartHost` accepts instances of [`VicoZoomState`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-vico-zoom-state/), enabling zoom customization. Use [`rememberVicoZoomState`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/remember-vico-zoom-state) to instantiate this class:
+`CartesianChartHost` accepts [`VicoZoomState`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-vico-zoom-state/) instances, enabling zoom customization. Use [`rememberVicoZoomState`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/remember-vico-zoom-state) to instantiate `VicoZoomState`:
 
 ```kt
 val zoomState = rememberVicoZoomState(/* ... */)
 CartesianChartHost(zoomState = zoomState, /* ... */)
 ```
 
-[`Zoom`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-zoom/) is used to define zoom factors. The following singletons and factory functions are available:
+[`Zoom`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-zoom/) defines zoom factors. The following singletons and factory functions are available:
 
 * [`Zoom.Content`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-zoom/-companion/-content)
 * [`Zoom.max`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-zoom/-companion/max)
