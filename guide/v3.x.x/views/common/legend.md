@@ -8,8 +8,8 @@ metaLinks:
 
 ## Overview
 
-A [`Legend`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.common/-legend/) describes the elements present on a chart. There are two built-in implementations: [`HorizontalLegend`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.common/-horizontal-legend/) and [`VerticalLegend`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.common/-vertical-legend/). These `Legend`s consist of [`LegendItem`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.common/-legend-item/)s.
+A legend, represented by [`Legend`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.common/-legend/), describes the elements present on a chart. There are two built-in implementations: [`HorizontalLegend`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.common/-horizontal-legend/) and [`VerticalLegend`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.common/-vertical-legend/). Legend instances consist of [`LegendItem`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.common/-legend-item/) instances.
 
 ## Application
 
-[`CartesianChart`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian/-cartesian-chart/)s accept `Legend`s via the `legend` constructor parameter.
+[`CartesianChart`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian/-cartesian-chart/) instances accept `Legend` instances via the `legend` constructor parameter.
