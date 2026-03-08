@@ -67,6 +67,7 @@ fun ViewElectricCarSales(modifier: Modifier) {
                   )
                 )
               ),
+            interpolator = LineCartesianLayer.Interpolator.catmullRom(),
           )
         )
       ElectricCarSalesBinding.inflate(inflater, parent, attachToParent).apply {

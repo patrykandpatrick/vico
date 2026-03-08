@@ -141,12 +141,12 @@ internal fun TypedArray.getLine(context: Context, defaultColor: Int): LineCartes
             )
           )
         },
-    pointConnector =
+    interpolator =
       getFraction(R.styleable.LineStyle_curvature, 0f).let { curvature ->
         if (curvature == 0f) {
-          LineCartesianLayer.PointConnector.Sharp
+          LineCartesianLayer.Interpolator.Sharp
         } else {
-          LineCartesianLayer.PointConnector.cubic(curvature)
+          LineCartesianLayer.Interpolator.cubic(curvature)
         }
       },
     dataLabel =

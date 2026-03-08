@@ -76,7 +76,7 @@ protected constructor(
    * @property stroke defines the style of the stroke.
    * @property areaFill draws the area fill.
    * @property pointProvider provides the [Point]s.
-   * @property pointConnector connects the line’s points, thus defining its shape.
+   * @property interpolator interpolates between the line’s points, defining its shape.
    * @property dataLabel used for the data labels.
    * @property dataLabelPosition the vertical position of the data labels relative to the points.
    * @property dataLabelValueFormatter formats the data-label values.
@@ -87,12 +87,43 @@ protected constructor(
     public val stroke: LineStroke = LineStroke.Continuous(),
     protected val areaFill: AreaFill? = null,
     public val pointProvider: PointProvider? = null,
-    public val pointConnector: PointConnector = PointConnector.Sharp,
+    public val interpolator: Interpolator = Interpolator.Sharp,
     public val dataLabel: TextComponent? = null,
     public val dataLabelPosition: Position.Vertical = Position.Vertical.Top,
     public val dataLabelValueFormatter: CartesianValueFormatter = CartesianValueFormatter.decimal(),
     public val dataLabelRotationDegrees: Float = 0f,
   ) {
+    /** Creates a [Line] with a [PointConnector]. */
+    @Suppress("DEPRECATION")
+    @Deprecated("Use the constructor with `interpolator`.")
+    public constructor(
+      fill: LineFill,
+      stroke: LineStroke = LineStroke.Continuous(),
+      areaFill: AreaFill? = null,
+      pointProvider: PointProvider? = null,
+      pointConnector: PointConnector,
+      dataLabel: TextComponent? = null,
+      dataLabelPosition: Position.Vertical = Position.Vertical.Top,
+      dataLabelValueFormatter: CartesianValueFormatter = CartesianValueFormatter.decimal(),
+      dataLabelRotationDegrees: Float = 0f,
+    ) : this(
+      fill,
+      stroke,
+      areaFill,
+      pointProvider,
+      PointConnectorAdapter(pointConnector),
+      dataLabel,
+      dataLabelPosition,
+      dataLabelValueFormatter,
+      dataLabelRotationDegrees,
+    )
+
+    /** Connects the line’s points, defining its shape. */
+    @Suppress("DEPRECATION")
+    @Deprecated("Use `interpolator`.", ReplaceWith("interpolator"))
+    public val pointConnector: PointConnector
+      get() = (interpolator as? PointConnectorAdapter)?.pointConnector ?: PointConnector.Sharp
+
     protected val linePaint: Paint = Paint().apply { style = PaintingStyle.Stroke }
 
     /** Draws the line. */
@@ -245,9 +276,11 @@ protected constructor(
     }
   }
 
-  /** Connects a [LineCartesianLayer] line’s points, thus defining its shape. */
+  /** Connects a [LineCartesianLayer] line’s points, defining its shape. */
+  @Suppress("DEPRECATION")
+  @Deprecated("Use `Interpolator`.")
   public fun interface PointConnector {
-    /** Connects ([x1], [y2]) and ([x2], [y2]). */
+    /** Connects ([x1], [y1]) and ([x2], [y2]). */
     public fun connect(
       context: CartesianDrawingContext,
       path: Path,
@@ -257,9 +290,10 @@ protected constructor(
       y2: Float,
     )
 
-    /** Houses a [PointConnector] factory function. */
+    /** Houses [PointConnector] singletons and factory functions. */
     public companion object {
       /** Uses line segments. */
+      @Deprecated("Use `Interpolator.Sharp`.", ReplaceWith("Interpolator.Sharp"))
       public val Sharp: PointConnector = PointConnector { _, path, _, _, x2, y2 ->
         path.lineTo(x2, y2)
       }
@@ -267,9 +301,72 @@ protected constructor(
       /**
        * Uses cubic Bézier curves. [curvature], which must be in ([0, 1]], defines their strength.
        */
+      @Suppress("DEPRECATION")
+      @Deprecated("Use `Interpolator.cubic`.", ReplaceWith("Interpolator.cubic()"))
       public fun cubic(
         @FloatRange(from = 0.0, to = 1.0, fromInclusive = false) curvature: Float = 0.5f
       ): PointConnector = CubicPointConnector(curvature)
+    }
+  }
+
+  /** Interpolates between a [LineCartesianLayer] line’s points, defining its shape. */
+  public interface Interpolator {
+    /**
+     * Draws [path] through [points]. Only the points in [visibleIndexRange] need to produce path
+     * operations, but the remaining points are available for use in interpolation.
+     */
+    public fun interpolate(
+      context: CartesianDrawingContext,
+      path: Path,
+      points: List<Offset>,
+      visibleIndexRange: IntRange,
+    )
+
+    /**
+     * Returns the _y_-value range of the interpolated curve for the given [y] values. This may be
+     * wider than the range of [y] if the interpolation overshoots (e.g., for splines). The default
+     * implementation returns the range of [y].
+     */
+    public fun getYRange(y: List<Double>): ClosedRange<Double> = y.min()..y.max()
+
+    /** Houses [Interpolator] singletons and factory functions. */
+    public companion object {
+      /** Uses line segments. */
+      public val Sharp: Interpolator =
+        object : Interpolator {
+          override fun interpolate(
+            context: CartesianDrawingContext,
+            path: Path,
+            points: List<Offset>,
+            visibleIndexRange: IntRange,
+          ) {
+            for (index in visibleIndexRange) {
+              val point = points[index]
+              if (index == visibleIndexRange.first) {
+                path.moveTo(point.x, point.y)
+              } else {
+                path.lineTo(point.x, point.y)
+              }
+            }
+          }
+        }
+
+      /**
+       * Uses cubic Bézier curves. [curvature], which must be in ([0, 1]], defines their strength.
+       */
+      public fun cubic(
+        @FloatRange(from = 0.0, to = 1.0, fromInclusive = false) curvature: Float = 0.5f
+      ): Interpolator = CubicInterpolator(curvature)
+
+      /**
+       * Uses a Catmull–Rom spline. [alpha], which must be in [[0, 1)], controls the tightness: 0
+       * (the default) produces the standard Catmull–Rom spline, and values approaching 1 produce
+       * near-straight lines. Catmull–Rom splines pass through all data points and produce straight
+       * segments for collinear points.
+       */
+      public fun catmullRom(
+        @FloatRange(from = 0.0, to = 1.0, toInclusive = false) alpha: Float = 0f
+      ): Interpolator = CatmullRomInterpolator(alpha)
     }
   }
 
@@ -396,28 +493,24 @@ protected constructor(
         linePath.rewind()
         val line = lineProvider.getLine(seriesIndex, model.extraStore)
 
-        var prevX = layerBounds.getStart(isLtr = isLtr)
-        var prevY = layerBounds.bottom
-
         val drawingStartAlignmentCorrection =
           layoutDirectionMultiplier * layerDimensions.startPadding
 
         val drawingStart =
           layerBounds.getStart(isLtr = isLtr) + drawingStartAlignmentCorrection - scroll
 
-        forEachPointInBounds(
-          series = series,
-          drawingStart = drawingStart,
-          pointInfoMap = pointInfoMap,
-          drawFullLineLength = line.stroke is LineStroke.Dashed,
-        ) { _, x, y, _, _ ->
-          if (linePath.isEmpty) {
-            linePath.moveTo(x, y)
-          } else {
-            line.pointConnector.connect(this, linePath, prevX, prevY, x, y)
-          }
-          prevX = x
-          prevY = y
+        val points = mutableListOf<Offset>()
+        val visibleIndexRange =
+          collectPointsAndVisibleIndexRange(
+            series = series,
+            drawingStart = drawingStart,
+            pointInfoMap = pointInfoMap,
+            drawFullLineLength = line.stroke is LineStroke.Dashed,
+            points = points,
+          )
+
+        if (points.isNotEmpty() && !visibleIndexRange.isEmpty()) {
+          connectPoints(line.interpolator, points, visibleIndexRange)
         }
 
         saveLayer(opacity = drawingModel?.opacity ?: 1f)
@@ -575,6 +668,66 @@ protected constructor(
     linePath.rewind()
   }
 
+  protected fun CartesianDrawingContext.collectPointsAndVisibleIndexRange(
+    series: List<LineCartesianLayerModel.Entry>,
+    drawingStart: Float,
+    pointInfoMap: Map<Double, LineCartesianLayerDrawingModel.Entry>?,
+    drawFullLineLength: Boolean = false,
+    points: MutableList<Offset>,
+  ): IntRange {
+    val minX = ranges.minX
+    val maxX = ranges.maxX
+    val xStep = ranges.xStep
+
+    val boundsStart = layerBounds.getStart(isLtr = isLtr)
+    val boundsEnd = boundsStart + layoutDirectionMultiplier * layerBounds.width
+
+    fun getDrawX(entry: LineCartesianLayerModel.Entry): Float =
+      drawingStart +
+        layoutDirectionMultiplier * layerDimensions.xSpacing * ((entry.x - minX) / xStep).toFloat()
+
+    fun getDrawY(entry: LineCartesianLayerModel.Entry): Float {
+      val yRange = ranges.getYRange(verticalAxisPosition)
+      return layerBounds.bottom -
+        (pointInfoMap?.get(entry.x)?.y ?: ((entry.y - yRange.minY) / yRange.length).toFloat()) *
+          layerBounds.height
+    }
+
+    var visibleStart = -1
+    var visibleEnd = -1
+
+    series.forEachIn(minX = minX, maxX = maxX) { entry, _ ->
+      points += Offset(getDrawX(entry), getDrawY(entry))
+    }
+
+    for (index in points.indices) {
+      val px = points[index].x
+      val nextPx = points.getOrNull(index + 1)?.x
+      val inBounds =
+        drawFullLineLength ||
+          nextPx == null ||
+          !(isLtr && px < boundsStart || !isLtr && px > boundsStart) ||
+          !(isLtr && nextPx < boundsStart || !isLtr && nextPx > boundsStart)
+      val pastEnd = isLtr && px > boundsEnd || !isLtr && px < boundsEnd
+      if (inBounds && visibleStart == -1) visibleStart = index
+      if (inBounds) visibleEnd = index
+      if (pastEnd) {
+        if (visibleEnd == -1) visibleEnd = index
+        break
+      }
+    }
+
+    return if (visibleStart == -1) IntRange.EMPTY else visibleStart..visibleEnd
+  }
+
+  protected fun CartesianDrawingContext.connectPoints(
+    interpolator: Interpolator,
+    points: List<Offset>,
+    visibleIndexRange: IntRange,
+  ) {
+    interpolator.interpolate(this, linePath, points, visibleIndexRange)
+  }
+
   protected open fun CartesianDrawingContext.forEachPointInBounds(
     series: List<LineCartesianLayerModel.Entry>,
     drawingStart: Float,
@@ -657,11 +810,19 @@ protected constructor(
     chartRanges: MutableCartesianChartRanges,
     model: LineCartesianLayerModel,
   ) {
+    var minY = model.minY
+    var maxY = model.maxY
+    model.series.forEachIndexed { seriesIndex, series ->
+      val interpolator = lineProvider.getLine(seriesIndex, model.extraStore).interpolator
+      val yRange = interpolator.getYRange(series.map { it.y })
+      minY = kotlin.math.min(minY, yRange.start)
+      maxY = kotlin.math.max(maxY, yRange.endInclusive)
+    }
     chartRanges.tryUpdate(
       rangeProvider.getMinX(model.minX, model.maxX, model.extraStore),
       rangeProvider.getMaxX(model.minX, model.maxX, model.extraStore),
-      rangeProvider.getMinY(model.minY, model.maxY, model.extraStore),
-      rangeProvider.getMaxY(model.minY, model.maxY, model.extraStore),
+      rangeProvider.getMinY(minY, maxY, model.extraStore),
+      rangeProvider.getMaxY(minY, maxY, model.extraStore),
       verticalAxisPosition,
     )
   }
@@ -835,7 +996,7 @@ public fun LineCartesianLayer.Companion.rememberLine(
   stroke: LineCartesianLayer.LineStroke = LineCartesianLayer.LineStroke.Continuous(),
   areaFill: LineCartesianLayer.AreaFill? = null,
   pointProvider: LineCartesianLayer.PointProvider? = null,
-  pointConnector: PointConnector = PointConnector.Sharp,
+  interpolator: LineCartesianLayer.Interpolator = LineCartesianLayer.Interpolator.Sharp,
   dataLabel: TextComponent? = null,
   dataLabelPosition: Position.Vertical = Position.Vertical.Top,
   dataLabelValueFormatter: CartesianValueFormatter = remember { CartesianValueFormatter.decimal() },
@@ -846,7 +1007,7 @@ public fun LineCartesianLayer.Companion.rememberLine(
     stroke,
     areaFill,
     pointProvider,
-    pointConnector,
+    interpolator,
     dataLabel,
     dataLabelPosition,
     dataLabelRotationDegrees,
@@ -857,10 +1018,40 @@ public fun LineCartesianLayer.Companion.rememberLine(
       stroke,
       areaFill,
       pointProvider,
-      pointConnector,
+      interpolator,
       dataLabel,
       dataLabelPosition,
       dataLabelValueFormatter,
       dataLabelRotationDegrees,
     )
   }
+
+/** Creates and remembers a [LineCartesianLayer.Line]. */
+@Suppress("DEPRECATION")
+@Deprecated("Use the overload with `interpolator`.")
+@Composable
+public fun LineCartesianLayer.Companion.rememberLine(
+  fill: LineCartesianLayer.LineFill =
+    vicoTheme.lineCartesianLayerColors.first().let { color ->
+      remember(color) { LineCartesianLayer.LineFill.single(Fill(color)) }
+    },
+  stroke: LineCartesianLayer.LineStroke = LineCartesianLayer.LineStroke.Continuous(),
+  areaFill: LineCartesianLayer.AreaFill? = null,
+  pointProvider: LineCartesianLayer.PointProvider? = null,
+  pointConnector: PointConnector,
+  dataLabel: TextComponent? = null,
+  dataLabelPosition: Position.Vertical = Position.Vertical.Top,
+  dataLabelValueFormatter: CartesianValueFormatter = remember { CartesianValueFormatter.decimal() },
+  dataLabelRotationDegrees: Float = 0f,
+): Line =
+  rememberLine(
+    fill,
+    stroke,
+    areaFill,
+    pointProvider,
+    PointConnectorAdapter(pointConnector),
+    dataLabel,
+    dataLabelPosition,
+    dataLabelValueFormatter,
+    dataLabelRotationDegrees,
+  )

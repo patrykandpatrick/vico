@@ -17,29 +17,33 @@
 package com.patrykandpatrick.vico.views.cartesian.layer
 
 import android.graphics.Path
+import android.graphics.PointF
 import com.patrykandpatrick.vico.views.cartesian.CartesianDrawingContext
 import kotlin.math.abs
 
-@Suppress("DEPRECATION")
-internal data class CubicPointConnector(private val curvature: Float) :
-  LineCartesianLayer.PointConnector {
+internal data class CubicInterpolator(private val curvature: Float) :
+  LineCartesianLayer.Interpolator {
   init {
     require(curvature > 0 && curvature <= 1) { "`curvature` must be in (0, 1]." }
   }
 
-  override fun connect(
+  override fun interpolate(
     context: CartesianDrawingContext,
     path: Path,
-    x1: Float,
-    y1: Float,
-    x2: Float,
-    y2: Float,
+    points: List<PointF>,
+    visibleIndexRange: IntRange,
   ) {
-    val xDelta =
-      (Y_MULTIPLIER * abs(y2 - y1) / context.layerBounds.height()).coerceAtMost(1f) *
-        curvature *
-        (x2 - x1)
-    path.cubicTo(x1 + xDelta, y1, x2 - xDelta, y2, x2, y2)
+    if (visibleIndexRange.isEmpty()) return
+    path.moveTo(points[visibleIndexRange.first].x, points[visibleIndexRange.first].y)
+    for (index in visibleIndexRange.first + 1..visibleIndexRange.last) {
+      val prev = points[index - 1]
+      val current = points[index]
+      val xDelta =
+        (Y_MULTIPLIER * abs(current.y - prev.y) / context.layerBounds.height()).coerceAtMost(1f) *
+          curvature *
+          (current.x - prev.x)
+      path.cubicTo(prev.x + xDelta, prev.y, current.x - xDelta, current.y, current.x, current.y)
+    }
   }
 
   private companion object {
