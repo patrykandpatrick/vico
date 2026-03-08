@@ -7,8 +7,6 @@ metaLinks:
 
 # LineCartesianLayer
 
-## Overview
-
 Use [`LineCartesianLayer`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.layer/-line-cartesian-layer/) to create line charts. Each line is associated with a [`LineCartesianLayer.Line`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.layer/-line-cartesian-layer/-line/) instance. These are provided by [`LineCartesianLayer.LineProvider`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.layer/-line-cartesian-layer/-line-provider/). A base implementation of this interface can be instantiated via [`LineCartesianLayer.LineProvider.series`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.layer/-line-cartesian-layer/-line-provider/-companion/series). You can customize line fills, backgrounds, shapes, and other properties. You can also add data labels and points.
 
 Line strokes are customized via [`LineCartesianLayer.LineStroke`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.layer/-line-cartesian-layer/-line-stroke/), which has two implementations:

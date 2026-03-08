@@ -7,8 +7,6 @@ metaLinks:
 
 # CandlestickCartesianLayer
 
-## Overview
-
 Use [`CandlestickCartesianLayer`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.layer/-candlestick-cartesian-layer/) to create candlestick charts. Each candle’s style is defined by its corresponding [`Candle`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.layer/-candlestick-cartesian-layer/-candle/) instance. These are provided by [`CandleProvider`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.layer/-candlestick-cartesian-layer/-candle-provider/):
 
 * To style candles based on their absolute price changes (closing vs. opening), use [`absolute`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.layer/absolute). This is commonly used for filled candles.

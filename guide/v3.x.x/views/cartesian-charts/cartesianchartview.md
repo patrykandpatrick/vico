@@ -1,7 +1,5 @@
 # CartesianChartView
 
-## Overview
-
 [`CartesianChartView`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian/-cartesian-chart-view/) is the entry point for Cartesian charts in the view system. It accepts [`CartesianChart`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian/-cartesian-chart/) and [`CartesianChartModelProducer`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.data/-cartesian-chart-model-producer/) instances, facilitates communication between them, and displays the chart. It also handles scroll and zoom and shows a placeholder when no data is available.
 
 `CartesianChartView` automatically creates a chart when the `layers` attribute is used:
@@ -75,7 +73,7 @@ cartesianChartView.zoomHandler = zoomHandler
 * [`Scroll.Absolute.pixels`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian/-scroll/-absolute/-companion/pixels)
 * [`Scroll.Absolute.x`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian/-scroll/-absolute/-companion/x)
 * [`Scroll.Relative.pixels`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian/-scroll/-relative/-companion/pixels)
-* [`Scroll.Relative.x`](https://api.vico.patrykandpatrick.vico.views.cartesian/-scroll/-relative/-companion/x)
+* [`Scroll.Relative.x`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian/-scroll/-relative/-companion/x)
 
 [`AutoScrollCondition`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian/-auto-scroll-condition/) defines when to scroll automatically. There are two singletons:
 

@@ -7,11 +7,9 @@ metaLinks:
 
 # ColumnCartesianLayer
 
-## Overview
+Use [`ColumnCartesianLayer`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.layer/-column-cartesian-layer/) to create column charts. Columns are drawn via [`LineComponent`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.common.component/-line-component/) instances provided by [`ColumnCartesianLayer.ColumnProvider`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.layer/-column-cartesian-layer/-column-provider/). [`ColumnCartesianLayer.ColumnProvider.series`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.layer/-column-cartesian-layer/-column-provider/-companion/series) creates a `ColumnCartesianLayer.ColumnProvider` instance that uses one `LineComponent` instance per series. You can create your own implementation for custom behavior, including styling columns individually based on their _y_-values.
 
-Use [`ColumnCartesianLayer`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.layer/-column-cartesian-layer/) to create column charts. Each column corresponds to a [`LineComponent`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.common.component/-line-component/) instance. These are provided by [`ColumnCartesianLayer.ColumnProvider`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.layer/-column-cartesian-layer/-column-provider/). [`ColumnCartesianLayer.ColumnProvider.series`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.layer/-column-cartesian-layer/-column-provider/-companion/series) creates a `ColumnCartesianLayer.ColumnProvider` instance that uses one `LineComponent` instance per series. You can create your own implementation for custom behavior, including styling columns individually based on their _y_-values.
-
-On a `ColumnCartesianLayer` instance, you can also change column spacing. Data labels are supported. When multiple series are added, its columns can be grouped horizontally or stacked.
+On a `ColumnCartesianLayer` instance, you can also change column spacing. Data labels are supported. When multiple series are added, columns can be grouped horizontally or stacked.
 
 To create a `ColumnCartesianLayer` instance, use the XML attributes:
 

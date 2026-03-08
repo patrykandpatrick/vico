@@ -7,14 +7,12 @@ metaLinks:
 
 # CandlestickCartesianLayer
 
-## Overview
-
 Use [`CandlestickCartesianLayer`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.layer/-candlestick-cartesian-layer/) to create candlestick charts. Instantiate it via [`rememberCandlestickCartesianLayer`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.layer/remember-candlestick-cartesian-layer).
 
 Each candle’s style is defined by its corresponding [`Candle`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.layer/-candlestick-cartesian-layer/-candle/) instance. These are provided by [`CandleProvider`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.layer/-candlestick-cartesian-layer/-candle-provider/):
 
-* To style candles based on their absolute price changes (closing vs. opening), use [`absolute`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.layer/absolute). This is commonly used for filled candles and has such defaults.
-* To style candles based on both their absolute price changes (closing vs. opening) and their relative price changes (closing vs. previous closing), use [`absoluteRelative`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.layer/absolute-relative). This is commonly used for hollow candles and has such defaults.
+* To style candles based on their absolute price changes (closing vs. opening), use [`absolute`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.layer/absolute). This is commonly used for filled candles and provides corresponding defaults.
+* To style candles based on both their absolute price changes (closing vs. opening) and their relative price changes (closing vs. previous closing), use [`absoluteRelative`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.layer/absolute-relative). This is commonly used for hollow candles and provides corresponding defaults.
 * For custom behavior, implement `CandleProvider`.
 
 In `rememberCandlestickCartesianLayer`, you can set the minimum body height, change the candle spacing, and toggle wick scaling.
@@ -53,7 +51,7 @@ When creating a [`CartesianChartModel`](https://api.vico.patrykandpatrick.com/vi
 
 ```kt
 CartesianChartModel(
-    ColumnCartesianLayerModel.build(
+    CandlestickCartesianLayerModel.build(
         x = listOf(1, 2, 3, 4),
         opening = listOf(2, 4, 6, 3),
         closing = listOf(4, 5, 3, 3),
@@ -67,7 +65,7 @@ CartesianChartModel(
 This function also has an overload with no `x` parameter:
 
 ```kt
-ColumnCartesianLayerModel.build(
+CandlestickCartesianLayerModel.build(
     opening = listOf(2, 4, 6, 3),
     closing = listOf(4, 5, 3, 3),
     low = listOf(1, 4, 2, 2),

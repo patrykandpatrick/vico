@@ -7,8 +7,6 @@ metaLinks:
 
 # CartesianValueFormatter
 
-## Overview
-
 _x_- and _y_-values are numerical. You can use [`CartesianValueFormatter`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.data/-cartesian-value-formatter/) to format them for display. They can remain numbers, or they can be transformed to dates, category names, and so on.
 
 There are two factory functions for `CartesianValueFormatter`: [`CartesianValueFormatter.decimal`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.data/-cartesian-value-formatter/-companion/decimal) and [`CartesianValueFormatter.yPercent`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.data/-cartesian-value-formatter/-companion/y-percent). For more complex use cases, create custom implementations. `CartesianValueFormatter` instances are most commonly used with [`HorizontalAxis`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.axis/-horizontal-axis/) and [`VerticalAxis`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.axis/-vertical-axis/); see the `valueFormatter` parameters and properties. However, these aren’t the only APIs that accept `CartesianValueFormatter` instances.

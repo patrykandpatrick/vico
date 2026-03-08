@@ -7,13 +7,11 @@ metaLinks:
 
 # CartesianChartModelProducer
 
-## Overview
-
 A chart’s data is stored in its model, represented by [`CartesianChartModel`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.data/-cartesian-chart-model/). Much like [`CartesianChart`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian/-cartesian-chart/) combines [`CartesianLayer`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.layer/-cartesian-layer/) instances, [`CartesianChartModel`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.data/-cartesian-chart-model/) combines [`CartesianLayerModel`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.data/-cartesian-layer-model/) instances. Use the transaction-based [`CartesianChartModelProducer`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.data/-cartesian-chart-model-producer/) to create models.
 
 ## Creation
 
-Instantiate `CartesianChartModelProducer` via the constructor. Since data updates are performed via transactions, the producer used by a chart shouldn’t be replaced. Thus, store it in a place with sufficient persistence, such as a viewmodel.
+Instantiate `CartesianChartModelProducer` via the constructor. Since data updates are performed via transactions, the producer used by a chart shouldn’t be replaced. Thus, store it in a place with sufficient persistence, such as a view model.
 
 ## `Transaction`
 

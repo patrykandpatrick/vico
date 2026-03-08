@@ -7,8 +7,6 @@ metaLinks:
 
 # CartesianMarker
 
-## Overview
-
 [`CartesianMarker`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.marker/-cartesian-marker/) instances highlight points on charts. There are two types:
 
 * Standard markers are shown on tap. Add these via the `marker` parameter of [`rememberCartesianChart`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/remember-cartesian-chart).

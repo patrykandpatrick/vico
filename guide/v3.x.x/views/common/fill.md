@@ -6,8 +6,6 @@ metaLinks:
 
 # Fill
 
-## Overview
-
 [`Fill`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.common/-fill/) defines fill properties—either a color or a [`ShaderProvider`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.common.shader/-shader-provider/) instance.
 
 ## `ShaderProvider`

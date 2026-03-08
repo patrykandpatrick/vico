@@ -27,7 +27,7 @@ The following has been adapted from the [“Basic column chart”](https://githu
     app:chartStyle="@style/ChartStyle" />
 ```
 
-At the top level of the `Activity`:
+At the top level of your activity:
 
 ```kt
 val modelProducer = CartesianChartModelProducer()
@@ -66,7 +66,7 @@ The following has been adapted from the [“Basic line chart”](https://github.
     app:chartStyle="@style/ChartStyle" />
 ```
 
-At the top level of the `Activity`:
+At the top level of your activity:
 
 ```kt
 val modelProducer = CartesianChartModelProducer()
