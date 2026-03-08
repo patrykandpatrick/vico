@@ -9,15 +9,15 @@ metaLinks:
 
 ## Overview
 
-Use [`CandlestickCartesianLayer`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.layer/-candlestick-cartesian-layer/) to create candlestick charts. Each candle’s style is defined by its corresponding [`Candle`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.layer/-candlestick-cartesian-layer/-candle/). The `Candle`s are provided by a [`CandleProvider`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.layer/-candlestick-cartesian-layer/-candle-provider/):
+Use [`CandlestickCartesianLayer`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.layer/-candlestick-cartesian-layer/) to create candlestick charts. Each candle’s style is defined by its corresponding [`Candle`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.layer/-candlestick-cartesian-layer/-candle/) instance. These are provided by [`CandleProvider`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.layer/-candlestick-cartesian-layer/-candle-provider/):
 
 * To style candles based on their absolute price changes (closing vs. opening), use [`absolute`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.layer/absolute). This is commonly used for filled candles.
 * To style candles based on both their absolute price changes (closing vs. opening) and their relative price changes (closing vs. previous closing), use [`absoluteRelative`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.layer/absolute-relative). This is commonly used for hollow candles.
 * For custom behavior, implement `CandleProvider`.
 
-At the `CandlestickCartesianLayer` level, you can set the minimum body height, change the candle spacing, and toggle wick scaling.
+On a `CandlestickCartesianLayer` instance, you can set the minimum body height, change the candle spacing, and toggle wick scaling.
 
-To create a [`CandlestickCartesianLayer`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.layer/-candlestick-cartesian-layer/), use the XML attributes:
+To create a `CandlestickCartesianLayer` instance, use the XML attributes:
 
 ```xml
 <style name="ChartStyle">
@@ -32,7 +32,7 @@ To create a [`CandlestickCartesianLayer`](https://api.vico.patrykandpatrick.com/
     <!-- ... --> />
 ```
 
-Alternatively, use the `CandlestickCartesianLayer` constructor:
+Alternatively, instantiate `CandlestickCartesianLayer` via the constructor:
 
 ```kt
 cartesianChartView.chart = CartesianChart(CandlestickCartesianLayer(/* ... */), /* ... */)
@@ -40,7 +40,7 @@ cartesianChartView.chart = CartesianChart(CandlestickCartesianLayer(/* ... */), 
 
 ## `Transaction.candlestickSeries`
 
-`CandlestickCartesianLayer`s use [`CandlestickCartesianLayerModel`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.data/-candlestick-cartesian-layer-model/)s. When using a `CartesianChartModelProducer`, add `CandlestickCartesianLayerModel`s via [`candlestickSeries`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.data/candlestick-series):
+Candlestick layers use [`CandlestickCartesianLayerModel`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.data/-candlestick-cartesian-layer-model/) instances. When using [`CartesianChartModelProducer`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.data/-cartesian-chart-model-producer/), add them via [`candlestickSeries`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.data/candlestick-series):
 
 ```kt
 cartesianChartModelProducer.runTransaction {
@@ -68,7 +68,7 @@ candlestickSeries(
 
 ## Manual `CandlestickCartesianLayerModel` creation
 
-When creating a [`CartesianChartModel`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.data/-cartesian-chart-model/) directly, you can add a `CandlestickCartesianLayerModel` by using [`build`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.data/-candlestick-cartesian-layer-model/-companion/build):
+When creating a [`CartesianChartModel`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.data/-cartesian-chart-model/) instance directly, you can add a candlestick-layer model by using [`build`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.data/-candlestick-cartesian-layer-model/-companion/build):
 
 ```kt
 CartesianChartModel(
