@@ -571,8 +571,7 @@ protected constructor(
       public fun step(
         step: (ExtraStore) -> Double? = { null },
         shiftTopLines: Boolean = true,
-      ): ItemPlacer =
-        DefaultVerticalAxisItemPlacer(DefaultVerticalAxisItemPlacer.Mode.Step(step), shiftTopLines)
+      ): ItemPlacer = StepVerticalAxisItemPlacer(step, shiftTopLines)
 
       /**
        * Creates a count-based [ItemPlacer] implementation. [count] returns the number of labels
@@ -583,11 +582,7 @@ protected constructor(
       public fun count(
         count: (ExtraStore) -> Int? = { null },
         shiftTopLines: Boolean = true,
-      ): ItemPlacer =
-        DefaultVerticalAxisItemPlacer(
-          DefaultVerticalAxisItemPlacer.Mode.Count(count),
-          shiftTopLines,
-        )
+      ): ItemPlacer = CountVerticalAxisItemPlacer(count, shiftTopLines)
     }
   }
 
