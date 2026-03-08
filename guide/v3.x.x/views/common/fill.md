@@ -8,11 +8,11 @@ metaLinks:
 
 ## Overview
 
-[`Fill`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.common/-fill/) defines fill properties—either a color or a [`ShaderProvider`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.common.shader/-shader-provider/).
+[`Fill`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.common/-fill/) defines fill properties—either a color or a [`ShaderProvider`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.common.shader/-shader-provider/) instance.
 
 ## `ShaderProvider`
 
-`ShaderProvider` lets you create complex fills, including gradients and patterns. `core` has the following factory functions:
+[`ShaderProvider`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.common.shader/-shader-provider/) lets you create complex fills, including gradients and patterns. `core` has the following factory functions:
 
 * [`ShaderProvider.bitmap`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.common.shader/-shader-provider/-companion/bitmap)
 * [`ShaderProvider.component`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.common.shader/-shader-provider/-companion/component)

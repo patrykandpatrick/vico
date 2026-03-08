@@ -6,4 +6,4 @@ metaLinks:
 
 # Fill
 
-`Fill` defines fill properties—either a `Color` or a `Brush`.
+[`Fill`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.common/-fill/) defines fill properties—either a color or a brush.
