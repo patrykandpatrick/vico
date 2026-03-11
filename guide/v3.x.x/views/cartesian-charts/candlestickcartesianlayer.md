@@ -15,6 +15,8 @@ Use [`CandlestickCartesianLayer`](https://api.vico.patrykandpatrick.com/vico/vie
 
 On a `CandlestickCartesianLayer` instance, you can set the minimum body height, change the candle spacing, and toggle wick scaling.
 
+## Creation
+
 To create a `CandlestickCartesianLayer` instance, use the XML attributes:
 
 ```xml

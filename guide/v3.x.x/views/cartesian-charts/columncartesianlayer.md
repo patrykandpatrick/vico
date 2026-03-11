@@ -11,6 +11,8 @@ Use [`ColumnCartesianLayer`](https://api.vico.patrykandpatrick.com/vico/views/co
 
 On a `ColumnCartesianLayer` instance, you can also change column spacing. Data labels are supported. When multiple series are added, columns can be grouped horizontally or stacked.
 
+## Creation
+
 To create a `ColumnCartesianLayer` instance, use the XML attributes:
 
 ```xml
