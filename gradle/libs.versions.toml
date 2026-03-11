@@ -1,5 +1,5 @@
 [versions]
-activity = "1.12.4"
+activity = "1.13.0"
 agp = "9.1.0"
 androidXAnnotation = "1.9.1"
 androidXCore = "1.17.0"
