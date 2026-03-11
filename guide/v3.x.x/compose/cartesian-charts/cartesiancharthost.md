@@ -13,6 +13,12 @@ metaLinks:
 CartesianChartHost(rememberCartesianChart(/* ... */), modelProducer, /* ... */)
 ```
 
+You can also use a manually created [`CartesianChartModel`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-chart-model/) instance instead of a model producer:
+
+```kt
+CartesianChartHost(rememberCartesianChart(/* ... */), model, /* ... */)
+```
+
 ## Scroll
 
 `CartesianChartHost` accepts [`VicoScrollState`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-vico-scroll-state/) instances, enabling scroll customization and programmatic scrolling. Use [`rememberVicoScrollState`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/remember-vico-scroll-state) to instantiate `VicoScrollState`:

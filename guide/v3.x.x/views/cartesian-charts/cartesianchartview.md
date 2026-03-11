@@ -23,6 +23,22 @@ Use the [`CartesianChartView.chart`](https://api.vico.patrykandpatrick.com/vico/
 cartesianChartView.chart = CartesianChart(/* ... */)
 ```
 
+## Data
+
+Use [`CartesianChartView.modelProducer`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian/-cartesian-chart-view/model-producer) to set a [`CartesianChartModelProducer`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.data/-cartesian-chart-model-producer/) instance:
+
+```kt
+cartesianChartView.modelProducer = cartesianChartModelProducer
+```
+
+You can also use a manually created [`CartesianChartModel`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.data/-cartesian-chart-model/) instance via the [`model`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian/-cartesian-chart-view/model) property:
+
+```kt
+cartesianChartView.model = model
+```
+
+## Multiple layers
+
 You can add multiple layers by separating their names with pipes:
 
 ```xml
