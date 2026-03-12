@@ -2,7 +2,7 @@
 activity = "1.12.4"
 agp = "9.1.0"
 androidXAnnotation = "1.9.1"
-androidXCore = "1.17.0"
+androidXCore = "1.18.0"
 appcompat = "1.7.1"
 compose = "1.10.2"
 composeMaterial3 = "1.9.0"
