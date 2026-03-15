@@ -21,6 +21,26 @@ A chart’s _x_- and _y_-ranges depend on those reported by its layers. The _x_-
 
 _x_- and _y_-range customization is discussed in [a later subsection](cartesianlayer.md#cartesianlayerrangeprovider).
 
+## _x_-step
+
+The _x_-step is a reference _x_-increment. Together with `CartesianLayer` settings, it determines the intrinsic mapping between data and screen units (before zoom). Other components also use it for calibration; for instance, the built-in axis-item placers use it as the default label and line spacing. An _x_-value is considered _major_ if it’s a natural number of _x_-steps away from the minimum.
+
+By default, the _x_-step is the greatest common divisor of the differences between consecutive _x_-values the flattened _x_-series. For example, if these _x_-values are $$\{0, 1, 2, 3\}$$, the _x_-step is 1; if the _x_ values are $$\{0, 2, 4, 6\}$$, the _x_-step is 2.
+
+To customize the _x_-step, use `rememberCartesianChart`’s `getXStep` parameter, which accepts a `(CartesianChartModel) -> Double` lambda:
+
+```kotlin
+rememberCartesianChart(getXStep = { 1.0 }, /* ... */)
+```
+
+Consider a daily line chart whose data points may arrive at arbitrary times within a day. Setting the _x_-step to one day means that one day’s worth of _x_-distance intrinsically maps to a specific amount of screen space, and the built-in axis-item placers use a one-day interval.
+
+For a daily column chart that may have gaps in the data, locking the _x_-step to one day causes the chart to leave room for the missing days. Without this, the default would shrink the step based on the data actually present, and columns would be packed together as though no days were missing.
+
+For line charts, both increasing and decreasing the _x_-step relative to the default can be useful. For column and candlestick charts, only increasing it is practical; the opposite could cause overlaps.
+
+Note that the _x_-step is different from zoom. Zoom scales the entire chart—including column widths, for example—whereas the _x_-step changes the logical interpretation of the data’s spacing. The effects described above aren’t achievable with zoom alone.
+
 ## Sample charts
 
 * [“Basic column chart”](https://github.com/patrykandpatrick/vico/blob/stable/sample/charts/compose/src/commonMain/kotlin/com/patrykandpatrick/vico/sample/charts/compose/BasicColumnChart.kt)
