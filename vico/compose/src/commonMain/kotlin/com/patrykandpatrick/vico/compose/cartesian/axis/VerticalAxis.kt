@@ -70,6 +70,8 @@ protected constructor(
   size: Size,
   titleComponent: TextComponent?,
   title: (ExtraStore) -> CharSequence?,
+  tickPosition: TickPosition,
+  lineDrawingOrder: LineDrawingOrder,
 ) :
   BaseAxis<P>(
     line,
@@ -82,6 +84,8 @@ protected constructor(
     size,
     titleComponent,
     title,
+    tickPosition,
+    lineDrawingOrder,
   ) {
   protected val areLabelsOutsideAtStartOrInsideAtEnd: Boolean
     get() =
@@ -111,6 +115,8 @@ protected constructor(
     itemPlacer: ItemPlacer,
     titleComponent: TextComponent?,
     title: (ExtraStore) -> CharSequence?,
+    tickPosition: TickPosition,
+    lineDrawingOrder: LineDrawingOrder,
   ) : this(
     position,
     line,
@@ -126,6 +132,8 @@ protected constructor(
     Size.Auto(),
     titleComponent,
     title,
+    tickPosition,
+    lineDrawingOrder,
   )
 
   override fun updateAxisDimensions(
@@ -178,19 +186,7 @@ protected constructor(
             y = centerY,
           )
       }
-      val topExtension = if (itemPlacer.getShiftTopLines(this)) tickThickness else 0f
-      val bottomExtension = tickThickness
-      line?.drawVertical(
-        context = context,
-        x =
-          if (position.isLeft(this)) {
-            bounds.right - lineThickness.half
-          } else {
-            bounds.left + lineThickness.half
-          },
-        top = bounds.top - topExtension,
-        bottom = bounds.bottom + bottomExtension,
-      )
+      if (lineDrawingOrder == LineDrawingOrder.UnderLayers) drawLineAndTicks(context)
     }
   }
 
@@ -199,26 +195,20 @@ protected constructor(
     axisDimensions: Map<Axis.Position, AxisDimensions>,
   ) {
     with(context) {
+      if (lineDrawingOrder == LineDrawingOrder.OverLayers) drawLineAndTicks(context)
+
       val label = label
       val labelValues =
         itemPlacer.getLabelValues(this, bounds.height, getMaxLabelHeight(), position)
       val tickLeftX = getTickLeftX()
       val tickRightX = tickLeftX + lineThickness + this.tickLength
       val labelX = if (areLabelsOutsideAtStartOrInsideAtEnd == isLtr) tickLeftX else tickRightX
-      var tickCenterY: Float
       val yRange = ranges.getYRange(position)
 
       labelValues.forEach { labelValue ->
-        tickCenterY =
+        val tickCenterY =
           bounds.bottom - bounds.height * ((labelValue - yRange.minY) / yRange.length).toFloat() +
             getLineCanvasYCorrection(tickThickness, labelValue)
-
-        tick?.drawHorizontal(
-          context = context,
-          left = tickLeftX,
-          right = tickRightX,
-          y = tickCenterY,
-        )
 
         label ?: return@forEach
         drawLabel(
@@ -250,6 +240,42 @@ protected constructor(
               TITLE_ABS_ROTATION_DEGREES
             },
           maxHeight = bounds.height.toInt(),
+        )
+      }
+    }
+  }
+
+  private fun drawLineAndTicks(context: CartesianDrawingContext) {
+    with(context) {
+      val topExtension = if (itemPlacer.getShiftTopLines(this)) tickThickness else 0f
+      val bottomExtension = tickThickness
+      line?.drawVertical(
+        context = context,
+        x =
+          if (position.isLeft(this)) {
+            bounds.right - lineThickness.half
+          } else {
+            bounds.left + lineThickness.half
+          },
+        top = bounds.top - topExtension,
+        bottom = bounds.bottom + bottomExtension,
+      )
+
+      val labelValues =
+        itemPlacer.getLabelValues(this, bounds.height, getMaxLabelHeight(), position)
+      val tickLeftX = getTickLeftX()
+      val tickRightX = tickLeftX + lineThickness + this.tickLength
+      val yRange = ranges.getYRange(position)
+
+      labelValues.forEach { labelValue ->
+        val tickCenterY =
+          bounds.bottom - bounds.height * ((labelValue - yRange.minY) / yRange.length).toFloat() +
+            getLineCanvasYCorrection(tickThickness, labelValue)
+        tick?.drawHorizontal(
+          context = context,
+          left = tickLeftX,
+          right = tickRightX,
+          y = tickCenterY,
         )
       }
     }
@@ -317,12 +343,15 @@ protected constructor(
   protected fun CartesianMeasuringContext.getTickLeftX(): Float {
     val onLeft = position.isLeft(this)
     val base = if (onLeft) bounds.right else bounds.left
-    return when {
-      onLeft && horizontalLabelPosition == Outside -> base - lineThickness - tickLength
-      onLeft && horizontalLabelPosition == Inside -> base - lineThickness
-      horizontalLabelPosition == Outside -> base
-      horizontalLabelPosition == Inside -> base - tickLength
-      else -> error("Unexpected combination of axis position and label position")
+    return when (tickPosition) {
+      TickPosition.Outside -> if (onLeft) base - lineThickness - tickLength else base
+      TickPosition.Inside -> if (onLeft) base - lineThickness else base - tickLength
+      TickPosition.Cross ->
+        if (onLeft) {
+          base - lineThickness - tickLength / 2
+        } else {
+          base - tickLength / 2
+        }
     }
   }
 
@@ -368,6 +397,12 @@ protected constructor(
 
   protected open fun getWidth(context: CartesianMeasuringContext, freeHeight: Float): Float =
     with(context) {
+      val outwardTickLength =
+        when (tickPosition) {
+          TickPosition.Outside -> this.tickLength
+          TickPosition.Inside -> 0f
+          TickPosition.Cross -> this.tickLength / 2
+        }
       when (size) {
         is Size.Auto -> {
           val titleComponentWidth =
@@ -384,7 +419,7 @@ protected constructor(
           val labelSpace =
             when (horizontalLabelPosition) {
               Outside ->
-                ceil(getMaxLabelWidth(freeHeight)).also { maxLabelWidth = it } + this.tickLength
+                ceil(getMaxLabelWidth(freeHeight)).also { maxLabelWidth = it } + outwardTickLength
               Inside -> 0f
             }
           (labelSpace + titleComponentWidth + lineThickness).coerceIn(
@@ -397,7 +432,7 @@ protected constructor(
         is Size.Text ->
           titleComponent
             ?.getWidth(context = this, text = size.text, rotationDegrees = labelRotationDegrees)
-            .orZero + this.tickLength + lineThickness.half
+            .orZero + outwardTickLength + lineThickness.half
       }
     }
 
@@ -454,6 +489,8 @@ protected constructor(
     size: Size = this.size,
     titleComponent: TextComponent? = this.titleComponent,
     title: (ExtraStore) -> CharSequence? = this.title,
+    tickPosition: TickPosition = this.tickPosition,
+    lineDrawingOrder: LineDrawingOrder = this.lineDrawingOrder,
   ): VerticalAxis<P> =
     VerticalAxis(
       position,
@@ -470,6 +507,8 @@ protected constructor(
       size,
       titleComponent,
       title,
+      tickPosition,
+      lineDrawingOrder,
     )
 
   override fun equals(other: Any?): Boolean =
@@ -604,6 +643,9 @@ protected constructor(
       size: Size = Size.Auto(),
       titleComponent: TextComponent? = null,
       title: (ExtraStore) -> CharSequence? = { null },
+      tickPosition: TickPosition =
+        if (horizontalLabelPosition == Outside) TickPosition.Outside else TickPosition.Inside,
+      lineDrawingOrder: LineDrawingOrder = LineDrawingOrder.UnderLayers,
     ): VerticalAxis<Axis.Position.Vertical.Start> =
       remember(
         line,
@@ -619,6 +661,8 @@ protected constructor(
         size,
         titleComponent,
         title,
+        tickPosition,
+        lineDrawingOrder,
       ) {
         VerticalAxis(
           Axis.Position.Vertical.Start,
@@ -635,6 +679,8 @@ protected constructor(
           size,
           titleComponent,
           title,
+          tickPosition,
+          lineDrawingOrder,
         )
       }
 
@@ -654,6 +700,9 @@ protected constructor(
       size: Size = Size.Auto(),
       titleComponent: TextComponent? = null,
       title: (ExtraStore) -> CharSequence? = { null },
+      tickPosition: TickPosition =
+        if (horizontalLabelPosition == Outside) TickPosition.Outside else TickPosition.Inside,
+      lineDrawingOrder: LineDrawingOrder = LineDrawingOrder.UnderLayers,
     ): VerticalAxis<Axis.Position.Vertical.End> =
       remember(
         line,
@@ -669,6 +718,8 @@ protected constructor(
         size,
         titleComponent,
         title,
+        tickPosition,
+        lineDrawingOrder,
       ) {
         VerticalAxis(
           Axis.Position.Vertical.End,
@@ -685,6 +736,8 @@ protected constructor(
           size,
           titleComponent,
           title,
+          tickPosition,
+          lineDrawingOrder,
         )
       }
   }

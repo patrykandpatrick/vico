@@ -58,6 +58,8 @@ protected constructor(
   size: Size,
   titleComponent: TextComponent?,
   title: (ExtraStore) -> CharSequence?,
+  tickPosition: TickPosition,
+  lineDrawingOrder: LineDrawingOrder,
 ) :
   BaseAxis<P>(
     line,
@@ -70,6 +72,8 @@ protected constructor(
     size,
     titleComponent,
     title,
+    tickPosition,
+    lineDrawingOrder,
   ) {
   protected val Axis.Position.Horizontal.textVerticalPosition: Position.Vertical
     get() =
@@ -91,6 +95,8 @@ protected constructor(
     itemPlacer: ItemPlacer,
     titleComponent: TextComponent?,
     title: (ExtraStore) -> CharSequence?,
+    tickPosition: TickPosition,
+    lineDrawingOrder: LineDrawingOrder,
   ) : this(
     position,
     line,
@@ -104,6 +110,8 @@ protected constructor(
     Size.Auto(),
     titleComponent,
     title,
+    tickPosition,
+    lineDrawingOrder,
   )
 
   override fun updateAxisDimensions(
@@ -133,13 +141,19 @@ protected constructor(
   ) {
     with(context) {
       val saveCount = canvas.save()
-      val tickTop =
-        if (position == Axis.Position.Horizontal.Top) {
-          bounds.bottom - lineThickness - tickLength
-        } else {
-          bounds.top
+      val isTop = position == Axis.Position.Horizontal.Top
+      val outwardTickLength =
+        when (tickPosition) {
+          TickPosition.Outside -> tickLength
+          TickPosition.Inside -> 0f
+          TickPosition.Cross -> tickLength / 2
         }
-      val tickBottom = tickTop + lineThickness + tickLength
+      val textY =
+        if (isTop) {
+          bounds.bottom - lineThickness - outwardTickLength
+        } else {
+          bounds.top + lineThickness + outwardTickLength
+        }
       val fullXRange = internalGetFullXRange(layerDimensions)
       val maxLabelWidth = getMaxLabelWidth(layerDimensions, fullXRange)
 
@@ -157,7 +171,6 @@ protected constructor(
 
       canvas.clipPath(clipPath)
 
-      val textY = if (position == Axis.Position.Horizontal.Top) tickTop else tickBottom
       val baseCanvasX =
         bounds.getStart(isLtr) - scroll + layerDimensions.startPadding * layoutDirectionMultiplier
       val visibleXRange = getVisibleXRange()
@@ -183,45 +196,10 @@ protected constructor(
           y = textY,
           verticalPosition = position.textVerticalPosition,
           maxWidth = maxWidth,
-          maxHeight = (bounds.height() - tickLength - lineThickness.half).toInt(),
+          maxHeight = (bounds.height() - outwardTickLength - lineThickness.half).toInt(),
           rotationDegrees = labelRotationDegrees,
         )
-
-        if (lineValues == null) {
-          tick?.drawVertical(
-            context = this,
-            x = canvasX + getLinesCorrectionX(x, fullXRange),
-            top = tickTop,
-            bottom = tickBottom,
-          )
-        }
       }
-
-      lineValues?.forEach { x ->
-        tick?.drawVertical(
-          context = this,
-          x =
-            baseCanvasX +
-              ((x - ranges.minX) / ranges.xStep).toFloat() *
-                layerDimensions.xSpacing *
-                layoutDirectionMultiplier +
-              getLinesCorrectionX(x, fullXRange),
-          top = tickTop,
-          bottom = tickBottom,
-        )
-      }
-
-      line?.drawHorizontal(
-        context = this,
-        left = lineLeft,
-        right = lineRight,
-        y =
-          if (position == Axis.Position.Horizontal.Top) {
-            bounds.bottom - lineThickness.half
-          } else {
-            bounds.top + lineThickness.half
-          },
-      )
 
       title(model.extraStore)?.let { title ->
         titleComponent?.draw(
@@ -237,6 +215,10 @@ protected constructor(
           maxWidth = bounds.width().toInt(),
           text = title,
         )
+      }
+
+      if (lineDrawingOrder == LineDrawingOrder.UnderLayers) {
+        drawLineAndTicks(context, axisDimensions)
       }
 
       canvas.restoreToCount(saveCount)
@@ -373,7 +355,86 @@ protected constructor(
   override fun drawOverLayers(
     context: CartesianDrawingContext,
     axisDimensions: Map<Axis.Position, AxisDimensions>,
-  ) {}
+  ) {
+    if (lineDrawingOrder == LineDrawingOrder.OverLayers) drawLineAndTicks(context, axisDimensions)
+  }
+
+  private fun drawLineAndTicks(
+    context: CartesianDrawingContext,
+    axisDimensions: Map<Axis.Position, AxisDimensions>,
+  ) {
+    with(context) {
+      val isTop = position == Axis.Position.Horizontal.Top
+      val tickTop =
+        when (tickPosition) {
+          TickPosition.Outside ->
+            if (isTop) {
+              bounds.bottom - lineThickness - tickLength
+            } else {
+              bounds.top
+            }
+          TickPosition.Inside ->
+            if (isTop) {
+              bounds.bottom - lineThickness
+            } else {
+              bounds.top - tickLength
+            }
+          TickPosition.Cross ->
+            if (isTop) {
+              bounds.bottom - lineThickness - tickLength / 2
+            } else {
+              bounds.top - tickLength / 2
+            }
+        }
+      val tickBottom = tickTop + lineThickness + tickLength
+      val fullXRange = internalGetFullXRange(layerDimensions)
+      val maxLabelWidth = getMaxLabelWidth(layerDimensions, fullXRange)
+      val lineLeft = getLineLeft(context, maxLabelWidth, axisDimensions)
+      val lineRight = getLineRight(context, maxLabelWidth, axisDimensions)
+
+      val saveCount = canvas.save()
+      clipPath.rewind()
+      clipPath.addRect(
+        lineLeft,
+        min(bounds.top, layerBounds.top),
+        lineRight,
+        max(bounds.bottom, layerBounds.bottom),
+        Path.Direction.CW,
+      )
+      canvas.clipPath(clipPath)
+
+      line?.drawHorizontal(
+        context = this,
+        left = lineLeft,
+        right = lineRight,
+        y =
+          if (position == Axis.Position.Horizontal.Top) {
+            bounds.bottom - lineThickness.half
+          } else {
+            bounds.top + lineThickness.half
+          },
+      )
+
+      val baseCanvasX =
+        bounds.getStart(isLtr) - scroll + layerDimensions.startPadding * layoutDirectionMultiplier
+      val visibleXRange = getVisibleXRange()
+      val tickValues =
+        itemPlacer.getLineValues(this, visibleXRange, fullXRange, maxLabelWidth)
+          ?: itemPlacer.getLabelValues(this, visibleXRange, fullXRange, maxLabelWidth)
+
+      tickValues.forEach { x ->
+        val canvasX =
+          baseCanvasX +
+            ((x - ranges.minX) / ranges.xStep).toFloat() *
+              layerDimensions.xSpacing *
+              layoutDirectionMultiplier +
+            getLinesCorrectionX(x, fullXRange)
+        tick?.drawVertical(context = this, x = canvasX, top = tickTop, bottom = tickBottom)
+      }
+
+      canvas.restoreToCount(saveCount)
+    }
+  }
 
   override fun updateLayerDimensions(
     context: CartesianMeasuringContext,
@@ -462,6 +523,12 @@ protected constructor(
   ): Float =
     with(context) {
       val fullXRange = internalGetFullXRange(layerDimensions)
+      val outwardTickLength =
+        when (tickPosition) {
+          TickPosition.Outside -> tickLength
+          TickPosition.Inside -> 0f
+          TickPosition.Cross -> tickLength / 2
+        }
 
       when (size) {
         is Size.Auto -> {
@@ -476,7 +543,7 @@ protected constructor(
                 )
               }
               .orZero
-          (labelHeight + titleComponentHeight + lineThickness + tickLength)
+          (labelHeight + titleComponentHeight + lineThickness + outwardTickLength)
             .coerceAtMost(canvasSize.height / MAX_HEIGHT_DIVISOR)
             .coerceIn(size.minDp.pixels, size.maxDp.pixels)
         }
@@ -542,6 +609,8 @@ protected constructor(
     size: Size = this.size,
     titleComponent: TextComponent? = this.titleComponent,
     title: (ExtraStore) -> CharSequence? = this.title,
+    tickPosition: TickPosition = this.tickPosition,
+    lineDrawingOrder: LineDrawingOrder = this.lineDrawingOrder,
   ): HorizontalAxis<P> =
     HorizontalAxis(
       position,
@@ -556,6 +625,8 @@ protected constructor(
       size,
       titleComponent,
       title,
+      tickPosition,
+      lineDrawingOrder,
     )
 
   override fun equals(other: Any?): Boolean =
@@ -701,6 +772,8 @@ protected constructor(
       size: Size = Size.Auto(),
       titleComponent: TextComponent? = null,
       title: (ExtraStore) -> CharSequence? = { null },
+      tickPosition: TickPosition = TickPosition.Outside,
+      lineDrawingOrder: LineDrawingOrder = LineDrawingOrder.UnderLayers,
     ): HorizontalAxis<Axis.Position.Horizontal.Top> =
       HorizontalAxis(
         Axis.Position.Horizontal.Top,
@@ -715,6 +788,8 @@ protected constructor(
         size,
         titleComponent,
         title,
+        tickPosition,
+        lineDrawingOrder,
       )
 
     /** Creates a bottom [HorizontalAxis]. */
@@ -730,6 +805,8 @@ protected constructor(
       size: Size = Size.Auto(),
       titleComponent: TextComponent? = null,
       title: (ExtraStore) -> CharSequence? = { null },
+      tickPosition: TickPosition = TickPosition.Outside,
+      lineDrawingOrder: LineDrawingOrder = LineDrawingOrder.UnderLayers,
     ): HorizontalAxis<Axis.Position.Horizontal.Bottom> =
       HorizontalAxis(
         Axis.Position.Horizontal.Bottom,
@@ -744,6 +821,8 @@ protected constructor(
         size,
         titleComponent,
         title,
+        tickPosition,
+        lineDrawingOrder,
       )
   }
 }

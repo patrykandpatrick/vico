@@ -38,6 +38,9 @@ import com.patrykandpatrick.vico.views.common.setAll
  * @property size determines how the [BaseAxis] sizes itself.
  * @property titleComponent the title [TextComponent].
  * @property title returns the title text.
+ * @property tickPosition defines the position of each tick relative to the axis line.
+ * @property lineDrawingOrder whether to draw ticks and the axis line under or over the
+ *   [CartesianLayer]s.
  */
 public abstract class BaseAxis<P : Axis.Position>(
   protected val line: LineComponent?,
@@ -50,6 +53,8 @@ public abstract class BaseAxis<P : Axis.Position>(
   protected val size: Size,
   protected val titleComponent: TextComponent?,
   protected val title: (ExtraStore) -> CharSequence?,
+  public val tickPosition: TickPosition,
+  public val lineDrawingOrder: LineDrawingOrder,
 ) : Axis<P> {
   private val restrictedBounds: MutableList<RectF> = mutableListOf()
 
@@ -94,7 +99,9 @@ public abstract class BaseAxis<P : Axis.Position>(
         guideline == other.guideline &&
         size == other.size &&
         titleComponent == other.titleComponent &&
-        title == other.title
+        title == other.title &&
+        tickPosition == other.tickPosition &&
+        lineDrawingOrder == other.lineDrawingOrder
 
   override fun hashCode(): Int {
     var result = line.hashCode()
@@ -108,7 +115,27 @@ public abstract class BaseAxis<P : Axis.Position>(
     result = 31 * result + size.hashCode()
     result = 31 * result + titleComponent.hashCode()
     result = 31 * result + title.hashCode()
+    result = 31 * result + tickPosition.hashCode()
+    result = 31 * result + lineDrawingOrder.hashCode()
     return result
+  }
+
+  /** Defines the position of each tick relative to the axis line. */
+  public enum class TickPosition {
+    /** Positions the tick on the outer side of the axis line (away from the [CartesianLayer]s). */
+    Outside,
+    /** Positions the tick on the inner side of the axis line (toward the [CartesianLayer]s). */
+    Inside,
+    /** Positions the tick across the axis line, extending equally in both directions. */
+    Cross,
+  }
+
+  /** Defines whether ticks and the axis line are drawn under or over the [CartesianLayer]s. */
+  public enum class LineDrawingOrder {
+    /** Draws ticks and the axis line under the [CartesianLayer]s. */
+    UnderLayers,
+    /** Draws ticks and the axis line over the [CartesianLayer]s. */
+    OverLayers,
   }
 
   /**

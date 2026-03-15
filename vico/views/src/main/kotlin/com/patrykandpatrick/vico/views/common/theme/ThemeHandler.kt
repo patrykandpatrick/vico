@@ -26,6 +26,7 @@ import com.patrykandpatrick.vico.views.R
 import com.patrykandpatrick.vico.views.cartesian.CartesianChart
 import com.patrykandpatrick.vico.views.cartesian.FadingEdges
 import com.patrykandpatrick.vico.views.cartesian.axis.Axis
+import com.patrykandpatrick.vico.views.cartesian.axis.BaseAxis
 import com.patrykandpatrick.vico.views.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.views.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.views.cartesian.layer.CartesianLayerPadding
@@ -166,19 +167,33 @@ internal class ThemeHandler(private val context: Context, attrs: AttributeSet?) 
             axisStyle.getHorizontalAxisItemPlacer(),
             titleComponent,
             title,
+            BaseAxis.TickPosition.entries[
+                axisStyle.getInteger(
+                  R.styleable.AxisStyle_tickPosition,
+                  BaseAxis.TickPosition.Outside.ordinal,
+                )],
+            BaseAxis.LineDrawingOrder.entries[
+                axisStyle.getInteger(
+                  R.styleable.AxisStyle_lineDrawingOrder,
+                  BaseAxis.LineDrawingOrder.UnderLayers.ordinal,
+                )],
           )
-        is Axis.Position.Vertical ->
+        is Axis.Position.Vertical -> {
+          val horizontalLabelPosition =
+            VerticalAxis.HorizontalLabelPosition.entries[
+                axisStyle.getInteger(R.styleable.AxisStyle_verticalAxisHorizontalLabelPosition, 0)]
+          val defaultTickPosition =
+            if (horizontalLabelPosition == VerticalAxis.HorizontalLabelPosition.Outside) {
+              BaseAxis.TickPosition.Outside
+            } else {
+              BaseAxis.TickPosition.Inside
+            }
           VerticalAxis(
             position = position,
             line = line,
             label = label,
             labelRotationDegrees = labelRotationDegrees,
-            horizontalLabelPosition =
-              VerticalAxis.HorizontalLabelPosition.entries[
-                  axisStyle.getInteger(
-                    R.styleable.AxisStyle_verticalAxisHorizontalLabelPosition,
-                    0,
-                  )],
+            horizontalLabelPosition = horizontalLabelPosition,
             verticalLabelPosition =
               Position.Vertical.entries[
                   axisStyle.getInteger(
@@ -191,7 +206,20 @@ internal class ThemeHandler(private val context: Context, attrs: AttributeSet?) 
             itemPlacer = axisStyle.getVerticalAxisItemPlacer(),
             titleComponent = titleComponent,
             title = title,
+            tickPosition =
+              BaseAxis.TickPosition.entries[
+                  axisStyle.getInteger(
+                    R.styleable.AxisStyle_tickPosition,
+                    defaultTickPosition.ordinal,
+                  )],
+            lineDrawingOrder =
+              BaseAxis.LineDrawingOrder.entries[
+                  axisStyle.getInteger(
+                    R.styleable.AxisStyle_lineDrawingOrder,
+                    BaseAxis.LineDrawingOrder.UnderLayers.ordinal,
+                  )],
           )
+        }
       }
         as Axis<P>
     }

@@ -90,6 +90,19 @@
         <!-- The style of the axis title. -->
         <attr name="titleStyle" format="reference" />
 
+        <!-- Whether to draw ticks and the axis line under or over the layers. -->
+        <attr name="lineDrawingOrder" format="enum">
+            <enum name="underLayers" value="0" />
+            <enum name="overLayers" value="1" />
+        </attr>
+
+        <!-- The position of the ticks relative to the axis line. -->
+        <attr name="tickPosition" format="enum">
+            <enum name="outside" value="0" />
+            <enum name="inside" value="1" />
+            <enum name="cross" value="2" />
+        </attr>
+
         <!-- The horizontal position of the labels on this axis if it is vertical. -->
         <attr name="verticalAxisHorizontalLabelPosition" format="enum">
             <enum name="outside" value="0" />
