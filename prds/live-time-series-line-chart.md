@@ -14,7 +14,7 @@ Consumers need a **line chart whose horizontal axis is time in epoch millisecond
 
 ## Solution
 
-Provide a **small public API** (Compose Multiplatform and Android Views) that composes existing **Cartesian chart, scroll, and zoom** building blocks with a **single controller** responsible for:
+Provide a **small public API** (Compose Multiplatform) that composes existing **Cartesian chart, scroll, and zoom** building blocks with a **single controller** responsible for:
 
 - Mapping **visible duration in ms** ↔ **scroll position** so **chart horizontal center ↔ `nowProvider()`**.
 - Running a **vsync-aligned** update loop **only while following and not paused** and while the chart is **active**, with a **sub-pixel deadband** to avoid useless scroll updates.
@@ -39,7 +39,7 @@ Callers supply **`nowProvider`**, defaulting to **system epoch millis** on suppo
 10. As an app developer, I want **hysteresis** on follow thresholds, so that follow mode does not flicker at the boundary.
 11. As an app developer, I want **visible window width in time** to be set **programmatically**, so that zoom is under app control (no user pinch-zoom on this chart).
 12. As an app developer, I want **`nowProvider` injectable**, so that tests are deterministic and server-aligned clocks are possible.
-13. As an app developer, I want **parity between Compose and Views**, so that I can use the same behavior on both stacks.
+13. As an app developer, I want to use compose to keep up with the latest tech.
 14. As an app developer, I want samples or demos showing **pause**, **Go live**, **browse**, and **programmatic window changes**, so that integration is obvious.
 15. As an end user with **little history yet**, I want a **fixed-duration window centered on `now`**, so that the **left side may be empty** early on rather than rescaling oddly (v1 simplicity).
 16. As an app developer, I accept **unbounded in-memory history in v1**, so that implementation stays simple (document **OOM / performance risk**).
@@ -54,9 +54,9 @@ Callers supply **`nowProvider`**, defaulting to **system epoch millis** on suppo
 
 - **New deep module (public API):** a **timeline follow controller** (names TBD) that owns **mode** (following vs browsing), **follow-paused** flag, **`nowProvider`**, **visible duration (ms)**, **threshold parameters** (fraction of span + ms floor/ceiling + hysteresis), and **frame-driven** scroll updates with **deadband**. It should expose a **narrow surface** to hosts: e.g. observe **layout bounds / layer dimensions / max scroll** from existing measuring hooks, compute **target scroll**, and apply via existing **scroll APIs**.
 - **Compose integration:** extend or wrap **`CartesianChartHost`** (or equivalent) so this chart type can use a **dedicated scroll/gesture path**: **drag without decay** on platforms that currently attach **fling** via **`animateDecay`** in desktop/web `Modifier` implementations.
-- **Views integration:** extend or wrap **`CartesianChartView`** / **`MotionEventHandler`** path so **ACTION_UP does not start `OverScroller.fling`** for this chart mode (or provide a **scroll-only** gesture mode).
+- **No views integration:** The functionality is only for compose
 - **Zoom:** reuse existing **programmatic zoom** facilities to implement **visible duration** changes; **no additional user pinch** for v1 beyond what global chart settings already do—this chart type should **disable** user pinch if the default host enables it.
-- **Samples:** add **Compose and Views** examples demonstrating **live updates**, **pause follow**, **Go live**, **browse**, and **programmatic window resize**.
+- **Samples:** add **Compose** examples demonstrating **live updates**, **pause follow**, **Go live**, **browse**, and **programmatic window resize**.
 
 ### Public interfaces
 
@@ -103,7 +103,6 @@ Callers supply **`nowProvider`**, defaulting to **system epoch millis** on suppo
 - **Risks:** **Unbounded memory** and **pathological draw cost** for long sessions; **frame-driven scroll** cost if deadband is ineffective.
 - **Open implementation choice:** behavior when **`x > nowProvider()`** (drop sample, clamp, or debug assert)—should be **consistent** and **documented**.
 - **Existing code reality:** Compose **desktop/web** use **`draggable` + `animateDecay`** for scroll; Views use **`OverScroller.fling`** on pointer up—**disabling fling** is a **deliberate change** for this chart mode, not the default for all charts.
-- **AGENTS.md:** dual-stack parity—plan **Compose + Views** from the start.
 
 ---
 
@@ -113,8 +112,8 @@ This file is the canonical PRD; the section above is suitable for GitHub issue c
 
 ### Codebase exploration summary (evidence)
 
-- **Scroll state:** `VicoScrollState` (Compose) and `ScrollHandler` (Views) already expose **programmatic scroll**, **max scroll**, and optional **auto-scroll on model change**—live follow is **orthogonal** and likely **custom** rather than `AutoScrollCondition` alone.
-- **Gestures:** Horizontal **fling** exists on **Views** (`MotionEventHandler` + `OverScroller`) and on **Compose desktop/web** (`animateDecay` after drag). **Android/iOS** `extraPointerInput` may differ; integration must account for **per-platform** gesture wiring.
+- **Scroll state:** `VicoScrollState` (Compose) already exposes **programmatic scroll**, **max scroll**, and optional **auto-scroll on model change**—live follow is **orthogonal** and likely **custom** rather than `AutoScrollCondition` alone.
+- **Gestures:** Horizontal **fling** exists on **Compose desktop/web** (`animateDecay` after drag). **Android/iOS** `extraPointerInput` may differ; integration must account for **per-platform** gesture wiring.
 - **Samples:** Charts such as **Temperature Anomalies** demonstrate **`Scroll.Absolute.End`** patterns—not **time-centered** follow.
 
 ### Proposed major modules (deep vs shallow)
@@ -123,7 +122,6 @@ This file is the canonical PRD; the section above is suitable for GitHub issue c
 |--------|----------------|--------|
 | **Timeline follow controller** | Time ↔ scroll mapping, modes, pause, thresholds, hysteresis, deadband, frame tick gating | **Deep**—primary complexity here |
 | **Compose host wiring** | Connect controller to `VicoScrollState`, lifecycle, optional animation on Go live; **no-fling** drag | Shallow adapter |
-| **Views host wiring** | Connect controller to `ScrollHandler`, disable fling path for this mode | Shallow adapter |
 | **Sample apps** | End-to-end demo | Shallow |
 
 ### Test scope alignment
