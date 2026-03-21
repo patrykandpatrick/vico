@@ -14,17 +14,19 @@
  * limitations under the License.
  */
 
-package com.patrykandpatrick.vico.views.common
+package com.patrykandpatrick.vico.compose.pie
 
-internal const val ERR_REPEATING_COLLECTION_EMPTY =
-  "Cannot get repeated item from empty collection."
+import com.patrykandpatrick.vico.compose.common.format
 
-internal const val ELLIPSIS = "…"
+/** Formats pie-chart values for display. */
+public fun interface PieValueFormatter {
+  /** Formats the value at [index]. */
+  public fun format(context: PieChartMeasuringContext, value: Float, index: Int): CharSequence
 
-internal const val NEW_PRODUCER_ERROR_MESSAGE: String =
-  "A new `CartesianChartModelProducer` was provided. Run data updates via `runTransaction`, not " +
-    "by creating new `CartesianChartModelProducer`s."
-
-internal const val NEW_PIE_PRODUCER_ERROR_MESSAGE: String =
-  "A new `PieChartModelProducer` was provided. Run data updates via `runTransaction`, not by " +
-    "creating new `PieChartModelProducer`s."
+  public companion object {
+    /** Returns the value as a string. */
+    public val Value: PieValueFormatter = PieValueFormatter { _, value, _ ->
+      value.toDouble().format()
+    }
+  }
+}

@@ -29,6 +29,7 @@
     <attr name="thickness" format="dimension" />
     <attr name="dashLength" format="dimension" />
     <attr name="gapLength" format="dimension" />
+    <attr name="pieSliceLabelStyle" format="reference" />
 
     <declare-styleable name="AxisStyle">
         <!-- Equivalent to the `addExtremeLabel` parameter of
@@ -300,6 +301,90 @@
         <!-- Equivalent to the `unscalableStartPaddingDp` parameter of the `CartesianLayerPadding`
         constructor. -->
         <attr name="unscalableStartLayerPadding" format="dimension" />
+    </declare-styleable>
+
+    <declare-styleable name="PieChartView">
+        <!-- The maximum value for the XML preview. -->
+        <attr name="previewMaxValue" format="integer" />
+
+        <!-- The maximum slice count for the XML preview. -->
+        <attr name="previewMaxSliceCount" format="integer" />
+
+        <!-- The minimum value for the XML preview. -->
+        <attr name="previewMinValue" format="integer" />
+
+        <!-- The minimum slice count for the XML preview. -->
+        <attr name="previewMinSliceCount" format="integer" />
+
+        <!-- The inner size of the pie chart. -->
+        <attr name="pieInnerSize" format="dimension" />
+
+        <!-- The outer size of the pie chart. -->
+        <attr name="pieOuterSize" format="dimension">
+            <enum name="fill" value="-1" />
+        </attr>
+
+        <!-- The generic slice-label style. -->
+        <attr name="pieSliceLabelStyle" />
+
+        <!-- The slice styles. -->
+        <attr name="pieSliceStyle1" format="reference" />
+        <attr name="pieSliceStyle2" format="reference" />
+        <attr name="pieSliceStyle3" format="reference" />
+        <attr name="pieSliceStyle4" format="reference" />
+        <attr name="pieSliceStyle5" format="reference" />
+        <attr name="pieSliceStyle6" format="reference" />
+        <attr name="pieSliceStyle7" format="reference" />
+        <attr name="pieSliceStyle8" format="reference" />
+
+        <!-- The spacing between neighboring slices. -->
+        <attr name="sliceSpacing" format="dimension" />
+
+        <!-- The start angle of the first slice. -->
+        <attr name="startAngle" format="float" />
+    </declare-styleable>
+
+    <declare-styleable name="PieChartSliceStyle">
+        <!-- The slice color. -->
+        <attr name="sliceColor" format="color" />
+
+        <!-- The slice offset from the center. -->
+        <attr name="sliceOffsetFromCenter" format="dimension" />
+
+        <!-- The label style for this slice. -->
+        <attr name="pieSliceLabelStyle" />
+
+        <!-- The slice stroke color. -->
+        <attr name="sliceStrokeColor" format="color" />
+
+        <!-- The slice stroke width. -->
+        <attr name="sliceStrokeWidth" format="dimension" />
+    </declare-styleable>
+
+    <declare-styleable name="PieChartSliceLabelStyle">
+        <!-- The angled segment length for outside labels. -->
+        <attr name="pieSliceLabelAngledSegmentLength" format="dimension" />
+
+        <!-- The horizontal segment length for outside labels. -->
+        <attr name="pieSliceLabelHorizontalSegmentLength" format="dimension" />
+
+        <!-- The outside-label line color. -->
+        <attr name="pieSliceLabelLineColor" format="color" />
+
+        <!-- The outside-label line width. -->
+        <attr name="pieSliceLabelLineWidth" format="dimension" />
+
+        <!-- The maximum outside-label width as a fraction of the chart width. -->
+        <attr name="pieSliceLabelMaxWidthToBoundsRatio" format="fraction" />
+
+        <!-- The label text style. -->
+        <attr name="pieSliceLabelTextStyle" format="reference" />
+
+        <!-- The label type. -->
+        <attr name="pieSliceLabelType" format="enum">
+            <enum name="inside" value="0" />
+            <enum name="outside" value="1" />
+        </attr>
     </declare-styleable>
 
     <declare-styleable name="ColumnCartesianLayerStyle">

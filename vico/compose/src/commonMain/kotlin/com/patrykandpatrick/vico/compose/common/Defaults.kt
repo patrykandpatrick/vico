@@ -21,6 +21,7 @@ import androidx.annotation.RestrictTo
 internal object Animation {
   val range: ClosedFloatingPointRange<Float> = 0f..1f
   const val DIFF_DURATION: Int = 500
+  const val PIE_DIFF_DURATION: Int = 1_000
 }
 
 internal object Defaults {
@@ -62,6 +63,11 @@ internal object Defaults {
   const val LEGEND_ICON_LABEL_SPACING: Float = 8f
   const val LEGEND_ICON_SIZE: Float = 8f
   const val LEGEND_ROW_SPACING: Float = 10f
+  const val PIE_SPACING: Float = 2f
+  const val PIE_OUTSIDE_LABEL_LINE_WIDTH: Float = 1f
+  const val PIE_OUTSIDE_LABEL_ANGLED_SEGMENT_LENGTH: Float = 8f
+  const val PIE_OUTSIDE_LABEL_HORIZONTAL_SEGMENT_LENGTH: Float = 12f
+  const val PIE_OUTSIDE_LABEL_MAX_WIDTH_TO_BOUNDS_RATIO: Float = 0.33f
 }
 
 /** @suppress */

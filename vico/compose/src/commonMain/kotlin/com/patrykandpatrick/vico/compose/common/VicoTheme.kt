@@ -37,6 +37,7 @@ import com.patrykandpatrick.vico.compose.common.component.LineComponent
  * @param candlestickCartesianLayerColors houses default [CandlestickCartesianLayer.Candle] colors.
  * @param columnCartesianLayerColors used for [ColumnCartesianLayer]&#0020;[LineComponent]s.
  * @param lineCartesianLayerColors used for [LineCartesianLayer.Line]s.
+ * @param pieChartColors used for pie-chart slices.
  * @param lineColor used for [HorizontalAxis] and [VerticalAxis] lines.
  * @param textColor used for [HorizontalAxis] and [VerticalAxis] labels.
  */
@@ -44,6 +45,7 @@ public data class VicoTheme(
   val candlestickCartesianLayerColors: CandlestickCartesianLayerColors,
   val columnCartesianLayerColors: List<Color>,
   val lineCartesianLayerColors: List<Color> = columnCartesianLayerColors,
+  val pieChartColors: List<Color> = columnCartesianLayerColors,
   val lineColor: Color,
   val textColor: Color,
 ) {
@@ -81,6 +83,7 @@ public data class VicoTheme(
         candlestickCartesianLayerColors =
           CandlestickCartesianLayerColors.fromDefaultColors(defaultColors),
         columnCartesianLayerColors = defaultColors.cartesianLayerColors.map(::Color),
+        pieChartColors = defaultColors.cartesianLayerColors.map(::Color),
         lineColor = Color(defaultColors.lineColor),
         textColor = Color(defaultColors.textColor),
       )

@@ -22,3 +22,7 @@ internal const val ERR_REPEATING_COLLECTION_EMPTY =
 internal const val NEW_PRODUCER_ERROR_MESSAGE: String =
   "A new `CartesianChartModelProducer` was provided. Run data updates via `runTransaction`, not " +
     "by creating new `CartesianChartModelProducer`s."
+
+internal const val NEW_PIE_PRODUCER_ERROR_MESSAGE: String =
+  "A new `PieChartModelProducer` was provided. Run data updates via `runTransaction`, not by " +
+    "creating new `PieChartModelProducer`s."

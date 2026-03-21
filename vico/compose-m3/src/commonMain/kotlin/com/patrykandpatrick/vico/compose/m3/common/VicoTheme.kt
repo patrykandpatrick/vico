@@ -31,6 +31,7 @@ public fun rememberM3VicoTheme(
   columnCartesianLayerColors: List<Color> =
     MaterialTheme.colorScheme.run { listOf(primary, secondary, tertiary) },
   lineCartesianLayerColors: List<Color> = columnCartesianLayerColors,
+  pieChartColors: List<Color> = columnCartesianLayerColors,
   lineColor: Color = MaterialTheme.colorScheme.outline,
   textColor: Color = MaterialTheme.colorScheme.onBackground,
 ): VicoTheme =
@@ -38,6 +39,7 @@ public fun rememberM3VicoTheme(
     candlestickCartesianLayerColors,
     columnCartesianLayerColors,
     lineCartesianLayerColors,
+    pieChartColors,
     lineColor,
     textColor,
   ) {
@@ -45,6 +47,7 @@ public fun rememberM3VicoTheme(
       candlestickCartesianLayerColors,
       columnCartesianLayerColors,
       lineCartesianLayerColors,
+      pieChartColors,
       lineColor,
       textColor,
     )

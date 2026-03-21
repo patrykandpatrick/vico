@@ -18,6 +18,7 @@ package com.patrykandpatrick.vico.compose.common
 
 import com.patrykandpatrick.vico.compose.cartesian.CartesianMeasuringContext
 import com.patrykandpatrick.vico.compose.common.data.ExtraStore
+import com.patrykandpatrick.vico.compose.pie.PieChartMeasuringContext
 
 internal class LegendItemManager(
   private val items: AdditionScope<LegendItem>.(ExtraStore) -> Unit
@@ -29,11 +30,16 @@ internal class LegendItemManager(
 
   fun addItems(context: MeasuringContext) {
     with(context) {
-      require(this is CartesianMeasuringContext) { "Unexpected `MeasuringContext` implementation." }
-      val extraStoreHashCode = model.extraStore.hashCode()
+      val resolvedExtraStore =
+        when (this) {
+          is CartesianMeasuringContext -> model.extraStore
+          is PieChartMeasuringContext -> model.extraStore
+          else -> error("Unexpected `MeasuringContext` implementation.")
+        }
+      val extraStoreHashCode = resolvedExtraStore.hashCode()
       if (extraStoreHashCode != previousExtraStoreHashCode) {
         _itemList.clear()
-        items(itemScope, model.extraStore)
+        items(itemScope, resolvedExtraStore)
         previousExtraStoreHashCode = extraStoreHashCode
       }
     }

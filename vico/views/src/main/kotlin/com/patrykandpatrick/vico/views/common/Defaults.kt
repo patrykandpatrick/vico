@@ -19,6 +19,7 @@ package com.patrykandpatrick.vico.views.common
 internal object Animation {
   val range: ClosedFloatingPointRange<Float> = 0f..1f
   const val DIFF_DURATION: Int = 500
+  const val PIE_DIFF_DURATION: Int = 1_000
   const val ANIMATED_SCROLL_DURATION: Int = 300
 }
 
@@ -62,6 +63,10 @@ internal object Defaults {
   const val LEGEND_ICON_LABEL_SPACING: Float = 8f
   const val LEGEND_ICON_SIZE: Float = 8f
   const val LEGEND_ROW_SPACING: Float = 8f
+  const val PIE_CHART_START_ANGLE: Float = -90f
+  const val SLICE_ANGLED_SEGMENT_LENGTH: Float = 12f
+  const val SLICE_HORIZONTAL_SEGMENT_LENGTH: Float = 16f
+  const val SLICE_OUTSIDE_LABEL_MAX_WIDTH_TO_BOUNDS_RATIO: Float = 0.25f
 }
 
 internal class DefaultColors(
