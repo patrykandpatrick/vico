@@ -63,7 +63,7 @@ private fun ComposeBasicPieChart(
           PieValueFormatter { context, _, index -> context.model.extraStore[LegendLabelKey][index] },
       ),
     modelProducer = modelProducer,
-    modifier = modifier.height(256.dp),
+    modifier = modifier.height(240.dp),
   )
 }
 
