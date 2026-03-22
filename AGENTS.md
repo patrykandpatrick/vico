@@ -10,8 +10,8 @@ Multiplatform (iOS, Desktop, Web/WASM) and Android Views.
 JDK 17 required. Build targets JVM 11.
 
 ```bash
-# Build
-./gradlew build -x lint -x test
+# Compile
+./gradlew compileDebugSources
 
 # Test
 ./gradlew test
