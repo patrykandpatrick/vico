@@ -86,7 +86,6 @@ private val cacheKeyNamespace = CacheStore.KeyNamespace()
 
 internal fun Fill.extractColor(
   context: DrawingContext,
-  significantY: Float,
   width: Float,
   height: Float,
   side: Int = 1,
