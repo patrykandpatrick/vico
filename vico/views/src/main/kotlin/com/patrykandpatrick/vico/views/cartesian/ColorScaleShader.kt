@@ -52,12 +52,11 @@ internal object ColorScaleShader {
     entries: List<Map.Entry<Number, Int>>,
     verticalAxisPosition: Axis.Position.Vertical?,
   ): FloatArray {
-    val maxY = context.ranges.getYRange(verticalAxisPosition).maxY
-    val minY = context.ranges.getYRange(verticalAxisPosition).minY
-    val range = maxY - minY
+    val yRange = context.ranges.getYRange(verticalAxisPosition)
+    val range = yRange.length
     if (range == 0.0) return getDegeneratePositions(entries.size)
     return FloatArray(entries.size) { index ->
-      1f - ((entries[index].key.toDouble() - minY) / range).toFloat()
+      1f - ((entries[index].key.toDouble() - yRange.minY) / range).toFloat()
     }
   }
 

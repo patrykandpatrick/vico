@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2026 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,11 +50,10 @@ internal object ColorScaleShader {
     y: Collection<Number>,
     verticalAxisPosition: Axis.Position.Vertical?,
   ): List<Float> {
-    val maxY = context.ranges.getYRange(verticalAxisPosition).maxY
-    val minY = context.ranges.getYRange(verticalAxisPosition).minY
-    val range = maxY - minY
+    val yRange = context.ranges.getYRange(verticalAxisPosition)
+    val range = yRange.length
     if (range == 0.0) return getDegeneratePositions(y.size)
-    return y.map { y -> 1f - ((y.toDouble() - minY) / range).toFloat() }.sorted()
+    return y.map { y -> 1f - ((y.toDouble() - yRange.minY) / range).toFloat() }.sorted()
   }
 
   private fun getSafeGradientData(
