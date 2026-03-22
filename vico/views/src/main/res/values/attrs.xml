@@ -304,6 +304,9 @@
     </declare-styleable>
 
     <declare-styleable name="PieChartView">
+        <!-- The `PieChart` style. -->
+        <attr name="chartStyle" />
+
         <!-- The maximum value for the XML preview. -->
         <attr name="previewMaxValue" format="integer" />
 
@@ -315,7 +318,9 @@
 
         <!-- The minimum slice count for the XML preview. -->
         <attr name="previewMinSliceCount" format="integer" />
+    </declare-styleable>
 
+    <declare-styleable name="PieChartStyle">
         <!-- The inner size of the pie chart. -->
         <attr name="pieInnerSize" format="dimension" />
 

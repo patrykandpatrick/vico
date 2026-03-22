@@ -44,6 +44,7 @@ import com.patrykandpatrick.vico.compose.common.half
 import com.patrykandpatrick.vico.compose.common.orZero
 import com.patrykandpatrick.vico.compose.common.saveLayer
 import com.patrykandpatrick.vico.compose.common.toRadians
+import com.patrykandpatrick.vico.compose.common.vicoTheme
 import kotlin.math.cos
 import kotlin.math.max
 import kotlin.math.sin
@@ -520,8 +521,11 @@ internal fun createSlicePath(
 /** Creates and remembers a [PieChart]. */
 @Composable
 public fun rememberPieChart(
-  sliceProvider: PieChart.SliceProvider,
-  spacing: Dp = Defaults.PIE_SPACING.dp,
+  sliceProvider: PieChart.SliceProvider =
+    PieChart.SliceProvider.series(
+      vicoTheme.pieChartColors.map { color -> PieChart.Slice(fill = Fill(color)) }
+    ),
+  spacing: Dp = 0.dp,
   outerSize: PieSize.Outer = PieSize.Outer.Fill,
   innerSize: PieSize.Inner = PieSize.Inner.Zero,
   startAngle: Float = -90f,

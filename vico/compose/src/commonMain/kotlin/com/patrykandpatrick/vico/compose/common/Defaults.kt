@@ -63,7 +63,6 @@ internal object Defaults {
   const val LEGEND_ICON_LABEL_SPACING: Float = 8f
   const val LEGEND_ICON_SIZE: Float = 8f
   const val LEGEND_ROW_SPACING: Float = 10f
-  const val PIE_SPACING: Float = 2f
   const val PIE_OUTSIDE_LABEL_LINE_WIDTH: Float = 1f
   const val PIE_OUTSIDE_LABEL_ANGLED_SEGMENT_LENGTH: Float = 8f
   const val PIE_OUTSIDE_LABEL_HORIZONTAL_SEGMENT_LENGTH: Float = 12f

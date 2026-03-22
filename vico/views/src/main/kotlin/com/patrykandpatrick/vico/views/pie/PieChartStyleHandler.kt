@@ -39,44 +39,51 @@ internal class PieChartStyleHandler(context: Context, attrs: AttributeSet?, defS
   internal val slices: List<PieChart.Slice>
 
   init {
-    val typedArray =
+    val viewTypedArray =
       context.obtainStyledAttributes(attrs, R.styleable.PieChartView, defStyleAttr, 0)
-    sliceSpacing = typedArray.getRawDimension(context, R.styleable.PieChartView_sliceSpacing, 0f)
+    val typedArray =
+      viewTypedArray.getNestedTypedArray(
+        context,
+        R.styleable.PieChartView_chartStyle,
+        R.styleable.PieChartStyle,
+      )
+    sliceSpacing = typedArray.getRawDimension(context, R.styleable.PieChartStyle_sliceSpacing, 0f)
     startAngle =
-      typedArray.getFloat(R.styleable.PieChartView_startAngle, Defaults.PIE_CHART_START_ANGLE)
+      typedArray.getFloat(R.styleable.PieChartStyle_startAngle, Defaults.PIE_CHART_START_ANGLE)
     outerSize = typedArray.getOuterSize(context)
     innerSize = typedArray.getInnerSize(context)
     val genericSliceLabel =
-      if (typedArray.hasValue(R.styleable.PieChartView_pieSliceLabelStyle)) {
-        typedArray.getSliceLabel(context, R.styleable.PieChartView_pieSliceLabelStyle)
+      if (typedArray.hasValue(R.styleable.PieChartStyle_pieSliceLabelStyle)) {
+        typedArray.getSliceLabel(context, R.styleable.PieChartStyle_pieSliceLabelStyle)
       } else {
         null
       }
     slices = typedArray.getSlices(context, genericSliceLabel)
     typedArray.recycle()
+    viewTypedArray.recycle()
   }
 
   private fun TypedArray.getOuterSize(context: Context): PieSize.Outer {
-    val outerSizeValue = getRawDimension(context, R.styleable.PieChartView_pieOuterSize, -1f)
+    val outerSizeValue = getRawDimension(context, R.styleable.PieChartStyle_pieOuterSize, -1f)
     return if (outerSizeValue <= 0) PieSize.Outer.Fill else PieSize.Outer.fixed(outerSizeValue)
   }
 
   private fun TypedArray.getInnerSize(context: Context): PieSize.Inner =
-    PieSize.Inner.fixed(getRawDimension(context, R.styleable.PieChartView_pieInnerSize, 0f))
+    PieSize.Inner.fixed(getRawDimension(context, R.styleable.PieChartStyle_pieInnerSize, 0f))
 
   private fun TypedArray.getSlices(
     context: Context,
     genericSliceLabel: PieChart.SliceLabel?,
   ): List<PieChart.Slice> =
     listOf(
-        R.styleable.PieChartView_pieSliceStyle1,
-        R.styleable.PieChartView_pieSliceStyle2,
-        R.styleable.PieChartView_pieSliceStyle3,
-        R.styleable.PieChartView_pieSliceStyle4,
-        R.styleable.PieChartView_pieSliceStyle5,
-        R.styleable.PieChartView_pieSliceStyle6,
-        R.styleable.PieChartView_pieSliceStyle7,
-        R.styleable.PieChartView_pieSliceStyle8,
+        R.styleable.PieChartStyle_pieSliceStyle1,
+        R.styleable.PieChartStyle_pieSliceStyle2,
+        R.styleable.PieChartStyle_pieSliceStyle3,
+        R.styleable.PieChartStyle_pieSliceStyle4,
+        R.styleable.PieChartStyle_pieSliceStyle5,
+        R.styleable.PieChartStyle_pieSliceStyle6,
+        R.styleable.PieChartStyle_pieSliceStyle7,
+        R.styleable.PieChartStyle_pieSliceStyle8,
       )
       .mapNotNull { index ->
         if (hasValue(index)) {

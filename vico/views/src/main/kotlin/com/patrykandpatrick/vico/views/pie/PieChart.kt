@@ -25,6 +25,7 @@ import com.patrykandpatrick.vico.views.common.Bounded
 import com.patrykandpatrick.vico.views.common.Defaults
 import com.patrykandpatrick.vico.views.common.DrawingContext
 import com.patrykandpatrick.vico.views.common.ELLIPSIS
+import com.patrykandpatrick.vico.views.common.Legend
 import com.patrykandpatrick.vico.views.common.MAX_HEX_VALUE
 import com.patrykandpatrick.vico.views.common.MeasuringContext
 import com.patrykandpatrick.vico.views.common.PI_RAD
@@ -36,6 +37,7 @@ import com.patrykandpatrick.vico.views.common.data.MutableExtraStore
 import com.patrykandpatrick.vico.views.common.getRepeating
 import com.patrykandpatrick.vico.views.common.half
 import com.patrykandpatrick.vico.views.common.opacity
+import com.patrykandpatrick.vico.views.common.orZero
 import com.patrykandpatrick.vico.views.common.saveLayer
 import com.patrykandpatrick.vico.views.common.shader.ShaderProvider
 import com.patrykandpatrick.vico.views.pie.data.PieChartModel
@@ -54,6 +56,7 @@ private constructor(
   public val innerSize: PieSize.Inner,
   public val startAngle: Float,
   public val valueFormatter: PieValueFormatter,
+  public val legend: Legend<PieChartMeasuringContext, PieChartDrawingContext>?,
   internal val drawingModelInterpolator: PieChartDrawingModelInterpolator,
   internal val drawingModelKey: ExtraStore.Key<PieChartDrawingModel>,
 ) : Bounded {
@@ -77,6 +80,7 @@ private constructor(
     innerSize: PieSize.Inner = PieSize.Inner.Zero,
     startAngle: Float = Defaults.PIE_CHART_START_ANGLE,
     valueFormatter: PieValueFormatter = PieValueFormatter.Value,
+    legend: Legend<PieChartMeasuringContext, PieChartDrawingContext>? = null,
   ) : this(
     sliceProvider = sliceProvider,
     spacingDp = spacingDp,
@@ -84,6 +88,7 @@ private constructor(
     innerSize = innerSize,
     startAngle = startAngle,
     valueFormatter = valueFormatter,
+    legend = legend,
     drawingModelInterpolator = defaultPieChartDrawingModelInterpolator(),
     drawingModelKey = ExtraStore.Key(),
   )
@@ -146,9 +151,17 @@ private constructor(
     }
   }
 
+  internal fun getLegendHeight(context: PieChartMeasuringContext): Float =
+    legend?.getHeight(context, bounds.width()).orZero
+
   internal fun draw(context: PieChartDrawingContext, model: PieChartModel) {
     if (model.entries.isEmpty() || model.sum <= 0f) return
     with(context) {
+      val legendHeight = getLegendHeight(context)
+      val originalBottom = bounds.bottom
+      bounds.bottom -= legendHeight
+      legend?.setBounds(bounds.left, bounds.bottom, bounds.right, bounds.bottom + legendHeight)
+
       val drawingModel = model.extraStore.getOrNull(drawingModelKey)
       val sliceInfo = drawingModel?.slices
       updateOvalBounds(context, model, sliceInfo)
@@ -192,6 +205,9 @@ private constructor(
       if (restoreCount >= 0) {
         canvas.restoreToCount(restoreCount)
       }
+
+      legend?.draw(context)
+      bounds.bottom = originalBottom
     }
   }
 
@@ -464,7 +480,7 @@ private constructor(
           layoutHelper.adjustTextBounds(textBounds, slicePath)
 
           val maxTextWidth = ceil(textBounds.width()).toInt()
-          if (maxTextWidth > minWidth) {
+          if (maxTextWidth >= minWidth) {
             val canvasSaveCount = canvas.saveLayer(opacity = labelOpacity)
             textComponent.draw(
               context = this,
@@ -721,6 +737,7 @@ private constructor(
     innerSize: PieSize.Inner = this.innerSize,
     startAngle: Float = this.startAngle,
     valueFormatter: PieValueFormatter = this.valueFormatter,
+    legend: Legend<PieChartMeasuringContext, PieChartDrawingContext>? = this.legend,
   ): PieChart =
     PieChart(
       sliceProvider = sliceProvider,
@@ -729,6 +746,7 @@ private constructor(
       innerSize = innerSize,
       startAngle = startAngle,
       valueFormatter = valueFormatter,
+      legend = legend,
       drawingModelInterpolator = drawingModelInterpolator,
       drawingModelKey = drawingModelKey,
     )

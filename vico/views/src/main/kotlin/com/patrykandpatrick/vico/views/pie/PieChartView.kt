@@ -22,8 +22,9 @@ import android.util.AttributeSet
 import com.patrykandpatrick.vico.views.R
 import com.patrykandpatrick.vico.views.common.Animation
 import com.patrykandpatrick.vico.views.common.ChartView
+import com.patrykandpatrick.vico.views.common.Defaults
 import com.patrykandpatrick.vico.views.common.NEW_PIE_PRODUCER_ERROR_MESSAGE
-import com.patrykandpatrick.vico.views.common.specSize
+import com.patrykandpatrick.vico.views.common.dpInt
 import com.patrykandpatrick.vico.views.common.theme.use
 import com.patrykandpatrick.vico.views.pie.data.PieChartModel
 import com.patrykandpatrick.vico.views.pie.data.PieChartModelProducer
@@ -156,5 +157,5 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     }
 
   override fun getChartDesiredHeight(widthMeasureSpec: Int, heightMeasureSpec: Int): Int =
-    widthMeasureSpec.specSize
+    Defaults.CHART_HEIGHT.dpInt
 }
