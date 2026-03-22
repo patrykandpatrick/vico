@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathOperation
 import androidx.compose.ui.graphics.withSave
 import com.patrykandpatrick.vico.compose.cartesian.CartesianDrawingContext
+import com.patrykandpatrick.vico.compose.cartesian.ColorScale
 import com.patrykandpatrick.vico.compose.cartesian.axis.Axis
 import com.patrykandpatrick.vico.compose.common.Fill
 import com.patrykandpatrick.vico.compose.common.data.ExtraStore
@@ -155,6 +156,42 @@ internal data class DoubleAreaFill(
         canvas.translate(left, top)
         path.translate(Offset(-left, -top))
         canvas.drawPath(path, paint)
+      }
+    }
+  }
+}
+
+internal data class ColorScaleAreaFill(
+  private val colorScale: ColorScale,
+  override val splitY: (ExtraStore) -> Number,
+) : BaseAreaFill(splitY) {
+  private val paint = Paint()
+  private val areaPath = Path()
+
+  override fun reset() {
+    areaPath.rewind()
+  }
+
+  override fun onTopAreasCreated(context: CartesianDrawingContext, path: Path, fillBounds: Rect) {
+    areaPath.addPath(path)
+  }
+
+  override fun onBottomAreasCreated(
+    context: CartesianDrawingContext,
+    path: Path,
+    fillBounds: Rect,
+  ) {
+    areaPath.addPath(path)
+  }
+
+  override fun onAreasCreated(context: CartesianDrawingContext, fillBounds: Rect) {
+    with(context) {
+      val (left, top) = fillBounds
+      paint.shader = colorScale.getColorScaleShader(context, top)
+      canvas.withSave {
+        canvas.translate(left, top)
+        areaPath.translate(Offset(-left, -top))
+        canvas.drawPath(areaPath, paint)
       }
     }
   }

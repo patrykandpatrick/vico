@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.compose.cartesian.CartesianMeasuringContext
+import com.patrykandpatrick.vico.compose.cartesian.ColorScale
 import com.patrykandpatrick.vico.compose.cartesian.axis.Axis
 import com.patrykandpatrick.vico.compose.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.compose.cartesian.data.*
@@ -178,6 +179,13 @@ protected constructor(
       /** Uses a single [Fill]. */
       public fun single(fill: Fill): LineFill = SingleLineFill(fill)
 
+      /** Uses a color scale. */
+      public fun colorScale(
+        colors: (ExtraStore) -> Map<Number, Color>,
+        alpha: (ExtraStore) -> Float = { 1f },
+        verticalAxisPosition: Axis.Position.Vertical? = null,
+      ): LineFill = ColorScaleLineFill(ColorScale(colors, alpha, verticalAxisPosition))
+
       /**
        * Uses [topFill] for the portions of the line that are above the [splitY] line, and
        * analogously for [bottomFill]. (The [splitY] line is an imaginary horizontal line whose _y_
@@ -262,6 +270,18 @@ protected constructor(
        */
       public fun single(fill: Fill, splitY: (ExtraStore) -> Number = { 0 }): AreaFill =
         SingleAreaFill(fill, splitY)
+
+      /**
+       * Uses a color scale for the areas bounded by the [LineCartesianLayer] line and the [splitY]
+       * line. (The [splitY] line is an imaginary horizontal line whose _y_ value is determined by
+       * [splitY].)
+       */
+      public fun colorScale(
+        colors: (ExtraStore) -> Map<Number, Color>,
+        alpha: (ExtraStore) -> Float = { 1f },
+        verticalAxisPosition: Axis.Position.Vertical? = null,
+        splitY: (ExtraStore) -> Number = { 0 },
+      ): AreaFill = ColorScaleAreaFill(ColorScale(colors, alpha, verticalAxisPosition), splitY)
 
       /**
        * Uses [topFill] for those areas bounded by the [LineCartesianLayer] line and the [splitY]

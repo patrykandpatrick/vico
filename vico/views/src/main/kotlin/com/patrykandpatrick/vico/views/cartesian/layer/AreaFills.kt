@@ -20,6 +20,7 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
 import com.patrykandpatrick.vico.views.cartesian.CartesianDrawingContext
+import com.patrykandpatrick.vico.views.cartesian.ColorScale
 import com.patrykandpatrick.vico.views.cartesian.axis.Axis
 import com.patrykandpatrick.vico.views.common.DefaultAlpha
 import com.patrykandpatrick.vico.views.common.Fill
@@ -142,6 +143,37 @@ internal data class DoubleAreaFill(
       paint.color = bottomFill.color
       bottomFill.applyShader(paint, context, fillBounds)
       canvas.drawPath(path, paint)
+    }
+  }
+}
+
+internal data class ColorScaleAreaFill(
+  private val colorScale: ColorScale,
+  override val splitY: (ExtraStore) -> Number,
+) : BaseAreaFill(splitY) {
+  private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+  private val areaPath = Path()
+
+  override fun reset() {
+    areaPath.rewind()
+  }
+
+  override fun onTopAreasCreated(context: CartesianDrawingContext, path: Path, fillBounds: RectF) {
+    areaPath.addPath(path)
+  }
+
+  override fun onBottomAreasCreated(
+    context: CartesianDrawingContext,
+    path: Path,
+    fillBounds: RectF,
+  ) {
+    areaPath.addPath(path)
+  }
+
+  override fun onAreasCreated(context: CartesianDrawingContext, fillBounds: RectF) {
+    with(context) {
+      paint.shader = colorScale.getColorScaleShader(context)
+      canvas.drawPath(areaPath, paint)
     }
   }
 }

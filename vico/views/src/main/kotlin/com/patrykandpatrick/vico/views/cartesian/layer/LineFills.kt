@@ -18,6 +18,7 @@ package com.patrykandpatrick.vico.views.cartesian.layer
 
 import android.graphics.Paint
 import com.patrykandpatrick.vico.views.cartesian.CartesianDrawingContext
+import com.patrykandpatrick.vico.views.cartesian.ColorScale
 import com.patrykandpatrick.vico.views.cartesian.axis.Axis
 import com.patrykandpatrick.vico.views.common.Fill
 import com.patrykandpatrick.vico.views.common.data.ExtraStore
@@ -86,6 +87,27 @@ internal data class DoubleLineFill(
       canvas.drawRect(
         layerBounds.left,
         canvasSplitY,
+        layerBounds.right,
+        layerBounds.bottom + halfLineThickness,
+        paint,
+      )
+    }
+  }
+}
+
+internal data class ColorScaleLineFill(val colorScale: ColorScale) : LineCartesianLayer.LineFill {
+  private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+
+  override fun draw(
+    context: CartesianDrawingContext,
+    halfLineThickness: Float,
+    verticalAxisPosition: Axis.Position.Vertical?,
+  ) {
+    with(context) {
+      paint.shader = colorScale.getColorScaleShader(context)
+      canvas.drawRect(
+        layerBounds.left,
+        layerBounds.top - halfLineThickness,
         layerBounds.right,
         layerBounds.bottom + halfLineThickness,
         paint,
