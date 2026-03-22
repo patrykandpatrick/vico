@@ -75,6 +75,7 @@ internal constructor(
     val outerRadius = circleBounds.width / 2f
     val holeRadius = innerSize.getRadius(context, circleBounds.width, circleBounds.height)
     require(outerRadius > holeRadius) { "The outer size must be greater than the inner size." }
+    val spacingPx = with(context) { spacing.pixels }
     val spacingDegrees = if (outerRadius > 0f) spacingToDegrees(context, outerRadius) else 0f
     var currentAngle = startAngle
     drawingModel.slices.forEachIndexed { index, sliceInfo ->
@@ -87,11 +88,25 @@ internal constructor(
       val correctedStartAngle = currentAngle + spacingDegrees / 2f
       val correctedSweepAngle = (sliceInfo.degrees - spacingDegrees).coerceAtLeast(0f)
       if (correctedSweepAngle > 0f) {
+        val centerOffset =
+          if (spacingPx > 0f && holeRadius == 0f && sliceInfo.degrees < 360f) {
+            val halfSweepRadians = (sliceInfo.degrees / 2f).toRadians()
+            val sinHalf = sin(halfSweepRadians).toFloat()
+            if (sinHalf > 0.001f) {
+              val tipDistance = spacingPx / sinHalf
+              val bisectorRadians = centerAngle.toRadians()
+              Offset(
+                cos(bisectorRadians).toFloat() * tipDistance,
+                sin(bisectorRadians).toFloat() * tipDistance,
+              )
+            } else Offset.Zero
+          } else Offset.Zero
         slice.buildPath(
           circleBounds = correctedBounds,
           holeRadius = holeRadius,
           startAngle = correctedStartAngle,
           sweepAngle = correctedSweepAngle,
+          centerOffset = centerOffset,
           destination = slice.path,
         )
         slice.draw(context, slice.path, correctedBounds, sliceInfo.sliceOpacity)
@@ -211,10 +226,13 @@ internal constructor(
       holeRadius: Float,
       startAngle: Float,
       sweepAngle: Float,
+      centerOffset: Offset = Offset.Zero,
       destination: Path,
     ) {
       destination.rewind()
-      destination.addPath(createSlicePath(circleBounds, holeRadius, startAngle, sweepAngle))
+      destination.addPath(
+        createSlicePath(circleBounds, holeRadius, startAngle, sweepAngle, centerOffset)
+      )
     }
 
     public open fun copy(
@@ -466,6 +484,7 @@ internal fun createSlicePath(
   holeRadius: Float,
   startAngle: Float,
   sweepAngle: Float,
+  centerOffset: Offset = Offset.Zero,
 ): Path {
   val path = Path()
   path.arcTo(circleBounds, startAngle, sweepAngle, false)
@@ -479,7 +498,7 @@ internal fun createSlicePath(
       )
     path.arcTo(innerBounds, startAngle + sweepAngle, -sweepAngle, false)
   } else {
-    path.lineTo(circleBounds.center.x, circleBounds.center.y)
+    path.lineTo(circleBounds.center.x + centerOffset.x, circleBounds.center.y + centerOffset.y)
   }
   path.close()
   return path
