@@ -96,6 +96,7 @@ protected constructor(
       }
 
   protected var maxLabelWidth: Float? = null
+  protected var maxLabelHeight: Float = 0f
 
   internal constructor(
     position: P,
@@ -155,7 +156,7 @@ protected constructor(
     with(context) {
       var centerY: Float
       val yRange = ranges.getYRange(position)
-      val maxLabelHeight = getMaxLabelHeight()
+      val maxLabelHeight = maxLabelHeight
       val lineValues =
         itemPlacer.getLineValues(this, bounds.height(), maxLabelHeight, position)
           ?: itemPlacer.getLabelValues(this, bounds.height(), maxLabelHeight, position)
@@ -193,8 +194,7 @@ protected constructor(
       if (lineDrawingOrder == LineDrawingOrder.OverLayers) drawLineAndTicks(context)
 
       val label = label
-      val labelValues =
-        itemPlacer.getLabelValues(this, bounds.height(), getMaxLabelHeight(), position)
+      val labelValues = itemPlacer.getLabelValues(this, bounds.height(), maxLabelHeight, position)
       val tickLeftX = getTickLeftX()
       val tickRightX = tickLeftX + lineThickness + tickLength
       val labelX = if (areLabelsOutsideAtStartOrInsideAtEnd == isLtr) tickLeftX else tickRightX
@@ -256,8 +256,7 @@ protected constructor(
         bottom = bounds.bottom + bottomExtension,
       )
 
-      val labelValues =
-        itemPlacer.getLabelValues(this, bounds.height(), getMaxLabelHeight(), position)
+      val labelValues = itemPlacer.getLabelValues(this, bounds.height(), maxLabelHeight, position)
       val tickLeftX = getTickLeftX()
       val tickRightX = tickLeftX + lineThickness + tickLength
       val yRange = ranges.getYRange(position)
@@ -373,7 +372,7 @@ protected constructor(
     model: CartesianChartModel,
   ): Unit =
     with(context) {
-      val maxLabelHeight = getMaxLabelHeight()
+      val maxLabelHeight = getMaxLabelHeight().also { maxLabelHeight = it }
       val maxLineThickness = max(lineThickness, tickThickness)
       layerMargins.ensureValuesAtLeast(
         top =
@@ -451,7 +450,7 @@ protected constructor(
     label
       ?.let { label ->
         itemPlacer
-          .getWidthMeasurementLabelValues(this, axisHeight, getMaxLabelHeight(), position)
+          .getWidthMeasurementLabelValues(this, axisHeight, maxLabelHeight, position)
           .maxOfOrNull { value ->
             label.getWidth(
               context = this,
