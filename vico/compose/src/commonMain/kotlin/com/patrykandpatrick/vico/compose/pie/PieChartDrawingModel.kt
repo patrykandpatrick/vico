@@ -14,14 +14,29 @@
  * limitations under the License.
  */
 
-package com.patrykandpatrick.vico.views.pie
+package com.patrykandpatrick.vico.compose.pie
 
-import com.patrykandpatrick.vico.views.common.lerp
-import com.patrykandpatrick.vico.views.common.orZero
-import java.util.Objects
+import com.patrykandpatrick.vico.compose.common.lerp
+import com.patrykandpatrick.vico.compose.common.orZero
+import kotlin.math.max
 
 internal class PieChartDrawingModel(val slices: List<SliceInfo>) {
-  class SliceInfo(val degrees: Float, val sliceOpacity: Float = 1f, val labelOpacity: Float = 1f) {
+  internal fun transform(from: PieChartDrawingModel?, fraction: Float): PieChartDrawingModel {
+    val oldSlices = from?.slices.orEmpty()
+    val sliceCount = max(oldSlices.size, slices.size)
+    return PieChartDrawingModel(
+      List(sliceCount) { index ->
+        slices.getOrNull(index)?.transform(oldSlices.getOrNull(index), fraction)
+          ?: checkNotNull(oldSlices.getOrNull(index)).transform(null, 1f - fraction)
+      }
+    )
+  }
+
+  internal class SliceInfo(
+    val degrees: Float,
+    val sliceOpacity: Float = 1f,
+    val labelOpacity: Float = 1f,
+  ) {
     internal fun transform(from: SliceInfo?, fraction: Float): SliceInfo {
       val oldDegrees = from?.degrees.orZero
       return SliceInfo(
@@ -48,11 +63,23 @@ internal class PieChartDrawingModel(val slices: List<SliceInfo>) {
           sliceOpacity == other.sliceOpacity &&
           labelOpacity == other.labelOpacity
 
-    override fun hashCode(): Int = Objects.hash(degrees, sliceOpacity, labelOpacity)
+    override fun hashCode(): Int {
+      var result = degrees.hashCode()
+      result = 31 * result + sliceOpacity.hashCode()
+      result = 31 * result + labelOpacity.hashCode()
+      return result
+    }
   }
 
   override fun equals(other: Any?): Boolean =
     this === other || other is PieChartDrawingModel && slices == other.slices
 
-  override fun hashCode(): Int = Objects.hash(slices)
+  override fun hashCode(): Int = slices.hashCode()
 }
+
+internal fun PieChartModel.toDrawingModel(): PieChartDrawingModel =
+  PieChartDrawingModel(
+    entries.map { entry ->
+      PieChartDrawingModel.SliceInfo(degrees = if (sum == 0f) 0f else entry.value / sum * 360f)
+    }
+  )

@@ -41,6 +41,7 @@ import com.patrykandpatrick.vico.compose.common.component.TextComponent
 import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 import com.patrykandpatrick.vico.compose.common.getRepeating
 import com.patrykandpatrick.vico.compose.common.half
+import com.patrykandpatrick.vico.compose.common.orZero
 import com.patrykandpatrick.vico.compose.common.saveLayer
 import com.patrykandpatrick.vico.compose.common.toRadians
 import kotlin.math.cos
@@ -59,6 +60,7 @@ internal constructor(
   public val startAngle: Float,
   internal val valueFormatter: PieValueFormatter,
   internal val legend: Legend<PieChartMeasuringContext, PieChartDrawingContext>?,
+  internal val drawingModelInterpolator: PieChartDrawingModelInterpolator,
   internal val id: Uuid = Uuid.random(),
 ) : Bounded {
   override var bounds: Rect = Rect.Zero
@@ -78,19 +80,19 @@ internal constructor(
     val spacingPx = with(context) { spacing.pixels }
     val spacingDegrees = if (outerRadius > 0f) spacingToDegrees(context, outerRadius) else 0f
     var currentAngle = startAngle
-    drawingModel.slices.forEachIndexed { index, sliceInfo ->
-      val value = context.model.entries[index].value
-      val slice =
-        sliceProvider.getSlice(context.model.entries[index], index, context.model.extraStore)
-      val centerAngle = currentAngle + sliceInfo.degrees / 2f
+    context.model.entries.forEachIndexed { index, entry ->
+      val sliceInfo = drawingModel.slices.getOrNull(index)
+      val degrees = sliceInfo?.degrees ?: (entry.value / context.model.sum * 360f)
+      val slice = sliceProvider.getSlice(entry, index, context.model.extraStore)
+      val centerAngle = currentAngle + degrees / 2f
       val offset = slice.getOffset(context, centerAngle)
       val correctedBounds = circleBounds.translate(offset)
       val correctedStartAngle = currentAngle + spacingDegrees / 2f
-      val correctedSweepAngle = (sliceInfo.degrees - spacingDegrees).coerceAtLeast(0f)
+      val correctedSweepAngle = (degrees - spacingDegrees).coerceAtLeast(0f)
       if (correctedSweepAngle > 0f) {
         val centerOffset =
-          if (spacingPx > 0f && holeRadius == 0f && sliceInfo.degrees < 360f) {
-            val halfSweepRadians = (sliceInfo.degrees / 2f).toRadians()
+          if (spacingPx > 0f && holeRadius == 0f && degrees < 360f) {
+            val halfSweepRadians = (degrees / 2f).toRadians()
             val sinHalf = sin(halfSweepRadians).toFloat()
             if (sinHalf > 0.001f) {
               val tipDistance = spacingPx / sinHalf
@@ -109,7 +111,7 @@ internal constructor(
           centerOffset = centerOffset,
           destination = slice.path,
         )
-        slice.draw(context, slice.path, correctedBounds, sliceInfo.sliceOpacity)
+        slice.draw(context, slice.path, correctedBounds, sliceInfo?.sliceOpacity ?: 1f)
         slice.label?.draw(
           context = context,
           chartBounds = bounds,
@@ -117,12 +119,12 @@ internal constructor(
           holeRadius = holeRadius,
           angle = centerAngle,
           sweepAngle = correctedSweepAngle,
-          label = valueFormatter.format(context, value, index),
+          label = valueFormatter.format(context, entry.value, index),
           slicePath = slice.path,
-          opacity = sliceInfo.labelOpacity,
+          opacity = sliceInfo?.labelOpacity ?: 1f,
         )
       }
-      currentAngle += sliceInfo.degrees
+      currentAngle += degrees
     }
     legend?.draw(context)
   }
@@ -137,11 +139,12 @@ internal constructor(
     drawingModel: PieChartDrawingModel,
   ): Rect {
     val baseRadius = outerSize.getRadius(context, bounds.width, bounds.height)
+    val entries = context.model.entries
     val maxOffset =
-      drawingModel.slices.indices.maxOfOrNull { index ->
+      entries.indices.maxOfOrNull { index ->
         with(context) {
           sliceProvider
-            .getSlice(context.model.entries[index], index, context.model.extraStore)
+            .getSlice(entries[index], index, context.model.extraStore)
             .offsetFromCenter
             .pixels
         }
@@ -155,10 +158,10 @@ internal constructor(
       )
     var insets = PieInsets()
     var currentAngle = startAngle
-    drawingModel.slices.forEachIndexed { index, sliceInfo ->
-      val value = context.model.entries[index].value
-      val sliceLabel =
-        sliceProvider.getSlice(context.model.entries[index], index, context.model.extraStore).label
+    entries.forEachIndexed { index, entry ->
+      val sliceInfo = drawingModel.slices.getOrNull(index)
+      val degrees = sliceInfo?.degrees ?: (entry.value / context.model.sum * 360f)
+      val sliceLabel = sliceProvider.getSlice(entry, index, context.model.extraStore).label
       if (sliceLabel != null) {
         insets =
           insets.plus(
@@ -166,12 +169,12 @@ internal constructor(
               context = context,
               chartBounds = bounds,
               circleBounds = provisionalBounds,
-              angle = currentAngle + sliceInfo.degrees / 2f,
-              label = valueFormatter.format(context, value, index),
+              angle = currentAngle + degrees / 2f,
+              label = valueFormatter.format(context, entry.value, index),
             )
           )
       }
-      currentAngle += sliceInfo.degrees
+      currentAngle += degrees
     }
     val radius = max(0f, baseRadius - insets.largestEdge - maxOffset)
     return Rect(
@@ -458,7 +461,17 @@ internal constructor(
     valueFormatter: PieValueFormatter = this.valueFormatter,
     legend: Legend<PieChartMeasuringContext, PieChartDrawingContext>? = this.legend,
   ): PieChart =
-    PieChart(sliceProvider, spacing, outerSize, innerSize, startAngle, valueFormatter, legend, id)
+    PieChart(
+      sliceProvider,
+      spacing,
+      outerSize,
+      innerSize,
+      startAngle,
+      valueFormatter,
+      legend,
+      drawingModelInterpolator,
+      id,
+    )
 }
 
 internal data class PieInsets(
@@ -504,55 +517,6 @@ internal fun createSlicePath(
   return path
 }
 
-internal data class PieChartDrawingModel(val slices: List<PieChartSliceDrawingModel>)
-
-internal data class PieChartSliceDrawingModel(
-  val degrees: Float,
-  val sliceOpacity: Float = 1f,
-  val labelOpacity: Float = 1f,
-)
-
-internal fun PieChartModel.toDrawingModel(): PieChartDrawingModel =
-  PieChartDrawingModel(
-    entries.mapIndexed { index, entry ->
-      PieChartSliceDrawingModel(degrees = if (sum == 0f) 0f else entry.value / sum * 360f)
-    }
-  )
-
-internal fun interpolate(
-  old: PieChartDrawingModel?,
-  new: PieChartDrawingModel,
-  fraction: Float,
-): PieChartDrawingModel {
-  val oldSlices = old?.slices.orEmpty()
-  val size = max(oldSlices.size, new.slices.size)
-  return PieChartDrawingModel(
-    List(size) { index ->
-      val newSlice = new.slices.getOrNull(index) ?: PieChartSliceDrawingModel(0f)
-      val oldSlice = oldSlices.getOrNull(index)
-      val oldDegrees = oldSlice?.degrees.orZero
-      PieChartSliceDrawingModel(
-        degrees = oldDegrees + (newSlice.degrees - oldDegrees) * fraction,
-        sliceOpacity =
-          when {
-            oldSlice == null || oldSlice.degrees == 0f -> fraction
-            newSlice.degrees == 0f -> 1f - fraction
-            else -> 1f
-          },
-        labelOpacity =
-          when {
-            oldSlice == null || oldSlice.degrees == 0f -> fraction
-            newSlice.degrees == 0f -> 1f - fraction
-            else -> 1f
-          },
-      )
-    }
-  )
-}
-
-private val Float?.orZero: Float
-  get() = this ?: 0f
-
 /** Creates and remembers a [PieChart]. */
 @Composable
 public fun rememberPieChart(
@@ -592,6 +556,7 @@ public fun rememberPieChart(
           startAngle,
           valueFormatter,
           legend,
+          defaultPieChartDrawingModelInterpolator(),
         )
     wrapper.value = pieChart
     pieChart

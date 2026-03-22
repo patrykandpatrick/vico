@@ -30,7 +30,6 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -65,33 +64,32 @@ public fun PieChartHost(
   }
   previousHashCode.value = hashCode
   var currentModel by remember { mutableStateOf<PieChartModel?>(null) }
-  var previousModel by remember { mutableStateOf<PieChartModel?>(null) }
-  var animationFraction by remember { mutableFloatStateOf(if (animateIn) 0f else 1f) }
+  var drawingModel by remember { mutableStateOf<PieChartDrawingModel?>(null) }
   val isInPreview = LocalInspectionMode.current
 
   LaunchedEffect(modelProducer, chart.id, animationSpec, animateIn, isInPreview) {
     modelProducer.models.collectLatest { model ->
-      previousModel = currentModel
+      chart.drawingModelInterpolator.setModels(drawingModel, model?.toDrawingModel())
       currentModel = model
       if (model == null) {
-        animationFraction = 0f
-      } else if (animationSpec != null && !isInPreview && (previousModel != null || animateIn)) {
-        animationFraction = 0f
+        drawingModel = null
+      } else if (animationSpec != null && !isInPreview && (drawingModel != null || animateIn)) {
         animate(initialValue = 0f, targetValue = 1f, animationSpec = animationSpec) { value, _ ->
-          animationFraction = value
+          drawingModel = chart.drawingModelInterpolator.transform(value)
         }
       } else {
-        animationFraction = 1f
+        drawingModel = chart.drawingModelInterpolator.transform(1f)
       }
     }
   }
 
   PieChartHostBox(modifier) {
     val model = currentModel
-    if (model == null) {
+    val dm = drawingModel
+    if (model == null || dm == null) {
       placeholder()
     } else {
-      PieChartHostImpl(chart, model, previousModel, animationFraction)
+      PieChartHostImpl(chart, model, dm)
     }
   }
 }
@@ -99,17 +97,14 @@ public fun PieChartHost(
 /** Displays a [PieChart]. */
 @Composable
 public fun PieChartHost(chart: PieChart, model: PieChartModel, modifier: Modifier = Modifier) {
-  PieChartHostBox(modifier) {
-    PieChartHostImpl(chart, model, previousModel = null, animationFraction = 1f)
-  }
+  PieChartHostBox(modifier) { PieChartHostImpl(chart, model, model.toDrawingModel()) }
 }
 
 @Composable
 internal fun PieChartHostImpl(
   chart: PieChart,
   model: PieChartModel,
-  previousModel: PieChartModel?,
-  animationFraction: Float,
+  drawingModel: PieChartDrawingModel,
 ) {
   val measuringContext = rememberPieChartMeasuringContext(model, model.extraStore)
 
@@ -129,9 +124,6 @@ internal fun PieChartHostImpl(
         chartBounds,
         mutableDrawScope,
       )
-    val currentDrawingModel = model.toDrawingModel()
-    val drawingModel =
-      interpolate(previousModel?.toDrawingModel(), currentDrawingModel, animationFraction)
     chart.draw(drawingContext, drawingModel)
     measuringContext.value.cacheStore.purge()
   }

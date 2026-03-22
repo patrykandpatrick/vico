@@ -135,7 +135,6 @@ public class PieChartModelProducer {
     suspend fun handleUpdate(partial: PieChartModel.Partial?, transactionExtraStore: ExtraStore) {
       cancelAnimation()
       val model = getModel(partial, transactionExtraStore)
-      hostExtraStore.clear()
       prepareForTransformation(model, hostExtraStore)
       startAnimation { key, fraction -> transform(key, fraction, partial, transactionExtraStore) }
     }

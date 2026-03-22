@@ -103,18 +103,16 @@ private constructor(
 
       var ovalRadius = outerSize.getRadius(context, bounds.width(), bounds.height())
       var currentAngle = startAngle
-      val sliceCount = sliceInfo?.size ?: model.entries.size
       var maxOffsetFromCenter = 0f
 
-      for (index in 0 until sliceCount) {
-        val slice = sliceProvider.getSlice(model.entries[index], index, model.extraStore)
-        val info = sliceInfo?.get(index)
-        val entry = model.entries.getOrNull(index)
-        val sweepAngle =
-          info?.degrees ?: entry?.value?.let { value -> value / model.sum * FULL_DEGREES } ?: 0f
+      for (index in model.entries.indices) {
+        val entry = model.entries[index]
+        val slice = sliceProvider.getSlice(entry, index, model.extraStore)
+        val info = sliceInfo?.getOrNull(index)
+        val sweepAngle = info?.degrees ?: entry.value / model.sum * FULL_DEGREES
 
         slice.label?.let { labelComponent ->
-          val label = info?.value?.let { valueFormatter.format(context, it, index) }
+          val label = valueFormatter.format(context, entry.value, index)
           if (label != null) {
             oval.set(
               bounds.centerX() - ovalRadius,
@@ -159,15 +157,13 @@ private constructor(
       require(oval.radius > innerRadius) { "The outer size must be greater than the inner size." }
 
       val restoreCount = if (spacingDp > 0f) canvas.saveLayer() else -1
-      val sliceCount = sliceInfo?.size ?: model.entries.size
       var drawAngle = startAngle
 
-      for (index in 0 until sliceCount) {
-        val slice = sliceProvider.getSlice(model.entries[index], index, model.extraStore)
-        val info = sliceInfo?.get(index)
-        val entry = model.entries.getOrNull(index)
-        val sweepAngle =
-          info?.degrees ?: entry?.value?.let { value -> value / model.sum * FULL_DEGREES } ?: 0f
+      for (index in model.entries.indices) {
+        val entry = model.entries[index]
+        val slice = sliceProvider.getSlice(entry, index, model.extraStore)
+        val info = sliceInfo?.getOrNull(index)
+        val sweepAngle = info?.degrees ?: entry.value / model.sum * FULL_DEGREES
 
         spacingPathBuilder.rewind()
         if (spacingDp > 0f) {
@@ -185,7 +181,7 @@ private constructor(
           startAngle = drawAngle,
           sweepAngle = sweepAngle,
           holeRadius = innerRadius,
-          label = info?.value?.let { valueFormatter.format(context, it, index) },
+          label = valueFormatter.format(context, entry.value, index),
           spacingPath = spacingPathBuilder,
           sliceOpacity = info?.sliceOpacity ?: 1f,
           labelOpacity = info?.labelOpacity ?: 1f,
@@ -742,8 +738,7 @@ private constructor(
       List(customSize ?: entries.size) { index ->
         val entry = entries.getOrNull(index)
         PieChartDrawingModel.SliceInfo(
-          degrees = entry?.value?.let { it / sum * FULL_DEGREES } ?: 0f,
-          value = entry?.value,
+          degrees = entry?.value?.let { it / sum * FULL_DEGREES } ?: 0f
         )
       }
     )
