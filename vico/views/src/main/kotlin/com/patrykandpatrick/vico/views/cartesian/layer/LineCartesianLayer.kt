@@ -174,6 +174,20 @@ protected constructor(
 
       /** Uses a color scale. */
       public fun colorScale(
+        alpha: (ExtraStore) -> Float = { 1f },
+        verticalAxisPosition: Axis.Position.Vertical? = null,
+        block: ColorScaleBuilder.() -> Unit,
+      ): LineFill =
+        ColorScaleLineFill(
+          ColorScale(
+            colors = { extraStore -> buildColorScale(extraStore, block) },
+            alpha = alpha,
+            verticalAxisPosition = verticalAxisPosition,
+          )
+        )
+
+      /** Uses a color scale. */
+      public fun colorScale(
         colors: (ExtraStore) -> Map<Number, Int>,
         alpha: (ExtraStore) -> Float = { 1f },
         verticalAxisPosition: Axis.Position.Vertical? = null,
@@ -265,6 +279,26 @@ protected constructor(
        */
       public fun single(fill: Fill, splitY: (ExtraStore) -> Number = { 0 }): AreaFill =
         SingleAreaFill(fill, splitY)
+
+      /**
+       * Uses a color scale for the areas bounded by the [LineCartesianLayer] line and the [splitY]
+       * line. (The [splitY] line is an imaginary horizontal line whose _y_ value is determined by
+       * [splitY].)
+       */
+      public fun colorScale(
+        alpha: (ExtraStore) -> Float = { 1f },
+        verticalAxisPosition: Axis.Position.Vertical? = null,
+        splitY: (ExtraStore) -> Number = { 0 },
+        block: ColorScaleBuilder.() -> Unit,
+      ): AreaFill =
+        ColorScaleAreaFill(
+          ColorScale(
+            colors = { extraStore -> buildColorScale(extraStore, block) },
+            alpha = alpha,
+            verticalAxisPosition = verticalAxisPosition,
+          ),
+          splitY,
+        )
 
       /**
        * Uses a color scale for the areas bounded by the [LineCartesianLayer] line and the [splitY]
