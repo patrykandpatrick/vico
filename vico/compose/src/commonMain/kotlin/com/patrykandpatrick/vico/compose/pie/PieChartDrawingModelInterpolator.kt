@@ -32,10 +32,8 @@ private class DefaultPieChartDrawingModelInterpolator : PieChartDrawingModelInte
   private var newDrawingModel: PieChartDrawingModel? = null
 
   override fun setModels(old: PieChartDrawingModel?, new: PieChartDrawingModel?) {
-    synchronized(this) {
-      oldDrawingModel = old
-      newDrawingModel = new
-    }
+    oldDrawingModel = old
+    newDrawingModel = new
   }
 
   override suspend fun transform(fraction: Float): PieChartDrawingModel? {
