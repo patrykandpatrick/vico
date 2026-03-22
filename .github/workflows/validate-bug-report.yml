@@ -32,6 +32,7 @@ jobs:
           else
             echo "number=${{ github.event.issue.number }}" >> $GITHUB_OUTPUT
           fi
+      - uses: actions/checkout@v6
       - uses: anthropics/claude-code-action@v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -50,6 +51,8 @@ jobs:
             gh issue view ${{ steps.issue.outputs.number }} --repo ${{ github.repository }} --json title,body,author
 
             The issue body is rendered from a GitHub issue form, where each field appears as a `### Field name` section heading followed by the submitted value.
+
+            The repository source code is checked out and available. Consult it if needed to verify that the example uses valid APIs and arguments.
 
             Assess the issue on these criteria:
 
