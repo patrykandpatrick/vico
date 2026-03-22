@@ -27,6 +27,7 @@ actual val Charts.overridden: LinkedHashMap<UIFramework, List<Chart>>?
           { ViewBasicColumnChart(it) },
           { ViewBasicLineChart(it) },
           { ViewBasicComboChart(it) },
+          { ViewBasicPieChart(it) },
           { ViewAITestScores(it) },
           { ViewDailyDigitalMediaUse(it) },
           { ViewTemperatureAnomalies(it) },

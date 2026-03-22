@@ -1,0 +1,55 @@
+/*
+ * Copyright 2026 by Patryk Goworowski and Patrick Michalik.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.patrykandpatrick.vico.sample.charts.views
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.viewinterop.AndroidViewBinding
+import com.patrykandpatrick.vico.sample.charts.views.databinding.BasicPieChartBinding
+import com.patrykandpatrick.vico.views.common.data.ExtraStore
+import com.patrykandpatrick.vico.views.pie.data.PieChartModelProducer
+import com.patrykandpatrick.vico.views.pie.data.pieSeries
+
+private val LegendLabelKey = ExtraStore.Key<List<String>>()
+private val legendLabels = listOf("A", "B", "C")
+
+@Composable
+fun ViewBasicPieChart(modifier: Modifier) {
+  val modelProducer = remember { PieChartModelProducer() }
+  LaunchedEffect(Unit) {
+    modelProducer.runTransaction {
+      pieSeries { series(3, 4, 2) }
+      extras { it[LegendLabelKey] = legendLabels }
+    }
+  }
+  AndroidViewBinding(
+    { inflater, parent, attachToParent ->
+      BasicPieChartBinding.inflate(inflater, parent, attachToParent).apply {
+        chartView.chart =
+          chartView.chart.copy(
+            valueFormatter = { context, _, index ->
+              context.model.extraStore[LegendLabelKey][index]
+            }
+          )
+        chartView.modelProducer = modelProducer
+      }
+    },
+    modifier,
+  )
+}

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright 2026 by Patryk Goworowski and Patrick Michalik.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<resources>
+    <style name="BasicPieChartInsideLabelStyle">
+        <item name="pieSliceLabelType">inside</item>
+    </style>
+
+    <style name="BasicPieChartWhiteInsideLabelStyle">
+        <item name="pieSliceLabelType">inside</item>
+        <item name="pieSliceLabelTextStyle">@style/BasicPieChartWhiteLabelTextStyle</item>
+    </style>
+
+    <style name="BasicPieChartWhiteLabelTextStyle">
+        <item name="android:color">@android:color/white</item>
+    </style>
+
+    <style name="BasicPieChartSlice1Style">
+        <item name="sliceColor">#3287ff</item>
+        <item name="pieSliceLabelStyle">@style/BasicPieChartWhiteInsideLabelStyle</item>
+    </style>
+
+    <style name="BasicPieChartSlice2Style">
+        <item name="sliceColor">#0ac285</item>
+        <item name="pieSliceLabelStyle">@style/BasicPieChartWhiteInsideLabelStyle</item>
+    </style>
+
+    <style name="BasicPieChartSlice3Style">
+        <item name="sliceColor">#ffab02</item>
+        <item name="pieSliceLabelStyle">@style/BasicPieChartInsideLabelStyle</item>
+    </style>
+
+    <style name="BasicPieChartStyle">
+        <item name="pieSliceStyle1">@style/BasicPieChartSlice1Style</item>
+        <item name="pieSliceStyle2">@style/BasicPieChartSlice2Style</item>
+        <item name="pieSliceStyle3">@style/BasicPieChartSlice3Style</item>
+    </style>
+</resources>
