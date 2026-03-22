@@ -59,6 +59,7 @@ internal constructor(
   public val startAngle: Float,
   internal val valueFormatter: PieValueFormatter,
   internal val legend: Legend<PieChartMeasuringContext, PieChartDrawingContext>?,
+  internal val drawingModelInterpolator: PieChartDrawingModelInterpolator,
   internal val id: Uuid = Uuid.random(),
 ) : Bounded {
   override var bounds: Rect = Rect.Zero
@@ -440,7 +441,17 @@ internal constructor(
     valueFormatter: PieValueFormatter = this.valueFormatter,
     legend: Legend<PieChartMeasuringContext, PieChartDrawingContext>? = this.legend,
   ): PieChart =
-    PieChart(sliceProvider, spacing, outerSize, innerSize, startAngle, valueFormatter, legend, id)
+    PieChart(
+      sliceProvider,
+      spacing,
+      outerSize,
+      innerSize,
+      startAngle,
+      valueFormatter,
+      legend,
+      drawingModelInterpolator,
+      id,
+    )
 }
 
 internal data class PieInsets(
@@ -573,6 +584,7 @@ public fun rememberPieChart(
           startAngle,
           valueFormatter,
           legend,
+          defaultPieChartDrawingModelInterpolator(),
         )
     wrapper.value = pieChart
     pieChart
