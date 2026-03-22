@@ -22,31 +22,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.patrykandpatrick.vico.sample.charts.views.databinding.BasicPieChartBinding
-import com.patrykandpatrick.vico.views.common.data.ExtraStore
 import com.patrykandpatrick.vico.views.pie.data.PieChartModelProducer
 import com.patrykandpatrick.vico.views.pie.data.pieSeries
-
-private val LegendLabelKey = ExtraStore.Key<List<String>>()
-private val legendLabels = listOf("A", "B", "C")
 
 @Composable
 fun ViewBasicPieChart(modifier: Modifier) {
   val modelProducer = remember { PieChartModelProducer() }
-  LaunchedEffect(Unit) {
-    modelProducer.runTransaction {
-      pieSeries { series(3, 4, 2) }
-      extras { it[LegendLabelKey] = legendLabels }
-    }
-  }
+  LaunchedEffect(Unit) { modelProducer.runTransaction { pieSeries { series(60, 20, 20) } } }
   AndroidViewBinding(
     { inflater, parent, attachToParent ->
       BasicPieChartBinding.inflate(inflater, parent, attachToParent).apply {
         chartView.chart =
-          chartView.chart.copy(
-            valueFormatter = { context, _, index ->
-              context.model.extraStore[LegendLabelKey][index]
-            }
-          )
+          chartView.chart.copy(valueFormatter = { _, value, _ -> "${value.toInt()}%" })
         chartView.modelProducer = modelProducer
       }
     },

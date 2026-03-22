@@ -27,7 +27,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.common.Fill
 import com.patrykandpatrick.vico.compose.common.component.TextComponent
-import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 import com.patrykandpatrick.vico.compose.common.vicoTheme
 import com.patrykandpatrick.vico.compose.pie.PieChart
 import com.patrykandpatrick.vico.compose.pie.PieChartHost
@@ -35,9 +34,6 @@ import com.patrykandpatrick.vico.compose.pie.PieChartModelProducer
 import com.patrykandpatrick.vico.compose.pie.PieValueFormatter
 import com.patrykandpatrick.vico.compose.pie.pieSeries
 import com.patrykandpatrick.vico.compose.pie.rememberPieChart
-
-private val LegendLabelKey = ExtraStore.Key<List<String>>()
-private val legendLabels = listOf("A", "B", "C")
 
 @Composable
 private fun ComposeBasicPieChart(
@@ -59,8 +55,7 @@ private fun ComposeBasicPieChart(
               )
             }
           ),
-        valueFormatter =
-          PieValueFormatter { context, _, index -> context.model.extraStore[LegendLabelKey][index] },
+        valueFormatter = PieValueFormatter { _, value, _ -> "${value.toInt()}%" },
       ),
     modelProducer = modelProducer,
     modifier = modifier.height(240.dp),
@@ -70,12 +65,7 @@ private fun ComposeBasicPieChart(
 @Composable
 fun ComposeBasicPieChart(modifier: Modifier = Modifier) {
   val modelProducer = remember { PieChartModelProducer() }
-  LaunchedEffect(Unit) {
-    modelProducer.runTransaction {
-      pieSeries { series(3, 4, 2) }
-      extras { it[LegendLabelKey] = legendLabels }
-    }
-  }
+  LaunchedEffect(Unit) { modelProducer.runTransaction { pieSeries { series(60, 20, 20) } } }
   ComposeBasicPieChart(modelProducer, modifier)
 }
 
@@ -84,11 +74,6 @@ fun ComposeBasicPieChart(modifier: Modifier = Modifier) {
 private fun ComposeBasicPieChartPreview() {
   val modelProducer = remember { PieChartModelProducer() }
   // Use `runBlocking` only for previews, which don’t support asynchronous execution.
-  runBlocking?.invoke {
-    modelProducer.runTransaction {
-      pieSeries { series(3, 4, 2) }
-      extras { it[LegendLabelKey] = legendLabels }
-    }
-  }
+  runBlocking?.invoke { modelProducer.runTransaction { pieSeries { series(60, 20, 20) } } }
   PreviewBox { ComposeBasicPieChart(modelProducer) }
 }
