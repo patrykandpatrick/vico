@@ -72,6 +72,16 @@ internal constructor(
   internal fun getLegendHeight(context: PieChartMeasuringContext): Float =
     legend?.getHeight(context, context.canvasSize.width).orZero
 
+  internal fun prepareForTransformation(
+    oldDrawingModel: PieChartDrawingModel?,
+    model: PieChartModel?,
+  ) {
+    drawingModelInterpolator.setModels(oldDrawingModel, model?.toDrawingModel())
+  }
+
+  internal suspend fun transform(fraction: Float): PieChartDrawingModel? =
+    drawingModelInterpolator.transform(fraction)
+
   internal fun draw(context: PieChartDrawingContext, drawingModel: PieChartDrawingModel) {
     val circleBounds = getCircleBounds(context, drawingModel)
     val outerRadius = circleBounds.width / 2f

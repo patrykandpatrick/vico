@@ -1,3 +1,5 @@
+@file:OptIn(kotlin.uuid.ExperimentalUuidApi::class)
+
 /*
  * Copyright 2026 by Patryk Goworowski and Patrick Michalik.
  *
@@ -16,6 +18,12 @@
 
 package com.patrykandpatrick.vico.compose.pie
 
+import androidx.compose.ui.unit.dp
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -53,5 +61,38 @@ class PieChartDrawingModelInterpolatorTest {
       ),
       transformedModel,
     )
+  }
+
+  @Test
+  fun `PieChart uses the drawingModel interpolator for transformations`() {
+    val interpolator = mockk<PieChartDrawingModelInterpolator>()
+    val chart =
+      PieChart(
+        sliceProvider = PieChart.SliceProvider.series(PieChart.Slice()),
+        spacing = 0.dp,
+        outerSize = PieSize.Outer.Fill,
+        innerSize = PieSize.Inner.Zero,
+        startAngle = -90f,
+        valueFormatter = PieValueFormatter.Value,
+        legend = null,
+        drawingModelInterpolator = interpolator,
+      )
+    val oldDrawingModel = PieChartModel.build(1f, 3f).toDrawingModel()
+    val newModel = PieChartModel.build(2f, 2f)
+    val newDrawingModel = newModel.toDrawingModel()
+    val transformedModel =
+      PieChartDrawingModel(
+        listOf(PieChartDrawingModel.SliceInfo(135f), PieChartDrawingModel.SliceInfo(225f))
+      )
+
+    every { interpolator.setModels(oldDrawingModel, newDrawingModel) } returns Unit
+    coEvery { interpolator.transform(0.25f) } returns transformedModel
+
+    chart.prepareForTransformation(oldDrawingModel, newModel)
+    val actualTransformedModel = runBlocking { chart.transform(0.25f) }
+
+    assertEquals(transformedModel, actualTransformedModel)
+    verify(exactly = 1) { interpolator.setModels(oldDrawingModel, newDrawingModel) }
+    coVerify(exactly = 1) { interpolator.transform(0.25f) }
   }
 }

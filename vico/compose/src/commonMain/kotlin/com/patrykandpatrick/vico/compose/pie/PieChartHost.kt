@@ -65,33 +65,47 @@ public fun PieChartHost(
   }
   previousHashCode.value = hashCode
   var currentModel by remember { mutableStateOf<PieChartModel?>(null) }
-  var previousModel by remember { mutableStateOf<PieChartModel?>(null) }
+  var currentDrawingModel by remember { mutableStateOf<PieChartDrawingModel?>(null) }
   var animationFraction by remember { mutableFloatStateOf(if (animateIn) 0f else 1f) }
   val isInPreview = LocalInspectionMode.current
 
   LaunchedEffect(modelProducer, chart.id, animationSpec, animateIn, isInPreview) {
     modelProducer.models.collectLatest { model ->
-      previousModel = currentModel
+      val oldDrawingModel = currentDrawingModel
       currentModel = model
+      chart.prepareForTransformation(oldDrawingModel, model)
       if (model == null) {
+        currentDrawingModel = null
         animationFraction = 0f
-      } else if (animationSpec != null && !isInPreview && (previousModel != null || animateIn)) {
+      } else if (animationSpec != null && !isInPreview && (oldDrawingModel != null || animateIn)) {
         animationFraction = 0f
+        currentDrawingModel = chart.transform(animationFraction)
         animate(initialValue = 0f, targetValue = 1f, animationSpec = animationSpec) { value, _ ->
           animationFraction = value
         }
       } else {
         animationFraction = 1f
+        currentDrawingModel = chart.transform(animationFraction)
       }
     }
   }
 
+  LaunchedEffect(chart.id, currentModel?.id, animationFraction) {
+    currentDrawingModel =
+      if (currentModel == null) {
+        null
+      } else {
+        chart.transform(animationFraction)
+      }
+  }
+
   PieChartHostBox(modifier) {
     val model = currentModel
-    if (model == null) {
+    val drawingModel = currentDrawingModel
+    if (model == null || drawingModel == null) {
       placeholder()
     } else {
-      PieChartHostImpl(chart, model, previousModel, animationFraction)
+      PieChartHostImpl(chart, model, drawingModel)
     }
   }
 }
@@ -99,17 +113,14 @@ public fun PieChartHost(
 /** Displays a [PieChart]. */
 @Composable
 public fun PieChartHost(chart: PieChart, model: PieChartModel, modifier: Modifier = Modifier) {
-  PieChartHostBox(modifier) {
-    PieChartHostImpl(chart, model, previousModel = null, animationFraction = 1f)
-  }
+  PieChartHostBox(modifier) { PieChartHostImpl(chart, model, model.toDrawingModel()) }
 }
 
 @Composable
 internal fun PieChartHostImpl(
   chart: PieChart,
   model: PieChartModel,
-  previousModel: PieChartModel?,
-  animationFraction: Float,
+  drawingModel: PieChartDrawingModel,
 ) {
   val measuringContext = rememberPieChartMeasuringContext(model, model.extraStore)
 
@@ -129,10 +140,6 @@ internal fun PieChartHostImpl(
         chartBounds,
         mutableDrawScope,
       )
-    val oldDrawingModel = previousModel?.toDrawingModel()
-    val currentDrawingModel = model.toDrawingModel()
-    chart.drawingModelInterpolator.setModels(oldDrawingModel, currentDrawingModel)
-    val drawingModel = currentDrawingModel.transform(oldDrawingModel, animationFraction)
     chart.draw(drawingContext, drawingModel)
     measuringContext.value.cacheStore.purge()
   }
