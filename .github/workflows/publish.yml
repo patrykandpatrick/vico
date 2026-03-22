@@ -25,7 +25,7 @@ jobs:
           echo "VERSION_NAME=$VERSION_NAME" >> $GITHUB_ENV
           echo "TAG_NAME=v$VERSION_NAME" >> $GITHUB_ENV
           IS_PRERELEASE=false
-          echo $VERSION_NAME | grep -q "alpha\|beta" && IS_PRERELEASE=true
+          echo $VERSION_NAME | grep -q "alpha\|beta\|next" && IS_PRERELEASE=true
           echo "IS_PRERELEASE=$IS_PRERELEASE" >> $GITHUB_ENV
           ./gradlew assembleDebug
           cd sample/android/build/outputs/apk/debug
