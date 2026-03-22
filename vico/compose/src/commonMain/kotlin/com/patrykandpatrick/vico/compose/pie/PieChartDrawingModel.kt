@@ -16,10 +16,11 @@
 
 package com.patrykandpatrick.vico.compose.pie
 
+import com.patrykandpatrick.vico.compose.common.lerp
 import com.patrykandpatrick.vico.compose.common.orZero
 import kotlin.math.max
 
-internal data class PieChartDrawingModel(val slices: List<SliceInfo>) {
+internal class PieChartDrawingModel(val slices: List<SliceInfo>) {
   internal fun transform(from: PieChartDrawingModel?, fraction: Float): PieChartDrawingModel {
     val oldSlices = from?.slices.orEmpty()
     val sliceCount = max(oldSlices.size, slices.size)
@@ -31,7 +32,7 @@ internal data class PieChartDrawingModel(val slices: List<SliceInfo>) {
     )
   }
 
-  internal data class SliceInfo(
+  internal class SliceInfo(
     val degrees: Float,
     val sliceOpacity: Float = 1f,
     val labelOpacity: Float = 1f,
@@ -39,7 +40,7 @@ internal data class PieChartDrawingModel(val slices: List<SliceInfo>) {
     internal fun transform(from: SliceInfo?, fraction: Float): SliceInfo {
       val oldDegrees = from?.degrees.orZero
       return SliceInfo(
-        degrees = oldDegrees + (degrees - oldDegrees) * fraction,
+        degrees = oldDegrees.lerp(degrees, fraction),
         sliceOpacity =
           when {
             from == null || from.degrees == 0f -> fraction
@@ -54,7 +55,26 @@ internal data class PieChartDrawingModel(val slices: List<SliceInfo>) {
           },
       )
     }
+
+    override fun equals(other: Any?): Boolean =
+      this === other ||
+        other is SliceInfo &&
+          degrees == other.degrees &&
+          sliceOpacity == other.sliceOpacity &&
+          labelOpacity == other.labelOpacity
+
+    override fun hashCode(): Int {
+      var result = degrees.hashCode()
+      result = 31 * result + sliceOpacity.hashCode()
+      result = 31 * result + labelOpacity.hashCode()
+      return result
+    }
   }
+
+  override fun equals(other: Any?): Boolean =
+    this === other || other is PieChartDrawingModel && slices == other.slices
+
+  override fun hashCode(): Int = slices.hashCode()
 }
 
 internal fun PieChartModel.toDrawingModel(): PieChartDrawingModel =
