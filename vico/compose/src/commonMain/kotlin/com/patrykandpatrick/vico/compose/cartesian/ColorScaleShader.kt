@@ -30,16 +30,20 @@ internal object ColorScaleShader {
     from: Offset = Offset(0f, context.layerBounds.top),
     to: Offset = Offset(0f, context.layerBounds.bottom),
     verticalAxisPosition: Axis.Position.Vertical? = null,
-  ): Shader =
-    LinearGradientShader(
+  ): Shader {
+    val sortedColors = colors.getSortedColors(alpha)
+    val positions = getPositions(context, colors.keys, verticalAxisPosition)
+    val (safeColors, safePositions) = getSafeGradientData(sortedColors, positions)
+    return LinearGradientShader(
       from = from,
       to = to,
-      colors = colors.getSortedColors(alpha),
-      colorStops = getPositions(context, colors.keys, verticalAxisPosition),
+      colors = safeColors,
+      colorStops = safePositions,
     )
+  }
 
   private fun Map<Number, Color>.getSortedColors(alpha: Float): List<Color> =
-    entries.sortedByDescending { it.key.toDouble() }.map { it.value.copy(alpha) }
+    entries.sortedByDescending { it.key.toDouble() }.map { it.value.copy(alpha.coerceIn(0f, 1f)) }
 
   private fun getPositions(
     context: CartesianDrawingContext,
@@ -48,6 +52,32 @@ internal object ColorScaleShader {
   ): List<Float> {
     val maxY = context.ranges.getYRange(verticalAxisPosition).maxY
     val minY = context.ranges.getYRange(verticalAxisPosition).minY
-    return y.map { y -> 1f - ((y.toFloat() - minY) / (maxY - minY)).toFloat() }.sorted()
+    val range = maxY - minY
+    if (range == 0.0) return getDegeneratePositions(y.size)
+    return y.map { y -> 1f - ((y.toDouble() - minY) / range).toFloat() }.sorted()
   }
+
+  private fun getSafeGradientData(
+    colors: List<Color>,
+    positions: List<Float>,
+  ): Pair<List<Color>, List<Float>> =
+    when {
+      colors.size >= 2 && positions.size >= 2 -> Pair(colors, positions)
+      colors.isNotEmpty() ->
+        Pair(
+          listOf(colors.first(), colors.first()),
+          positions.firstOrNull()?.let { listOf(it, it) } ?: listOf(0f, 1f),
+        )
+      else -> Pair(listOf(Color.Transparent, Color.Transparent), listOf(0f, 1f))
+    }
+
+  private fun getDegeneratePositions(count: Int): List<Float> =
+    when (count) {
+      0 -> emptyList()
+      1 -> listOf(0f)
+      else -> {
+        val step = 1f / (count - 1)
+        List(count) { index -> index * step }
+      }
+    }
 }

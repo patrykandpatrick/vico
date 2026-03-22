@@ -33,14 +33,16 @@ internal object ColorScaleShader {
     verticalAxisPosition: Axis.Position.Vertical? = null,
   ): LinearGradient {
     val sortedMapEntries = colors.entries.sortedByDescending { it.key.toDouble() }
+    val (safeColors, safePositions) =
+      getSafeGradientData(sortedMapEntries, context, alpha, verticalAxisPosition)
 
     return LinearGradient(
       left,
       top,
       right,
       bottom,
-      getColorsIntArray(sortedMapEntries, alpha),
-      getPositions(context, sortedMapEntries, verticalAxisPosition),
+      safeColors,
+      safePositions,
       Shader.TileMode.CLAMP,
     )
   }
@@ -52,11 +54,41 @@ internal object ColorScaleShader {
   ): FloatArray {
     val maxY = context.ranges.getYRange(verticalAxisPosition).maxY
     val minY = context.ranges.getYRange(verticalAxisPosition).minY
+    val range = maxY - minY
+    if (range == 0.0) return getDegeneratePositions(entries.size)
     return FloatArray(entries.size) { index ->
-      1f - ((entries[index].key.toFloat() - minY) / (maxY - minY)).toFloat()
+      1f - ((entries[index].key.toDouble() - minY) / range).toFloat()
     }
   }
 
-  private fun getColorsIntArray(entries: List<Map.Entry<Number, Int>>, alpha: Float): IntArray =
-    IntArray(entries.size) { index -> entries[index].value.copyColor(alpha = alpha) }
+  private fun getColorsIntArray(entries: List<Map.Entry<Number, Int>>, alpha: Float): IntArray {
+    val clampedAlpha = alpha.coerceIn(0f, 1f)
+    return IntArray(entries.size) { index -> entries[index].value.copyColor(alpha = clampedAlpha) }
+  }
+
+  private fun getSafeGradientData(
+    entries: List<Map.Entry<Number, Int>>,
+    context: CartesianDrawingContext,
+    alpha: Float,
+    verticalAxisPosition: Axis.Position.Vertical?,
+  ): Pair<IntArray, FloatArray> =
+    when {
+      entries.size >= 2 ->
+        getColorsIntArray(entries, alpha) to getPositions(context, entries, verticalAxisPosition)
+      entries.size == 1 -> {
+        val color = getColorsIntArray(entries, alpha).first()
+        intArrayOf(color, color) to floatArrayOf(0f, 1f)
+      }
+      else -> intArrayOf(0, 0) to floatArrayOf(0f, 1f)
+    }
+
+  private fun getDegeneratePositions(count: Int): FloatArray =
+    when (count) {
+      0 -> floatArrayOf()
+      1 -> floatArrayOf(0f)
+      else -> {
+        val denominator = (count - 1).toFloat()
+        FloatArray(count) { index -> index / denominator }
+      }
+    }
 }
