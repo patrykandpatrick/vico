@@ -144,10 +144,7 @@ internal data class DoubleAreaFill(
   }
 }
 
-internal data class ColorScaleAreaFill(
-  private val colorScale: ColorScale,
-  override val splitY: (ExtraStore) -> Number,
-) : BaseAreaFill(splitY) {
+internal data class ColorScaleAreaFill(private val colorScale: ColorScale) : BaseAreaFill({ 0 }) {
   private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
   private val areaPath = Path()
 

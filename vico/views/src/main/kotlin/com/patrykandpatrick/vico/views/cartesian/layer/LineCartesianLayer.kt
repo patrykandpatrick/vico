@@ -280,15 +280,10 @@ protected constructor(
       public fun single(fill: Fill, splitY: (ExtraStore) -> Number = { 0 }): AreaFill =
         SingleAreaFill(fill, splitY)
 
-      /**
-       * Uses a color scale for the areas bounded by the [LineCartesianLayer] line and the [splitY]
-       * line. (The [splitY] line is an imaginary horizontal line whose _y_ value is determined by
-       * [splitY].)
-       */
+      /** Uses a color scale for the areas bounded by the [LineCartesianLayer] line and zero. */
       public fun colorScale(
         alpha: (ExtraStore) -> Float = { 1f },
         verticalAxisPosition: Axis.Position.Vertical? = null,
-        splitY: (ExtraStore) -> Number = { 0 },
         block: ColorScaleBuilder.() -> Unit,
       ): AreaFill =
         ColorScaleAreaFill(
@@ -296,21 +291,15 @@ protected constructor(
             colors = { extraStore -> buildColorScale(extraStore, block) },
             alpha = alpha,
             verticalAxisPosition = verticalAxisPosition,
-          ),
-          splitY,
+          )
         )
 
-      /**
-       * Uses a color scale for the areas bounded by the [LineCartesianLayer] line and the [splitY]
-       * line. (The [splitY] line is an imaginary horizontal line whose _y_ value is determined by
-       * [splitY].)
-       */
+      /** Uses a color scale for the areas bounded by the [LineCartesianLayer] line and zero. */
       public fun colorScale(
         colors: (ExtraStore) -> Map<Number, Int>,
         alpha: (ExtraStore) -> Float = { 1f },
         verticalAxisPosition: Axis.Position.Vertical? = null,
-        splitY: (ExtraStore) -> Number = { 0 },
-      ): AreaFill = ColorScaleAreaFill(ColorScale(colors, alpha, verticalAxisPosition), splitY)
+      ): AreaFill = ColorScaleAreaFill(ColorScale(colors, alpha, verticalAxisPosition))
 
       /**
        * Uses [topFill] for those areas bounded by the [LineCartesianLayer] line and the [splitY]
