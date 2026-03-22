@@ -41,6 +41,7 @@ import com.patrykandpatrick.vico.compose.common.component.TextComponent
 import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 import com.patrykandpatrick.vico.compose.common.getRepeating
 import com.patrykandpatrick.vico.compose.common.half
+import com.patrykandpatrick.vico.compose.common.orZero
 import com.patrykandpatrick.vico.compose.common.saveLayer
 import com.patrykandpatrick.vico.compose.common.toRadians
 import kotlin.math.cos
@@ -495,55 +496,6 @@ internal fun createSlicePath(
   path.close()
   return path
 }
-
-internal data class PieChartDrawingModel(val slices: List<PieChartSliceDrawingModel>)
-
-internal data class PieChartSliceDrawingModel(
-  val degrees: Float,
-  val sliceOpacity: Float = 1f,
-  val labelOpacity: Float = 1f,
-)
-
-internal fun PieChartModel.toDrawingModel(): PieChartDrawingModel =
-  PieChartDrawingModel(
-    entries.mapIndexed { index, entry ->
-      PieChartSliceDrawingModel(degrees = if (sum == 0f) 0f else entry.value / sum * 360f)
-    }
-  )
-
-internal fun interpolate(
-  old: PieChartDrawingModel?,
-  new: PieChartDrawingModel,
-  fraction: Float,
-): PieChartDrawingModel {
-  val oldSlices = old?.slices.orEmpty()
-  val size = max(oldSlices.size, new.slices.size)
-  return PieChartDrawingModel(
-    List(size) { index ->
-      val newSlice = new.slices.getOrNull(index) ?: PieChartSliceDrawingModel(0f)
-      val oldSlice = oldSlices.getOrNull(index)
-      val oldDegrees = oldSlice?.degrees.orZero
-      PieChartSliceDrawingModel(
-        degrees = oldDegrees + (newSlice.degrees - oldDegrees) * fraction,
-        sliceOpacity =
-          when {
-            oldSlice == null || oldSlice.degrees == 0f -> fraction
-            newSlice.degrees == 0f -> 1f - fraction
-            else -> 1f
-          },
-        labelOpacity =
-          when {
-            oldSlice == null || oldSlice.degrees == 0f -> fraction
-            newSlice.degrees == 0f -> 1f - fraction
-            else -> 1f
-          },
-      )
-    }
-  )
-}
-
-private val Float?.orZero: Float
-  get() = this ?: 0f
 
 /** Creates and remembers a [PieChart]. */
 @Composable

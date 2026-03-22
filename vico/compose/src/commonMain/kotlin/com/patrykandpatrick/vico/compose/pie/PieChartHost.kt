@@ -132,7 +132,7 @@ internal fun PieChartHostImpl(
     val oldDrawingModel = previousModel?.toDrawingModel()
     val currentDrawingModel = model.toDrawingModel()
     chart.drawingModelInterpolator.setModels(oldDrawingModel, currentDrawingModel)
-    val drawingModel = interpolate(oldDrawingModel, currentDrawingModel, animationFraction)
+    val drawingModel = currentDrawingModel.transform(oldDrawingModel, animationFraction)
     chart.draw(drawingContext, drawingModel)
     measuringContext.value.cacheStore.purge()
   }

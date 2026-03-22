@@ -16,10 +16,10 @@
 
 package com.patrykandpatrick.vico.compose.pie
 
-import kotlinx.coroutines.runBlocking
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
+import kotlinx.coroutines.runBlocking
 
 class PieChartDrawingModelInterpolatorTest {
 
@@ -37,11 +37,11 @@ class PieChartDrawingModelInterpolatorTest {
     val interpolator = defaultPieChartDrawingModelInterpolator()
     val oldModel =
       PieChartDrawingModel(
-        listOf(PieChartSliceDrawingModel(90f), PieChartSliceDrawingModel(270f))
+        listOf(PieChartDrawingModel.SliceInfo(90f), PieChartDrawingModel.SliceInfo(270f))
       )
     val newModel =
       PieChartDrawingModel(
-        listOf(PieChartSliceDrawingModel(180f), PieChartSliceDrawingModel(180f))
+        listOf(PieChartDrawingModel.SliceInfo(180f), PieChartDrawingModel.SliceInfo(180f))
       )
 
     interpolator.setModels(oldModel, newModel)
@@ -49,7 +49,7 @@ class PieChartDrawingModelInterpolatorTest {
 
     assertEquals(
       PieChartDrawingModel(
-        listOf(PieChartSliceDrawingModel(112.5f), PieChartSliceDrawingModel(247.5f))
+        listOf(PieChartDrawingModel.SliceInfo(112.5f), PieChartDrawingModel.SliceInfo(247.5f))
       ),
       transformedModel,
     )

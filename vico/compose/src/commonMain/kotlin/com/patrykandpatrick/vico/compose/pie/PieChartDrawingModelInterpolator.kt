@@ -38,6 +38,6 @@ private class DefaultPieChartDrawingModelInterpolator : PieChartDrawingModelInte
 
   override suspend fun transform(fraction: Float): PieChartDrawingModel? {
     val newModel = newDrawingModel ?: return null
-    return interpolate(oldDrawingModel, newModel, fraction)
+    return newModel.transform(oldDrawingModel, fraction)
   }
 }
