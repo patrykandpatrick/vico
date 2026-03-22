@@ -36,7 +36,7 @@ internal data class SingleLineFill(val fill: Fill) : LineCartesianLayer.LineFill
     with(context) {
       val top = layerBounds.top - halfLineThickness
       val bottom = layerBounds.bottom + halfLineThickness
-      fill.applyShader(paint, context, Size(layerBounds.width, bottom - top), translationY = top)
+      fill.brush?.applyTo(size = Size(layerBounds.width, bottom - top), p = paint, alpha = 1f)
       canvas.drawRect(layerBounds.left, top, layerBounds.right, bottom, paint)
     }
   }
@@ -57,11 +57,10 @@ internal data class DoubleLineFill(
     with(context) {
       val canvasSplitY = getCanvasSplitY(splitY, halfLineThickness, verticalAxisPosition)
       paint.color = topFill.color
-      topFill.applyShader(
-        paint,
-        context,
+      topFill.brush?.applyTo(
         Size(layerBounds.width, canvasSplitY - layerBounds.top - halfLineThickness),
-        translationY = layerBounds.top - halfLineThickness,
+        paint,
+        1f,
       )
       canvas.withSave {
         canvas.translate(layerBounds.left, layerBounds.top)
@@ -75,11 +74,10 @@ internal data class DoubleLineFill(
       }
 
       paint.color = bottomFill.color
-      bottomFill.applyShader(
-        paint,
-        context,
+      bottomFill.brush?.applyTo(
         Size(layerBounds.width, layerBounds.bottom - canvasSplitY + halfLineThickness),
-        translationY = canvasSplitY,
+        paint,
+        1f,
       )
       canvas.withSave {
         canvas.translate(layerBounds.left, canvasSplitY)

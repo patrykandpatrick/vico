@@ -19,8 +19,6 @@ package com.patrykandpatrick.vico.views.common
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.RectF
-import com.patrykandpatrick.vico.views.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.views.common.data.CacheStore
 import com.patrykandpatrick.vico.views.common.shader.ShaderProvider
 
@@ -37,32 +35,6 @@ private constructor(public val color: Int, public val shaderProvider: ShaderProv
 
   /** Creates a [ShaderProvider]&#0020;[Fill]. */
   public constructor(shaderProvider: ShaderProvider) : this(Color.BLACK, shaderProvider)
-
-  internal fun applyShader(paint: Paint, context: CartesianDrawingContext, bounds: RectF) {
-    applyShader(paint, context, bounds.left, bounds.top, bounds.right, bounds.bottom)
-  }
-
-  internal fun applyShader(
-    paint: Paint,
-    context: CartesianDrawingContext,
-    left: Float = context.layerBounds.left,
-    top: Float = context.layerBounds.top,
-    right: Float = context.layerBounds.right,
-    bottom: Float = context.layerBounds.bottom,
-  ) {
-    paint.shader = shaderProvider?.getShader(context, left, top, right, bottom)
-  }
-
-  internal fun applyShader(
-    paint: Paint,
-    context: DrawingContext,
-    left: Float,
-    top: Float,
-    right: Float,
-    bottom: Float,
-  ) {
-    paint.shader = shaderProvider?.getShader(context, left, top, right, bottom)
-  }
 
   override fun equals(other: Any?): Boolean =
     this === other ||
@@ -95,10 +67,12 @@ internal fun Fill.extractColor(
     canvas.setBitmap(bitmap)
     val correctedHeight = if (height <= 0f) canvas.height.toFloat() else height.coerceAtLeast(1f)
     val correctedWidth = if (width <= 0f) canvas.width.toFloat() else width.coerceAtLeast(1f)
-    val bitmapY = if (side == 1) 0 else (correctedHeight - 1).toInt()
     paint.shader = shaderProvider.getShader(context, 0f, 0f, correctedWidth, correctedHeight)
     canvas.drawRect(0f, 0f, correctedWidth, correctedHeight, paint)
-    bitmap.getPixel(correctedWidth.half.toInt(), bitmapY)
+    bitmap.getPixel(
+      correctedWidth.half.toInt(),
+      if (side == 1) 0 else (correctedHeight - 1).toInt(),
+    )
   } else {
     color
   }

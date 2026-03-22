@@ -64,9 +64,9 @@ public open class ShapeComponent(
   private fun getShadowPainters(shadows: List<Shadow>) =
     shadows.map { DropShadowPainter(shape, it) }
 
-  protected fun applyBrushes(context: DrawingContext, size: Size, translationY: Float) {
-    fill.applyShader(paint, context, size, translationY)
-    strokeFill.applyShader(strokePaint, context, size, translationY)
+  protected fun applyBrushes(size: Size) {
+    fill.brush?.applyTo(size = size, p = paint, alpha = 1f)
+    strokeFill.brush?.applyTo(size = size, p = strokePaint, alpha = 1f)
   }
 
   override fun draw(context: DrawingContext, left: Float, top: Float, right: Float, bottom: Float) {
@@ -85,9 +85,9 @@ public open class ShapeComponent(
         if (adjustedLeft > adjustedRight || adjustedTop > adjustedBottom) return
       }
       path.rewind()
-      val width = adjustedRight - adjustedLeft
-      val height = adjustedBottom - adjustedTop
-      applyBrushes(context = context, size = Size(width, height), translationY = top)
+      val width = right - left
+      val height = bottom - top
+      applyBrushes(Size(width, height))
       shape.outline(density, layoutDirection, path, 0f, 0f, width, height)
       if (shadowPainters.isNotEmpty()) {
         with(mutableDrawScope) {
@@ -96,7 +96,7 @@ public open class ShapeComponent(
         }
       }
       canvas.withSave {
-        canvas.translate(adjustedLeft, adjustedTop)
+        canvas.translate(left, top)
         canvas.drawPath(path, paint)
         if (strokeThickness == 0f || strokeFill.color.alpha == 0f) return@withSave
         strokePaint.strokeWidth = strokeThickness

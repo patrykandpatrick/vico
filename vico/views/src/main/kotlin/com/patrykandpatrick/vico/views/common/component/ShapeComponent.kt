@@ -62,8 +62,10 @@ public open class ShapeComponent(
     right: Float,
     bottom: Float,
   ) {
-    fill.applyShader(paint, context, left, top, right, bottom)
-    strokeFill.applyShader(strokePaint, context, left, top, right, bottom)
+    fill.shaderProvider?.getShader(context, left, top, right, bottom)?.let(paint::setShader)
+    strokeFill.shaderProvider
+      ?.getShader(context, left, top, right, bottom)
+      ?.let(strokePaint::setShader)
   }
 
   override fun draw(context: DrawingContext, left: Float, top: Float, right: Float, bottom: Float) {

@@ -21,7 +21,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.toArgb
-import com.patrykandpatrick.vico.compose.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.compose.common.data.CacheStore
 
 /**
@@ -36,25 +35,6 @@ public class Fill private constructor(public val color: Color, public val brush:
 
   /** Creates a [Brush]&#0020;[Fill]. */
   public constructor(brush: Brush) : this(Color.Black, brush)
-
-  internal fun applyShader(paint: Paint, context: CartesianDrawingContext, size: Size) {
-    when {
-      brush != null -> brush.applyTo(size = size, p = paint, alpha = 1f)
-      else -> paint.shader = null
-    }
-  }
-
-  internal fun applyShader(
-    paint: Paint,
-    context: DrawingContext,
-    size: Size,
-    translationY: Float = 0f,
-  ) {
-    when {
-      brush != null -> brush.applyTo(size = size, p = paint, alpha = 1f)
-      else -> paint.shader = null
-    }
-  }
 
   override fun equals(other: Any?): Boolean =
     this === other || other is Fill && color == other.color && brush == other.brush
@@ -84,10 +64,12 @@ internal fun Fill.extractColor(
     val (bitmap, canvas) = context.getBitmap(cacheKeyNamespace)
     val correctedHeight = if (height <= 0f) bitmap.height.toFloat() else height.coerceAtLeast(1f)
     val correctedWidth = if (width <= 0f) bitmap.width.toFloat() else width.coerceAtLeast(1f)
-    val bitmapY = if (side == 1) 0 else (correctedHeight - 1).toInt()
     brush.applyTo(size = Size(correctedWidth, correctedHeight), p = paint, alpha = 1f)
     canvas.drawRect(0f, 0f, correctedWidth, correctedHeight, paint)
-    bitmap.getPixel(correctedWidth.half.toInt(), bitmapY)
+    bitmap.getPixel(
+      correctedWidth.half.toInt(),
+      if (side == 1) 0 else (correctedHeight - 1).toInt(),
+    )
   } else {
     color
   }

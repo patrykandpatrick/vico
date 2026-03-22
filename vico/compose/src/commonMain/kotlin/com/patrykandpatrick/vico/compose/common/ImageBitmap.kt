@@ -16,7 +16,6 @@
 
 package com.patrykandpatrick.vico.compose.common
 
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 
@@ -25,9 +24,3 @@ internal fun ImageBitmap.getPixel(x: Int, y: Int): Color {
   readPixels(buffer, x, y, 1, 1)
   return Color(buffer[0])
 }
-
-/** Creates a [Fill]. */
-public fun fill(color: Color): Fill = Fill(color)
-
-/** Creates a [Fill]. */
-public fun fill(brush: Brush): Fill = Fill(brush)

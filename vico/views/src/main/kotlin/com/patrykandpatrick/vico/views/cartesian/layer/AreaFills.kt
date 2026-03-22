@@ -22,13 +22,10 @@ import android.graphics.RectF
 import com.patrykandpatrick.vico.views.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.views.cartesian.ColorScale
 import com.patrykandpatrick.vico.views.cartesian.axis.Axis
-import com.patrykandpatrick.vico.views.common.DefaultAlpha
-import com.patrykandpatrick.vico.views.common.Fill
-import com.patrykandpatrick.vico.views.common.copyColor
+import com.patrykandpatrick.vico.views.common.*
 import com.patrykandpatrick.vico.views.common.data.ExtraStore
-import com.patrykandpatrick.vico.views.common.getEnd
-import com.patrykandpatrick.vico.views.common.getStart
 import com.patrykandpatrick.vico.views.common.shader.ShaderProvider
+import com.patrykandpatrick.vico.views.common.shader.getShader
 
 internal abstract class BaseAreaFill(open val splitY: (ExtraStore) -> Number) :
   LineCartesianLayer.AreaFill {
@@ -113,7 +110,7 @@ internal data class SingleAreaFill(
   override fun onAreasCreated(context: CartesianDrawingContext, fillBounds: RectF) {
     with(context) {
       paint.color = fill.color
-      fill.applyShader(paint, this, fillBounds)
+      paint.shader = fill.shaderProvider?.getShader(this, fillBounds)
       canvas.drawPath(areaPath, paint)
     }
   }
@@ -129,7 +126,7 @@ internal data class DoubleAreaFill(
   override fun onTopAreasCreated(context: CartesianDrawingContext, path: Path, fillBounds: RectF) {
     with(context) {
       paint.color = topFill.color
-      topFill.applyShader(paint, context, fillBounds)
+      paint.shader = topFill.shaderProvider?.getShader(this, fillBounds)
       canvas.drawPath(path, paint)
     }
   }
@@ -141,7 +138,7 @@ internal data class DoubleAreaFill(
   ) {
     with(context) {
       paint.color = bottomFill.color
-      bottomFill.applyShader(paint, context, fillBounds)
+      paint.shader = bottomFill.shaderProvider?.getShader(this, fillBounds)
       canvas.drawPath(path, paint)
     }
   }

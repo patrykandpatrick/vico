@@ -32,14 +32,14 @@ internal data class SingleLineFill(val fill: Fill) : LineCartesianLayer.LineFill
     verticalAxisPosition: Axis.Position.Vertical?,
   ) {
     with(context) {
-      fill.applyShader(
-        paint,
-        this,
-        layerBounds.left,
-        layerBounds.top,
-        layerBounds.right,
-        layerBounds.bottom,
-      )
+      paint.shader =
+        fill.shaderProvider?.getShader(
+          this,
+          layerBounds.left,
+          layerBounds.top - halfLineThickness,
+          layerBounds.right,
+          layerBounds.bottom + halfLineThickness,
+        )
       canvas.drawPaint(paint)
     }
   }
@@ -60,14 +60,14 @@ internal data class DoubleLineFill(
     with(context) {
       val canvasSplitY = getCanvasSplitY(splitY, halfLineThickness, verticalAxisPosition)
       paint.color = topFill.color
-      topFill.applyShader(
-        paint,
-        this,
-        layerBounds.left,
-        layerBounds.top - halfLineThickness,
-        layerBounds.right,
-        canvasSplitY,
-      )
+      paint.shader =
+        topFill.shaderProvider?.getShader(
+          this,
+          layerBounds.left,
+          layerBounds.top - halfLineThickness,
+          layerBounds.right,
+          canvasSplitY,
+        )
       canvas.drawRect(
         layerBounds.left,
         layerBounds.top - halfLineThickness,
@@ -76,14 +76,14 @@ internal data class DoubleLineFill(
         paint,
       )
       paint.color = bottomFill.color
-      bottomFill.applyShader(
-        paint,
-        this,
-        layerBounds.left,
-        canvasSplitY,
-        layerBounds.right,
-        layerBounds.bottom + halfLineThickness,
-      )
+      paint.shader =
+        bottomFill.shaderProvider?.getShader(
+          this,
+          layerBounds.left,
+          canvasSplitY,
+          layerBounds.right,
+          layerBounds.bottom + halfLineThickness,
+        )
       canvas.drawRect(
         layerBounds.left,
         canvasSplitY,
