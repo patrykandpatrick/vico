@@ -291,31 +291,33 @@ protected constructor(
   ): Unit =
     with(context) {
       val offsetFromTickCenterY = getOffsetFromTickCenterY()
-      val textBounds =
-        labelComponent
-          .getBounds(context = this, text = label, rotationDegrees = labelRotationDegrees)
-          .apply {
-            translate(
-              x = labelX - if (areLabelsOutsideAtStartOrInsideAtEnd) width() else 0f,
-              y =
-                tickCenterY + offsetFromTickCenterY -
-                  when (verticalLabelPosition) {
-                    Position.Vertical.Top -> height()
-                    Position.Vertical.Center -> height().half
-                    Position.Vertical.Bottom -> 0f
-                  },
+      val shouldDraw =
+        horizontalLabelPosition == Outside ||
+          run {
+            val textBounds =
+              labelComponent
+                .getBounds(context = this, text = label, rotationDegrees = labelRotationDegrees)
+                .apply {
+                  translate(
+                    x = labelX - if (areLabelsOutsideAtStartOrInsideAtEnd) width() else 0f,
+                    y =
+                      tickCenterY + offsetFromTickCenterY -
+                        when (verticalLabelPosition) {
+                          Position.Vertical.Top -> height()
+                          Position.Vertical.Center -> height().half
+                          Position.Vertical.Bottom -> 0f
+                        },
+                  )
+                }
+            isNotInRestrictedBounds(
+              left = textBounds.left,
+              top = textBounds.top,
+              right = textBounds.right,
+              bottom = textBounds.bottom,
             )
           }
 
-      if (
-        horizontalLabelPosition == Outside ||
-          isNotInRestrictedBounds(
-            left = textBounds.left,
-            top = textBounds.top,
-            right = textBounds.right,
-            bottom = textBounds.bottom,
-          )
-      ) {
+      if (shouldDraw) {
         labelComponent.draw(
           context = this,
           text = label,
