@@ -26,12 +26,11 @@ internal object ColorScaleShader {
   fun create(
     context: CartesianDrawingContext,
     colors: Map<Number, Color>,
-    alpha: Float = 1f,
     from: Offset = Offset(0f, context.layerBounds.top),
     to: Offset = Offset(0f, context.layerBounds.bottom),
     verticalAxisPosition: Axis.Position.Vertical? = null,
   ): Shader {
-    val sortedColors = colors.getSortedColors(alpha)
+    val sortedColors = colors.getSortedColors()
     val positions = getPositions(context, colors.keys, verticalAxisPosition)
     val (safeColors, safePositions) = getSafeGradientData(sortedColors, positions)
     return LinearGradientShader(
@@ -42,8 +41,8 @@ internal object ColorScaleShader {
     )
   }
 
-  private fun Map<Number, Color>.getSortedColors(alpha: Float): List<Color> =
-    entries.sortedByDescending { it.key.toDouble() }.map { it.value.copy(alpha.coerceIn(0f, 1f)) }
+  private fun Map<Number, Color>.getSortedColors(): List<Color> =
+    entries.sortedByDescending { it.key.toDouble() }.map { it.value }
 
   private fun getPositions(
     context: CartesianDrawingContext,

@@ -20,7 +20,7 @@ import androidx.compose.ui.graphics.Color
 import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 
 /** Builds color-scale entries for cartesian layer fills. */
-public class ColorScaleBuilder internal constructor(public val extraStore: ExtraStore) {
+public class ColorScaleScope internal constructor(public val extraStore: ExtraStore) {
   private val entries = linkedMapOf<Number, Color>()
 
   /** Adds a color-scale entry. */
@@ -33,5 +33,5 @@ public class ColorScaleBuilder internal constructor(public val extraStore: Extra
 
 internal fun buildColorScale(
   extraStore: ExtraStore,
-  block: ColorScaleBuilder.() -> Unit,
-): Map<Number, Color> = ColorScaleBuilder(extraStore).apply(block).build()
+  block: ColorScaleScope.() -> Unit,
+): Map<Number, Color> = ColorScaleScope(extraStore).apply(block).build()

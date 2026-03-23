@@ -19,7 +19,7 @@ package com.patrykandpatrick.vico.views.cartesian.layer
 import com.patrykandpatrick.vico.views.common.data.ExtraStore
 
 /** Builds color-scale entries for cartesian layer fills. */
-public class ColorScaleBuilder internal constructor(public val extraStore: ExtraStore) {
+public class ColorScaleScope internal constructor(public val extraStore: ExtraStore) {
   private val entries = linkedMapOf<Number, Int>()
 
   /** Adds a color-scale entry. */
@@ -32,5 +32,5 @@ public class ColorScaleBuilder internal constructor(public val extraStore: Extra
 
 internal fun buildColorScale(
   extraStore: ExtraStore,
-  block: ColorScaleBuilder.() -> Unit,
-): Map<Number, Int> = ColorScaleBuilder(extraStore).apply(block).build()
+  colors: ColorScaleScope.() -> Unit,
+): Map<Number, Int> = ColorScaleScope(extraStore).apply(colors).build()

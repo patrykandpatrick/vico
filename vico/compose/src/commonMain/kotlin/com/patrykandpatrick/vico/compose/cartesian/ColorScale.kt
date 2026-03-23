@@ -30,7 +30,6 @@ import com.patrykandpatrick.vico.compose.common.data.ExtraStore
  */
 public class ColorScale(
   private val colors: (ExtraStore) -> Map<Number, Color>,
-  private val alpha: (ExtraStore) -> Float = { 1f },
   private val verticalAxisPosition: Axis.Position.Vertical? = null,
 ) {
 
@@ -41,7 +40,6 @@ public class ColorScale(
     ColorScaleShader.create(
       context = context,
       colors = colors(context.extraStore),
-      alpha = alpha(context.extraStore),
       from = Offset(x = 0f, y = context.layerBounds.top - translationY),
       to = Offset(x = 0f, y = context.layerBounds.bottom - translationY),
       verticalAxisPosition = verticalAxisPosition,

@@ -174,24 +174,15 @@ protected constructor(
 
       /** Uses a color scale. */
       public fun colorScale(
-        alpha: (ExtraStore) -> Float = { 1f },
         verticalAxisPosition: Axis.Position.Vertical? = null,
-        block: ColorScaleBuilder.() -> Unit,
+        colors: ColorScaleScope.() -> Unit,
       ): LineFill =
         ColorScaleLineFill(
           ColorScale(
-            colors = { extraStore -> buildColorScale(extraStore, block) },
-            alpha = alpha,
+            colors = { extraStore -> buildColorScale(extraStore, colors) },
             verticalAxisPosition = verticalAxisPosition,
           )
         )
-
-      /** Uses a color scale. */
-      public fun colorScale(
-        colors: (ExtraStore) -> Map<Number, Int>,
-        alpha: (ExtraStore) -> Float = { 1f },
-        verticalAxisPosition: Axis.Position.Vertical? = null,
-      ): LineFill = ColorScaleLineFill(ColorScale(colors, alpha, verticalAxisPosition))
 
       /**
        * Uses [topFill] for the portions of the line that are above the [splitY] line, and
@@ -282,24 +273,15 @@ protected constructor(
 
       /** Uses a color scale for the areas bounded by the [LineCartesianLayer] line and zero. */
       public fun colorScale(
-        alpha: (ExtraStore) -> Float = { 1f },
         verticalAxisPosition: Axis.Position.Vertical? = null,
-        block: ColorScaleBuilder.() -> Unit,
+        colors: ColorScaleScope.() -> Unit,
       ): AreaFill =
         ColorScaleAreaFill(
           ColorScale(
-            colors = { extraStore -> buildColorScale(extraStore, block) },
-            alpha = alpha,
+            colors = { extraStore -> buildColorScale(extraStore, colors) },
             verticalAxisPosition = verticalAxisPosition,
           )
         )
-
-      /** Uses a color scale for the areas bounded by the [LineCartesianLayer] line and zero. */
-      public fun colorScale(
-        colors: (ExtraStore) -> Map<Number, Int>,
-        alpha: (ExtraStore) -> Float = { 1f },
-        verticalAxisPosition: Axis.Position.Vertical? = null,
-      ): AreaFill = ColorScaleAreaFill(ColorScale(colors, alpha, verticalAxisPosition))
 
       /**
        * Uses [topFill] for those areas bounded by the [LineCartesianLayer] line and the [splitY]

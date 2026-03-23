@@ -19,13 +19,11 @@ package com.patrykandpatrick.vico.views.cartesian
 import android.graphics.LinearGradient
 import android.graphics.Shader
 import com.patrykandpatrick.vico.views.cartesian.axis.Axis
-import com.patrykandpatrick.vico.views.common.copyColor
 
 internal object ColorScaleShader {
   fun create(
     context: CartesianDrawingContext,
     colors: Map<Number, Int>,
-    alpha: Float = 1f,
     left: Float = 0f,
     top: Float = context.layerBounds.top,
     right: Float = 0f,
@@ -34,7 +32,7 @@ internal object ColorScaleShader {
   ): LinearGradient {
     val sortedMapEntries = colors.entries.sortedByDescending { it.key.toDouble() }
     val (safeColors, safePositions) =
-      getSafeGradientData(sortedMapEntries, context, alpha, verticalAxisPosition)
+      getSafeGradientData(sortedMapEntries, context, verticalAxisPosition)
 
     return LinearGradient(
       left,
@@ -60,22 +58,19 @@ internal object ColorScaleShader {
     }
   }
 
-  private fun getColorsIntArray(entries: List<Map.Entry<Number, Int>>, alpha: Float): IntArray {
-    val clampedAlpha = alpha.coerceIn(0f, 1f)
-    return IntArray(entries.size) { index -> entries[index].value.copyColor(alpha = clampedAlpha) }
-  }
+  private fun getColorsIntArray(entries: List<Map.Entry<Number, Int>>): IntArray =
+    IntArray(entries.size) { index -> entries[index].value }
 
   private fun getSafeGradientData(
     entries: List<Map.Entry<Number, Int>>,
     context: CartesianDrawingContext,
-    alpha: Float,
     verticalAxisPosition: Axis.Position.Vertical?,
   ): Pair<IntArray, FloatArray> =
     when {
       entries.size >= 2 ->
-        getColorsIntArray(entries, alpha) to getPositions(context, entries, verticalAxisPosition)
+        getColorsIntArray(entries) to getPositions(context, entries, verticalAxisPosition)
       entries.size == 1 -> {
-        val color = getColorsIntArray(entries, alpha).first()
+        val color = getColorsIntArray(entries).first()
         intArrayOf(color, color) to floatArrayOf(0f, 1f)
       }
       else -> intArrayOf(0, 0) to floatArrayOf(0f, 1f)
