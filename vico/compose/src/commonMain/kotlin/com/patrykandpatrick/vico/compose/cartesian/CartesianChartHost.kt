@@ -18,6 +18,8 @@ package com.patrykandpatrick.vico.compose.cartesian
 
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.interaction.DragInteraction
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -49,6 +51,11 @@ import kotlinx.coroutines.launch
  * @param animateIn whether to run an initial animation when the [CartesianChartHost] enters
  *   composition. The animation is skipped for previews.
  * @param placeholder shown when no [CartesianChartModel] is available.
+ * @param onViewportMeasured invoked after each measure/draw pass with the current horizontal
+ *   viewport geometry. Avoid storing this in Compose state from the callback (it runs every frame).
+ * @param onHorizontalScrollDragStarted invoked when a user-driven horizontal scroll drag starts.
+ * @param horizontalPointerFlingEnabled whether to run inertial horizontal scrolling after pointer
+ *   drag on platforms that add it (desktop and web targets).
  */
 @Composable
 public fun CartesianChartHost(
@@ -60,6 +67,9 @@ public fun CartesianChartHost(
   animationSpec: AnimationSpec<Float>? = defaultCartesianDiffAnimationSpec,
   animateIn: Boolean = true,
   placeholder: @Composable BoxScope.() -> Unit = {},
+  onViewportMeasured: ((CartesianViewportSnapshot) -> Unit)? = null,
+  onHorizontalScrollDragStarted: (() -> Unit)? = null,
+  horizontalPointerFlingEnabled: Boolean = true,
 ) {
   val mutableRanges = remember { MutableCartesianChartRanges() }
   val modelWrapper by modelProducer.collectAsState(chart, animationSpec, animateIn, mutableRanges)
@@ -75,6 +85,9 @@ public fun CartesianChartHost(
         ranges,
         previousModel,
         extraStore,
+        onViewportMeasured = onViewportMeasured,
+        onHorizontalScrollDragStarted = onHorizontalScrollDragStarted,
+        horizontalPointerFlingEnabled = horizontalPointerFlingEnabled,
       )
     } else {
       placeholder()
@@ -93,6 +106,11 @@ public fun CartesianChartHost(
  *   customization and programmatic scrolling.
  * @param zoomState houses information on the [CartesianChart]’s zoom factor. Allows for zoom
  *   customization.
+ * @param onViewportMeasured invoked after each measure/draw pass with the current horizontal
+ *   viewport geometry. Avoid storing this in Compose state from the callback (it runs every frame).
+ * @param onHorizontalScrollDragStarted invoked when a user-driven horizontal scroll drag starts.
+ * @param horizontalPointerFlingEnabled whether to run inertial horizontal scrolling after pointer
+ *   drag on platforms that add it (desktop and web targets).
  */
 @Composable
 public fun CartesianChartHost(
@@ -101,6 +119,9 @@ public fun CartesianChartHost(
   modifier: Modifier = Modifier,
   scrollState: VicoScrollState = rememberVicoScrollState(),
   zoomState: VicoZoomState = rememberDefaultVicoZoomState(scrollState.scrollEnabled),
+  onViewportMeasured: ((CartesianViewportSnapshot) -> Unit)? = null,
+  onHorizontalScrollDragStarted: (() -> Unit)? = null,
+  horizontalPointerFlingEnabled: Boolean = true,
 ) {
   val ranges = remember { MutableCartesianChartRanges() }
   remember(chart, model) {
@@ -108,7 +129,16 @@ public fun CartesianChartHost(
     chart.updateRanges(ranges, model)
   }
   CartesianChartHostBox(modifier) {
-    CartesianChartHostImpl(chart, model, scrollState, zoomState, ranges.toImmutable())
+    CartesianChartHostImpl(
+      chart,
+      model,
+      scrollState,
+      zoomState,
+      ranges.toImmutable(),
+      onViewportMeasured = onViewportMeasured,
+      onHorizontalScrollDragStarted = onHorizontalScrollDragStarted,
+      horizontalPointerFlingEnabled = horizontalPointerFlingEnabled,
+    )
   }
 }
 
@@ -121,6 +151,9 @@ internal fun CartesianChartHostImpl(
   ranges: CartesianChartRanges,
   previousModel: CartesianChartModel? = null,
   extraStore: ExtraStore = ExtraStore.Empty,
+  onViewportMeasured: ((CartesianViewportSnapshot) -> Unit)? = null,
+  onHorizontalScrollDragStarted: (() -> Unit)? = null,
+  horizontalPointerFlingEnabled: Boolean = true,
 ) {
   var markerX by rememberSaveable { mutableStateOf<Double?>(null) }
   var markerSeriesIndex by rememberSaveable { mutableStateOf<Int?>(null) }
@@ -142,6 +175,17 @@ internal fun CartesianChartHostImpl(
   val coroutineScope = rememberCoroutineScope()
   var lastHandledModel by remember { ValueWrapper(model) }
   val layerDimensions = remember { MutableCartesianLayerDimensions() }
+  val scrollInteractionSource = remember { MutableInteractionSource() }
+
+  LaunchedEffect(onHorizontalScrollDragStarted, scrollInteractionSource) {
+    if (onHorizontalScrollDragStarted != null) {
+      scrollInteractionSource.interactions.collect { interaction ->
+        if (interaction is DragInteraction.Start) {
+          onHorizontalScrollDragStarted.invoke()
+        }
+      }
+    }
+  }
 
   val onInteraction =
     remember(chart, layerDimensions, scrollState, ranges) {
@@ -223,6 +267,8 @@ internal fun CartesianChartHostImpl(
       Modifier.fillMaxSize()
         .pointerInput(
           scrollState = scrollState,
+          scrollInteractionSource = scrollInteractionSource,
+          horizontalPointerFlingEnabled = horizontalPointerFlingEnabled,
           consumeMoveEvents = chart.markerController.consumeMoveEvents,
           onInteraction = onInteraction,
           onZoom =
@@ -248,6 +294,18 @@ internal fun CartesianChartHostImpl(
 
     zoomState.update(measuringContext.value, layerDimensions, chart.layerBounds, scrollState.value)
     scrollState.update(measuringContext.value, chart.layerBounds, layerDimensions)
+
+    onViewportMeasured?.invoke(
+      CartesianViewportSnapshot(
+        scrollValue = scrollState.value,
+        maxScrollValue = scrollState.maxValue,
+        fullXRangeStart = measuringContext.value.getFullXRange(layerDimensions).start,
+        layoutDirectionMultiplier = measuringContext.value.layoutDirectionMultiplier,
+        xSpacing = layerDimensions.xSpacing,
+        xStep = measuringContext.value.ranges.xStep,
+        layerBoundsWidth = chart.layerBounds.width,
+      )
+    )
 
     if (model != lastHandledModel) {
       coroutineScope.launch { scrollState.autoScroll(model, previousModel) }

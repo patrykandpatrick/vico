@@ -16,11 +16,7 @@
 
 package com.patrykandpatrick.vico.compose.cartesian
 
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
+import platform.Foundation.NSDate
 
-@Composable
-internal actual fun Modifier.extraPointerInput(
-  scrollState: VicoScrollState,
-  horizontalPointerFlingEnabled: Boolean,
-) = this
+internal actual fun platformEpochMillis(): Long =
+  (NSDate().timeIntervalSince1970 * 1000.0).toLong()

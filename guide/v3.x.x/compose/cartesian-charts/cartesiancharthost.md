@@ -60,3 +60,13 @@ CartesianChartHost(zoomState = zoomState, /* ... */)
 * [`Zoom.x`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-zoom/-companion/x)
 
 You can create custom implementations of `Zoom` for more specific behavior.
+
+## Viewport measurement and pointer fling
+
+Optional parameters let hosts read horizontal viewport geometry each frame and tune pointer behavior:
+
+* [`onViewportMeasured`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-cartesian-chart-host) receives a [`CartesianViewportSnapshot`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-cartesian-viewport-snapshot) after layout. Do not write this into Compose state from the callback (it can run every frame).
+* [`onHorizontalScrollDragStarted`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-cartesian-chart-host) runs when a user-driven horizontal scroll drag starts.
+* [`horizontalPointerFlingEnabled`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-cartesian-chart-host) disables inertial horizontal scrolling after pointer drag on desktop and web when set to `false` (defaults to `true`).
+
+For a centered “live now” timeline built on these hooks, see the [Live timeline Cartesian chart](live-timeline-cartesian-chart.md) guide.

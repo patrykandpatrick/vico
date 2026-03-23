@@ -4,7 +4,7 @@
 
 ## Parent PRD
 
-[live-time-series-line-chart.md](../live-time-series-line-chart.md)  
+[live-time-series-line-chart.md](./live-time-series-line-chart.md)  
 *(Optional: link a parent GitHub tracking issue here when created.)*
 
 ## Type

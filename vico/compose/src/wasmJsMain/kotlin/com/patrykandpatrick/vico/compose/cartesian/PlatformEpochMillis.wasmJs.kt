@@ -16,11 +16,9 @@
 
 package com.patrykandpatrick.vico.compose.cartesian
 
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
+import kotlin.js.ExperimentalWasmJsInterop
 
-@Composable
-internal actual fun Modifier.extraPointerInput(
-  scrollState: VicoScrollState,
-  horizontalPointerFlingEnabled: Boolean,
-) = this
+@OptIn(ExperimentalWasmJsInterop::class)
+private fun jsDateNowMs(): Double = js("Date.now()")
+
+internal actual fun platformEpochMillis(): Long = jsDateNowMs().toLong()

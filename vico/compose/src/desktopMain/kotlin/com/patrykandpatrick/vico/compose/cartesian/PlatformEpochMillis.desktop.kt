@@ -16,11 +16,4 @@
 
 package com.patrykandpatrick.vico.compose.cartesian
 
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-
-@Composable
-internal actual fun Modifier.extraPointerInput(
-  scrollState: VicoScrollState,
-  horizontalPointerFlingEnabled: Boolean,
-) = this
+internal actual fun platformEpochMillis(): Long = System.currentTimeMillis()

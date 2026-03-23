@@ -22,18 +22,22 @@ import com.patrykandpatrick.vico.sample.app.Chart.Details
 import com.patrykandpatrick.vico.sample.charts.compose.*
 
 object Charts {
-  val Compose =
-    default(
-      { ComposeBasicColumnChart(it) },
-      { ComposeBasicLineChart(it) },
-      { ComposeBasicComboChart(it) },
-      { ComposeAITestScores(it) },
-      { ComposeDailyDigitalMediaUse(it) },
-      { ComposeTemperatureAnomalies(it) },
-      { ComposeElectricCarSales(it) },
-      { ComposeRockMetalRatios(it) },
-      { ComposeGoldPrices(it) },
+  val Compose: List<Chart> = buildList {
+    addAll(
+      default(
+        { ComposeBasicColumnChart(it) },
+        { ComposeBasicLineChart(it) },
+        { ComposeBasicComboChart(it) },
+        { ComposeAITestScores(it) },
+        { ComposeDailyDigitalMediaUse(it) },
+        { ComposeTemperatureAnomalies(it) },
+        { ComposeElectricCarSales(it) },
+        { ComposeRockMetalRatios(it) },
+        { ComposeGoldPrices(it) },
+      )
     )
+    add(Chart(Details.LiveTimeSeries, { ComposeLiveTimeSeriesChart(it) }))
+  }
 
   fun default(
     basicColumnChart: @Composable (Modifier) -> Unit,

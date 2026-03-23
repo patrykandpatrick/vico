@@ -32,7 +32,10 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 @Composable
-internal actual fun Modifier.extraPointerInput(scrollState: VicoScrollState): Modifier {
+internal actual fun Modifier.extraPointerInput(
+  scrollState: VicoScrollState,
+  horizontalPointerFlingEnabled: Boolean,
+): Modifier {
   var scrollJob by rememberWrappedValue<Job?>(null)
   val coroutineScope = rememberCoroutineScope()
   val animationSpec = rememberSplineBasedDecay<Float>()
@@ -45,12 +48,14 @@ internal actual fun Modifier.extraPointerInput(scrollState: VicoScrollState): Mo
     orientation = Orientation.Horizontal,
     onDragStopped = { velocity ->
       scrollJob?.cancel()
-      scrollJob =
-        coroutineScope.launch {
-          AnimationState(scrollState.value, velocity).animateDecay(animationSpec) {
-            launch { scrollState.scroll(Scroll.Absolute.pixels(value)) }
+      if (horizontalPointerFlingEnabled) {
+        scrollJob =
+          coroutineScope.launch {
+            AnimationState(scrollState.value, velocity).animateDecay(animationSpec) {
+              launch { scrollState.scroll(Scroll.Absolute.pixels(value)) }
+            }
           }
-        }
+      }
     },
     reverseDirection = true,
   )

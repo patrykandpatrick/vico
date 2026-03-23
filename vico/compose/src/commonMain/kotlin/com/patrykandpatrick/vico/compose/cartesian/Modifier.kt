@@ -19,6 +19,7 @@ package com.patrykandpatrick.vico.compose.cartesian
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -33,11 +34,17 @@ private const val BASE_SCROLL_ZOOM_DELTA = 0.1f
 
 private fun Offset.toPoint() = Point(x, y)
 
-@Composable internal expect fun Modifier.extraPointerInput(scrollState: VicoScrollState): Modifier
+@Composable
+internal expect fun Modifier.extraPointerInput(
+  scrollState: VicoScrollState,
+  horizontalPointerFlingEnabled: Boolean,
+): Modifier
 
 @Composable
 internal fun Modifier.pointerInput(
   scrollState: VicoScrollState,
+  scrollInteractionSource: MutableInteractionSource,
+  horizontalPointerFlingEnabled: Boolean,
   onInteraction: ((Interaction) -> Unit)?,
   onZoom: ((Float, Offset) -> Unit)?,
   consumeMoveEvents: Boolean,
@@ -48,6 +55,7 @@ internal fun Modifier.pointerInput(
       orientation = Orientation.Horizontal,
       enabled = scrollState.scrollEnabled,
       reverseDirection = true,
+      interactionSource = scrollInteractionSource,
     )
     .pointerInput(onZoom, onInteraction) {
       awaitPointerEventScope {
@@ -109,6 +117,6 @@ internal fun Modifier.pointerInput(
         Modifier
       }
     )
-    .extraPointerInput(scrollState)
+    .extraPointerInput(scrollState, horizontalPointerFlingEnabled)
 
 private fun Offset.fits(size: IntSize) = x >= 0f && x <= size.width && y >= 0f && y <= size.height

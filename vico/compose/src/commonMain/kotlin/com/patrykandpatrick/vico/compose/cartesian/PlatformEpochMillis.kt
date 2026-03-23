@@ -16,11 +16,11 @@
 
 package com.patrykandpatrick.vico.compose.cartesian
 
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
+/** Wall-clock epoch milliseconds for the current platform. */
+internal expect fun platformEpochMillis(): Long
 
-@Composable
-internal actual fun Modifier.extraPointerInput(
-  scrollState: VicoScrollState,
-  horizontalPointerFlingEnabled: Boolean,
-) = this
+/**
+ * Returns a [nowProvider] suitable for live timelines when chart _x_ values use epoch
+ * milliseconds.
+ */
+public fun defaultLiveTimelineNowProvider(): () -> Long = { platformEpochMillis() }
