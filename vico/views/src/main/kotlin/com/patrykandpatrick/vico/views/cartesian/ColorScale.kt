@@ -20,18 +20,12 @@ import android.graphics.Shader
 import com.patrykandpatrick.vico.views.cartesian.axis.Axis
 import com.patrykandpatrick.vico.views.common.data.ExtraStore
 
-/**
- * Creates a [Shader] whose colors depend on their y-positions.
- *
- * @param colors maps y-values to colors.
- * @param verticalAxisPosition the position of the [Axis] whose coordinate system to use.
- */
-public class ColorScale(
+internal class ColorScale(
   private val colors: (ExtraStore) -> Map<Number, Int>,
   private val verticalAxisPosition: Axis.Position.Vertical? = null,
 ) {
 
-  public fun getColorScaleShader(context: CartesianDrawingContext): Shader =
+  fun getColorScaleShader(context: CartesianDrawingContext): Shader =
     ColorScaleShader.create(
       context = context,
       colors = colors(context.extraStore),
