@@ -21,10 +21,10 @@ import androidx.annotation.FloatRange
 import androidx.core.graphics.get
 import com.patrykandpatrick.vico.views.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.views.cartesian.CartesianMeasuringContext
+import com.patrykandpatrick.vico.views.cartesian.ColorScale
 import com.patrykandpatrick.vico.views.cartesian.axis.Axis
 import com.patrykandpatrick.vico.views.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.views.cartesian.data.*
-import com.patrykandpatrick.vico.views.cartesian.layer.LineCartesianLayer.PointConnector
 import com.patrykandpatrick.vico.views.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.views.cartesian.marker.LineCartesianLayerMarkerTarget
 import com.patrykandpatrick.vico.views.cartesian.marker.MutableLineCartesianLayerMarkerTarget
@@ -172,6 +172,18 @@ protected constructor(
       /** Uses a single [Fill]. */
       public fun single(fill: Fill): LineFill = SingleLineFill(fill)
 
+      /** Uses a color scale. */
+      public fun colorScale(
+        verticalAxisPosition: Axis.Position.Vertical? = null,
+        colors: ColorScaleScope.() -> Unit,
+      ): LineFill =
+        ColorScaleLineFill(
+          ColorScale(
+            colors = { extraStore -> buildColorScale(extraStore, colors) },
+            verticalAxisPosition = verticalAxisPosition,
+          )
+        )
+
       /**
        * Uses [topFill] for the portions of the line that are above the [splitY] line, and
        * analogously for [bottomFill]. (The [splitY] line is an imaginary horizontal line whose _y_
@@ -258,6 +270,18 @@ protected constructor(
        */
       public fun single(fill: Fill, splitY: (ExtraStore) -> Number = { 0 }): AreaFill =
         SingleAreaFill(fill, splitY)
+
+      /** Uses a color scale for the areas bounded by the [LineCartesianLayer] line and zero. */
+      public fun colorScale(
+        verticalAxisPosition: Axis.Position.Vertical? = null,
+        colors: ColorScaleScope.() -> Unit,
+      ): AreaFill =
+        ColorScaleAreaFill(
+          ColorScale(
+            colors = { extraStore -> buildColorScale(extraStore, colors) },
+            verticalAxisPosition = verticalAxisPosition,
+          )
+        )
 
       /**
        * Uses [topFill] for those areas bounded by the [LineCartesianLayer] line and the [splitY]

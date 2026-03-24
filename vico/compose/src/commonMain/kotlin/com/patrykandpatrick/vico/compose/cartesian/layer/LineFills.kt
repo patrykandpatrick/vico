@@ -20,6 +20,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.withSave
 import com.patrykandpatrick.vico.compose.cartesian.CartesianDrawingContext
+import com.patrykandpatrick.vico.compose.cartesian.ColorScale
 import com.patrykandpatrick.vico.compose.cartesian.axis.Axis
 import com.patrykandpatrick.vico.compose.common.Fill
 import com.patrykandpatrick.vico.compose.common.data.ExtraStore
@@ -88,6 +89,23 @@ internal data class DoubleLineFill(
           paint,
         )
       }
+    }
+  }
+}
+
+internal data class ColorScaleLineFill(val colorScale: ColorScale) : LineCartesianLayer.LineFill {
+  private val paint = Paint()
+
+  override fun draw(
+    context: CartesianDrawingContext,
+    halfLineThickness: Float,
+    verticalAxisPosition: Axis.Position.Vertical?,
+  ) {
+    with(context) {
+      val top = layerBounds.top - halfLineThickness
+      val bottom = layerBounds.bottom + halfLineThickness
+      paint.shader = colorScale.getColorScaleShader(context)
+      canvas.drawRect(layerBounds.left, top, layerBounds.right, bottom, paint)
     }
   }
 }
