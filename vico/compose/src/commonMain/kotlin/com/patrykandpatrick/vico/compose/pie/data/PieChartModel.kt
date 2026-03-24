@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.patrykandpatrick.vico.compose.pie
+package com.patrykandpatrick.vico.compose.pie.data
 
 import androidx.compose.runtime.Immutable
 import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 
-/** Stores a [PieChart]’s data. */
+/** Stores a [PieChart]'s data. */
 @Immutable
 public class PieChartModel
 internal constructor(public val entries: List<Entry>, public val extraStore: ExtraStore) {

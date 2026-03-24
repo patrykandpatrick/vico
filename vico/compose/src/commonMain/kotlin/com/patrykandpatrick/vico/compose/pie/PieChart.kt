@@ -45,6 +45,8 @@ import com.patrykandpatrick.vico.compose.common.orZero
 import com.patrykandpatrick.vico.compose.common.saveLayer
 import com.patrykandpatrick.vico.compose.common.toRadians
 import com.patrykandpatrick.vico.compose.common.vicoTheme
+import com.patrykandpatrick.vico.compose.pie.data.PieChartModel
+import com.patrykandpatrick.vico.compose.pie.data.PieValueFormatter
 import kotlin.math.cos
 import kotlin.math.max
 import kotlin.math.sin

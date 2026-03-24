@@ -30,9 +30,9 @@ import com.patrykandpatrick.vico.compose.common.component.TextComponent
 import com.patrykandpatrick.vico.compose.common.vicoTheme
 import com.patrykandpatrick.vico.compose.pie.PieChart
 import com.patrykandpatrick.vico.compose.pie.PieChartHost
-import com.patrykandpatrick.vico.compose.pie.PieChartModelProducer
-import com.patrykandpatrick.vico.compose.pie.PieValueFormatter
-import com.patrykandpatrick.vico.compose.pie.pieSeries
+import com.patrykandpatrick.vico.compose.pie.data.PieChartModelProducer
+import com.patrykandpatrick.vico.compose.pie.data.PieValueFormatter
+import com.patrykandpatrick.vico.compose.pie.data.pieSeries
 import com.patrykandpatrick.vico.compose.pie.rememberPieChart
 
 @Composable

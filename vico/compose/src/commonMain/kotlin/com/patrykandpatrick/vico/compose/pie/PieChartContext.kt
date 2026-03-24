@@ -34,6 +34,7 @@ import com.patrykandpatrick.vico.compose.common.MeasuringContext
 import com.patrykandpatrick.vico.compose.common.MutableDrawScope
 import com.patrykandpatrick.vico.compose.common.data.CacheStore
 import com.patrykandpatrick.vico.compose.common.data.ExtraStore
+import com.patrykandpatrick.vico.compose.pie.data.PieChartModel
 
 /** A [MeasuringContext] extension with pie-chart data. */
 public interface PieChartMeasuringContext : MeasuringContext {

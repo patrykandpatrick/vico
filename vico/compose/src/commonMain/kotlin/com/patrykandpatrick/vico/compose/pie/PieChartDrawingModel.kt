@@ -18,6 +18,7 @@ package com.patrykandpatrick.vico.compose.pie
 
 import com.patrykandpatrick.vico.compose.common.lerp
 import com.patrykandpatrick.vico.compose.common.orZero
+import com.patrykandpatrick.vico.compose.pie.data.PieChartModel
 import kotlin.math.max
 
 internal class PieChartDrawingModel(val slices: List<SliceInfo>) {

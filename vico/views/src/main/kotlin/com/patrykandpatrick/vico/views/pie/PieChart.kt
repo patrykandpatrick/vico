@@ -41,6 +41,7 @@ import com.patrykandpatrick.vico.views.common.orZero
 import com.patrykandpatrick.vico.views.common.saveLayer
 import com.patrykandpatrick.vico.views.common.shader.ShaderProvider
 import com.patrykandpatrick.vico.views.pie.data.PieChartModel
+import com.patrykandpatrick.vico.views.pie.data.PieValueFormatter
 import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.max

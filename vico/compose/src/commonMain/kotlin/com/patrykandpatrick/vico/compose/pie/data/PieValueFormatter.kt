@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package com.patrykandpatrick.vico.compose.pie
+package com.patrykandpatrick.vico.compose.pie.data
 
 import com.patrykandpatrick.vico.compose.common.format
+import com.patrykandpatrick.vico.compose.pie.PieChartMeasuringContext
 
 /** Formats pie-chart values for display. */
 public fun interface PieValueFormatter {

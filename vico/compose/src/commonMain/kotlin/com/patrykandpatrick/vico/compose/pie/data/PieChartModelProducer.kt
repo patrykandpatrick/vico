@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.patrykandpatrick.vico.compose.pie
+package com.patrykandpatrick.vico.compose.pie.data
 
 import com.patrykandpatrick.vico.compose.common.data.MutableExtraStore
 import kotlinx.coroutines.Dispatchers

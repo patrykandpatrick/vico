@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package com.patrykandpatrick.vico.views.pie
+package com.patrykandpatrick.vico.views.pie.data
 
+import com.patrykandpatrick.vico.views.pie.PieChartMeasuringContext
 import java.text.DecimalFormat
 
 /** Formats pie-chart values. */

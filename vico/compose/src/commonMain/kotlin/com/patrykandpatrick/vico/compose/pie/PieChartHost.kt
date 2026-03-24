@@ -42,6 +42,8 @@ import com.patrykandpatrick.vico.compose.common.Defaults.CHART_HEIGHT
 import com.patrykandpatrick.vico.compose.common.MutableDrawScope
 import com.patrykandpatrick.vico.compose.common.NEW_PIE_PRODUCER_ERROR_MESSAGE
 import com.patrykandpatrick.vico.compose.common.ValueWrapper
+import com.patrykandpatrick.vico.compose.pie.data.PieChartModel
+import com.patrykandpatrick.vico.compose.pie.data.PieChartModelProducer
 import kotlinx.coroutines.flow.collectLatest
 
 internal val defaultPieDiffAnimationSpec: AnimationSpec<Float> =
