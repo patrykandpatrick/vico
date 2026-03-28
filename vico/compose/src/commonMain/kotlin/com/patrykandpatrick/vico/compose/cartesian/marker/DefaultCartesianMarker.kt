@@ -409,9 +409,21 @@ internal class DefaultValueFormatter(
     this === other ||
       other is DefaultValueFormatter &&
         decimalCount == other.decimalCount &&
+        decimalSeparator == other.decimalSeparator &&
+        thousandsSeparator == other.thousandsSeparator &&
+        prefix == other.prefix &&
+        suffix == other.suffix &&
         colorCode == other.colorCode
 
-  override fun hashCode(): Int = 31 * decimalCount.hashCode() + colorCode.hashCode()
+  override fun hashCode(): Int {
+    var result = decimalCount.hashCode()
+    result = 31 * result + decimalSeparator.hashCode()
+    result = 31 * result + thousandsSeparator.hashCode()
+    result = 31 * result + prefix.hashCode()
+    result = 31 * result + suffix.hashCode()
+    result = 31 * result + colorCode.hashCode()
+    return result
+  }
 }
 
 /** Creates and remembers a [DefaultCartesianMarker]. */
