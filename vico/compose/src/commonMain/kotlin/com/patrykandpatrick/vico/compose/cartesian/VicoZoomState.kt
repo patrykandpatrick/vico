@@ -16,7 +16,11 @@
 
 package com.patrykandpatrick.vico.compose.cartesian
 
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableFloatState
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.geometry.Rect
@@ -198,8 +202,18 @@ public fun rememberVicoZoomState(
   }
 
 @Composable
-internal fun rememberDefaultVicoZoomState(scrollEnabled: Boolean) =
-  rememberVicoZoomState(
-    initialZoom =
-      if (scrollEnabled) remember { Zoom.max(Zoom.fixed(), Zoom.Content) } else Zoom.Content
-  )
+internal fun rememberDefaultVicoZoomState(scrollEnabled: Boolean): VicoZoomState {
+  val initialZoom = if (scrollEnabled) Zoom.max(Zoom.fixed(), Zoom.Content) else Zoom.Content
+  val minZoom = Zoom.Content
+  val maxZoom = Zoom.max(Zoom.fixed(Defaults.MAX_ZOOM), Zoom.Content)
+  return rememberSaveable(
+    saver = remember { VicoZoomState.Saver(true, initialZoom, minZoom, maxZoom) }
+  ) {
+    VicoZoomState(
+      zoomEnabled = true,
+      initialZoom = initialZoom,
+      minZoom = minZoom,
+      maxZoom = maxZoom,
+    )
+  }
+}

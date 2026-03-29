@@ -40,7 +40,7 @@ import com.patrykandpatrick.vico.views.common.rangeWith
  * @property autoScrollDuration the animation duration for automatic scrolling.
  */
 public class ScrollHandler(
-  internal val scrollEnabled: Boolean = true,
+  public var scrollEnabled: Boolean = true,
   private val initialScroll: Scroll.Absolute = Scroll.Absolute.Start,
   private val autoScroll: Scroll = initialScroll,
   private val autoScrollCondition: AutoScrollCondition = AutoScrollCondition.Never,

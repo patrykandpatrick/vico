@@ -23,9 +23,17 @@ import androidx.compose.foundation.gestures.ScrollableState
 import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.gestures.stopScroll
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableFloatState
+import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.geometry.Rect
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.compose.cartesian.layer.CartesianLayerDimensions
@@ -48,7 +56,7 @@ public class VicoScrollState {
   private var context: CartesianMeasuringContext? = null
   private var layerDimensions: CartesianLayerDimensions? = null
   private var bounds: Rect? = null
-  internal val scrollEnabled: Boolean
+  internal var scrollEnabled by mutableStateOf(true)
   internal val consumedXDeltas = MutableSharedFlow<Float>(extraBufferCapacity = 1)
   internal val unconsumedXDeltas = MutableSharedFlow<Float>(extraBufferCapacity = 1)
 
@@ -226,29 +234,32 @@ public fun rememberVicoScrollState(
   autoScroll: Scroll = initialScroll,
   autoScrollCondition: AutoScrollCondition = AutoScrollCondition.Never,
   autoScrollAnimationSpec: AnimationSpec<Float> = spring(),
-): VicoScrollState =
-  rememberSaveable(
-    scrollEnabled,
-    initialScroll,
-    autoScroll,
-    autoScrollCondition,
-    autoScrollAnimationSpec,
-    saver =
-      remember(scrollEnabled, initialScroll, autoScrollCondition, autoScrollAnimationSpec) {
-        VicoScrollState.Saver(
-          scrollEnabled,
-          initialScroll,
-          autoScroll,
-          autoScrollCondition,
-          autoScrollAnimationSpec,
-        )
-      },
-  ) {
-    VicoScrollState(
-      scrollEnabled,
+): VicoScrollState {
+  val state =
+    rememberSaveable(
       initialScroll,
       autoScroll,
       autoScrollCondition,
       autoScrollAnimationSpec,
-    )
-  }
+      saver =
+        remember(scrollEnabled, initialScroll, autoScrollCondition, autoScrollAnimationSpec) {
+          VicoScrollState.Saver(
+            scrollEnabled,
+            initialScroll,
+            autoScroll,
+            autoScrollCondition,
+            autoScrollAnimationSpec,
+          )
+        },
+    ) {
+      VicoScrollState(
+        scrollEnabled,
+        initialScroll,
+        autoScroll,
+        autoScrollCondition,
+        autoScrollAnimationSpec,
+      )
+    }
+  SideEffect { state.scrollEnabled = scrollEnabled }
+  return state
+}
