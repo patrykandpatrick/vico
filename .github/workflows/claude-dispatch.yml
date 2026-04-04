@@ -32,12 +32,15 @@ jobs:
           prompt: |
             You are running from a manually dispatched GitHub Actions workflow for the `${{ github.repository }}` repository.
 
-            Follow the operator's request below and carry it out using GitHub tools as needed. The repository source code is checked out and available.
-
-            Operator request:
-            ${{ github.event.inputs.prompt }}
+            Carry out the operator's request using GitHub tools as needed. The repository source code is checked out and available.
 
             Use `gh` or `gh api` for GitHub operations such as commenting on issues or discussions, closing them, adding or removing labels, and other repository maintenance tasks.
 
+            When referring to commits or releases in any public-facing text, always format them as hyperlinks.
+
             Before making changes, inspect the current state of any referenced issue, pull request, or discussion. Then perform the requested actions and finish with a concise summary of what you changed.
+
+            Operator request:
+
+            ${{ github.event.inputs.prompt }}
           claude_args: --max-turns 5 --model claude-opus-4-6
