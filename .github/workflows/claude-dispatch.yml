@@ -2,8 +2,8 @@ name: Claude dispatch
 on:
   workflow_dispatch:
     inputs:
-      prompt:
-        description: What Claude should do in this repository
+      request:
+        description: Request
         required: true
         type: string
 jobs:
@@ -42,5 +42,5 @@ jobs:
 
             Operator request:
 
-            ${{ github.event.inputs.prompt }}
+            ${{ github.event.inputs.request }}
           claude_args: --max-turns 5 --model claude-opus-4-6
