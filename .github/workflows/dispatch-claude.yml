@@ -1,4 +1,4 @@
-name: Claude dispatch
+name: Dispatch Claude
 on:
   workflow_dispatch:
     inputs:
@@ -7,7 +7,7 @@ on:
         required: true
         type: string
 jobs:
-  claude-dispatch:
+  dispatch-claude:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
@@ -43,4 +43,4 @@ jobs:
             Operator request:
 
             ${{ github.event.inputs.request }}
-          claude_args: --max-turns 5 --model claude-opus-4-6
+          claude_args: --model claude-opus-4-6
