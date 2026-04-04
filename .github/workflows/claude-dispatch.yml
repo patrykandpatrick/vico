@@ -1,0 +1,43 @@
+name: Claude dispatch
+on:
+  workflow_dispatch:
+    inputs:
+      prompt:
+        description: What Claude should do in this repository
+        required: true
+        type: string
+jobs:
+  claude-dispatch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      actions: read
+      contents: read
+      discussions: write
+      id-token: write
+      issues: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v6
+      - uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          settings: |
+            {
+              "permissions": {
+                "allow": ["Bash(*)"]
+              }
+            }
+          prompt: |
+            You are running from a manually dispatched GitHub Actions workflow for the `${{ github.repository }}` repository.
+
+            Follow the operator's request below and carry it out using GitHub tools as needed. The repository source code is checked out and available.
+
+            Operator request:
+            ${{ github.event.inputs.prompt }}
+
+            Use `gh` or `gh api` for GitHub operations such as commenting on issues or discussions, closing them, adding or removing labels, and other repository maintenance tasks.
+
+            Before making changes, inspect the current state of any referenced issue, pull request, or discussion. Then perform the requested actions and finish with a concise summary of what you changed.
+          claude_args: --max-turns 5 --model claude-opus-4-6
