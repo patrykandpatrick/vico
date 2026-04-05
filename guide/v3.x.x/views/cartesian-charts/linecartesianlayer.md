@@ -7,7 +7,7 @@ metaLinks:
 
 # LineCartesianLayer
 
-Use [`LineCartesianLayer`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.layer/-line-cartesian-layer/) to create line charts. Each line is associated with a [`LineCartesianLayer.Line`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.layer/-line-cartesian-layer/-line/) instance. These are provided by [`LineCartesianLayer.LineProvider`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.layer/-line-cartesian-layer/-line-provider/). A base implementation of this interface can be instantiated via [`LineCartesianLayer.LineProvider.series`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.layer/-line-cartesian-layer/-line-provider/-companion/series). You can customize line fills, backgrounds, shapes, and other properties. You can also add data labels and points.
+Use [`LineCartesianLayer`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.layer/-line-cartesian-layer/) to create line charts. Each line is associated with a [`LineCartesianLayer.Line`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.layer/-line-cartesian-layer/-line/) instance. These are provided by [`LineCartesianLayer.LineProvider`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.layer/-line-cartesian-layer/-line-provider/). A base implementation of this interface can be instantiated via [`LineCartesianLayer.LineProvider.series`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.layer/-line-cartesian-layer/-line-provider/-companion/series). You can customize line fills, backgrounds, shapes, and other properties. You can also add data labels, points, and interpolation.
 
 ## `LineStroke`
 
@@ -30,13 +30,25 @@ Area fills, which are optional, are customized via [`LineCartesianLayer.AreaFill
 
 These cover most use cases. You can use both solid colors and [`ShaderProvider`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.common.shader/-shader-provider/) instances, and you can apply split styling—enabling you to create a line that’s green for positive values and red for negative values, for instance. You can, however, also create your own `LineCartesianLayer.LineFill` and `LineCartesianLayer.AreaFill` implementations.
 
+[`LineCartesianLayer.LineFill.colorScale`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.layer/-line-cartesian-layer/-line-fill/-companion/color-scale) and [`LineCartesianLayer.AreaFill.colorScale`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.layer/-line-cartesian-layer/-area-fill/-companion/color-scale) provide another option. These APIs let you define multi-stop styling against the value scale instead of splitting at a single threshold.
+
+## `Interpolator`
+
+Use [`LineCartesianLayer.Interpolator`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.layer/-line-cartesian-layer/-interpolator/) to define how a line passes through its points. Three built-in implementations are available:
+
+* [`LineCartesianLayer.Interpolator.Sharp`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.layer/-line-cartesian-layer/-interpolator/-companion/-sharp)
+* [`LineCartesianLayer.Interpolator.cubic`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.layer/-line-cartesian-layer/-interpolator/-companion/cubic)
+* [`LineCartesianLayer.Interpolator.catmullRom`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.layer/-line-cartesian-layer/-interpolator/-companion/catmull-rom)
+
+The first uses straight line segments. The second uses cubic Bézier curves. The third passes through all points and keeps collinear segments straight.
+
 ## `PointProvider`
 
 To add points, use [`LineCartesianLayer.PointProvider`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.layer/-line-cartesian-layer/-point-provider/). [`LineCartesianLayer.PointProvider.single`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.layer/-line-cartesian-layer/-point-provider/-companion/single) instantiates a base implementation that adds a point for each entry and uses a shared point style. Once again, custom implementations can be created. A common use case for this is styling points individually based on their _y_-values.
 
 ## Creation
 
-To create a `LineCartesianLayer` instance, use the XML attributes:
+To create a line-layer instance, use the XML attributes:
 
 ```xml
 <style name="ChartStyle">

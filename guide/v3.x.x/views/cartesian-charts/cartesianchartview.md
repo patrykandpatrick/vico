@@ -84,6 +84,8 @@ cartesianChartView.scrollHandler = scrollHandler
 cartesianChartView.zoomHandler = zoomHandler
 ```
 
+You can also toggle [`ScrollHandler.scrollEnabled`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian/-scroll-handler/scroll-enabled/) directly. 
+
 [`Scroll`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian/-scroll/) represents scroll values—either absolute (from zero) or relative (from the current value). [`Scroll.Absolute`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian/-scroll/-absolute/) and [`Scroll.Relative`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian/-scroll/-relative/) cover the two cases. The following factory functions are available:
 
 * [`Scroll.Absolute.pixels`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian/-scroll/-absolute/-companion/pixels)
