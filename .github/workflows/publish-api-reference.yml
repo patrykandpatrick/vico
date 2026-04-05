@@ -84,7 +84,7 @@ jobs:
         run: |
           cd ${{ github.workspace }}/vico
           ./gradlew dokkaGenerate
-      - uses: actions/configure-pages@v5
+      - uses: actions/configure-pages@v6
       - name: Build GitHub Pages site
         run: |
           SITE_DIR=${{ github.workspace }}/site
