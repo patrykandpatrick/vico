@@ -1,9 +1,11 @@
 name: Publish API reference
 on:
-  push:
-    tags:
-      - "v*"
   workflow_dispatch:
+    inputs:
+      tag_name:
+        description: Version tag to publish. Defaults to the newest version tag.
+        required: false
+        type: string
 jobs:
   publish-api-reference:
     runs-on: ubuntu-latest
@@ -28,9 +30,8 @@ jobs:
       - name: Resolve tag
         run: |
           cd ${{ github.workspace }}/vico
-          if [ "${{ github.event_name }}" = "push" ]; then
-            TAG_NAME="${GITHUB_REF_NAME}"
-          else
+          TAG_NAME="${{ inputs.tag_name }}"
+          if [ -z "$TAG_NAME" ]; then
             TAG_NAME=$(
               git tag --list 'v*' |
                 awk '
