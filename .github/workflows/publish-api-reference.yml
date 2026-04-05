@@ -1,0 +1,117 @@
+name: Publish API reference
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+jobs:
+  publish-api-reference:
+    runs-on: ubuntu-latest
+    if: github.repository == 'patrykandpatrick/vico'
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          path: vico
+          fetch-depth: 0
+      - uses: actions/setup-java@v5
+        with:
+          distribution: zulu
+          java-version: 17
+      - uses: gradle/actions/setup-gradle@v6
+      - name: Resolve tag
+        run: |
+          cd ${{ github.workspace }}/vico
+          if [ "${{ github.event_name }}" = "push" ]; then
+            TAG_NAME="${GITHUB_REF_NAME}"
+          else
+            TAG_NAME=$(
+              git tag --list 'v*' |
+                awk '
+                  function prerelease_rank(label) {
+                    if (label == "") return 3
+                    if (label == "alpha") return 0
+                    if (label == "beta") return 1
+                    if (label == "next") return 2
+                    return -1
+                  }
+                  {
+                    tag = $0
+                    version = substr(tag, 2)
+                    split(version, parts, "-")
+                    split(parts[1], core, ".")
+                    label = ""
+                    label_number = 0
+                    if (length(parts) > 1) {
+                      split(parts[2], prerelease_parts, ".")
+                      label = prerelease_parts[1]
+                      if (length(prerelease_parts) > 1) {
+                        label_number = prerelease_parts[2]
+                      }
+                    }
+                    printf "%06d %06d %06d %06d %06d %s\n", core[1], core[2], core[3], prerelease_rank(label), label_number, tag
+                  }
+                ' |
+                sort -k1,1nr -k2,2nr -k3,3nr -k4,4nr -k5,5nr |
+                head -n1 |
+                cut -d' ' -f6
+            )
+          fi
+
+          if [ -z "$TAG_NAME" ]; then
+            echo "No version tag found."
+            exit 1
+          fi
+
+          VERSION_NAME=${TAG_NAME#v}
+          IS_PRERELEASE=false
+          echo "$VERSION_NAME" | grep -q "alpha\|beta\|next" && IS_PRERELEASE=true
+
+          echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
+          echo "VERSION_NAME=$VERSION_NAME" >> $GITHUB_ENV
+          echo "IS_PRERELEASE=$IS_PRERELEASE" >> $GITHUB_ENV
+      - name: Check out release tag
+        run: |
+          cd ${{ github.workspace }}/vico
+          git checkout "$TAG_NAME"
+      - name: Build current API reference
+        run: |
+          cd ${{ github.workspace }}/vico
+          ./gradlew dokkaGenerate
+      - uses: actions/configure-pages@v6
+      - name: Build GitHub Pages site
+        run: |
+          SITE_DIR=${{ github.workspace }}/site
+          rm -rf "$SITE_DIR" ${{ github.workspace }}/vico-stable
+          mkdir -p "$SITE_DIR"
+
+          if $IS_PRERELEASE; then
+            cd ${{ github.workspace }}/vico
+            STABLE_TAG=$(git tag --list 'v*' --sort=-version:refname | grep -Ev 'alpha|beta|next' | head -n1)
+            if [ -z "$STABLE_TAG" ]; then
+              echo "No stable tag found."
+              exit 1
+            fi
+
+            git worktree add ${{ github.workspace }}/vico-stable "$STABLE_TAG"
+            cd ${{ github.workspace }}/vico-stable
+            ./gradlew dokkaGenerate
+            cp -R ${{ github.workspace }}/vico-stable/vico/build/dokka/html/. "$SITE_DIR"
+            mkdir -p "$SITE_DIR/$TAG_NAME"
+            cp -R ${{ github.workspace }}/vico/vico/build/dokka/html/. "$SITE_DIR/$TAG_NAME"
+          else
+            cp -R ${{ github.workspace }}/vico/vico/build/dokka/html/. "$SITE_DIR"
+          fi
+
+          touch "$SITE_DIR/.nojekyll"
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: ${{ github.workspace }}/site
+      - id: deployment
+        uses: actions/deploy-pages@v5
