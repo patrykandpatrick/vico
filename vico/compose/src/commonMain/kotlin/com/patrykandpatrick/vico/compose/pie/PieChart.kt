@@ -303,7 +303,11 @@ internal constructor(
         val x = center.x + cos(radians).toFloat() * textRadius
         val y = center.y + sin(radians).toFloat() * textRadius
         val maxWidth =
-          (2f * textRadius * sin(sweepAngle.toRadians() / 2.0)).toInt().coerceAtLeast(0)
+          getInsideLabelMaxWidth(
+            textRadius = textRadius,
+            ringThickness = radius - holeRadius,
+            sweepAngle = sweepAngle,
+          )
         if (maxWidth <= 0) return
         context.saveLayer(opacity)
         textComponent.draw(
@@ -538,6 +542,20 @@ internal fun createSlicePath(
   }
   path.close()
   return path
+}
+
+internal fun getInsideLabelMaxWidth(
+  textRadius: Float,
+  ringThickness: Float,
+  sweepAngle: Float,
+): Int {
+  val sweepWidth =
+    if (sweepAngle >= 180f) {
+      ringThickness
+    } else {
+      2f * textRadius * sin(sweepAngle.toRadians() / 2.0)
+    }
+  return sweepWidth.toInt().coerceAtLeast(0)
 }
 
 /** Creates and remembers a [PieChart]. */
