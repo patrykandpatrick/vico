@@ -53,4 +53,16 @@ class PieChartDrawingModelInterpolatorTest {
       transformedModel,
     )
   }
+
+  @Test
+  fun `Single slice animation can reach full circle`() {
+    val interpolator = defaultPieChartDrawingModelInterpolator()
+    val newModel = PieChartDrawingModel(listOf(PieChartDrawingModel.SliceInfo(360f)))
+
+    interpolator.setModels(old = null, new = newModel)
+    val transformedModel = interpolator.transform(1f)
+
+    assertEquals(1, transformedModel?.slices?.size)
+    assertEquals(360f, transformedModel!!.slices.single().degrees)
+  }
 }
