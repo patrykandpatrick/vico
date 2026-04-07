@@ -56,7 +56,7 @@ class PieChartDrawingModelInterpolatorTest {
   }
 
   @Test
-  fun `Single slice animation keeps sweep below full circle`() {
+  fun `Single slice animation can reach full circle`() {
     val interpolator = defaultPieChartDrawingModelInterpolator()
     val newModel = PieChartDrawingModel(listOf(PieChartDrawingModel.SliceInfo(360f)))
 
@@ -64,6 +64,6 @@ class PieChartDrawingModelInterpolatorTest {
     val transformedModel = interpolator.transform(1f)
 
     assertEquals(1, transformedModel?.slices?.size)
-    assertTrue(transformedModel!!.slices.single().degrees < 360f)
+    assertEquals(360f, transformedModel!!.slices.single().degrees)
   }
 }

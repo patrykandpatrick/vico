@@ -28,6 +28,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.PaintingStyle
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.PathFillType
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.common.Bounded
@@ -502,19 +503,38 @@ internal fun createSlicePath(
   sweepAngle: Float,
   centerOffset: Offset = Offset.Zero,
 ): Path {
+  val offsetBounds =
+    if (centerOffset == Offset.Zero) circleBounds else circleBounds.translate(centerOffset)
+  val fullSweep = sweepAngle >= 360f
   val path = Path()
-  path.arcTo(circleBounds, startAngle, sweepAngle, false)
+  if (fullSweep) {
+    path.fillType = PathFillType.EvenOdd
+    path.addOval(offsetBounds)
+    if (holeRadius > 0f) {
+      val innerBounds =
+        Rect(
+          left = offsetBounds.center.x - holeRadius,
+          top = offsetBounds.center.y - holeRadius,
+          right = offsetBounds.center.x + holeRadius,
+          bottom = offsetBounds.center.y + holeRadius,
+        )
+      path.addOval(innerBounds)
+    }
+    return path
+  }
+
+  path.arcTo(offsetBounds, startAngle, sweepAngle, false)
   if (holeRadius > 0f) {
     val innerBounds =
       Rect(
-        left = circleBounds.center.x - holeRadius,
-        top = circleBounds.center.y - holeRadius,
-        right = circleBounds.center.x + holeRadius,
-        bottom = circleBounds.center.y + holeRadius,
+        left = offsetBounds.center.x - holeRadius,
+        top = offsetBounds.center.y - holeRadius,
+        right = offsetBounds.center.x + holeRadius,
+        bottom = offsetBounds.center.y + holeRadius,
       )
     path.arcTo(innerBounds, startAngle + sweepAngle, -sweepAngle, false)
   } else {
-    path.lineTo(circleBounds.center.x + centerOffset.x, circleBounds.center.y + centerOffset.y)
+    path.lineTo(offsetBounds.center.x, offsetBounds.center.y)
   }
   path.close()
   return path
