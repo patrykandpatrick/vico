@@ -37,4 +37,5 @@ kotlin {
 dependencies {
   api(project(":vico:compose"))
   implementation(libs.glanceAppWidget)
+  implementation(libs.uiTextAndroid)
 }

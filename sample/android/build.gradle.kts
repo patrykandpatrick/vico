@@ -46,7 +46,9 @@ kotlin { compilerOptions { jvmTarget = JvmTarget.JVM_11 } }
 
 dependencies {
   implementation(project(":sample:app"))
+  implementation(project(":vico:compose-glance"))
   implementation(libs.activityCompose)
   implementation(libs.material)
+  implementation(libs.glanceAppWidget)
   debugImplementation(libs.composeUITooling)
 }

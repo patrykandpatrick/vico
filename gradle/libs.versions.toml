@@ -18,6 +18,7 @@ lifecycleRuntime = "2.10.0"
 material = "1.13.0"
 mavenPublish = "0.36.0"
 mockK = "1.14.9"
+uiTextAndroid = "1.10.6"
 
 [libraries]
 activityCompose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity" }
@@ -54,3 +55,4 @@ material = { group = "com.google.android.material", name = "material", version.r
 mavenPublish = { group = "com.vanniktech.maven.publish", name = "com.vanniktech.maven.publish.gradle.plugin", version.ref = "mavenPublish" }
 mockK = { group = "io.mockk", name = "mockk", version.ref = "mockK" }
 serialization = { group = "org.jetbrains.kotlin.plugin.serialization", name = "org.jetbrains.kotlin.plugin.serialization.gradle.plugin", version.ref = "kotlin" }
+uiTextAndroid = { group = "androidx.compose.ui", name = "ui-text-android", version.ref = "uiTextAndroid" }
