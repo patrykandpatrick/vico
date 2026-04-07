@@ -19,6 +19,7 @@ package com.patrykandpatrick.vico.compose.pie
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
 class PieChartDrawingModelInterpolatorTest {
 
@@ -52,5 +53,17 @@ class PieChartDrawingModelInterpolatorTest {
       ),
       transformedModel,
     )
+  }
+
+  @Test
+  fun `Single slice animation keeps sweep below full circle`() {
+    val interpolator = defaultPieChartDrawingModelInterpolator()
+    val newModel = PieChartDrawingModel(listOf(PieChartDrawingModel.SliceInfo(360f)))
+
+    interpolator.setModels(old = null, new = newModel)
+    val transformedModel = interpolator.transform(1f)
+
+    assertEquals(1, transformedModel?.slices?.size)
+    assertTrue(transformedModel!!.slices.single().degrees < 360f)
   }
 }

@@ -21,6 +21,8 @@ import com.patrykandpatrick.vico.compose.common.orZero
 import com.patrykandpatrick.vico.compose.pie.data.PieChartModel
 import kotlin.math.max
 
+private const val MAX_SWEEP_DEGREES = 360f - 0.001f
+
 internal class PieChartDrawingModel(val slices: List<SliceInfo>) {
   internal fun transform(from: PieChartDrawingModel?, fraction: Float): PieChartDrawingModel {
     val oldSlices = from?.slices.orEmpty()
@@ -41,7 +43,7 @@ internal class PieChartDrawingModel(val slices: List<SliceInfo>) {
     internal fun transform(from: SliceInfo?, fraction: Float): SliceInfo {
       val oldDegrees = from?.degrees.orZero
       return SliceInfo(
-        degrees = oldDegrees.lerp(degrees, fraction),
+        degrees = oldDegrees.lerp(degrees, fraction).coerceAtMost(MAX_SWEEP_DEGREES),
         sliceOpacity =
           when {
             from == null || from.degrees == 0f -> fraction
@@ -81,6 +83,9 @@ internal class PieChartDrawingModel(val slices: List<SliceInfo>) {
 internal fun PieChartModel.toDrawingModel(): PieChartDrawingModel =
   PieChartDrawingModel(
     entries.map { entry ->
-      PieChartDrawingModel.SliceInfo(degrees = if (sum == 0f) 0f else entry.value / sum * 360f)
+      PieChartDrawingModel.SliceInfo(
+        degrees =
+          if (sum == 0f) 0f else (entry.value / sum * 360f).coerceAtMost(MAX_SWEEP_DEGREES)
+      )
     }
   )
