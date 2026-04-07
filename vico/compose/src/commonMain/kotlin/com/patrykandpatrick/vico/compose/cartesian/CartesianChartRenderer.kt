@@ -30,18 +30,6 @@ import com.patrykandpatrick.vico.compose.cartesian.layer.MutableCartesianLayerDi
 import com.patrykandpatrick.vico.compose.common.MutableDrawScope
 import com.patrykandpatrick.vico.compose.common.data.CacheStore
 
-/**
- * Renders this [CartesianChart] with the given [model] to an [ImageBitmap] of the specified
- * dimensions. This is intended for off-screen rendering (e.g., for use in app widgets).
- *
- * @param model the [CartesianChartModel] providing the chart data.
- * @param width the width of the output [ImageBitmap] in pixels.
- * @param height the height of the output [ImageBitmap] in pixels.
- * @param fontFamilyResolver the [FontFamily.Resolver] for text rendering.
- * @param density the [Density] for dp-to-pixel conversions.
- * @param layoutDirection the [LayoutDirection].
- * @suppress
- */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public fun CartesianChart.renderToImageBitmap(
   model: CartesianChartModel,

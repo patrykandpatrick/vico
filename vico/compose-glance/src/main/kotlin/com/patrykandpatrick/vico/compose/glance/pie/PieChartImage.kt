@@ -18,6 +18,7 @@ package com.patrykandpatrick.vico.compose.glance.pie
 
 import android.content.Context
 import android.view.View
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.text.font.createFontFamilyResolver
 import androidx.compose.ui.unit.Density
@@ -47,7 +48,7 @@ import kotlin.math.roundToInt
  * @param size the desired chart size. Defaults to the widget size provided by Glance's [LocalSize].
  * @param contentScale how the chart image should be scaled within its bounds.
  */
-@androidx.compose.runtime.Composable
+@Composable
 public fun PieChartImage(
   chart: PieChart,
   model: PieChartModel,
