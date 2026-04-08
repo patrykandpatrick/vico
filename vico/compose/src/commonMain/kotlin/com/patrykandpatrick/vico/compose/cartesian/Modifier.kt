@@ -31,6 +31,7 @@ import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.util.fastForEach
 import com.patrykandpatrick.vico.compose.cartesian.marker.Interaction
 import com.patrykandpatrick.vico.compose.common.Point
 import com.patrykandpatrick.vico.compose.common.detectZoomGestures
@@ -46,7 +47,7 @@ private fun Offset.toPoint() = Point(x, y)
 @Composable
 internal fun Modifier.pointerInput(
   scrollState: VicoScrollState,
-  onInteraction: ((Interaction) -> Unit)?,
+  onInteraction: ((Interaction) -> Boolean)?,
   onZoom: ((Float, Offset) -> Unit)?,
   consumeMoveEvents: Boolean,
   longPressEnabled: Boolean,
@@ -63,27 +64,36 @@ internal fun Modifier.pointerInput(
           val event = awaitPointerEvent()
           val position = event.changes.first().position
           val pointerPosition = position.toPoint()
-          when {
-            event.type == PointerEventType.Scroll && scrollState.scrollEnabled && onZoom != null ->
-              onZoom(
-                1 - event.changes.first().scrollDelta.y * BASE_SCROLL_ZOOM_DELTA,
-                event.changes.first().position,
-              )
-            onInteraction == null -> continue
-            event.type == PointerEventType.Press && event.changes.size == 1 ->
-              onInteraction(Interaction.Press(pointerPosition))
-            event.type == PointerEventType.Release || event.type == PointerEventType.Press ->
-              onInteraction(Interaction.Release(pointerPosition))
-            event.type == PointerEventType.Move -> {
-              if (consumeMoveEvents && !scrollState.scrollEnabled) event.changes.first().consume()
-              onInteraction(Interaction.Move(pointerPosition))
+          val consume =
+            when {
+              event.type == PointerEventType.Scroll &&
+                scrollState.scrollEnabled &&
+                onZoom != null -> {
+                onZoom(
+                  1 - event.changes.first().scrollDelta.y * BASE_SCROLL_ZOOM_DELTA,
+                  event.changes.first().position,
+                )
+                true
+              }
+              onInteraction == null -> continue
+              event.type == PointerEventType.Press && event.changes.size == 1 ->
+                onInteraction(Interaction.Press(pointerPosition))
+              event.type == PointerEventType.Release || event.type == PointerEventType.Press ->
+                onInteraction(Interaction.Release(pointerPosition))
+              event.type == PointerEventType.Move -> {
+                val consume = consumeMoveEvents && !scrollState.scrollEnabled
+                onInteraction(Interaction.Move(pointerPosition)) && consume
+              }
+              event.type == PointerEventType.Enter ->
+                onInteraction(Interaction.Enter(pointerPosition))
+              event.type == PointerEventType.Exit -> {
+                val isInsideChartBounds = position.fits(size)
+                onInteraction(Interaction.Exit(pointerPosition, isInsideChartBounds))
+              }
+              else -> false
             }
-            event.type == PointerEventType.Enter ->
-              onInteraction(Interaction.Enter(pointerPosition))
-            event.type == PointerEventType.Exit -> {
-              val isInsideChartBounds = position.fits(size)
-              onInteraction(Interaction.Exit(pointerPosition, isInsideChartBounds))
-            }
+          if (consume) {
+            event.changes.fastForEach { it.consume() }
           }
         }
       }
@@ -91,7 +101,7 @@ internal fun Modifier.pointerInput(
     .then(
       if (onInteraction != null) {
         Modifier.pointerInput(onInteraction, longPressEnabled) {
-          detectTapGesturesWithoutConsume(
+          detectTapGestures(
             onTap = { onInteraction(Interaction.Tap(it.toPoint())) },
             onLongPress =
               if (longPressEnabled) {
@@ -119,16 +129,18 @@ internal fun Modifier.pointerInput(
     )
     .extraPointerInput(scrollState)
 
-private suspend fun PointerInputScope.detectTapGesturesWithoutConsume(
-  onTap: (Offset) -> Unit,
-  onLongPress: ((Offset) -> Unit)?,
+private suspend fun PointerInputScope.detectTapGestures(
+  onTap: (Offset) -> Boolean,
+  onLongPress: ((Offset) -> Boolean)?,
 ) {
   awaitEachGesture {
     val down = awaitFirstDown()
     if (onLongPress != null) {
       val longPress = awaitLongPressOrCancellation(down.id)
       if (longPress != null) {
-        onLongPress(longPress.position)
+        if (onLongPress(longPress.position)) {
+          longPress.consume()
+        }
         return@awaitEachGesture
       }
     } else {
@@ -136,7 +148,9 @@ private suspend fun PointerInputScope.detectTapGesturesWithoutConsume(
     }
     val inputChange = currentEvent.changes.firstOrNull()
     if (inputChange.isTap(down)) {
-      onTap(inputChange.position)
+      if (onTap(inputChange.position)) {
+        inputChange.consume()
+      }
     }
   }
 }
@@ -148,7 +162,7 @@ private fun PointerInputChange?.isTap(firstDown: PointerInputChange): Boolean {
   this ?: return false
   val longPressTimeoutMillis = pointerEventScope.viewConfiguration.longPressTimeoutMillis
   val touchSlop = pointerEventScope.viewConfiguration.touchSlop
-  val isNotLongPress = previousUptimeMillis - uptimeMillis < longPressTimeoutMillis
+  val isNotLongPress = uptimeMillis - previousUptimeMillis < longPressTimeoutMillis
   val isNotMove = (firstDown.position - position).getDistance() < touchSlop
   return !pressed && previousPressed && isNotLongPress && isNotMove
 }
