@@ -17,17 +17,25 @@
 package com.patrykandpatrick.vico.compose.cartesian
 
 import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.awaitLongPressOrCancellation
 import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.gestures.waitForUpOrCancellation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.pointer.AwaitPointerEventScope
 import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.input.pointer.PointerInputChange
+import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.IntSize
 import com.patrykandpatrick.vico.compose.cartesian.marker.Interaction
 import com.patrykandpatrick.vico.compose.common.Point
 import com.patrykandpatrick.vico.compose.common.detectZoomGestures
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 private const val BASE_SCROLL_ZOOM_DELTA = 0.1f
 
@@ -83,14 +91,14 @@ internal fun Modifier.pointerInput(
     .then(
       if (onInteraction != null) {
         Modifier.pointerInput(onInteraction, longPressEnabled) {
-          detectTapGestures(
+          detectTapGesturesWithoutConsume(
+            onTap = { onInteraction(Interaction.Tap(it.toPoint())) },
             onLongPress =
               if (longPressEnabled) {
                 { onInteraction(Interaction.LongPress(it.toPoint())) }
               } else {
                 null
               },
-            onTap = { onInteraction(Interaction.Tap(it.toPoint())) },
           )
         }
       } else {
@@ -110,5 +118,39 @@ internal fun Modifier.pointerInput(
       }
     )
     .extraPointerInput(scrollState)
+
+private suspend fun PointerInputScope.detectTapGesturesWithoutConsume(
+  onTap: (Offset) -> Unit,
+  onLongPress: ((Offset) -> Unit)?,
+) {
+  awaitEachGesture {
+    val down = awaitFirstDown()
+    if (onLongPress != null) {
+      val longPress = awaitLongPressOrCancellation(down.id)
+      if (longPress != null) {
+        onLongPress(longPress.position)
+        return@awaitEachGesture
+      }
+    } else {
+      waitForUpOrCancellation()
+    }
+    val inputChange = currentEvent.changes.firstOrNull()
+    if (inputChange.isTap(down)) {
+      onTap(inputChange.position)
+    }
+  }
+}
+
+@OptIn(ExperimentalContracts::class)
+context(pointerEventScope: AwaitPointerEventScope)
+private fun PointerInputChange?.isTap(firstDown: PointerInputChange): Boolean {
+  contract { returns(true).implies(this@isTap != null) }
+  this ?: return false
+  val longPressTimeoutMillis = pointerEventScope.viewConfiguration.longPressTimeoutMillis
+  val touchSlop = pointerEventScope.viewConfiguration.touchSlop
+  val isNotLongPress = previousUptimeMillis - uptimeMillis < longPressTimeoutMillis
+  val isNotMove = (firstDown.position - position).getDistance() < touchSlop
+  return !pressed && previousPressed && isNotLongPress && isNotMove
+}
 
 private fun Offset.fits(size: IntSize) = x >= 0f && x <= size.width && y >= 0f && y <= size.height
