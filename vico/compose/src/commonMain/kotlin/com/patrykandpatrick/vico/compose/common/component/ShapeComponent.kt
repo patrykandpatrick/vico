@@ -85,18 +85,20 @@ public open class ShapeComponent(
         if (adjustedLeft > adjustedRight || adjustedTop > adjustedBottom) return
       }
       path.rewind()
-      val width = right - left
-      val height = bottom - top
+      val width = adjustedRight - adjustedLeft
+      val height = adjustedBottom - adjustedTop
       applyBrushes(Size(width, height))
       shape.outline(density, layoutDirection, path, 0f, 0f, width, height)
       if (shadowPainters.isNotEmpty()) {
         with(mutableDrawScope) {
           size = Size(width, height)
-          translate(left, top) { shadowPainters.forEach { with(it) { draw(size) } } }
+          translate(adjustedLeft, adjustedTop) {
+            shadowPainters.forEach { with(it) { draw(size) } }
+          }
         }
       }
       canvas.withSave {
-        canvas.translate(left, top)
+        canvas.translate(adjustedLeft, adjustedTop)
         canvas.drawPath(path, paint)
         if (strokeThickness == 0f || strokeFill.color.alpha == 0f) return@withSave
         strokePaint.strokeWidth = strokeThickness
