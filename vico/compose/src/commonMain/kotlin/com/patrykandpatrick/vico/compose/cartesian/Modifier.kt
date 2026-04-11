@@ -76,13 +76,17 @@ internal fun Modifier.pointerInput(
                 true
               }
               onInteraction == null -> continue
-              event.type == PointerEventType.Press && event.changes.size == 1 ->
+              event.type == PointerEventType.Press && event.changes.size == 1 -> {
                 onInteraction(Interaction.Press(pointerPosition))
-              event.type == PointerEventType.Release || event.type == PointerEventType.Press ->
+                false
+              }
+              event.type == PointerEventType.Release || event.type == PointerEventType.Press -> {
                 onInteraction(Interaction.Release(pointerPosition))
+                false
+              }
               event.type == PointerEventType.Move -> {
-                val consume = consumeMoveEvents && !scrollState.scrollEnabled
-                onInteraction(Interaction.Move(pointerPosition)) && consume
+                onInteraction(Interaction.Move(pointerPosition))
+                consumeMoveEvents && !scrollState.scrollEnabled
               }
               event.type == PointerEventType.Enter ->
                 onInteraction(Interaction.Enter(pointerPosition))
@@ -135,18 +139,19 @@ private suspend fun PointerInputScope.detectTapGestures(
 ) {
   awaitEachGesture {
     val down = awaitFirstDown()
-    if (onLongPress != null) {
-      val longPress = awaitLongPressOrCancellation(down.id)
-      if (longPress != null) {
-        if (onLongPress(longPress.position)) {
-          longPress.consume()
+    val inputChange =
+      if (onLongPress != null) {
+        val longPress = awaitLongPressOrCancellation(down.id)
+        if (longPress != null) {
+          if (onLongPress(longPress.position)) {
+            longPress.consume()
+          }
+          return@awaitEachGesture
         }
-        return@awaitEachGesture
+        currentEvent.changes.firstOrNull { it.id == down.id }
+      } else {
+        waitForUpOrCancellation()
       }
-    } else {
-      waitForUpOrCancellation()
-    }
-    val inputChange = currentEvent.changes.firstOrNull()
     if (inputChange.isTap(down)) {
       if (onTap(inputChange.position)) {
         inputChange.consume()
@@ -162,7 +167,7 @@ private fun PointerInputChange?.isTap(firstDown: PointerInputChange): Boolean {
   this ?: return false
   val longPressTimeoutMillis = pointerEventScope.viewConfiguration.longPressTimeoutMillis
   val touchSlop = pointerEventScope.viewConfiguration.touchSlop
-  val isNotLongPress = uptimeMillis - previousUptimeMillis < longPressTimeoutMillis
+  val isNotLongPress = uptimeMillis - firstDown.uptimeMillis < longPressTimeoutMillis
   val isNotMove = (firstDown.position - position).getDistance() < touchSlop
   return !pressed && previousPressed && isNotLongPress && isNotMove
 }
