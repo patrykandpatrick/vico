@@ -92,7 +92,9 @@ public open class ShapeComponent(
       if (shadowPainters.isNotEmpty()) {
         with(mutableDrawScope) {
           size = Size(width, height)
-          translate(adjustedLeft, adjustedTop) { shadowPainters.forEach { with(it) { draw(size) } } }
+          translate(adjustedLeft, adjustedTop) {
+            shadowPainters.forEach { with(it) { draw(size) } }
+          }
         }
       }
       canvas.withSave {
