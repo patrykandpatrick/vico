@@ -28,7 +28,7 @@ kotlin {
     configure()
     namespace = "com.patrykandpatrick.vico.sample.charts.compose"
   }
-  listOf(iosX64(), iosArm64(), iosSimulatorArm64()).forEach { iosTarget ->
+  listOf(iosArm64(), iosSimulatorArm64()).forEach { iosTarget ->
     iosTarget.binaries.framework {
       baseName = project.name
       isStatic = true
