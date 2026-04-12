@@ -62,7 +62,9 @@ kotlin {
     val androidHostTest by getting { dependencies { implementation(libs.mockK) } }
   }
   explicitApi()
-  compilerOptions { freeCompilerArgs.add("-Xannotation-default-target=param-property") }
+  compilerOptions {
+    freeCompilerArgs.addAll("-Xannotation-default-target=param-property", "-Xcontext-parameters")
+  }
 }
 
 /*

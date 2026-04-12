@@ -190,6 +190,9 @@ internal fun CartesianChartHostImpl(
               markerX = null
               markerSeriesIndex = null
             }
+            true
+          } else {
+            false
           }
         }
       } else {

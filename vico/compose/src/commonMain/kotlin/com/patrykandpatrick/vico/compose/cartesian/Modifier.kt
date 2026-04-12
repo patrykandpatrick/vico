@@ -17,17 +17,26 @@
 package com.patrykandpatrick.vico.compose.cartesian
 
 import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.awaitLongPressOrCancellation
 import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.gestures.waitForUpOrCancellation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.pointer.AwaitPointerEventScope
 import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.input.pointer.PointerInputChange
+import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.util.fastForEach
 import com.patrykandpatrick.vico.compose.cartesian.marker.Interaction
 import com.patrykandpatrick.vico.compose.common.Point
 import com.patrykandpatrick.vico.compose.common.detectZoomGestures
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 private const val BASE_SCROLL_ZOOM_DELTA = 0.1f
 
@@ -38,7 +47,7 @@ private fun Offset.toPoint() = Point(x, y)
 @Composable
 internal fun Modifier.pointerInput(
   scrollState: VicoScrollState,
-  onInteraction: ((Interaction) -> Unit)?,
+  onInteraction: ((Interaction) -> Boolean)?,
   onZoom: ((Float, Offset) -> Unit)?,
   consumeMoveEvents: Boolean,
   longPressEnabled: Boolean,
@@ -55,27 +64,40 @@ internal fun Modifier.pointerInput(
           val event = awaitPointerEvent()
           val position = event.changes.first().position
           val pointerPosition = position.toPoint()
-          when {
-            event.type == PointerEventType.Scroll && scrollState.scrollEnabled && onZoom != null ->
-              onZoom(
-                1 - event.changes.first().scrollDelta.y * BASE_SCROLL_ZOOM_DELTA,
-                event.changes.first().position,
-              )
-            onInteraction == null -> continue
-            event.type == PointerEventType.Press && event.changes.size == 1 ->
-              onInteraction(Interaction.Press(pointerPosition))
-            event.type == PointerEventType.Release || event.type == PointerEventType.Press ->
-              onInteraction(Interaction.Release(pointerPosition))
-            event.type == PointerEventType.Move -> {
-              if (consumeMoveEvents && !scrollState.scrollEnabled) event.changes.first().consume()
-              onInteraction(Interaction.Move(pointerPosition))
+          val consume =
+            when {
+              event.type == PointerEventType.Scroll &&
+                scrollState.scrollEnabled &&
+                onZoom != null -> {
+                onZoom(
+                  1 - event.changes.first().scrollDelta.y * BASE_SCROLL_ZOOM_DELTA,
+                  event.changes.first().position,
+                )
+                true
+              }
+              onInteraction == null -> continue
+              event.type == PointerEventType.Press && event.changes.size == 1 -> {
+                onInteraction(Interaction.Press(pointerPosition))
+                false
+              }
+              event.type == PointerEventType.Release || event.type == PointerEventType.Press -> {
+                onInteraction(Interaction.Release(pointerPosition))
+                false
+              }
+              event.type == PointerEventType.Move -> {
+                onInteraction(Interaction.Move(pointerPosition))
+                consumeMoveEvents && !scrollState.scrollEnabled
+              }
+              event.type == PointerEventType.Enter ->
+                onInteraction(Interaction.Enter(pointerPosition))
+              event.type == PointerEventType.Exit -> {
+                val isInsideChartBounds = position.fits(size)
+                onInteraction(Interaction.Exit(pointerPosition, isInsideChartBounds))
+              }
+              else -> false
             }
-            event.type == PointerEventType.Enter ->
-              onInteraction(Interaction.Enter(pointerPosition))
-            event.type == PointerEventType.Exit -> {
-              val isInsideChartBounds = position.fits(size)
-              onInteraction(Interaction.Exit(pointerPosition, isInsideChartBounds))
-            }
+          if (consume) {
+            event.changes.fastForEach { it.consume() }
           }
         }
       }
@@ -84,13 +106,13 @@ internal fun Modifier.pointerInput(
       if (onInteraction != null) {
         Modifier.pointerInput(onInteraction, longPressEnabled) {
           detectTapGestures(
+            onTap = { onInteraction(Interaction.Tap(it.toPoint())) },
             onLongPress =
               if (longPressEnabled) {
                 { onInteraction(Interaction.LongPress(it.toPoint())) }
               } else {
                 null
               },
-            onTap = { onInteraction(Interaction.Tap(it.toPoint())) },
           )
         }
       } else {
@@ -110,5 +132,38 @@ internal fun Modifier.pointerInput(
       }
     )
     .extraPointerInput(scrollState)
+
+private suspend fun PointerInputScope.detectTapGestures(
+  onTap: (Offset) -> Boolean,
+  onLongPress: ((Offset) -> Boolean)?,
+) {
+  awaitEachGesture {
+    val down = awaitFirstDown()
+    val inputChange =
+      if (onLongPress != null) {
+        val longPress = awaitLongPressOrCancellation(down.id)
+        if (longPress != null) {
+          if (onLongPress(longPress.position)) longPress.consume()
+          return@awaitEachGesture
+        }
+        currentEvent.changes.firstOrNull { it.id == down.id }
+      } else {
+        waitForUpOrCancellation()
+      }
+    if (inputChange.isTap(down) && onTap(inputChange.position)) inputChange.consume()
+  }
+}
+
+@OptIn(ExperimentalContracts::class)
+context(pointerEventScope: AwaitPointerEventScope)
+private fun PointerInputChange?.isTap(firstDown: PointerInputChange): Boolean {
+  contract { returns(true).implies(this@isTap != null) }
+  if (this == null) return false
+  val longPressTimeoutMillis = pointerEventScope.viewConfiguration.longPressTimeoutMillis
+  val touchSlop = pointerEventScope.viewConfiguration.touchSlop
+  val isNotLongPress = uptimeMillis - firstDown.uptimeMillis < longPressTimeoutMillis
+  val isNotMove = (firstDown.position - position).getDistance() < touchSlop
+  return !pressed && previousPressed && isNotLongPress && isNotMove
+}
 
 private fun Offset.fits(size: IntSize) = x >= 0f && x <= size.width && y >= 0f && y <= size.height
