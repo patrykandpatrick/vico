@@ -28,7 +28,7 @@ jobs:
           ./gradlew assembleDebug
           cd sample/android/build/outputs/apk/debug
           mv android-debug.apk android-sample-debug.apk
-      - uses: softprops/action-gh-release@v2
+      - uses: softprops/action-gh-release@v3
         with:
           draft: true
           files: ${{ github.workspace }}/vico/sample/android/build/outputs/apk/debug/android-sample-debug.apk
