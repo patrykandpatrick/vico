@@ -253,7 +253,9 @@ internal fun CartesianChartHostImpl(
     scrollState.update(measuringContext.value, chart.layerBounds, layerDimensions)
 
     if (model != lastHandledModel) {
-      coroutineScope.launch { scrollState.autoScroll(model, previousModel) }
+      if (!scrollState.autoScrollBeforeFirstDraw(model, previousModel)) {
+        coroutineScope.launch { scrollState.autoScroll(model, previousModel) }
+      }
       lastHandledModel = model
     }
 

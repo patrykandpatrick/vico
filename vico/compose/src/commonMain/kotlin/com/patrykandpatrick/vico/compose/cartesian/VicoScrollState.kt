@@ -17,6 +17,7 @@
 package com.patrykandpatrick.vico.compose.cartesian
 
 import androidx.compose.animation.core.AnimationSpec
+import androidx.compose.animation.core.SnapSpec
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.MutatePriority
 import androidx.compose.foundation.gestures.ScrollableState
@@ -160,6 +161,16 @@ public class VicoScrollState {
       value = initialScroll.getValue(context, layerDimensions, bounds, maxValue)
       initialScrollHandled = true
     }
+  }
+
+  internal fun autoScrollBeforeFirstDraw(model: CartesianChartModel, oldModel: CartesianChartModel?): Boolean {
+    if (autoScrollAnimationSpec !is SnapSpec<*> || !autoScrollCondition.shouldScroll(oldModel, model)) {
+      return false
+    }
+    withUpdated { context, layerDimensions, bounds ->
+      value += autoScroll.getDelta(context, layerDimensions, bounds, maxValue, value)
+    }
+    return true
   }
 
   internal suspend fun autoScroll(model: CartesianChartModel, oldModel: CartesianChartModel?) {
