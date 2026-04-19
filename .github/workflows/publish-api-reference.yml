@@ -1,5 +1,8 @@
 name: Publish API reference
 on:
+  push:
+    tags:
+      - "v*"
   workflow_dispatch:
     inputs:
       tag_name:
@@ -30,7 +33,11 @@ jobs:
       - name: Resolve tag
         run: |
           cd ${{ github.workspace }}/vico
-          TAG_NAME="${{ inputs.tag_name }}"
+          if [ "${{ github.event_name }}" = "push" ]; then
+            TAG_NAME="${GITHUB_REF_NAME}"
+          else
+            TAG_NAME="${{ inputs.tag_name }}"
+          fi
           if [ -z "$TAG_NAME" ]; then
             TAG_NAME=$(
               git tag --list 'v*' |
