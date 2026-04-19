@@ -38,14 +38,14 @@ import kotlin.math.roundToInt
 /**
  * Displays a [CartesianChart] as a static image in a Glance app widget.
  *
- * The chart is rendered off-screen to a bitmap and displayed via Glance's [Image]. Since Glance
- * doesn't support Compose Canvas, this is the recommended approach for showing charts in widgets.
+ * The chart is rendered off-screen to a bitmap and displayed via Glance’s [Image]. Since Glance
+ * doesn’t support Compose Canvas, this is the recommended approach for showing charts in widgets.
  *
  * @param chart the [CartesianChart].
  * @param model the [CartesianChartModel].
  * @param contentDescription the content description for accessibility.
  * @param modifier the [GlanceModifier] to be applied.
- * @param size the desired chart size. Defaults to the widget size provided by Glance's [LocalSize].
+ * @param size the desired chart size. Defaults to the widget size provided by Glance’s [LocalSize].
  * @param contentScale how the chart image should be scaled within its bounds.
  */
 @Composable
