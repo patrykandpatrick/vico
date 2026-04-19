@@ -142,15 +142,11 @@ protected constructor(
     model.series.forEachIndexed { index, entryCollection ->
       drawingStart = getDrawingStart(index, model.series.size, mergeMode) - scroll
 
-      val (_, firstVisibleIndex, lastVisibleIndex) =
-        entryCollection.getSliceIndices(
-          ranges.minX,
-          ranges.maxX,
-          visibleXRange.start,
-          visibleXRange.endInclusive,
-        )
+      val visibleIndices =
+        entryCollection.getSliceIndices(visibleXRange.start, visibleXRange.endInclusive)
+      if (visibleIndices.isEmpty()) return@forEachIndexed
 
-      entryCollection.subList(firstVisibleIndex, lastVisibleIndex + 1).forEach { entry ->
+      entryCollection.subList(visibleIndices.first, visibleIndices.last + 1).forEach { entry ->
         val columnInfo = drawingModel?.getOrNull(index)?.get(entry.x)
         height =
           (columnInfo?.height ?: (abs(entry.y) / yRange.length)).toFloat() * layerBounds.height()

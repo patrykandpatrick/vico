@@ -31,6 +31,7 @@ import com.patrykandpatrick.vico.compose.cartesian.ColorScale
 import com.patrykandpatrick.vico.compose.cartesian.axis.Axis
 import com.patrykandpatrick.vico.compose.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.compose.cartesian.data.*
+import com.patrykandpatrick.vico.compose.cartesian.getVisibleXRange
 import com.patrykandpatrick.vico.compose.cartesian.layer.LineCartesianLayer.Line
 import com.patrykandpatrick.vico.compose.cartesian.layer.LineCartesianLayer.PointConnector
 import com.patrykandpatrick.vico.compose.cartesian.marker.CartesianMarker
@@ -337,8 +338,21 @@ protected constructor(
   /** Interpolates between a [LineCartesianLayer] line’s points, defining its shape. */
   public interface Interpolator {
     /**
-     * Draws [path] through [points]. Only the points in [visibleIndexRange] need to produce path
-     * operations, but the remaining points are available for use in interpolation.
+     * Returns the number of extra points required on either side of the visible range, beyond the
+     * standard single extra point already included in `visibleIndexRange`. `null` indicates that
+     * the full series should be provided.
+     */
+    public val visiblePadding: Int?
+      get() = 0
+
+    /**
+     * Draws [path] through [points].
+     *
+     * [points] contains the visible _x_ range slice, plus horizontal padding as requested by
+     * [visiblePadding]. If [visiblePadding] is `null`, [points] contains the full series.
+     *
+     * Only the points in [visibleIndexRange] need to produce path operations, but the remaining
+     * points are available for interpolation context.
      */
     public fun interpolate(
       context: CartesianDrawingContext,
@@ -527,6 +541,7 @@ protected constructor(
         val points = mutableListOf<Offset>()
         val visibleIndexRange =
           collectPointsAndVisibleIndexRange(
+            interpolator = line.interpolator,
             series = series,
             drawingStart = drawingStart,
             pointInfoMap = pointInfoMap,
@@ -694,6 +709,7 @@ protected constructor(
   }
 
   protected fun CartesianDrawingContext.collectPointsAndVisibleIndexRange(
+    interpolator: Interpolator,
     series: List<LineCartesianLayerModel.Entry>,
     drawingStart: Float,
     pointInfoMap: Map<Double, LineCartesianLayerDrawingModel.Entry>?,
@@ -701,8 +717,9 @@ protected constructor(
     points: MutableList<Offset>,
   ): IntRange {
     val minX = ranges.minX
-    val maxX = ranges.maxX
     val xStep = ranges.xStep
+    val visibleXRange = getVisibleXRange()
+    val visiblePointPadding = interpolator.visiblePadding?.plus(1)
 
     val boundsStart = layerBounds.getStart(isLtr = isLtr)
     val boundsEnd = boundsStart + layoutDirectionMultiplier * layerBounds.width
@@ -721,7 +738,12 @@ protected constructor(
     var visibleStart = -1
     var visibleEnd = -1
 
-    series.forEachIn(minX = minX, maxX = maxX) { entry, _ ->
+    val visibleIndices =
+      series.getSliceIndices(visibleXRange.start, visibleXRange.endInclusive, visiblePointPadding)
+
+    if (visibleIndices.isEmpty()) return IntRange.EMPTY
+
+    series.subList(visibleIndices.first, visibleIndices.last + 1).forEach { entry ->
       points += Offset(getDrawX(entry), getDrawY(entry))
     }
 
@@ -764,8 +786,8 @@ protected constructor(
       ) -> Unit,
   ) {
     val minX = ranges.minX
-    val maxX = ranges.maxX
     val xStep = ranges.xStep
+    val visibleXRange = getVisibleXRange()
 
     var x: Float? = null
     var nextX: Float? = null
@@ -784,7 +806,19 @@ protected constructor(
           layerBounds.height
     }
 
-    series.forEachIn(minX = minX, maxX = maxX, padding = 1) { entry, next ->
+    val visibleIndices = series.getSliceIndices(visibleXRange.start, visibleXRange.endInclusive)
+
+    if (visibleIndices.isEmpty()) return
+
+    val actionEndIndex = visibleIndices.last
+
+    val actionStartIndex = visibleIndices.first
+
+    if (actionEndIndex < actionStartIndex) return
+
+    for (index in actionStartIndex..actionEndIndex) {
+      val entry = series[index]
+      val next = series.getOrNull(index + 1)
       val previousX = x
       val immutableX = nextX ?: getDrawX(entry)
       val immutableNextX = next?.let(::getDrawX)
@@ -796,7 +830,7 @@ protected constructor(
           (isLtr && immutableX < boundsStart || !isLtr && immutableX > boundsStart) &&
           (isLtr && immutableNextX < boundsStart || !isLtr && immutableNextX > boundsStart)
       ) {
-        return@forEachIn
+        continue
       }
       action(entry, immutableX, getDrawY(entry), previousX, nextX)
       if (isLtr && immutableX > boundsEnd || isLtr.not() && immutableX < boundsEnd) return

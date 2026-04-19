@@ -141,15 +141,11 @@ protected constructor(
     val minBodyHeight = minCandleBodyHeightDp.pixels
     val visibleXRange = getVisibleXRange()
 
-    val (_, firstVisibleEntryIndex, lastVisibleEntryIndex) =
-      model.series.getSliceIndices(
-        ranges.minX,
-        ranges.maxX,
-        visibleXRange.start,
-        visibleXRange.endInclusive,
-      )
+    val visibleIndices =
+      model.series.getSliceIndices(visibleXRange.start, visibleXRange.endInclusive)
+    if (visibleIndices.isEmpty()) return
 
-    model.series.subList(firstVisibleEntryIndex, lastVisibleEntryIndex + 1).forEach { entry ->
+    model.series.subList(visibleIndices.first, visibleIndices.last + 1).forEach { entry ->
       candle = candleProvider.getCandle(entry, model.extraStore)
       val candleInfo = drawingModel?.entries?.get(entry.x) ?: entry.toCandleInfo(yRange)
       val xSpacingMultiplier = ((entry.x - ranges.minX) / ranges.xStep).toFloat()

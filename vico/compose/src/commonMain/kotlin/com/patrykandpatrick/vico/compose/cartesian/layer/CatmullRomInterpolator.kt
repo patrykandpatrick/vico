@@ -26,6 +26,8 @@ import kotlin.math.sqrt
 internal data class CatmullRomInterpolator(private val alpha: Float) :
   LineCartesianLayer.Interpolator {
 
+  override val visiblePadding: Int = 1
+
   init {
     require(alpha in 0f..<1f) { "`alpha` must be in [0, 1)." }
   }

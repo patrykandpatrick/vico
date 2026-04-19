@@ -112,32 +112,30 @@ internal inline fun <T : CartesianLayerModel.Entry> List<T>.forEachIn(
 }
 
 internal fun <T : CartesianLayerModel.Entry> List<T>.getSliceIndices(
-  layerXRangeStart: Double,
-  layerXRangeEnd: Double,
   visibleXRangeStart: Double,
   visibleXRangeEnd: Double,
-): Triple<Int, Int, Int> {
-  var firstInLayerXRange = 0
-  var lastInLayerXRange = 0
-  var firstVisible = 0
-  var lastVisible = 0
-  for (entry in this) {
-    when {
-      entry.x > layerXRangeEnd || lastInLayerXRange == lastIndex -> break
-      entry.x < layerXRangeStart -> {
-        firstInLayerXRange++
-        firstVisible++
-        lastVisible++
-      }
-      entry.x < visibleXRangeStart -> {
-        firstVisible++
-        lastVisible++
-      }
-      entry.x <= visibleXRangeEnd -> lastVisible++
+  visiblePadding: Int? = 1,
+): IntRange {
+  if (isEmpty()) return IntRange.EMPTY
+  if (visiblePadding == null) return indices
+
+  var firstVisible = size
+  for (index in indices) {
+    if (this[index].x >= visibleXRangeStart) {
+      firstVisible = index
+      break
     }
-    lastInLayerXRange++
   }
-  firstVisible = (firstVisible - 1).coerceAtLeast(firstInLayerXRange)
-  lastVisible = (lastVisible + 1).coerceAtMost(lastInLayerXRange)
-  return Triple(firstInLayerXRange, firstVisible, lastVisible)
+
+  var lastVisibleExclusive = size
+  for (index in firstVisible until size) {
+    if (this[index].x > visibleXRangeEnd) {
+      lastVisibleExclusive = index
+      break
+    }
+  }
+
+  val start = (firstVisible - visiblePadding).coerceAtLeast(0)
+  val endExclusive = (lastVisibleExclusive + visiblePadding).coerceAtMost(size)
+  return if (endExclusive <= start) IntRange.EMPTY else start..<endExclusive
 }
