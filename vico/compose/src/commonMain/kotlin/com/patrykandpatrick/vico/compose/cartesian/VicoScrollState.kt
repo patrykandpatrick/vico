@@ -16,8 +16,7 @@
 
 package com.patrykandpatrick.vico.compose.cartesian
 
-import androidx.compose.animation.core.AnimationSpec
-import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.MutatePriority
 import androidx.compose.foundation.gestures.ScrollableState
 import androidx.compose.foundation.gestures.animateScrollBy
@@ -50,6 +49,7 @@ public class VicoScrollState {
   private val autoScroll: Scroll
   private val autoScrollCondition: AutoScrollCondition
   private val autoScrollAnimationSpec: AnimationSpec<Float>
+  private val vectorizedAutoScrollAnimationSpec: VectorizedAnimationSpec<AnimationVector1D>
   private val _value: MutableFloatState
   private val _maxValue = mutableFloatStateOf(0f)
   private var initialScrollHandled: Boolean
@@ -106,6 +106,8 @@ public class VicoScrollState {
     this.autoScroll = autoScroll
     this.autoScrollCondition = autoScrollCondition
     this.autoScrollAnimationSpec = autoScrollAnimationSpec
+    this.vectorizedAutoScrollAnimationSpec =
+      autoScrollAnimationSpec.vectorize(Float.VectorConverter)
     _value = mutableFloatStateOf(value)
     this.initialScrollHandled = initialScrollHandled
   }
@@ -194,10 +196,18 @@ public class VicoScrollState {
   /** Triggers an animated scroll. */
   public suspend fun animateScroll(scroll: Scroll, animationSpec: AnimationSpec<Float> = spring()) {
     withUpdated { context, layerDimensions, bounds ->
-      scrollableState.animateScrollBy(
-        scroll.getDelta(context, layerDimensions, bounds, maxValue, value),
-        animationSpec,
-      )
+      val delta = scroll.getDelta(context, layerDimensions, bounds, maxValue, value)
+      val duration =
+        vectorizedAutoScrollAnimationSpec.getDurationNanos(
+          initialValue = AnimationVector(value),
+          targetValue = AnimationVector(value + delta),
+          initialVelocity = AnimationVector(0f),
+        )
+      if (duration == 0L) {
+        value += delta
+      } else {
+        scrollableState.animateScrollBy(delta, animationSpec)
+      }
     }
   }
 
