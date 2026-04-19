@@ -49,7 +49,6 @@ public class VicoScrollState {
   private val autoScroll: Scroll
   private val autoScrollCondition: AutoScrollCondition
   private val autoScrollAnimationSpec: AnimationSpec<Float>
-  private val vectorizedAutoScrollAnimationSpec: VectorizedAnimationSpec<AnimationVector1D>
   private val _value: MutableFloatState
   private val _maxValue = mutableFloatStateOf(0f)
   private var initialScrollHandled: Boolean
@@ -106,8 +105,6 @@ public class VicoScrollState {
     this.autoScroll = autoScroll
     this.autoScrollCondition = autoScrollCondition
     this.autoScrollAnimationSpec = autoScrollAnimationSpec
-    this.vectorizedAutoScrollAnimationSpec =
-      autoScrollAnimationSpec.vectorize(Float.VectorConverter)
     _value = mutableFloatStateOf(value)
     this.initialScrollHandled = initialScrollHandled
   }
@@ -198,13 +195,15 @@ public class VicoScrollState {
     withUpdated { context, layerDimensions, bounds ->
       val delta = scroll.getDelta(context, layerDimensions, bounds, maxValue, value)
       val duration =
-        vectorizedAutoScrollAnimationSpec.getDurationNanos(
-          initialValue = AnimationVector(value),
-          targetValue = AnimationVector(value + delta),
-          initialVelocity = AnimationVector(0f),
-        )
+        animationSpec
+          .vectorize(Float.VectorConverter)
+          .getDurationNanos(
+            initialValue = AnimationVector(value),
+            targetValue = AnimationVector(value + delta),
+            initialVelocity = AnimationVector(0f),
+          )
       if (duration == 0L) {
-        value += delta
+        scrollableState.scrollBy(delta)
       } else {
         scrollableState.animateScrollBy(delta, animationSpec)
       }
