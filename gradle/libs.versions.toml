@@ -18,7 +18,7 @@ lifecycleRuntime = "2.10.0"
 material = "1.13.0"
 mavenPublish = "0.36.0"
 mockK = "1.14.9"
-uiTextAndroid = "1.10.6"
+uiTextAndroid = "1.11.0"
 
 [libraries]
 activityCompose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity" }
