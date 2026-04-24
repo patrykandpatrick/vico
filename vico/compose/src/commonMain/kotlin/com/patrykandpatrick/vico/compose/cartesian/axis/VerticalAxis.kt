@@ -431,7 +431,7 @@ protected constructor(
         is Size.Fixed -> size.value.pixels
         is Size.Fraction -> canvasSize.width * size.fraction
         is Size.Text ->
-          titleComponent
+          label
             ?.getWidth(context = this, text = size.text, rotationDegrees = labelRotationDegrees)
             .orZero + outwardTickLength + lineThickness.half
       }
