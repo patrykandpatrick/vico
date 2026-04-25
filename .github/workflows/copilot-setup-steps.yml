@@ -1,0 +1,48 @@
+name: Copilot setup steps
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+  pull_request:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+
+jobs:
+  copilot-setup-steps:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: zulu
+          java-version: 17
+
+      - name: Install ktfmt
+        run: |
+          curl -sSL -o /tmp/ktfmt.jar https://github.com/facebook/ktfmt/releases/download/v0.59/ktfmt-0.59-with-dependencies.jar
+          sudo mkdir -p /usr/local/lib/ktfmt
+          sudo mv /tmp/ktfmt.jar /usr/local/lib/ktfmt/ktfmt.jar
+          sudo tee /usr/local/bin/ktfmt >/dev/null <<'EOF'
+          #!/usr/bin/env bash
+          exec java -jar /usr/local/lib/ktfmt/ktfmt.jar "$@"
+          EOF
+          sudo chmod +x /usr/local/bin/ktfmt
+          ktfmt --version
+
+      - name: Install Lefthook
+        env:
+          LEFTHOOK_VERSION: 2.1.6
+        run: |
+          curl -sSL -o /tmp/lefthook.deb "https://github.com/evilmartians/lefthook/releases/download/v${LEFTHOOK_VERSION}/lefthook_${LEFTHOOK_VERSION}_amd64.deb"
+          sudo dpkg -i /tmp/lefthook.deb
+          lefthook version
+
+      - name: Install Git hooks
+        run: |
+          lefthook install
+          lefthook check-install

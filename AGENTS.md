@@ -15,14 +15,10 @@ JDK 17 required. Build targets JVM 11.
 
 # Test
 ./gradlew test
-
-# Format (ktfmt, Google style)
-# See .github/workflows/check-formatting.yml for the current version and download URL.
-java -jar ktfmt.jar --google-style .
 ```
 
-**Run all three before committing.** CI enforces build, test, and formatting on
-every push and PR.
+**Run both before committing.** Formatting is handled by the Lefthook
+pre-commit hook and enforced by CI on every push and PR.
 
 ## Key Guidance
 
