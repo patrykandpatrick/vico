@@ -17,5 +17,5 @@
 object Versions {
   const val COMPILE_SDK = 36
   const val MIN_SDK = 23
-  const val VICO = "3.2.0-next.1"
+  const val VICO = "3.2.0-next.2"
 }
