@@ -101,6 +101,7 @@ protected constructor(
       }
 
   protected var maxLabelWidth: Float? = null
+  protected var maxLabelHeight: Float? = null
 
   internal constructor(
     position: P,
@@ -155,7 +156,7 @@ protected constructor(
     with(context) {
       var centerY: Float
       val yRange = ranges.getYRange(position)
-      val maxLabelHeight = getMaxLabelHeight()
+      val maxLabelHeight = maxLabelHeight ?: getMaxLabelHeight()
       val lineValues =
         itemPlacer.getLineValues(this, bounds.height, maxLabelHeight, position)
           ?: itemPlacer.getLabelValues(this, bounds.height, maxLabelHeight, position)
@@ -203,7 +204,12 @@ protected constructor(
     with(context) {
       val label = label
       val labelValues =
-        itemPlacer.getLabelValues(this, bounds.height, getMaxLabelHeight(), position)
+        itemPlacer.getLabelValues(
+          this,
+          bounds.height,
+          maxLabelHeight ?: getMaxLabelHeight(),
+          position,
+        )
       val tickLeftX = getTickLeftX()
       val tickRightX = tickLeftX + lineThickness + this.tickLength
       val labelX = if (areLabelsOutsideAtStartOrInsideAtEnd == isLtr) tickLeftX else tickRightX
@@ -271,31 +277,25 @@ protected constructor(
   ): Unit =
     with(context) {
       val offsetFromTickCenterY = getOffsetFromTickCenterY()
-      val textBounds =
-        labelComponent
-          .getBounds(context = this, text = label, rotationDegrees = labelRotationDegrees)
-          .run {
-            translate(
-              translateX = labelX - if (areLabelsOutsideAtStartOrInsideAtEnd) width else 0f,
-              translateY =
-                tickCenterY + offsetFromTickCenterY -
-                  when (verticalLabelPosition) {
-                    Position.Vertical.Top -> height
-                    Position.Vertical.Center -> height.half
-                    Position.Vertical.Bottom -> 0f
-                  },
-            )
-          }
-
-      if (
+      val shouldDraw =
         horizontalLabelPosition == Outside ||
-          isNotInRestrictedBounds(
-            left = textBounds.left,
-            top = textBounds.top,
-            right = textBounds.right,
-            bottom = textBounds.bottom,
-          )
-      ) {
+          labelComponent
+            .getBounds(context = this, text = label, rotationDegrees = labelRotationDegrees)
+            .run {
+              translate(
+                translateX = labelX - if (areLabelsOutsideAtStartOrInsideAtEnd) width else 0f,
+                translateY =
+                  tickCenterY + offsetFromTickCenterY -
+                    when (verticalLabelPosition) {
+                      Position.Vertical.Top -> height
+                      Position.Vertical.Center -> height.half
+                      Position.Vertical.Bottom -> 0f
+                    },
+              )
+            }
+            .run { isNotInRestrictedBounds(left = left, top = top, right = right, bottom = bottom) }
+
+      if (shouldDraw) {
         labelComponent.draw(
           context = this,
           text = label,
@@ -348,7 +348,7 @@ protected constructor(
     model: CartesianChartModel,
   ): Unit =
     with(context) {
-      val maxLabelHeight = getMaxLabelHeight()
+      val maxLabelHeight = getMaxLabelHeight().also { maxLabelHeight = it }
       val maxLineThickness = max(lineThickness, tickThickness)
       layerMargins.ensureValuesAtLeast(
         top =
@@ -420,7 +420,12 @@ protected constructor(
     label
       ?.let { label ->
         itemPlacer
-          .getWidthMeasurementLabelValues(this, axisHeight, getMaxLabelHeight(), position)
+          .getWidthMeasurementLabelValues(
+            this,
+            axisHeight,
+            maxLabelHeight ?: getMaxLabelHeight(),
+            position,
+          )
           .maxOfOrNull { value ->
             label.getWidth(
               context = this,

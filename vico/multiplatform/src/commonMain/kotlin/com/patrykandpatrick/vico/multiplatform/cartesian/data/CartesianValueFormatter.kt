@@ -50,9 +50,22 @@ public fun interface CartesianValueFormatter {
         value.format(decimalCount, decimalSeparator, thousandsSeparator, prefix, suffix)
 
       override fun equals(other: Any?) =
-        this === other || other is Decimal && decimalCount == other.decimalCount
+        this === other ||
+          other is Decimal &&
+            decimalCount == other.decimalCount &&
+            decimalSeparator == other.decimalSeparator &&
+            thousandsSeparator == other.thousandsSeparator &&
+            prefix == other.prefix &&
+            suffix == other.suffix
 
-      override fun hashCode() = decimalCount.hashCode()
+      override fun hashCode(): Int {
+        var result = decimalCount.hashCode()
+        result = 31 * result + decimalSeparator.hashCode()
+        result = 31 * result + thousandsSeparator.hashCode()
+        result = 31 * result + prefix.hashCode()
+        result = 31 * result + suffix.hashCode()
+        return result
+      }
     }
 
     private class YPercent(private val decimalCount: Int) : CartesianValueFormatter {

@@ -80,7 +80,6 @@ public open class TextComponent(
   protected val minWidth: MinWidth = MinWidth.fixed(),
 ) {
   private lateinit var textLayoutResult: TextLayoutResult
-  private lateinit var measuringLayoutResult: TextLayoutResult
 
   /**
    * Uses [Canvas] to draw this [TextComponent].
@@ -342,9 +341,6 @@ public open class TextComponent(
           )
         }
 
-      measuringLayoutResult =
-        measurer.measure(text, textStyle, textOverflow, lineCount, width, height)
-
       val widthWithoutMargins = width - margins.horizontal.pixels.toInt()
       val heightWithoutMargins = height - margins.vertical.pixels.toInt()
 
@@ -353,8 +349,10 @@ public open class TextComponent(
             rotationDegrees % 1f.piRad == 0f -> widthWithoutMargins
             rotationDegrees % 0.5f.piRad == 0f -> heightWithoutMargins
             else -> {
+              val measuringResult =
+                measurer.measure(text, textStyle, textOverflow, lineCount, width, height)
               val cumulatedHeight =
-                lineCount * measuringLayoutResult.size.height + padding.vertical.pixels.toInt()
+                lineCount * measuringResult.size.height + padding.vertical.pixels.toInt()
               val alpha = rotationDegrees.toRadians()
               val absSinAlpha = sin(alpha).absoluteValue
               val absCosAlpha = cos(alpha).absoluteValue

@@ -30,6 +30,7 @@ import com.patrykandpatrick.vico.multiplatform.cartesian.marker.Interaction
 import com.patrykandpatrick.vico.multiplatform.common.*
 import com.patrykandpatrick.vico.multiplatform.common.Defaults.CHART_HEIGHT
 import com.patrykandpatrick.vico.multiplatform.common.data.ExtraStore
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.launch
 
@@ -224,7 +225,9 @@ internal fun CartesianChartHostImpl(
     scrollState.update(measuringContext.value, chart.layerBounds, layerDimensions)
 
     if (model != lastHandledModel) {
-      coroutineScope.launch { scrollState.autoScroll(model, previousModel) }
+      coroutineScope.launch(start = CoroutineStart.UNDISPATCHED) {
+        scrollState.autoScroll(model, previousModel)
+      }
       lastHandledModel = model
     }
 

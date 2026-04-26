@@ -18,6 +18,8 @@ package com.patrykandpatrick.vico.compose.cartesian
 
 import android.graphics.RectF
 import androidx.compose.animation.core.AnimationSpec
+import androidx.compose.animation.core.AnimationVector
+import androidx.compose.animation.core.VectorConverter
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.MutatePriority
 import androidx.compose.foundation.gestures.ScrollableState
@@ -196,10 +198,20 @@ public class VicoScrollState {
   /** Triggers an animated scroll. */
   public suspend fun animateScroll(scroll: Scroll, animationSpec: AnimationSpec<Float> = spring()) {
     withUpdated { context, layerDimensions, bounds ->
-      scrollableState.animateScrollBy(
-        scroll.getDelta(context, layerDimensions, bounds, maxValue, value),
-        animationSpec,
-      )
+      val delta = scroll.getDelta(context, layerDimensions, bounds, maxValue, value)
+      val duration =
+        animationSpec
+          .vectorize(Float.VectorConverter)
+          .getDurationNanos(
+            initialValue = AnimationVector(value),
+            targetValue = AnimationVector(value + delta),
+            initialVelocity = AnimationVector(0f),
+          )
+      if (duration == 0L) {
+        scrollableState.scrollBy(delta)
+      } else {
+        scrollableState.animateScrollBy(delta, animationSpec)
+      }
     }
   }
 
