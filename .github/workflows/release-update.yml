@@ -17,9 +17,6 @@ jobs:
           java-version: 17
       - uses: gradle/actions/setup-gradle@v5
       - run: |
-          git config --global user.email "96002241+patrykandpatrickbot@users.noreply.github.com"
-          git config --global user.name "Patryk & Patrick Bot"
-          git clone https://${{ secrets.BOT_PAT }}@github.com/patrykandpatrick/vico-api-reference
           cd ${{ github.workspace }}/vico
           VERSION_NAME=$(grep -oP "(?<=const val VICO = \")[^\"]*" buildSrc/src/main/kotlin/Versions.kt)
           echo "VERSION_NAME=$VERSION_NAME" >> $GITHUB_ENV
@@ -36,21 +33,8 @@ jobs:
           files: ${{ github.workspace }}/vico/sample/app/build/outputs/apk/debug/android-sample-debug.apk
           prerelease: ${{ env.IS_PRERELEASE }}
           tag_name: ${{ env.TAG_NAME }}
-          token: ${{ secrets.BOT_PAT }}
       - run: |
           cd ${{ github.workspace }}/vico
-          git remote set-url origin https://patrykandpatrickbot:${{ secrets.BOT_PAT }}@github.com/patrykandpatrick/vico
-          ./gradlew dokkaGenerate
-          API_REFERENCE_DESTINATION=${{ github.workspace }}/vico-api-reference/$(if $IS_PRERELEASE; then echo $VERSION_NAME; else echo stable; fi)
-          rm -fr $API_REFERENCE_DESTINATION/*
-          cp -R ${{ github.workspace }}/vico/vico/build/dokka/html/. $API_REFERENCE_DESTINATION
-          cd ${{ github.workspace }}/vico-api-reference
-          git remote set-url origin https://patrykandpatrickbot:${{ secrets.BOT_PAT }}@github.com/patrykandpatrick/vico-api-reference
-          git add -A
-          git diff --staged --quiet HEAD || git commit -m "Update API reference"
-          git push origin
-          cd ${{ github.workspace }}/vico
-          git push origin
           ./gradlew publishToMavenCentral --no-configuration-cache
         env:
           ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
