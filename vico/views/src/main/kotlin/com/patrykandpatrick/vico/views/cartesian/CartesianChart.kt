@@ -37,6 +37,19 @@ import com.patrykandpatrick.vico.views.common.data.MutableExtraStore
 import java.util.*
 import kotlin.math.abs
 
+private fun getDefaultXStep(model: CartesianChartModel, minX: Double): Double {
+  var gcd = model.getXDeltaGcd()
+  if (model.models.isEmpty()) return gcd
+  val minXOffset = model.models.minOf { it.minX } - minX
+  if (minXOffset != 0.0) {
+    gcd = gcd.gcdWith(abs(minXOffset))
+    require(gcd != 0.0) {
+      "The x-values are too precise. The maximum precision is four decimal places."
+    }
+  }
+  return gcd
+}
+
 /** A chart based on a Cartesian coordinate plane, composed of [CartesianLayer]s. */
 public open class CartesianChart
 private constructor(
@@ -52,7 +65,9 @@ private constructor(
   protected val fadingEdges: FadingEdges? = null,
   protected val decorations: List<Decoration> = emptyList(),
   protected val persistentMarkers: (PersistentMarkerScope.(ExtraStore) -> Unit)? = null,
-  protected val getXStep: ((CartesianChartModel) -> Double) = { it.getXDeltaGcd() },
+  protected val getXStep: ((CartesianChartModel, Double, Double) -> Double) = { model, minX, _ ->
+    getDefaultXStep(model, minX)
+  },
   public val markerController: CartesianMarkerController,
   /** @suppress */
   @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) public val id: UUID,
@@ -141,7 +156,7 @@ private constructor(
   /** The [CartesianLayer]s of which this [CartesianChart] is composed. */
   public val layers: List<CartesianLayer<*>> = layers.toList()
 
-  /** Links _x_ values to [CartesianMarker.Target]s. */
+  /** Links _x_-values to [CartesianMarker.Target]s. */
   @Suppress("UNCHECKED_CAST")
   protected val markerTargets: SortedMap<Double, List<CartesianMarker.Target>> =
     _markerTargets as SortedMap<Double, List<CartesianMarker.Target>>
@@ -181,7 +196,8 @@ private constructor(
    *   that it’s scrollable.
    * @param decorations the [Decoration]s.
    * @param persistentMarkers adds persistent [CartesianMarker]s.
-   * @param getXStep defines the _x_ step (the difference between neighboring major _x_ values).
+   * @param getXStep defines the _x_-step (the difference between neighboring major _x_-values).
+   *   Receives the model and the final minimum and maximum _x_-values.
    * @param markerController controls [marker] visibility.
    */
   public constructor(
@@ -197,7 +213,9 @@ private constructor(
     fadingEdges: FadingEdges? = null,
     decorations: List<Decoration> = emptyList(),
     persistentMarkers: (PersistentMarkerScope.(ExtraStore) -> Unit)? = null,
-    getXStep: ((CartesianChartModel) -> Double) = { it.getXDeltaGcd() },
+    getXStep: ((CartesianChartModel, Double, Double) -> Double) = { model, minX, _ ->
+      getDefaultXStep(model, minX)
+    },
     markerController: CartesianMarkerController = CartesianMarkerController.showOnPress(),
   ) : this(
     layers = layers,
@@ -213,6 +231,66 @@ private constructor(
     decorations = decorations,
     persistentMarkers = persistentMarkers,
     getXStep = getXStep,
+    markerController = markerController,
+    id = UUID.randomUUID(),
+    previousMarkerTargetHashCode = null,
+    persistentMarkerMap = mutableMapOf(),
+    previousPersistentMarkerHashCode = null,
+  )
+
+  /**
+   * Creates a [CartesianChart].
+   *
+   * @param layers the [CartesianLayer]s.
+   * @param startAxis the start [Axis].
+   * @param topAxis the top [Axis].
+   * @param endAxis the end [Axis].
+   * @param bottomAxis the bottom [Axis].
+   * @param marker appears when the [CartesianChart] is tapped.
+   * @param markerVisibilityListener allows for listening to [marker] visibility changes.
+   * @param layerPadding returns the [CartesianLayerPadding].
+   * @param legend the legend.
+   * @param fadingEdges applies a horizontal fade to the edges of the [CartesianChart], provided
+   *   that it’s scrollable.
+   * @param decorations the [Decoration]s.
+   * @param persistentMarkers adds persistent [CartesianMarker]s.
+   * @param getXStep defines the _x_-step (the difference between neighboring major _x_-values).
+   * @param markerController controls [marker] visibility.
+   */
+  @Deprecated(
+    message =
+      "Use the constructor whose `getXStep` lambda also receives the final minimum and maximum " +
+        "x-values."
+  )
+  public constructor(
+    vararg layers: CartesianLayer<*>,
+    startAxis: Axis<Axis.Position.Vertical.Start>? = null,
+    topAxis: Axis<Axis.Position.Horizontal.Top>? = null,
+    endAxis: Axis<Axis.Position.Vertical.End>? = null,
+    bottomAxis: Axis<Axis.Position.Horizontal.Bottom>? = null,
+    marker: CartesianMarker? = null,
+    markerVisibilityListener: CartesianMarkerVisibilityListener? = null,
+    layerPadding: ((ExtraStore) -> CartesianLayerPadding) = { CartesianLayerPadding() },
+    legend: Legend<CartesianMeasuringContext, CartesianDrawingContext>? = null,
+    fadingEdges: FadingEdges? = null,
+    decorations: List<Decoration> = emptyList(),
+    persistentMarkers: (PersistentMarkerScope.(ExtraStore) -> Unit)? = null,
+    getXStep: ((CartesianChartModel) -> Double),
+    markerController: CartesianMarkerController = CartesianMarkerController.showOnPress(),
+  ) : this(
+    layers = layers,
+    startAxis = startAxis,
+    topAxis = topAxis,
+    endAxis = endAxis,
+    bottomAxis = bottomAxis,
+    marker = marker,
+    markerVisibilityListener = markerVisibilityListener,
+    layerPadding = layerPadding,
+    legend = legend,
+    fadingEdges = fadingEdges,
+    decorations = decorations,
+    persistentMarkers = persistentMarkers,
+    getXStep = { model, _, _ -> getXStep(model) },
     markerController = markerController,
     id = UUID.randomUUID(),
     previousMarkerTargetHashCode = null,
@@ -310,8 +388,8 @@ private constructor(
   }
 
   internal fun updateRanges(ranges: MutableCartesianChartRanges, model: CartesianChartModel) {
-    ranges.xStep = getXStep(model)
     model.forEachWithLayer(rangeUpdateConsumer.apply { this.ranges = ranges })
+    ranges.xStep = getXStep(model, ranges.minX, ranges.maxX)
   }
 
   override fun updateLayerMargins(
@@ -459,7 +537,7 @@ private constructor(
     fadingEdges: FadingEdges? = this.fadingEdges,
     decorations: List<Decoration> = this.decorations,
     persistentMarkers: (PersistentMarkerScope.(ExtraStore) -> Unit)? = this.persistentMarkers,
-    getXStep: ((CartesianChartModel) -> Double) = this.getXStep,
+    getXStep: ((CartesianChartModel, Double, Double) -> Double) = this.getXStep,
     markerController: CartesianMarkerController = this.markerController,
   ): CartesianChart =
     CartesianChart(
@@ -481,6 +559,45 @@ private constructor(
       previousMarkerTargetHashCode = previousMarkerTargetHashCode,
       persistentMarkerMap = persistentMarkerMap,
       previousPersistentMarkerHashCode = previousPersistentMarkerHashCode,
+    )
+
+  /** Creates a new [CartesianChart] based on this one. */
+  @Deprecated(
+    message =
+      "Use the overload whose `getXStep` lambda also receives the final minimum and maximum " +
+        "x-values."
+  )
+  public fun copy(
+    vararg layers: CartesianLayer<*> = this.layers.toTypedArray(),
+    startAxis: Axis<Axis.Position.Vertical.Start>? = this.startAxis,
+    topAxis: Axis<Axis.Position.Horizontal.Top>? = this.topAxis,
+    endAxis: Axis<Axis.Position.Vertical.End>? = this.endAxis,
+    bottomAxis: Axis<Axis.Position.Horizontal.Bottom>? = this.bottomAxis,
+    marker: CartesianMarker? = this.marker,
+    markerVisibilityListener: CartesianMarkerVisibilityListener? = this.markerVisibilityListener,
+    layerPadding: ((ExtraStore) -> CartesianLayerPadding) = this.layerPadding,
+    legend: Legend<CartesianMeasuringContext, CartesianDrawingContext>? = this.legend,
+    fadingEdges: FadingEdges? = this.fadingEdges,
+    decorations: List<Decoration> = this.decorations,
+    persistentMarkers: (PersistentMarkerScope.(ExtraStore) -> Unit)? = this.persistentMarkers,
+    getXStep: ((CartesianChartModel) -> Double),
+    markerController: CartesianMarkerController = this.markerController,
+  ): CartesianChart =
+    copy(
+      layers = layers,
+      startAxis = startAxis,
+      topAxis = topAxis,
+      endAxis = endAxis,
+      bottomAxis = bottomAxis,
+      marker = marker,
+      markerVisibilityListener = markerVisibilityListener,
+      layerPadding = layerPadding,
+      legend = legend,
+      fadingEdges = fadingEdges,
+      decorations = decorations,
+      persistentMarkers = persistentMarkers,
+      getXStep = { model, _, _ -> getXStep(model) },
+      markerController = markerController,
     )
 
   override fun equals(other: Any?): Boolean =

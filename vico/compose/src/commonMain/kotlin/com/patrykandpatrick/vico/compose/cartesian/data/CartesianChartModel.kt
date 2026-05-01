@@ -40,7 +40,7 @@ public class CartesianChartModel {
   public val models: List<CartesianLayerModel>
 
   /**
-   * Expresses the size of this [CartesianChartModel] in terms of the range of the _x_ values
+   * Expresses the size of this [CartesianChartModel] in terms of the range of the _x_-values
    * covered.
    */
   public val width: Double
@@ -69,7 +69,7 @@ public class CartesianChartModel {
     this.extraStore = extraStore
   }
 
-  /** Returns the greatest common divisor of the _x_ values’ differences. */
+  /** Returns the greatest common divisor of the _x_-values’ differences. */
   public fun getXDeltaGcd(): Double =
     models.fold<CartesianLayerModel, Double?>(null) { gcd, layerModel ->
       val layerModelGcd = layerModel.getXDeltaGcd()

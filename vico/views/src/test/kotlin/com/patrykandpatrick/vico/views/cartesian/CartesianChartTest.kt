@@ -21,6 +21,10 @@ import android.graphics.RectF
 import android.graphics.Xfermode
 import com.patrykandpatrick.vico.views.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.views.cartesian.axis.VerticalAxis
+import com.patrykandpatrick.vico.views.cartesian.data.CartesianChartModel
+import com.patrykandpatrick.vico.views.cartesian.data.CartesianLayerRangeProvider
+import com.patrykandpatrick.vico.views.cartesian.data.LineCartesianLayerModel
+import com.patrykandpatrick.vico.views.cartesian.data.MutableCartesianChartRanges
 import com.patrykandpatrick.vico.views.cartesian.layer.CartesianLayerPadding
 import com.patrykandpatrick.vico.views.cartesian.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.views.cartesian.layer.LineCartesianLayer
@@ -78,6 +82,81 @@ class CartesianChartTest {
 
     assertNotEquals(chart, copiedChart)
     assertNotEquals(chart.hashCode(), copiedChart.hashCode())
+  }
+
+  @Suppress("DEPRECATION")
+  @Test
+  fun `Given x step lambda is provided, when chart is created, then lambda arity resolves`() {
+    CartesianChart(
+      getXStep = { model -> model.getXDeltaGcd() },
+      layers = getCartesianChart().layers.toTypedArray(),
+    )
+    CartesianChart(
+      getXStep = { model, _, _ -> model.getXDeltaGcd() },
+      layers = getCartesianChart().layers.toTypedArray(),
+    )
+  }
+
+  @Test
+  fun `Given x range is extended, when ranges are updated, then default x step accounts for range`() {
+    val chart =
+      CartesianChart(
+        LineCartesianLayer(
+          lineProvider =
+            LineCartesianLayer.LineProvider.series(
+              LineCartesianLayer.Line(LineCartesianLayer.LineFill.single(Fill.Black))
+            ),
+          rangeProvider = CartesianLayerRangeProvider.fixed(minX = -0.5, maxX = 2.0),
+        )
+      )
+    val ranges = MutableCartesianChartRanges()
+    val model =
+      CartesianChartModel(
+        LineCartesianLayerModel(
+          listOf(
+            listOf(
+              LineCartesianLayerModel.Entry(0, 0),
+              LineCartesianLayerModel.Entry(1, 1),
+              LineCartesianLayerModel.Entry(2, 2),
+            )
+          )
+        )
+      )
+
+    chart.updateRanges(ranges, model)
+
+    assertEquals(0.5, ranges.xStep)
+  }
+
+  @Test
+  fun `Given only max x is extended, when ranges are updated, then default x step is unchanged`() {
+    val chart =
+      CartesianChart(
+        LineCartesianLayer(
+          lineProvider =
+            LineCartesianLayer.LineProvider.series(
+              LineCartesianLayer.Line(LineCartesianLayer.LineFill.single(Fill.Black))
+            ),
+          rangeProvider = CartesianLayerRangeProvider.fixed(maxX = 2.5),
+        )
+      )
+    val ranges = MutableCartesianChartRanges()
+    val model =
+      CartesianChartModel(
+        LineCartesianLayerModel(
+          listOf(
+            listOf(
+              LineCartesianLayerModel.Entry(0, 0),
+              LineCartesianLayerModel.Entry(1, 1),
+              LineCartesianLayerModel.Entry(2, 2),
+            )
+          )
+        )
+      )
+
+    chart.updateRanges(ranges, model)
+
+    assertEquals(1.0, ranges.xStep)
   }
 
   private companion object {
