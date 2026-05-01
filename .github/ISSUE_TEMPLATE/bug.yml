@@ -63,7 +63,7 @@ body:
       options:
         - 3.1.0
         - 3.2.0-next.2
-        - 2.4.3
+        - 2.4.4
     validations:
       required: true
   - type: textarea
