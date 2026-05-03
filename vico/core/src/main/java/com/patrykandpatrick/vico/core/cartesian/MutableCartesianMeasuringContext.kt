@@ -42,6 +42,7 @@ public class MutableCartesianMeasuringContext(
   @Deprecated("`CartesianMeasuringContext.pointerPosition` is deprecated.")
   override var pointerPosition: Point?,
   override var markerX: Double?,
+  @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) override var markerSeriesIndex: Int? = null,
   cacheStore: CacheStore = CacheStore(),
 ) :
   MutableMeasuringContext(canvasSize, density, extraStore, isLtr, spToPx, cacheStore),

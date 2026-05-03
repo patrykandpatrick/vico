@@ -44,6 +44,7 @@ internal fun rememberCartesianMeasuringContext(
   layerPadding: CartesianLayerPadding,
   pointerPosition: Point?,
   markerX: Double?,
+  markerSeriesIndex: Int?,
 ): State<MutableCartesianMeasuringContext> {
   val density = LocalDensity.current
   val isLtr = LocalLayoutDirection.current == LayoutDirection.Ltr
@@ -61,6 +62,7 @@ internal fun rememberCartesianMeasuringContext(
       layerPadding,
       pointerPosition,
       markerX,
+      markerSeriesIndex,
       cacheStore,
     ) {
       MutableCartesianMeasuringContext(
@@ -76,6 +78,7 @@ internal fun rememberCartesianMeasuringContext(
         layerPadding = layerPadding,
         pointerPosition = pointerPosition,
         markerX = markerX,
+        markerSeriesIndex = markerSeriesIndex,
         cacheStore = cacheStore,
       )
     }

@@ -31,6 +31,7 @@ import com.patrykandpatrick.vico.core.cartesian.*
 import com.patrykandpatrick.vico.core.cartesian.data.*
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayerPadding
 import com.patrykandpatrick.vico.core.cartesian.layer.MutableCartesianLayerDimensions
+import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerController.Lock
 import com.patrykandpatrick.vico.core.cartesian.marker.Interaction
 import com.patrykandpatrick.vico.core.common.*
@@ -84,6 +85,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       layerPadding = CartesianLayerPadding(),
       pointerPosition = null,
       markerX = null,
+      markerSeriesIndex = null,
     )
 
   private val scaleGestureListener: ScaleGestureDetector.OnScaleGestureListener =
@@ -386,10 +388,31 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
         x,
         measuringContext.getVisibleXRange(layerDimensions, chart.layerBounds, scrollHandler.value),
       )
-    if (chart.markerController.shouldAcceptInteraction(interaction, targets)) {
-      val shouldShow = chart.markerController.shouldShowMarker(interaction, targets)
+    val narrowedTargets: List<CartesianMarker.Target>
+    val seriesIndex: Int?
+    if (targets.isNotEmpty()) {
+      val closestIndex = targets.indices.minBy { abs(targets[it].canvasX - interaction.point.x) }
+      if (targets.distinctBy { it.canvasX }.size > 1) {
+        narrowedTargets = listOf(targets[closestIndex])
+        seriesIndex = closestIndex
+      } else {
+        narrowedTargets = targets
+        seriesIndex = null
+      }
+    } else {
+      narrowedTargets = targets
+      seriesIndex = null
+    }
+    if (chart.markerController.shouldAcceptInteraction(interaction, narrowedTargets)) {
+      val shouldShow = chart.markerController.shouldShowMarker(interaction, narrowedTargets)
       lastAcceptedInteraction = interaction
-      measuringContext.markerX = if (shouldShow) targets.firstOrNull()?.x else null
+      if (shouldShow && narrowedTargets.isNotEmpty()) {
+        measuringContext.markerX = narrowedTargets.first().x
+        measuringContext.markerSeriesIndex = seriesIndex
+      } else {
+        measuringContext.markerX = null
+        measuringContext.markerSeriesIndex = null
+      }
       invalidate()
     }
   }

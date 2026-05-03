@@ -49,6 +49,9 @@ public interface CartesianMeasuringContext : MeasuringContext {
   /** The marker’s _x_-value. */
   public val markerX: Double?
 
+  /** The marker’s series index. */
+  public val markerSeriesIndex: Int?
+
   /** Whether the marker is shown. */
   @Deprecated("Use `markerX != null`.")
   public val isMarkerShown: Boolean
