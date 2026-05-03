@@ -1,0 +1,6 @@
+pre-commit:
+  jobs:
+    - name: ktfmt
+      run: ktfmt --google-style {staged_files}
+      glob: "*.{kt,kts}"
+      stage_fixed: true
