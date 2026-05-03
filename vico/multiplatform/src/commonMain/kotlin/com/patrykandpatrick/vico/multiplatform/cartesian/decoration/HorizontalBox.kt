@@ -102,8 +102,10 @@ public class HorizontalBox(
   override fun equals(other: Any?): Boolean =
     this === other ||
       other is HorizontalBox &&
+        y == other.y &&
         box == other.box &&
         labelComponent == other.labelComponent &&
+        label == other.label &&
         horizontalLabelPosition == other.horizontalLabelPosition &&
         verticalLabelPosition == other.verticalLabelPosition &&
         labelRotationDegrees == other.labelRotationDegrees &&
