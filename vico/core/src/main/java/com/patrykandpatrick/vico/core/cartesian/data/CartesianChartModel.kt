@@ -21,6 +21,7 @@ import com.patrykandpatrick.vico.core.cartesian.CartesianChart
 import com.patrykandpatrick.vico.core.common.data.CartesianLayerDrawingModel
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.core.common.gcdWith
+import kotlin.math.abs
 
 /** Stores a [CartesianChart]’s data. */
 @Suppress("DEPRECATION")
@@ -97,4 +98,19 @@ public class CartesianChartModel {
     public val Empty: CartesianChartModel =
       CartesianChartModel(models = emptyList(), id = 0, width = 0.0, extraStore = ExtraStore.Empty)
   }
+}
+
+/** @suppress */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+public fun CartesianChartModel.getDefaultXStep(minX: Double): Double {
+  var gcd = getXDeltaGcd()
+  if (models.isEmpty()) return gcd
+  val minXOffset = models.minOf { it.minX } - minX
+  if (minXOffset != 0.0) {
+    gcd = gcd.gcdWith(abs(minXOffset))
+    require(gcd != 0.0) {
+      "The x-values are too precise. The maximum precision is four decimal places."
+    }
+  }
+  return gcd
 }

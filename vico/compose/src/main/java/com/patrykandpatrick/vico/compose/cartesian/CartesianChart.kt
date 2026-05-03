@@ -28,6 +28,7 @@ import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
 import com.patrykandpatrick.vico.core.cartesian.FadingEdges
 import com.patrykandpatrick.vico.core.cartesian.axis.Axis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
+import com.patrykandpatrick.vico.core.cartesian.data.getDefaultXStep
 import com.patrykandpatrick.vico.core.cartesian.decoration.Decoration
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayerPadding
@@ -59,7 +60,9 @@ public fun rememberCartesianChart(
   fadingEdges: FadingEdges? = null,
   decorations: List<Decoration> = emptyList(),
   persistentMarkers: (CartesianChart.PersistentMarkerScope.(ExtraStore) -> Unit)? = null,
-  getXStep: ((CartesianChartModel) -> Double) = { it.getXDeltaGcd() },
+  getXStep: ((CartesianChartModel, Double, Double) -> Double) = { model, minX, _ ->
+    model.getDefaultXStep(minX)
+  },
   markerController: CartesianMarkerController = CartesianMarkerController.showOnPress(),
 ): CartesianChart {
   val wrapper = remember { ValueWrapper<CartesianChart?>(null) }
@@ -116,3 +119,46 @@ public fun rememberCartesianChart(
     cartesianChart
   }
 }
+
+/**
+ * Creates and remembers a [CartesianChart].
+ *
+ * @param getXStep defines the _x_ step (the difference between neighboring major _x_ values).
+ */
+@Deprecated(
+  message =
+    "Use the overload whose `getXStep` lambda also receives the final minimum and maximum x-values."
+)
+@Composable
+public fun rememberCartesianChart(
+  vararg layers: CartesianLayer<*>,
+  startAxis: Axis<Axis.Position.Vertical.Start>? = null,
+  topAxis: Axis<Axis.Position.Horizontal.Top>? = null,
+  endAxis: Axis<Axis.Position.Vertical.End>? = null,
+  bottomAxis: Axis<Axis.Position.Horizontal.Bottom>? = null,
+  marker: CartesianMarker? = null,
+  markerVisibilityListener: CartesianMarkerVisibilityListener? = null,
+  layerPadding: ((ExtraStore) -> CartesianLayerPadding) = { cartesianLayerPadding() },
+  legend: Legend<CartesianMeasuringContext, CartesianDrawingContext>? = null,
+  fadingEdges: FadingEdges? = null,
+  decorations: List<Decoration> = emptyList(),
+  persistentMarkers: (CartesianChart.PersistentMarkerScope.(ExtraStore) -> Unit)? = null,
+  getXStep: ((CartesianChartModel) -> Double),
+  markerController: CartesianMarkerController = CartesianMarkerController.showOnPress(),
+): CartesianChart =
+  rememberCartesianChart(
+    layers = layers,
+    startAxis = startAxis,
+    topAxis = topAxis,
+    endAxis = endAxis,
+    bottomAxis = bottomAxis,
+    marker = marker,
+    markerVisibilityListener = markerVisibilityListener,
+    layerPadding = layerPadding,
+    legend = legend,
+    fadingEdges = fadingEdges,
+    decorations = decorations,
+    persistentMarkers = persistentMarkers,
+    getXStep = { model, _, _ -> getXStep(model) },
+    markerController = markerController,
+  )
