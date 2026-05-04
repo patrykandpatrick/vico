@@ -15,7 +15,7 @@ jobs:
         with:
           distribution: zulu
           java-version: 17
-      - uses: gradle/actions/setup-gradle@v5
+      - uses: gradle/actions/setup-gradle@v6
       - run: |
           cd ${{ github.workspace }}/vico
           VERSION_NAME=$(grep -oP "(?<=const val VICO = \")[^\"]*" buildSrc/src/main/kotlin/Versions.kt)
