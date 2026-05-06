@@ -36,7 +36,7 @@ kotlin {
     compilerOptions { jvmTarget = JvmTarget.JVM_11 }
     publishLibraryVariants("release")
   }
-  listOf(iosX64(), iosArm64(), iosSimulatorArm64()).forEach { target ->
+  listOf(iosArm64(), iosSimulatorArm64()).forEach { target ->
     target.binaries.framework {
       baseName = project.name
       isStatic = true
