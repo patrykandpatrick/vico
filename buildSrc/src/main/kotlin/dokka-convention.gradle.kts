@@ -16,4 +16,9 @@
 
 plugins { id("org.jetbrains.dokka") }
 
-dokka { dokkaPublications.configureEach { suppressInheritedMembers = true } }
+dokka {
+  dokkaPublications.configureEach { suppressInheritedMembers = true }
+
+  // AGP 9 exposes the release variant as a Dokka source set that duplicates androidJvm.
+  dokkaSourceSets.matching { it.name == "release" }.configureEach { suppress.set(true) }
+}
