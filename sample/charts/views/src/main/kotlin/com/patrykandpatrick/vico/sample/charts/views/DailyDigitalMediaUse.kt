@@ -31,7 +31,7 @@ import com.patrykandpatrick.vico.views.cartesian.CartesianMeasuringContext
 import com.patrykandpatrick.vico.views.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.views.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.views.cartesian.data.CartesianValueFormatter
-import com.patrykandpatrick.vico.views.cartesian.data.columnSeries
+import com.patrykandpatrick.vico.views.cartesian.data.columnModel
 import com.patrykandpatrick.vico.views.cartesian.marker.CartesianMarkerController
 import com.patrykandpatrick.vico.views.cartesian.marker.DefaultCartesianMarker
 import com.patrykandpatrick.vico.views.common.Fill
@@ -65,7 +65,7 @@ fun ViewDailyDigitalMediaUse(modifier: Modifier) {
   LaunchedEffect(Unit) {
     modelProducer.runTransaction {
       // Learn more: https://patrykandpatrick.com/eji9zq.
-      columnSeries { y.values.forEach { series(x, it) } }
+      columnModel { y.values.forEach { series(x, it) } }
       extras { it[LegendLabelKey] = y.keys }
     }
   }

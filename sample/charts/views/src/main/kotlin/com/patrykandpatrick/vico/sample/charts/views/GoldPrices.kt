@@ -29,7 +29,7 @@ import com.patrykandpatrick.vico.views.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.views.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.views.cartesian.data.CartesianLayerRangeProvider
 import com.patrykandpatrick.vico.views.cartesian.data.CartesianValueFormatter
-import com.patrykandpatrick.vico.views.cartesian.data.candlestickSeries
+import com.patrykandpatrick.vico.views.cartesian.data.candlestickModel
 import com.patrykandpatrick.vico.views.cartesian.layer.CandlestickCartesianLayer
 import com.patrykandpatrick.vico.views.cartesian.marker.DefaultCartesianMarker
 import com.patrykandpatrick.vico.views.common.data.ExtraStore
@@ -77,7 +77,7 @@ fun ViewGoldPrices(modifier: Modifier) {
   LaunchedEffect(Unit) {
     modelProducer.runTransaction {
       // Learn more: https://patrykandpatrick.com/y3c4gz.
-      candlestickSeries(x, opening, closing, low, high)
+      candlestickModel(x, opening, closing, low, high)
     }
   }
   AndroidViewBinding(

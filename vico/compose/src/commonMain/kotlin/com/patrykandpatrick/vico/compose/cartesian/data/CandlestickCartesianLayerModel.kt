@@ -309,7 +309,7 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
  * [CartesianLayerModel.Partial] list. [opening], [closing], [low], and [high] should have the same
  * sizes.
  */
-public fun CartesianChartModelProducer.Transaction.candlestickSeries(
+public fun CartesianChartModelProducer.Transaction.candlestickModel(
   x: Collection<Number>,
   opening: Collection<Number>,
   closing: Collection<Number>,
@@ -321,19 +321,40 @@ public fun CartesianChartModelProducer.Transaction.candlestickSeries(
 }
 
 /**
- * Creates a [CandlestickCartesianLayerModel.Partial] with the provided prices and [key], using
- * their indices as the _x_ values, and adds it to the [CartesianChartModelProducer.Transaction]’s
+ * Creates a [CandlestickCartesianLayerModel.Partial] with the provided _x_ values ([x]), prices,
+ * and [key] and adds it to the [CartesianChartModelProducer.Transaction]’s
  * [CartesianLayerModel.Partial] list. [opening], [closing], [low], and [high] should have the same
  * sizes.
  */
+@Deprecated(
+  "Use `candlestickModel`.",
+  ReplaceWith("candlestickModel(x, opening, closing, low, high, key)"),
+)
 public fun CartesianChartModelProducer.Transaction.candlestickSeries(
+  x: Collection<Number>,
   opening: Collection<Number>,
   closing: Collection<Number>,
   low: Collection<Number>,
   high: Collection<Number>,
   key: Any = 0,
 ) {
-  candlestickSeries(
+  candlestickModel(x, opening, closing, low, high, key)
+}
+
+/**
+ * Creates a [CandlestickCartesianLayerModel.Partial] with the provided prices and [key], using
+ * their indices as the _x_ values, and adds it to the [CartesianChartModelProducer.Transaction]’s
+ * [CartesianLayerModel.Partial] list. [opening], [closing], [low], and [high] should have the same
+ * sizes.
+ */
+public fun CartesianChartModelProducer.Transaction.candlestickModel(
+  opening: Collection<Number>,
+  closing: Collection<Number>,
+  low: Collection<Number>,
+  high: Collection<Number>,
+  key: Any = 0,
+) {
+  candlestickModel(
     x = opening.indices.toList(),
     opening = opening,
     closing = closing,
@@ -341,4 +362,24 @@ public fun CartesianChartModelProducer.Transaction.candlestickSeries(
     high = high,
     key = key,
   )
+}
+
+/**
+ * Creates a [CandlestickCartesianLayerModel.Partial] with the provided prices and [key], using
+ * their indices as the _x_ values, and adds it to the [CartesianChartModelProducer.Transaction]’s
+ * [CartesianLayerModel.Partial] list. [opening], [closing], [low], and [high] should have the same
+ * sizes.
+ */
+@Deprecated(
+  "Use `candlestickModel`.",
+  ReplaceWith("candlestickModel(opening, closing, low, high, key)"),
+)
+public fun CartesianChartModelProducer.Transaction.candlestickSeries(
+  opening: Collection<Number>,
+  closing: Collection<Number>,
+  low: Collection<Number>,
+  high: Collection<Number>,
+  key: Any = 0,
+) {
+  candlestickModel(opening, closing, low, high, key)
 }

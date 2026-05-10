@@ -69,7 +69,7 @@ fun ViewTemperatureAnomalies(modifier: Modifier) {
   LaunchedEffect(Unit) {
     modelProducer.runTransaction {
       // Learn more: https://patrykandpatrick.com/eji9zq.
-      columnSeries { series(x, y) }
+      columnModel { series(x, y) }
     }
   }
   AndroidViewBinding(

@@ -241,10 +241,21 @@ public class ColumnCartesianLayerModel : CartesianLayerModel {
  * Calls [block] to create a [ColumnCartesianLayerModel.Partial] and adds it to the
  * [CartesianChartModelProducer.Transaction]’s [CartesianLayerModel.Partial] list.
  */
-public fun CartesianChartModelProducer.Transaction.columnSeries(
+public fun CartesianChartModelProducer.Transaction.columnModel(
   block: ColumnCartesianLayerModel.BuilderScope.() -> Unit
 ) {
   add(ColumnCartesianLayerModel.partial(block))
+}
+
+/**
+ * Calls [block] to create a [ColumnCartesianLayerModel.Partial] and adds it to the
+ * [CartesianChartModelProducer.Transaction]’s [CartesianLayerModel.Partial] list.
+ */
+@Deprecated("Use `columnModel`.", ReplaceWith("columnModel(block)"))
+public fun CartesianChartModelProducer.Transaction.columnSeries(
+  block: ColumnCartesianLayerModel.BuilderScope.() -> Unit
+) {
+  columnModel(block)
 }
 
 internal fun Iterable<ColumnCartesianLayerModel.Entry>.getAggregateYRange() =

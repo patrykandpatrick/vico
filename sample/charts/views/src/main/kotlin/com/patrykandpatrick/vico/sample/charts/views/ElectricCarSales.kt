@@ -28,7 +28,7 @@ import com.patrykandpatrick.vico.views.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.views.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.views.cartesian.data.CartesianLayerRangeProvider
 import com.patrykandpatrick.vico.views.cartesian.data.CartesianValueFormatter
-import com.patrykandpatrick.vico.views.cartesian.data.lineSeries
+import com.patrykandpatrick.vico.views.cartesian.data.lineModel
 import com.patrykandpatrick.vico.views.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.views.cartesian.marker.DefaultCartesianMarker
 import com.patrykandpatrick.vico.views.common.Fill
@@ -48,7 +48,7 @@ fun ViewElectricCarSales(modifier: Modifier) {
   LaunchedEffect(Unit) {
     modelProducer.runTransaction {
       // Learn more: https://patrykandpatrick.com/vmml6t.
-      lineSeries { series(x, y) }
+      lineModel { series(x, y) }
     }
   }
   AndroidViewBinding(

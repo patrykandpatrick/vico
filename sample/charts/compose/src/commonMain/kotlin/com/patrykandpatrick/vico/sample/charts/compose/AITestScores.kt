@@ -32,7 +32,7 @@ import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.compose.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModelProducer
-import com.patrykandpatrick.vico.compose.cartesian.data.lineSeries
+import com.patrykandpatrick.vico.compose.cartesian.data.lineModel
 import com.patrykandpatrick.vico.compose.cartesian.decoration.HorizontalLine
 import com.patrykandpatrick.vico.compose.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLine
@@ -147,7 +147,7 @@ fun ComposeAITestScores(modifier: Modifier = Modifier) {
   LaunchedEffect(Unit) {
     modelProducer.runTransaction {
       // Learn more: https://patrykandpatrick.com/z5ah6v.
-      lineSeries { data.forEach { (_, map) -> series(map.keys, map.values) } }
+      lineModel { data.forEach { (_, map) -> series(map.keys, map.values) } }
       extras { extraStore -> extraStore[LegendLabelKey] = data.keys }
     }
   }
@@ -162,7 +162,7 @@ private fun ComposeAITestScoresPreview() {
   runBlocking?.invoke {
     modelProducer.runTransaction {
       // Learn more: https://patrykandpatrick.com/z5ah6v.
-      lineSeries { data.forEach { (_, map) -> series(map.keys, map.values) } }
+      lineModel { data.forEach { (_, map) -> series(map.keys, map.values) } }
       extras { extraStore -> extraStore[LegendLabelKey] = data.keys }
     }
   }

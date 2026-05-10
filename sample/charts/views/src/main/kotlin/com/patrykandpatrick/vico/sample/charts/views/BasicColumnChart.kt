@@ -24,7 +24,7 @@ import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.patrykandpatrick.vico.sample.charts.views.databinding.BasicColumnChartBinding
 import com.patrykandpatrick.vico.views.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.views.cartesian.data.CartesianLayerRangeProvider
-import com.patrykandpatrick.vico.views.cartesian.data.columnSeries
+import com.patrykandpatrick.vico.views.cartesian.data.columnModel
 
 @Composable
 fun ViewBasicColumnChart(modifier: Modifier) {
@@ -33,7 +33,7 @@ fun ViewBasicColumnChart(modifier: Modifier) {
   LaunchedEffect(Unit) {
     modelProducer.runTransaction {
       // Learn more: https://patrykandpatrick.com/eji9zq.
-      columnSeries { series(5, 6, 5, 2, 11, 8, 5, 2, 15, 11, 8, 13, 12, 10, 2, 7) }
+      columnModel { series(5, 6, 5, 2, 11, 8, 5, 2, 15, 11, 8, 13, 12, 10, 2, 7) }
     }
   }
   AndroidViewBinding(

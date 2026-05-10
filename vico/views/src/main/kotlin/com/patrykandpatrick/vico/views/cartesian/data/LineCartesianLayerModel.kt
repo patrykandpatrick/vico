@@ -211,8 +211,19 @@ public class LineCartesianLayerModel : CartesianLayerModel {
  * Calls [block] to create a [LineCartesianLayerModel.Partial] and adds it to the
  * [CartesianChartModelProducer.Transaction]’s [CartesianLayerModel.Partial] list.
  */
-public fun CartesianChartModelProducer.Transaction.lineSeries(
+public fun CartesianChartModelProducer.Transaction.lineModel(
   block: LineCartesianLayerModel.BuilderScope.() -> Unit
 ) {
   add(LineCartesianLayerModel.partial(block))
+}
+
+/**
+ * Calls [block] to create a [LineCartesianLayerModel.Partial] and adds it to the
+ * [CartesianChartModelProducer.Transaction]’s [CartesianLayerModel.Partial] list.
+ */
+@Deprecated("Use `lineModel`.", ReplaceWith("lineModel(block)"))
+public fun CartesianChartModelProducer.Transaction.lineSeries(
+  block: LineCartesianLayerModel.BuilderScope.() -> Unit
+) {
+  lineModel(block)
 }

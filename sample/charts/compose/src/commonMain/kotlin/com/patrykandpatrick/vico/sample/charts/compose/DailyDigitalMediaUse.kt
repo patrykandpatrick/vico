@@ -31,7 +31,7 @@ import com.patrykandpatrick.vico.compose.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.compose.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianValueFormatter
-import com.patrykandpatrick.vico.compose.cartesian.data.columnSeries
+import com.patrykandpatrick.vico.compose.cartesian.data.columnModel
 import com.patrykandpatrick.vico.compose.cartesian.layer.CartesianLayerPadding
 import com.patrykandpatrick.vico.compose.cartesian.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
@@ -126,7 +126,7 @@ fun ComposeDailyDigitalMediaUse(modifier: Modifier = Modifier) {
   LaunchedEffect(Unit) {
     modelProducer.runTransaction {
       // Learn more: https://patrykandpatrick.com/3aqy4o.
-      columnSeries { y.values.forEach { series(x, it) } }
+      columnModel { y.values.forEach { series(x, it) } }
       extras { it[LegendLabelKey] = y.keys }
     }
   }
@@ -141,7 +141,7 @@ private fun ComposeDailyDigitalMediaUsePreview() {
   runBlocking?.invoke {
     modelProducer.runTransaction {
       // Learn more: https://patrykandpatrick.com/3aqy4o.
-      columnSeries { y.values.forEach { series(x, it) } }
+      columnModel { y.values.forEach { series(x, it) } }
       extras { it[LegendLabelKey] = y.keys }
     }
   }

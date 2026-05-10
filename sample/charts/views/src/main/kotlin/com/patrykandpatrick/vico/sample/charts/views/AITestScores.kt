@@ -29,7 +29,7 @@ import com.patrykandpatrick.vico.sample.charts.views.databinding.AiTestScoresBin
 import com.patrykandpatrick.vico.views.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.views.cartesian.CartesianMeasuringContext
 import com.patrykandpatrick.vico.views.cartesian.data.CartesianChartModelProducer
-import com.patrykandpatrick.vico.views.cartesian.data.lineSeries
+import com.patrykandpatrick.vico.views.cartesian.data.lineModel
 import com.patrykandpatrick.vico.views.cartesian.decoration.HorizontalLine
 import com.patrykandpatrick.vico.views.common.*
 import com.patrykandpatrick.vico.views.common.component.LineComponent
@@ -80,7 +80,7 @@ fun ViewAITestScores(modifier: Modifier) {
   LaunchedEffect(Unit) {
     modelProducer.runTransaction {
       // Learn more: https://patrykandpatrick.com/vmml6t.
-      lineSeries { data.forEach { (_, map) -> series(map.keys, map.values) } }
+      lineModel { data.forEach { (_, map) -> series(map.keys, map.values) } }
       extras { extraStore -> extraStore[LegendLabelKey] = data.keys }
     }
   }

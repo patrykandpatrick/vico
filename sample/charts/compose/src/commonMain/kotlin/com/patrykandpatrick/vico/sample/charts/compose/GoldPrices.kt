@@ -31,7 +31,7 @@ import com.patrykandpatrick.vico.compose.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianLayerRangeProvider
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianValueFormatter
-import com.patrykandpatrick.vico.compose.cartesian.data.candlestickSeries
+import com.patrykandpatrick.vico.compose.cartesian.data.candlestickModel
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberCandlestickCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.marker.DefaultCartesianMarker
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
@@ -102,7 +102,7 @@ fun ComposeGoldPrices(modifier: Modifier = Modifier) {
   LaunchedEffect(Unit) {
     modelProducer.runTransaction {
       // Learn more: https://patrykandpatrick.com/r8d20v.
-      candlestickSeries(x, opening, closing, low, high)
+      candlestickModel(x, opening, closing, low, high)
     }
   }
   ComposeGoldPrices(modelProducer, modifier)
@@ -116,7 +116,7 @@ private fun ComposeGoldPricesPreview() {
   runBlocking?.invoke {
     modelProducer.runTransaction {
       // Learn more: https://patrykandpatrick.com/r8d20v.
-      candlestickSeries(x, opening, closing, low, high)
+      candlestickModel(x, opening, closing, low, high)
     }
   }
   PreviewBox { ComposeGoldPrices(modelProducer) }

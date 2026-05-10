@@ -33,7 +33,7 @@ import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModelProdu
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianLayerRangeProvider
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.compose.cartesian.data.ColumnCartesianLayerModel
-import com.patrykandpatrick.vico.compose.cartesian.data.columnSeries
+import com.patrykandpatrick.vico.compose.cartesian.data.columnModel
 import com.patrykandpatrick.vico.compose.cartesian.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.marker.DefaultCartesianMarker
@@ -115,7 +115,7 @@ fun ComposeTemperatureAnomalies(modifier: Modifier = Modifier) {
   LaunchedEffect(Unit) {
     modelProducer.runTransaction {
       // Learn more: https://patrykandpatrick.com/3aqy4o.
-      columnSeries { series(x, y) }
+      columnModel { series(x, y) }
     }
   }
   ComposeTemperatureAnomalies(modelProducer, modifier)
@@ -129,7 +129,7 @@ private fun ComposeTemperatureAnomaliesPreview() {
   runBlocking?.invoke {
     modelProducer.runTransaction {
       // Learn more: https://patrykandpatrick.com/3aqy4o.
-      columnSeries { series(x, y) }
+      columnModel { series(x, y) }
     }
   }
   PreviewBox { ComposeTemperatureAnomalies(modelProducer) }

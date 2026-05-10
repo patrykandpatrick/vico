@@ -29,7 +29,7 @@ import com.patrykandpatrick.vico.views.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.views.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.views.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.views.cartesian.data.CartesianValueFormatter
-import com.patrykandpatrick.vico.views.cartesian.data.columnSeries
+import com.patrykandpatrick.vico.views.cartesian.data.columnModel
 import com.patrykandpatrick.vico.views.cartesian.marker.ColumnCartesianLayerMarkerTarget
 import com.patrykandpatrick.vico.views.cartesian.marker.DefaultCartesianMarker
 import com.patrykandpatrick.vico.views.common.data.ExtraStore
@@ -69,7 +69,7 @@ fun ViewRockMetalRatios(modifier: Modifier) {
   LaunchedEffect(Unit) {
     modelProducer.runTransaction {
       // Learn more: https://patrykandpatrick.com/eji9zq.
-      columnSeries { series(data.values) }
+      columnModel { series(data.values) }
       extras { it[BottomAxisLabelKey] = data.keys.toList() }
     }
   }

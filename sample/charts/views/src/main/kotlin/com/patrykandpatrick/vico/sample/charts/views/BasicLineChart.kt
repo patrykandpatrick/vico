@@ -23,7 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.patrykandpatrick.vico.sample.charts.views.databinding.BasicLineChartBinding
 import com.patrykandpatrick.vico.views.cartesian.data.CartesianChartModelProducer
-import com.patrykandpatrick.vico.views.cartesian.data.lineSeries
+import com.patrykandpatrick.vico.views.cartesian.data.lineModel
 
 @Composable
 fun ViewBasicLineChart(modifier: Modifier) {
@@ -31,7 +31,7 @@ fun ViewBasicLineChart(modifier: Modifier) {
   LaunchedEffect(Unit) {
     modelProducer.runTransaction {
       // Learn more: https://patrykandpatrick.com/vmml6t.
-      lineSeries { series(13, 8, 7, 12, 0, 1, 15, 14, 0, 11, 6, 12, 0, 11, 12, 11) }
+      lineModel { series(13, 8, 7, 12, 0, 1, 15, 14, 0, 11, 6, 12, 0, 11, 12, 11) }
     }
   }
   AndroidViewBinding(
