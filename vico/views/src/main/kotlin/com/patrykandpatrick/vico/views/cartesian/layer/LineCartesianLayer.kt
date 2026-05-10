@@ -456,7 +456,10 @@ protected constructor(
   /** Provides [Point]s to [LineCartesianLayer]s. */
   public interface PointProvider {
     /** Returns the [Point] for the point with the given properties. */
-    @Deprecated("Override `getPoint(entry, extraStore)`.")
+    @Deprecated(
+      "Override `getPoint(entry, extraStore)`. The series key and index are available as " +
+        "`entry.seriesKey` and `entry.seriesIndex`."
+    )
     public fun getPoint(
       entry: LineCartesianLayerModel.Entry,
       seriesIndex: Int,

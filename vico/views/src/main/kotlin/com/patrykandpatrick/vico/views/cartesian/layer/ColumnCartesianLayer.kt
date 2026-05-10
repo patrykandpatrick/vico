@@ -590,7 +590,10 @@ protected constructor(
   /** Provides column [LineComponent]s to [ColumnCartesianLayer]s. */
   public interface ColumnProvider {
     /** Returns the [LineComponent] for the column with the given properties. */
-    @Deprecated("Override `getColumn(entry, extraStore)`.")
+    @Deprecated(
+      "Override `getColumn(entry, extraStore)`. The series key and index are available as " +
+        "`entry.seriesKey` and `entry.seriesIndex`."
+    )
     public fun getColumn(
       entry: ColumnCartesianLayerModel.Entry,
       seriesIndex: Int,
