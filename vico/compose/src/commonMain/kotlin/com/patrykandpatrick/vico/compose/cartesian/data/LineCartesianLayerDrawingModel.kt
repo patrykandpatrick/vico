@@ -24,8 +24,14 @@ import com.patrykandpatrick.vico.compose.common.orZero
 /** Houses [LineCartesianLayer] drawing information. [opacity] is the lines’ opacity. */
 public class LineCartesianLayerDrawingModel(
   private val entries: List<Map<Double, Entry>>,
+  seriesKeys: List<Any>,
   public val opacity: Float = 1f,
-) : CartesianLayerDrawingModel<LineCartesianLayerDrawingModel.Entry>(entries) {
+) : CartesianLayerDrawingModel<LineCartesianLayerDrawingModel.Entry>(entries, seriesKeys) {
+  public constructor(
+    entries: List<Map<Double, Entry>>,
+    opacity: Float = 1f,
+  ) : this(entries, entries.indices.toList(), opacity)
+
   override fun transform(
     entries: List<Map<Double, Entry>>,
     from: CartesianLayerDrawingModel<Entry>?,
@@ -33,6 +39,7 @@ public class LineCartesianLayerDrawingModel(
   ): CartesianLayerDrawingModel<Entry> =
     LineCartesianLayerDrawingModel(
       entries,
+      seriesKeys,
       (from as LineCartesianLayerDrawingModel?)?.opacity.orZero.lerp(opacity, fraction),
     )
 
@@ -40,9 +47,15 @@ public class LineCartesianLayerDrawingModel(
     this === other ||
       other is LineCartesianLayerDrawingModel &&
         entries == other.entries &&
+        seriesKeys == other.seriesKeys &&
         opacity == other.opacity
 
-  override fun hashCode(): Int = 31 * entries.hashCode() + opacity.hashCode()
+  override fun hashCode(): Int {
+    var result = entries.hashCode()
+    result = 31 * result + seriesKeys.hashCode()
+    result = 31 * result + opacity.hashCode()
+    return result
+  }
 
   /**
    * Houses positional information for a [LineCartesianLayer]’s point. [y] expresses the distance of

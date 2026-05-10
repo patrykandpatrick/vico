@@ -20,8 +20,18 @@ import com.patrykandpatrick.vico.views.cartesian.layer.CartesianLayer
 
 /** Houses drawing information for a [CartesianLayer]. */
 public abstract class CartesianLayerDrawingModel<T : CartesianLayerDrawingModel.Entry>(
-  private val entries: List<Map<Double, T>>
+  private val entries: List<Map<Double, T>>,
+  public val seriesKeys: List<Any>,
 ) : List<Map<Double, T>> by entries {
+  public constructor(entries: List<Map<Double, T>>) : this(entries, entries.indices.toList())
+
+  init {
+    require(entries.size == seriesKeys.size) {
+      "`entries` and `seriesKeys` must have the same size."
+    }
+    require(seriesKeys.toSet().size == seriesKeys.size) { "Series keys must be unique." }
+  }
+
   /**
    * Returns an intermediate [CartesianLayerDrawingModel] between this one and [from]. The returned
    * drawing model includes the provided [Entry] list. [fraction] is the balance between [from] and

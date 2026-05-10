@@ -24,24 +24,36 @@ import com.patrykandpatrick.vico.views.common.orZero
 /** Houses drawing information for a [ColumnCartesianLayer]. [opacity] is the columns’ opacity. */
 public class ColumnCartesianLayerDrawingModel(
   private val entries: List<Map<Double, Entry>>,
+  seriesKeys: List<Any>,
   public val opacity: Float = 1f,
-) : CartesianLayerDrawingModel<ColumnCartesianLayerDrawingModel.Entry>(entries) {
+) : CartesianLayerDrawingModel<ColumnCartesianLayerDrawingModel.Entry>(entries, seriesKeys) {
+  public constructor(
+    entries: List<Map<Double, Entry>>,
+    opacity: Float = 1f,
+  ) : this(entries, entries.indices.toList(), opacity)
+
   override fun transform(
     entries: List<Map<Double, Entry>>,
     from: CartesianLayerDrawingModel<Entry>?,
     fraction: Float,
   ): CartesianLayerDrawingModel<Entry> {
     val oldOpacity = (from as ColumnCartesianLayerDrawingModel?)?.opacity.orZero
-    return ColumnCartesianLayerDrawingModel(entries, oldOpacity.lerp(opacity, fraction))
+    return ColumnCartesianLayerDrawingModel(entries, seriesKeys, oldOpacity.lerp(opacity, fraction))
   }
 
   override fun equals(other: Any?): Boolean =
     this === other ||
       other is ColumnCartesianLayerDrawingModel &&
         entries == other.entries &&
+        seriesKeys == other.seriesKeys &&
         opacity == other.opacity
 
-  override fun hashCode(): Int = 31 * entries.hashCode() + opacity.hashCode()
+  override fun hashCode(): Int {
+    var result = entries.hashCode()
+    result = 31 * result + seriesKeys.hashCode()
+    result = 31 * result + opacity.hashCode()
+    return result
+  }
 
   /**
    * Houses positional information for a [ColumnCartesianLayer]’s column. [height] expresses the

@@ -64,13 +64,11 @@ private val MarkerValueFormatter = DefaultCartesianMarker.ValueFormatter.default
 
 private fun getColumnProvider(positive: LineComponent, negative: LineComponent) =
   object : ColumnCartesianLayer.ColumnProvider {
-    override fun getColumn(
-      entry: ColumnCartesianLayerModel.Entry,
-      seriesIndex: Int,
-      extraStore: ExtraStore,
-    ) = if (entry.y >= 0) positive else negative
+    override fun getColumn(entry: ColumnCartesianLayerModel.Entry, extraStore: ExtraStore) =
+      if (entry.y >= 0) positive else negative
 
-    override fun getWidestSeriesColumn(seriesIndex: Int, extraStore: ExtraStore) = positive
+    override fun getWidestSeriesColumn(seriesKey: Any, seriesIndex: Int, extraStore: ExtraStore) =
+      positive
   }
 
 @Composable

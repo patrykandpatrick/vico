@@ -16,8 +16,6 @@
 
 package com.patrykandpatrick.vico.compose.common.data
 
-import com.patrykandpatrick.vico.compose.common.orZero
-import kotlin.math.max
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 
@@ -53,18 +51,20 @@ internal class DefaultCartesianLayerDrawingModelInterpolator<
     ) as R?
 
   private fun updateTransformationMap() {
-    transformationMaps = buildList {
-      repeat(max(oldDrawingModel?.size.orZero, newDrawingModel?.size.orZero)) { index ->
-        val map = mutableMapOf<Double, TransformationModel<T>>()
-        oldDrawingModel?.getOrNull(index)?.forEach { (x, entry) ->
-          map[x] = TransformationModel(entry)
+    val oldEntriesByKey =
+      oldDrawingModel?.seriesKeys?.zip(oldDrawingModel.orEmpty())?.toMap().orEmpty()
+    transformationMaps =
+      newDrawingModel
+        ?.seriesKeys
+        ?.zip(newDrawingModel.orEmpty())
+        ?.map { (key, newEntries) ->
+          val oldEntries = oldEntriesByKey[key]
+          val map = mutableMapOf<Double, TransformationModel<T>>()
+          oldEntries?.forEach { (x, entry) -> map[x] = TransformationModel(entry) }
+          newEntries.forEach { (x, entry) -> map[x] = TransformationModel(map[x]?.old, entry) }
+          map
         }
-        newDrawingModel?.getOrNull(index)?.forEach { (x, entry) ->
-          map[x] = TransformationModel(map[x]?.old, entry)
-        }
-        add(map)
-      }
-    }
+        .orEmpty()
   }
 
   private class TransformationModel<T : CartesianLayerDrawingModel.Entry>(

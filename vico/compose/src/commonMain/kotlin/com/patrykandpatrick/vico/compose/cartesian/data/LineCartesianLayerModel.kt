@@ -28,6 +28,9 @@ public class LineCartesianLayerModel : CartesianLayerModel {
   /** The series (lists of [Entry] instances). */
   public val series: List<List<Entry>>
 
+  /** The keys identifying the series. */
+  public val seriesKeys: List<Any>
+
   override val minX: Double
 
   override val maxX: Double
@@ -38,14 +41,24 @@ public class LineCartesianLayerModel : CartesianLayerModel {
 
   override val extraStore: ExtraStore
 
-  public constructor(series: List<List<Entry>>) : this(series, ExtraStore.Empty)
+  public constructor(series: List<List<Entry>>) : this(series, series.indices.toList())
 
-  private constructor(series: List<List<Entry>>, extraStore: ExtraStore) {
+  public constructor(
+    series: List<List<Entry>>,
+    seriesKeys: List<Any>,
+  ) : this(series, seriesKeys, ExtraStore.Empty)
+
+  private constructor(series: List<List<Entry>>, seriesKeys: List<Any>, extraStore: ExtraStore) {
     require(series.isNotEmpty()) { "At least one series should be added." }
+    require(series.size == seriesKeys.size) { "`series` and `seriesKeys` must have the same size." }
+    require(seriesKeys.toSet().size == seriesKeys.size) { "Series keys must be unique." }
+    this.seriesKeys = seriesKeys.toList()
     this.series =
-      series.map { entries ->
+      series.mapIndexed { seriesIndex, entries ->
         require(entries.isNotEmpty()) { "Series can’t be empty." }
-        entries.sortedBy { entry -> entry.x }
+        entries
+          .sortedBy { entry -> entry.x }
+          .map { entry -> Entry(entry.x, entry.y, seriesKeys[seriesIndex], seriesIndex) }
       }
     this.entries = this.series.flatten()
     val xRange = this.series.rangeOfPair { it.first().x to it.last().x }
@@ -60,6 +73,7 @@ public class LineCartesianLayerModel : CartesianLayerModel {
   private constructor(
     entries: List<Entry>,
     series: List<List<Entry>>,
+    seriesKeys: List<Any>,
     minX: Double,
     maxX: Double,
     minY: Double,
@@ -68,6 +82,7 @@ public class LineCartesianLayerModel : CartesianLayerModel {
   ) {
     this.entries = entries
     this.series = series
+    this.seriesKeys = seriesKeys
     this.minX = minX
     this.maxX = maxX
     this.minY = minY
@@ -78,12 +93,13 @@ public class LineCartesianLayerModel : CartesianLayerModel {
   override fun getXDeltaGcd(): Double = entries.getXDeltaGcd()
 
   override fun copy(extraStore: ExtraStore): CartesianLayerModel =
-    LineCartesianLayerModel(entries, series, minX, maxX, minY, maxY, extraStore)
+    LineCartesianLayerModel(entries, series, seriesKeys, minX, maxX, minY, maxY, extraStore)
 
   override fun equals(other: Any?): Boolean =
     this === other ||
       other is LineCartesianLayerModel &&
         series == other.series &&
+        seriesKeys == other.seriesKeys &&
         minX == other.minX &&
         maxX == other.maxX &&
         minY == other.minY &&
@@ -92,6 +108,7 @@ public class LineCartesianLayerModel : CartesianLayerModel {
 
   override fun hashCode(): Int {
     var result = series.hashCode()
+    result = 31 * result + seriesKeys.hashCode()
     result = 31 * result + minX.hashCode()
     result = 31 * result + maxX.hashCode()
     result = 31 * result + minY.hashCode()
@@ -101,66 +118,92 @@ public class LineCartesianLayerModel : CartesianLayerModel {
   }
 
   override fun toString(): String =
-    "LineCartesianLayerModel(series=$series, minX=$minX, maxX=$maxX, minY=$minY, maxY=$maxY)"
+    "LineCartesianLayerModel(series=$series, seriesKeys=$seriesKeys, minX=$minX, maxX=$maxX, minY=$minY, maxY=$maxY)"
 
   /** Represents a line node at ([x], [y]). */
-  public class Entry internal constructor(override val x: Double, public val y: Double) :
-    CartesianLayerModel.Entry {
+  public class Entry
+  internal constructor(
+    override val x: Double,
+    public val y: Double,
+    public val seriesKey: Any = 0,
+    public val seriesIndex: Int = 0,
+  ) : CartesianLayerModel.Entry {
     public constructor(x: Number, y: Number) : this(x.toDouble(), y.toDouble())
 
     override fun equals(other: Any?): Boolean =
-      this === other || other is Entry && x == other.x && y == other.y
+      this === other ||
+        other is Entry &&
+          x == other.x &&
+          y == other.y &&
+          seriesKey == other.seriesKey &&
+          seriesIndex == other.seriesIndex
 
-    override fun hashCode(): Int = 31 * x.hashCode() + y.hashCode()
+    override fun hashCode(): Int {
+      var result = x.hashCode()
+      result = 31 * result + y.hashCode()
+      result = 31 * result + seriesKey.hashCode()
+      result = 31 * result + seriesIndex
+      return result
+    }
 
-    override fun toString(): String = "Entry(x=$x, y=$y)"
+    override fun toString(): String =
+      "Entry(x=$x, y=$y, seriesKey=$seriesKey, seriesIndex=$seriesIndex)"
   }
 
   /**
    * Stores the minimum amount of data required to create a [LineCartesianLayerModel] and
    * facilitates this creation.
    */
-  public class Partial(private val series: List<List<Entry>>) : CartesianLayerModel.Partial {
+  public class Partial(private val series: List<List<Entry>>, private val seriesKeys: List<Any>) :
+    CartesianLayerModel.Partial {
     override fun complete(extraStore: ExtraStore): CartesianLayerModel =
-      LineCartesianLayerModel(series, extraStore)
+      LineCartesianLayerModel(series, seriesKeys, extraStore)
 
     override fun equals(other: Any?): Boolean =
-      this === other || other is Partial && series == other.series
+      this === other || other is Partial && series == other.series && seriesKeys == other.seriesKeys
 
-    override fun hashCode(): Int = series.hashCode()
+    override fun hashCode(): Int = 31 * series.hashCode() + seriesKeys.hashCode()
   }
 
   /** Facilitates the creation of [LineCartesianLayerModel]s and [Partial]s. */
   public class BuilderScope internal constructor() {
     internal val series = mutableListOf<List<Entry>>()
+    internal val seriesKeys = mutableListOf<Any>()
 
     /**
-     * Adds a series with the provided _x_ values ([x]) and _y_ values ([y]). [x] and [y] should
-     * have the same size.
+     * Adds a series with the provided _x_ values ([x]), _y_ values ([y]), and [key]. [x] and [y]
+     * should have the same size.
      */
-    public fun series(x: Collection<Number>, y: Collection<Number>) {
+    public fun series(x: Collection<Number>, y: Collection<Number>, key: Any = series.size) {
       series.add(x.zip(y, LineCartesianLayerModel::Entry))
+      seriesKeys.add(key)
     }
 
-    /** Adds a series with the provided _y_ values ([y]), using their indices as the _x_ values. */
-    public fun series(y: Collection<Number>) {
-      series(y.indices.toList(), y)
+    /**
+     * Adds a series with the provided _y_ values ([y]) and [key], using the _y_ values’ indices as
+     * the _x_ values.
+     */
+    public fun series(y: Collection<Number>, key: Any = series.size) {
+      series(y.indices.toList(), y, key)
     }
 
-    /** Adds a series with the provided _y_ values ([y]), using their indices as the _x_ values. */
-    public fun series(vararg y: Number) {
-      series(y.toList())
+    /**
+     * Adds a series with the provided _y_ values ([y]) and [key], using the _y_ values’ indices as
+     * the _x_ values.
+     */
+    public fun series(vararg y: Number, key: Any = series.size) {
+      series(y.toList(), key)
     }
   }
 
   public companion object {
     /** Creates a [LineCartesianLayerModel]. */
     public fun build(block: BuilderScope.() -> Unit): LineCartesianLayerModel =
-      LineCartesianLayerModel(BuilderScope().apply(block).series)
+      BuilderScope().apply(block).let { LineCartesianLayerModel(it.series, it.seriesKeys) }
 
     /** Creates a [Partial]. */
     public fun partial(block: BuilderScope.() -> Unit): Partial =
-      Partial(BuilderScope().apply(block).series)
+      BuilderScope().apply(block).let { Partial(it.series, it.seriesKeys) }
   }
 }
 

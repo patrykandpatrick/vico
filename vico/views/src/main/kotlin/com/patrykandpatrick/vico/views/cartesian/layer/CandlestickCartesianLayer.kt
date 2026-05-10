@@ -129,7 +129,8 @@ protected constructor(
     drawingModel: CandlestickCartesianLayerDrawingModel?,
   ) {
     val yRange = ranges.getYRange(verticalAxisPosition)
-    val halfMaxCandleWidth = candleProvider.getWidestCandle(model.extraStore).widthDp.half.pixels
+    val halfMaxCandleWidth =
+      candleProvider.getWidestCandleOrThrow(model.key, model.extraStore).widthDp.half.pixels
 
     val drawingStart =
       layerBounds.getStart(isLtr) +
@@ -146,7 +147,7 @@ protected constructor(
     if (visibleIndices.isEmpty()) return
 
     model.series.subList(visibleIndices.first, visibleIndices.last + 1).forEach { entry ->
-      candle = candleProvider.getCandle(entry, model.extraStore)
+      candle = candleProvider.getCandleOrThrow(entry, model.key, model.extraStore)
       val candleInfo = drawingModel?.entries?.get(entry.x) ?: entry.toCandleInfo(yRange)
       val xSpacingMultiplier = ((entry.x - ranges.minX) / ranges.xStep).toFloat()
       bodyCenterX =
@@ -164,7 +165,16 @@ protected constructor(
         bodyTopY = bodyBottomY - minBodyHeight
       }
 
-      updateMarkerTargets(entry, bodyCenterX, bodyBottomY, bodyTopY, bottomWickY, topWickY, candle)
+      updateMarkerTargets(
+        entry,
+        model.key,
+        bodyCenterX,
+        bodyBottomY,
+        bodyTopY,
+        bottomWickY,
+        topWickY,
+        candle,
+      )
 
       candle.body.drawVertical(this, bodyCenterX, bodyTopY, bodyBottomY, zoom)
 
@@ -188,6 +198,7 @@ protected constructor(
 
   protected open fun CartesianDrawingContext.updateMarkerTargets(
     entry: CandlestickCartesianLayerModel.Entry,
+    key: Any,
     canvasX: Float,
     bodyBottomCanvasY: Float,
     bodyTopCanvasY: Float,
@@ -204,6 +215,7 @@ protected constructor(
           x = entry.x,
           canvasX = canvasX,
           entry = entry,
+          modelKey = key,
           openingCanvasY =
             if (entry.absoluteChange == Change.Bullish) limitedBodyBottomCanvasY
             else limitedBodyTopCanvasY,
@@ -262,7 +274,8 @@ protected constructor(
     model: CandlestickCartesianLayerModel,
   ) {
     with(context) {
-      val candleWidth = candleProvider.getWidestCandle(model.extraStore).widthDp.pixels
+      val candleWidth =
+        candleProvider.getWidestCandleOrThrow(model.key, model.extraStore).widthDp.pixels
       val xSpacing = candleWidth + candleSpacingDp.pixels
       dimensions.ensureValuesAtLeast(
         xSpacing = xSpacing,
@@ -305,7 +318,8 @@ protected constructor(
   ): CandlestickCartesianLayerDrawingModel {
     val yRange = ranges.getYRange(verticalAxisPosition)
     return CandlestickCartesianLayerDrawingModel(
-      series.associate { it.x to it.toCandleInfo(yRange) }
+      entries = series.associate { it.x to it.toCandleInfo(yRange) },
+      key = key,
     )
   }
 
@@ -359,13 +373,28 @@ protected constructor(
   /** Provides [Candle]s to [CandlestickCartesianLayer]s. */
   public interface CandleProvider {
     /** Returns the [Candle] for the given [CandlestickCartesianLayerModel.Entry]. */
+    @Deprecated("Override `getCandle(entry, key, extraStore)`.")
     public fun getCandle(
       entry: CandlestickCartesianLayerModel.Entry,
       extraStore: ExtraStore,
-    ): Candle
+    ): Candle = throw NotImplementedError()
+
+    /** Returns the [Candle] for the given [CandlestickCartesianLayerModel.Entry]. */
+    @Suppress("DEPRECATION")
+    public fun getCandle(
+      entry: CandlestickCartesianLayerModel.Entry,
+      key: Any,
+      extraStore: ExtraStore,
+    ): Candle = getCandle(entry, extraStore)
 
     /** Returns the widest [Candle]. */
-    public fun getWidestCandle(extraStore: ExtraStore): Candle
+    @Deprecated("Override `getWidestCandle(key, extraStore)`.")
+    public fun getWidestCandle(extraStore: ExtraStore): Candle = throw NotImplementedError()
+
+    /** Returns the widest [Candle]. */
+    @Suppress("DEPRECATION")
+    public fun getWidestCandle(key: Any, extraStore: ExtraStore): Candle =
+      getWidestCandle(extraStore)
 
     /** Provides access to [CandleProvider] factory functions. */
     public companion object {
@@ -375,6 +404,7 @@ protected constructor(
 
         override fun getCandle(
           entry: CandlestickCartesianLayerModel.Entry,
+          key: Any,
           extraStore: ExtraStore,
         ) =
           when (entry.absoluteChange) {
@@ -383,7 +413,8 @@ protected constructor(
             Change.Bearish -> bearish
           }
 
-        override fun getWidestCandle(extraStore: ExtraStore) = candles.maxBy { it.widthDp }
+        override fun getWidestCandle(key: Any, extraStore: ExtraStore) =
+          candles.maxBy { it.widthDp }
       }
 
       internal data class AbsoluteRelative(
@@ -412,6 +443,7 @@ protected constructor(
 
         override fun getCandle(
           entry: CandlestickCartesianLayerModel.Entry,
+          key: Any,
           extraStore: ExtraStore,
         ) =
           when (entry.absoluteChange) {
@@ -435,11 +467,39 @@ protected constructor(
               }
           }
 
-        override fun getWidestCandle(extraStore: ExtraStore) = candles.maxBy { it.widthDp }
+        override fun getWidestCandle(key: Any, extraStore: ExtraStore) =
+          candles.maxBy { it.widthDp }
       }
     }
   }
 }
+
+private fun CandlestickCartesianLayer.CandleProvider.getCandleOrThrow(
+  entry: CandlestickCartesianLayerModel.Entry,
+  key: Any,
+  extraStore: ExtraStore,
+): CandlestickCartesianLayer.Candle =
+  try {
+    getCandle(entry, key, extraStore)
+  } catch (e: NotImplementedError) {
+    throw IllegalStateException(
+      "`CandleProvider` must implement `getCandle(entry, key, extraStore)` or the deprecated `getCandle(entry, extraStore)`.",
+      e,
+    )
+  }
+
+private fun CandlestickCartesianLayer.CandleProvider.getWidestCandleOrThrow(
+  key: Any,
+  extraStore: ExtraStore,
+): CandlestickCartesianLayer.Candle =
+  try {
+    getWidestCandle(key, extraStore)
+  } catch (e: NotImplementedError) {
+    throw IllegalStateException(
+      "`CandleProvider` must implement `getWidestCandle(key, extraStore)` or the deprecated `getWidestCandle(extraStore)`.",
+      e,
+    )
+  }
 
 internal fun LineComponent.asWick(): LineComponent =
   copy(

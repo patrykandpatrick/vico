@@ -407,12 +407,12 @@ protected constructor(
   /** Provides [Line]s to [LineCartesianLayer]s. */
   public fun interface LineProvider {
     /** Returns the [Line] for the specified series. */
-    public fun getLine(seriesIndex: Int, extraStore: ExtraStore): Line
+    public fun getLine(seriesKey: Any, seriesIndex: Int, extraStore: ExtraStore): Line
 
     /** Houses [LineProvider] factory functions. */
     public companion object {
       private data class Series(private val lines: List<Line>) : LineProvider {
-        override fun getLine(seriesIndex: Int, extraStore: ExtraStore) =
+        override fun getLine(seriesKey: Any, seriesIndex: Int, extraStore: ExtraStore) =
           lines.getRepeating(seriesIndex)
       }
 
@@ -456,11 +456,17 @@ protected constructor(
   /** Provides [Point]s to [LineCartesianLayer]s. */
   public interface PointProvider {
     /** Returns the [Point] for the point with the given properties. */
+    @Deprecated("Override `getPoint(entry, extraStore)`.")
     public fun getPoint(
       entry: LineCartesianLayerModel.Entry,
       seriesIndex: Int,
       extraStore: ExtraStore,
-    ): Point?
+    ): Point? = throw NotImplementedError()
+
+    /** Returns the [Point] for the point with the given properties. */
+    @Suppress("DEPRECATION")
+    public fun getPoint(entry: LineCartesianLayerModel.Entry, extraStore: ExtraStore): Point? =
+      getPoint(entry, entry.seriesIndex, extraStore)
 
     /** Returns the largest [Point]. */
     public fun getLargestPoint(extraStore: ExtraStore): Point?
@@ -468,11 +474,7 @@ protected constructor(
     /** Houses a [PointProvider] factory function. */
     public companion object {
       private data class Single(private val point: Point) : PointProvider {
-        override fun getPoint(
-          entry: LineCartesianLayerModel.Entry,
-          seriesIndex: Int,
-          extraStore: ExtraStore,
-        ) = point
+        override fun getPoint(entry: LineCartesianLayerModel.Entry, extraStore: ExtraStore) = point
 
         override fun getLargestPoint(extraStore: ExtraStore) = point
       }
@@ -524,10 +526,11 @@ protected constructor(
       val drawingModel = extraStore.getOrNull(drawingModelKey)
 
       model.series.forEachIndexed { seriesIndex, series ->
+        val seriesKey = model.seriesKeys[seriesIndex]
         val pointInfoMap = drawingModel?.getOrNull(seriesIndex)
 
         linePath.rewind()
-        val line = lineProvider.getLine(seriesIndex, model.extraStore)
+        val line = lineProvider.getLineOrThrow(seriesKey, seriesIndex, model.extraStore)
 
         val drawingStartAlignmentCorrection =
           layoutDirectionMultiplier * layerDimensions.startPadding
@@ -555,7 +558,7 @@ protected constructor(
         line.fillColor?.let { color ->
           line.draw(context, linePath, color, verticalAxisPosition)
           forEachPointInBounds(series, drawingStart, pointInfoMap) { entry, x, y, _, _ ->
-            updateMarkerTargets(entry, x, y, color)
+            updateMarkerTargets(entry, seriesKey, x, y, color)
           }
         }
           ?: run {
@@ -567,11 +570,11 @@ protected constructor(
             lineCanvas.drawBitmap(lineFillBitmap, 0f, 0f, srcInPaint)
             canvas.drawBitmap(lineBitmap, 0f, 0f, null)
             forEachPointInBounds(series, drawingStart, pointInfoMap) { entry, x, y, _, _ ->
-              updateMarkerTargets(entry, x, y, lineFillBitmap)
+              updateMarkerTargets(entry, seriesKey, x, y, lineFillBitmap)
             }
           }
 
-        drawPointsAndDataLabels(line, series, seriesIndex, drawingStart, pointInfoMap)
+        drawPointsAndDataLabels(line, series, seriesKey, seriesIndex, drawingStart, pointInfoMap)
 
         canvas.restore()
       }
@@ -580,6 +583,7 @@ protected constructor(
 
   protected open fun CartesianDrawingContext.updateMarkerTargets(
     entry: LineCartesianLayerModel.Entry,
+    seriesKey: Any,
     canvasX: Float,
     canvasY: Float,
     lineFillBitmap: Bitmap,
@@ -604,6 +608,7 @@ protected constructor(
 
   protected open fun CartesianDrawingContext.updateMarkerTargets(
     entry: LineCartesianLayerModel.Entry,
+    seriesKey: Any,
     canvasX: Float,
     canvasY: Float,
     color: Int,
@@ -619,6 +624,7 @@ protected constructor(
   protected open fun CartesianDrawingContext.drawPointsAndDataLabels(
     line: Line,
     series: List<LineCartesianLayerModel.Entry>,
+    seriesKey: Any,
     seriesIndex: Int,
     drawingStart: Float,
     pointInfoMap: Map<Double, LineCartesianLayerDrawingModel.Entry>?,
@@ -628,7 +634,7 @@ protected constructor(
       drawingStart = drawingStart,
       pointInfoMap = pointInfoMap,
     ) { chartEntry, x, y, previousX, nextX ->
-      val point = line.pointProvider?.getPoint(chartEntry, seriesIndex, model.extraStore)
+      val point = line.pointProvider?.getPointOrThrow(chartEntry, model.extraStore)
       point?.draw(this, x, y)
 
       line.dataLabel
@@ -844,9 +850,9 @@ protected constructor(
     with(context) {
       val maxPointSize =
         (0..<model.series.size)
-          .maxOf {
+          .maxOf { index ->
             lineProvider
-              .getLine(it, model.extraStore)
+              .getLineOrThrow(model.seriesKeys[index], index, model.extraStore)
               .pointProvider
               ?.getLargestPoint(model.extraStore)
               ?.sizeDp
@@ -871,7 +877,9 @@ protected constructor(
     var minY = model.minY
     var maxY = model.maxY
     model.series.forEachIndexed { seriesIndex, series ->
-      val interpolator = lineProvider.getLine(seriesIndex, model.extraStore).interpolator
+      val seriesKey = model.seriesKeys[seriesIndex]
+      val interpolator =
+        lineProvider.getLineOrThrow(seriesKey, seriesIndex, model.extraStore).interpolator
       val yRange = interpolator.getYRange(series.map { it.y })
       minY = kotlin.math.min(minY, yRange.start)
       maxY = kotlin.math.max(maxY, yRange.endInclusive)
@@ -894,7 +902,7 @@ protected constructor(
     with(context) {
       val verticalMargin =
         (0..<model.series.size)
-          .mapNotNull { lineProvider.getLine(it, model.extraStore) }
+          .mapNotNull { lineProvider.getLineOrThrow(model.seriesKeys[it], it, model.extraStore) }
           .maxOf {
             max(
               it.stroke.thicknessDp,
@@ -935,7 +943,8 @@ protected constructor(
               ((entry.y - yRange.minY) / yRange.length).toFloat()
             )
         }
-      }
+      },
+      seriesKeys,
     )
   }
 
@@ -982,6 +991,25 @@ protected constructor(
   /** Provides access to [Line] and [Point] factory functions. */
   public companion object
 }
+
+private fun LineCartesianLayer.LineProvider.getLineOrThrow(
+  seriesKey: Any,
+  seriesIndex: Int,
+  extraStore: ExtraStore,
+): LineCartesianLayer.Line = getLine(seriesKey, seriesIndex, extraStore)
+
+private fun LineCartesianLayer.PointProvider.getPointOrThrow(
+  entry: LineCartesianLayerModel.Entry,
+  extraStore: ExtraStore,
+): LineCartesianLayer.Point? =
+  try {
+    getPoint(entry, extraStore)
+  } catch (e: NotImplementedError) {
+    throw IllegalStateException(
+      "`PointProvider` must implement `getPoint(entry, extraStore)` or the deprecated `getPoint(entry, seriesIndex, extraStore)`.",
+      e,
+    )
+  }
 
 internal fun CartesianDrawingContext.getCanvasSplitY(
   splitY: (ExtraStore) -> Number,

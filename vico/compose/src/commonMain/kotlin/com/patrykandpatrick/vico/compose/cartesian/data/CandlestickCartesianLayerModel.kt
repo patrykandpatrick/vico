@@ -25,6 +25,9 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
   /** The series (list of [Entry] instances). */
   public val series: List<Entry>
 
+  /** The key identifying this layer’s data. */
+  public val key: Any
+
   override val minX: Double
 
   override val maxX: Double
@@ -35,10 +38,13 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
 
   override val extraStore: ExtraStore
 
-  public constructor(series: List<Entry>) : this(series, ExtraStore.Empty)
+  public constructor(series: List<Entry>) : this(series, 0)
 
-  private constructor(series: List<Entry>, extraStore: ExtraStore) {
+  public constructor(series: List<Entry>, key: Any) : this(series, key, ExtraStore.Empty)
+
+  private constructor(series: List<Entry>, key: Any, extraStore: ExtraStore) {
     require(series.isNotEmpty()) { "Series can’t be empty." }
+    this.key = key
     this.series = series.sortedBy { it.x }
     val yRange = this.series.rangeOfPair { it.low to it.high }
     this.minX = this.series.first().x
@@ -50,6 +56,7 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
 
   private constructor(
     series: List<Entry>,
+    key: Any,
     minX: Double,
     maxX: Double,
     minY: Double,
@@ -57,6 +64,7 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
     extraStore: ExtraStore,
   ) {
     this.series = series
+    this.key = key
     this.minX = minX
     this.maxX = maxX
     this.minY = minY
@@ -67,12 +75,13 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
   override fun getXDeltaGcd(): Double = series.getXDeltaGcd()
 
   override fun copy(extraStore: ExtraStore): CartesianLayerModel =
-    CandlestickCartesianLayerModel(series, minX, maxX, minY, maxY, extraStore)
+    CandlestickCartesianLayerModel(series, key, minX, maxX, minY, maxY, extraStore)
 
   override fun equals(other: Any?): Boolean =
     this === other ||
       other is CandlestickCartesianLayerModel &&
         series == other.series &&
+        key == other.key &&
         minX == other.minX &&
         maxX == other.maxX &&
         minY == other.minY &&
@@ -81,6 +90,7 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
 
   override fun hashCode(): Int {
     var result = series.hashCode()
+    result = 31 * result + key.hashCode()
     result = 31 * result + minX.hashCode()
     result = 31 * result + maxX.hashCode()
     result = 31 * result + minY.hashCode()
@@ -90,7 +100,7 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
   }
 
   override fun toString(): String =
-    "CandlestickCartesianLayerModel(series=$series, minX=$minX, maxX=$maxX, minY=$minY, maxY=$maxY)"
+    "CandlestickCartesianLayerModel(series=$series, key=$key, minX=$minX, maxX=$maxX, minY=$minY, maxY=$maxY)"
 
   /** Represents an [Entry]’s absolute or relative price change. */
   public enum class Change {
@@ -190,9 +200,10 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
    * Stores the minimum amount of data required to create a [CandlestickCartesianLayerModel] and
    * facilitates this creation.
    */
-  public class Partial(private val series: List<Entry>) : CartesianLayerModel.Partial {
+  public class Partial(private val series: List<Entry>, private val key: Any) :
+    CartesianLayerModel.Partial {
     override fun complete(extraStore: ExtraStore): CartesianLayerModel =
-      CandlestickCartesianLayerModel(series, extraStore)
+      CandlestickCartesianLayerModel(series, key, extraStore)
   }
 
   public companion object {
@@ -223,8 +234,8 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
     }
 
     /**
-     * Creates a [CandlestickCartesianLayerModel] with the provided _x_ values ([x]) and prices.
-     * [opening], [closing], [low], and [high] should have the same sizes.
+     * Creates a [CandlestickCartesianLayerModel] with the provided _x_ values ([x]), prices, and
+     * [key]. [opening], [closing], [low], and [high] should have the same sizes.
      */
     public fun build(
       x: Collection<Number>,
@@ -232,18 +243,21 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
       closing: Collection<Number>,
       low: Collection<Number>,
       high: Collection<Number>,
+      key: Any = 0,
     ): CandlestickCartesianLayerModel =
-      CandlestickCartesianLayerModel(series(x, opening, closing, low, high))
+      CandlestickCartesianLayerModel(series(x, opening, closing, low, high), key)
 
     /**
-     * Creates a [CandlestickCartesianLayerModel] with the provided prices, using their indices as
-     * the _x_ values. [opening], [closing], [low], and [high] should have the same sizes.
+     * Creates a [CandlestickCartesianLayerModel] with the provided prices and [key], using the
+     * prices’ indices as the _x_ values. [opening], [closing], [low], and [high] should have the
+     * same sizes.
      */
     public fun build(
       opening: Collection<Number>,
       closing: Collection<Number>,
       low: Collection<Number>,
       high: Collection<Number>,
+      key: Any = 0,
     ): CandlestickCartesianLayerModel =
       build(
         x = opening.indices.toList(),
@@ -251,11 +265,12 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
         closing = closing,
         low = low,
         high = high,
+        key = key,
       )
 
     /**
-     * Creates a [Partial] with the provided _x_ values ([x]) and prices. [opening], [closing],
-     * [low], and [high] should have the same sizes.
+     * Creates a [Partial] with the provided _x_ values ([x]), prices, and [key]. [opening],
+     * [closing], [low], and [high] should have the same sizes.
      */
     public fun partial(
       x: Collection<Number>,
@@ -263,17 +278,19 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
       closing: Collection<Number>,
       low: Collection<Number>,
       high: Collection<Number>,
-    ): Partial = Partial(series(x, opening, closing, low, high))
+      key: Any = 0,
+    ): Partial = Partial(series(x, opening, closing, low, high), key)
 
     /**
-     * Creates a [Partial] with the provided prices, using their indices as the _x_ values.
-     * [opening], [closing], [low], and [high] should have the same sizes.
+     * Creates a [Partial] with the provided prices and [key], using the prices’ indices as the _x_
+     * values. [opening], [closing], [low], and [high] should have the same sizes.
      */
     public fun partial(
       opening: Collection<Number>,
       closing: Collection<Number>,
       low: Collection<Number>,
       high: Collection<Number>,
+      key: Any = 0,
     ): Partial =
       partial(
         x = opening.indices.toList(),
@@ -281,14 +298,16 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
         closing = closing,
         low = low,
         high = high,
+        key = key,
       )
   }
 }
 
 /**
- * Creates a [CandlestickCartesianLayerModel.Partial] with the provided _x_ values ([x]) and prices
- * and adds it to the [CartesianChartModelProducer.Transaction]’s [CartesianLayerModel.Partial]
- * list. [opening], [closing], [low], and [high] should have the same sizes.
+ * Creates a [CandlestickCartesianLayerModel.Partial] with the provided _x_ values ([x]), prices,
+ * and [key] and adds it to the [CartesianChartModelProducer.Transaction]’s
+ * [CartesianLayerModel.Partial] list. [opening], [closing], [low], and [high] should have the same
+ * sizes.
  */
 public fun CartesianChartModelProducer.Transaction.candlestickSeries(
   x: Collection<Number>,
@@ -296,13 +315,14 @@ public fun CartesianChartModelProducer.Transaction.candlestickSeries(
   closing: Collection<Number>,
   low: Collection<Number>,
   high: Collection<Number>,
+  key: Any = 0,
 ) {
-  add(CandlestickCartesianLayerModel.partial(x, opening, closing, low, high))
+  add(CandlestickCartesianLayerModel.partial(x, opening, closing, low, high, key))
 }
 
 /**
- * Creates a [CandlestickCartesianLayerModel.Partial] with the provided prices, using their indices
- * as the _x_ values, and adds it to the [CartesianChartModelProducer.Transaction]’s
+ * Creates a [CandlestickCartesianLayerModel.Partial] with the provided prices and [key], using
+ * their indices as the _x_ values, and adds it to the [CartesianChartModelProducer.Transaction]’s
  * [CartesianLayerModel.Partial] list. [opening], [closing], [low], and [high] should have the same
  * sizes.
  */
@@ -311,6 +331,7 @@ public fun CartesianChartModelProducer.Transaction.candlestickSeries(
   closing: Collection<Number>,
   low: Collection<Number>,
   high: Collection<Number>,
+  key: Any = 0,
 ) {
   candlestickSeries(
     x = opening.indices.toList(),
@@ -318,5 +339,6 @@ public fun CartesianChartModelProducer.Transaction.candlestickSeries(
     closing = closing,
     low = low,
     high = high,
+    key = key,
   )
 }

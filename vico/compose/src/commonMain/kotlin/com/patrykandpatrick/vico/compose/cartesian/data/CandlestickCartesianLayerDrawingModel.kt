@@ -26,8 +26,15 @@ import com.patrykandpatrick.vico.compose.common.orZero
  */
 public class CandlestickCartesianLayerDrawingModel(
   public val entries: Map<Double, Entry>,
+  public val key: Any,
   public val opacity: Float = 1f,
-) : CartesianLayerDrawingModel<CandlestickCartesianLayerDrawingModel.Entry>(listOf(entries)) {
+) :
+  CartesianLayerDrawingModel<CandlestickCartesianLayerDrawingModel.Entry>(
+    listOf(entries),
+    listOf(key),
+  ) {
+  public constructor(entries: Map<Double, Entry>, opacity: Float = 1f) : this(entries, 0, opacity)
+
   override fun transform(
     entries: List<Map<Double, Entry>>,
     from: CartesianLayerDrawingModel<Entry>?,
@@ -36,6 +43,7 @@ public class CandlestickCartesianLayerDrawingModel(
     val oldOpacity = (from as CandlestickCartesianLayerDrawingModel?)?.opacity.orZero
     return CandlestickCartesianLayerDrawingModel(
       entries = entries.first(),
+      key = key,
       opacity = oldOpacity.lerp(opacity, fraction),
     )
   }
@@ -44,9 +52,15 @@ public class CandlestickCartesianLayerDrawingModel(
     this === other ||
       other is CandlestickCartesianLayerDrawingModel &&
         entries == other.entries &&
+        key == other.key &&
         opacity == other.opacity
 
-  override fun hashCode(): Int = 31 * entries.hashCode() + opacity.hashCode()
+  override fun hashCode(): Int {
+    var result = entries.hashCode()
+    result = 31 * result + key.hashCode()
+    result = 31 * result + opacity.hashCode()
+    return result
+  }
 
   /**
    * Houses positional information for a [CandlestickCartesianLayer]’s candle. Each position is

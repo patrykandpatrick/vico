@@ -140,7 +140,8 @@ protected constructor(
     canvas.saveLayer(opacity = drawingModel?.opacity ?: 1f)
 
     model.series.forEachIndexed { index, entryCollection ->
-      drawingStart = getDrawingStart(index, model.series.size, mergeMode) - scroll
+      val seriesKey = model.seriesKeys[index]
+      drawingStart = getDrawingStart(index, model.series.size, model.seriesKeys, mergeMode) - scroll
 
       val visibleIndices =
         entryCollection.getSliceIndices(visibleXRange.start, visibleXRange.endInclusive)
@@ -151,12 +152,12 @@ protected constructor(
         height =
           (columnInfo?.height ?: (abs(entry.y) / yRange.length)).toFloat() * layerBounds.height()
         val xSpacingMultiplier = ((entry.x - ranges.minX) / ranges.xStep).toFloat()
-        val column = columnProvider.getColumn(entry, index, model.extraStore)
+        val column = columnProvider.getColumnOrThrow(entry, model.extraStore)
         columnCenterX =
           drawingStart +
             (layerDimensions.xSpacing * xSpacingMultiplier +
               columnProvider
-                .getWidestSeriesColumn(index, model.extraStore)
+                .getWidestSeriesColumnOrThrow(seriesKey, index, model.extraStore)
                 .thicknessDp
                 .half
                 .pixels * zoom) * layoutDirectionMultiplier
@@ -183,6 +184,7 @@ protected constructor(
 
         updateMarkerTargets(
           entry = entry,
+          seriesKey = seriesKey,
           canvasX = columnCenterX,
           canvasY = columnSignificantY,
           columnHeight = columnBottom - columnTop,
@@ -322,6 +324,7 @@ protected constructor(
 
   protected open fun CartesianDrawingContext.updateMarkerTargets(
     entry: ColumnCartesianLayerModel.Entry,
+    seriesKey: Any,
     canvasX: Float,
     canvasY: Float,
     columnHeight: Float,
@@ -377,6 +380,7 @@ protected constructor(
       val columnCollectionWidth =
         getColumnCollectionWidth(
           if (model.series.isNotEmpty()) model.series.size else 1,
+          model.seriesKeys,
           mergeMode(model.extraStore),
         )
       val xSpacing = columnCollectionWidth + columnCollectionSpacingDp.pixels
@@ -392,42 +396,53 @@ protected constructor(
 
   protected open fun CartesianMeasuringContext.getColumnCollectionWidth(
     entryCollectionSize: Int,
+    seriesKeys: List<Any>,
     mergeMode: MergeMode,
   ): Float =
     when (mergeMode) {
       is MergeMode.Stacked ->
         (0..<entryCollectionSize)
           .maxOf { seriesIndex ->
-            columnProvider.getWidestSeriesColumn(seriesIndex, model.extraStore).thicknessDp
+            columnProvider
+              .getWidestSeriesColumnOrThrow(seriesKeys[seriesIndex], seriesIndex, model.extraStore)
+              .thicknessDp
           }
           .pixels
       is MergeMode.Grouped ->
-        getCumulatedThickness(entryCollectionSize) +
+        getCumulatedThickness(entryCollectionSize, seriesKeys) +
           mergeMode.columnSpacingDp.pixels * (entryCollectionSize - 1)
     }
 
   protected open fun CartesianDrawingContext.getDrawingStart(
     entryCollectionIndex: Int,
     entryCollectionCount: Int,
+    seriesKeys: List<Any>,
     mergeMode: MergeMode,
   ): Float {
     val mergeModeComponent =
       when (mergeMode) {
         is MergeMode.Grouped ->
-          getCumulatedThickness(entryCollectionIndex) +
+          getCumulatedThickness(entryCollectionIndex, seriesKeys) +
             mergeMode.columnSpacingDp.pixels * entryCollectionIndex
         MergeMode.Stacked -> 0f
       }
     return layerBounds.getStart(isLtr) +
       (layerDimensions.startPadding +
-        (mergeModeComponent - getColumnCollectionWidth(entryCollectionCount, mergeMode).half) *
-          zoom) * layoutDirectionMultiplier
+        (mergeModeComponent -
+          getColumnCollectionWidth(entryCollectionCount, seriesKeys, mergeMode).half) * zoom) *
+        layoutDirectionMultiplier
   }
 
-  protected open fun CartesianMeasuringContext.getCumulatedThickness(count: Int): Float {
+  protected open fun CartesianMeasuringContext.getCumulatedThickness(
+    count: Int,
+    seriesKeys: List<Any>,
+  ): Float {
     var thickness = 0f
     for (seriesIndex in 0..<count) {
-      thickness += columnProvider.getWidestSeriesColumn(seriesIndex, model.extraStore).thicknessDp
+      thickness +=
+        columnProvider
+          .getWidestSeriesColumnOrThrow(seriesKeys[seriesIndex], seriesIndex, model.extraStore)
+          .thicknessDp
     }
     return thickness.pixels
   }
@@ -493,7 +508,7 @@ protected constructor(
             )
         }
       }
-      .let(::ColumnCartesianLayerDrawingModel)
+      .let { ColumnCartesianLayerDrawingModel(it, seriesKeys) }
 
   /** Creates a new [ColumnCartesianLayer] based on this one. */
   public fun copy(
@@ -575,26 +590,44 @@ protected constructor(
   /** Provides column [LineComponent]s to [ColumnCartesianLayer]s. */
   public interface ColumnProvider {
     /** Returns the [LineComponent] for the column with the given properties. */
+    @Deprecated("Override `getColumn(entry, extraStore)`.")
     public fun getColumn(
       entry: ColumnCartesianLayerModel.Entry,
       seriesIndex: Int,
       extraStore: ExtraStore,
-    ): LineComponent
+    ): LineComponent = throw NotImplementedError()
+
+    /** Returns the [LineComponent] for the column with the given properties. */
+    @Suppress("DEPRECATION")
+    public fun getColumn(
+      entry: ColumnCartesianLayerModel.Entry,
+      extraStore: ExtraStore,
+    ): LineComponent = getColumn(entry, entry.seriesIndex, extraStore)
 
     /** Returns the widest column [LineComponent] for the specified series. */
-    public fun getWidestSeriesColumn(seriesIndex: Int, extraStore: ExtraStore): LineComponent
+    @Deprecated("Override `getWidestSeriesColumn(seriesKey, seriesIndex, extraStore)`.")
+    public fun getWidestSeriesColumn(seriesIndex: Int, extraStore: ExtraStore): LineComponent =
+      throw NotImplementedError()
+
+    /** Returns the widest column [LineComponent] for the specified series. */
+    @Suppress("DEPRECATION")
+    public fun getWidestSeriesColumn(
+      seriesKey: Any,
+      seriesIndex: Int,
+      extraStore: ExtraStore,
+    ): LineComponent = getWidestSeriesColumn(seriesIndex, extraStore)
 
     /** Houses [ColumnProvider] factory functions. */
     public companion object {
       private data class Series(private val columns: List<LineComponent>) : ColumnProvider {
-        override fun getColumn(
-          entry: ColumnCartesianLayerModel.Entry,
+        override fun getColumn(entry: ColumnCartesianLayerModel.Entry, extraStore: ExtraStore) =
+          columns.getRepeating(entry.seriesIndex)
+
+        override fun getWidestSeriesColumn(
+          seriesKey: Any,
           seriesIndex: Int,
           extraStore: ExtraStore,
         ) = columns.getRepeating(seriesIndex)
-
-        override fun getWidestSeriesColumn(seriesIndex: Int, extraStore: ExtraStore) =
-          columns.getRepeating(seriesIndex)
       }
 
       /**
@@ -613,3 +646,30 @@ protected constructor(
     }
   }
 }
+
+private fun ColumnCartesianLayer.ColumnProvider.getColumnOrThrow(
+  entry: ColumnCartesianLayerModel.Entry,
+  extraStore: ExtraStore,
+): LineComponent =
+  try {
+    getColumn(entry, extraStore)
+  } catch (e: NotImplementedError) {
+    throw IllegalStateException(
+      "`ColumnProvider` must implement `getColumn(entry, extraStore)` or the deprecated `getColumn(entry, seriesIndex, extraStore)`.",
+      e,
+    )
+  }
+
+private fun ColumnCartesianLayer.ColumnProvider.getWidestSeriesColumnOrThrow(
+  seriesKey: Any,
+  seriesIndex: Int,
+  extraStore: ExtraStore,
+): LineComponent =
+  try {
+    getWidestSeriesColumn(seriesKey, seriesIndex, extraStore)
+  } catch (e: NotImplementedError) {
+    throw IllegalStateException(
+      "`ColumnProvider` must implement `getWidestSeriesColumn(seriesKey, seriesIndex, extraStore)` or the deprecated `getWidestSeriesColumn(seriesIndex, extraStore)`.",
+      e,
+    )
+  }

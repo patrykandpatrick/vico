@@ -24,6 +24,7 @@ import com.patrykandpatrick.vico.compose.cartesian.layer.CandlestickCartesianLay
  * Houses information on a [CandlestickCartesianLayer] candle to be marked.
  *
  * @property entry the [CandlestickCartesianLayerModel.Entry].
+ * @property modelKey the key of the model containing [entry].
  * @property openingCanvasY the pixel _y_ coordinate of the body edge corresponding to
  *   [CandlestickCartesianLayerModel.Entry.opening].
  * @property closingCanvasY the pixel _y_ coordinate of the body edge corresponding to
@@ -41,6 +42,7 @@ public data class CandlestickCartesianLayerMarkerTarget(
   override val x: Double,
   override val canvasX: Float,
   public val entry: CandlestickCartesianLayerModel.Entry,
+  public val modelKey: Any,
   public val openingCanvasY: Float,
   public val closingCanvasY: Float,
   public val lowCanvasY: Float,
@@ -49,4 +51,32 @@ public data class CandlestickCartesianLayerMarkerTarget(
   public val closingColor: Color,
   public val lowColor: Color,
   public val highColor: Color,
-) : CartesianMarker.Target
+) : CartesianMarker.Target {
+  @Deprecated("Use the constructor that takes `modelKey`.")
+  public constructor(
+    x: Double,
+    canvasX: Float,
+    entry: CandlestickCartesianLayerModel.Entry,
+    openingCanvasY: Float,
+    closingCanvasY: Float,
+    lowCanvasY: Float,
+    highCanvasY: Float,
+    openingColor: Color,
+    closingColor: Color,
+    lowColor: Color,
+    highColor: Color,
+  ) : this(
+    x,
+    canvasX,
+    entry,
+    0,
+    openingCanvasY,
+    closingCanvasY,
+    lowCanvasY,
+    highCanvasY,
+    openingColor,
+    closingColor,
+    lowColor,
+    highColor,
+  )
+}
