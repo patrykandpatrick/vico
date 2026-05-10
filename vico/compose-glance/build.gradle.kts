@@ -24,6 +24,8 @@ plugins {
   id("org.jetbrains.kotlin.plugin.compose")
 }
 
+dokka { dokkaSourceSets.register("main") { sourceRoots.from("src/main/kotlin") } }
+
 android {
   configure()
   namespace = moduleNamespace
