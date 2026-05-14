@@ -122,8 +122,8 @@ public class VicoScrollState {
    * @param autoScroll represents the scroll value or delta for automatic scrolling.
    * @param autoScrollCondition defines when an automatic scroll should occur.
    * @param autoScrollAnimationSpec the [AnimationSpec] for automatic scrolling.
-   * @param snapScrollX if not null, the scroll will snap to multiples of this _x_-axis window
-   *   width after the user stops scrolling.
+   * @param snapScrollX if not null, the scroll will snap to multiples of this _x_-axis window width
+   *   after the user stops scrolling.
    */
   public constructor(
     scrollEnabled: Boolean,
@@ -222,11 +222,13 @@ public class VicoScrollState {
     val snapScrollX = snapScrollX ?: return null
     val context = this.context ?: return null
     val layerDimensions = this.layerDimensions ?: return null
-    val windowPx =
-      (snapScrollX / context.ranges.xStep).toFloat() * layerDimensions.xSpacing
+    val windowPx = (snapScrollX / context.ranges.xStep).toFloat() * layerDimensions.xSpacing
     if (windowPx <= 0f) return null
+    val startPadding = layerDimensions.startPadding
     val snapTarget =
-      ((value / windowPx).roundToInt() * windowPx).coerceIn(0f.rangeWith(maxValue))
+      (startPadding + ((value - startPadding) / windowPx).roundToInt() * windowPx).coerceIn(
+        0f.rangeWith(maxValue)
+      )
     val delta = snapTarget - value
     return if (delta == 0f) null else delta
   }

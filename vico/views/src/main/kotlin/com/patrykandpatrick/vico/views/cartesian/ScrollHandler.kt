@@ -218,11 +218,13 @@ public class ScrollHandler(
     val snapScrollX = snapScrollX ?: return
     val context = this.context ?: return
     val layerDimensions = this.layerDimensions ?: return
-    val windowPx =
-      (snapScrollX / context.ranges.xStep).toFloat() * layerDimensions.xSpacing
+    val windowPx = (snapScrollX / context.ranges.xStep).toFloat() * layerDimensions.xSpacing
     if (windowPx <= 0f) return
+    val startPadding = layerDimensions.startPadding
     val snapTarget =
-      ((value / windowPx).roundToInt() * windowPx).coerceIn(0f.rangeWith(maxValue))
+      (startPadding + ((value - startPadding) / windowPx).roundToInt() * windowPx).coerceIn(
+        0f.rangeWith(maxValue)
+      )
     val delta = snapTarget - value
     if (delta == 0f) return
     animateScrollBy(delta, duration, interpolator)

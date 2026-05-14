@@ -140,6 +140,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       density = resources.displayMetrics.density,
       onInteraction = ::handleInteraction,
       requestInvalidate = ::invalidate,
+      onUserScroll = { wasUserScrolling = true },
     )
 
   /** The [CartesianChart] displayed by this [View]. */
@@ -308,13 +309,6 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   override fun onTouchEvent(event: MotionEvent): Boolean {
     val superHandled = super.onTouchEvent(event)
     if (!isEnabled || !event.shouldAccept()) return superHandled
-    if (
-      scrollHandler.scrollEnabled &&
-        event.actionMasked == MotionEvent.ACTION_MOVE &&
-        scrollHandler.snapScrollX != null
-    ) {
-      wasUserScrolling = true
-    }
     val scaleHandled =
       if (zoomHandler.zoomEnabled && event.pointerCount > 1 && scrollHandler.scrollEnabled) {
         scaleGestureDetector.onTouchEvent(event)

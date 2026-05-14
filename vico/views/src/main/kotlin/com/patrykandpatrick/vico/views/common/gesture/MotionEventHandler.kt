@@ -34,6 +34,7 @@ internal class MotionEventHandler(
   var scrollEnabled: Boolean = false,
   private val onInteraction: (Interaction) -> Unit,
   private val requestInvalidate: () -> Unit,
+  private val onUserScroll: () -> Unit = {},
   internal val chartBounds: RectF = RectF(),
 ) {
   private val velocityUnits = (VELOCITY_PIXELS * density).toInt()
@@ -69,8 +70,11 @@ internal class MotionEventHandler(
           val shouldPerformScroll = totalDragAmount > dragThreshold
           if (shouldPerformScroll && !ignoreEvent) {
             velocityTracker.get().addMovement(motionEvent)
-            if (scrollHandler.scroll(Scroll.Relative.pixels(lastX - currentX)) == 0f) {
+            val consumed = scrollHandler.scroll(Scroll.Relative.pixels(lastX - currentX))
+            if (consumed == 0f) {
               onInteraction(Interaction.Move(motionEvent.point))
+            } else {
+              onUserScroll()
             }
             requestInvalidate()
             initialX = -dragThreshold
