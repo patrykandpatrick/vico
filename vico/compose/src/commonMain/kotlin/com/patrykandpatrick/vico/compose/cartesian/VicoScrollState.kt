@@ -233,6 +233,8 @@ public class VicoScrollState {
 
   internal suspend fun performSnap(animationSpec: AnimationSpec<Float> = spring()) {
     val delta = getSnapDelta() ?: return
+    scrollableState.stopScroll(MutatePriority.PreventUserInput)
+    isScrollInProgress.first { !it }
     scrollableState.animateScrollBy(delta, animationSpec)
   }
 
