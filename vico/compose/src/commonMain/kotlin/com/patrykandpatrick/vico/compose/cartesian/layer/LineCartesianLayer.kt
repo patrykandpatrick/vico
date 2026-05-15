@@ -1100,7 +1100,7 @@ public fun LineCartesianLayer.Companion.rememberLine(
     interpolator,
     dataLabel,
     dataLabelPosition,
-    dataLabelRotationDegrees,
+    dataLabelValueFormatter,
     dataLabelRotationDegrees,
   ) {
     Line(
