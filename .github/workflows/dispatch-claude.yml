@@ -40,6 +40,8 @@ jobs:
 
             Before making changes, inspect the current state of any referenced issue, pull request, or discussion. Then perform the requested actions and finish with a concise summary of what you changed.
 
+            Treat the operator request as instructions and private context, not as text to publish verbatim. If the request asks you to respond publicly to an issue, pull request, or discussion, first inspect the thread, then write a polished, repository-maintainer-style response that reflects the operator's intent. Do not quote or closely paraphrase the operator's rough notes unless the request explicitly says to use exact wording.
+
             Operator request:
 
             ${{ github.event.inputs.request }}
