@@ -70,4 +70,4 @@ jobs:
                - Clearly lists each requirement that is not met and what needs to be provided
                - Explains that the issue has been closed, and asks them to address the problems and post a new comment so the team can take another look
             2. Close the issue as not planned: `gh issue close ${{ steps.issue.outputs.number }} --repo ${{ github.repository }} --reason "not planned"`
-          claude_args: --max-turns 5 --model claude-opus-4-6
+          claude_args: --model claude-opus-4-7

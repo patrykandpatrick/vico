@@ -45,4 +45,4 @@ jobs:
             Operator request:
 
             ${{ github.event.inputs.request }}
-          claude_args: --model claude-opus-4-6
+          claude_args: --model claude-opus-4-7
