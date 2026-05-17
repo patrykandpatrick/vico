@@ -22,16 +22,17 @@ import com.patrykandpatrick.vico.compose.common.lerp
 import com.patrykandpatrick.vico.compose.common.orZero
 
 /**
- * Houses drawing information for a [CandlestickCartesianLayer]. [opacity] is the columns’ opacity.
+ * Houses drawing information for a [CandlestickCartesianLayer]. [modelKey] identifies the source
+ * model, and [opacity] is the candles’ opacity.
  */
 public class CandlestickCartesianLayerDrawingModel(
   public val entries: Map<Double, Entry>,
-  public val key: Any,
+  public val modelKey: Any,
   public val opacity: Float = 1f,
 ) :
   CartesianLayerDrawingModel<CandlestickCartesianLayerDrawingModel.Entry>(
     listOf(entries),
-    listOf(key),
+    listOf(modelKey),
   ) {
   public constructor(entries: Map<Double, Entry>, opacity: Float = 1f) : this(entries, 0, opacity)
 
@@ -43,7 +44,7 @@ public class CandlestickCartesianLayerDrawingModel(
     val oldOpacity = (from as CandlestickCartesianLayerDrawingModel?)?.opacity.orZero
     return CandlestickCartesianLayerDrawingModel(
       entries = entries.first(),
-      key = key,
+      modelKey = modelKey,
       opacity = oldOpacity.lerp(opacity, fraction),
     )
   }
@@ -52,12 +53,12 @@ public class CandlestickCartesianLayerDrawingModel(
     this === other ||
       other is CandlestickCartesianLayerDrawingModel &&
         entries == other.entries &&
-        key == other.key &&
+        modelKey == other.modelKey &&
         opacity == other.opacity
 
   override fun hashCode(): Int {
     var result = entries.hashCode()
-    result = 31 * result + key.hashCode()
+    result = 31 * result + modelKey.hashCode()
     result = 31 * result + opacity.hashCode()
     return result
   }

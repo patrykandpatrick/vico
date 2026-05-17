@@ -319,7 +319,7 @@ protected constructor(
     val yRange = ranges.getYRange(verticalAxisPosition)
     return CandlestickCartesianLayerDrawingModel(
       entries = series.associate { it.x to it.toCandleInfo(yRange) },
-      key = key,
+      modelKey = key,
     )
   }
 
