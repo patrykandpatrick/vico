@@ -4,7 +4,7 @@
 ![](https://img.shields.io/github/actions/workflow/status/patrykandpatrick/vico/build.yml?branch=master)
 ![](https://kotlin-version.aws.icerock.dev/kotlin-version?group=com.patrykandpatrick.vico&name=compose)
 
-![](https://patrykandpatrick.com/vico/images/cover.png)
+![](https://patrykandpatrick.com/vico.png)
 
 Vico is a powerful and extensible multiplatform chart library. It offers native
 support for Compose Multiplatform and the Android view system.
