@@ -322,6 +322,7 @@ internal class ThemeHandler(private val context: Context, attrs: AttributeSet?) 
           getBoolean(R.styleable.AxisStyle_addExtremeHorizontalAxisLabelPadding, true),
         )
       1 -> HorizontalAxis.ItemPlacer.segmented(shiftExtremeLines)
+      2 -> HorizontalAxis.ItemPlacer.extremes(shiftExtremeLines)
       else -> throw IllegalArgumentException("Unexpected `horizontalAxisItemPlacer` value.")
     }
   }

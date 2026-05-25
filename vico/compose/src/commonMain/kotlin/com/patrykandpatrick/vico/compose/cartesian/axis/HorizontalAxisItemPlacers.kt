@@ -82,7 +82,10 @@ internal class AlignedHorizontalAxisItemPlacer(
   private val offset: (ExtraStore) -> Int,
   private val shiftExtremeLines: Boolean,
   private val addExtremeLabelPadding: Boolean,
+  private val shiftExtremeLabelsInward: Boolean = false,
 ) : BaseHorizontalAxisItemPlacer(shiftExtremeLines) {
+  override fun getShiftExtremeLabelsInward(context: CartesianMeasuringContext) =
+    shiftExtremeLabelsInward
   private fun CartesianMeasuringContext.getSpacingOrThrow() =
     spacing(model.extraStore).also { require(it > 0) { "`spacing` must return a positive value." } }
 
@@ -205,4 +208,53 @@ internal class SegmentedHorizontalAxisItemPlacer(private val shiftExtremeLines: 
     tickThickness: Float,
     maxLabelWidth: Float,
   ) = if (shiftExtremeLines) tickThickness else tickThickness.half
+}
+
+internal class ExtremesHorizontalAxisItemPlacer(private val shiftExtremeLines: Boolean) :
+  BaseHorizontalAxisItemPlacer(shiftExtremeLines) {
+  override fun getShiftExtremeLabelsInward(context: CartesianMeasuringContext) = true
+
+  override fun getLabelValues(
+    context: CartesianDrawingContext,
+    visibleXRange: ClosedFloatingPointRange<Double>,
+    fullXRange: ClosedFloatingPointRange<Double>,
+    maxLabelWidth: Float,
+  ): List<Double> = context.run { listOf(ranges.minX, ranges.maxX) }
+
+  override fun getLineValues(
+    context: CartesianDrawingContext,
+    visibleXRange: ClosedFloatingPointRange<Double>,
+    fullXRange: ClosedFloatingPointRange<Double>,
+    maxLabelWidth: Float,
+  ): List<Double> = context.run { listOf(ranges.minX, ranges.maxX) }
+
+  override fun getWidthMeasurementLabelValues(
+    context: CartesianMeasuringContext,
+    layerDimensions: CartesianLayerDimensions,
+    fullXRange: ClosedFloatingPointRange<Double>,
+  ) = context.ranges.measuredLabelValues
+
+  override fun getFirstLabelValue(context: CartesianMeasuringContext, maxLabelWidth: Float) = null
+
+  override fun getLastLabelValue(context: CartesianMeasuringContext, maxLabelWidth: Float) = null
+
+  override fun getStartLayerMargin(
+    context: CartesianMeasuringContext,
+    layerDimensions: CartesianLayerDimensions,
+    tickThickness: Float,
+    maxLabelWidth: Float,
+  ): Float {
+    val tickSpace = if (shiftExtremeLines) tickThickness else tickThickness.half
+    return (tickSpace - layerDimensions.unscalableStartPadding).coerceAtLeast(0f)
+  }
+
+  override fun getEndLayerMargin(
+    context: CartesianMeasuringContext,
+    layerDimensions: CartesianLayerDimensions,
+    tickThickness: Float,
+    maxLabelWidth: Float,
+  ): Float {
+    val tickSpace = if (shiftExtremeLines) tickThickness else tickThickness.half
+    return (tickSpace - layerDimensions.unscalableEndPadding).coerceAtLeast(0f)
+  }
 }
