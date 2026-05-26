@@ -48,6 +48,7 @@ import kotlin.math.min
  *
  * @property itemPlacer determines for what _x_ values the [HorizontalAxis] displays labels, ticks,
  *   and guidelines.
+ * @property titlePosition defines the title’s position.
  */
 public open class HorizontalAxis<P : Axis.Position.Horizontal>
 protected constructor(
@@ -60,6 +61,7 @@ protected constructor(
   tickLength: Dp,
   guideline: LineComponent?,
   public val itemPlacer: ItemPlacer,
+  public val titlePosition: TitlePosition,
   size: Size,
   titleComponent: TextComponent?,
   title: (ExtraStore) -> CharSequence?,
@@ -98,6 +100,7 @@ protected constructor(
     tickLength: Dp,
     guideline: LineComponent?,
     itemPlacer: ItemPlacer,
+    titlePosition: TitlePosition = TitlePosition.Center,
     titleComponent: TextComponent?,
     title: (ExtraStore) -> CharSequence?,
     tickPosition: TickPosition,
@@ -112,6 +115,7 @@ protected constructor(
     tickLength,
     guideline,
     itemPlacer,
+    titlePosition,
     Size.Auto(),
     titleComponent,
     title,
@@ -208,29 +212,59 @@ protected constructor(
         )
       }
 
-      title(model.extraStore)?.let { title ->
-        titleComponent?.draw(
-          context = this,
-          x = bounds.center.x,
-          y = if (position == Axis.Position.Horizontal.Top) bounds.top else bounds.bottom,
-          verticalPosition =
-            if (position == Axis.Position.Horizontal.Top) {
-              Position.Vertical.Bottom
-            } else {
-              Position.Vertical.Top
-            },
-          maxWidth = bounds.width.toInt(),
-          text = title,
-        )
-      }
-
       if (lineDrawingOrder == LineDrawingOrder.UnderLayers) {
         drawLineAndTicks(context, axisDimensions)
       }
 
       canvas.restore()
 
+      title(model.extraStore)?.let { title ->
+        titleComponent?.drawTitle(this, title, lineLeft, lineRight)
+      }
+
       drawGuidelines(context, baseCanvasX, fullXRange, labelValues, lineValues)
+    }
+  }
+
+  private fun TextComponent.drawTitle(
+    context: CartesianDrawingContext,
+    title: CharSequence,
+    lineLeft: Float,
+    lineRight: Float,
+  ) {
+    with(context) {
+      when (titlePosition) {
+        TitlePosition.Center ->
+          draw(
+            context = this,
+            x = bounds.center.x,
+            y = if (position == Axis.Position.Horizontal.Top) bounds.top else bounds.bottom,
+            verticalPosition =
+              if (position == Axis.Position.Horizontal.Top) {
+                Position.Vertical.Bottom
+              } else {
+                Position.Vertical.Top
+              },
+            maxWidth = bounds.width.toInt(),
+            text = title,
+          )
+        TitlePosition.End ->
+          draw(
+            context = this,
+            x = if (isLtr) lineRight else lineLeft,
+            y =
+              if (position == Axis.Position.Horizontal.Top) {
+                bounds.bottom - lineThickness.half
+              } else {
+                bounds.top + lineThickness.half
+              },
+            horizontalPosition = Position.Horizontal.End,
+            verticalPosition = Position.Vertical.Center,
+            maxWidth =
+              (if (isLtr) canvasSize.width - lineRight else lineLeft).toInt().coerceAtLeast(1),
+            text = title,
+          )
+      }
     }
   }
 
@@ -505,15 +539,29 @@ protected constructor(
     val maxLabelWidth =
       context.getMaxLabelWidth(layerDimensions, context.internalGetFullXRange(layerDimensions))
     val height = getHeight(context, layerDimensions, maxLabelWidth)
-    layerMargins.ensureValuesAtLeast(
+    var startMargin =
       itemPlacer.getStartLayerMargin(
         context,
         layerDimensions,
         context.tickThickness,
         maxLabelWidth,
-      ),
-      itemPlacer.getEndLayerMargin(context, layerDimensions, context.tickThickness, maxLabelWidth),
-    )
+      )
+    var endMargin =
+      itemPlacer.getEndLayerMargin(context, layerDimensions, context.tickThickness, maxLabelWidth)
+    if (titlePosition == TitlePosition.End) {
+      val titleWidth =
+        title(model.extraStore)
+          ?.let { title ->
+            titleComponent?.getWidth(
+              context = context,
+              text = title,
+              maxWidth = context.canvasSize.width.toInt(),
+            )
+          }
+          .orZero
+      if (context.isLtr) endMargin += titleWidth else startMargin += titleWidth
+    }
+    layerMargins.ensureValuesAtLeast(startMargin, endMargin)
     when (position) {
       Axis.Position.Horizontal.Top -> layerMargins.ensureValuesAtLeast(top = height)
       Axis.Position.Horizontal.Bottom -> layerMargins.ensureValuesAtLeast(bottom = height)
@@ -547,7 +595,14 @@ protected constructor(
                 )
               }
               .orZero
-          (labelHeight + titleComponentHeight + lineThickness + outwardTickLength)
+          val height =
+            labelHeight + lineThickness + outwardTickLength
+          val fullHeight =
+            when (titlePosition) {
+              TitlePosition.Center -> height + titleComponentHeight
+              TitlePosition.End -> max(height, titleComponentHeight)
+            }
+          fullHeight
             .coerceAtMost(canvasSize.height / MAX_HEIGHT_DIVISOR)
             .coerceIn(size.min.pixels, size.max.pixels)
         }
@@ -610,6 +665,7 @@ protected constructor(
     tickLength: Dp = this.tickLength,
     guideline: LineComponent? = this.guideline,
     itemPlacer: ItemPlacer = this.itemPlacer,
+    titlePosition: TitlePosition = this.titlePosition,
     size: Size = this.size,
     titleComponent: TextComponent? = this.titleComponent,
     title: (ExtraStore) -> CharSequence? = this.title,
@@ -626,6 +682,7 @@ protected constructor(
       tickLength,
       guideline,
       itemPlacer,
+      titlePosition,
       size,
       titleComponent,
       title,
@@ -634,9 +691,25 @@ protected constructor(
     )
 
   override fun equals(other: Any?): Boolean =
-    super.equals(other) && other is HorizontalAxis<*> && itemPlacer == other.itemPlacer
+    super.equals(other) &&
+      other is HorizontalAxis<*> &&
+      itemPlacer == other.itemPlacer &&
+      titlePosition == other.titlePosition
 
-  override fun hashCode(): Int = 31 * super.hashCode() + itemPlacer.hashCode()
+  override fun hashCode(): Int {
+    var result = super.hashCode()
+    result = 31 * result + itemPlacer.hashCode()
+    result = 31 * result + titlePosition.hashCode()
+    return result
+  }
+
+  /** Defines how a [HorizontalAxis] title is positioned. */
+  public enum class TitlePosition {
+    /** Places the title above or below the axis, centered horizontally. */
+    Center,
+    /** Places the title at the axis line’s end, centered vertically on the line. */
+    End,
+  }
 
   /** Determines for what _x_ values a [HorizontalAxis] displays labels, ticks, and guidelines. */
   public interface ItemPlacer {
@@ -774,6 +847,7 @@ protected constructor(
       tickLength: Dp = Defaults.AXIS_TICK_LENGTH.dp,
       guideline: LineComponent? = rememberAxisGuidelineComponent(),
       itemPlacer: ItemPlacer = remember { ItemPlacer.aligned() },
+      titlePosition: TitlePosition = TitlePosition.Center,
       size: Size = Size.Auto(),
       titleComponent: TextComponent? = null,
       title: (ExtraStore) -> CharSequence? = { null },
@@ -789,6 +863,7 @@ protected constructor(
         tickLength,
         guideline,
         itemPlacer,
+        titlePosition,
         size,
         titleComponent,
         title,
@@ -805,6 +880,7 @@ protected constructor(
           tickLength,
           guideline,
           itemPlacer,
+          titlePosition,
           size,
           titleComponent,
           title,
@@ -824,6 +900,7 @@ protected constructor(
       tickLength: Dp = Defaults.AXIS_TICK_LENGTH.dp,
       guideline: LineComponent? = rememberAxisGuidelineComponent(),
       itemPlacer: ItemPlacer = remember { ItemPlacer.aligned() },
+      titlePosition: TitlePosition = TitlePosition.Center,
       size: Size = Size.Auto(),
       titleComponent: TextComponent? = null,
       title: (ExtraStore) -> CharSequence? = { null },
@@ -839,6 +916,7 @@ protected constructor(
         tickLength,
         guideline,
         itemPlacer,
+        titlePosition,
         size,
         titleComponent,
         title,
@@ -855,6 +933,7 @@ protected constructor(
           tickLength,
           guideline,
           itemPlacer,
+          titlePosition,
           size,
           titleComponent,
           title,

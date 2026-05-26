@@ -157,22 +157,30 @@ internal class ThemeHandler(private val context: Context, attrs: AttributeSet?) 
       when (position) {
         is Axis.Position.Horizontal ->
           HorizontalAxis(
-            position,
-            line,
-            label,
-            labelRotationDegrees,
-            tick,
-            tickLengthDp,
-            guideline,
-            axisStyle.getHorizontalAxisItemPlacer(),
-            titleComponent,
-            title,
-            BaseAxis.TickPosition.entries[
+            position = position,
+            line = line,
+            label = label,
+            labelRotationDegrees = labelRotationDegrees,
+            tick = tick,
+            tickLengthDp = tickLengthDp,
+            guideline = guideline,
+            itemPlacer = axisStyle.getHorizontalAxisItemPlacer(),
+            titleComponent = titleComponent,
+            title = title,
+            titlePosition =
+              HorizontalAxis.TitlePosition.entries[
+                  axisStyle.getInteger(
+                    R.styleable.AxisStyle_horizontalAxisTitlePosition,
+                    HorizontalAxis.TitlePosition.Center.ordinal,
+                  )],
+            tickPosition =
+              BaseAxis.TickPosition.entries[
                 axisStyle.getInteger(
                   R.styleable.AxisStyle_tickPosition,
                   BaseAxis.TickPosition.Outside.ordinal,
                 )],
-            BaseAxis.LineDrawingOrder.entries[
+            lineDrawingOrder =
+              BaseAxis.LineDrawingOrder.entries[
                 axisStyle.getInteger(
                   R.styleable.AxisStyle_lineDrawingOrder,
                   BaseAxis.LineDrawingOrder.UnderLayers.ordinal,
@@ -206,6 +214,12 @@ internal class ThemeHandler(private val context: Context, attrs: AttributeSet?) 
             itemPlacer = axisStyle.getVerticalAxisItemPlacer(),
             titleComponent = titleComponent,
             title = title,
+            titlePosition =
+              VerticalAxis.TitlePosition.entries[
+                  axisStyle.getInteger(
+                    R.styleable.AxisStyle_verticalAxisTitlePosition,
+                    VerticalAxis.TitlePosition.Side.ordinal,
+                  )],
             tickPosition =
               BaseAxis.TickPosition.entries[
                   axisStyle.getInteger(
