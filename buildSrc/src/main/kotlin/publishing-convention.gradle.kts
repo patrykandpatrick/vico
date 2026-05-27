@@ -17,8 +17,8 @@
 plugins { id("com.vanniktech.maven.publish") }
 
 mavenPublishing {
-  //publishToMavenCentral(automaticRelease = true)
-  //signAllPublications()
+  publishToMavenCentral(automaticRelease = true)
+  signAllPublications()
   pom {
     name = "Vico"
     description = "A powerful and extensible multiplatform chart library."
