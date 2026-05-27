@@ -6,7 +6,7 @@ metaLinks:
 
 # Introduction
 
-<figure><img src="https://www.patrykandpatrick.com/vico/images/cover.png" alt=""><figcaption></figcaption></figure>
+<figure><img src="https://patrykandpatrick.com/vico.png" alt=""><figcaption></figcaption></figure>
 
 Vico is a powerful and extensible multiplatform chart library. It offers native support for Compose Multiplatform and the Android view system.
 
