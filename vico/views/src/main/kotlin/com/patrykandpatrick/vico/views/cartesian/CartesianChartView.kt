@@ -47,6 +47,34 @@ import kotlin.properties.ReadWriteProperty
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
 
+/**
+ * The maximum horizontal distance, in pixels, within which two [CartesianMarker.Target]s are
+ * considered to share a position. [CartesianMarker.Target]s for the same _x_ can have marginally
+ * different [CartesianMarker.Target.canvasX] values across layers because of floating-point error,
+ * so an exact comparison would spuriously treat them as separate positions. This is well below the
+ * spacing between genuinely distinct positions (e.g., grouped columns).
+ */
+private const val MARKER_POSITION_TOLERANCE = 0.5f
+
+/**
+ * Narrows [targets] to the one closest to [pointX] when they span more than one horizontal
+ * position, returning it together with its index. When all [targets] share a position (within
+ * [MARKER_POSITION_TOLERANCE]), they’re returned unchanged with a `null` index. This keeps the
+ * tapped column selected in grouped-column charts while preserving every target in, e.g., a column–
+ * line combo chart, where the column and line share an _x_.
+ */
+internal fun narrowMarkerTargets(
+  targets: List<CartesianMarker.Target>,
+  pointX: Float,
+): Pair<List<CartesianMarker.Target>, Int?> {
+  if (targets.isEmpty()) return targets to null
+  if (targets.maxOf { it.canvasX } - targets.minOf { it.canvasX } <= MARKER_POSITION_TOLERANCE) {
+    return targets to null
+  }
+  val closestIndex = targets.indices.minBy { abs(targets[it].canvasX - pointX) }
+  return listOf(targets[closestIndex]) to closestIndex
+}
+
 /** Displays a [CartesianChart]. */
 public open class CartesianChartView
 @JvmOverloads
@@ -362,21 +390,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
         x,
         measuringContext.getVisibleXRange(layerDimensions, chart.layerBounds, scrollHandler.value),
       )
-    val narrowedTargets: List<CartesianMarker.Target>
-    val seriesIndex: Int?
-    if (targets.isNotEmpty()) {
-      val closestIndex = targets.indices.minBy { abs(targets[it].canvasX - interaction.point.x) }
-      if (targets.distinctBy { it.canvasX }.size > 1) {
-        narrowedTargets = listOf(targets[closestIndex])
-        seriesIndex = closestIndex
-      } else {
-        narrowedTargets = targets
-        seriesIndex = null
-      }
-    } else {
-      narrowedTargets = targets
-      seriesIndex = null
-    }
+    val (narrowedTargets, seriesIndex) = narrowMarkerTargets(targets, interaction.point.x)
     if (chart.markerController.shouldAcceptInteraction(interaction, narrowedTargets)) {
       val shouldShow = chart.markerController.shouldShowMarker(interaction, narrowedTargets)
       lastAcceptedInteraction = interaction
