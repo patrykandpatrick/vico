@@ -82,10 +82,9 @@ internal class AlignedHorizontalAxisItemPlacer(
   private val offset: (ExtraStore) -> Int,
   private val shiftExtremeLines: Boolean,
   private val addExtremeLabelPadding: Boolean,
-  private val shiftExtremeLabelsInward: Boolean = false,
+  private val shiftExtremeLabels: Boolean = false,
 ) : BaseHorizontalAxisItemPlacer(shiftExtremeLines) {
-  override fun getShiftExtremeLabelsInward(context: CartesianMeasuringContext) =
-    shiftExtremeLabelsInward
+  override fun getShiftExtremeLabels(context: CartesianMeasuringContext) = shiftExtremeLabels
 
   private fun CartesianMeasuringContext.getSpacingOrThrow() =
     spacing(model.extraStore).also { require(it > 0) { "`spacing` must return a positive value." } }
@@ -213,7 +212,7 @@ internal class SegmentedHorizontalAxisItemPlacer(private val shiftExtremeLines: 
 
 internal class ExtremesHorizontalAxisItemPlacer(private val shiftExtremeLines: Boolean) :
   BaseHorizontalAxisItemPlacer(shiftExtremeLines) {
-  override fun getShiftExtremeLabelsInward(context: CartesianMeasuringContext) = true
+  override fun getShiftExtremeLabels(context: CartesianMeasuringContext) = true
 
   override fun getLabelValues(
     context: CartesianDrawingContext,

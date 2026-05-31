@@ -183,7 +183,7 @@ protected constructor(
       val visibleXRange = getVisibleXRange()
       val labelValues = itemPlacer.getLabelValues(this, visibleXRange, fullXRange, maxLabelWidth)
       val lineValues = itemPlacer.getLineValues(this, visibleXRange, fullXRange, maxLabelWidth)
-      val shiftExtremeLabels = itemPlacer.getShiftExtremeLabelsInward(this)
+      val shiftExtremeLabels = itemPlacer.getShiftExtremeLabels(this)
 
       labelValues.forEachIndexed { index, x ->
         val canvasX =
@@ -460,6 +460,7 @@ protected constructor(
     layerDimensions: MutableCartesianLayerDimensions,
   ) {
     val label = label ?: return
+    if (itemPlacer.getShiftExtremeLabels(context)) return
     val ranges = context.ranges
     val maxLabelWidth =
       context.getMaxLabelWidth(layerDimensions, context.internalGetFullXRange(layerDimensions))
@@ -666,7 +667,7 @@ protected constructor(
 
     /**
      * If the [HorizontalAxis] is to reserve room for the first label, returns the first label’s _x_
-     * value. Otherwise, returns `null`.
+     * value. Otherwise, returns `null`. This is ignored if [getShiftExtremeLabels] returns `true`.
      */
     public fun getFirstLabelValue(
       context: CartesianMeasuringContext,
@@ -675,7 +676,7 @@ protected constructor(
 
     /**
      * If the [HorizontalAxis] is to reserve room for the last label, returns the last label’s _x_
-     * value. Otherwise, returns `null`.
+     * value. Otherwise, returns `null`. This is ignored if [getShiftExtremeLabels] returns `true`.
      */
     public fun getLastLabelValue(
       context: CartesianMeasuringContext,
@@ -731,9 +732,10 @@ protected constructor(
     /**
      * Returns whether the first and last labels should be shifted inward (end-aligned and
      * start-aligned, respectively) rather than centered. This anchors the outermost labels to the
-     * plot-area edges, preventing clipping without shrinking the plot area.
+     * plot-area edges, preventing clipping without shrinking the plot area. If `true`,
+     * [getFirstLabelValue] and [getLastLabelValue] are ignored.
      */
-    public fun getShiftExtremeLabelsInward(context: CartesianMeasuringContext): Boolean = false
+    public fun getShiftExtremeLabels(context: CartesianMeasuringContext): Boolean = false
 
     /** Returns the start [CartesianLayer]-area margin required by the [HorizontalAxis]. */
     public fun getStartLayerMargin(
@@ -759,25 +761,24 @@ protected constructor(
        * components being horizontally centered relative to one another. [shiftExtremeLines] is used
        * as the return value of [ItemPlacer.getShiftExtremeLines]. [addExtremeLabelPadding]
        * specifies whether [CartesianLayer] padding should be added for the first and last labels,
-       * ensuring their visibility. [shiftExtremeLabelsInward] is used as the return value of
-       * [ItemPlacer.getShiftExtremeLabelsInward]—an alternative to [addExtremeLabelPadding] that
-       * anchors the outermost labels inward instead of shrinking the plot area. Because
-       * [shiftExtremeLabelsInward] makes the extreme-label padding unnecessary, enabling it together
-       * with [addExtremeLabelPadding] is not recommended.
+       * ensuring their visibility. [shiftExtremeLabels] is used as the return value of
+       * [ItemPlacer.getShiftExtremeLabels]. If both [addExtremeLabelPadding] and
+       * [shiftExtremeLabels] are enabled, [shiftExtremeLabels] takes precedence: The first and last
+       * labels are anchored inward, and no extreme-label padding is added.
        */
       public fun aligned(
         spacing: (ExtraStore) -> Int = { 1 },
         offset: (ExtraStore) -> Int = { 0 },
         shiftExtremeLines: Boolean = true,
         addExtremeLabelPadding: Boolean = true,
-        shiftExtremeLabelsInward: Boolean = false,
+        shiftExtremeLabels: Boolean = false,
       ): ItemPlacer =
         AlignedHorizontalAxisItemPlacer(
           spacing,
           offset,
           shiftExtremeLines,
           addExtremeLabelPadding,
-          shiftExtremeLabelsInward,
+          shiftExtremeLabels,
         )
 
       /**
