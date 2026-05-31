@@ -531,6 +531,12 @@ protected constructor(
 
       val drawingModel = extraStore.getOrNull(drawingModelKey)
 
+      // Composite all series onto a single layer. During the fade-in (`opacity` < 1), this
+      // allocates one offscreen buffer per frame rather than one per series. With a shared layer,
+      // overlapping series also composite opaquely before the group is faded, which avoids
+      // inter-series bleed-through.
+      saveLayer(opacity = drawingModel?.opacity ?: 1f)
+
       model.series.forEachIndexed { seriesIndex, series ->
         val seriesKey = model.seriesKeys[seriesIndex]
         val pointInfoMap = drawingModel?.getOrNull(seriesIndex)
@@ -559,8 +565,6 @@ protected constructor(
           connectPoints(line.interpolator, points, visibleIndexRange)
         }
 
-        saveLayer(opacity = drawingModel?.opacity ?: 1f)
-
         line.fillColor?.let { color ->
           line.draw(context, linePath, color, verticalAxisPosition)
           forEachPointInBounds(series, drawingStart, pointInfoMap) { entry, x, y, _, _ ->
@@ -580,9 +584,9 @@ protected constructor(
           }
 
         drawPointsAndDataLabels(line, series, seriesKey, seriesIndex, drawingStart, pointInfoMap)
-
-        canvas.restore()
       }
+
+      canvas.restore()
     }
   }
 
