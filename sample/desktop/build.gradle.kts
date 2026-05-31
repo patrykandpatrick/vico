@@ -14,35 +14,33 @@
  * limitations under the License.
  */
 
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-  `dokka-convention`
-  `publishing-convention`
-  id("com.android.kotlin.multiplatform.library")
   id("org.jetbrains.compose")
-  id("org.jetbrains.kotlin.multiplatform")
+  id("org.jetbrains.kotlin.jvm")
   id("org.jetbrains.kotlin.plugin.compose")
 }
 
-kotlin {
-  androidLibrary {
-    configure()
-    namespace = moduleNamespace
-  }
-  listOf(iosArm64(), iosSimulatorArm64()).forEach { target ->
-    target.binaries.framework {
-      baseName = project.name
-      isStatic = true
+java {
+  sourceCompatibility = JavaVersion.VERSION_11
+  targetCompatibility = JavaVersion.VERSION_11
+}
+
+kotlin { compilerOptions { jvmTarget = JvmTarget.JVM_11 } }
+
+dependencies {
+  implementation(project(":sample:shared"))
+  implementation(compose.desktop.currentOs)
+}
+
+compose.desktop {
+  application {
+    mainClass = "com.patrykandpatrick.vico.sample.app.MainKt"
+    nativeDistributions {
+      packageName = "com.patrykandpatrick.vico.sample"
+      targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
     }
   }
-  jvm("desktop")
-  @OptIn(ExperimentalWasmDsl::class) wasmJs { browser() }
-  sourceSets {
-    commonMain.dependencies {
-      api(project(":vico:compose"))
-      implementation(libs.composeMaterial)
-    }
-  }
-  explicitApi()
 }

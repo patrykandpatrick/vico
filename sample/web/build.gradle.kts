@@ -14,34 +14,24 @@
  * limitations under the License.
  */
 
-pluginManagement.repositories {
-  google()
-  gradlePluginPortal()
-  mavenCentral()
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+
+plugins {
+  id("org.jetbrains.compose")
+  id("org.jetbrains.kotlin.multiplatform")
+  id("org.jetbrains.kotlin.plugin.compose")
 }
 
-@Suppress("UnstableApiUsage")
-dependencyResolutionManagement {
-  repositories {
-    google()
-    mavenCentral()
-    mavenLocal()
+kotlin {
+  @OptIn(ExperimentalWasmDsl::class)
+  wasmJs {
+    browser()
+    binaries.executable()
+  }
+  sourceSets {
+    commonMain.dependencies {
+      implementation(project(":sample:shared"))
+      implementation(libs.composeUI)
+    }
   }
 }
-
-rootProject.name = "Vico"
-
-include(
-  "sample:android",
-  "sample:charts:compose",
-  "sample:charts:views",
-  "sample:desktop",
-  "sample:shared",
-  "sample:web",
-  "vico",
-  "vico:compose",
-  "vico:compose-glance",
-  "vico:compose-m2",
-  "vico:compose-m3",
-  "vico:views",
-)

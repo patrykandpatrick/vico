@@ -23,6 +23,7 @@ dependencies {
   implementation(libs.composeCompiler)
   implementation(libs.dokka)
   implementation(libs.kotlinAndroid)
+  implementation(libs.kotlinJvm)
   implementation(libs.mavenPublish)
   implementation(libs.serialization)
 }

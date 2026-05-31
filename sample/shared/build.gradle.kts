@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 
 plugins {
@@ -37,15 +36,7 @@ kotlin {
     }
   }
   jvm("desktop")
-  js {
-    browser()
-    binaries.executable()
-  }
-  @OptIn(ExperimentalWasmDsl::class)
-  wasmJs {
-    browser()
-    binaries.executable()
-  }
+  @OptIn(ExperimentalWasmDsl::class) wasmJs { browser() }
   sourceSets {
     androidMain.dependencies { implementation(project(":sample:charts:views")) }
     commonMain.dependencies {
@@ -54,18 +45,6 @@ kotlin {
       implementation(libs.composeNavigation)
       implementation(libs.lifecycleRuntime)
       implementation(project(":sample:charts:compose"))
-    }
-    val desktopMain by getting
-    desktopMain.dependencies { implementation(libs.composeDesktop) }
-  }
-}
-
-compose.desktop {
-  application {
-    mainClass = "com.patrykandpatrick.vico.sample.app.MainKt"
-    nativeDistributions {
-      packageName = "com.patrykandpatrick.vico.sample"
-      targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
     }
   }
 }
