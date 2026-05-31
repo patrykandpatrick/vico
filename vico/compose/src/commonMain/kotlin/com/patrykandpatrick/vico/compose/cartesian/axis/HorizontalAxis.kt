@@ -183,6 +183,7 @@ protected constructor(
       val visibleXRange = getVisibleXRange()
       val labelValues = itemPlacer.getLabelValues(this, visibleXRange, fullXRange, maxLabelWidth)
       val lineValues = itemPlacer.getLineValues(this, visibleXRange, fullXRange, maxLabelWidth)
+      val shiftExtremeLabels = itemPlacer.getShiftExtremeLabels(this)
 
       labelValues.forEachIndexed { index, x ->
         val canvasX =
@@ -192,8 +193,21 @@ protected constructor(
               layoutDirectionMultiplier
         val previousX = labelValues.getOrNull(index - 1) ?: (fullXRange.start.doubled - x)
         val nextX = labelValues.getOrNull(index + 1) ?: (fullXRange.endInclusive.doubled - x)
+        val horizontalPosition =
+          when {
+            shiftExtremeLabels && index == 0 -> Position.Horizontal.End
+            shiftExtremeLabels && index == labelValues.lastIndex -> Position.Horizontal.Start
+            else -> Position.Horizontal.Center
+          }
         val maxWidth =
-          ceil(min(x - previousX, nextX - x) / ranges.xStep * layerDimensions.xSpacing).toInt()
+          when (horizontalPosition) {
+            Position.Horizontal.End ->
+              ceil((nextX - x) / ranges.xStep * layerDimensions.xSpacing).toInt()
+            Position.Horizontal.Start ->
+              ceil((x - previousX) / ranges.xStep * layerDimensions.xSpacing).toInt()
+            else ->
+              ceil(min(x - previousX, nextX - x) / ranges.xStep * layerDimensions.xSpacing).toInt()
+          }
 
         label?.draw(
           context = this,
@@ -201,6 +215,7 @@ protected constructor(
             valueFormatter.formatForAxis(context = this, value = x, verticalAxisPosition = null),
           x = canvasX,
           y = textY,
+          horizontalPosition = horizontalPosition,
           verticalPosition = position.textVerticalPosition,
           maxWidth = maxWidth,
           maxHeight = (bounds.height - outwardTickLength - lineThickness.half).toInt(),
@@ -445,6 +460,7 @@ protected constructor(
     layerDimensions: MutableCartesianLayerDimensions,
   ) {
     val label = label ?: return
+    if (itemPlacer.getShiftExtremeLabels(context)) return
     val ranges = context.ranges
     val maxLabelWidth =
       context.getMaxLabelWidth(layerDimensions, context.internalGetFullXRange(layerDimensions))
@@ -651,7 +667,7 @@ protected constructor(
 
     /**
      * If the [HorizontalAxis] is to reserve room for the first label, returns the first label’s _x_
-     * value. Otherwise, returns `null`.
+     * value. Otherwise, returns `null`. This is ignored if [getShiftExtremeLabels] returns `true`.
      */
     public fun getFirstLabelValue(
       context: CartesianMeasuringContext,
@@ -660,7 +676,7 @@ protected constructor(
 
     /**
      * If the [HorizontalAxis] is to reserve room for the last label, returns the last label’s _x_
-     * value. Otherwise, returns `null`.
+     * value. Otherwise, returns `null`. This is ignored if [getShiftExtremeLabels] returns `true`.
      */
     public fun getLastLabelValue(
       context: CartesianMeasuringContext,
@@ -713,6 +729,14 @@ protected constructor(
       maxLabelWidth: Float,
     ): List<Double>? = null
 
+    /**
+     * Returns whether the first and last labels should be shifted inward (end-aligned and
+     * start-aligned, respectively) rather than centered. This anchors the outermost labels to the
+     * plot-area edges, preventing clipping without shrinking the plot area. If `true`,
+     * [getFirstLabelValue] and [getLastLabelValue] are ignored.
+     */
+    public fun getShiftExtremeLabels(context: CartesianMeasuringContext): Boolean = false
+
     /** Returns the start [CartesianLayer]-area margin required by the [HorizontalAxis]. */
     public fun getStartLayerMargin(
       context: CartesianMeasuringContext,
@@ -737,15 +761,25 @@ protected constructor(
        * components being horizontally centered relative to one another. [shiftExtremeLines] is used
        * as the return value of [ItemPlacer.getShiftExtremeLines]. [addExtremeLabelPadding]
        * specifies whether [CartesianLayer] padding should be added for the first and last labels,
-       * ensuring their visibility.
+       * ensuring their visibility. [shiftExtremeLabels] is used as the return value of
+       * [ItemPlacer.getShiftExtremeLabels]. If both [addExtremeLabelPadding] and
+       * [shiftExtremeLabels] are enabled, [shiftExtremeLabels] takes precedence: The first and last
+       * labels are anchored inward, and no extreme-label padding is added.
        */
       public fun aligned(
         spacing: (ExtraStore) -> Int = { 1 },
         offset: (ExtraStore) -> Int = { 0 },
         shiftExtremeLines: Boolean = true,
         addExtremeLabelPadding: Boolean = true,
+        shiftExtremeLabels: Boolean = false,
       ): ItemPlacer =
-        AlignedHorizontalAxisItemPlacer(spacing, offset, shiftExtremeLines, addExtremeLabelPadding)
+        AlignedHorizontalAxisItemPlacer(
+          spacing,
+          offset,
+          shiftExtremeLines,
+          addExtremeLabelPadding,
+          shiftExtremeLabels,
+        )
 
       /**
        * Adds a label for each major _x_ value, and adds ticks between the labels and for
@@ -756,6 +790,16 @@ protected constructor(
        */
       public fun segmented(shiftExtremeLines: Boolean = true): ItemPlacer =
         SegmentedHorizontalAxisItemPlacer(shiftExtremeLines)
+
+      /**
+       * Places labels, ticks, and guidelines only at [CartesianChartRanges.minX] and
+       * [CartesianChartRanges.maxX]. The first label is end-aligned and the last is start-aligned,
+       * anchoring them to the plot-area edges without shrinking the plot area. Under scroll or
+       * zoom, labels remain at the data extremes (they scroll off-screen when out of view).
+       * [shiftExtremeLines] is used as the return value of [ItemPlacer.getShiftExtremeLines].
+       */
+      public fun extremes(shiftExtremeLines: Boolean = true): ItemPlacer =
+        ExtremesHorizontalAxisItemPlacer(shiftExtremeLines)
     }
   }
 

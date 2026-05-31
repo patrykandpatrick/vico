@@ -43,6 +43,7 @@
         <attr name="horizontalAxisItemPlacer" format="enum">
             <enum name="aligned" value="0" />
             <enum name="segmented" value="1" />
+            <enum name="extremes" value="2" />
         </attr>
 
         <!-- The label offset for this axis if it is horizontal. -->
