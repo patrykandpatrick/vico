@@ -11,7 +11,7 @@ on:
 
 jobs:
   copilot-setup-steps:
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: blacksmith-2vcpu-ubuntu-2404-arm
     permissions:
       contents: read
     steps:
@@ -38,7 +38,12 @@ jobs:
         env:
           LEFTHOOK_VERSION: 2.1.6
         run: |
-          curl -sSL -o /tmp/lefthook.deb "https://github.com/evilmartians/lefthook/releases/download/v${LEFTHOOK_VERSION}/lefthook_${LEFTHOOK_VERSION}_amd64.deb"
+          LEFTHOOK_ARCH=$(dpkg --print-architecture)
+          case "$LEFTHOOK_ARCH" in
+            amd64|arm64) ;;
+            *) echo "Unsupported architecture: $LEFTHOOK_ARCH"; exit 1 ;;
+          esac
+          curl -sSL -o /tmp/lefthook.deb "https://github.com/evilmartians/lefthook/releases/download/v${LEFTHOOK_VERSION}/lefthook_${LEFTHOOK_VERSION}_${LEFTHOOK_ARCH}.deb"
           sudo dpkg -i /tmp/lefthook.deb
           lefthook version
 

@@ -18,7 +18,7 @@ jobs:
       github.event.issue.author_association != 'COLLABORATOR' &&
       github.event.action == 'labeled' && github.event.label.name == 'bug'
       )
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: blacksmith-2vcpu-ubuntu-2404
     timeout-minutes: 5
     permissions:
       id-token: write
