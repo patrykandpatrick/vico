@@ -1,0 +1,4 @@
+interface:
+  display_name: "Docs"
+  short_description: "Write Vico guide prose consistently"
+  default_prompt: "Use $docs to edit guide prose consistently."
