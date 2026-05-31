@@ -119,7 +119,7 @@ fun ComposeRockMetalRatios(modifier: Modifier = Modifier) {
 
 @Composable
 @Preview
-private fun ComposeRockMetalRatiosPreview() {
+fun ComposeRockMetalRatiosPreview() {
   val modelProducer = remember { CartesianChartModelProducer() }
   // Use `runBlocking` only for previews, which don’t support asynchronous execution.
   runBlocking?.invoke {

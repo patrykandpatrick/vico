@@ -18,6 +18,7 @@ lifecycleRuntime = "2.10.0"
 material = "1.14.0"
 mavenPublish = "0.36.0"
 mockK = "1.14.11"
+screenshot = "0.0.1-alpha15"
 uiTextAndroid = "1.11.2"
 
 [libraries]
@@ -44,6 +45,7 @@ dokka = { group = "org.jetbrains.dokka", name = "dokka-gradle-plugin", version.r
 glanceAppWidget = { group = "androidx.glance", name = "glance-appwidget", version.ref = "glance" }
 jetpackComposeBom = { group = "androidx.compose", name = "compose-bom", version.ref = "jetpackComposeBom" }
 jetpackComposeUI = { group = "androidx.compose.ui", name = "ui" }
+jetpackComposeUITooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 jetpackComposeViewBinding = { group = "androidx.compose.ui", name = "ui-viewbinding" }
 kotlinAndroid = { group = "org.jetbrains.kotlin.android", name = "org.jetbrains.kotlin.android.gradle.plugin", version.ref = "kotlin" }
 kotlinDateTime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "dateTime" }
@@ -55,5 +57,9 @@ lifecycleRuntime = { group = "org.jetbrains.androidx.lifecycle", name = "lifecyc
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 mavenPublish = { group = "com.vanniktech.maven.publish", name = "com.vanniktech.maven.publish.gradle.plugin", version.ref = "mavenPublish" }
 mockK = { group = "io.mockk", name = "mockk", version.ref = "mockK" }
+screenshotValidationApi = { group = "com.android.tools.screenshot", name = "screenshot-validation-api", version.ref = "screenshot" }
 serialization = { group = "org.jetbrains.kotlin.plugin.serialization", name = "org.jetbrains.kotlin.plugin.serialization.gradle.plugin", version.ref = "kotlin" }
 uiTextAndroid = { group = "androidx.compose.ui", name = "ui-text-android", version.ref = "uiTextAndroid" }
+
+[plugins]
+screenshot = { id = "com.android.compose.screenshot", version.ref = "screenshot" }

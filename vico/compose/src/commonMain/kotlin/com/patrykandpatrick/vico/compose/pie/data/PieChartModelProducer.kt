@@ -29,6 +29,8 @@ public class PieChartModelProducer {
 
   internal val models: StateFlow<PieChartModel?> = modelFlow.asStateFlow()
 
+  internal fun getCachedModel(): PieChartModel? = modelFlow.value
+
   /** Creates a [Transaction], invokes [block], and updates the model. */
   public suspend fun runTransaction(block: Transaction.() -> Unit) {
     withContext(Dispatchers.Default) { Transaction().also(block).commit() }

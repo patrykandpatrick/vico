@@ -71,7 +71,7 @@ fun ComposeBasicPieChart(modifier: Modifier = Modifier) {
 
 @Composable
 @Preview
-private fun ComposeBasicPieChartPreview() {
+fun ComposeBasicPieChartPreview() {
   val modelProducer = remember { PieChartModelProducer() }
   // Use `runBlocking` only for previews, which don’t support asynchronous execution.
   runBlocking?.invoke { modelProducer.runTransaction { pieSeries { series(60, 20, 20) } } }

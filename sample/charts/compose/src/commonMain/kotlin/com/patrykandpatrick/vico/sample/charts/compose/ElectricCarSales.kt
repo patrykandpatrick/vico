@@ -94,7 +94,7 @@ fun ComposeElectricCarSales(modifier: Modifier = Modifier) {
 
 @Composable
 @Preview
-private fun ComposeElectricCarSalesPreview() {
+fun ComposeElectricCarSalesPreview() {
   val modelProducer = remember { CartesianChartModelProducer() }
   // Use `runBlocking` only for previews, which don’t support asynchronous execution.
   runBlocking?.invoke {

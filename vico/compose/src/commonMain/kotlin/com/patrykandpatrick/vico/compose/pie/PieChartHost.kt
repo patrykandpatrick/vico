@@ -65,9 +65,10 @@ public fun PieChartHost(
     NEW_PIE_PRODUCER_ERROR_MESSAGE
   }
   previousHashCode.value = hashCode
-  var currentModel by remember { mutableStateOf<PieChartModel?>(null) }
-  var drawingModel by remember { mutableStateOf<PieChartDrawingModel?>(null) }
   val isInPreview = LocalInspectionMode.current
+  val initialModel = remember { if (isInPreview) modelProducer.getCachedModel() else null }
+  var currentModel by remember { mutableStateOf(initialModel) }
+  var drawingModel by remember { mutableStateOf(initialModel?.toDrawingModel()) }
 
   LaunchedEffect(modelProducer, chart.id, animationSpec, animateIn, isInPreview) {
     modelProducer.models.collectLatest { model ->

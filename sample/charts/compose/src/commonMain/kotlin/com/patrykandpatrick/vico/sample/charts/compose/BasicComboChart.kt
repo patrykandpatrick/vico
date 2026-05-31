@@ -78,7 +78,7 @@ fun ComposeBasicComboChart(modifier: Modifier = Modifier) {
 
 @Composable
 @Preview
-private fun ComposeBasicComboChartPreview() {
+fun ComposeBasicComboChartPreview() {
   val modelProducer = remember { CartesianChartModelProducer() }
   // Use `runBlocking` only for previews, which don’t support asynchronous execution.
   runBlocking?.invoke {

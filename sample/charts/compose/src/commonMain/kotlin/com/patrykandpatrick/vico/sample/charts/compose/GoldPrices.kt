@@ -110,7 +110,7 @@ fun ComposeGoldPrices(modifier: Modifier = Modifier) {
 
 @Composable
 @Preview
-private fun ComposeGoldPricesPreview() {
+fun ComposeGoldPricesPreview() {
   val modelProducer = remember { CartesianChartModelProducer() }
   // Use `runBlocking` only for previews, which don’t support asynchronous execution.
   runBlocking?.invoke {

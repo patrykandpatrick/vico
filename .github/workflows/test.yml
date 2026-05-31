@@ -17,3 +17,9 @@ jobs:
           java-version: 17
       - uses: gradle/actions/setup-gradle@v6
       - run: ./gradlew test
+      - run: ./gradlew :sample:android:validateDebugScreenshotTest
+      - uses: actions/upload-artifact@v7
+        if: failure()
+        with:
+          name: screenshot-test-report
+          path: sample/android/build/reports/screenshotTest/preview/debug

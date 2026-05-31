@@ -135,7 +135,7 @@ fun ComposeDailyDigitalMediaUse(modifier: Modifier = Modifier) {
 
 @Composable
 @Preview
-private fun ComposeDailyDigitalMediaUsePreview() {
+fun ComposeDailyDigitalMediaUsePreview() {
   val modelProducer = remember { CartesianChartModelProducer() }
   // Use `runBlocking` only for previews, which don’t support asynchronous execution.
   runBlocking?.invoke {
