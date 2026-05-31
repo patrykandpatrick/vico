@@ -43,19 +43,43 @@ Write GitHub release notes in the established Vico format:
 
 1. Determine the target tag from the request, `TAG_NAME`, or
    `buildSrc/src/main/kotlin/Versions.kt`.
-2. Compare the previous published version tag with the target tag, or with
+2. If the target is a stable version and same-version `next` releases exist,
+   follow the stable-after-`next` workflow below before inspecting raw history.
+3. Compare the previous published version tag with the target tag, or with
    `HEAD` if the target tag does not exist yet.
-3. Review commits, pull requests, linked issues, discussions, and relevant diffs
+4. Review commits, pull requests, linked issues, discussions, and relevant diffs
    to find user-visible changes.
-4. Group each change under the most specific Vico section. If a change touches
+5. Group each change under the most specific Vico section. If a change touches
    both `vico/compose` and `vico/views` through shared code, place it under
    `Common`.
-5. Classify breaking changes conservatively. Use only `none`, `negligible`,
+6. Classify breaking changes conservatively. Use only `none`, `negligible`,
    `minor`, `moderate`, or `major`. Treat source-incompatible public API changes
    as at least `minor`, even when deprecated overloads cover most callers.
-6. Write a draft that is ready to paste into a GitHub release body.
-7. Verify that the draft starts with `## Overview`, has no empty sections, and
+7. Write a draft that is ready to paste into a GitHub release body.
+8. Verify that the draft starts with `## Overview`, has no empty sections, and
    contains no claims unsupported by the inspected history.
+
+## Stable Releases After `next`
+
+Stable releases are usually preceded by one or more same-version `next`
+releases, and the stable release is expected to be identical to the final
+`next` release. Each `next` release should already have a GitHub release body.
+
+When drafting notes for a stable target such as `v3.2.0`, first look for
+same-version `next` tags such as `v3.2.0-next.1`, `v3.2.0-next.2`, and
+`v3.2.0-next.3`.
+
+1. Read the GitHub release bodies for all same-version `next` releases in
+   ascending order.
+2. Combine those changelogs into one stable release body in the Vico format.
+   Preserve user-visible content, addressed issues, external contributors, and
+   the strongest breaking-change classification.
+3. Deduplicate repeated bullets and lightly normalize wording, but do not
+   redraft from scratch.
+4. Inspect commits, pull requests, and diffs only to verify that the stable tag
+   has no user-visible changes after the final `next`, or to fill gaps when a
+   `next` release body is missing.
+5. If no same-version `next` changelogs are available, use the normal workflow.
 
 ## Template
 
