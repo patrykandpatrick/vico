@@ -36,7 +36,8 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.LineCartesianLayerDrawingModel
 import com.patrykandpatrick.vico.core.cartesian.data.LineCartesianLayerModel
 import com.patrykandpatrick.vico.core.cartesian.data.MutableCartesianChartRanges
-import com.patrykandpatrick.vico.core.cartesian.data.forEachIn
+import com.patrykandpatrick.vico.core.cartesian.data.getSliceIndices
+import com.patrykandpatrick.vico.core.cartesian.getVisibleXRange
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.core.cartesian.marker.LineCartesianLayerMarkerTarget
 import com.patrykandpatrick.vico.core.cartesian.marker.MutableLineCartesianLayerMarkerTarget
@@ -575,8 +576,8 @@ protected constructor(
       ) -> Unit,
   ) {
     val minX = ranges.minX
-    val maxX = ranges.maxX
     val xStep = ranges.xStep
+    val visibleXRange = getVisibleXRange()
 
     var x: Float? = null
     var nextX: Float? = null
@@ -595,7 +596,19 @@ protected constructor(
           layerBounds.height()
     }
 
-    series.forEachIn(minX = minX, maxX = maxX, padding = 1) { entry, next ->
+    val visibleIndices = series.getSliceIndices(visibleXRange.start, visibleXRange.endInclusive)
+
+    if (visibleIndices.isEmpty()) return
+
+    val actionEndIndex = visibleIndices.last
+
+    val actionStartIndex = visibleIndices.first
+
+    if (actionEndIndex < actionStartIndex) return
+
+    for (index in actionStartIndex..actionEndIndex) {
+      val entry = series[index]
+      val next = series.getOrNull(index + 1)
       val previousX = x
       val immutableX = nextX ?: getDrawX(entry)
       val immutableNextX = next?.let(::getDrawX)
@@ -607,7 +620,7 @@ protected constructor(
           (isLtr && immutableX < boundsStart || !isLtr && immutableX > boundsStart) &&
           (isLtr && immutableNextX < boundsStart || !isLtr && immutableNextX > boundsStart)
       ) {
-        return@forEachIn
+        continue
       }
       action(entry, immutableX, getDrawY(entry), previousX, nextX)
       if (isLtr && immutableX > boundsEnd || isLtr.not() && immutableX < boundsEnd) return

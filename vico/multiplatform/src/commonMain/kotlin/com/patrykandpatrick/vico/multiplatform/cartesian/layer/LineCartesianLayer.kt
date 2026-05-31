@@ -42,7 +42,8 @@ import com.patrykandpatrick.vico.multiplatform.cartesian.data.CartesianValueForm
 import com.patrykandpatrick.vico.multiplatform.cartesian.data.LineCartesianLayerDrawingModel
 import com.patrykandpatrick.vico.multiplatform.cartesian.data.LineCartesianLayerModel
 import com.patrykandpatrick.vico.multiplatform.cartesian.data.MutableCartesianChartRanges
-import com.patrykandpatrick.vico.multiplatform.cartesian.data.forEachIn
+import com.patrykandpatrick.vico.multiplatform.cartesian.data.getSliceIndices
+import com.patrykandpatrick.vico.multiplatform.cartesian.getVisibleXRange
 import com.patrykandpatrick.vico.multiplatform.cartesian.layer.LineCartesianLayer.Line
 import com.patrykandpatrick.vico.multiplatform.cartesian.layer.LineCartesianLayer.PointConnector
 import com.patrykandpatrick.vico.multiplatform.cartesian.marker.CartesianMarker
@@ -577,8 +578,8 @@ protected constructor(
       ) -> Unit,
   ) {
     val minX = ranges.minX
-    val maxX = ranges.maxX
     val xStep = ranges.xStep
+    val visibleXRange = getVisibleXRange()
 
     var x: Float? = null
     var nextX: Float? = null
@@ -597,7 +598,19 @@ protected constructor(
           layerBounds.height
     }
 
-    series.forEachIn(minX = minX, maxX = maxX, padding = 1) { entry, next ->
+    val visibleIndices = series.getSliceIndices(visibleXRange.start, visibleXRange.endInclusive)
+
+    if (visibleIndices.isEmpty()) return
+
+    val actionEndIndex = visibleIndices.last
+
+    val actionStartIndex = visibleIndices.first
+
+    if (actionEndIndex < actionStartIndex) return
+
+    for (index in actionStartIndex..actionEndIndex) {
+      val entry = series[index]
+      val next = series.getOrNull(index + 1)
       val previousX = x
       val immutableX = nextX ?: getDrawX(entry)
       val immutableNextX = next?.let(::getDrawX)
@@ -609,7 +622,7 @@ protected constructor(
           (isLtr && immutableX < boundsStart || !isLtr && immutableX > boundsStart) &&
           (isLtr && immutableNextX < boundsStart || !isLtr && immutableNextX > boundsStart)
       ) {
-        return@forEachIn
+        continue
       }
       action(entry, immutableX, getDrawY(entry), previousX, nextX)
       if (isLtr && immutableX > boundsEnd || isLtr.not() && immutableX < boundsEnd) return
