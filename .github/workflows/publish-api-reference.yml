@@ -11,7 +11,7 @@ on:
         type: string
 jobs:
   publish-api-reference:
-    runs-on: ubuntu-latest
+    runs-on: blacksmith-4vcpu-ubuntu-2404
     if: github.repository == 'patrykandpatrick/vico'
     environment:
       name: github-pages
