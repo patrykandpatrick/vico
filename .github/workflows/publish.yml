@@ -54,11 +54,29 @@ jobs:
             The repository is checked out at `${{ github.workspace }}/vico`.
             Write only the final release body to `${{ runner.temp }}/release-notes.md`.
             Do not modify repository files.
-      - run: |
-          test -s "${{ runner.temp }}/release-notes.md"
-          grep -q "^## Overview$" "${{ runner.temp }}/release-notes.md"
+      - name: Validate generated release notes
+        run: |
+          release_notes_path="${{ runner.temp }}/release-notes.md"
+
+          if [[ ! -s "$release_notes_path" ]]; then
+            echo "::error file=$release_notes_path::Claude did not write release notes."
+            ls -la "${{ runner.temp }}"
+            exit 1
+          fi
+
+          if ! grep -q "^## Overview$" "$release_notes_path"; then
+            echo "::error file=$release_notes_path::Release notes are missing the required '## Overview' section."
+            sed -n '1,120p' "$release_notes_path"
+            exit 1
+          fi
+
           cd ${{ github.workspace }}/vico
-          test -z "$(git status --porcelain)"
+          git_status="$(git status --porcelain)"
+          if [[ -n "$git_status" ]]; then
+            echo "::error::Release notes generation modified repository files."
+            git status --short
+            exit 1
+          fi
       - uses: softprops/action-gh-release@v3
         with:
           draft: true
