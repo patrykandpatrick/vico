@@ -7,10 +7,15 @@ jobs:
     if: github.repository == 'patrykandpatrick/vico'
     permissions:
       contents: write
+      discussions: read
+      id-token: write
+      issues: read
+      pull-requests: read
     steps:
       - uses: actions/checkout@v6
         with:
           path: vico
+          fetch-depth: 0
       - uses: actions/setup-java@v5
         with:
           distribution: zulu
@@ -27,9 +32,37 @@ jobs:
           ./gradlew assembleDebug
           cd sample/android/build/outputs/apk/debug
           mv android-debug.apk android-sample-debug.apk
+      - uses: anthropics/claude-code-action@v1
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_NOTES_PATH: ${{ runner.temp }}/release-notes.md
+          TAG_NAME: ${{ env.TAG_NAME }}
+          VERSION_NAME: ${{ env.VERSION_NAME }}
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          claude_args: --add-dir "${{ github.workspace }}/vico"
+          settings: |
+            {
+              "permissions": {
+                "allow": ["Bash(*)"]
+              }
+            }
+          prompt: |
+            /release-notes Write GitHub release notes for `${{ env.TAG_NAME }}`.
+
+            The repository is checked out at `${{ github.workspace }}/vico`.
+            Write only the final release body to `${{ runner.temp }}/release-notes.md`.
+            Do not modify repository files.
+      - run: |
+          test -s "${{ runner.temp }}/release-notes.md"
+          grep -q "^## Overview$" "${{ runner.temp }}/release-notes.md"
+          cd ${{ github.workspace }}/vico
+          test -z "$(git status --porcelain)"
       - uses: softprops/action-gh-release@v3
         with:
           draft: true
+          body_path: ${{ runner.temp }}/release-notes.md
           files: ${{ github.workspace }}/vico/sample/android/build/outputs/apk/debug/android-sample-debug.apk
           prerelease: ${{ env.IS_PRERELEASE }}
           tag_name: ${{ env.TAG_NAME }}
