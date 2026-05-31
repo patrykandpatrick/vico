@@ -183,6 +183,7 @@ protected constructor(
       val visibleXRange = getVisibleXRange()
       val labelValues = itemPlacer.getLabelValues(this, visibleXRange, fullXRange, maxLabelWidth)
       val lineValues = itemPlacer.getLineValues(this, visibleXRange, fullXRange, maxLabelWidth)
+      val shiftExtremeLabels = itemPlacer.getShiftExtremeLabelsInward(this)
 
       labelValues.forEachIndexed { index, x ->
         val canvasX =
@@ -192,7 +193,6 @@ protected constructor(
               layoutDirectionMultiplier
         val previousX = labelValues.getOrNull(index - 1) ?: (fullXRange.start.doubled - x)
         val nextX = labelValues.getOrNull(index + 1) ?: (fullXRange.endInclusive.doubled - x)
-        val shiftExtremeLabels = itemPlacer.getShiftExtremeLabelsInward(this)
         val horizontalPosition =
           when {
             shiftExtremeLabels && index == 0 -> Position.Horizontal.End
@@ -761,7 +761,9 @@ protected constructor(
        * specifies whether [CartesianLayer] padding should be added for the first and last labels,
        * ensuring their visibility. [shiftExtremeLabelsInward] is used as the return value of
        * [ItemPlacer.getShiftExtremeLabelsInward]—an alternative to [addExtremeLabelPadding] that
-       * anchors the outermost labels inward instead of shrinking the plot area.
+       * anchors the outermost labels inward instead of shrinking the plot area. Because
+       * [shiftExtremeLabelsInward] makes the extreme-label padding unnecessary, enabling it together
+       * with [addExtremeLabelPadding] is not recommended.
        */
       public fun aligned(
         spacing: (ExtraStore) -> Int = { 1 },

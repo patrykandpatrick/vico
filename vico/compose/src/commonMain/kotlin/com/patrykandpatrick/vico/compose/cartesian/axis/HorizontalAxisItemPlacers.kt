@@ -86,6 +86,7 @@ internal class AlignedHorizontalAxisItemPlacer(
 ) : BaseHorizontalAxisItemPlacer(shiftExtremeLines) {
   override fun getShiftExtremeLabelsInward(context: CartesianMeasuringContext) =
     shiftExtremeLabelsInward
+
   private fun CartesianMeasuringContext.getSpacingOrThrow() =
     spacing(model.extraStore).also { require(it > 0) { "`spacing` must return a positive value." } }
 
@@ -232,7 +233,7 @@ internal class ExtremesHorizontalAxisItemPlacer(private val shiftExtremeLines: B
     context: CartesianMeasuringContext,
     layerDimensions: CartesianLayerDimensions,
     fullXRange: ClosedFloatingPointRange<Double>,
-  ) = context.ranges.measuredLabelValues
+  ) = emptyList<Double>()
 
   override fun getFirstLabelValue(context: CartesianMeasuringContext, maxLabelWidth: Float) = null
 
@@ -243,18 +244,12 @@ internal class ExtremesHorizontalAxisItemPlacer(private val shiftExtremeLines: B
     layerDimensions: CartesianLayerDimensions,
     tickThickness: Float,
     maxLabelWidth: Float,
-  ): Float {
-    val tickSpace = if (shiftExtremeLines) tickThickness else tickThickness.half
-    return (tickSpace - layerDimensions.unscalableStartPadding).coerceAtLeast(0f)
-  }
+  ) = if (shiftExtremeLines) tickThickness else tickThickness.half
 
   override fun getEndLayerMargin(
     context: CartesianMeasuringContext,
     layerDimensions: CartesianLayerDimensions,
     tickThickness: Float,
     maxLabelWidth: Float,
-  ): Float {
-    val tickSpace = if (shiftExtremeLines) tickThickness else tickThickness.half
-    return (tickSpace - layerDimensions.unscalableEndPadding).coerceAtLeast(0f)
-  }
+  ) = if (shiftExtremeLines) tickThickness else tickThickness.half
 }
