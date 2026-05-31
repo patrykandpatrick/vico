@@ -41,7 +41,7 @@ jobs:
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          claude_args: --add-dir "${{ github.workspace }}/vico"
+          claude_args: --model claude-opus-4-8 --add-dir "${{ github.workspace }}/vico"
           settings: |
             {
               "permissions": {
