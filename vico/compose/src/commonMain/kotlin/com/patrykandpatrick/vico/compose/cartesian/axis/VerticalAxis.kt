@@ -252,16 +252,22 @@ protected constructor(
               },
             maxHeight = bounds.height.toInt(),
           )
-        TitlePosition.Top ->
+        TitlePosition.Top -> {
+          val onLeft = position.isLeft(this)
           draw(
             context = this,
             text = title,
-            x = getAxisLineCenterX(),
+            x = if (onLeft) bounds.left else bounds.right,
             y = bounds.top,
-            horizontalPosition = Position.Horizontal.Center,
+            horizontalPosition =
+              if (onLeft == isLtr) Position.Horizontal.End else Position.Horizontal.Start,
             verticalPosition = Position.Vertical.Top,
-            maxWidth = canvasSize.width.toInt(),
+            maxWidth =
+              (if (onLeft) canvasSize.width - bounds.left else bounds.right)
+                .toInt()
+                .coerceAtLeast(1),
           )
+        }
       }
     }
   }
@@ -272,12 +278,7 @@ protected constructor(
       val bottomExtension = tickThickness
       line?.drawVertical(
         context = context,
-        x =
-          if (position.isLeft(this)) {
-            bounds.right - lineThickness.half
-          } else {
-            bounds.left + lineThickness.half
-          },
+        x = getAxisLineCenterX(),
         top = bounds.top - topExtension,
         bottom = bounds.bottom + bottomExtension,
       )
@@ -583,7 +584,12 @@ protected constructor(
   public enum class TitlePosition {
     /** Draws the title beside the axis, rotated by 90 degrees. */
     Side,
-    /** Draws the title horizontally above the axis line. */
+    /**
+     * Draws the title horizontally above the axis line, anchored to the axis’s side of the canvas
+     * (the start edge for a start [VerticalAxis], the end edge for an end one) and extending toward
+     * the [CartesianLayer] area. If both a start and an end [VerticalAxis] use [Top] and their
+     * titles are wide enough, they may overlap.
+     */
     Top,
   }
 

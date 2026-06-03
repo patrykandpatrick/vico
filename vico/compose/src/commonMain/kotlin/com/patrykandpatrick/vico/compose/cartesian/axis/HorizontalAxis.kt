@@ -61,10 +61,10 @@ protected constructor(
   tickLength: Dp,
   guideline: LineComponent?,
   public val itemPlacer: ItemPlacer,
-  public val titlePosition: TitlePosition,
   size: Size,
   titleComponent: TextComponent?,
   title: (ExtraStore) -> CharSequence?,
+  public val titlePosition: TitlePosition,
   tickPosition: TickPosition,
   lineDrawingOrder: LineDrawingOrder,
 ) :
@@ -100,9 +100,9 @@ protected constructor(
     tickLength: Dp,
     guideline: LineComponent?,
     itemPlacer: ItemPlacer,
-    titlePosition: TitlePosition = TitlePosition.Center,
     titleComponent: TextComponent?,
     title: (ExtraStore) -> CharSequence?,
+    titlePosition: TitlePosition,
     tickPosition: TickPosition,
     lineDrawingOrder: LineDrawingOrder,
   ) : this(
@@ -115,10 +115,10 @@ protected constructor(
     tickLength,
     guideline,
     itemPlacer,
-    titlePosition,
     Size.Auto(),
     titleComponent,
     title,
+    titlePosition,
     tickPosition,
     lineDrawingOrder,
   )
@@ -216,10 +216,18 @@ protected constructor(
         drawLineAndTicks(context, axisDimensions)
       }
 
+      val titleText = title(model.extraStore)
+      // `Center` titles are drawn within the clip region, preserving the pre-`titlePosition`
+      // behavior. `End` titles are drawn after the clip is removed so they aren’t cut off at the
+      // line range.
+      if (titlePosition == TitlePosition.Center && titleText != null) {
+        titleComponent?.drawTitle(this, titleText, lineLeft, lineRight)
+      }
+
       canvas.restore()
 
-      title(model.extraStore)?.let { title ->
-        titleComponent?.drawTitle(this, title, lineLeft, lineRight)
+      if (titlePosition == TitlePosition.End && titleText != null) {
+        titleComponent?.drawTitle(this, titleText, lineLeft, lineRight)
       }
 
       drawGuidelines(context, baseCanvasX, fullXRange, labelValues, lineValues)
@@ -665,10 +673,10 @@ protected constructor(
     tickLength: Dp = this.tickLength,
     guideline: LineComponent? = this.guideline,
     itemPlacer: ItemPlacer = this.itemPlacer,
-    titlePosition: TitlePosition = this.titlePosition,
     size: Size = this.size,
     titleComponent: TextComponent? = this.titleComponent,
     title: (ExtraStore) -> CharSequence? = this.title,
+    titlePosition: TitlePosition = this.titlePosition,
     tickPosition: TickPosition = this.tickPosition,
     lineDrawingOrder: LineDrawingOrder = this.lineDrawingOrder,
   ): HorizontalAxis<P> =
@@ -682,10 +690,10 @@ protected constructor(
       tickLength,
       guideline,
       itemPlacer,
-      titlePosition,
       size,
       titleComponent,
       title,
+      titlePosition,
       tickPosition,
       lineDrawingOrder,
     )
@@ -707,7 +715,7 @@ protected constructor(
   public enum class TitlePosition {
     /** Places the title above or below the axis, centered horizontally. */
     Center,
-    /** Places the title at the axis line’s end, centered vertically on the line. */
+    /** Places the title at the axis line’s end, centered vertically on the axis line. */
     End,
   }
 
@@ -847,10 +855,10 @@ protected constructor(
       tickLength: Dp = Defaults.AXIS_TICK_LENGTH.dp,
       guideline: LineComponent? = rememberAxisGuidelineComponent(),
       itemPlacer: ItemPlacer = remember { ItemPlacer.aligned() },
-      titlePosition: TitlePosition = TitlePosition.Center,
       size: Size = Size.Auto(),
       titleComponent: TextComponent? = null,
       title: (ExtraStore) -> CharSequence? = { null },
+      titlePosition: TitlePosition = TitlePosition.Center,
       tickPosition: TickPosition = TickPosition.Outside,
       lineDrawingOrder: LineDrawingOrder = LineDrawingOrder.UnderLayers,
     ): HorizontalAxis<Axis.Position.Horizontal.Top> =
@@ -863,10 +871,10 @@ protected constructor(
         tickLength,
         guideline,
         itemPlacer,
-        titlePosition,
         size,
         titleComponent,
         title,
+        titlePosition,
         tickPosition,
         lineDrawingOrder,
       ) {
@@ -880,10 +888,10 @@ protected constructor(
           tickLength,
           guideline,
           itemPlacer,
-          titlePosition,
           size,
           titleComponent,
           title,
+          titlePosition,
           tickPosition,
           lineDrawingOrder,
         )
@@ -900,10 +908,10 @@ protected constructor(
       tickLength: Dp = Defaults.AXIS_TICK_LENGTH.dp,
       guideline: LineComponent? = rememberAxisGuidelineComponent(),
       itemPlacer: ItemPlacer = remember { ItemPlacer.aligned() },
-      titlePosition: TitlePosition = TitlePosition.Center,
       size: Size = Size.Auto(),
       titleComponent: TextComponent? = null,
       title: (ExtraStore) -> CharSequence? = { null },
+      titlePosition: TitlePosition = TitlePosition.Center,
       tickPosition: TickPosition = TickPosition.Outside,
       lineDrawingOrder: LineDrawingOrder = LineDrawingOrder.UnderLayers,
     ): HorizontalAxis<Axis.Position.Horizontal.Bottom> =
@@ -916,10 +924,10 @@ protected constructor(
         tickLength,
         guideline,
         itemPlacer,
-        titlePosition,
         size,
         titleComponent,
         title,
+        titlePosition,
         tickPosition,
         lineDrawingOrder,
       ) {
@@ -933,10 +941,10 @@ protected constructor(
           tickLength,
           guideline,
           itemPlacer,
-          titlePosition,
           size,
           titleComponent,
           title,
+          titlePosition,
           tickPosition,
           lineDrawingOrder,
         )
