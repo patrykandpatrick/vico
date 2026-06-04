@@ -36,6 +36,7 @@ kotlin {
     }
   }
   jvm("desktop")
+  js { browser() }
   @OptIn(ExperimentalWasmDsl::class) wasmJs { browser() }
   sourceSets {
     androidMain.dependencies { implementation(project(":sample:charts:views")) }
