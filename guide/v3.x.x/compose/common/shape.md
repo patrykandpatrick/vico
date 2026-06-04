@@ -6,13 +6,9 @@ metaLinks:
 
 # Shape
 
-[`Shape`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.common.shape/-shape/) defines a shape outline. The following constructors, singletons, and factory functions are available:
+Vico’s Compose APIs use `Shape` instances. You can use Compose’s built-in implementations, including `RoundedCornerShape` and `CutCornerShape`, or provide custom shape implementations.
 
-* [`CorneredShape.Pill`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.common.shape/-cornered-shape/-companion/-pill)
-* [`CorneredShape.cut`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.common.shape/-cornered-shape/-companion/cut)
-* [`CorneredShape.rounded`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.common.shape/-cornered-shape/-companion/rounded)
-* [`CorneredShape`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.common.shape/-cornered-shape/)
-* [`Shape.Rectangle`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.common.shape/-shape/-companion/-rectangle)
-* [`Shape.toVicoShape`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.common.shape/to-vico-shape)
-* [`DashedShape`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.common.shape/-dashed-shape/)
-* [`MarkerCorneredShape`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.common.shape/-marker-cornered-shape/)
+Vico provides the following additional `Shape` implementations:
+
+* [`DashedShape`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.common/-dashed-shape/) alternates a base `Shape` instance with gaps.
+* [`MarkerCornerBasedShape`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.common/-marker-corner-based-shape/) wraps a `CornerBasedShape` instance and adds a triangular marker tick.
