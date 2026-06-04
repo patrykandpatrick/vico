@@ -37,7 +37,15 @@ kotlin {
     }
   }
   jvm("desktop")
-  @OptIn(ExperimentalWasmDsl::class) wasmJs { browser() }
+  js {
+    browser()
+    binaries.executable()
+  }
+  @OptIn(ExperimentalWasmDsl::class)
+  wasmJs {
+    browser()
+    binaries.executable()
+  }
   sourceSets {
     commonMain.dependencies {
       api(project(":vico:compose"))
