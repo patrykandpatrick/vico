@@ -54,7 +54,6 @@ class Chart(internal val details: Details, internal val content: @Composable (Mo
           "Nassar et al. 2022; Wang et al. 2024. Processing by Our World in\u00A0Data.",
         )
       val GoldPrices = Details("Gold prices (12/30/2024)", "Yahoo Finance n.d.")
-      val ZoomTransition = Details("Zoom transition")
     }
   }
 }

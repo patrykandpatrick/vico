@@ -16,10 +16,17 @@
 
 package com.patrykandpatrick.vico.views.cartesian
 
+import android.animation.ValueAnimator
 import android.graphics.RectF
+import com.patrykandpatrick.vico.views.cartesian.data.CartesianChartRanges
 import com.patrykandpatrick.vico.views.cartesian.layer.MutableCartesianLayerDimensions
 import io.mockk.MockKAnnotations
+import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.justRun
+import io.mockk.mockk
+import io.mockk.slot
+import io.mockk.verify
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -30,10 +37,16 @@ class ZoomHandlerTest {
   @MockK private lateinit var context: CartesianMeasuringContext
   @MockK private lateinit var layerDimensions: MutableCartesianLayerDimensions
   @MockK private lateinit var bounds: RectF
+  @MockK private lateinit var ranges: CartesianChartRanges
 
   @BeforeTest
   fun setUp() {
     MockKAnnotations.init(this, relaxed = true)
+    every { context.isLtr } returns true
+    every { context.ranges } returns ranges
+    every { ranges.xLength } returns 10.0
+    every { ranges.xStep } returns 1.0
+    every { bounds.width() } returns 100f
   }
 
   @Test
@@ -70,5 +83,29 @@ class ZoomHandlerTest {
     zoomHandler.update(context, layerDimensions, bounds, 0f)
 
     assertEquals(1f..2f, zoomHandler.valueRange)
+  }
+
+  @Test
+  fun `When animateZoom is called during an ongoing animated zoom, then the ongoing zoom is canceled`() {
+    val animator = mockk<ValueAnimator>(relaxed = true)
+    val updateListener = slot<ValueAnimator.AnimatorUpdateListener>()
+    justRun { animator.addUpdateListener(capture(updateListener)) }
+    every { animator.animatedFraction } returns 1f
+    val zoomHandler =
+      ZoomHandler(
+        initialZoom = Zoom.fixed(1f),
+        minZoom = Zoom.fixed(1f),
+        maxZoom = Zoom.fixed(4f),
+        animator = animator,
+      )
+    zoomHandler.update(context, MutableCartesianLayerDimensions(xSpacing = 10f), bounds, 0f)
+
+    zoomHandler.animateZoom(Zoom.fixed(4f))
+    zoomHandler.animateZoom(Zoom.fixed(2f))
+    updateListener.captured.onAnimationUpdate(animator)
+
+    verify(exactly = 2) { animator.cancel() }
+    verify(exactly = 2) { animator.start() }
+    assertEquals(2f, zoomHandler.value)
   }
 }

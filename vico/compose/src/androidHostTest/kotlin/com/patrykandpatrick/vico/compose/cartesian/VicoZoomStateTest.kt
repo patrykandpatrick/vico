@@ -16,22 +16,41 @@
 
 package com.patrykandpatrick.vico.compose.cartesian
 
+import androidx.compose.animation.core.tween
+import androidx.compose.runtime.MonotonicFrameClock
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.unit.LayoutDirection
+import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartRanges
 import com.patrykandpatrick.vico.compose.cartesian.layer.MutableCartesianLayerDimensions
 import io.mockk.MockKAnnotations
+import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import kotlin.coroutines.CoroutineContext
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.suspendCancellableCoroutine
+import org.junit.jupiter.api.Timeout
 
+@Timeout(1)
 class VicoZoomStateTest {
   @MockK private lateinit var context: CartesianMeasuringContext
+  @MockK private lateinit var ranges: CartesianChartRanges
 
   @BeforeTest
   fun setUp() {
     MockKAnnotations.init(this, relaxed = true)
+    every { context.layoutDirection } returns LayoutDirection.Ltr
+    every { context.ranges } returns ranges
+    every { ranges.xLength } returns 10.0
+    every { ranges.xStep } returns 1.0
   }
 
   @Test
@@ -86,5 +105,59 @@ class VicoZoomStateTest {
     sut.update(context, MutableCartesianLayerDimensions(), Rect(0f, 0f, 10f, 10f), 0f)
 
     assertEquals(1f..2f, sut.valueRange)
+  }
+
+  @Test
+  fun `When animateZoom is called during an ongoing animated zoom, then the ongoing zoom is canceled`() =
+    runBlocking(SuspendingFrameClock()) {
+      val frameClock = coroutineContext[MonotonicFrameClock] as SuspendingFrameClock
+      val sut = createZoomState()
+      val scrollCollector =
+        launch(start = CoroutineStart.UNDISPATCHED) { sut.pendingScroll.collect {} }
+
+      val ongoingJob =
+        launch(start = CoroutineStart.UNDISPATCHED) {
+          sut.animateZoom(Zoom.fixed(4f), tween(durationMillis = 1))
+        }
+
+      assertEquals(1f, sut.value)
+      assertFalse(ongoingJob.isCompleted)
+      assertEquals(1, frameClock.frameRequests)
+
+      sut.animateZoom(Zoom.fixed(2f), tween(durationMillis = 0))
+      ongoingJob.join()
+
+      assertTrue(ongoingJob.isCancelled)
+      assertEquals(2f, sut.value)
+
+      scrollCollector.cancelAndJoin()
+    }
+
+  private fun createZoomState(): VicoZoomState =
+    VicoZoomState(
+        zoomEnabled = true,
+        initialZoom = Zoom.fixed(1f),
+        minZoom = Zoom.fixed(1f),
+        maxZoom = Zoom.fixed(4f),
+      )
+      .also {
+        it.update(
+          context = context,
+          layerDimensions = MutableCartesianLayerDimensions(xSpacing = 10f),
+          bounds = Rect(0f, 0f, 100f, 100f),
+          scroll = 0f,
+        )
+      }
+
+  private class SuspendingFrameClock : MonotonicFrameClock {
+    var frameRequests: Int = 0
+
+    override val key: CoroutineContext.Key<*>
+      get() = MonotonicFrameClock.Key
+
+    override suspend fun <R> withFrameNanos(onFrame: (Long) -> R): R {
+      frameRequests++
+      return suspendCancellableCoroutine {}
+    }
   }
 }

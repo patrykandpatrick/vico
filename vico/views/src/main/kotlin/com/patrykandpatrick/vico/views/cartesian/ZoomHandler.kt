@@ -51,9 +51,20 @@ public class ZoomHandler(
   private var pendingScroll = mutableListOf<Scroll>()
   internal var invalidate: (() -> Unit)? = null
   internal var postInvalidateOnAnimation: (() -> Unit)? = null
-
-  private val animator by lazy {
+  private var animatorFactory = {
     ValueAnimator.ofFloat(Animation.range.start, Animation.range.endInclusive)
+  }
+
+  private val animator by lazy { animatorFactory() }
+
+  internal constructor(
+    zoomEnabled: Boolean = true,
+    initialZoom: Zoom = Zoom.max(Zoom.fixed(), Zoom.Content),
+    minZoom: Zoom = Zoom.Content,
+    maxZoom: Zoom = Zoom.max(Zoom.fixed(Defaults.MAX_ZOOM), Zoom.Content),
+    animator: ValueAnimator,
+  ) : this(zoomEnabled, initialZoom, minZoom, maxZoom) {
+    animatorFactory = { animator }
   }
 
   /** The current zoom factor. */
@@ -74,10 +85,6 @@ public class ZoomHandler(
       value = value
     }
 
-  /** The right edge of the chart's layer bounds in pixels, or `null` before first layout. */
-  public val boundsRight: Float?
-    get() = bounds?.right
-
   /** Triggers a zoom. */
   public fun zoom(zoom: Zoom) {
     withUpdated { context, layerDimensions, bounds ->
@@ -87,18 +94,23 @@ public class ZoomHandler(
     }
   }
 
-  /** Triggers an animated zoom. */
+  /**
+   * Triggers an animated zoom.
+   *
+   * @param bias the zoom anchor’s horizontal position within the [CartesianChart] bounds, from 0
+   *   (the start edge) to 1 (the end edge).
+   */
   public fun animateZoom(
     zoom: Zoom,
     duration: Long = Animation.DIFF_DURATION.toLong(),
     interpolator: TimeInterpolator = AccelerateDecelerateInterpolator(),
-    centroidX: Float? = null,
+    bias: Float = 0.5f,
   ) {
     withUpdated { context, layerDimensions, bounds ->
       val unscaled = if (value != 0f) layerDimensions.copyScaled(1f / value) else layerDimensions
       val target = zoom.getValue(context, unscaled, bounds).coerceIn(valueRange)
       if (target == value) return@withUpdated
-      val centroidX = centroidX ?: context.canvasSize.width.half
+      val centroidX = bounds.left + bias * bounds.width()
       val start = value
       with(animator) {
         cancel()
