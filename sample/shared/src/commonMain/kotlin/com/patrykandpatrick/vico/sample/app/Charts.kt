@@ -34,6 +34,7 @@ object Charts {
       { ComposeElectricCarSales(it) },
       { ComposeRockMetalRatios(it) },
       { ComposeGoldPrices(it) },
+      { ComposeZoomTransitionLineChart(it) },
     )
 
   fun default(
@@ -47,6 +48,7 @@ object Charts {
     electricCarSales: @Composable (Modifier) -> Unit,
     rockMetalRatios: @Composable (Modifier) -> Unit,
     goldPrices: @Composable (Modifier) -> Unit,
+    zoomTransition: @Composable (Modifier) -> Unit,
   ) =
     listOf(
       Chart(Details.BasicColumnChart, basicColumnChart),
@@ -59,6 +61,7 @@ object Charts {
       Chart(Details.ElectricCarSales, electricCarSales),
       Chart(Details.RockMetalRatios, rockMetalRatios),
       Chart(Details.GoldPrices, goldPrices),
+      Chart(Details.ZoomTransition, zoomTransition),
     )
 }
 

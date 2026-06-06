@@ -16,6 +16,10 @@
 
 package com.patrykandpatrick.vico.compose.cartesian
 
+import androidx.compose.animation.core.AnimationSpec
+import androidx.compose.animation.core.TargetBasedAnimation
+import androidx.compose.animation.core.VectorConverter
+import androidx.compose.animation.core.spring
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableFloatState
 import androidx.compose.runtime.mutableFloatStateOf
@@ -23,6 +27,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.center
 import com.patrykandpatrick.vico.compose.cartesian.layer.MutableCartesianLayerDimensions
@@ -105,13 +110,51 @@ public class VicoZoomState {
     overridden = false,
   )
 
+  /** The right edge of the chart's layer bounds in pixels, or `null` before first layout. */
+  public val boundsRight: Float?
+    get() = bounds?.right
+
   /** Triggers a zoom. */
   public suspend fun zoom(zoom: Zoom) {
     withUpdated { context, layerDimensions, bounds ->
-      val newValue = zoom.getValue(context, layerDimensions, bounds)
+      val unscaled = if (value != 0f) layerDimensions.copyScaled(1f / value) else layerDimensions
+      val newValue = zoom.getValue(context, unscaled, bounds)
       if (newValue != value) {
         zoom(newValue / value, context.canvasSize.center.x) { scroll }
       }
+    }
+  }
+
+  /** Triggers an animated zoom. */
+  public suspend fun animateZoom(
+    zoom: Zoom,
+    animationSpec: AnimationSpec<Float> = spring(),
+    centroidX: Float? = null,
+  ) {
+    withUpdated { context, layerDimensions, bounds ->
+      val unscaled = if (value != 0f) layerDimensions.copyScaled(1f / value) else layerDimensions
+      val target = zoom.getValue(context, unscaled, bounds).coerceIn(valueRange)
+      if (target == value) return@withUpdated
+      val centroidX = centroidX ?: context.canvasSize.center.x
+      val anim = TargetBasedAnimation(animationSpec, Float.VectorConverter, value, target)
+      val durationNanos = anim.durationNanos
+      if (durationNanos == 0L) {
+        zoom(target / value, centroidX) { scroll }
+        return@withUpdated
+      }
+      var startNanos = -1L
+      var playTime = 0L
+      while (playTime < durationNanos) {
+        withFrameNanos { frameNanos ->
+          if (startNanos < 0L) startNanos = frameNanos
+          playTime = frameNanos - startNanos
+        }
+        val current = anim.getValueFromNanos(playTime).coerceIn(valueRange)
+        val factor = if (value != 0f) current / value else 1f
+        zoom(factor, centroidX) { scroll }
+      }
+      val finalFactor = if (value != 0f) target / value else 1f
+      zoom(finalFactor, centroidX) { scroll }
     }
   }
 

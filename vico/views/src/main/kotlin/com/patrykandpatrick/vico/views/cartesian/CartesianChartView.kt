@@ -160,6 +160,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     ) { oldValue, newValue ->
       oldValue?.clearUpdated()
       newValue.invalidate = ::invalidate
+      newValue.postInvalidateOnAnimation = ::postInvalidateOnAnimation
       _measuringContext.zoomEnabled = newValue.zoomEnabled && measuringContext.scrollEnabled
     }
 

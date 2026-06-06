@@ -16,10 +16,15 @@
 
 package com.patrykandpatrick.vico.views.cartesian
 
+import android.animation.TimeInterpolator
+import android.animation.ValueAnimator
 import android.graphics.RectF
 import android.os.Bundle
+import android.view.animation.AccelerateDecelerateInterpolator
 import com.patrykandpatrick.vico.views.cartesian.layer.MutableCartesianLayerDimensions
+import com.patrykandpatrick.vico.views.cartesian.layer.copyScaled
 import com.patrykandpatrick.vico.views.cartesian.layer.scale
+import com.patrykandpatrick.vico.views.common.Animation
 import com.patrykandpatrick.vico.views.common.Defaults
 import com.patrykandpatrick.vico.views.common.half
 
@@ -45,6 +50,11 @@ public class ZoomHandler(
   private var scroll = 0f
   private var pendingScroll = mutableListOf<Scroll>()
   internal var invalidate: (() -> Unit)? = null
+  internal var postInvalidateOnAnimation: (() -> Unit)? = null
+
+  private val animator by lazy {
+    ValueAnimator.ofFloat(Animation.range.start, Animation.range.endInclusive)
+  }
 
   /** The current zoom factor. */
   public var value: Float = 0f
@@ -64,11 +74,46 @@ public class ZoomHandler(
       value = value
     }
 
+  /** The right edge of the chart's layer bounds in pixels, or `null` before first layout. */
+  public val boundsRight: Float?
+    get() = bounds?.right
+
   /** Triggers a zoom. */
   public fun zoom(zoom: Zoom) {
     withUpdated { context, layerDimensions, bounds ->
-      val newValue = zoom.getValue(context, layerDimensions, bounds)
+      val unscaled = if (value != 0f) layerDimensions.copyScaled(1f / value) else layerDimensions
+      val newValue = zoom.getValue(context, unscaled, bounds)
       if (newValue != value) zoom(newValue / value, context.canvasSize.width.half, scroll, bounds)
+    }
+  }
+
+  /** Triggers an animated zoom. */
+  public fun animateZoom(
+    zoom: Zoom,
+    duration: Long = Animation.DIFF_DURATION.toLong(),
+    interpolator: TimeInterpolator = AccelerateDecelerateInterpolator(),
+    centroidX: Float? = null,
+  ) {
+    withUpdated { context, layerDimensions, bounds ->
+      val unscaled = if (value != 0f) layerDimensions.copyScaled(1f / value) else layerDimensions
+      val target = zoom.getValue(context, unscaled, bounds).coerceIn(valueRange)
+      if (target == value) return@withUpdated
+      val centroidX = centroidX ?: context.canvasSize.width.half
+      val start = value
+      with(animator) {
+        cancel()
+        removeAllUpdateListeners()
+        removeAllListeners()
+        this.interpolator = interpolator
+        this.duration = duration
+        addUpdateListener { anim ->
+          val current = (start + anim.animatedFraction * (target - start)).coerceIn(valueRange)
+          val factor = if (value != 0f) current / value else 1f
+          zoom(factor, centroidX, scroll, bounds)
+          postInvalidateOnAnimation?.invoke()
+        }
+        start()
+      }
     }
   }
 
@@ -155,6 +200,7 @@ public class ZoomHandler(
     layerDimensions = null
     bounds = null
     invalidate = null
+    postInvalidateOnAnimation = null
   }
 
   /** Facilitates listening for zoom events. */

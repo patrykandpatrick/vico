@@ -16,6 +16,7 @@
 
 package com.patrykandpatrick.vico.sample.app
 
+import com.patrykandpatrick.vico.sample.charts.compose.ComposeZoomTransitionLineChart
 import com.patrykandpatrick.vico.sample.charts.views.*
 
 actual val Charts.overridden: LinkedHashMap<UIFramework, List<Chart>>?
@@ -34,5 +35,6 @@ actual val Charts.overridden: LinkedHashMap<UIFramework, List<Chart>>?
           { ViewElectricCarSales(it) },
           { ViewRockMetalRatios(it) },
           { ViewGoldPrices(it) },
+          { ComposeZoomTransitionLineChart(it) },
         ),
     )
