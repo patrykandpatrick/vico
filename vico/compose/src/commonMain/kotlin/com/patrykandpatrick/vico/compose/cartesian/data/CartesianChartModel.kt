@@ -108,6 +108,7 @@ internal val defaultCartesianDiffAnimationSpec: AnimationSpec<Float> =
 internal fun CartesianChartModelProducer.collectAsState(
   chart: CartesianChart,
   animationSpec: AnimationSpec<Float>?,
+  initialAnimationSpec: AnimationSpec<Float>?,
   animateIn: Boolean,
   ranges: MutableCartesianChartRanges,
 ): State<CartesianChartData> {
@@ -143,16 +144,20 @@ internal fun CartesianChartModelProducer.collectAsState(
     var finalAnimationFrameJob: Job? = null
     var isAnimationRunning: Boolean
     var isAnimationFrameGenerationRunning = false
+    var isInitialAnimation = true
     val startAnimation: (transformModel: suspend (key: Any, fraction: Float) -> Unit) -> Unit =
       { transformModel ->
-        if (animationSpec != null && !isInPreview && (dataState.value.model != null || animateIn)) {
+        val isInitial = isInitialAnimation && dataState.value.model == null
+        val spec = if (isInitial) initialAnimationSpec else animationSpec
+        isInitialAnimation = false
+        if (spec != null && !isInPreview && (dataState.value.model != null || animateIn)) {
           isAnimationRunning = true
           mainAnimationJob =
             scope.launch {
               animate(
                 initialValue = Animation.range.start,
                 targetValue = Animation.range.endInclusive,
-                animationSpec = animationSpec,
+                animationSpec = spec,
               ) { fraction, _ ->
                 when {
                   !isAnimationRunning -> return@animate

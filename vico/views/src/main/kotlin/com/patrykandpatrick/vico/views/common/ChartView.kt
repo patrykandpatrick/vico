@@ -65,6 +65,10 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       interpolator = FastOutSlowInInterpolator()
     }
 
+  private var initialAnimationDuration: Long? = null
+  private var initialAnimationInterpolator: Interpolator? = null
+  private var isInitialAnimation = true
+
   protected val extraStore: MutableExtraStore = MutableExtraStore()
 
   protected var coroutineScope: CoroutineScope? = null
@@ -156,6 +160,14 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   protected fun startAnimation(transformModel: suspend (key: Any, fraction: Float) -> Unit) {
     if (model != null || animateIn) {
       handler?.post {
+        val isInitial = isInitialAnimation && model == null
+        isInitialAnimation = false
+        val savedDuration = animator.duration
+        val savedInterpolator = animator.interpolator
+        if (isInitial) {
+          initialAnimationDuration?.let { animator.duration = it }
+          initialAnimationInterpolator?.let { animator.interpolator = it }
+        }
         isAnimationRunning = true
         animator.start { fraction ->
           when {
@@ -178,8 +190,13 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
             }
           }
         }
+        if (isInitial) {
+          animator.duration = savedDuration
+          animator.interpolator = savedInterpolator
+        }
       }
     } else {
+      isInitialAnimation = false
       finalAnimationFrameJob =
         coroutineScope?.launch { transformModel(this@ChartView, Animation.range.endInclusive) }
     }
@@ -195,6 +212,16 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   /** Sets the [Interpolator] for difference animations. */
   public fun setAnimationInterpolator(interpolator: Interpolator) {
     animator.interpolator = interpolator
+  }
+
+  /** Sets the duration (in milliseconds) of the initial (reveal) animation. */
+  public fun setInitialAnimationDuration(durationMillis: Long) {
+    initialAnimationDuration = durationMillis
+  }
+
+  /** Sets the [Interpolator] for the initial (reveal) animation. */
+  public fun setInitialAnimationInterpolator(interpolator: Interpolator) {
+    initialAnimationInterpolator = interpolator
   }
 
   override fun onRtlPropertiesChanged(layoutDirection: Int) {

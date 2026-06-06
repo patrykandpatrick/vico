@@ -21,41 +21,55 @@ import com.patrykandpatrick.vico.compose.common.data.CartesianLayerDrawingModel
 import com.patrykandpatrick.vico.compose.common.lerp
 import com.patrykandpatrick.vico.compose.common.orZero
 
-/** Houses [LineCartesianLayer] drawing information. [opacity] is the lines’ opacity. */
+/**
+ * Houses [LineCartesianLayer] drawing information. [opacity] is the lines’ opacity.
+ * [revealFraction] is the fraction of the layer revealed from the start edge (0 = hidden, 1 = fully
+ * visible).
+ */
 public class LineCartesianLayerDrawingModel(
   private val entries: List<Map<Double, Entry>>,
   seriesKeys: List<Any>,
   public val opacity: Float = 1f,
+  public val revealFraction: Float = 1f,
 ) : CartesianLayerDrawingModel<LineCartesianLayerDrawingModel.Entry>(entries, seriesKeys) {
   public constructor(
     entries: List<Map<Double, Entry>>,
     opacity: Float = 1f,
-  ) : this(entries, entries.indices.toList(), opacity)
+    revealFraction: Float = 1f,
+  ) : this(entries, entries.indices.toList(), opacity, revealFraction)
 
   override fun transform(
     entries: List<Map<Double, Entry>>,
     from: CartesianLayerDrawingModel<Entry>?,
     fraction: Float,
-  ): CartesianLayerDrawingModel<Entry> =
-    LineCartesianLayerDrawingModel(
+  ): CartesianLayerDrawingModel<Entry> {
+    val old = from as LineCartesianLayerDrawingModel?
+    return LineCartesianLayerDrawingModel(
       entries,
       seriesKeys,
-      (from as LineCartesianLayerDrawingModel?)?.opacity.orZero.lerp(opacity, fraction),
+      old?.opacity.orZero.lerp(opacity, fraction),
+      (old?.revealFraction ?: 1f).lerp(revealFraction, fraction),
     )
+  }
 
   override fun equals(other: Any?): Boolean =
     this === other ||
       other is LineCartesianLayerDrawingModel &&
         entries == other.entries &&
         seriesKeys == other.seriesKeys &&
-        opacity == other.opacity
+        opacity == other.opacity &&
+        revealFraction == other.revealFraction
 
   override fun hashCode(): Int {
     var result = entries.hashCode()
     result = 31 * result + seriesKeys.hashCode()
     result = 31 * result + opacity.hashCode()
+    result = 31 * result + revealFraction.hashCode()
     return result
   }
+
+  internal fun withRevealFraction(fraction: Float): LineCartesianLayerDrawingModel =
+    LineCartesianLayerDrawingModel(entries, seriesKeys, opacity, fraction)
 
   /**
    * Houses positional information for a [LineCartesianLayer]’s point. [y] expresses the distance of

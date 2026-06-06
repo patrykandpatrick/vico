@@ -62,6 +62,7 @@ protected constructor(
     > =
     CartesianLayerDrawingModelInterpolator.default(),
   protected val drawingModelKey: ExtraStore.Key<LineCartesianLayerDrawingModel>,
+  protected val revealAnimationEnabled: Boolean = false,
 ) : BaseCartesianLayer<LineCartesianLayerModel>() {
   /**
    * Defines the appearance of a line in a line chart.
@@ -513,6 +514,7 @@ protected constructor(
         LineCartesianLayerDrawingModel,
       > =
       CartesianLayerDrawingModelInterpolator.default(),
+    revealAnimationEnabled: Boolean = false,
   ) : this(
     lineProvider,
     pointSpacingDp,
@@ -520,6 +522,7 @@ protected constructor(
     verticalAxisPosition,
     drawingModelInterpolator,
     ExtraStore.Key(),
+    revealAnimationEnabled,
   )
 
   override fun drawInternal(context: CartesianDrawingContext, model: LineCartesianLayerModel) {
@@ -527,6 +530,25 @@ protected constructor(
       resetTempData()
 
       val drawingModel = extraStore.getOrNull(drawingModelKey)
+      val revealFraction = drawingModel?.revealFraction ?: 1f
+      if (revealFraction < 1f) {
+        canvas.save()
+        if (isLtr) {
+          canvas.clipRect(
+            layerBounds.left,
+            layerBounds.top,
+            layerBounds.left + layerBounds.width() * revealFraction,
+            layerBounds.bottom,
+          )
+        } else {
+          canvas.clipRect(
+            layerBounds.right - layerBounds.width() * revealFraction,
+            layerBounds.top,
+            layerBounds.right,
+            layerBounds.bottom,
+          )
+        }
+      }
 
       // Composite all series onto a single layer. During the fade-in (`opacity` < 1), this
       // allocates one offscreen buffer per frame rather than one per series. With a shared layer,
@@ -584,7 +606,7 @@ protected constructor(
         drawPointsAndDataLabels(line, series, seriesKey, seriesIndex, drawingStart, pointInfoMap)
       }
 
-      canvas.restore()
+      if (revealFraction < 1f) canvas.restore()
     }
   }
 
@@ -927,10 +949,15 @@ protected constructor(
     ranges: CartesianChartRanges,
     extraStore: MutableExtraStore,
   ) {
-    drawingModelInterpolator.setModels(
-      old = extraStore.getOrNull(drawingModelKey),
-      new = model?.toDrawingModel(ranges),
-    )
+    val old = extraStore.getOrNull(drawingModelKey)
+    val new = model?.toDrawingModel(ranges)
+    val effectiveOld =
+      if (old == null && revealAnimationEnabled && new != null) {
+        new.withRevealFraction(0f)
+      } else {
+        old
+      }
+    drawingModelInterpolator.setModels(old = effectiveOld, new = new)
   }
 
   override suspend fun transform(extraStore: MutableExtraStore, fraction: Float) {
@@ -967,6 +994,7 @@ protected constructor(
         LineCartesianLayerDrawingModel,
       > =
       this.drawingModelInterpolator,
+    revealAnimationEnabled: Boolean = this.revealAnimationEnabled,
   ): LineCartesianLayer =
     LineCartesianLayer(
       lineProvider,
@@ -975,6 +1003,7 @@ protected constructor(
       verticalAxisPosition,
       drawingModelInterpolator,
       drawingModelKey,
+      revealAnimationEnabled,
     )
 
   override fun equals(other: Any?): Boolean =
