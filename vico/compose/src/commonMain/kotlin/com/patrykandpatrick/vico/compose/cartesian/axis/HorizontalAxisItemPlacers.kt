@@ -219,14 +219,18 @@ internal class ExtremesHorizontalAxisItemPlacer(private val shiftExtremeLines: B
     visibleXRange: ClosedFloatingPointRange<Double>,
     fullXRange: ClosedFloatingPointRange<Double>,
     maxLabelWidth: Float,
-  ): List<Double> = context.run { listOf(ranges.minX, ranges.maxX) }
+  ): List<Double> =
+    if (visibleXRange.start == visibleXRange.endInclusive) listOf(visibleXRange.start)
+    else listOf(visibleXRange.start, visibleXRange.endInclusive)
 
   override fun getLineValues(
     context: CartesianDrawingContext,
     visibleXRange: ClosedFloatingPointRange<Double>,
     fullXRange: ClosedFloatingPointRange<Double>,
     maxLabelWidth: Float,
-  ): List<Double> = context.run { listOf(ranges.minX, ranges.maxX) }
+  ): List<Double> =
+    if (visibleXRange.start == visibleXRange.endInclusive) listOf(visibleXRange.start)
+    else listOf(visibleXRange.start, visibleXRange.endInclusive)
 
   override fun getWidthMeasurementLabelValues(
     context: CartesianMeasuringContext,
