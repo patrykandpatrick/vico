@@ -24,9 +24,12 @@ import android.graphics.RectF
 import android.os.Bundle
 import android.view.animation.AccelerateDecelerateInterpolator
 import com.patrykandpatrick.vico.views.cartesian.data.CartesianChartModel
+import com.patrykandpatrick.vico.views.cartesian.getSnapTarget as calculateSnapTarget
 import com.patrykandpatrick.vico.views.cartesian.layer.CartesianLayerDimensions
 import com.patrykandpatrick.vico.views.common.Animation
 import com.patrykandpatrick.vico.views.common.rangeWith
+import kotlin.math.abs
+import kotlin.math.roundToInt
 
 /**
  * Houses information on a [CartesianChart]’s scroll value. Allows for scroll customization and
@@ -38,6 +41,13 @@ import com.patrykandpatrick.vico.views.common.rangeWith
  * @property autoScrollCondition defines when an automatic scroll should be performed.
  * @property autoScrollInterpolator the [TimeInterpolator] for automatic scrolling.
  * @property autoScrollDuration the animation duration for automatic scrolling.
+ * @property xSnapStep if not null, the scroll will snap to multiples of this _x_-axis step after
+ *   the user stops scrolling.
+ * @property snapInterpolator the [TimeInterpolator] for snap scrolling when no fling velocity is
+ *   available. Snaps after a fling use the fling’s projected destination and platform scrolling
+ *   behavior instead.
+ * @property snapDuration the snap scroll animation duration when no fling velocity is available,
+ *   and the maximum snap scroll duration when a fling velocity is available.
  */
 public class ScrollHandler(
   public var scrollEnabled: Boolean = true,
@@ -46,6 +56,9 @@ public class ScrollHandler(
   private val autoScrollCondition: AutoScrollCondition = AutoScrollCondition.Never,
   private val autoScrollInterpolator: TimeInterpolator = AccelerateDecelerateInterpolator(),
   private val autoScrollDuration: Long = Animation.DIFF_DURATION.toLong(),
+  public val xSnapStep: Double? = null,
+  private val snapInterpolator: TimeInterpolator = AccelerateDecelerateInterpolator(),
+  private val snapDuration: Long = Animation.ANIMATED_SCROLL_DURATION.toLong(),
 ) {
   private val scrollListeners = mutableSetOf<Listener>()
   private var initialScrollHandled = false
@@ -141,6 +154,10 @@ public class ScrollHandler(
     postInvalidateOnAnimation = null
   }
 
+  internal fun stopAnimation() {
+    animator.cancel()
+  }
+
   private fun scrollBy(delta: Float): Float {
     val oldValue = value
     value += delta
@@ -207,6 +224,45 @@ public class ScrollHandler(
     }
   }
 
+  internal fun performSnap() {
+    val delta = getSnapDelta() ?: return
+    animateScrollBy(delta, snapDuration, snapInterpolator)
+  }
+
+  internal fun getSnapTarget(targetValue: Float): Float? {
+    val context = this.context ?: return null
+    val layerDimensions = this.layerDimensions ?: return null
+    return calculateSnapTarget(
+      maxValue = maxValue,
+      xSnapStep = xSnapStep,
+      xStep = context.ranges.xStep,
+      xSpacing = layerDimensions.xSpacing,
+      startPadding = layerDimensions.startPadding,
+      targetValue = targetValue,
+    )
+  }
+
+  internal fun getSnapScrollDuration(distance: Int, velocity: Int, velocityUnits: Int): Int {
+    val maxDuration = snapDuration.coerceAtLeast(MIN_SNAP_SCROLL_DURATION.toLong()).toInt()
+    val velocityPxPerSecond = abs(velocity) * VELOCITY_UNITS_PER_SECOND / velocityUnits.toFloat()
+    return (abs(distance).toFloat() / velocityPxPerSecond * VELOCITY_UNITS_PER_SECOND)
+      .roundToInt()
+      .coerceIn(MIN_SNAP_SCROLL_DURATION, maxDuration)
+  }
+
+  private fun getSnapDelta(): Float? {
+    val context = this.context ?: return null
+    val layerDimensions = this.layerDimensions ?: return null
+    return getSnapDelta(
+      value = value,
+      maxValue = maxValue,
+      xSnapStep = xSnapStep,
+      xStep = context.ranges.xStep,
+      xSpacing = layerDimensions.xSpacing,
+      startPadding = layerDimensions.startPadding,
+    )
+  }
+
   /** Adds the provided [Listener]. */
   public fun addListener(listener: Listener): Boolean {
     if (!scrollListeners.add(listener)) return false
@@ -228,6 +284,8 @@ public class ScrollHandler(
   }
 
   private companion object {
+    const val MIN_SNAP_SCROLL_DURATION = 50
+    const val VELOCITY_UNITS_PER_SECOND = 1_000
     const val VALUE_KEY = "value"
     const val INITIAL_SCROLL_HANDLED_KEY = "initialScrollHandled"
   }
