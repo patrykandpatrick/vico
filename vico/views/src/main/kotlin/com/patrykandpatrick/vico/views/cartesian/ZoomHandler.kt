@@ -16,10 +16,15 @@
 
 package com.patrykandpatrick.vico.views.cartesian
 
+import android.animation.TimeInterpolator
+import android.animation.ValueAnimator
 import android.graphics.RectF
 import android.os.Bundle
+import android.view.animation.AccelerateDecelerateInterpolator
 import com.patrykandpatrick.vico.views.cartesian.layer.MutableCartesianLayerDimensions
+import com.patrykandpatrick.vico.views.cartesian.layer.copyScaled
 import com.patrykandpatrick.vico.views.cartesian.layer.scale
+import com.patrykandpatrick.vico.views.common.Animation
 import com.patrykandpatrick.vico.views.common.Defaults
 import com.patrykandpatrick.vico.views.common.half
 
@@ -45,6 +50,22 @@ public class ZoomHandler(
   private var scroll = 0f
   private var pendingScroll = mutableListOf<Scroll>()
   internal var invalidate: (() -> Unit)? = null
+  internal var postInvalidateOnAnimation: (() -> Unit)? = null
+  private var animatorFactory = {
+    ValueAnimator.ofFloat(Animation.range.start, Animation.range.endInclusive)
+  }
+
+  private val animator by lazy { animatorFactory() }
+
+  internal constructor(
+    zoomEnabled: Boolean = true,
+    initialZoom: Zoom = Zoom.max(Zoom.fixed(), Zoom.Content),
+    minZoom: Zoom = Zoom.Content,
+    maxZoom: Zoom = Zoom.max(Zoom.fixed(Defaults.MAX_ZOOM), Zoom.Content),
+    animator: ValueAnimator,
+  ) : this(zoomEnabled, initialZoom, minZoom, maxZoom) {
+    animatorFactory = { animator }
+  }
 
   /** The current zoom factor. */
   public var value: Float = 0f
@@ -67,8 +88,44 @@ public class ZoomHandler(
   /** Triggers a zoom. */
   public fun zoom(zoom: Zoom) {
     withUpdated { context, layerDimensions, bounds ->
-      val newValue = zoom.getValue(context, layerDimensions, bounds)
+      val unscaled = if (value != 0f) layerDimensions.copyScaled(1f / value) else layerDimensions
+      val newValue = zoom.getValue(context, unscaled, bounds)
       if (newValue != value) zoom(newValue / value, context.canvasSize.width.half, scroll, bounds)
+    }
+  }
+
+  /**
+   * Triggers an animated zoom.
+   *
+   * @param bias the zoom anchor’s horizontal position within the [CartesianChart] bounds, from 0
+   *   (the start edge) to 1 (the end edge).
+   */
+  public fun animateZoom(
+    zoom: Zoom,
+    duration: Long = Animation.DIFF_DURATION.toLong(),
+    interpolator: TimeInterpolator = AccelerateDecelerateInterpolator(),
+    bias: Float = 0.5f,
+  ) {
+    withUpdated { context, layerDimensions, bounds ->
+      val unscaled = if (value != 0f) layerDimensions.copyScaled(1f / value) else layerDimensions
+      val target = zoom.getValue(context, unscaled, bounds).coerceIn(valueRange)
+      if (target == value) return@withUpdated
+      val centroidX = bounds.left + bias * bounds.width()
+      val start = value
+      with(animator) {
+        cancel()
+        removeAllUpdateListeners()
+        removeAllListeners()
+        this.interpolator = interpolator
+        this.duration = duration
+        addUpdateListener { anim ->
+          val current = (start + anim.animatedFraction * (target - start)).coerceIn(valueRange)
+          val factor = if (value != 0f) current / value else 1f
+          zoom(factor, centroidX, scroll, bounds)
+          postInvalidateOnAnimation?.invoke()
+        }
+        start()
+      }
     }
   }
 
@@ -155,6 +212,7 @@ public class ZoomHandler(
     layerDimensions = null
     bounds = null
     invalidate = null
+    postInvalidateOnAnimation = null
   }
 
   /** Facilitates listening for zoom events. */
