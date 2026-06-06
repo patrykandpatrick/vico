@@ -85,19 +85,79 @@ class VicoScrollStateTest {
       job.cancelAndJoin()
     }
 
-  private fun createScrollState(): VicoScrollState =
+  @Test
+  fun `When xSnapStep is set, then snap delta accounts for layer start padding`() = runBlocking {
+    val sut =
+      createScrollState(
+        xSnapStep = 2.0,
+        layerDimensions =
+          MutableCartesianLayerDimensions(
+            xSpacing = 10f,
+            scalableStartPadding = 7f,
+            unscalableStartPadding = 3f,
+          ),
+      )
+
+    sut.scroll(Scroll.Absolute.pixels(27f))
+
+    assertEquals(3f, sut.getSnapDelta())
+  }
+
+  @Test
+  fun `When xSnapStep is set and scroll is at start, then snap delta is null`() = runBlocking {
+    val sut =
+      createScrollState(
+        xSnapStep = 2.0,
+        layerDimensions =
+          MutableCartesianLayerDimensions(
+            xSpacing = 10f,
+            scalableStartPadding = 7f,
+            unscalableStartPadding = 3f,
+          ),
+      )
+
+    assertEquals(0f, sut.value)
+    assertEquals(null, sut.getSnapDelta())
+  }
+
+  @Test
+  fun `When xSnapStep is set and target is projected, then snap delta uses projected target`() =
+    runBlocking {
+      val sut =
+        createScrollState(
+          xSnapStep = 2.0,
+          layerDimensions =
+            MutableCartesianLayerDimensions(
+              xSpacing = 10f,
+              scalableStartPadding = 7f,
+              unscalableStartPadding = 3f,
+            ),
+        )
+
+      sut.scroll(Scroll.Absolute.pixels(12f))
+
+      assertEquals(38f, sut.getSnapDelta(targetValue = 49f))
+    }
+
+  private fun createScrollState(
+    xSnapStep: Double? = null,
+    layerDimensions: MutableCartesianLayerDimensions =
+      MutableCartesianLayerDimensions(xSpacing = 20f),
+  ): VicoScrollState =
     VicoScrollState(
         scrollEnabled = true,
         initialScroll = Scroll.Absolute.Start,
         autoScroll = Scroll.Absolute.Start,
         autoScrollCondition = AutoScrollCondition.Never,
         autoScrollAnimationSpec = tween(),
+        xSnapStep = xSnapStep,
+        snapAnimationSpec = tween(),
       )
       .also {
         it.update(
           context = context,
           bounds = Rect(0f, 0f, 100f, 100f),
-          layerDimensions = MutableCartesianLayerDimensions(xSpacing = 20f),
+          layerDimensions = layerDimensions,
         )
         it.maxValue = 100f
       }

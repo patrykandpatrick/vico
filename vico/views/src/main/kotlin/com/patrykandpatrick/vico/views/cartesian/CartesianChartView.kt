@@ -104,6 +104,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   private var scrollDirectionResolved = false
 
   private var wasUserScrolling = false
+  private var isUserScrolling = false
 
   private val layerDimensions = MutableCartesianLayerDimensions()
 
@@ -140,7 +141,8 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       density = resources.displayMetrics.density,
       onInteraction = ::handleInteraction,
       requestInvalidate = ::invalidate,
-      onUserScroll = { wasUserScrolling = true },
+      onUserScroll = { if (scrollHandler.xSnapStep != null) wasUserScrolling = true },
+      onSnapScroll = { wasUserScrolling = false },
     )
 
   /** The [CartesianChart] displayed by this [View]. */
@@ -318,6 +320,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     val touchHandled = motionEventHandler.handleMotionEvent(event, scrollHandler)
     val gestureHandled = gestureDetector.onTouchEvent(event)
     val hasMarker = chart?.marker != null
+    if (wasUserScrolling) isUserScrolling = true
     when {
       chart?.markerController?.consumeMoveEvents == true &&
         !scrollHandler.scrollEnabled &&
@@ -334,6 +337,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 
       event.isUpOrCancel() -> {
         scrollDirectionResolved = false
+        isUserScrolling = false
       }
     }
 
@@ -421,6 +425,13 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       if (chart.layerBounds.isEmpty) return@withChartAndModel
 
       var viewportChange = false
+      zoomHandler.update(measuringContext, layerDimensions, chart.layerBounds, scrollHandler.value)
+      scrollHandler.update(measuringContext, chart.layerBounds, layerDimensions)
+      zoomHandler.consumePendingScroll { scroll ->
+        scrollHandler.scroll(scroll)
+        viewportChange = true
+      }
+
       motionEventHandler.scrollEnabled = scrollHandler.scrollEnabled
       val isScrollerRunning = scroller.computeScrollOffset()
       if (isScrollerRunning) {
@@ -428,16 +439,9 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
         scrollHandler.scroll(Scroll.Absolute.pixels(delta))
         viewportChange = true
         postInvalidateOnAnimation()
-      } else if (wasUserScrolling) {
+      } else if (wasUserScrolling && !isUserScrolling) {
         wasUserScrolling = false
         scrollHandler.performSnap()
-      }
-
-      zoomHandler.update(measuringContext, layerDimensions, chart.layerBounds, scrollHandler.value)
-      scrollHandler.update(measuringContext, chart.layerBounds, layerDimensions)
-      zoomHandler.consumePendingScroll { scroll ->
-        scrollHandler.scroll(scroll)
-        viewportChange = true
       }
 
       val drawingContext =

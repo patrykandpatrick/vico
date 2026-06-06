@@ -37,7 +37,6 @@ import androidx.compose.ui.geometry.Rect
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.compose.cartesian.layer.CartesianLayerDimensions
 import com.patrykandpatrick.vico.compose.common.rangeWith
-import kotlin.math.roundToInt
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.first
 
@@ -50,6 +49,7 @@ public class VicoScrollState {
   private val autoScroll: Scroll
   private val autoScrollCondition: AutoScrollCondition
   private val autoScrollAnimationSpec: AnimationSpec<Float>
+  internal val snapAnimationSpec: AnimationSpec<Float>
   private val _value: MutableFloatState
   private val _maxValue = mutableFloatStateOf(0f)
   private var initialScrollHandled: Boolean
@@ -57,7 +57,7 @@ public class VicoScrollState {
   private var layerDimensions: CartesianLayerDimensions? = null
   private var bounds: Rect? = null
   internal var scrollEnabled by mutableStateOf(true)
-  internal val snapScrollX: Double?
+  internal val xSnapStep: Double?
   internal val consumedXDeltas = MutableSharedFlow<Float>(extraBufferCapacity = 1)
   internal val unconsumedXDeltas = MutableSharedFlow<Float>(extraBufferCapacity = 1)
 
@@ -99,7 +99,8 @@ public class VicoScrollState {
     autoScroll: Scroll,
     autoScrollCondition: AutoScrollCondition,
     autoScrollAnimationSpec: AnimationSpec<Float>,
-    snapScrollX: Double?,
+    xSnapStep: Double?,
+    snapAnimationSpec: AnimationSpec<Float>,
     value: Float,
     initialScrollHandled: Boolean,
   ) {
@@ -108,7 +109,8 @@ public class VicoScrollState {
     this.autoScroll = autoScroll
     this.autoScrollCondition = autoScrollCondition
     this.autoScrollAnimationSpec = autoScrollAnimationSpec
-    this.snapScrollX = snapScrollX
+    this.xSnapStep = xSnapStep
+    this.snapAnimationSpec = snapAnimationSpec
     _value = mutableFloatStateOf(value)
     this.initialScrollHandled = initialScrollHandled
   }
@@ -122,8 +124,9 @@ public class VicoScrollState {
    * @param autoScroll represents the scroll value or delta for automatic scrolling.
    * @param autoScrollCondition defines when an automatic scroll should occur.
    * @param autoScrollAnimationSpec the [AnimationSpec] for automatic scrolling.
-   * @param snapScrollX if not null, the scroll will snap to multiples of this _x_-axis window width
-   *   after the user stops scrolling.
+   * @param xSnapStep if not null, the scroll will snap to multiples of this _x_-axis step after the
+   *   user stops scrolling.
+   * @param snapAnimationSpec the [AnimationSpec] for snap scrolling.
    */
   public constructor(
     scrollEnabled: Boolean,
@@ -131,14 +134,16 @@ public class VicoScrollState {
     autoScroll: Scroll,
     autoScrollCondition: AutoScrollCondition,
     autoScrollAnimationSpec: AnimationSpec<Float>,
-    snapScrollX: Double? = null,
+    xSnapStep: Double?,
+    snapAnimationSpec: AnimationSpec<Float>,
   ) : this(
     scrollEnabled = scrollEnabled,
     initialScroll = initialScroll,
     autoScroll = autoScroll,
     autoScrollCondition = autoScrollCondition,
     autoScrollAnimationSpec = autoScrollAnimationSpec,
-    snapScrollX = snapScrollX,
+    xSnapStep = xSnapStep,
+    snapAnimationSpec = snapAnimationSpec,
     value = 0f,
     initialScrollHandled = false,
   )
@@ -218,26 +223,40 @@ public class VicoScrollState {
     }
   }
 
-  internal fun getSnapDelta(): Float? {
-    val snapScrollX = snapScrollX ?: return null
+  internal fun getSnapDelta(targetValue: Float = value): Float? {
     val context = this.context ?: return null
     val layerDimensions = this.layerDimensions ?: return null
-    val windowPx = (snapScrollX / context.ranges.xStep).toFloat() * layerDimensions.xSpacing
-    if (windowPx <= 0f) return null
-    val startPadding = layerDimensions.startPadding
-    val snapTarget =
-      (startPadding + ((value - startPadding) / windowPx).roundToInt() * windowPx).coerceIn(
-        0f.rangeWith(maxValue)
-      )
-    val delta = snapTarget - value
-    return if (delta == 0f) null else delta
+    return getSnapDelta(
+      value = value,
+      maxValue = maxValue,
+      xSnapStep = xSnapStep,
+      xStep = context.ranges.xStep,
+      xSpacing = layerDimensions.xSpacing,
+      startPadding = layerDimensions.startPadding,
+      targetValue = targetValue,
+    )
   }
 
-  internal suspend fun performSnap(animationSpec: AnimationSpec<Float> = spring()) {
-    val delta = getSnapDelta() ?: return
+  internal suspend fun performSnap(
+    targetValue: Float = value,
+    initialVelocity: Float = 0f,
+    animationSpec: AnimationSpec<Float> = snapAnimationSpec,
+  ) {
+    val delta = getSnapDelta(targetValue) ?: return
     scrollableState.stopScroll(MutatePriority.PreventUserInput)
     isScrollInProgress.first { !it }
-    scrollableState.animateScrollBy(delta, animationSpec)
+    scrollableState.scroll(MutatePriority.PreventUserInput) {
+      var previousValue = 0f
+      animate(
+        initialValue = 0f,
+        targetValue = delta,
+        initialVelocity = initialVelocity,
+        animationSpec = animationSpec,
+      ) { value, _ ->
+        scrollBy(value - previousValue)
+        previousValue = value
+      }
+    }
   }
 
   internal companion object {
@@ -247,7 +266,8 @@ public class VicoScrollState {
       autoScroll: Scroll,
       autoScrollCondition: AutoScrollCondition,
       autoScrollAnimationSpec: AnimationSpec<Float>,
-      snapScrollX: Double?,
+      xSnapStep: Double?,
+      snapAnimationSpec: AnimationSpec<Float>,
     ) =
       Saver<VicoScrollState, Pair<Float, Boolean>>(
         save = { it.value to it.initialScrollHandled },
@@ -258,7 +278,8 @@ public class VicoScrollState {
             autoScroll,
             autoScrollCondition,
             autoScrollAnimationSpec,
-            snapScrollX,
+            xSnapStep,
+            snapAnimationSpec,
             value,
             initialScrollHandled,
           )
@@ -270,8 +291,9 @@ public class VicoScrollState {
 /**
  * Creates and remembers a [VicoScrollState] instance.
  *
- * @param snapScrollX if not null, the scroll will snap to multiples of this _x_-axis window width
- *   after the user stops scrolling.
+ * @param xSnapStep if not null, the scroll will snap to multiples of this _x_-axis step after the
+ *   user stops scrolling.
+ * @param snapAnimationSpec the [AnimationSpec] for snap scrolling.
  */
 @Composable
 public fun rememberVicoScrollState(
@@ -280,7 +302,8 @@ public fun rememberVicoScrollState(
   autoScroll: Scroll = initialScroll,
   autoScrollCondition: AutoScrollCondition = AutoScrollCondition.Never,
   autoScrollAnimationSpec: AnimationSpec<Float> = spring(),
-  snapScrollX: Double? = null,
+  xSnapStep: Double? = null,
+  snapAnimationSpec: AnimationSpec<Float> = spring(),
 ): VicoScrollState {
   val state =
     rememberSaveable(
@@ -288,14 +311,16 @@ public fun rememberVicoScrollState(
       autoScroll,
       autoScrollCondition,
       autoScrollAnimationSpec,
-      snapScrollX,
+      xSnapStep,
+      snapAnimationSpec,
       saver =
         remember(
           scrollEnabled,
           initialScroll,
           autoScrollCondition,
           autoScrollAnimationSpec,
-          snapScrollX,
+          xSnapStep,
+          snapAnimationSpec,
         ) {
           VicoScrollState.Saver(
             scrollEnabled,
@@ -303,7 +328,8 @@ public fun rememberVicoScrollState(
             autoScroll,
             autoScrollCondition,
             autoScrollAnimationSpec,
-            snapScrollX,
+            xSnapStep,
+            snapAnimationSpec,
           )
         },
     ) {
@@ -313,7 +339,8 @@ public fun rememberVicoScrollState(
         autoScroll,
         autoScrollCondition,
         autoScrollAnimationSpec,
-        snapScrollX,
+        xSnapStep,
+        snapAnimationSpec,
       )
     }
   SideEffect { state.scrollEnabled = scrollEnabled }

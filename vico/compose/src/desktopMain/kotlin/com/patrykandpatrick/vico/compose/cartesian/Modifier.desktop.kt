@@ -18,6 +18,7 @@ package com.patrykandpatrick.vico.compose.cartesian
 
 import androidx.compose.animation.core.AnimationState
 import androidx.compose.animation.core.animateDecay
+import androidx.compose.animation.core.calculateTargetValue
 import androidx.compose.animation.rememberSplineBasedDecay
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
@@ -47,10 +48,16 @@ internal actual fun Modifier.extraPointerInput(scrollState: VicoScrollState): Mo
       scrollJob?.cancel()
       scrollJob =
         coroutineScope.launch {
-          AnimationState(scrollState.value, velocity).animateDecay(animationSpec) {
-            launch { scrollState.scroll(Scroll.Absolute.pixels(value)) }
+          if (scrollState.xSnapStep == null) {
+            AnimationState(scrollState.value, velocity).animateDecay(animationSpec) {
+              launch { scrollState.scroll(Scroll.Absolute.pixels(value)) }
+            }
+          } else {
+            scrollState.performSnap(
+              targetValue = animationSpec.calculateTargetValue(scrollState.value, velocity),
+              initialVelocity = velocity,
+            )
           }
-          scrollState.performSnap()
         }
     },
     reverseDirection = true,

@@ -16,9 +16,10 @@
 
 package com.patrykandpatrick.vico.compose.cartesian
 
-import androidx.compose.animation.core.AnimationSpec
+import androidx.compose.animation.core.DecayAnimationSpec
 import androidx.compose.animation.core.animate
-import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.calculateTargetValue
+import androidx.compose.animation.rememberSplineBasedDecay
 import androidx.compose.foundation.gestures.FlingBehavior
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.ScrollScope
@@ -60,10 +61,11 @@ internal fun Modifier.pointerInput(
   longPressEnabled: Boolean,
 ): Modifier {
   val defaultFlingBehavior = ScrollableDefaults.flingBehavior()
+  val decayAnimationSpec = rememberSplineBasedDecay<Float>()
   val flingBehavior =
-    remember(scrollState, defaultFlingBehavior) {
-      if (scrollState.snapScrollX != null) {
-        SnapFlingBehavior(scrollState, defaultFlingBehavior)
+    remember(scrollState, defaultFlingBehavior, decayAnimationSpec) {
+      if (scrollState.xSnapStep != null) {
+        SnapFlingBehavior(scrollState, decayAnimationSpec)
       } else {
         defaultFlingBehavior
       }
@@ -188,14 +190,18 @@ private fun Offset.fits(size: IntSize) = x >= 0f && x <= size.width && y >= 0f &
 
 internal class SnapFlingBehavior(
   private val scrollState: VicoScrollState,
-  private val delegate: FlingBehavior,
-  private val snapAnimationSpec: AnimationSpec<Float> = spring(),
+  private val decayAnimationSpec: DecayAnimationSpec<Float>,
 ) : FlingBehavior {
   override suspend fun ScrollScope.performFling(initialVelocity: Float): Float {
-    val remaining = with(delegate) { performFling(initialVelocity) }
-    val snapDelta = scrollState.getSnapDelta() ?: return remaining
+    val targetValue = decayAnimationSpec.calculateTargetValue(scrollState.value, initialVelocity)
+    val snapDelta = scrollState.getSnapDelta(targetValue) ?: return 0f
     var previousValue = 0f
-    animate(0f, snapDelta, animationSpec = snapAnimationSpec) { value, _ ->
+    animate(
+      initialValue = 0f,
+      targetValue = snapDelta,
+      initialVelocity = initialVelocity,
+      animationSpec = scrollState.snapAnimationSpec,
+    ) { value, _ ->
       scrollBy(value - previousValue)
       previousValue = value
     }
