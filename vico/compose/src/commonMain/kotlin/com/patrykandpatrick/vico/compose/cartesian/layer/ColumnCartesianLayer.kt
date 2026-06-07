@@ -39,6 +39,9 @@ import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.common.data.CartesianLayerDrawingModelInterpolator
 import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 import com.patrykandpatrick.vico.compose.common.data.MutableExtraStore
+import com.patrykandpatrick.vico.compose.common.doubled
+import com.patrykandpatrick.vico.compose.common.getRepeating
+import com.patrykandpatrick.vico.compose.common.half
 import kotlin.math.abs
 import kotlin.math.min
 

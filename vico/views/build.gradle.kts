@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
+import org.gradle.api.attributes.Attribute
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
   `dokka-convention`
@@ -22,7 +24,32 @@ plugins {
   id("com.android.library")
 }
 
-dokka { dokkaSourceSets.register("main") { sourceRoots.from("src/main/kotlin") } }
+val generatedCommonSources = layout.buildDirectory.dir("generated/commonMain/kotlin")
+
+val generateCommonSources by
+  tasks.registering(Sync::class) {
+    from("../shared/src/commonMain/kotlin") {
+      filter { line: String ->
+        line.replace("com.patrykandpatrick.vico.shared", "com.patrykandpatrick.vico.views")
+      }
+    }
+    into(generatedCommonSources)
+  }
+
+dokka {
+  dokkaSourceSets.register("main") {
+    sourceRoots.from("src/main/kotlin", generatedCommonSources)
+    classpath.from(
+      configurations.named("debugCompileClasspath").map { configuration ->
+        configuration.incoming
+          .artifactView {
+            attributes.attribute(Attribute.of("artifactType", String::class.java), "jar")
+          }
+          .files
+      }
+    )
+  }
+}
 
 android {
   configure()
@@ -31,9 +58,13 @@ android {
 
 kotlin {
   explicitApi()
-  compilerOptions {
-    jvmTarget = JvmTarget.JVM_11
-    freeCompilerArgs.add("-Xannotation-default-target=param-property")
+  compilerOptions { jvmTarget = JvmTarget.JVM_11 }
+}
+
+tasks.withType<KotlinCompile>().configureEach {
+  if (!name.contains("Test", ignoreCase = true)) {
+    dependsOn(generateCommonSources)
+    source(generatedCommonSources)
   }
 }
 

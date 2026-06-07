@@ -26,7 +26,7 @@ plugins {
 }
 
 kotlin {
-  androidLibrary {
+  android {
     configure()
     namespace = moduleNamespace
   }

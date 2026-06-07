@@ -25,8 +25,20 @@ plugins {
   id("org.jetbrains.kotlin.plugin.compose")
 }
 
+val generatedCommonSources = layout.buildDirectory.dir("generated/commonMain/kotlin")
+
+val generateCommonSources by
+  tasks.registering(Sync::class) {
+    from("../shared/src/commonMain/kotlin") {
+      filter { line: String ->
+        line.replace("com.patrykandpatrick.vico.shared", "com.patrykandpatrick.vico.compose")
+      }
+    }
+    into(generatedCommonSources)
+  }
+
 kotlin {
-  androidLibrary {
+  android {
     configure()
     namespace = moduleNamespace
     withHostTest { isIncludeAndroidResources = true }
@@ -48,6 +60,7 @@ kotlin {
     binaries.executable()
   }
   sourceSets {
+    commonMain { kotlin.srcDir(generatedCommonSources) }
     commonMain.dependencies {
       implementation(libs.androidXAnnotation)
       implementation(libs.composeFoundation)
@@ -62,10 +75,9 @@ kotlin {
     val androidHostTest by getting { dependencies { implementation(libs.mockK) } }
   }
   explicitApi()
-  compilerOptions {
-    freeCompilerArgs.addAll("-Xannotation-default-target=param-property", "-Xcontext-parameters")
-  }
 }
+
+tasks.matching { it.name.startsWith("compile") }.configureEach { dependsOn(generateCommonSources) }
 
 /*
  * Ensure `./gradlew test` includes this module’s test suite. In this module, the JVM-capable tests

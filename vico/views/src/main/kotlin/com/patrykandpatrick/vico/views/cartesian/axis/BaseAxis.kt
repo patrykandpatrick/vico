@@ -18,6 +18,7 @@ package com.patrykandpatrick.vico.views.cartesian.axis
 
 import android.graphics.RectF
 import com.patrykandpatrick.vico.views.cartesian.data.CartesianValueFormatter
+import com.patrykandpatrick.vico.views.cartesian.layer.CartesianLayer
 import com.patrykandpatrick.vico.views.common.MeasuringContext
 import com.patrykandpatrick.vico.views.common.component.LineComponent
 import com.patrykandpatrick.vico.views.common.component.TextComponent

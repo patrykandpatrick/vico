@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import org.gradle.api.attributes.Attribute
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -24,7 +25,20 @@ plugins {
   id("org.jetbrains.kotlin.plugin.compose")
 }
 
-dokka { dokkaSourceSets.register("main") { sourceRoots.from("src/main/kotlin") } }
+dokka {
+  dokkaSourceSets.register("main") {
+    sourceRoots.from("src/main/kotlin")
+    classpath.from(
+      configurations.named("debugCompileClasspath").map { configuration ->
+        configuration.incoming
+          .artifactView {
+            attributes.attribute(Attribute.of("artifactType", String::class.java), "jar")
+          }
+          .files
+      }
+    )
+  }
+}
 
 android {
   configure()

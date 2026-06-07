@@ -19,6 +19,7 @@ package com.patrykandpatrick.vico.views.pie
 import android.content.Context
 import android.graphics.Canvas
 import android.util.AttributeSet
+import android.view.View
 import com.patrykandpatrick.vico.views.R
 import com.patrykandpatrick.vico.views.common.Animation
 import com.patrykandpatrick.vico.views.common.ChartView

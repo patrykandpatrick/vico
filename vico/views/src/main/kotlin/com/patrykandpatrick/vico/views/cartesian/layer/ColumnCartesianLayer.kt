@@ -31,6 +31,9 @@ import com.patrykandpatrick.vico.views.common.component.TextComponent
 import com.patrykandpatrick.vico.views.common.data.CartesianLayerDrawingModelInterpolator
 import com.patrykandpatrick.vico.views.common.data.ExtraStore
 import com.patrykandpatrick.vico.views.common.data.MutableExtraStore
+import com.patrykandpatrick.vico.views.common.doubled
+import com.patrykandpatrick.vico.views.common.getRepeating
+import com.patrykandpatrick.vico.views.common.half
 import java.util.*
 import kotlin.math.abs
 import kotlin.math.min

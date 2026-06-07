@@ -39,6 +39,8 @@ import com.patrykandpatrick.vico.compose.common.*
 import com.patrykandpatrick.vico.compose.common.data.CacheStore
 import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 import com.patrykandpatrick.vico.compose.common.data.MutableExtraStore
+import com.patrykandpatrick.vico.compose.common.gcdWith
+import com.patrykandpatrick.vico.compose.common.orZero
 import kotlin.math.abs
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid

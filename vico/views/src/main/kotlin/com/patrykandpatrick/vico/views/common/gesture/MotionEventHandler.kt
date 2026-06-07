@@ -27,6 +27,7 @@ import com.patrykandpatrick.vico.views.cartesian.marker.Interaction
 import com.patrykandpatrick.vico.views.common.fling
 import com.patrykandpatrick.vico.views.common.point
 import kotlin.math.abs
+import kotlin.math.roundToInt
 
 internal class MotionEventHandler(
   private val scroller: OverScroller,
@@ -34,6 +35,8 @@ internal class MotionEventHandler(
   var scrollEnabled: Boolean = false,
   private val onInteraction: (Interaction) -> Unit,
   private val requestInvalidate: () -> Unit,
+  private val onUserScroll: () -> Unit = {},
+  private val onSnapScroll: () -> Unit = {},
   internal val chartBounds: RectF = RectF(),
 ) {
   private val velocityUnits = (VELOCITY_PIXELS * density).toInt()
@@ -53,6 +56,7 @@ internal class MotionEventHandler(
     return when (motionEvent.action and MotionEvent.ACTION_MASK) {
       MotionEvent.ACTION_DOWN -> {
         scroller.abortAnimation()
+        scrollHandler.stopAnimation()
         initialX = motionEvent.x
         onInteraction(Interaction.Press(motionEvent.point))
         lastX = initialX
@@ -69,8 +73,11 @@ internal class MotionEventHandler(
           val shouldPerformScroll = totalDragAmount > dragThreshold
           if (shouldPerformScroll && !ignoreEvent) {
             velocityTracker.get().addMovement(motionEvent)
-            if (scrollHandler.scroll(Scroll.Relative.pixels(lastX - currentX)) == 0f) {
+            val consumed = scrollHandler.scroll(Scroll.Relative.pixels(lastX - currentX))
+            if (consumed == 0f) {
               onInteraction(Interaction.Move(motionEvent.point))
+            } else {
+              onUserScroll()
             }
             requestInvalidate()
             initialX = -dragThreshold
@@ -108,11 +115,31 @@ internal class MotionEventHandler(
         velocityTracker.get().apply {
           computeCurrentVelocity(velocityUnits)
           val currentX = scrollHandler.value.toInt()
+          val velocityX = -xVelocity.toInt()
           scroller.fling(
             startX = currentX,
-            velocityX = -xVelocity.toInt(),
+            velocityX = velocityX,
             maxScrollX = scrollHandler.maxValue.toInt(),
           )
+          scrollHandler
+            .getSnapTarget(scroller.finalX.toFloat())
+            ?.roundToInt()
+            ?.takeIf { velocityX != 0 && it != currentX }
+            ?.let { snapTarget ->
+              scroller.abortAnimation()
+              scroller.startScroll(
+                currentX,
+                0,
+                snapTarget - currentX,
+                0,
+                scrollHandler.getSnapScrollDuration(
+                  distance = snapTarget - currentX,
+                  velocity = velocityX,
+                  velocityUnits = velocityUnits,
+                ),
+              )
+              onSnapScroll()
+            }
           requestInvalidate()
         }
         velocityTracker.clear()

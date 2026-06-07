@@ -28,11 +28,15 @@ import com.patrykandpatrick.vico.views.cartesian.data.CartesianLayerModel
 import com.patrykandpatrick.vico.views.cartesian.layer.CartesianLayerDimensions
 import com.patrykandpatrick.vico.views.cartesian.layer.CartesianLayerMargins
 import com.patrykandpatrick.vico.views.common.*
+import com.patrykandpatrick.vico.views.common.averageOf
 import com.patrykandpatrick.vico.views.common.component.Component
 import com.patrykandpatrick.vico.views.common.component.LineComponent
 import com.patrykandpatrick.vico.views.common.component.ShapeComponent
 import com.patrykandpatrick.vico.views.common.component.TextComponent
 import com.patrykandpatrick.vico.views.common.data.CacheStore
+import com.patrykandpatrick.vico.views.common.doubled
+import com.patrykandpatrick.vico.views.common.half
+import com.patrykandpatrick.vico.views.common.orZero
 import com.patrykandpatrick.vico.views.common.shape.MarkerCorneredShape
 import java.text.DecimalFormat
 import kotlin.math.ceil

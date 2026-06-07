@@ -44,6 +44,10 @@ import com.patrykandpatrick.vico.compose.common.data.CacheStore
 import com.patrykandpatrick.vico.compose.common.data.CartesianLayerDrawingModelInterpolator
 import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 import com.patrykandpatrick.vico.compose.common.data.MutableExtraStore
+import com.patrykandpatrick.vico.compose.common.doubled
+import com.patrykandpatrick.vico.compose.common.getRepeating
+import com.patrykandpatrick.vico.compose.common.half
+import com.patrykandpatrick.vico.compose.common.orZero
 import kotlin.math.*
 
 /**

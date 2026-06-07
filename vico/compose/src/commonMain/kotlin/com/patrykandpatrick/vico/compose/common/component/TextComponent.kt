@@ -31,6 +31,8 @@ import com.patrykandpatrick.vico.compose.common.*
 import com.patrykandpatrick.vico.compose.common.Defaults.TEXT_COMPONENT_LINE_COUNT
 import com.patrykandpatrick.vico.compose.common.component.TextComponent.MinWidth.Companion.text
 import com.patrykandpatrick.vico.compose.common.data.CacheStore
+import com.patrykandpatrick.vico.compose.common.half
+import com.patrykandpatrick.vico.compose.common.piRad
 import kotlin.jvm.JvmName
 import kotlin.math.absoluteValue
 import kotlin.math.cos

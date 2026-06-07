@@ -23,13 +23,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.patrykandpatrick.vico.sample.charts.views.databinding.BasicColumnChartBinding
 import com.patrykandpatrick.vico.views.cartesian.data.CartesianChartModelProducer
-import com.patrykandpatrick.vico.views.cartesian.data.CartesianLayerRangeProvider
 import com.patrykandpatrick.vico.views.cartesian.data.columnModel
 
 @Composable
 fun ViewBasicColumnChart(modifier: Modifier) {
   val modelProducer = remember { CartesianChartModelProducer() }
-  CartesianLayerRangeProvider
   LaunchedEffect(Unit) {
     modelProducer.runTransaction {
       // Learn more: https://patrykandpatrick.com/eji9zq.

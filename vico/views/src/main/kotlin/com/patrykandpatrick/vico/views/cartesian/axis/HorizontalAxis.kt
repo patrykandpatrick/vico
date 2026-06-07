@@ -33,6 +33,10 @@ import com.patrykandpatrick.vico.views.common.*
 import com.patrykandpatrick.vico.views.common.component.LineComponent
 import com.patrykandpatrick.vico.views.common.component.TextComponent
 import com.patrykandpatrick.vico.views.common.data.ExtraStore
+import com.patrykandpatrick.vico.views.common.doubled
+import com.patrykandpatrick.vico.views.common.half
+import com.patrykandpatrick.vico.views.common.isBoundOf
+import com.patrykandpatrick.vico.views.common.orZero
 import kotlin.math.ceil
 import kotlin.math.max
 import kotlin.math.min

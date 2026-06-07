@@ -18,6 +18,7 @@ package com.patrykandpatrick.vico.compose.pie.data
 
 import androidx.compose.runtime.Immutable
 import com.patrykandpatrick.vico.compose.common.data.ExtraStore
+import com.patrykandpatrick.vico.compose.pie.PieChart
 
 /** Stores a [PieChart]'s data. */
 @Immutable

@@ -23,6 +23,7 @@ import com.patrykandpatrick.vico.views.common.*
 import com.patrykandpatrick.vico.views.common.component.ShapeComponent
 import com.patrykandpatrick.vico.views.common.component.TextComponent
 import com.patrykandpatrick.vico.views.common.data.ExtraStore
+import com.patrykandpatrick.vico.views.common.half
 import java.text.DecimalFormat
 
 /**

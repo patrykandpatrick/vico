@@ -16,13 +16,21 @@
 
 package com.patrykandpatrick.vico.compose.cartesian
 
+import androidx.compose.animation.core.DecayAnimationSpec
+import androidx.compose.animation.core.animate
+import androidx.compose.animation.core.calculateTargetValue
+import androidx.compose.animation.rememberSplineBasedDecay
+import androidx.compose.foundation.gestures.FlingBehavior
 import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.ScrollScope
+import androidx.compose.foundation.gestures.ScrollableDefaults
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.awaitLongPressOrCancellation
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.gestures.waitForUpOrCancellation
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.AwaitPointerEventScope
@@ -51,12 +59,23 @@ internal fun Modifier.pointerInput(
   onZoom: ((Float, Offset) -> Unit)?,
   consumeMoveEvents: Boolean,
   longPressEnabled: Boolean,
-) =
-  scrollable(
+): Modifier {
+  val defaultFlingBehavior = ScrollableDefaults.flingBehavior()
+  val decayAnimationSpec = rememberSplineBasedDecay<Float>()
+  val flingBehavior =
+    remember(scrollState, defaultFlingBehavior, decayAnimationSpec) {
+      if (scrollState.xSnapStep != null) {
+        SnapFlingBehavior(scrollState, decayAnimationSpec)
+      } else {
+        defaultFlingBehavior
+      }
+    }
+  return scrollable(
       state = scrollState.scrollableState,
       orientation = Orientation.Horizontal,
       enabled = scrollState.scrollEnabled,
       reverseDirection = true,
+      flingBehavior = flingBehavior,
     )
     .pointerInput(onZoom, onInteraction) {
       awaitPointerEventScope {
@@ -132,6 +151,7 @@ internal fun Modifier.pointerInput(
       }
     )
     .extraPointerInput(scrollState)
+}
 
 private suspend fun PointerInputScope.detectTapGestures(
   onTap: (Offset) -> Boolean,
@@ -167,3 +187,24 @@ private fun PointerInputChange?.isTap(firstDown: PointerInputChange): Boolean {
 }
 
 private fun Offset.fits(size: IntSize) = x >= 0f && x <= size.width && y >= 0f && y <= size.height
+
+internal class SnapFlingBehavior(
+  private val scrollState: VicoScrollState,
+  private val decayAnimationSpec: DecayAnimationSpec<Float>,
+) : FlingBehavior {
+  override suspend fun ScrollScope.performFling(initialVelocity: Float): Float {
+    val targetValue = decayAnimationSpec.calculateTargetValue(scrollState.value, initialVelocity)
+    val snapDelta = scrollState.getSnapDelta(targetValue) ?: return 0f
+    var previousValue = 0f
+    animate(
+      initialValue = 0f,
+      targetValue = snapDelta,
+      initialVelocity = initialVelocity,
+      animationSpec = scrollState.snapAnimationSpec,
+    ) { value, _ ->
+      scrollBy(value - previousValue)
+      previousValue = value
+    }
+    return 0f
+  }
+}

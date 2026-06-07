@@ -131,6 +131,9 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 
   private var scrollDirectionResolved = false
 
+  private var wasUserScrolling = false
+  private var isUserScrolling = false
+
   private val layerDimensions = MutableCartesianLayerDimensions()
 
   private var previousLayerPaddingHashCode: Int? = null
@@ -157,6 +160,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     ) { oldValue, newValue ->
       oldValue?.clearUpdated()
       newValue.invalidate = ::invalidate
+      newValue.postInvalidateOnAnimation = ::postInvalidateOnAnimation
       _measuringContext.zoomEnabled = newValue.zoomEnabled && measuringContext.scrollEnabled
     }
 
@@ -166,6 +170,8 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       density = resources.displayMetrics.density,
       onInteraction = ::handleInteraction,
       requestInvalidate = ::invalidate,
+      onUserScroll = { if (scrollHandler.xSnapStep != null) wasUserScrolling = true },
+      onSnapScroll = { wasUserScrolling = false },
     )
 
   /** The [CartesianChart] displayed by this [View]. */
@@ -343,6 +349,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     val touchHandled = motionEventHandler.handleMotionEvent(event, scrollHandler)
     val gestureHandled = gestureDetector.onTouchEvent(event)
     val hasMarker = chart?.marker != null
+    if (wasUserScrolling) isUserScrolling = true
     when {
       chart?.markerController?.consumeMoveEvents == true &&
         !scrollHandler.scrollEnabled &&
@@ -359,6 +366,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 
       event.isUpOrCancel() -> {
         scrollDirectionResolved = false
+        isUserScrolling = false
       }
     }
 
@@ -432,19 +440,23 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       if (chart.layerBounds.isEmpty) return@withChartAndModel
 
       var viewportChange = false
-      motionEventHandler.scrollEnabled = scrollHandler.scrollEnabled
-      if (scroller.computeScrollOffset()) {
-        val delta = scroller.currX.toFloat()
-        scrollHandler.scroll(Scroll.Absolute.pixels(delta))
-        viewportChange = true
-        postInvalidateOnAnimation()
-      }
-
       zoomHandler.update(measuringContext, layerDimensions, chart.layerBounds, scrollHandler.value)
       scrollHandler.update(measuringContext, chart.layerBounds, layerDimensions)
       zoomHandler.consumePendingScroll { scroll ->
         scrollHandler.scroll(scroll)
         viewportChange = true
+      }
+
+      motionEventHandler.scrollEnabled = scrollHandler.scrollEnabled
+      val isScrollerRunning = scroller.computeScrollOffset()
+      if (isScrollerRunning) {
+        val delta = scroller.currX.toFloat()
+        scrollHandler.scroll(Scroll.Absolute.pixels(delta))
+        viewportChange = true
+        postInvalidateOnAnimation()
+      } else if (wasUserScrolling && !isUserScrolling) {
+        wasUserScrolling = false
+        scrollHandler.performSnap()
       }
 
       val drawingContext =

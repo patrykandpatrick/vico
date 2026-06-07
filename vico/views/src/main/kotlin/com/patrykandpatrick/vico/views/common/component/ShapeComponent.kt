@@ -19,6 +19,7 @@ package com.patrykandpatrick.vico.views.common.component
 import android.graphics.Paint
 import android.graphics.Path
 import com.patrykandpatrick.vico.views.common.*
+import com.patrykandpatrick.vico.views.common.half
 import com.patrykandpatrick.vico.views.common.shape.Shape
 
 /**

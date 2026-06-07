@@ -16,6 +16,7 @@
 
 package com.patrykandpatrick.vico.views.cartesian.layer
 
+import com.patrykandpatrick.vico.views.cartesian.CartesianChart
 import com.patrykandpatrick.vico.views.cartesian.CartesianMeasuringContext
 
 /** Stores shared [CartesianLayer] dimensions. */

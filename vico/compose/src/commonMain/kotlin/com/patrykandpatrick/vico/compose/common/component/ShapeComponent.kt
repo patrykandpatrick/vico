@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.common.*
+import com.patrykandpatrick.vico.compose.common.half
 
 /**
  * Draws [Shape]s.

@@ -23,6 +23,7 @@ import com.patrykandpatrick.vico.views.cartesian.axis.VerticalAxis.HorizontalLab
 import com.patrykandpatrick.vico.views.cartesian.axis.VerticalAxis.ItemPlacer.Companion.count
 import com.patrykandpatrick.vico.views.cartesian.axis.VerticalAxis.ItemPlacer.Companion.step
 import com.patrykandpatrick.vico.views.cartesian.data.CartesianChartModel
+import com.patrykandpatrick.vico.views.cartesian.data.CartesianChartRanges
 import com.patrykandpatrick.vico.views.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.views.cartesian.data.formatForAxis
 import com.patrykandpatrick.vico.views.cartesian.layer.*
