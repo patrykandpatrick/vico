@@ -72,7 +72,7 @@ protected constructor(
       LineCartesianLayerDrawingModel.Entry,
       LineCartesianLayerDrawingModel,
     > =
-    CartesianLayerDrawingModelInterpolator.default(),
+    CartesianLayerDrawingModelInterpolator.line(),
   protected val drawingModelKey: ExtraStore.Key<LineCartesianLayerDrawingModel>,
 ) : BaseCartesianLayer<LineCartesianLayerModel>() {
   /**
@@ -519,7 +519,7 @@ protected constructor(
         LineCartesianLayerDrawingModel.Entry,
         LineCartesianLayerDrawingModel,
       > =
-      CartesianLayerDrawingModelInterpolator.default(),
+      CartesianLayerDrawingModelInterpolator.line(),
   ) : this(
     lineProvider,
     pointSpacing,
@@ -1053,7 +1053,7 @@ public fun rememberLineCartesianLayer(
       LineCartesianLayerDrawingModel,
     > =
     remember {
-      CartesianLayerDrawingModelInterpolator.default()
+      CartesianLayerDrawingModelInterpolator.line()
     },
 ): LineCartesianLayer {
   var lineCartesianLayerWrapper by remember { ValueWrapper<LineCartesianLayer?>(null) }

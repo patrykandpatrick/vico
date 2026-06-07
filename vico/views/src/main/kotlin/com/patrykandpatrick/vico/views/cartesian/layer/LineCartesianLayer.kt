@@ -64,7 +64,7 @@ protected constructor(
       LineCartesianLayerDrawingModel.Entry,
       LineCartesianLayerDrawingModel,
     > =
-    CartesianLayerDrawingModelInterpolator.default(),
+    CartesianLayerDrawingModelInterpolator.line(),
   protected val drawingModelKey: ExtraStore.Key<LineCartesianLayerDrawingModel>,
 ) : BaseCartesianLayer<LineCartesianLayerModel>() {
   /**
@@ -516,7 +516,7 @@ protected constructor(
         LineCartesianLayerDrawingModel.Entry,
         LineCartesianLayerDrawingModel,
       > =
-      CartesianLayerDrawingModelInterpolator.default(),
+      CartesianLayerDrawingModelInterpolator.line(),
   ) : this(
     lineProvider,
     pointSpacingDp,

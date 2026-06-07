@@ -26,11 +26,7 @@ import kotlin.test.assertEquals
 class CartesianLayerDrawingModelInterpolatorTest {
   @Test
   fun `Transform matches series by key`() {
-    val interpolator =
-      CartesianLayerDrawingModelInterpolator.default<
-        LineCartesianLayerDrawingModel.Entry,
-        LineCartesianLayerDrawingModel,
-      >()
+    val interpolator = CartesianLayerDrawingModelInterpolator.line()
     val oldModel =
       LineCartesianLayerDrawingModel(
         entries =
