@@ -28,6 +28,7 @@ import com.patrykandpatrick.vico.views.cartesian.data.CartesianChartModelProduce
 import com.patrykandpatrick.vico.views.cartesian.data.lineModel
 import com.patrykandpatrick.vico.views.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.views.common.Fill
+import com.patrykandpatrick.vico.views.common.data.CartesianLayerDrawingModelInterpolator
 import com.patrykandpatrick.vico.views.common.shader.ShaderProvider
 
 @Composable
@@ -62,7 +63,8 @@ fun ViewRevealLineChart(modifier: Modifier) {
             chart!!.copy(
               (chart!!.layers[0] as LineCartesianLayer).copy(
                 lineProvider = lineProvider,
-                revealAnimationEnabled = true,
+                drawingModelInterpolator =
+                  CartesianLayerDrawingModelInterpolator.line(reveal = true),
               )
             )
           this.modelProducer = modelProducer

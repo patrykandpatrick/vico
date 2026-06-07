@@ -33,6 +33,7 @@ import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLine
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.common.Fill
+import com.patrykandpatrick.vico.compose.common.data.CartesianLayerDrawingModelInterpolator
 
 @Composable
 private fun ComposeRevealLineChart(
@@ -58,7 +59,7 @@ private fun ComposeRevealLineChart(
                   ),
               )
             ),
-          revealAnimationEnabled = true,
+          drawingModelInterpolator = CartesianLayerDrawingModelInterpolator.line(reveal = true),
         ),
         startAxis = VerticalAxis.rememberStart(),
         bottomAxis = HorizontalAxis.rememberBottom(),

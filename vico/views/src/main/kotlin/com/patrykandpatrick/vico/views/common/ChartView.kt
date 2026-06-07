@@ -162,38 +162,47 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       handler?.post {
         val isInitial = isInitialAnimation && model == null
         isInitialAnimation = false
-        val savedDuration = animator.duration
-        val savedInterpolator = animator.interpolator
+        val onEnd: (() -> Unit)?
         if (isInitial) {
+          val savedDuration = animator.duration
+          val savedInterpolator = animator.interpolator
           initialAnimationDuration?.let { animator.duration = it }
           initialAnimationInterpolator?.let { animator.interpolator = it }
+          // `ValueAnimator` reads its duration and interpolator per frame, and `start` only
+          // schedules the animation onto the next frame, so the initial duration and interpolator
+          // must remain in place until the animation ends rather than being restored synchronously.
+          onEnd = {
+            animator.duration = savedDuration
+            animator.interpolator = savedInterpolator
+          }
+        } else {
+          onEnd = null
         }
         isAnimationRunning = true
-        animator.start { fraction ->
-          when {
-            !isAnimationRunning -> return@start
-            !isAnimationFrameGenerationRunning -> {
-              isAnimationFrameGenerationRunning = true
-              animationFrameJob =
-                coroutineScope?.launch {
-                  transformModel(this@ChartView, fraction)
-                  isAnimationFrameGenerationRunning = false
-                }
+        animator.start(
+          onEnd = onEnd,
+          block = block@{ fraction ->
+            when {
+              !isAnimationRunning -> return@block
+              !isAnimationFrameGenerationRunning -> {
+                isAnimationFrameGenerationRunning = true
+                animationFrameJob =
+                  coroutineScope?.launch {
+                    transformModel(this@ChartView, fraction)
+                    isAnimationFrameGenerationRunning = false
+                  }
+              }
+              fraction == 1f -> {
+                finalAnimationFrameJob =
+                  coroutineScope?.launch(Dispatchers.Default) {
+                    animationFrameJob?.cancelAndJoin()
+                    transformModel(this@ChartView, fraction)
+                    isAnimationFrameGenerationRunning = false
+                  }
+              }
             }
-            fraction == 1f -> {
-              finalAnimationFrameJob =
-                coroutineScope?.launch(Dispatchers.Default) {
-                  animationFrameJob?.cancelAndJoin()
-                  transformModel(this@ChartView, fraction)
-                  isAnimationFrameGenerationRunning = false
-                }
-            }
-          }
-        }
-        if (isInitial) {
-          animator.duration = savedDuration
-          animator.interpolator = savedInterpolator
-        }
+          },
+        )
       }
     } else {
       isInitialAnimation = false
@@ -254,7 +263,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   }
 }
 
-private fun ValueAnimator.start(block: (Float) -> Unit) {
+private fun ValueAnimator.start(onEnd: (() -> Unit)? = null, block: (Float) -> Unit) {
   val updateListener = ValueAnimator.AnimatorUpdateListener { block(it.animatedFraction) }
   addUpdateListener(updateListener)
   addListener(
@@ -262,6 +271,7 @@ private fun ValueAnimator.start(block: (Float) -> Unit) {
       override fun onAnimationCancel(animation: Animator) {
         removeUpdateListener(updateListener)
         removeListener(this)
+        onEnd?.invoke()
       }
 
       override fun onAnimationEnd(animation: Animator) {

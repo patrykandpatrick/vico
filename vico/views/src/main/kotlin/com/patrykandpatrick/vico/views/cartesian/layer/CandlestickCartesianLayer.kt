@@ -102,7 +102,7 @@ protected constructor(
         CandlestickCartesianLayerDrawingModel.Entry,
         CandlestickCartesianLayerDrawingModel,
       > =
-      CartesianLayerDrawingModelInterpolator.default(),
+      CartesianLayerDrawingModelInterpolator.candlestick(),
   ) : this(
     candleProvider,
     minCandleBodyHeightDp,

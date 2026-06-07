@@ -64,9 +64,8 @@ protected constructor(
       LineCartesianLayerDrawingModel.Entry,
       LineCartesianLayerDrawingModel,
     > =
-    CartesianLayerDrawingModelInterpolator.default(),
+    CartesianLayerDrawingModelInterpolator.line(),
   protected val drawingModelKey: ExtraStore.Key<LineCartesianLayerDrawingModel>,
-  protected val revealAnimationEnabled: Boolean = false,
 ) : BaseCartesianLayer<LineCartesianLayerModel>() {
   /**
    * Defines the appearance of a line in a line chart.
@@ -517,8 +516,7 @@ protected constructor(
         LineCartesianLayerDrawingModel.Entry,
         LineCartesianLayerDrawingModel,
       > =
-      CartesianLayerDrawingModelInterpolator.default(),
-    revealAnimationEnabled: Boolean = false,
+      CartesianLayerDrawingModelInterpolator.line(),
   ) : this(
     lineProvider,
     pointSpacingDp,
@@ -526,7 +524,6 @@ protected constructor(
     verticalAxisPosition,
     drawingModelInterpolator,
     ExtraStore.Key(),
-    revealAnimationEnabled,
   )
 
   override fun drawInternal(context: CartesianDrawingContext, model: LineCartesianLayerModel) {
@@ -610,6 +607,7 @@ protected constructor(
         drawPointsAndDataLabels(line, series, seriesKey, seriesIndex, drawingStart, pointInfoMap)
       }
 
+      canvas.restore()
       if (revealFraction < 1f) canvas.restore()
     }
   }
@@ -953,15 +951,10 @@ protected constructor(
     ranges: CartesianChartRanges,
     extraStore: MutableExtraStore,
   ) {
-    val old = extraStore.getOrNull(drawingModelKey)
-    val new = model?.toDrawingModel(ranges)
-    val effectiveOld =
-      if (old == null && revealAnimationEnabled && new != null) {
-        new.withRevealFraction(0f)
-      } else {
-        old
-      }
-    drawingModelInterpolator.setModels(old = effectiveOld, new = new)
+    drawingModelInterpolator.setModels(
+      old = extraStore.getOrNull(drawingModelKey),
+      new = model?.toDrawingModel(ranges),
+    )
   }
 
   override suspend fun transform(extraStore: MutableExtraStore, fraction: Float) {
@@ -998,7 +991,6 @@ protected constructor(
         LineCartesianLayerDrawingModel,
       > =
       this.drawingModelInterpolator,
-    revealAnimationEnabled: Boolean = this.revealAnimationEnabled,
   ): LineCartesianLayer =
     LineCartesianLayer(
       lineProvider,
@@ -1007,7 +999,6 @@ protected constructor(
       verticalAxisPosition,
       drawingModelInterpolator,
       drawingModelKey,
-      revealAnimationEnabled,
     )
 
   override fun equals(other: Any?): Boolean =
