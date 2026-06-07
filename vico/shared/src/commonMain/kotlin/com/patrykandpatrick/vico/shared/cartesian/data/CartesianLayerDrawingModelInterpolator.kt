@@ -46,12 +46,20 @@ public interface CartesianLayerDrawingModelInterpolator<
     public fun <T : CartesianLayerDrawingModel.Entry, R : CartesianLayerDrawingModel<T>> default():
       CartesianLayerDrawingModelInterpolator<T, R> = DefaultCartesianLayerDrawingModelInterpolator()
 
-    /** Creates a [CartesianLayerDrawingModelInterpolator] for [LineCartesianLayer]s. */
-    public fun line():
-      CartesianLayerDrawingModelInterpolator<
-        LineCartesianLayerDrawingModel.Entry,
-        LineCartesianLayerDrawingModel,
-      > = DefaultCartesianLayerDrawingModelInterpolator()
+    /**
+     * Creates a [CartesianLayerDrawingModelInterpolator] for [LineCartesianLayer]s. If [reveal] is
+     * `true`, the [LineCartesianLayer]’s first appearance is animated as a clip sweeping in from
+     * the start edge at full opacity and _y_, rather than the default grow-from-baseline and
+     * fade-in.
+     */
+    public fun line(
+      reveal: Boolean = false
+    ): CartesianLayerDrawingModelInterpolator<
+      LineCartesianLayerDrawingModel.Entry,
+      LineCartesianLayerDrawingModel,
+    > =
+      if (reveal) RevealLineCartesianLayerDrawingModelInterpolator()
+      else DefaultLineCartesianLayerDrawingModelInterpolator()
 
     /** Creates a [CartesianLayerDrawingModelInterpolator] for [ColumnCartesianLayer]s. */
     public fun column():

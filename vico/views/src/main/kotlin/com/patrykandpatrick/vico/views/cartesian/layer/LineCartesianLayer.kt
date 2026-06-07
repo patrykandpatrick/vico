@@ -530,6 +530,25 @@ protected constructor(
       resetTempData()
 
       val drawingModel = extraStore.getOrNull(drawingModelKey)
+      val revealFraction = drawingModel?.revealFraction ?: 1f
+      if (revealFraction < 1f) {
+        canvas.save()
+        if (isLtr) {
+          canvas.clipRect(
+            layerBounds.left,
+            layerBounds.top,
+            layerBounds.left + layerBounds.width() * revealFraction,
+            layerBounds.bottom,
+          )
+        } else {
+          canvas.clipRect(
+            layerBounds.right - layerBounds.width() * revealFraction,
+            layerBounds.top,
+            layerBounds.right,
+            layerBounds.bottom,
+          )
+        }
+      }
 
       // Composite all series onto a single layer. During the fade-in (`opacity` < 1), this
       // allocates one offscreen buffer per frame rather than one per series. With a shared layer,
@@ -588,6 +607,7 @@ protected constructor(
       }
 
       canvas.restore()
+      if (revealFraction < 1f) canvas.restore()
     }
   }
 
@@ -797,7 +817,11 @@ protected constructor(
     drawFullLineLength: Boolean = false,
     action:
       (
-        entry: LineCartesianLayerModel.Entry, x: Float, y: Float, previousX: Float?, nextX: Float?,
+        entry: LineCartesianLayerModel.Entry,
+        x: Float,
+        y: Float,
+        previousX: Float?,
+        nextX: Float?,
       ) -> Unit,
   ) {
     val minX = ranges.minX
