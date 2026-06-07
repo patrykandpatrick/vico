@@ -24,7 +24,6 @@ import android.graphics.RectF
 import android.os.Bundle
 import android.view.animation.AccelerateDecelerateInterpolator
 import com.patrykandpatrick.vico.views.cartesian.data.CartesianChartModel
-import com.patrykandpatrick.vico.views.cartesian.getSnapTarget as calculateSnapTarget
 import com.patrykandpatrick.vico.views.cartesian.layer.CartesianLayerDimensions
 import com.patrykandpatrick.vico.views.common.Animation
 import com.patrykandpatrick.vico.views.common.rangeWith
@@ -232,7 +231,7 @@ public class ScrollHandler(
   internal fun getSnapTarget(targetValue: Float): Float? {
     val context = this.context ?: return null
     val layerDimensions = this.layerDimensions ?: return null
-    return calculateSnapTarget(
+    return com.patrykandpatrick.vico.views.cartesian.getSnapTarget(
       maxValue = maxValue,
       xSnapStep = xSnapStep,
       xStep = context.ranges.xStep,

@@ -36,6 +36,10 @@ import com.patrykandpatrick.vico.views.common.data.CacheStore
 import com.patrykandpatrick.vico.views.common.data.CartesianLayerDrawingModelInterpolator
 import com.patrykandpatrick.vico.views.common.data.ExtraStore
 import com.patrykandpatrick.vico.views.common.data.MutableExtraStore
+import com.patrykandpatrick.vico.views.common.doubled
+import com.patrykandpatrick.vico.views.common.getRepeating
+import com.patrykandpatrick.vico.views.common.half
+import com.patrykandpatrick.vico.views.common.orZero
 import java.util.*
 import kotlin.math.*
 

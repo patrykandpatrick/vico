@@ -27,3 +27,7 @@ hook and enforced by CI on every push and PR.
    changes need to be applied to both.
 2. **Explicit API mode:** All library modules require explicit visibility
    modifiers on public API.
+3. **Shared implementation code:** `vico/shared/src/commonMain/kotlin` contains
+   common sources that are generated into the Compose and Views packages at
+   build time. Do not import the canonical `com.patrykandpatrick.vico.shared`
+   package from stack source code.

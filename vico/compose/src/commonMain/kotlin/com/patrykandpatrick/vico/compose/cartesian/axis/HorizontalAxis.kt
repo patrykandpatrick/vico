@@ -38,6 +38,10 @@ import com.patrykandpatrick.vico.compose.common.*
 import com.patrykandpatrick.vico.compose.common.component.LineComponent
 import com.patrykandpatrick.vico.compose.common.component.TextComponent
 import com.patrykandpatrick.vico.compose.common.data.ExtraStore
+import com.patrykandpatrick.vico.compose.common.doubled
+import com.patrykandpatrick.vico.compose.common.half
+import com.patrykandpatrick.vico.compose.common.isBoundOf
+import com.patrykandpatrick.vico.compose.common.orZero
 import kotlin.math.ceil
 import kotlin.math.max
 import kotlin.math.min

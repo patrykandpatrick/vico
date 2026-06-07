@@ -23,6 +23,8 @@ import com.patrykandpatrick.vico.views.common.Defaults.TEXT_COMPONENT_LINE_COUNT
 import com.patrykandpatrick.vico.views.common.Insets
 import com.patrykandpatrick.vico.views.common.component.TextComponent.MinWidth.Companion.text
 import com.patrykandpatrick.vico.views.common.data.CacheStore
+import com.patrykandpatrick.vico.views.common.half
+import com.patrykandpatrick.vico.views.common.piRad
 import kotlin.math.absoluteValue
 import kotlin.math.cos
 import kotlin.math.min

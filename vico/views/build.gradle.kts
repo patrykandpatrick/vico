@@ -15,6 +15,7 @@
  */
 
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
   `dokka-convention`
@@ -22,7 +23,21 @@ plugins {
   id("com.android.library")
 }
 
-dokka { dokkaSourceSets.register("main") { sourceRoots.from("src/main/kotlin") } }
+val generatedCommonSources = layout.buildDirectory.dir("generated/commonMain/kotlin")
+
+val generateCommonSources by
+  tasks.registering(Sync::class) {
+    from("../shared/src/commonMain/kotlin") {
+      filter { line: String ->
+        line.replace("com.patrykandpatrick.vico.shared", "com.patrykandpatrick.vico.views")
+      }
+    }
+    into(generatedCommonSources)
+  }
+
+dokka {
+  dokkaSourceSets.register("main") { sourceRoots.from("src/main/kotlin", generatedCommonSources) }
+}
 
 android {
   configure()
@@ -34,6 +49,13 @@ kotlin {
   compilerOptions {
     jvmTarget = JvmTarget.JVM_11
     freeCompilerArgs.add("-Xannotation-default-target=param-property")
+  }
+}
+
+tasks.withType<KotlinCompile>().configureEach {
+  if (!name.contains("Test", ignoreCase = true)) {
+    dependsOn(generateCommonSources)
+    source(generatedCommonSources)
   }
 }
 

@@ -34,6 +34,8 @@ import com.patrykandpatrick.vico.views.common.*
 import com.patrykandpatrick.vico.views.common.data.CacheStore
 import com.patrykandpatrick.vico.views.common.data.ExtraStore
 import com.patrykandpatrick.vico.views.common.data.MutableExtraStore
+import com.patrykandpatrick.vico.views.common.gcdWith
+import com.patrykandpatrick.vico.views.common.orZero
 import java.util.*
 import kotlin.math.abs
 
