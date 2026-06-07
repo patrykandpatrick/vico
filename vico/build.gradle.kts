@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import java.time.Year
+
 plugins { `dokka-convention` }
 
 subprojects {
@@ -32,6 +34,6 @@ dependencies {
 dokka {
   pluginsConfiguration.html {
     customStyleSheets.from("$rootDir/logo-styles.css")
-    footerMessage = "© 2025 Patryk Goworowski and Patrick Michalik"
+    footerMessage = "© ${Year.now().value} Patryk Goworowski and Patrick Michalik"
   }
 }
