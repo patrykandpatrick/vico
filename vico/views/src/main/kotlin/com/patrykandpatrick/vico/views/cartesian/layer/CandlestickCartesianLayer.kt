@@ -28,7 +28,6 @@ import com.patrykandpatrick.vico.views.cartesian.marker.CandlestickCartesianLaye
 import com.patrykandpatrick.vico.views.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.views.common.Defaults
 import com.patrykandpatrick.vico.views.common.component.LineComponent
-import com.patrykandpatrick.vico.views.common.data.CartesianLayerDrawingModelInterpolator
 import com.patrykandpatrick.vico.views.common.data.ExtraStore
 import com.patrykandpatrick.vico.views.common.data.MutableExtraStore
 import com.patrykandpatrick.vico.views.common.extractColor

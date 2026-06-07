@@ -16,7 +16,6 @@
 
 package com.patrykandpatrick.vico.compose.cartesian.data
 
-import com.patrykandpatrick.vico.compose.common.data.CartesianLayerDrawingModelInterpolator
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.coroutines.startCoroutine

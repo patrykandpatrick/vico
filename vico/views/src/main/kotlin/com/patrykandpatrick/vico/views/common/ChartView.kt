@@ -29,13 +29,12 @@ import android.view.animation.Interpolator
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
-import com.patrykandpatrick.vico.views.cartesian.CartesianChart
 import com.patrykandpatrick.vico.views.common.data.ExtraStore
 import com.patrykandpatrick.vico.views.common.data.MutableExtraStore
 import kotlin.coroutines.EmptyCoroutineContext
 import kotlinx.coroutines.*
 
-/** Displays a [CartesianChart]. */
+/** Displays a chart. */
 public abstract class ChartView<M>
 @JvmOverloads
 constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) :

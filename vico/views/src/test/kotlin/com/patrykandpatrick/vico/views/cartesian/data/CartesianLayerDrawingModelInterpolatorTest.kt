@@ -16,7 +16,6 @@
 
 package com.patrykandpatrick.vico.views.cartesian.data
 
-import com.patrykandpatrick.vico.views.common.data.CartesianLayerDrawingModelInterpolator
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlinx.coroutines.runBlocking

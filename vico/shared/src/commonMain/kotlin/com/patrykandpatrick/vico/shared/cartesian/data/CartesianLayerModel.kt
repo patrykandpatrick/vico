@@ -17,7 +17,6 @@
 package com.patrykandpatrick.vico.shared.cartesian.data
 
 import com.patrykandpatrick.vico.shared.cartesian.layer.CartesianLayer
-import com.patrykandpatrick.vico.shared.common.data.CartesianLayerDrawingModel
 import com.patrykandpatrick.vico.shared.common.data.ExtraStore
 import com.patrykandpatrick.vico.shared.common.gcdWith
 import kotlin.math.abs

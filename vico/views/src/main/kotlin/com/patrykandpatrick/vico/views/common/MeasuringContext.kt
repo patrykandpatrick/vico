@@ -17,9 +17,6 @@
 package com.patrykandpatrick.vico.views.common
 
 import android.graphics.Canvas
-import android.graphics.RectF
-import com.patrykandpatrick.vico.views.cartesian.data.CartesianChartRanges
-import com.patrykandpatrick.vico.views.cartesian.layer.CartesianLayerDimensions
 import com.patrykandpatrick.vico.views.common.data.CacheStore
 import com.patrykandpatrick.vico.views.common.data.ExtraStore
 
@@ -65,17 +62,4 @@ public interface MeasuringContext {
   public fun reset() {
     cacheStore.purge()
   }
-}
-
-internal fun MeasuringContext.pointerPositionToX(
-  pointerPosition: Point,
-  layerDimensions: CartesianLayerDimensions,
-  layerBounds: RectF,
-  scrollValue: Float,
-  ranges: CartesianChartRanges,
-): Double {
-  val drawingStart =
-    layerBounds.getStart(isLtr) + layoutDirectionMultiplier * layerDimensions.startPadding
-  val pointerX = pointerPosition.x - drawingStart + scrollValue
-  return ranges.minX + pointerX * ranges.xStep / layerDimensions.xSpacing
 }

@@ -25,7 +25,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalInspectionMode
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChart
 import com.patrykandpatrick.vico.compose.common.*
-import com.patrykandpatrick.vico.compose.common.data.CartesianLayerDrawingModel
 import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 import com.patrykandpatrick.vico.compose.common.data.MutableExtraStore
 import com.patrykandpatrick.vico.compose.common.gcdWith

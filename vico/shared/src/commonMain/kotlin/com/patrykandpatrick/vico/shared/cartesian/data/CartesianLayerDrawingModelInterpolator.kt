@@ -14,11 +14,8 @@
  * limitations under the License.
  */
 
-package com.patrykandpatrick.vico.shared.common.data
+package com.patrykandpatrick.vico.shared.cartesian.data
 
-import com.patrykandpatrick.vico.shared.cartesian.data.CandlestickCartesianLayerDrawingModel
-import com.patrykandpatrick.vico.shared.cartesian.data.ColumnCartesianLayerDrawingModel
-import com.patrykandpatrick.vico.shared.cartesian.data.LineCartesianLayerDrawingModel
 import com.patrykandpatrick.vico.shared.cartesian.layer.CandlestickCartesianLayer
 import com.patrykandpatrick.vico.shared.cartesian.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.shared.cartesian.layer.LineCartesianLayer
