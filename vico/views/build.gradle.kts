@@ -46,10 +46,7 @@ android {
 
 kotlin {
   explicitApi()
-  compilerOptions {
-    jvmTarget = JvmTarget.JVM_11
-    freeCompilerArgs.add("-Xannotation-default-target=param-property")
-  }
+  compilerOptions { jvmTarget = JvmTarget.JVM_11 }
 }
 
 tasks.withType<KotlinCompile>().configureEach {

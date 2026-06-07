@@ -75,9 +75,6 @@ kotlin {
     val androidHostTest by getting { dependencies { implementation(libs.mockK) } }
   }
   explicitApi()
-  compilerOptions {
-    freeCompilerArgs.addAll("-Xannotation-default-target=param-property", "-Xcontext-parameters")
-  }
 }
 
 tasks.matching { it.name.startsWith("compile") }.configureEach { dependsOn(generateCommonSources) }
