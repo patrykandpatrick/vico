@@ -17,7 +17,6 @@
 package com.patrykandpatrick.vico.shared.cartesian.data
 
 import com.patrykandpatrick.vico.shared.cartesian.layer.LineCartesianLayer
-import com.patrykandpatrick.vico.shared.common.data.CartesianLayerDrawingModel
 import com.patrykandpatrick.vico.shared.common.lerp
 import com.patrykandpatrick.vico.shared.common.orZero
 

@@ -36,7 +36,6 @@ import com.patrykandpatrick.vico.compose.common.*
 import com.patrykandpatrick.vico.compose.common.component.LineComponent
 import com.patrykandpatrick.vico.compose.common.component.TextComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
-import com.patrykandpatrick.vico.compose.common.data.CartesianLayerDrawingModelInterpolator
 import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 import com.patrykandpatrick.vico.compose.common.data.MutableExtraStore
 import com.patrykandpatrick.vico.compose.common.doubled
@@ -81,7 +80,7 @@ protected constructor(
       ColumnCartesianLayerDrawingModel.Entry,
       ColumnCartesianLayerDrawingModel,
     > =
-    CartesianLayerDrawingModelInterpolator.default(),
+    CartesianLayerDrawingModelInterpolator.column(),
   protected val drawingModelKey: ExtraStore.Key<ColumnCartesianLayerDrawingModel>,
 ) : BaseCartesianLayer<ColumnCartesianLayerModel>() {
   private val _markerTargets =
@@ -107,7 +106,7 @@ protected constructor(
         ColumnCartesianLayerDrawingModel.Entry,
         ColumnCartesianLayerDrawingModel,
       > =
-      CartesianLayerDrawingModelInterpolator.default(),
+      CartesianLayerDrawingModelInterpolator.column(),
   ) : this(
     columnProvider,
     columnCollectionSpacing,
@@ -717,7 +716,7 @@ public fun rememberColumnCartesianLayer(
       ColumnCartesianLayerDrawingModel,
     > =
     remember {
-      CartesianLayerDrawingModelInterpolator.default()
+      CartesianLayerDrawingModelInterpolator.column()
     },
 ): ColumnCartesianLayer {
   var columnCartesianLayerWrapper by remember { ValueWrapper<ColumnCartesianLayer?>(null) }

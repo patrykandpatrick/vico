@@ -14,7 +14,11 @@
  * limitations under the License.
  */
 
-package com.patrykandpatrick.vico.shared.common.data
+package com.patrykandpatrick.vico.shared.cartesian.data
+
+import com.patrykandpatrick.vico.shared.cartesian.layer.CandlestickCartesianLayer
+import com.patrykandpatrick.vico.shared.cartesian.layer.ColumnCartesianLayer
+import com.patrykandpatrick.vico.shared.cartesian.layer.LineCartesianLayer
 
 /** Interpolates two [CartesianLayerDrawingModel]s. */
 public interface CartesianLayerDrawingModelInterpolator<
@@ -31,12 +35,36 @@ public interface CartesianLayerDrawingModelInterpolator<
    */
   public suspend fun transform(fraction: Float): R?
 
-  /** Houses a [CartesianLayerDrawingModelInterpolator] factory function. */
+  /** Houses [CartesianLayerDrawingModelInterpolator] factory functions. */
   public companion object {
     /**
      * Creates an instance of the default [CartesianLayerDrawingModelInterpolator] implementation.
      */
+    @Deprecated(
+      "Use the per-`CartesianLayer`-type factory functions: `line`, `column`, and `candlestick`."
+    )
     public fun <T : CartesianLayerDrawingModel.Entry, R : CartesianLayerDrawingModel<T>> default():
       CartesianLayerDrawingModelInterpolator<T, R> = DefaultCartesianLayerDrawingModelInterpolator()
+
+    /** Creates a [CartesianLayerDrawingModelInterpolator] for [LineCartesianLayer]s. */
+    public fun line():
+      CartesianLayerDrawingModelInterpolator<
+        LineCartesianLayerDrawingModel.Entry,
+        LineCartesianLayerDrawingModel,
+      > = DefaultCartesianLayerDrawingModelInterpolator()
+
+    /** Creates a [CartesianLayerDrawingModelInterpolator] for [ColumnCartesianLayer]s. */
+    public fun column():
+      CartesianLayerDrawingModelInterpolator<
+        ColumnCartesianLayerDrawingModel.Entry,
+        ColumnCartesianLayerDrawingModel,
+      > = DefaultCartesianLayerDrawingModelInterpolator()
+
+    /** Creates a [CartesianLayerDrawingModelInterpolator] for [CandlestickCartesianLayer]s. */
+    public fun candlestick():
+      CartesianLayerDrawingModelInterpolator<
+        CandlestickCartesianLayerDrawingModel.Entry,
+        CandlestickCartesianLayerDrawingModel,
+      > = DefaultCartesianLayerDrawingModelInterpolator()
   }
 }

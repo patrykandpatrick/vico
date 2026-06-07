@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.patrykandpatrick.vico.compose.common.data
+package com.patrykandpatrick.vico.compose.cartesian.data
 
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive

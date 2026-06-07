@@ -28,7 +28,6 @@ import com.patrykandpatrick.vico.views.cartesian.marker.MutableColumnCartesianLa
 import com.patrykandpatrick.vico.views.common.*
 import com.patrykandpatrick.vico.views.common.component.LineComponent
 import com.patrykandpatrick.vico.views.common.component.TextComponent
-import com.patrykandpatrick.vico.views.common.data.CartesianLayerDrawingModelInterpolator
 import com.patrykandpatrick.vico.views.common.data.ExtraStore
 import com.patrykandpatrick.vico.views.common.data.MutableExtraStore
 import com.patrykandpatrick.vico.views.common.doubled
@@ -73,7 +72,7 @@ protected constructor(
       ColumnCartesianLayerDrawingModel.Entry,
       ColumnCartesianLayerDrawingModel,
     > =
-    CartesianLayerDrawingModelInterpolator.default(),
+    CartesianLayerDrawingModelInterpolator.column(),
   protected val drawingModelKey: ExtraStore.Key<ColumnCartesianLayerDrawingModel>,
 ) : BaseCartesianLayer<ColumnCartesianLayerModel>() {
   private val _markerTargets =
@@ -99,7 +98,7 @@ protected constructor(
         ColumnCartesianLayerDrawingModel.Entry,
         ColumnCartesianLayerDrawingModel,
       > =
-      CartesianLayerDrawingModelInterpolator.default(),
+      CartesianLayerDrawingModelInterpolator.column(),
   ) : this(
     columnProvider,
     columnCollectionSpacingDp,

@@ -16,7 +16,6 @@
 
 package com.patrykandpatrick.vico.compose.cartesian.data
 
-import com.patrykandpatrick.vico.compose.common.data.CartesianLayerDrawingModelInterpolator
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.coroutines.startCoroutine
@@ -26,11 +25,7 @@ import kotlin.test.assertEquals
 class CartesianLayerDrawingModelInterpolatorTest {
   @Test
   fun `Transform matches series by key`() {
-    val interpolator =
-      CartesianLayerDrawingModelInterpolator.default<
-        LineCartesianLayerDrawingModel.Entry,
-        LineCartesianLayerDrawingModel,
-      >()
+    val interpolator = CartesianLayerDrawingModelInterpolator.line()
     val oldModel =
       LineCartesianLayerDrawingModel(
         entries =

@@ -33,7 +33,6 @@ import com.patrykandpatrick.vico.compose.cartesian.marker.CandlestickCartesianLa
 import com.patrykandpatrick.vico.compose.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.compose.common.*
 import com.patrykandpatrick.vico.compose.common.component.LineComponent
-import com.patrykandpatrick.vico.compose.common.data.CartesianLayerDrawingModelInterpolator
 import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 import com.patrykandpatrick.vico.compose.common.data.MutableExtraStore
 import com.patrykandpatrick.vico.compose.common.half
@@ -103,7 +102,7 @@ protected constructor(
         CandlestickCartesianLayerDrawingModel.Entry,
         CandlestickCartesianLayerDrawingModel,
       > =
-      CartesianLayerDrawingModelInterpolator.default(),
+      CartesianLayerDrawingModelInterpolator.candlestick(),
   ) : this(
     candleProvider,
     minCandleBodyHeight,
@@ -523,7 +522,7 @@ public fun rememberCandlestickCartesianLayer(
       CandlestickCartesianLayerDrawingModel.Entry,
       CandlestickCartesianLayerDrawingModel,
     > =
-    CartesianLayerDrawingModelInterpolator.default(),
+    CartesianLayerDrawingModelInterpolator.candlestick(),
 ): CandlestickCartesianLayer {
   var candlestickCartesianLayerWrapper by remember {
     ValueWrapper<CandlestickCartesianLayer?>(null)

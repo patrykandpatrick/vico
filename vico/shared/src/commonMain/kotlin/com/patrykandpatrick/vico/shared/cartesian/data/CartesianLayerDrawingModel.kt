@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.patrykandpatrick.vico.shared.common.data
+package com.patrykandpatrick.vico.shared.cartesian.data
 
 import com.patrykandpatrick.vico.shared.cartesian.layer.CartesianLayer
 

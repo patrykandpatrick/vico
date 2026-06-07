@@ -17,7 +17,6 @@
 package com.patrykandpatrick.vico.views.cartesian.data
 
 import com.patrykandpatrick.vico.views.cartesian.CartesianChart
-import com.patrykandpatrick.vico.views.common.data.CartesianLayerDrawingModel
 import com.patrykandpatrick.vico.views.common.data.ExtraStore
 import com.patrykandpatrick.vico.views.common.gcdWith
 

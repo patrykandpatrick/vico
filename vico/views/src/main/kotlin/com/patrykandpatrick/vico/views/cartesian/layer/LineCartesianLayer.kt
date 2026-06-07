@@ -33,7 +33,6 @@ import com.patrykandpatrick.vico.views.common.*
 import com.patrykandpatrick.vico.views.common.component.Component
 import com.patrykandpatrick.vico.views.common.component.TextComponent
 import com.patrykandpatrick.vico.views.common.data.CacheStore
-import com.patrykandpatrick.vico.views.common.data.CartesianLayerDrawingModelInterpolator
 import com.patrykandpatrick.vico.views.common.data.ExtraStore
 import com.patrykandpatrick.vico.views.common.data.MutableExtraStore
 import com.patrykandpatrick.vico.views.common.doubled
@@ -64,7 +63,7 @@ protected constructor(
       LineCartesianLayerDrawingModel.Entry,
       LineCartesianLayerDrawingModel,
     > =
-    CartesianLayerDrawingModelInterpolator.default(),
+    CartesianLayerDrawingModelInterpolator.line(),
   protected val drawingModelKey: ExtraStore.Key<LineCartesianLayerDrawingModel>,
 ) : BaseCartesianLayer<LineCartesianLayerModel>() {
   /**
@@ -516,7 +515,7 @@ protected constructor(
         LineCartesianLayerDrawingModel.Entry,
         LineCartesianLayerDrawingModel,
       > =
-      CartesianLayerDrawingModelInterpolator.default(),
+      CartesianLayerDrawingModelInterpolator.line(),
   ) : this(
     lineProvider,
     pointSpacingDp,

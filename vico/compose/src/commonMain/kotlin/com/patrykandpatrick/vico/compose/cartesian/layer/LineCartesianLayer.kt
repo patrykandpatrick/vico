@@ -41,7 +41,6 @@ import com.patrykandpatrick.vico.compose.common.*
 import com.patrykandpatrick.vico.compose.common.component.Component
 import com.patrykandpatrick.vico.compose.common.component.TextComponent
 import com.patrykandpatrick.vico.compose.common.data.CacheStore
-import com.patrykandpatrick.vico.compose.common.data.CartesianLayerDrawingModelInterpolator
 import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 import com.patrykandpatrick.vico.compose.common.data.MutableExtraStore
 import com.patrykandpatrick.vico.compose.common.doubled
@@ -72,7 +71,7 @@ protected constructor(
       LineCartesianLayerDrawingModel.Entry,
       LineCartesianLayerDrawingModel,
     > =
-    CartesianLayerDrawingModelInterpolator.default(),
+    CartesianLayerDrawingModelInterpolator.line(),
   protected val drawingModelKey: ExtraStore.Key<LineCartesianLayerDrawingModel>,
 ) : BaseCartesianLayer<LineCartesianLayerModel>() {
   /**
@@ -519,7 +518,7 @@ protected constructor(
         LineCartesianLayerDrawingModel.Entry,
         LineCartesianLayerDrawingModel,
       > =
-      CartesianLayerDrawingModelInterpolator.default(),
+      CartesianLayerDrawingModelInterpolator.line(),
   ) : this(
     lineProvider,
     pointSpacing,
@@ -1053,7 +1052,7 @@ public fun rememberLineCartesianLayer(
       LineCartesianLayerDrawingModel,
     > =
     remember {
-      CartesianLayerDrawingModelInterpolator.default()
+      CartesianLayerDrawingModelInterpolator.line()
     },
 ): LineCartesianLayer {
   var lineCartesianLayerWrapper by remember { ValueWrapper<LineCartesianLayer?>(null) }
