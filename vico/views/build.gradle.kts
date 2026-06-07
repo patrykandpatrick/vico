@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import org.gradle.api.attributes.Attribute
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -36,7 +37,18 @@ val generateCommonSources by
   }
 
 dokka {
-  dokkaSourceSets.register("main") { sourceRoots.from("src/main/kotlin", generatedCommonSources) }
+  dokkaSourceSets.register("main") {
+    sourceRoots.from("src/main/kotlin", generatedCommonSources)
+    classpath.from(
+      configurations.named("debugCompileClasspath").map { configuration ->
+        configuration.incoming
+          .artifactView {
+            attributes.attribute(Attribute.of("artifactType", String::class.java), "jar")
+          }
+          .files
+      }
+    )
+  }
 }
 
 android {
