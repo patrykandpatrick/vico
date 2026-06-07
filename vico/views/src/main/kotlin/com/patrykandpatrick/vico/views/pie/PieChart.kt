@@ -119,22 +119,20 @@ private constructor(
 
         slice.label?.let { labelComponent ->
           val label = valueFormatter.format(context, entry.value, index)
-          if (label != null) {
-            oval.set(
-              bounds.centerX() - ovalRadius,
-              bounds.centerY() - ovalRadius,
-              bounds.centerX() + ovalRadius,
-              bounds.centerY() + ovalRadius,
-            )
-            labelComponent.getInsets(
-              context = context,
-              contentBounds = bounds,
-              oval = oval,
-              angle = currentAngle + sweepAngle.half,
-              label = label,
-              outInsets = insets,
-            )
-          }
+          oval.set(
+            bounds.centerX() - ovalRadius,
+            bounds.centerY() - ovalRadius,
+            bounds.centerX() + ovalRadius,
+            bounds.centerY() + ovalRadius,
+          )
+          labelComponent.getInsets(
+            context = context,
+            contentBounds = bounds,
+            oval = oval,
+            angle = currentAngle + sweepAngle.half,
+            label = label,
+            outInsets = insets,
+          )
         }
 
         currentAngle += sweepAngle
