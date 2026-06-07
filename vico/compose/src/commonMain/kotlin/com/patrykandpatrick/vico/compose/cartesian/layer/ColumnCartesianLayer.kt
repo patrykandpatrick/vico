@@ -81,7 +81,7 @@ protected constructor(
       ColumnCartesianLayerDrawingModel.Entry,
       ColumnCartesianLayerDrawingModel,
     > =
-    CartesianLayerDrawingModelInterpolator.default(),
+    CartesianLayerDrawingModelInterpolator.column(),
   protected val drawingModelKey: ExtraStore.Key<ColumnCartesianLayerDrawingModel>,
 ) : BaseCartesianLayer<ColumnCartesianLayerModel>() {
   private val _markerTargets =
@@ -107,7 +107,7 @@ protected constructor(
         ColumnCartesianLayerDrawingModel.Entry,
         ColumnCartesianLayerDrawingModel,
       > =
-      CartesianLayerDrawingModelInterpolator.default(),
+      CartesianLayerDrawingModelInterpolator.column(),
   ) : this(
     columnProvider,
     columnCollectionSpacing,
@@ -717,7 +717,7 @@ public fun rememberColumnCartesianLayer(
       ColumnCartesianLayerDrawingModel,
     > =
     remember {
-      CartesianLayerDrawingModelInterpolator.default()
+      CartesianLayerDrawingModelInterpolator.column()
     },
 ): ColumnCartesianLayer {
   var columnCartesianLayerWrapper by remember { ValueWrapper<ColumnCartesianLayer?>(null) }

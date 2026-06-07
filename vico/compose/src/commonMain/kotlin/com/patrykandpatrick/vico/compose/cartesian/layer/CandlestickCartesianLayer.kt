@@ -103,7 +103,7 @@ protected constructor(
         CandlestickCartesianLayerDrawingModel.Entry,
         CandlestickCartesianLayerDrawingModel,
       > =
-      CartesianLayerDrawingModelInterpolator.default(),
+      CartesianLayerDrawingModelInterpolator.candlestick(),
   ) : this(
     candleProvider,
     minCandleBodyHeight,
@@ -523,7 +523,7 @@ public fun rememberCandlestickCartesianLayer(
       CandlestickCartesianLayerDrawingModel.Entry,
       CandlestickCartesianLayerDrawingModel,
     > =
-    CartesianLayerDrawingModelInterpolator.default(),
+    CartesianLayerDrawingModelInterpolator.candlestick(),
 ): CandlestickCartesianLayer {
   var candlestickCartesianLayerWrapper by remember {
     ValueWrapper<CandlestickCartesianLayer?>(null)
