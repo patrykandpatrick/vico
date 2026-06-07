@@ -24,7 +24,7 @@ plugins {
 }
 
 kotlin {
-  androidLibrary {
+  android {
     configure()
     namespace = "com.patrykandpatrick.vico.sample.charts.compose"
   }

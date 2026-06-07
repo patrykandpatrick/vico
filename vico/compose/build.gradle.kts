@@ -38,7 +38,7 @@ val generateCommonSources by
   }
 
 kotlin {
-  androidLibrary {
+  android {
     configure()
     namespace = moduleNamespace
     withHostTest { isIncludeAndroidResources = true }
