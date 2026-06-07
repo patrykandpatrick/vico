@@ -75,8 +75,8 @@ internal fun narrowMarkerTargets(
  * @param zoomState houses information on the [CartesianChart]’s zoom factor. Allows for zoom
  *   customization.
  * @param animationSpec the [AnimationSpec] for difference animations.
- * @param animateIn whether to run an initial animation when the [CartesianChartHost] enters
- *   composition. The animation is skipped for previews.
+ * @param initialAnimationSpec the [AnimationSpec] for the initial (reveal) animation. Defaults to
+ *   [animationSpec]. Set to `null` to skip the initial animation.
  * @param placeholder shown when no [CartesianChartModel] is available.
  */
 @Composable
@@ -87,11 +87,12 @@ public fun CartesianChartHost(
   scrollState: VicoScrollState = rememberVicoScrollState(),
   zoomState: VicoZoomState = rememberDefaultVicoZoomState(scrollState.scrollEnabled),
   animationSpec: AnimationSpec<Float>? = defaultCartesianDiffAnimationSpec,
-  animateIn: Boolean = true,
+  initialAnimationSpec: AnimationSpec<Float>? = animationSpec,
   placeholder: @Composable BoxScope.() -> Unit = {},
 ) {
   val mutableRanges = remember { MutableCartesianChartRanges() }
-  val modelWrapper by modelProducer.collectAsState(chart, animationSpec, animateIn, mutableRanges)
+  val modelWrapper by
+    modelProducer.collectAsState(chart, animationSpec, initialAnimationSpec, mutableRanges)
   val (model, previousModel, ranges, extraStore) = modelWrapper
 
   CartesianChartHostBox(modifier) {
@@ -109,6 +110,45 @@ public fun CartesianChartHost(
       placeholder()
     }
   }
+}
+
+/**
+ * Displays a [CartesianChart].
+ *
+ * @param chart the [CartesianChart].
+ * @param modelProducer creates and updates the [CartesianChartModel].
+ * @param modifier the modifier to be applied to the chart.
+ * @param scrollState houses information on the [CartesianChart]’s scroll value. Allows for scroll
+ *   customization and programmatic scrolling.
+ * @param zoomState houses information on the [CartesianChart]’s zoom factor. Allows for zoom
+ *   customization.
+ * @param animationSpec the [AnimationSpec] for difference animations.
+ * @param animateIn whether to run an initial animation when the [CartesianChartHost] enters
+ *   composition. The animation is skipped for previews.
+ * @param placeholder shown when no [CartesianChartModel] is available.
+ */
+@Deprecated("Set `initialAnimationSpec` to `null` to skip the initial animation.")
+@Composable
+public fun CartesianChartHost(
+  chart: CartesianChart,
+  modelProducer: CartesianChartModelProducer,
+  modifier: Modifier = Modifier,
+  scrollState: VicoScrollState = rememberVicoScrollState(),
+  zoomState: VicoZoomState = rememberDefaultVicoZoomState(scrollState.scrollEnabled),
+  animationSpec: AnimationSpec<Float>? = defaultCartesianDiffAnimationSpec,
+  animateIn: Boolean,
+  placeholder: @Composable BoxScope.() -> Unit = {},
+) {
+  CartesianChartHost(
+    chart = chart,
+    modelProducer = modelProducer,
+    modifier = modifier,
+    scrollState = scrollState,
+    zoomState = zoomState,
+    animationSpec = animationSpec,
+    initialAnimationSpec = if (animateIn) animationSpec else null,
+    placeholder = placeholder,
+  )
 }
 
 /**

@@ -64,6 +64,11 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       interpolator = FastOutSlowInInterpolator()
     }
 
+  private var initialAnimationDuration: Long? = null
+  private var initialAnimationInterpolator: Interpolator? = null
+  private var isInitialAnimation = true
+  private var isInitialAnimationEnabled = true
+
   protected val extraStore: MutableExtraStore = MutableExtraStore()
 
   protected var coroutineScope: CoroutineScope? = null
@@ -87,7 +92,12 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   private var shouldAcceptMotionEvents = false
 
   /** Whether to run an initial animation when the [ChartView] is created. */
-  public var animateIn: Boolean = true
+  @Deprecated("Call `setInitialAnimationDuration(0)` to skip the initial animation.")
+  public var animateIn: Boolean
+    get() = isInitialAnimationEnabled
+    set(value) {
+      isInitialAnimationEnabled = value
+    }
 
   override fun onAttachedToWindow() {
     super.onAttachedToWindow()
@@ -153,32 +163,54 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   }
 
   protected fun startAnimation(transformModel: suspend (key: Any, fraction: Float) -> Unit) {
-    if (model != null || animateIn) {
+    if (model != null || isInitialAnimationEnabled) {
       handler?.post {
-        isAnimationRunning = true
-        animator.start { fraction ->
-          when {
-            !isAnimationRunning -> return@start
-            !isAnimationFrameGenerationRunning -> {
-              isAnimationFrameGenerationRunning = true
-              animationFrameJob =
-                coroutineScope?.launch {
-                  transformModel(this@ChartView, fraction)
-                  isAnimationFrameGenerationRunning = false
-                }
-            }
-            fraction == 1f -> {
-              finalAnimationFrameJob =
-                coroutineScope?.launch(Dispatchers.Default) {
-                  animationFrameJob?.cancelAndJoin()
-                  transformModel(this@ChartView, fraction)
-                  isAnimationFrameGenerationRunning = false
-                }
-            }
+        val isInitial = isInitialAnimation && model == null
+        isInitialAnimation = false
+        val onEnd: (() -> Unit)?
+        if (isInitial) {
+          val savedDuration = animator.duration
+          val savedInterpolator = animator.interpolator
+          initialAnimationDuration?.let { animator.duration = it }
+          initialAnimationInterpolator?.let { animator.interpolator = it }
+          // `ValueAnimator` reads its duration and interpolator per frame, and `start` only
+          // schedules the animation onto the next frame, so the initial duration and interpolator
+          // must remain in place until the animation ends rather than being restored synchronously.
+          onEnd = {
+            animator.duration = savedDuration
+            animator.interpolator = savedInterpolator
           }
+        } else {
+          onEnd = null
         }
+        isAnimationRunning = true
+        animator.start(
+          onEnd = onEnd,
+          block = block@{ fraction ->
+              when {
+                !isAnimationRunning -> return@block
+                !isAnimationFrameGenerationRunning -> {
+                  isAnimationFrameGenerationRunning = true
+                  animationFrameJob =
+                    coroutineScope?.launch {
+                      transformModel(this@ChartView, fraction)
+                      isAnimationFrameGenerationRunning = false
+                    }
+                }
+                fraction == 1f -> {
+                  finalAnimationFrameJob =
+                    coroutineScope?.launch(Dispatchers.Default) {
+                      animationFrameJob?.cancelAndJoin()
+                      transformModel(this@ChartView, fraction)
+                      isAnimationFrameGenerationRunning = false
+                    }
+                }
+              }
+            },
+        )
       }
     } else {
+      isInitialAnimation = false
       finalAnimationFrameJob =
         coroutineScope?.launch { transformModel(this@ChartView, Animation.range.endInclusive) }
     }
@@ -194,6 +226,16 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   /** Sets the [Interpolator] for difference animations. */
   public fun setAnimationInterpolator(interpolator: Interpolator) {
     animator.interpolator = interpolator
+  }
+
+  /** Sets the duration (in milliseconds) of the initial (reveal) animation. */
+  public fun setInitialAnimationDuration(durationMillis: Long) {
+    initialAnimationDuration = durationMillis
+  }
+
+  /** Sets the [Interpolator] for the initial (reveal) animation. */
+  public fun setInitialAnimationInterpolator(interpolator: Interpolator) {
+    initialAnimationInterpolator = interpolator
   }
 
   override fun onRtlPropertiesChanged(layoutDirection: Int) {
@@ -226,7 +268,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   }
 }
 
-private fun ValueAnimator.start(block: (Float) -> Unit) {
+private fun ValueAnimator.start(onEnd: (() -> Unit)? = null, block: (Float) -> Unit) {
   val updateListener = ValueAnimator.AnimatorUpdateListener { block(it.animatedFraction) }
   addUpdateListener(updateListener)
   addListener(
@@ -234,6 +276,7 @@ private fun ValueAnimator.start(block: (Float) -> Unit) {
       override fun onAnimationCancel(animation: Animator) {
         removeUpdateListener(updateListener)
         removeListener(this)
+        onEnd?.invoke()
       }
 
       override fun onAnimationEnd(animation: Animator) {
