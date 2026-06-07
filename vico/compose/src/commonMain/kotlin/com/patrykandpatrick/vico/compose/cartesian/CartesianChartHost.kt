@@ -75,6 +75,8 @@ internal fun narrowMarkerTargets(
  * @param zoomState houses information on the [CartesianChart]’s zoom factor. Allows for zoom
  *   customization.
  * @param animationSpec the [AnimationSpec] for difference animations.
+ * @param initialAnimationSpec the [AnimationSpec] for the initial (reveal) animation. Defaults to
+ *   [animationSpec]. Set to `null` to skip the initial animation.
  * @param animateIn whether to run an initial animation when the [CartesianChartHost] enters
  *   composition. The animation is skipped for previews.
  * @param placeholder shown when no [CartesianChartModel] is available.
@@ -87,11 +89,19 @@ public fun CartesianChartHost(
   scrollState: VicoScrollState = rememberVicoScrollState(),
   zoomState: VicoZoomState = rememberDefaultVicoZoomState(scrollState.scrollEnabled),
   animationSpec: AnimationSpec<Float>? = defaultCartesianDiffAnimationSpec,
+  initialAnimationSpec: AnimationSpec<Float>? = animationSpec,
   animateIn: Boolean = true,
   placeholder: @Composable BoxScope.() -> Unit = {},
 ) {
   val mutableRanges = remember { MutableCartesianChartRanges() }
-  val modelWrapper by modelProducer.collectAsState(chart, animationSpec, animateIn, mutableRanges)
+  val modelWrapper by
+    modelProducer.collectAsState(
+      chart,
+      animationSpec,
+      initialAnimationSpec,
+      animateIn,
+      mutableRanges,
+    )
   val (model, previousModel, ranges, extraStore) = modelWrapper
 
   CartesianChartHostBox(modifier) {
