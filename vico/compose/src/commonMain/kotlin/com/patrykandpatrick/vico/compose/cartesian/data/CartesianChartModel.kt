@@ -109,7 +109,6 @@ internal fun CartesianChartModelProducer.collectAsState(
   chart: CartesianChart,
   animationSpec: AnimationSpec<Float>?,
   initialAnimationSpec: AnimationSpec<Float>?,
-  animateIn: Boolean,
   ranges: MutableCartesianChartRanges,
 ): State<CartesianChartData> {
   var previousHashCode by remember { ValueWrapper<Int?>(null) }
@@ -121,6 +120,8 @@ internal fun CartesianChartModelProducer.collectAsState(
   val isInPreview = LocalInspectionMode.current
   val scope = rememberCoroutineScope { getCoroutineContext(isInPreview) }
   val chartState = rememberWrappedValue(chart)
+  val animationSpecState = rememberUpdatedState(animationSpec)
+  val initialAnimationSpecState = rememberUpdatedState(initialAnimationSpec)
 
   fun updateRanges(model: CartesianChartModel?): CartesianChartRanges {
     ranges.reset()
@@ -138,7 +139,7 @@ internal fun CartesianChartModelProducer.collectAsState(
       model
     }
   }
-  LaunchRegistration(chart.id, animateIn, isInPreview) {
+  LaunchRegistration(chart.id, isInPreview) {
     var mainAnimationJob: Job? = null
     var animationFrameJob: Job? = null
     var finalAnimationFrameJob: Job? = null
@@ -148,9 +149,9 @@ internal fun CartesianChartModelProducer.collectAsState(
     val startAnimation: (transformModel: suspend (key: Any, fraction: Float) -> Unit) -> Unit =
       { transformModel ->
         val isInitial = isInitialAnimation && dataState.value.model == null
-        val spec = if (isInitial) initialAnimationSpec else animationSpec
+        val spec = if (isInitial) initialAnimationSpecState.value else animationSpecState.value
         isInitialAnimation = false
-        if (spec != null && !isInPreview && (dataState.value.model != null || animateIn)) {
+        if (spec != null && !isInPreview) {
           isAnimationRunning = true
           mainAnimationJob =
             scope.launch {
@@ -218,17 +219,12 @@ internal fun CartesianChartModelProducer.collectAsState(
 }
 
 @Composable
-private fun LaunchRegistration(
-  chartID: Uuid,
-  animateIn: Boolean,
-  isInPreview: Boolean,
-  block: () -> () -> Unit,
-) {
+private fun LaunchRegistration(chartID: Uuid, isInPreview: Boolean, block: () -> () -> Unit) {
   val runBlocking = runBlocking
   if (isInPreview && runBlocking != null) {
     runBlocking(getCoroutineContext(isPreview = true)) { block() }
   } else {
-    LaunchedEffect(chartID, animateIn) {
+    LaunchedEffect(chartID) {
       withContext(getCoroutineContext(isPreview = false)) {
         val disposable = block()
         currentCoroutineContext().job.invokeOnCompletion { disposable() }

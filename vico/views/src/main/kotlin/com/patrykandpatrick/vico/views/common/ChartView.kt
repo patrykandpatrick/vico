@@ -67,6 +67,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   private var initialAnimationDuration: Long? = null
   private var initialAnimationInterpolator: Interpolator? = null
   private var isInitialAnimation = true
+  private var isInitialAnimationEnabled = true
 
   protected val extraStore: MutableExtraStore = MutableExtraStore()
 
@@ -91,7 +92,12 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   private var shouldAcceptMotionEvents = false
 
   /** Whether to run an initial animation when the [ChartView] is created. */
-  public var animateIn: Boolean = true
+  @Deprecated("Call `setInitialAnimationDuration(0)` to skip the initial animation.")
+  public var animateIn: Boolean
+    get() = isInitialAnimationEnabled
+    set(value) {
+      isInitialAnimationEnabled = value
+    }
 
   override fun onAttachedToWindow() {
     super.onAttachedToWindow()
@@ -157,7 +163,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   }
 
   protected fun startAnimation(transformModel: suspend (key: Any, fraction: Float) -> Unit) {
-    if (model != null || animateIn) {
+    if (model != null || isInitialAnimationEnabled) {
       handler?.post {
         val isInitial = isInitialAnimation && model == null
         isInitialAnimation = false
@@ -181,26 +187,26 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
         animator.start(
           onEnd = onEnd,
           block = block@{ fraction ->
-            when {
-              !isAnimationRunning -> return@block
-              !isAnimationFrameGenerationRunning -> {
-                isAnimationFrameGenerationRunning = true
-                animationFrameJob =
-                  coroutineScope?.launch {
-                    transformModel(this@ChartView, fraction)
-                    isAnimationFrameGenerationRunning = false
-                  }
+              when {
+                !isAnimationRunning -> return@block
+                !isAnimationFrameGenerationRunning -> {
+                  isAnimationFrameGenerationRunning = true
+                  animationFrameJob =
+                    coroutineScope?.launch {
+                      transformModel(this@ChartView, fraction)
+                      isAnimationFrameGenerationRunning = false
+                    }
+                }
+                fraction == 1f -> {
+                  finalAnimationFrameJob =
+                    coroutineScope?.launch(Dispatchers.Default) {
+                      animationFrameJob?.cancelAndJoin()
+                      transformModel(this@ChartView, fraction)
+                      isAnimationFrameGenerationRunning = false
+                    }
+                }
               }
-              fraction == 1f -> {
-                finalAnimationFrameJob =
-                  coroutineScope?.launch(Dispatchers.Default) {
-                    animationFrameJob?.cancelAndJoin()
-                    transformModel(this@ChartView, fraction)
-                    isAnimationFrameGenerationRunning = false
-                  }
-              }
-            }
-          },
+            },
         )
       }
     } else {
