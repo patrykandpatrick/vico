@@ -168,10 +168,10 @@ internal class ThemeHandler(private val context: Context, attrs: AttributeSet?) 
             titleComponent = titleComponent,
             title = title,
             titlePosition =
-              HorizontalAxis.TitlePosition.entries[
+              BaseAxis.TitlePosition.entries[
                   axisStyle.getInteger(
                     R.styleable.AxisStyle_horizontalAxisTitlePosition,
-                    HorizontalAxis.TitlePosition.Center.ordinal,
+                    BaseAxis.TitlePosition.Beside.ordinal,
                   )],
             tickPosition =
               BaseAxis.TickPosition.entries[
@@ -215,10 +215,10 @@ internal class ThemeHandler(private val context: Context, attrs: AttributeSet?) 
             titleComponent = titleComponent,
             title = title,
             titlePosition =
-              VerticalAxis.TitlePosition.entries[
+              BaseAxis.TitlePosition.entries[
                   axisStyle.getInteger(
                     R.styleable.AxisStyle_verticalAxisTitlePosition,
-                    VerticalAxis.TitlePosition.Side.ordinal,
+                    BaseAxis.TitlePosition.Beside.ordinal,
                   )],
             tickPosition =
               BaseAxis.TickPosition.entries[

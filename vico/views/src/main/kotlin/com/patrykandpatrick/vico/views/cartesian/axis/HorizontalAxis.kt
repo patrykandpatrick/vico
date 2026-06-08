@@ -210,16 +210,16 @@ protected constructor(
       }
 
       val titleText = title(model.extraStore)
-      // `Center` titles are drawn within the clip region, preserving the pre-`titlePosition`
-      // behavior. `End` titles are drawn after the clip is removed so they aren’t cut off at the
+      // `Beside` titles are drawn within the clip region, preserving the pre-`titlePosition`
+      // behavior. `AtEnd` titles are drawn after the clip is removed so they aren’t cut off at the
       // line range.
-      if (titlePosition == TitlePosition.Center && titleText != null) {
+      if (titlePosition == TitlePosition.Beside && titleText != null) {
         titleComponent?.drawTitle(this, titleText, lineLeft, lineRight)
       }
 
       canvas.restoreToCount(saveCount)
 
-      if (titlePosition == TitlePosition.End && titleText != null) {
+      if (titlePosition == TitlePosition.AtEnd && titleText != null) {
         titleComponent?.drawTitle(this, titleText, lineLeft, lineRight)
       }
 
@@ -235,7 +235,7 @@ protected constructor(
   ) {
     with(context) {
       when (titlePosition) {
-        TitlePosition.Center ->
+        TitlePosition.Beside ->
           draw(
             context = this,
             x = bounds.centerX(),
@@ -249,7 +249,7 @@ protected constructor(
             maxWidth = bounds.width().toInt(),
             text = title,
           )
-        TitlePosition.End ->
+        TitlePosition.AtEnd ->
           draw(
             context = this,
             x = if (isLtr) lineRight else lineLeft,
@@ -552,7 +552,7 @@ protected constructor(
       )
     var endMargin =
       itemPlacer.getEndLayerMargin(context, layerDimensions, context.tickThickness, maxLabelWidth)
-    if (titlePosition == TitlePosition.End) {
+    if (titlePosition == TitlePosition.AtEnd) {
       val titleWidth =
         title(model.extraStore)
           ?.let { title ->
@@ -589,24 +589,37 @@ protected constructor(
       when (size) {
         is Size.Auto -> {
           val labelHeight = getMaxLabelHeight(layerDimensions, fullXRange, maxLabelWidth)
-          val titleComponentHeight =
-            title(model.extraStore)
-              ?.let { title ->
-                titleComponent?.getHeight(
-                  context = context,
-                  maxWidth = bounds.width().toInt(),
-                  text = title,
+          val baseHeight = labelHeight + lineThickness + outwardTickLength
+          val titleText = title(model.extraStore)
+          when (titlePosition) {
+              // The `Beside` title is drawn at the plot width, so it’s measured at the same width.
+              TitlePosition.Beside ->
+                baseHeight +
+                  titleText
+                    ?.let {
+                      titleComponent?.getHeight(
+                        context = context,
+                        maxWidth = bounds.width().toInt(),
+                        text = it,
+                      )
+                    }
+                    .orZero
+              // The `AtEnd` title is drawn in the end-margin region, so it’s measured at the canvas
+              // width to avoid over-reserving height through premature wrapping.
+              TitlePosition.AtEnd ->
+                max(
+                  baseHeight,
+                  titleText
+                    ?.let {
+                      titleComponent?.getHeight(
+                        context = context,
+                        maxWidth = canvasSize.width.toInt(),
+                        text = it,
+                      )
+                    }
+                    .orZero,
                 )
-              }
-              .orZero
-          val height =
-            labelHeight + lineThickness + outwardTickLength
-          val fullHeight =
-            when (titlePosition) {
-              TitlePosition.Center -> height + titleComponentHeight
-              TitlePosition.End -> max(height, titleComponentHeight)
             }
-          fullHeight
             .coerceAtMost(canvasSize.height / MAX_HEIGHT_DIVISOR)
             .coerceIn(size.minDp.pixels, size.maxDp.pixels)
         }
@@ -705,14 +718,6 @@ protected constructor(
     result = 31 * result + itemPlacer.hashCode()
     result = 31 * result + titlePosition.hashCode()
     return result
-  }
-
-  /** Defines how a [HorizontalAxis] title is positioned. */
-  public enum class TitlePosition {
-    /** Places the title above or below the axis, centered horizontally. */
-    Center,
-    /** Places the title at the axis line’s end, centered vertically on the axis line. */
-    End,
   }
 
   /** Determines for what _x_ values a [HorizontalAxis] displays labels, ticks, and guidelines. */
@@ -853,7 +858,7 @@ protected constructor(
       size: Size = Size.Auto(),
       titleComponent: TextComponent? = null,
       title: (ExtraStore) -> CharSequence? = { null },
-      titlePosition: TitlePosition = TitlePosition.Center,
+      titlePosition: TitlePosition = TitlePosition.Beside,
       tickPosition: TickPosition = TickPosition.Outside,
       lineDrawingOrder: LineDrawingOrder = LineDrawingOrder.UnderLayers,
     ): HorizontalAxis<Axis.Position.Horizontal.Top> =
@@ -888,7 +893,7 @@ protected constructor(
       size: Size = Size.Auto(),
       titleComponent: TextComponent? = null,
       title: (ExtraStore) -> CharSequence? = { null },
-      titlePosition: TitlePosition = TitlePosition.Center,
+      titlePosition: TitlePosition = TitlePosition.Beside,
       tickPosition: TickPosition = TickPosition.Outside,
       lineDrawingOrder: LineDrawingOrder = LineDrawingOrder.UnderLayers,
     ): HorizontalAxis<Axis.Position.Horizontal.Bottom> =

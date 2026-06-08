@@ -23,7 +23,7 @@ Numerous customization options are available; you can change the appearance of t
 
 [`BaseAxis.TickPosition`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.axis/-base-axis/-tick-position/) and [`BaseAxis.LineDrawingOrder`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.axis/-base-axis/-line-drawing-order/) let you place ticks outside, inside, or across the axis line and choose whether ticks and the axis line are drawn under or over the chart layers.
 
-[`HorizontalAxis.TitlePosition`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.axis/-horizontal-axis/-title-position/) and [`VerticalAxis.TitlePosition`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.axis/-vertical-axis/-title-position/) let you choose where an axis’s title is drawn.
+[`BaseAxis.TitlePosition`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.axis/-base-axis/-title-position/) lets you choose where an axis’s title is drawn.
 
 ## `ItemPlacer`
 

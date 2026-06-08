@@ -11,7 +11,7 @@ metaLinks:
 
 [`BaseAxis.TickPosition`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.axis/-base-axis/-tick-position/) and [`BaseAxis.LineDrawingOrder`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.axis/-base-axis/-line-drawing-order/) let you place ticks outside, inside, or across the axis line and choose whether ticks and the axis line are drawn under or over the chart layers. In XML, use the `tickPosition` and `lineDrawingOrder` attributes on `AxisStyle`.
 
-[`HorizontalAxis.TitlePosition`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.axis/-horizontal-axis/-title-position/) and [`VerticalAxis.TitlePosition`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.axis/-vertical-axis/-title-position/) let you choose where an axis’s title is drawn. In XML, use the `horizontalAxisTitlePosition` and `verticalAxisTitlePosition` attributes on `AxisStyle`.
+[`BaseAxis.TitlePosition`](https://api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.axis/-base-axis/-title-position/) lets you choose where an axis’s title is drawn. In XML, use the `horizontalAxisTitlePosition` and `verticalAxisTitlePosition` attributes on `AxisStyle`.
 
 ## Creation
 

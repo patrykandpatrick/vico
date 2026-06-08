@@ -48,7 +48,7 @@ private const val TITLE_ABS_ROTATION_DEGREES = 90f
  *   axis line.
  * @property verticalLabelPosition defines the vertical positions of the labels relative to their
  *   ticks.
- * @property titlePosition defines where the title is drawn.
+ * @property titlePosition defines the title’s position.
  */
 public open class VerticalAxis<P : Axis.Position.Vertical>
 protected constructor(
@@ -226,7 +226,7 @@ protected constructor(
   private fun TextComponent.drawTitle(context: CartesianDrawingContext, title: CharSequence) {
     with(context) {
       when (titlePosition) {
-        TitlePosition.Side ->
+        TitlePosition.Beside ->
           draw(
             context = this,
             text = title,
@@ -247,22 +247,16 @@ protected constructor(
               },
             maxHeight = bounds.height().toInt(),
           )
-        TitlePosition.Top -> {
-          val onLeft = position.isLeft(this)
+        TitlePosition.AtEnd ->
           draw(
             context = this,
             text = title,
-            x = if (onLeft) bounds.left else bounds.right,
+            x = getAxisLineCenterX(),
             y = bounds.top,
-            horizontalPosition =
-              if (onLeft == isLtr) Position.Horizontal.End else Position.Horizontal.Start,
+            horizontalPosition = Position.Horizontal.Center,
             verticalPosition = Position.Vertical.Top,
-            maxWidth =
-              (if (onLeft) canvasSize.width - bounds.left else bounds.right)
-                .toInt()
-                .coerceAtLeast(1),
+            maxWidth = canvasSize.width.toInt(),
           )
-        }
       }
     }
   }
@@ -379,13 +373,25 @@ protected constructor(
     horizontalLayerMargins: HorizontalCartesianLayerMargins,
     layerHeight: Float,
     model: CartesianChartModel,
-  ) {
-    val width = getWidth(context, layerHeight)
-    when (position) {
-      Axis.Position.Vertical.Start -> horizontalLayerMargins.ensureValuesAtLeast(start = width)
-      Axis.Position.Vertical.End -> horizontalLayerMargins.ensureValuesAtLeast(end = width)
+  ): Unit =
+    with(context) {
+      // An `AtEnd` title is centered on the axis line, so its outer half must stay on-canvas. The
+      // inner half overhangs the axis band, hence half the title width plus half the line thickness.
+      val titleInset =
+        title(model.extraStore)
+          ?.takeIf { titlePosition == TitlePosition.AtEnd }
+          ?.let { title ->
+            titleComponent
+              ?.getWidth(context = context, text = title, maxWidth = canvasSize.width.toInt())
+              ?.let { it.half + lineThickness.half }
+          }
+          .orZero
+      val margin = max(getWidth(context, layerHeight), titleInset)
+      when (position) {
+        Axis.Position.Vertical.Start -> horizontalLayerMargins.ensureValuesAtLeast(start = margin)
+        Axis.Position.Vertical.End -> horizontalLayerMargins.ensureValuesAtLeast(end = margin)
+      }
     }
-  }
 
   override fun updateLayerMargins(
     context: CartesianMeasuringContext,
@@ -398,7 +404,7 @@ protected constructor(
       val maxLineThickness = max(lineThickness, tickThickness)
       val titleHeight =
         title(model.extraStore)
-          ?.takeIf { titlePosition == TitlePosition.Top }
+          ?.takeIf { titlePosition == TitlePosition.AtEnd }
           ?.let { title ->
             titleComponent?.getHeight(
               context = context,
@@ -437,7 +443,7 @@ protected constructor(
         is Size.Auto -> {
           val titleComponentWidth =
             title(model.extraStore)
-              ?.takeIf { titlePosition == TitlePosition.Side }
+              ?.takeIf { titlePosition == TitlePosition.Beside }
               ?.let { title ->
                 titleComponent?.getWidth(
                   context = this,
@@ -576,19 +582,6 @@ protected constructor(
     Inside,
   }
 
-  /** Defines where a [VerticalAxis] draws its title. */
-  public enum class TitlePosition {
-    /** Draws the title beside the axis, rotated by 90 degrees. */
-    Side,
-    /**
-     * Draws the title horizontally above the axis line, anchored to the axis’s side of the canvas
-     * (the start edge for a start [VerticalAxis], the end edge for an end one) and extending toward
-     * the [CartesianLayer] area. If both a start and an end [VerticalAxis] use [Top] and their
-     * titles are wide enough, they may overlap.
-     */
-    Top,
-  }
-
   /** Determines for what _y_ values a [VerticalAxis] displays labels, ticks, and guidelines. */
   public interface ItemPlacer {
     /**
@@ -697,7 +690,7 @@ protected constructor(
       size: Size = Size.Auto(),
       titleComponent: TextComponent? = null,
       title: (ExtraStore) -> CharSequence? = { null },
-      titlePosition: TitlePosition = TitlePosition.Side,
+      titlePosition: TitlePosition = TitlePosition.Beside,
       tickPosition: TickPosition =
         if (horizontalLabelPosition == Outside) TickPosition.Outside else TickPosition.Inside,
       lineDrawingOrder: LineDrawingOrder = LineDrawingOrder.UnderLayers,
@@ -737,7 +730,7 @@ protected constructor(
       size: Size = Size.Auto(),
       titleComponent: TextComponent? = null,
       title: (ExtraStore) -> CharSequence? = { null },
-      titlePosition: TitlePosition = TitlePosition.Side,
+      titlePosition: TitlePosition = TitlePosition.Beside,
       tickPosition: TickPosition =
         if (horizontalLabelPosition == Outside) TickPosition.Outside else TickPosition.Inside,
       lineDrawingOrder: LineDrawingOrder = LineDrawingOrder.UnderLayers,
