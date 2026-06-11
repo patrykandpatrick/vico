@@ -52,6 +52,7 @@ import kotlin.math.min
  *
  * @property itemPlacer determines for what _x_ values the [HorizontalAxis] displays labels, ticks,
  *   and guidelines.
+ * @property titlePosition defines the title’s position.
  */
 public open class HorizontalAxis<P : Axis.Position.Horizontal>
 protected constructor(
@@ -67,6 +68,7 @@ protected constructor(
   size: Size,
   titleComponent: TextComponent?,
   title: (ExtraStore) -> CharSequence?,
+  public val titlePosition: TitlePosition,
   tickPosition: TickPosition,
   lineDrawingOrder: LineDrawingOrder,
 ) :
@@ -104,6 +106,7 @@ protected constructor(
     itemPlacer: ItemPlacer,
     titleComponent: TextComponent?,
     title: (ExtraStore) -> CharSequence?,
+    titlePosition: TitlePosition,
     tickPosition: TickPosition,
     lineDrawingOrder: LineDrawingOrder,
   ) : this(
@@ -119,6 +122,7 @@ protected constructor(
     Size.Auto(),
     titleComponent,
     title,
+    titlePosition,
     tickPosition,
     lineDrawingOrder,
   )
@@ -227,29 +231,67 @@ protected constructor(
         )
       }
 
-      title(model.extraStore)?.let { title ->
-        titleComponent?.draw(
-          context = this,
-          x = bounds.center.x,
-          y = if (position == Axis.Position.Horizontal.Top) bounds.top else bounds.bottom,
-          verticalPosition =
-            if (position == Axis.Position.Horizontal.Top) {
-              Position.Vertical.Bottom
-            } else {
-              Position.Vertical.Top
-            },
-          maxWidth = bounds.width.toInt(),
-          text = title,
-        )
-      }
-
       if (lineDrawingOrder == LineDrawingOrder.UnderLayers) {
         drawLineAndTicks(context, axisDimensions)
       }
 
+      val titleText = title(model.extraStore)
+      // `Beside` titles are drawn within the clip region, preserving the pre-`titlePosition`
+      // behavior. `AtEnd` titles are drawn after the clip is removed so they aren’t cut off at the
+      // line range.
+      if (titlePosition == TitlePosition.Beside && titleText != null) {
+        titleComponent?.drawTitle(this, titleText, lineLeft, lineRight)
+      }
+
       canvas.restore()
 
+      if (titlePosition == TitlePosition.AtEnd && titleText != null) {
+        titleComponent?.drawTitle(this, titleText, lineLeft, lineRight)
+      }
+
       drawGuidelines(context, baseCanvasX, fullXRange, labelValues, lineValues)
+    }
+  }
+
+  private fun TextComponent.drawTitle(
+    context: CartesianDrawingContext,
+    title: CharSequence,
+    lineLeft: Float,
+    lineRight: Float,
+  ) {
+    with(context) {
+      when (titlePosition) {
+        TitlePosition.Beside ->
+          draw(
+            context = this,
+            x = bounds.center.x,
+            y = if (position == Axis.Position.Horizontal.Top) bounds.top else bounds.bottom,
+            verticalPosition =
+              if (position == Axis.Position.Horizontal.Top) {
+                Position.Vertical.Bottom
+              } else {
+                Position.Vertical.Top
+              },
+            maxWidth = bounds.width.toInt(),
+            text = title,
+          )
+        TitlePosition.AtEnd ->
+          draw(
+            context = this,
+            x = if (isLtr) lineRight else lineLeft,
+            y =
+              if (position == Axis.Position.Horizontal.Top) {
+                bounds.bottom - lineThickness.half
+              } else {
+                bounds.top + lineThickness.half
+              },
+            horizontalPosition = Position.Horizontal.End,
+            verticalPosition = Position.Vertical.Center,
+            maxWidth =
+              (if (isLtr) canvasSize.width - lineRight else lineLeft).toInt().coerceAtLeast(1),
+            text = title,
+          )
+      }
     }
   }
 
@@ -525,15 +567,29 @@ protected constructor(
     val maxLabelWidth =
       context.getMaxLabelWidth(layerDimensions, context.internalGetFullXRange(layerDimensions))
     val height = getHeight(context, layerDimensions, maxLabelWidth)
-    layerMargins.ensureValuesAtLeast(
+    var startMargin =
       itemPlacer.getStartLayerMargin(
         context,
         layerDimensions,
         context.tickThickness,
         maxLabelWidth,
-      ),
-      itemPlacer.getEndLayerMargin(context, layerDimensions, context.tickThickness, maxLabelWidth),
-    )
+      )
+    var endMargin =
+      itemPlacer.getEndLayerMargin(context, layerDimensions, context.tickThickness, maxLabelWidth)
+    if (titlePosition == TitlePosition.AtEnd) {
+      val titleWidth =
+        title(model.extraStore)
+          ?.let { title ->
+            titleComponent?.getWidth(
+              context = context,
+              text = title,
+              maxWidth = context.canvasSize.width.toInt(),
+            )
+          }
+          .orZero
+      if (context.isLtr) endMargin += titleWidth else startMargin += titleWidth
+    }
+    layerMargins.ensureValuesAtLeast(startMargin, endMargin)
     when (position) {
       Axis.Position.Horizontal.Top -> layerMargins.ensureValuesAtLeast(top = height)
       Axis.Position.Horizontal.Bottom -> layerMargins.ensureValuesAtLeast(bottom = height)
@@ -557,17 +613,37 @@ protected constructor(
       when (size) {
         is Size.Auto -> {
           val labelHeight = getMaxLabelHeight(layerDimensions, fullXRange, maxLabelWidth)
-          val titleComponentHeight =
-            title(model.extraStore)
-              ?.let { title ->
-                titleComponent?.getHeight(
-                  context = context,
-                  maxWidth = bounds.width.toInt(),
-                  text = title,
+          val baseHeight = labelHeight + lineThickness + outwardTickLength
+          val titleText = title(model.extraStore)
+          when (titlePosition) {
+              // The `Beside` title is drawn at the plot width, so it’s measured at the same width.
+              TitlePosition.Beside ->
+                baseHeight +
+                  titleText
+                    ?.let {
+                      titleComponent?.getHeight(
+                        context = context,
+                        maxWidth = bounds.width.toInt(),
+                        text = it,
+                      )
+                    }
+                    .orZero
+              // The `AtEnd` title is drawn in the end-margin region, so it’s measured at the canvas
+              // width to avoid over-reserving height through premature wrapping.
+              TitlePosition.AtEnd ->
+                max(
+                  baseHeight,
+                  titleText
+                    ?.let {
+                      titleComponent?.getHeight(
+                        context = context,
+                        maxWidth = canvasSize.width.toInt(),
+                        text = it,
+                      )
+                    }
+                    .orZero,
                 )
-              }
-              .orZero
-          (labelHeight + titleComponentHeight + lineThickness + outwardTickLength)
+            }
             .coerceAtMost(canvasSize.height / MAX_HEIGHT_DIVISOR)
             .coerceIn(size.min.pixels, size.max.pixels)
         }
@@ -633,6 +709,7 @@ protected constructor(
     size: Size = this.size,
     titleComponent: TextComponent? = this.titleComponent,
     title: (ExtraStore) -> CharSequence? = this.title,
+    titlePosition: TitlePosition = this.titlePosition,
     tickPosition: TickPosition = this.tickPosition,
     lineDrawingOrder: LineDrawingOrder = this.lineDrawingOrder,
   ): HorizontalAxis<P> =
@@ -649,14 +726,23 @@ protected constructor(
       size,
       titleComponent,
       title,
+      titlePosition,
       tickPosition,
       lineDrawingOrder,
     )
 
   override fun equals(other: Any?): Boolean =
-    super.equals(other) && other is HorizontalAxis<*> && itemPlacer == other.itemPlacer
+    super.equals(other) &&
+      other is HorizontalAxis<*> &&
+      itemPlacer == other.itemPlacer &&
+      titlePosition == other.titlePosition
 
-  override fun hashCode(): Int = 31 * super.hashCode() + itemPlacer.hashCode()
+  override fun hashCode(): Int {
+    var result = super.hashCode()
+    result = 31 * result + itemPlacer.hashCode()
+    result = 31 * result + titlePosition.hashCode()
+    return result
+  }
 
   /** Determines for what _x_ values a [HorizontalAxis] displays labels, ticks, and guidelines. */
   public interface ItemPlacer {
@@ -825,6 +911,7 @@ protected constructor(
       size: Size = Size.Auto(),
       titleComponent: TextComponent? = null,
       title: (ExtraStore) -> CharSequence? = { null },
+      titlePosition: TitlePosition = TitlePosition.Beside,
       tickPosition: TickPosition = TickPosition.Outside,
       lineDrawingOrder: LineDrawingOrder = LineDrawingOrder.UnderLayers,
     ): HorizontalAxis<Axis.Position.Horizontal.Top> =
@@ -840,6 +927,7 @@ protected constructor(
         size,
         titleComponent,
         title,
+        titlePosition,
         tickPosition,
         lineDrawingOrder,
       ) {
@@ -856,6 +944,7 @@ protected constructor(
           size,
           titleComponent,
           title,
+          titlePosition,
           tickPosition,
           lineDrawingOrder,
         )
@@ -875,6 +964,7 @@ protected constructor(
       size: Size = Size.Auto(),
       titleComponent: TextComponent? = null,
       title: (ExtraStore) -> CharSequence? = { null },
+      titlePosition: TitlePosition = TitlePosition.Beside,
       tickPosition: TickPosition = TickPosition.Outside,
       lineDrawingOrder: LineDrawingOrder = LineDrawingOrder.UnderLayers,
     ): HorizontalAxis<Axis.Position.Horizontal.Bottom> =
@@ -890,6 +980,7 @@ protected constructor(
         size,
         titleComponent,
         title,
+        titlePosition,
         tickPosition,
         lineDrawingOrder,
       ) {
@@ -906,6 +997,7 @@ protected constructor(
           size,
           titleComponent,
           title,
+          titlePosition,
           tickPosition,
           lineDrawingOrder,
         )

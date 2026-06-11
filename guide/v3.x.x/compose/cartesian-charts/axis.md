@@ -23,6 +23,8 @@ Numerous customization options are available; you can change the appearance of t
 
 [`BaseAxis.TickPosition`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.axis/-base-axis/-tick-position/) and [`BaseAxis.LineDrawingOrder`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.axis/-base-axis/-line-drawing-order/) let you place ticks outside, inside, or across the axis line and choose whether ticks and the axis line are drawn under or over the chart layers.
 
+[`BaseAxis.TitlePosition`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.axis/-base-axis/-title-position/) lets you choose where an axis’s title is drawn.
+
 ## `ItemPlacer`
 
 [`HorizontalAxis.ItemPlacer`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.axis/-horizontal-axis/-item-placer/) and [`VerticalAxis.ItemPlacer`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.axis/-vertical-axis/-item-placer/) let you customize for what _x_- and _y_-values labels and lines are displayed. Four factory functions are available:
