@@ -47,7 +47,11 @@ internal abstract class BaseAreaFill(open val splitY: (ExtraStore) -> Number) :
   ) {
     @Suppress("DEPRECATION") linePath.computeBounds(areaBounds, false)
     with(context) {
-      val canvasSplitY = getCanvasSplitY(splitY, halfLineThickness, verticalAxisPosition)
+      // `getCanvasSplitY` can return a value slightly outside `layerBounds`; it's clamped so the
+      // polygon stays within the chart bounds.
+      val canvasSplitY =
+        getCanvasSplitY(splitY, halfLineThickness, verticalAxisPosition)
+          .coerceIn(layerBounds.top, layerBounds.bottom)
       // The area fill is the region between the line and the split line. Closing the line path to
       // the split line yields this region on both sides of the split. The fill is positioned and
       // separated via canvas clipping (see `fillArea`) rather than a boolean path operation:
@@ -65,7 +69,7 @@ internal abstract class BaseAreaFill(open val splitY: (ExtraStore) -> Number) :
 
   /** Fills [areaPath] with [paint], clipped to [fillBounds]. */
   protected fun CartesianDrawingContext.fillArea(areaPath: Path, paint: Paint, fillBounds: RectF) {
-    if (fillBounds.height() <= 0f) return
+    if (fillBounds.width() <= 0f || fillBounds.height() <= 0f) return
     val checkpoint = canvas.save()
     canvas.clipRect(fillBounds)
     canvas.drawPath(areaPath, paint)
@@ -95,16 +99,15 @@ internal data class DoubleAreaFill(
   private val bounds = RectF()
 
   override fun CartesianDrawingContext.drawAreas(areaPath: Path, canvasSplitY: Float) {
-    // `canvasSplitY` can fall slightly outside `layerBounds`, so the bands are clamped to it.
-    val splitY = canvasSplitY.coerceIn(layerBounds.top, layerBounds.bottom)
-    if (splitY > layerBounds.top) {
-      bounds.set(layerBounds.left, layerBounds.top, layerBounds.right, splitY)
+    // `canvasSplitY` is already clamped to `layerBounds` by `BaseAreaFill`.
+    if (canvasSplitY > layerBounds.top) {
+      bounds.set(layerBounds.left, layerBounds.top, layerBounds.right, canvasSplitY)
       paint.color = topFill.color
       paint.shader = topFill.shaderProvider?.getShader(this, bounds)
       fillArea(areaPath, paint, bounds)
     }
-    if (splitY < layerBounds.bottom) {
-      bounds.set(layerBounds.left, splitY, layerBounds.right, layerBounds.bottom)
+    if (canvasSplitY < layerBounds.bottom) {
+      bounds.set(layerBounds.left, canvasSplitY, layerBounds.right, layerBounds.bottom)
       paint.color = bottomFill.color
       paint.shader = bottomFill.shaderProvider?.getShader(this, bounds)
       fillArea(areaPath, paint, bounds)

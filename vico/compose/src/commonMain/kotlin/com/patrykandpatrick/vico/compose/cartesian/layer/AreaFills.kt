@@ -49,7 +49,11 @@ internal abstract class BaseAreaFill(open val splitY: (ExtraStore) -> Number) :
   ) {
     val areaBounds = linePath.getBounds()
     with(context) {
-      val canvasSplitY = getCanvasSplitY(splitY, halfLineThickness, verticalAxisPosition)
+      // `getCanvasSplitY` can return a value slightly outside `layerBounds`; it's clamped so the
+      // polygon stays within the chart bounds.
+      val canvasSplitY =
+        getCanvasSplitY(splitY, halfLineThickness, verticalAxisPosition)
+          .coerceIn(layerBounds.top, layerBounds.bottom)
       // The area fill is the region between the line and the split line. Closing the line path to
       // the split line yields this region on both sides of the split. The fill is positioned and
       // separated via canvas clipping (see `fillArea`) rather than a boolean path operation:
@@ -68,7 +72,7 @@ internal abstract class BaseAreaFill(open val splitY: (ExtraStore) -> Number) :
 
   /** Fills [areaPath] with [paint], clipped to and aligned with [fillBounds]. */
   protected fun CartesianDrawingContext.fillArea(areaPath: Path, paint: Paint, fillBounds: Rect) {
-    if (fillBounds.height <= 0f) return
+    if (fillBounds.width <= 0f || fillBounds.height <= 0f) return
     val (left, top) = fillBounds
     // The brush is anchored at the origin and sized to `fillBounds`, so the canvas is translated to
     // `fillBounds`’ top-left and a translated copy of the path is drawn (rather than mutating the
@@ -104,16 +108,15 @@ internal data class DoubleAreaFill(
   private val paint = Paint()
 
   override fun CartesianDrawingContext.drawAreas(areaPath: Path, canvasSplitY: Float) {
-    // `canvasSplitY` can fall slightly outside `layerBounds`, so the bands are clamped to it.
-    val splitY = canvasSplitY.coerceIn(layerBounds.top, layerBounds.bottom)
-    if (splitY > layerBounds.top) {
-      val bounds = Rect(layerBounds.left, layerBounds.top, layerBounds.right, splitY)
+    // `canvasSplitY` is already clamped to `layerBounds` by `BaseAreaFill`.
+    if (canvasSplitY > layerBounds.top) {
+      val bounds = Rect(layerBounds.left, layerBounds.top, layerBounds.right, canvasSplitY)
       paint.color = topFill.color
       topFill.brush?.applyTo(size = bounds.size, p = paint, alpha = 1f)
       fillArea(areaPath, paint, bounds)
     }
-    if (splitY < layerBounds.bottom) {
-      val bounds = Rect(layerBounds.left, splitY, layerBounds.right, layerBounds.bottom)
+    if (canvasSplitY < layerBounds.bottom) {
+      val bounds = Rect(layerBounds.left, canvasSplitY, layerBounds.right, layerBounds.bottom)
       paint.color = bottomFill.color
       bottomFill.brush?.applyTo(size = bounds.size, p = paint, alpha = 1f)
       fillArea(areaPath, paint, bounds)
