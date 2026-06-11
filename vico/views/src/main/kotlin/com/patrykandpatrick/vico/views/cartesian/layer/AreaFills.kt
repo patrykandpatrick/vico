@@ -31,16 +31,13 @@ internal abstract class BaseAreaFill(open val splitY: (ExtraStore) -> Number) :
   LineCartesianLayer.AreaFill {
   private val areaBounds = RectF()
   private val areaPath = Path()
-  private val clipPath = Path()
-  private val fillBounds = RectF()
 
-  open fun reset() {}
-
-  abstract fun onTopAreasCreated(context: CartesianDrawingContext, path: Path, fillBounds: RectF)
-
-  abstract fun onBottomAreasCreated(context: CartesianDrawingContext, path: Path, fillBounds: RectF)
-
-  open fun onAreasCreated(context: CartesianDrawingContext, fillBounds: RectF) {}
+  /**
+   * Draws the area(s). [areaPath] is the region between the line and the split line; [canvasSplitY]
+   * is the split line’s canvas _y_-coordinate. Implementations fill the relevant band(s) via
+   * [fillArea].
+   */
+  abstract fun CartesianDrawingContext.drawAreas(areaPath: Path, canvasSplitY: Float)
 
   override fun draw(
     context: CartesianDrawingContext,
@@ -48,39 +45,35 @@ internal abstract class BaseAreaFill(open val splitY: (ExtraStore) -> Number) :
     halfLineThickness: Float,
     verticalAxisPosition: Axis.Position.Vertical?,
   ) {
-    reset()
     @Suppress("DEPRECATION") linePath.computeBounds(areaBounds, false)
     with(context) {
-      val canvasSplitY = getCanvasSplitY(splitY, halfLineThickness, verticalAxisPosition)
-      if (canvasSplitY > layerBounds.top) {
-        clipPath.rewind()
-        fillBounds.set(layerBounds.left, layerBounds.top, layerBounds.right, canvasSplitY)
-        clipPath.addRect(fillBounds, Path.Direction.CW)
-        with(areaPath) {
-          set(linePath)
-          lineTo(areaBounds.getEnd(isLtr), layerBounds.bottom)
-          lineTo(areaBounds.getStart(isLtr), layerBounds.bottom)
-          close()
-          op(clipPath, Path.Op.INTERSECT)
-        }
-        onTopAreasCreated(this, areaPath, fillBounds)
+      // `getCanvasSplitY` can return a value slightly outside `layerBounds`; it's clamped so the
+      // polygon stays within the chart bounds.
+      val canvasSplitY =
+        getCanvasSplitY(splitY, halfLineThickness, verticalAxisPosition)
+          .coerceIn(layerBounds.top, layerBounds.bottom)
+      // The area fill is the region between the line and the split line. Closing the line path to
+      // the split line yields this region on both sides of the split. The fill is positioned and
+      // separated via canvas clipping (see `fillArea`) rather than a boolean path operation:
+      // `Path.op` can invert a self-intersecting subject, flipping the fill to the wrong side of
+      // the line. See https://github.com/patrykandpatrick/vico/issues/1517.
+      with(areaPath) {
+        set(linePath)
+        lineTo(areaBounds.getEnd(isLtr), canvasSplitY)
+        lineTo(areaBounds.getStart(isLtr), canvasSplitY)
+        close()
       }
-      if (canvasSplitY < layerBounds.bottom) {
-        clipPath.rewind()
-        fillBounds.set(layerBounds.left, canvasSplitY, layerBounds.right, layerBounds.bottom)
-        clipPath.addRect(fillBounds, Path.Direction.CW)
-        with(areaPath) {
-          set(linePath)
-          lineTo(areaBounds.getEnd(isLtr), layerBounds.top)
-          lineTo(areaBounds.getStart(isLtr), layerBounds.top)
-          close()
-          op(clipPath, Path.Op.INTERSECT)
-        }
-        onBottomAreasCreated(this, areaPath, fillBounds)
-      }
-      fillBounds.set(layerBounds)
-      onAreasCreated(this, fillBounds)
+      drawAreas(areaPath, canvasSplitY)
     }
+  }
+
+  /** Fills [areaPath] with [paint], clipped to [fillBounds]. */
+  protected fun CartesianDrawingContext.fillArea(areaPath: Path, paint: Paint, fillBounds: RectF) {
+    if (fillBounds.width() <= 0f || fillBounds.height() <= 0f) return
+    val checkpoint = canvas.save()
+    canvas.clipRect(fillBounds)
+    canvas.drawPath(areaPath, paint)
+    canvas.restoreToCount(checkpoint)
   }
 }
 
@@ -89,30 +82,11 @@ internal data class SingleAreaFill(
   override val splitY: (ExtraStore) -> Number,
 ) : BaseAreaFill(splitY) {
   private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
-  private val areaPath = Path()
 
-  override fun reset() {
-    areaPath.rewind()
-  }
-
-  override fun onTopAreasCreated(context: CartesianDrawingContext, path: Path, fillBounds: RectF) {
-    areaPath.addPath(path)
-  }
-
-  override fun onBottomAreasCreated(
-    context: CartesianDrawingContext,
-    path: Path,
-    fillBounds: RectF,
-  ) {
-    areaPath.addPath(path)
-  }
-
-  override fun onAreasCreated(context: CartesianDrawingContext, fillBounds: RectF) {
-    with(context) {
-      paint.color = fill.color
-      paint.shader = fill.shaderProvider?.getShader(this, fillBounds)
-      canvas.drawPath(areaPath, paint)
-    }
+  override fun CartesianDrawingContext.drawAreas(areaPath: Path, canvasSplitY: Float) {
+    paint.color = fill.color
+    paint.shader = fill.shaderProvider?.getShader(this, layerBounds)
+    fillArea(areaPath, paint, layerBounds)
   }
 }
 
@@ -122,53 +96,31 @@ internal data class DoubleAreaFill(
   override val splitY: (ExtraStore) -> Number,
 ) : BaseAreaFill(splitY) {
   private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+  private val bounds = RectF()
 
-  override fun onTopAreasCreated(context: CartesianDrawingContext, path: Path, fillBounds: RectF) {
-    with(context) {
+  override fun CartesianDrawingContext.drawAreas(areaPath: Path, canvasSplitY: Float) {
+    // `canvasSplitY` is already clamped to `layerBounds` by `BaseAreaFill`.
+    if (canvasSplitY > layerBounds.top) {
+      bounds.set(layerBounds.left, layerBounds.top, layerBounds.right, canvasSplitY)
       paint.color = topFill.color
-      paint.shader = topFill.shaderProvider?.getShader(this, fillBounds)
-      canvas.drawPath(path, paint)
+      paint.shader = topFill.shaderProvider?.getShader(this, bounds)
+      fillArea(areaPath, paint, bounds)
     }
-  }
-
-  override fun onBottomAreasCreated(
-    context: CartesianDrawingContext,
-    path: Path,
-    fillBounds: RectF,
-  ) {
-    with(context) {
+    if (canvasSplitY < layerBounds.bottom) {
+      bounds.set(layerBounds.left, canvasSplitY, layerBounds.right, layerBounds.bottom)
       paint.color = bottomFill.color
-      paint.shader = bottomFill.shaderProvider?.getShader(this, fillBounds)
-      canvas.drawPath(path, paint)
+      paint.shader = bottomFill.shaderProvider?.getShader(this, bounds)
+      fillArea(areaPath, paint, bounds)
     }
   }
 }
 
 internal data class ColorScaleAreaFill(private val colorScale: ColorScale) : BaseAreaFill({ 0 }) {
   private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
-  private val areaPath = Path()
 
-  override fun reset() {
-    areaPath.rewind()
-  }
-
-  override fun onTopAreasCreated(context: CartesianDrawingContext, path: Path, fillBounds: RectF) {
-    areaPath.addPath(path)
-  }
-
-  override fun onBottomAreasCreated(
-    context: CartesianDrawingContext,
-    path: Path,
-    fillBounds: RectF,
-  ) {
-    areaPath.addPath(path)
-  }
-
-  override fun onAreasCreated(context: CartesianDrawingContext, fillBounds: RectF) {
-    with(context) {
-      paint.shader = colorScale.getColorScaleShader(context)
-      canvas.drawPath(areaPath, paint)
-    }
+  override fun CartesianDrawingContext.drawAreas(areaPath: Path, canvasSplitY: Float) {
+    paint.shader = colorScale.getColorScaleShader(this)
+    fillArea(areaPath, paint, layerBounds)
   }
 }
 
