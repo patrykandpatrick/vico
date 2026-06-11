@@ -95,14 +95,16 @@ internal data class DoubleAreaFill(
   private val bounds = RectF()
 
   override fun CartesianDrawingContext.drawAreas(areaPath: Path, canvasSplitY: Float) {
-    if (canvasSplitY > layerBounds.top) {
-      bounds.set(layerBounds.left, layerBounds.top, layerBounds.right, canvasSplitY)
+    // `canvasSplitY` can fall slightly outside `layerBounds`, so the bands are clamped to it.
+    val splitY = canvasSplitY.coerceIn(layerBounds.top, layerBounds.bottom)
+    if (splitY > layerBounds.top) {
+      bounds.set(layerBounds.left, layerBounds.top, layerBounds.right, splitY)
       paint.color = topFill.color
       paint.shader = topFill.shaderProvider?.getShader(this, bounds)
       fillArea(areaPath, paint, bounds)
     }
-    if (canvasSplitY < layerBounds.bottom) {
-      bounds.set(layerBounds.left, canvasSplitY, layerBounds.right, layerBounds.bottom)
+    if (splitY < layerBounds.bottom) {
+      bounds.set(layerBounds.left, splitY, layerBounds.right, layerBounds.bottom)
       paint.color = bottomFill.color
       paint.shader = bottomFill.shaderProvider?.getShader(this, bounds)
       fillArea(areaPath, paint, bounds)

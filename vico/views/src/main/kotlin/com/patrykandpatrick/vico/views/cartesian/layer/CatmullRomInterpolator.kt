@@ -61,13 +61,16 @@ internal data class CatmullRomInterpolator(private val alpha: Float) :
     x2: Float,
     x3: Float,
   ) {
-    // The control points’ _x_-coordinates are clamped to [[x1, x2]]. With uneven point spacing,
-    // the raw values can fall outside this range, making the spline non-monotonic in _x_ (it
+    // The control points’ _x_-coordinates are clamped to the segment’s _x_-range. With uneven point
+    // spacing, the raw values can fall outside it, making the spline non-monotonic in _x_ (it
     // overshoots horizontally and doubles back). That produces a self-intersecting area-fill
     // polygon, which can invert the fill. See https://github.com/patrykandpatrick/vico/issues/1517.
-    val cp1x = (x1 + scale * (x2 - x0)).coerceIn(x1, x2)
+    // (`min`/`max` because _x_ decreases left-to-right when the layout direction is right-to-left.)
+    val minX = minOf(x1, x2)
+    val maxX = maxOf(x1, x2)
+    val cp1x = (x1 + scale * (x2 - x0)).coerceIn(minX, maxX)
     val cp1y = y1 + scale * (y2 - y0)
-    val cp2x = (x2 - scale * (x3 - x1)).coerceIn(x1, x2)
+    val cp2x = (x2 - scale * (x3 - x1)).coerceIn(minX, maxX)
     val cp2y = y2 - scale * (y3 - y1)
     path.cubicTo(cp1x, cp1y, cp2x, cp2y, x2, y2)
   }
