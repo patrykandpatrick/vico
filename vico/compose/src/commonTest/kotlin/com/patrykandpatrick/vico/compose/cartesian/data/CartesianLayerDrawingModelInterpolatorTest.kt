@@ -48,6 +48,48 @@ class CartesianLayerDrawingModelInterpolatorTest {
     assertEquals(0.875f, transformedModel?.single()?.get(0.0)?.y)
   }
 
+  @Test
+  fun `Reveal - first appearance interpolates revealFraction from zero`() {
+    val interpolator = CartesianLayerDrawingModelInterpolator.line(reveal = true)
+    val newModel =
+      LineCartesianLayerDrawingModel(
+        entries = listOf(mapOf(0.0 to LineCartesianLayerDrawingModel.Entry(0.8f))),
+        opacity = 1f,
+        revealFraction = 1f,
+      )
+
+    interpolator.setModels(null, newModel)
+    val transformedModel = runTestCoroutine { interpolator.transform(0.5f) }
+
+    assertEquals(0.8f, transformedModel?.single()?.get(0.0)?.y)
+    assertEquals(1f, transformedModel?.opacity)
+    assertEquals(0.5f, transformedModel?.revealFraction)
+  }
+
+  @Test
+  fun `Reveal - later update interpolates normally`() {
+    val interpolator = CartesianLayerDrawingModelInterpolator.line(reveal = true)
+    val oldModel =
+      LineCartesianLayerDrawingModel(
+        entries = listOf(mapOf(0.0 to LineCartesianLayerDrawingModel.Entry(0.4f))),
+        opacity = 1f,
+        revealFraction = 1f,
+      )
+    val newModel =
+      LineCartesianLayerDrawingModel(
+        entries = listOf(mapOf(0.0 to LineCartesianLayerDrawingModel.Entry(0.8f))),
+        opacity = 1f,
+        revealFraction = 1f,
+      )
+
+    interpolator.setModels(oldModel, newModel)
+    val transformedModel = runTestCoroutine { interpolator.transform(0.5f) }
+
+    assertEquals(0.6f, transformedModel?.single()?.get(0.0)?.y)
+    assertEquals(1f, transformedModel?.opacity)
+    assertEquals(1f, transformedModel?.revealFraction)
+  }
+
   private fun <T> runTestCoroutine(block: suspend () -> T): T {
     var completed = false
     var value: Any? = null
