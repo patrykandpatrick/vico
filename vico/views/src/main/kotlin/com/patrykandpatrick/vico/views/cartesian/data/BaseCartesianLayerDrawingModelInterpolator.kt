@@ -19,40 +19,55 @@ package com.patrykandpatrick.vico.views.cartesian.data
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 
-@Suppress("DEPRECATION", "UNCHECKED_CAST")
-internal class DefaultCartesianLayerDrawingModelInterpolator<
+internal abstract class BaseCartesianLayerDrawingModelInterpolator<
   T : CartesianLayerDrawingModel.Entry,
   R : CartesianLayerDrawingModel<T>,
 > : CartesianLayerDrawingModelInterpolator<T, R> {
-  private var transformationMaps = emptyList<Map<Double, TransformationModel<T>>>()
-  private var oldDrawingModel: R? = null
-  private var newDrawingModel: R? = null
+  private var transformationMaps = emptyList<Map<Double, TransformationEntry<T>>>()
+  protected var oldDrawingModel: R? = null
+    private set
+
+  protected var newDrawingModel: R? = null
+    private set
 
   override fun setModels(old: R?, new: R?) {
     synchronized(this) {
       oldDrawingModel = old
       newDrawingModel = new
-      updateTransformationMap()
+      updateTransformationMaps()
     }
   }
 
-  override suspend fun transform(fraction: Float): R? =
-    newDrawingModel?.transform(
+  override suspend fun transform(fraction: Float): R? {
+    val new = newDrawingModel ?: return null
+    val old = oldDrawingModel
+    return transform(
+      old = old,
+      new = new,
       entries =
         transformationMaps.mapNotNull { map ->
           map
-            .mapNotNull { (x, model) ->
+            .map { (x, entry) ->
               currentCoroutineContext().ensureActive()
-              model.transform(fraction)?.let { entry -> x to entry }
+              x to transformEntry(oldModel = old, old = entry.old, new = entry.new, fraction)
             }
-            .takeIf { list -> list.isNotEmpty() }
+            .takeIf { entries -> entries.isNotEmpty() }
             ?.toMap()
         },
-      from = oldDrawingModel,
       fraction = fraction,
-    ) as R?
+    )
+  }
 
-  private fun updateTransformationMap() {
+  protected abstract fun transform(
+    old: R?,
+    new: R,
+    entries: List<Map<Double, T>>,
+    fraction: Float,
+  ): R
+
+  protected abstract fun transformEntry(oldModel: R?, old: T?, new: T, fraction: Float): T
+
+  private fun updateTransformationMaps() {
     val oldEntriesByKey =
       oldDrawingModel?.seriesKeys?.zip(oldDrawingModel.orEmpty())?.toMap().orEmpty()
     transformationMaps =
@@ -61,18 +76,10 @@ internal class DefaultCartesianLayerDrawingModelInterpolator<
         ?.zip(newDrawingModel.orEmpty())
         ?.map { (key, newEntries) ->
           val oldEntries = oldEntriesByKey[key]
-          val map = mutableMapOf<Double, TransformationModel<T>>()
-          oldEntries?.forEach { (x, entry) -> map[x] = TransformationModel(entry) }
-          newEntries.forEach { (x, entry) -> map[x] = TransformationModel(map[x]?.old, entry) }
-          map
+          newEntries.mapValues { (x, entry) -> TransformationEntry(oldEntries?.get(x), entry) }
         }
         .orEmpty()
   }
 
-  private class TransformationModel<T : CartesianLayerDrawingModel.Entry>(
-    val old: T?,
-    val new: T? = null,
-  ) {
-    fun transform(fraction: Float): T? = new?.transform(old, fraction) as T?
-  }
+  private class TransformationEntry<T : CartesianLayerDrawingModel.Entry>(val old: T?, val new: T)
 }

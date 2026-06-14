@@ -18,6 +18,7 @@ package com.patrykandpatrick.vico.shared.cartesian.data
 
 import com.patrykandpatrick.vico.shared.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.shared.common.lerp
+import com.patrykandpatrick.vico.shared.common.orZero
 
 /**
  * Houses [LineCartesianLayer] drawing information. [opacity] is the lines’ opacity.
@@ -36,17 +37,21 @@ public class LineCartesianLayerDrawingModel(
     revealFraction: Float = 1f,
   ) : this(entries, entries.indices.toList(), opacity, revealFraction)
 
+  @Deprecated(
+    "Layer-specific `CartesianLayerDrawingModelInterpolator` implementations now own " +
+      "interpolation policy. This hook remains for compatibility with custom interpolators."
+  )
   override fun transform(
     entries: List<Map<Double, Entry>>,
     from: CartesianLayerDrawingModel<Entry>?,
     fraction: Float,
   ): CartesianLayerDrawingModel<Entry> {
-    val old = from as LineCartesianLayerDrawingModel
+    val old = from as LineCartesianLayerDrawingModel?
     return LineCartesianLayerDrawingModel(
       entries,
       seriesKeys,
-      old.opacity.lerp(opacity, fraction),
-      old.revealFraction.lerp(revealFraction, fraction),
+      old?.opacity.orZero.lerp(opacity, fraction),
+      (old?.revealFraction ?: revealFraction).lerp(revealFraction, fraction),
     )
   }
 
@@ -72,11 +77,15 @@ public class LineCartesianLayerDrawingModel(
    * [LineCartesianLayer]’s height.
    */
   public class Entry(public val y: Float) : CartesianLayerDrawingModel.Entry {
+    @Deprecated(
+      "Layer-specific `CartesianLayerDrawingModelInterpolator` implementations now own " +
+        "interpolation policy. Entries should only carry drawing information."
+    )
     override fun transform(
       from: CartesianLayerDrawingModel.Entry?,
       fraction: Float,
     ): CartesianLayerDrawingModel.Entry {
-      val oldY = (from as? Entry)?.y ?: 0f
+      val oldY = (from as? Entry)?.y.orZero
       return Entry(oldY.lerp(y, fraction))
     }
 

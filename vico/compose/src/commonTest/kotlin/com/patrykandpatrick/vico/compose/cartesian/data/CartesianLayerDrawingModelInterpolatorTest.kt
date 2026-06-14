@@ -45,7 +45,24 @@ class CartesianLayerDrawingModelInterpolatorTest {
     val transformedModel = runTestCoroutine { interpolator.transform(0.5f) }
 
     assertEquals(listOf("second"), transformedModel?.seriesKeys)
-    assertEquals(0.875f, transformedModel?.single()?.get(0.0)?.y)
+    assertFloatEquals(0.875f, transformedModel?.single()?.get(0.0)?.y)
+  }
+
+  @Test
+  fun `Line - first appearance starts at baseline and transparent`() {
+    val interpolator = CartesianLayerDrawingModelInterpolator.line()
+    val newModel =
+      LineCartesianLayerDrawingModel(
+        entries = listOf(mapOf(0.0 to LineCartesianLayerDrawingModel.Entry(0.8f))),
+        opacity = 0.6f,
+      )
+
+    interpolator.setModels(null, newModel)
+    val transformedModel = runTestCoroutine { interpolator.transform(0.5f) }
+
+    assertFloatEquals(0.4f, transformedModel?.single()?.get(0.0)?.y)
+    assertFloatEquals(0.3f, transformedModel?.opacity)
+    assertFloatEquals(1f, transformedModel?.revealFraction)
   }
 
   @Test
@@ -61,9 +78,9 @@ class CartesianLayerDrawingModelInterpolatorTest {
     interpolator.setModels(null, newModel)
     val transformedModel = runTestCoroutine { interpolator.transform(0.5f) }
 
-    assertEquals(0.8f, transformedModel?.single()?.get(0.0)?.y)
-    assertEquals(1f, transformedModel?.opacity)
-    assertEquals(0.5f, transformedModel?.revealFraction)
+    assertFloatEquals(0.8f, transformedModel?.single()?.get(0.0)?.y)
+    assertFloatEquals(1f, transformedModel?.opacity)
+    assertFloatEquals(0.5f, transformedModel?.revealFraction)
   }
 
   @Test
@@ -85,9 +102,67 @@ class CartesianLayerDrawingModelInterpolatorTest {
     interpolator.setModels(oldModel, newModel)
     val transformedModel = runTestCoroutine { interpolator.transform(0.5f) }
 
-    assertEquals(0.6f, transformedModel?.single()?.get(0.0)?.y)
-    assertEquals(1f, transformedModel?.opacity)
-    assertEquals(1f, transformedModel?.revealFraction)
+    assertFloatEquals(0.6f, transformedModel?.single()?.get(0.0)?.y)
+    assertFloatEquals(1f, transformedModel?.opacity)
+    assertFloatEquals(1f, transformedModel?.revealFraction)
+  }
+
+  @Test
+  fun `Column - newly inserted entries start at baseline`() {
+    val interpolator = CartesianLayerDrawingModelInterpolator.column()
+    val oldModel =
+      ColumnCartesianLayerDrawingModel(
+        entries = listOf(mapOf(0.0 to ColumnCartesianLayerDrawingModel.Entry(0.2f)))
+      )
+    val newModel =
+      ColumnCartesianLayerDrawingModel(
+        entries =
+          listOf(
+            mapOf(
+              0.0 to ColumnCartesianLayerDrawingModel.Entry(0.6f),
+              1.0 to ColumnCartesianLayerDrawingModel.Entry(0.8f),
+            )
+          )
+      )
+
+    interpolator.setModels(oldModel, newModel)
+    val transformedModel = runTestCoroutine { interpolator.transform(0.5f) }
+
+    assertFloatEquals(0.4f, transformedModel?.single()?.get(0.0)?.height)
+    assertFloatEquals(0.4f, transformedModel?.single()?.get(1.0)?.height)
+  }
+
+  @Test
+  fun `Candlestick - first appearance starts at baseline and transparent`() {
+    val interpolator = CartesianLayerDrawingModelInterpolator.candlestick()
+    val newModel =
+      CandlestickCartesianLayerDrawingModel(
+        entries =
+          mapOf(
+            0.0 to
+              CandlestickCartesianLayerDrawingModel.Entry(
+                bodyBottomY = 0.2f,
+                bodyTopY = 0.6f,
+                bottomWickY = 0.1f,
+                topWickY = 0.8f,
+              )
+          ),
+        opacity = 0.6f,
+      )
+
+    interpolator.setModels(null, newModel)
+    val transformedModel = runTestCoroutine { interpolator.transform(0.5f) }
+    val entry = transformedModel?.entries?.get(0.0)
+
+    assertFloatEquals(0.1f, entry?.bodyBottomY)
+    assertFloatEquals(0.3f, entry?.bodyTopY)
+    assertFloatEquals(0.05f, entry?.bottomWickY)
+    assertFloatEquals(0.4f, entry?.topWickY)
+    assertFloatEquals(0.3f, transformedModel?.opacity)
+  }
+
+  private fun assertFloatEquals(expected: Float, actual: Float?) {
+    assertEquals(expected, checkNotNull(actual), absoluteTolerance = 1e-6f)
   }
 
   private fun <T> runTestCoroutine(block: suspend () -> T): T {
