@@ -39,11 +39,19 @@ public abstract class CartesianLayerDrawingModel<T : CartesianLayerDrawingModel.
    * [CartesianLayerDrawingModel]. The returned object should be an instance of the
    * [CartesianLayerDrawingModel] subclass to which this function belongs.
    */
-  public abstract fun transform(
+  @Deprecated(
+    "Layer-specific `CartesianLayerDrawingModelInterpolator` implementations now own " +
+      "interpolation policy. This hook remains for compatibility with custom interpolators."
+  )
+  public open fun transform(
     entries: List<Map<Double, T>>,
     from: CartesianLayerDrawingModel<T>?,
     fraction: Float,
-  ): CartesianLayerDrawingModel<T>
+  ): CartesianLayerDrawingModel<T> =
+    throw UnsupportedOperationException(
+      "`CartesianLayerDrawingModel.transform` is deprecated. Interpolate drawing models in a " +
+        "`CartesianLayerDrawingModelInterpolator` implementation instead."
+    )
 
   abstract override fun equals(other: Any?): Boolean
 
@@ -59,7 +67,15 @@ public abstract class CartesianLayerDrawingModel<T : CartesianLayerDrawingModel.
      * corresponding to this [Entry] implementation. The returned object should be an instance of
      * the [Entry] implementation to which this function belongs.
      */
-    public fun transform(from: Entry?, fraction: Float): Entry
+    @Deprecated(
+      "Layer-specific `CartesianLayerDrawingModelInterpolator` implementations now own " +
+        "interpolation policy. Entries should only carry drawing information."
+    )
+    public fun transform(from: Entry?, fraction: Float): Entry =
+      throw UnsupportedOperationException(
+        "`CartesianLayerDrawingModel.Entry.transform` is deprecated. Interpolate entries in a " +
+          "`CartesianLayerDrawingModelInterpolator` implementation instead."
+      )
 
     override fun equals(other: Any?): Boolean
 

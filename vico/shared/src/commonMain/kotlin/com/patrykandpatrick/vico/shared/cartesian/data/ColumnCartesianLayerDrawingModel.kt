@@ -31,6 +31,10 @@ public class ColumnCartesianLayerDrawingModel(
     opacity: Float = 1f,
   ) : this(entries, entries.indices.toList(), opacity)
 
+  @Deprecated(
+    "Layer-specific `CartesianLayerDrawingModelInterpolator` implementations now own " +
+      "interpolation policy. This hook remains for compatibility with custom interpolators."
+  )
   override fun transform(
     entries: List<Map<Double, Entry>>,
     from: CartesianLayerDrawingModel<Entry>?,
@@ -59,6 +63,10 @@ public class ColumnCartesianLayerDrawingModel(
    * column’s height as a fraction of the [ColumnCartesianLayer]’s height.
    */
   public class Entry(public val height: Float) : CartesianLayerDrawingModel.Entry {
+    @Deprecated(
+      "Layer-specific `CartesianLayerDrawingModelInterpolator` implementations now own " +
+        "interpolation policy. Entries should only carry drawing information."
+    )
     override fun transform(
       from: CartesianLayerDrawingModel.Entry?,
       fraction: Float,

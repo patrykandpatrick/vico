@@ -51,20 +51,20 @@ public interface CartesianLayerDrawingModelInterpolator<
       CartesianLayerDrawingModelInterpolator<
         LineCartesianLayerDrawingModel.Entry,
         LineCartesianLayerDrawingModel,
-      > = DefaultCartesianLayerDrawingModelInterpolator()
+      > = LineCartesianLayerDrawingModelInterpolator()
 
     /** Creates a [CartesianLayerDrawingModelInterpolator] for [ColumnCartesianLayer]s. */
     public fun column():
       CartesianLayerDrawingModelInterpolator<
         ColumnCartesianLayerDrawingModel.Entry,
         ColumnCartesianLayerDrawingModel,
-      > = DefaultCartesianLayerDrawingModelInterpolator()
+      > = ColumnCartesianLayerDrawingModelInterpolator()
 
     /** Creates a [CartesianLayerDrawingModelInterpolator] for [CandlestickCartesianLayer]s. */
     public fun candlestick():
       CartesianLayerDrawingModelInterpolator<
         CandlestickCartesianLayerDrawingModel.Entry,
         CandlestickCartesianLayerDrawingModel,
-      > = DefaultCartesianLayerDrawingModelInterpolator()
+      > = CandlestickCartesianLayerDrawingModelInterpolator()
   }
 }

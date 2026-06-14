@@ -19,7 +19,7 @@ package com.patrykandpatrick.vico.compose.cartesian.data
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 
-@Suppress("UNCHECKED_CAST")
+@Suppress("DEPRECATION", "UNCHECKED_CAST")
 internal class DefaultCartesianLayerDrawingModelInterpolator<
   T : CartesianLayerDrawingModel.Entry,
   R : CartesianLayerDrawingModel<T>,
