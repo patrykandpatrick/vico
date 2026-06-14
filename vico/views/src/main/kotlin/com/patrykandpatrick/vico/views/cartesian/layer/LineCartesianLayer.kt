@@ -530,19 +530,19 @@ protected constructor(
       resetTempData()
 
       val drawingModel = extraStore.getOrNull(drawingModelKey)
-      val revealFraction = drawingModel?.revealFraction ?: 1f
-      if (revealFraction < 1f) {
+      val sweepFraction = drawingModel?.sweepFraction ?: 1f
+      if (sweepFraction < 1f) {
         canvas.save()
         if (isLtr) {
           canvas.clipRect(
             layerBounds.left,
             layerBounds.top,
-            layerBounds.left + layerBounds.width() * revealFraction,
+            layerBounds.left + layerBounds.width() * sweepFraction,
             layerBounds.bottom,
           )
         } else {
           canvas.clipRect(
-            layerBounds.right - layerBounds.width() * revealFraction,
+            layerBounds.right - layerBounds.width() * sweepFraction,
             layerBounds.top,
             layerBounds.right,
             layerBounds.bottom,
@@ -607,7 +607,7 @@ protected constructor(
       }
 
       canvas.restore()
-      if (revealFraction < 1f) canvas.restore()
+      if (sweepFraction < 1f) canvas.restore()
     }
   }
 
@@ -817,11 +817,7 @@ protected constructor(
     drawFullLineLength: Boolean = false,
     action:
       (
-        entry: LineCartesianLayerModel.Entry,
-        x: Float,
-        y: Float,
-        previousX: Float?,
-        nextX: Float?,
+        entry: LineCartesianLayerModel.Entry, x: Float, y: Float, previousX: Float?, nextX: Float?,
       ) -> Unit,
   ) {
     val minX = ranges.minX

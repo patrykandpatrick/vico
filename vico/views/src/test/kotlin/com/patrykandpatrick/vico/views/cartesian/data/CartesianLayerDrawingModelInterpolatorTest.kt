@@ -22,13 +22,13 @@ import kotlinx.coroutines.runBlocking
 
 class CartesianLayerDrawingModelInterpolatorTest {
   @Test
-  fun `Reveal - first appearance interpolates revealFraction from zero`() {
-    val interpolator = CartesianLayerDrawingModelInterpolator.line(reveal = true)
+  fun `Sweep - first appearance interpolates sweepFraction from zero`() {
+    val interpolator = CartesianLayerDrawingModelInterpolator.line(sweep = true)
     val newModel =
       LineCartesianLayerDrawingModel(
         entries = listOf(mapOf(0.0 to LineCartesianLayerDrawingModel.Entry(0.8f))),
         opacity = 1f,
-        revealFraction = 1f,
+        sweepFraction = 1f,
       )
 
     interpolator.setModels(null, newModel)
@@ -36,23 +36,23 @@ class CartesianLayerDrawingModelInterpolatorTest {
 
     assertFloatEquals(0.8f, transformedModel?.single()?.get(0.0)?.y)
     assertFloatEquals(1f, transformedModel?.opacity)
-    assertFloatEquals(0.5f, transformedModel?.revealFraction)
+    assertFloatEquals(0.5f, transformedModel?.sweepFraction)
   }
 
   @Test
-  fun `Reveal - later update interpolates normally`() {
-    val interpolator = CartesianLayerDrawingModelInterpolator.line(reveal = true)
+  fun `Sweep - later update interpolates normally`() {
+    val interpolator = CartesianLayerDrawingModelInterpolator.line(sweep = true)
     val oldModel =
       LineCartesianLayerDrawingModel(
         entries = listOf(mapOf(0.0 to LineCartesianLayerDrawingModel.Entry(0.4f))),
         opacity = 1f,
-        revealFraction = 1f,
+        sweepFraction = 1f,
       )
     val newModel =
       LineCartesianLayerDrawingModel(
         entries = listOf(mapOf(0.0 to LineCartesianLayerDrawingModel.Entry(0.8f))),
         opacity = 1f,
-        revealFraction = 1f,
+        sweepFraction = 1f,
       )
 
     interpolator.setModels(oldModel, newModel)
@@ -60,7 +60,7 @@ class CartesianLayerDrawingModelInterpolatorTest {
 
     assertFloatEquals(0.6f, transformedModel?.single()?.get(0.0)?.y)
     assertFloatEquals(1f, transformedModel?.opacity)
-    assertFloatEquals(1f, transformedModel?.revealFraction)
+    assertFloatEquals(1f, transformedModel?.sweepFraction)
   }
 
   @Test
@@ -102,7 +102,7 @@ class CartesianLayerDrawingModelInterpolatorTest {
 
     assertFloatEquals(0.4f, transformedModel?.single()?.get(0.0)?.y)
     assertFloatEquals(0.3f, transformedModel?.opacity)
-    assertFloatEquals(1f, transformedModel?.revealFraction)
+    assertFloatEquals(1f, transformedModel?.sweepFraction)
   }
 
   @Test

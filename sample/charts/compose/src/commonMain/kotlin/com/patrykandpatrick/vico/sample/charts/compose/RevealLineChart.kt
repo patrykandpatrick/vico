@@ -59,7 +59,7 @@ private fun ComposeRevealLineChart(
                   ),
               )
             ),
-          drawingModelInterpolator = CartesianLayerDrawingModelInterpolator.line(reveal = true),
+          drawingModelInterpolator = CartesianLayerDrawingModelInterpolator.line(sweep = true),
         ),
         startAxis = VerticalAxis.rememberStart(),
         bottomAxis = HorizontalAxis.rememberBottom(),

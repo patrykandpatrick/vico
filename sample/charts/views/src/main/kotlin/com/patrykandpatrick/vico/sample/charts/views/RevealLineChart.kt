@@ -63,8 +63,7 @@ fun ViewRevealLineChart(modifier: Modifier) {
             chart!!.copy(
               (chart!!.layers[0] as LineCartesianLayer).copy(
                 lineProvider = lineProvider,
-                drawingModelInterpolator =
-                  CartesianLayerDrawingModelInterpolator.line(reveal = true),
+                drawingModelInterpolator = CartesianLayerDrawingModelInterpolator.line(sweep = true),
               )
             )
           this.modelProducer = modelProducer

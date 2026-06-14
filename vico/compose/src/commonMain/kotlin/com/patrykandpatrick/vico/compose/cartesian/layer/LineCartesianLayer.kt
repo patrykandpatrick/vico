@@ -533,19 +533,19 @@ protected constructor(
       resetTempData()
 
       val drawingModel = extraStore.getOrNull(drawingModelKey)
-      val revealFraction = drawingModel?.revealFraction ?: 1f
-      if (revealFraction < 1f) {
-        val revealRight =
+      val sweepFraction = drawingModel?.sweepFraction ?: 1f
+      if (sweepFraction < 1f) {
+        val sweepRight =
           if (isLtr) {
-            layerBounds.left + layerBounds.width * revealFraction
+            layerBounds.left + layerBounds.width * sweepFraction
           } else {
-            layerBounds.right - layerBounds.width * revealFraction
+            layerBounds.right - layerBounds.width * sweepFraction
           }
         canvas.save()
         if (isLtr) {
-          canvas.clipRect(layerBounds.copy(right = revealRight))
+          canvas.clipRect(layerBounds.copy(right = sweepRight))
         } else {
-          canvas.clipRect(layerBounds.copy(left = revealRight))
+          canvas.clipRect(layerBounds.copy(left = sweepRight))
         }
       }
 
@@ -605,7 +605,7 @@ protected constructor(
       }
 
       canvas.restore()
-      if (revealFraction < 1f) canvas.restore()
+      if (sweepFraction < 1f) canvas.restore()
     }
   }
 
