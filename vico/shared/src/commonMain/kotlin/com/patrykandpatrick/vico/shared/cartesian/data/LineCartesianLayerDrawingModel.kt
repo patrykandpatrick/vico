@@ -20,16 +20,21 @@ import com.patrykandpatrick.vico.shared.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.shared.common.lerp
 import com.patrykandpatrick.vico.shared.common.orZero
 
-/** Houses [LineCartesianLayer] drawing information. [opacity] is the lines’ opacity. */
+/**
+ * Houses [LineCartesianLayer] drawing information. [opacity] is the lines’ opacity. [sweepFraction]
+ * is the fraction of the layer swept in from the start edge (0 = hidden, 1 = fully visible).
+ */
 public class LineCartesianLayerDrawingModel(
   private val entries: List<Map<Double, Entry>>,
   seriesKeys: List<Any>,
   public val opacity: Float = 1f,
+  public val sweepFraction: Float = 1f,
 ) : CartesianLayerDrawingModel<LineCartesianLayerDrawingModel.Entry>(entries, seriesKeys) {
   public constructor(
     entries: List<Map<Double, Entry>>,
     opacity: Float = 1f,
-  ) : this(entries, entries.indices.toList(), opacity)
+    sweepFraction: Float = 1f,
+  ) : this(entries, entries.indices.toList(), opacity, sweepFraction)
 
   @Deprecated(
     "Layer-specific `CartesianLayerDrawingModelInterpolator` implementations now own " +
@@ -39,24 +44,29 @@ public class LineCartesianLayerDrawingModel(
     entries: List<Map<Double, Entry>>,
     from: CartesianLayerDrawingModel<Entry>?,
     fraction: Float,
-  ): CartesianLayerDrawingModel<Entry> =
-    LineCartesianLayerDrawingModel(
+  ): CartesianLayerDrawingModel<Entry> {
+    val old = from as LineCartesianLayerDrawingModel?
+    return LineCartesianLayerDrawingModel(
       entries,
       seriesKeys,
-      (from as LineCartesianLayerDrawingModel?)?.opacity.orZero.lerp(opacity, fraction),
+      old?.opacity.orZero.lerp(opacity, fraction),
+      (old?.sweepFraction ?: sweepFraction).lerp(sweepFraction, fraction),
     )
+  }
 
   override fun equals(other: Any?): Boolean =
     this === other ||
       other is LineCartesianLayerDrawingModel &&
         entries == other.entries &&
         seriesKeys == other.seriesKeys &&
-        opacity == other.opacity
+        opacity == other.opacity &&
+        sweepFraction == other.sweepFraction
 
   override fun hashCode(): Int {
     var result = entries.hashCode()
     result = 31 * result + seriesKeys.hashCode()
     result = 31 * result + opacity.hashCode()
+    result = 31 * result + sweepFraction.hashCode()
     return result
   }
 

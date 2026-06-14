@@ -530,6 +530,25 @@ protected constructor(
       resetTempData()
 
       val drawingModel = extraStore.getOrNull(drawingModelKey)
+      val sweepFraction = drawingModel?.sweepFraction ?: 1f
+      if (sweepFraction < 1f) {
+        canvas.save()
+        if (isLtr) {
+          canvas.clipRect(
+            layerBounds.left,
+            layerBounds.top,
+            layerBounds.left + layerBounds.width() * sweepFraction,
+            layerBounds.bottom,
+          )
+        } else {
+          canvas.clipRect(
+            layerBounds.right - layerBounds.width() * sweepFraction,
+            layerBounds.top,
+            layerBounds.right,
+            layerBounds.bottom,
+          )
+        }
+      }
 
       // Composite all series onto a single layer. During the fade-in (`opacity` < 1), this
       // allocates one offscreen buffer per frame rather than one per series. With a shared layer,
@@ -588,6 +607,7 @@ protected constructor(
       }
 
       canvas.restore()
+      if (sweepFraction < 1f) canvas.restore()
     }
   }
 

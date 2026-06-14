@@ -19,7 +19,7 @@ package com.patrykandpatrick.vico.views.cartesian.data
 import com.patrykandpatrick.vico.views.common.lerp
 import com.patrykandpatrick.vico.views.common.orZero
 
-internal class LineCartesianLayerDrawingModelInterpolator :
+internal class LineCartesianLayerDrawingModelInterpolator(private val sweep: Boolean = false) :
   BaseCartesianLayerDrawingModelInterpolator<
     LineCartesianLayerDrawingModel.Entry,
     LineCartesianLayerDrawingModel,
@@ -33,7 +33,16 @@ internal class LineCartesianLayerDrawingModelInterpolator :
     LineCartesianLayerDrawingModel(
       entries = entries,
       seriesKeys = new.seriesKeys,
-      opacity = old?.opacity.orZero.lerp(new.opacity, fraction),
+      opacity =
+        (if (sweep && old == null) new.opacity else old?.opacity.orZero).lerp(
+          new.opacity,
+          fraction,
+        ),
+      sweepFraction =
+        (if (sweep && old == null) 0f else old?.sweepFraction ?: 1f).lerp(
+          new.sweepFraction,
+          fraction,
+        ),
     )
 
   override fun transformEntry(
@@ -41,6 +50,8 @@ internal class LineCartesianLayerDrawingModelInterpolator :
     old: LineCartesianLayerDrawingModel.Entry?,
     new: LineCartesianLayerDrawingModel.Entry,
     fraction: Float,
-  ): LineCartesianLayerDrawingModel.Entry =
-    LineCartesianLayerDrawingModel.Entry(old?.y.orZero.lerp(new.y, fraction))
+  ): LineCartesianLayerDrawingModel.Entry {
+    val oldY = if (sweep && oldModel == null) new.y else old?.y.orZero
+    return LineCartesianLayerDrawingModel.Entry(oldY.lerp(new.y, fraction))
+  }
 }
