@@ -86,6 +86,9 @@ public abstract class BaseAxis<P : Axis.Position>(
     bottom: Float,
   ): Boolean = restrictedBounds.none { it.overlaps(Rect(left, top, right, bottom)) }
 
+  protected fun isNotInRestrictedBounds(bounds: Rect): Boolean =
+    isNotInRestrictedBounds(bounds.left, bounds.top, bounds.right, bounds.bottom)
+
   override fun equals(other: Any?): Boolean =
     this === other ||
       other is BaseAxis<*> &&
@@ -145,7 +148,7 @@ public abstract class BaseAxis<P : Axis.Position>(
      * title is above or below the axis, centered horizontally. For a [VerticalAxis], it’s to the
      * side of the axis, rotated 90 degrees. No additional [CartesianLayer]-area margin is reserved.
      */
-    Beside,
+    Side,
     /**
      * Anchors the title at the axis line’s leading end, centered on the line. For a
      * [HorizontalAxis], the title is drawn at the line’s end (in right-to-left layouts, at the
@@ -153,10 +156,10 @@ public abstract class BaseAxis<P : Axis.Position>(
      * above the line, centered on it. [CartesianLayer]-area margin is reserved so the title fits:
      * the full title width for a [HorizontalAxis], and half the title width (plus half the line
      * thickness) for a [VerticalAxis], with the inner half overhanging the axis band. If both a
-     * start and an end [VerticalAxis] use [AtEnd] and their titles are wide enough, the titles may
+     * start and an end [VerticalAxis] use [End] and their titles are wide enough, the titles may
      * overlap.
      */
-    AtEnd,
+    End,
   }
 
   /**

@@ -16,6 +16,7 @@
 
 package com.patrykandpatrick.vico.views.cartesian.axis
 
+import android.graphics.RectF
 import com.patrykandpatrick.vico.views.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.views.cartesian.CartesianMeasuringContext
 import com.patrykandpatrick.vico.views.cartesian.axis.VerticalAxis.HorizontalLabelPosition.Inside
@@ -226,40 +227,123 @@ protected constructor(
   private fun TextComponent.drawTitle(context: CartesianDrawingContext, title: CharSequence) {
     with(context) {
       when (titlePosition) {
-        TitlePosition.Beside ->
-          draw(
-            context = this,
-            text = title,
-            x = if (position.isLeft(this)) bounds.left else bounds.right,
-            y = bounds.centerY(),
-            horizontalPosition =
-              if (position == Axis.Position.Vertical.Start) {
-                Position.Horizontal.End
-              } else {
-                Position.Horizontal.Start
-              },
-            verticalPosition = Position.Vertical.Center,
-            rotationDegrees =
-              if (position == Axis.Position.Vertical.Start) {
-                -TITLE_ABS_ROTATION_DEGREES
-              } else {
-                TITLE_ABS_ROTATION_DEGREES
-              },
-            maxHeight = bounds.height().toInt(),
-          )
-        TitlePosition.AtEnd ->
-          draw(
-            context = this,
-            text = title,
-            x = getAxisLineCenterX(),
-            y = bounds.top,
-            horizontalPosition = Position.Horizontal.Center,
-            verticalPosition = Position.Vertical.Top,
-            maxWidth = canvasSize.width.toInt(),
-          )
+        TitlePosition.Side -> {
+          val x = if (position.isLeft(this)) bounds.left else bounds.right
+          val horizontalPosition =
+            if (position == Axis.Position.Vertical.Start) {
+              Position.Horizontal.End
+            } else {
+              Position.Horizontal.Start
+            }
+          val rotationDegrees =
+            if (position == Axis.Position.Vertical.Start) {
+              -TITLE_ABS_ROTATION_DEGREES
+            } else {
+              TITLE_ABS_ROTATION_DEGREES
+            }
+          if (
+            isNotInRestrictedBounds(
+              getTitleBounds(
+                context = this,
+                title = title,
+                x = x,
+                y = bounds.centerY(),
+                horizontalPosition = horizontalPosition,
+                verticalPosition = Position.Vertical.Center,
+                maxWidth = canvasSize.width.toInt(),
+                maxHeight = bounds.height().toInt(),
+                rotationDegrees = rotationDegrees,
+              )
+            )
+          ) {
+            draw(
+              context = this,
+              text = title,
+              x = x,
+              y = bounds.centerY(),
+              horizontalPosition = horizontalPosition,
+              verticalPosition = Position.Vertical.Center,
+              rotationDegrees = rotationDegrees,
+              maxHeight = bounds.height().toInt(),
+            )
+          }
+        }
+        TitlePosition.End -> {
+          val y = getEndTitleY()
+          if (
+            isNotInRestrictedBounds(
+              getTitleBounds(
+                context = this,
+                title = title,
+                x = getAxisLineCenterX(),
+                y = y,
+                horizontalPosition = Position.Horizontal.Center,
+                verticalPosition = Position.Vertical.Top,
+                maxWidth = canvasSize.width.toInt(),
+                maxHeight = canvasSize.height.toInt(),
+              )
+            )
+          ) {
+            draw(
+              context = this,
+              text = title,
+              x = getAxisLineCenterX(),
+              y = y,
+              horizontalPosition = Position.Horizontal.Center,
+              verticalPosition = Position.Vertical.Top,
+              maxWidth = canvasSize.width.toInt(),
+            )
+          }
+        }
       }
     }
   }
+
+  private fun TextComponent.getTitleBounds(
+    context: CartesianDrawingContext,
+    title: CharSequence,
+    x: Float,
+    y: Float,
+    horizontalPosition: Position.Horizontal,
+    verticalPosition: Position.Vertical,
+    maxWidth: Int,
+    maxHeight: Int,
+    rotationDegrees: Float = 0f,
+  ): RectF =
+    with(context) {
+      val titleBounds =
+        getBounds(
+          context = this,
+          text = title,
+          maxWidth = maxWidth,
+          maxHeight = maxHeight,
+          rotationDegrees = rotationDegrees,
+        )
+      titleBounds.translate(
+        x =
+          when (horizontalPosition) {
+            Position.Horizontal.Start -> if (isLtr) x - titleBounds.width() else x
+            Position.Horizontal.Center -> x - titleBounds.width().half
+            Position.Horizontal.End -> if (isLtr) x else x - titleBounds.width()
+          },
+        y =
+          when (verticalPosition) {
+            Position.Vertical.Top -> y - titleBounds.height()
+            Position.Vertical.Center -> y - titleBounds.height().half
+            Position.Vertical.Bottom -> y
+          },
+      )
+    }
+
+  private fun CartesianMeasuringContext.getEndTitleY(): Float = bounds.top - getTopLayerMargin()
+
+  private fun CartesianMeasuringContext.getTopLayerMargin(): Float =
+    itemPlacer.getTopLayerMargin(
+      this,
+      verticalLabelPosition,
+      maxLabelHeight,
+      max(lineThickness, tickThickness),
+    )
 
   private fun drawLineAndTicks(context: CartesianDrawingContext) {
     with(context) {
@@ -295,7 +379,7 @@ protected constructor(
   override fun updateLayerDimensions(
     context: CartesianMeasuringContext,
     layerDimensions: MutableCartesianLayerDimensions,
-  ): Unit = Unit
+  ) {}
 
   protected open fun drawLabel(
     context: CartesianDrawingContext,
@@ -303,7 +387,7 @@ protected constructor(
     label: CharSequence,
     labelX: Float,
     tickCenterY: Float,
-  ): Unit =
+  ) {
     with(context) {
       val offsetFromTickCenterY = getOffsetFromTickCenterY()
       val shouldDraw =
@@ -345,6 +429,7 @@ protected constructor(
         )
       }
     }
+  }
 
   private fun CartesianMeasuringContext.getOffsetFromTickCenterY() =
     when (verticalLabelPosition) {
@@ -373,13 +458,14 @@ protected constructor(
     horizontalLayerMargins: HorizontalCartesianLayerMargins,
     layerHeight: Float,
     model: CartesianChartModel,
-  ): Unit =
+  ) {
     with(context) {
-      // An `AtEnd` title is centered on the axis line, so its outer half must stay on-canvas. The
-      // inner half overhangs the axis band, hence half the title width plus half the line thickness.
+      // An `End` title is centered on the axis line, so its outer half must stay on-canvas. The
+      // inner half overhangs the axis band, hence half the title width plus half the line
+      // thickness.
       val titleInset =
         title(model.extraStore)
-          ?.takeIf { titlePosition == TitlePosition.AtEnd }
+          ?.takeIf { titlePosition == TitlePosition.End }
           ?.let { title ->
             titleComponent
               ?.getWidth(context = context, text = title, maxWidth = canvasSize.width.toInt())
@@ -392,19 +478,20 @@ protected constructor(
         Axis.Position.Vertical.End -> horizontalLayerMargins.ensureValuesAtLeast(end = margin)
       }
     }
+  }
 
   override fun updateLayerMargins(
     context: CartesianMeasuringContext,
     layerMargins: CartesianLayerMargins,
     layerDimensions: CartesianLayerDimensions,
     model: CartesianChartModel,
-  ): Unit =
+  ) {
     with(context) {
       val maxLabelHeight = getMaxLabelHeight().also { maxLabelHeight = it }
       val maxLineThickness = max(lineThickness, tickThickness)
       val titleHeight =
         title(model.extraStore)
-          ?.takeIf { titlePosition == TitlePosition.AtEnd }
+          ?.takeIf { titlePosition == TitlePosition.End }
           ?.let { title ->
             titleComponent?.getHeight(
               context = context,
@@ -430,6 +517,7 @@ protected constructor(
           ),
       )
     }
+  }
 
   protected open fun getWidth(context: CartesianMeasuringContext, freeHeight: Float): Float =
     with(context) {
@@ -443,7 +531,7 @@ protected constructor(
         is Size.Auto -> {
           val titleComponentWidth =
             title(model.extraStore)
-              ?.takeIf { titlePosition == TitlePosition.Beside }
+              ?.takeIf { titlePosition == TitlePosition.Side }
               ?.let { title ->
                 titleComponent?.getWidth(
                   context = this,
@@ -690,7 +778,7 @@ protected constructor(
       size: Size = Size.Auto(),
       titleComponent: TextComponent? = null,
       title: (ExtraStore) -> CharSequence? = { null },
-      titlePosition: TitlePosition = TitlePosition.Beside,
+      titlePosition: TitlePosition = TitlePosition.Side,
       tickPosition: TickPosition =
         if (horizontalLabelPosition == Outside) TickPosition.Outside else TickPosition.Inside,
       lineDrawingOrder: LineDrawingOrder = LineDrawingOrder.UnderLayers,
@@ -730,7 +818,7 @@ protected constructor(
       size: Size = Size.Auto(),
       titleComponent: TextComponent? = null,
       title: (ExtraStore) -> CharSequence? = { null },
-      titlePosition: TitlePosition = TitlePosition.Beside,
+      titlePosition: TitlePosition = TitlePosition.Side,
       tickPosition: TickPosition =
         if (horizontalLabelPosition == Outside) TickPosition.Outside else TickPosition.Inside,
       lineDrawingOrder: LineDrawingOrder = LineDrawingOrder.UnderLayers,

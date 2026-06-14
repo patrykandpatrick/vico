@@ -171,20 +171,20 @@ internal class ThemeHandler(private val context: Context, attrs: AttributeSet?) 
               BaseAxis.TitlePosition.entries[
                   axisStyle.getInteger(
                     R.styleable.AxisStyle_horizontalAxisTitlePosition,
-                    BaseAxis.TitlePosition.Beside.ordinal,
+                    BaseAxis.TitlePosition.Side.ordinal,
                   )],
             tickPosition =
               BaseAxis.TickPosition.entries[
-                axisStyle.getInteger(
-                  R.styleable.AxisStyle_tickPosition,
-                  BaseAxis.TickPosition.Outside.ordinal,
-                )],
+                  axisStyle.getInteger(
+                    R.styleable.AxisStyle_tickPosition,
+                    BaseAxis.TickPosition.Outside.ordinal,
+                  )],
             lineDrawingOrder =
               BaseAxis.LineDrawingOrder.entries[
-                axisStyle.getInteger(
-                  R.styleable.AxisStyle_lineDrawingOrder,
-                  BaseAxis.LineDrawingOrder.UnderLayers.ordinal,
-                )],
+                  axisStyle.getInteger(
+                    R.styleable.AxisStyle_lineDrawingOrder,
+                    BaseAxis.LineDrawingOrder.UnderLayers.ordinal,
+                  )],
           )
         is Axis.Position.Vertical -> {
           val horizontalLabelPosition =
@@ -218,7 +218,7 @@ internal class ThemeHandler(private val context: Context, attrs: AttributeSet?) 
               BaseAxis.TitlePosition.entries[
                   axisStyle.getInteger(
                     R.styleable.AxisStyle_verticalAxisTitlePosition,
-                    BaseAxis.TitlePosition.Beside.ordinal,
+                    BaseAxis.TitlePosition.Side.ordinal,
                   )],
             tickPosition =
               BaseAxis.TickPosition.entries[

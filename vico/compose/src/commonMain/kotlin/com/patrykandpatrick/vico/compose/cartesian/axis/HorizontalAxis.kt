@@ -217,16 +217,16 @@ protected constructor(
       }
 
       val titleText = title(model.extraStore)
-      // `Beside` titles are drawn within the clip region, preserving the pre-`titlePosition`
-      // behavior. `AtEnd` titles are drawn after the clip is removed so they aren’t cut off at the
+      // `Side` titles are drawn within the clip region, preserving the pre-`titlePosition`
+      // behavior. `End` titles are drawn after the clip is removed so they aren’t cut off at the
       // line range.
-      if (titlePosition == TitlePosition.Beside && titleText != null) {
+      if (titlePosition == TitlePosition.Side && titleText != null) {
         titleComponent?.drawTitle(this, titleText, lineLeft, lineRight)
       }
 
       canvas.restore()
 
-      if (titlePosition == TitlePosition.AtEnd && titleText != null) {
+      if (titlePosition == TitlePosition.End && titleText != null) {
         titleComponent?.drawTitle(this, titleText, lineLeft, lineRight)
       }
 
@@ -242,39 +242,104 @@ protected constructor(
   ) {
     with(context) {
       when (titlePosition) {
-        TitlePosition.Beside ->
-          draw(
-            context = this,
-            x = bounds.center.x,
-            y = if (position == Axis.Position.Horizontal.Top) bounds.top else bounds.bottom,
-            verticalPosition =
-              if (position == Axis.Position.Horizontal.Top) {
-                Position.Vertical.Bottom
-              } else {
-                Position.Vertical.Top
-              },
-            maxWidth = bounds.width.toInt(),
-            text = title,
-          )
-        TitlePosition.AtEnd ->
-          draw(
-            context = this,
-            x = if (isLtr) lineRight else lineLeft,
-            y =
-              if (position == Axis.Position.Horizontal.Top) {
-                bounds.bottom - lineThickness.half
-              } else {
-                bounds.top + lineThickness.half
-              },
-            horizontalPosition = Position.Horizontal.End,
-            verticalPosition = Position.Vertical.Center,
-            maxWidth =
-              (if (isLtr) canvasSize.width - lineRight else lineLeft).toInt().coerceAtLeast(1),
-            text = title,
-          )
+        TitlePosition.Side -> {
+          val y = if (position == Axis.Position.Horizontal.Top) bounds.top else bounds.bottom
+          val verticalPosition =
+            if (position == Axis.Position.Horizontal.Top) {
+              Position.Vertical.Bottom
+            } else {
+              Position.Vertical.Top
+            }
+          if (
+            isNotInRestrictedBounds(
+              getTitleBounds(
+                context = this,
+                title = title,
+                x = bounds.center.x,
+                y = y,
+                horizontalPosition = Position.Horizontal.Center,
+                verticalPosition = verticalPosition,
+                maxWidth = bounds.width.toInt(),
+                maxHeight = canvasSize.height.toInt(),
+              )
+            )
+          ) {
+            draw(
+              context = this,
+              x = bounds.center.x,
+              y = y,
+              verticalPosition = verticalPosition,
+              maxWidth = bounds.width.toInt(),
+              text = title,
+            )
+          }
+        }
+        TitlePosition.End -> {
+          val x = if (isLtr) lineRight else lineLeft
+          val y =
+            if (position == Axis.Position.Horizontal.Top) {
+              bounds.bottom - lineThickness.half
+            } else {
+              bounds.top + lineThickness.half
+            }
+          val maxWidth = (if (isLtr) canvasSize.width - lineRight else lineLeft).toInt()
+          if (
+            isNotInRestrictedBounds(
+              getTitleBounds(
+                context = this,
+                title = title,
+                x = x,
+                y = y,
+                horizontalPosition = Position.Horizontal.End,
+                verticalPosition = Position.Vertical.Center,
+                maxWidth = maxWidth.coerceAtLeast(1),
+                maxHeight = canvasSize.height.toInt(),
+              )
+            )
+          ) {
+            draw(
+              context = this,
+              x = x,
+              y = y,
+              horizontalPosition = Position.Horizontal.End,
+              verticalPosition = Position.Vertical.Center,
+              maxWidth = maxWidth.coerceAtLeast(1),
+              text = title,
+            )
+          }
+        }
       }
     }
   }
+
+  private fun TextComponent.getTitleBounds(
+    context: CartesianDrawingContext,
+    title: CharSequence,
+    x: Float,
+    y: Float,
+    horizontalPosition: Position.Horizontal,
+    verticalPosition: Position.Vertical,
+    maxWidth: Int,
+    maxHeight: Int,
+  ): Rect =
+    with(context) {
+      val titleBounds =
+        getBounds(context = this, text = title, maxWidth = maxWidth, maxHeight = maxHeight)
+      titleBounds.translate(
+        translateX =
+          when (horizontalPosition) {
+            Position.Horizontal.Start -> if (isLtr) x - titleBounds.width else x
+            Position.Horizontal.Center -> x - titleBounds.width.half
+            Position.Horizontal.End -> if (isLtr) x else x - titleBounds.width
+          },
+        translateY =
+          when (verticalPosition) {
+            Position.Vertical.Top -> y - titleBounds.height
+            Position.Vertical.Center -> y - titleBounds.height.half
+            Position.Vertical.Bottom -> y
+          },
+      )
+    }
 
   private fun drawLineAndTicks(
     context: CartesianDrawingContext,
@@ -428,7 +493,7 @@ protected constructor(
     fullXRange: ClosedFloatingPointRange<Double>,
     labelValues: List<Double>,
     lineValues: List<Double>?,
-  ): Unit =
+  ) {
     with(context) {
       val guideline = guideline ?: return
       canvas.save()
@@ -463,6 +528,7 @@ protected constructor(
 
       canvas.restore()
     }
+  }
 
   protected fun CartesianDrawingContext.getLinesCorrectionX(
     entryX: Double,
@@ -548,15 +614,10 @@ protected constructor(
       context.getMaxLabelWidth(layerDimensions, context.internalGetFullXRange(layerDimensions))
     val height = getHeight(context, layerDimensions, maxLabelWidth)
     var startMargin =
-      itemPlacer.getStartLayerMargin(
-        context,
-        layerDimensions,
-        context.tickThickness,
-        maxLabelWidth,
-      )
+      itemPlacer.getStartLayerMargin(context, layerDimensions, context.tickThickness, maxLabelWidth)
     var endMargin =
       itemPlacer.getEndLayerMargin(context, layerDimensions, context.tickThickness, maxLabelWidth)
-    if (titlePosition == TitlePosition.AtEnd) {
+    if (titlePosition == TitlePosition.End) {
       val titleWidth =
         title(model.extraStore)
           ?.let { title ->
@@ -596,8 +657,8 @@ protected constructor(
           val baseHeight = labelHeight + lineThickness + outwardTickLength
           val titleText = title(model.extraStore)
           when (titlePosition) {
-              // The `Beside` title is drawn at the plot width, so it’s measured at the same width.
-              TitlePosition.Beside ->
+              // The `Side` title is drawn at the plot width, so it’s measured at the same width.
+              TitlePosition.Side ->
                 baseHeight +
                   titleText
                     ?.let {
@@ -608,9 +669,9 @@ protected constructor(
                       )
                     }
                     .orZero
-              // The `AtEnd` title is drawn in the end-margin region, so it’s measured at the canvas
+              // The `End` title is drawn in the end-margin region, so it’s measured at the canvas
               // width to avoid over-reserving height through premature wrapping.
-              TitlePosition.AtEnd ->
+              TitlePosition.End ->
                 max(
                   baseHeight,
                   titleText
@@ -863,7 +924,7 @@ protected constructor(
       size: Size = Size.Auto(),
       titleComponent: TextComponent? = null,
       title: (ExtraStore) -> CharSequence? = { null },
-      titlePosition: TitlePosition = TitlePosition.Beside,
+      titlePosition: TitlePosition = TitlePosition.Side,
       tickPosition: TickPosition = TickPosition.Outside,
       lineDrawingOrder: LineDrawingOrder = LineDrawingOrder.UnderLayers,
     ): HorizontalAxis<Axis.Position.Horizontal.Top> =
@@ -916,7 +977,7 @@ protected constructor(
       size: Size = Size.Auto(),
       titleComponent: TextComponent? = null,
       title: (ExtraStore) -> CharSequence? = { null },
-      titlePosition: TitlePosition = TitlePosition.Beside,
+      titlePosition: TitlePosition = TitlePosition.Side,
       tickPosition: TickPosition = TickPosition.Outside,
       lineDrawingOrder: LineDrawingOrder = LineDrawingOrder.UnderLayers,
     ): HorizontalAxis<Axis.Position.Horizontal.Bottom> =
