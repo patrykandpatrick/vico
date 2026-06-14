@@ -34,6 +34,5 @@ actual val Charts.overridden: LinkedHashMap<UIFramework, List<Chart>>?
           { ViewElectricCarSales(it) },
           { ViewRockMetalRatios(it) },
           { ViewGoldPrices(it) },
-          { ViewRevealLineChart(it) },
         ),
     )
