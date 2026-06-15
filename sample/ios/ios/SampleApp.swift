@@ -4,7 +4,7 @@ import SwiftUI
 struct SampleApp: App {
     var body: some Scene {
         WindowGroup {
-            ComposeView().ignoresSafeArea(.keyboard)
+            ComposeView().ignoresSafeArea()
         }
     }
 }
