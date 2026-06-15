@@ -17,7 +17,9 @@
 package com.patrykandpatrick.vico.sample.app
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.MaterialExpressiveTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
@@ -25,37 +27,46 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.graphics.Color
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun Theme(content: @Composable () -> Unit) {
-  MaterialTheme(
-    colorScheme =
-      if (isSystemInDarkTheme()) {
-        darkColorScheme(
-          secondaryContainer = Color(0xff18191b),
-          onSecondaryContainer = Color.White,
-          background = Color.Black,
-          onBackground = Color.White,
-          surface = Color.Black,
-          onSurface = Color.White,
-          outline = Color(0xff494c50),
-          surfaceContainer = Color(0xff303336),
-        )
-      } else {
-        lightColorScheme(
-          secondaryContainer = Color(0xfff2f2f3),
-          onSecondaryContainer = Color.Black,
-          background = Color.White,
-          onBackground = Color.Black,
-          surface = Color.White,
-          onSurface = Color.Black,
-          outline = Color(0xffbcbfc2),
-          surfaceContainer = Color.White,
-        )
-      }
-  ) {
+  MaterialExpressiveTheme(sampleColorScheme(isSystemInDarkTheme())) {
     CompositionLocalProvider(
       LocalContentColor provides MaterialTheme.colorScheme.onBackground,
       content,
     )
   }
 }
+
+private fun sampleColorScheme(darkTheme: Boolean) =
+  if (darkTheme) darkSampleColorScheme() else lightSampleColorScheme()
+
+private fun lightSampleColorScheme() =
+  lightColorScheme(
+    primary = Color.Black,
+    onPrimary = Color.White,
+    secondaryContainer = Color(0xfff2f2f3),
+    onSecondaryContainer = Color.Black,
+    background = Color.White,
+    onBackground = Color.Black,
+    surface = Color.White,
+    onSurface = Color.Black,
+    onSurfaceVariant = Color.Black,
+    outline = Color(0xffbcbfc2),
+    surfaceContainer = Color(0xfff2f2f3),
+  )
+
+private fun darkSampleColorScheme() =
+  darkColorScheme(
+    primary = Color.White,
+    onPrimary = Color.Black,
+    secondaryContainer = Color(0xff242628),
+    onSecondaryContainer = Color.White,
+    background = Color.Black,
+    onBackground = Color.White,
+    surface = Color.Black,
+    onSurface = Color.White,
+    onSurfaceVariant = Color.White,
+    outline = Color(0xff494c50),
+    surfaceContainer = Color(0xff242628),
+  )

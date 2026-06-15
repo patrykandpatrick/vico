@@ -17,19 +17,22 @@
 package com.patrykandpatrick.vico.sample.app
 
 import androidx.compose.animation.*
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.automirrored.rounded.ArrowForward
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -37,7 +40,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavController
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 internal fun ChartScreen(navController: NavController, uiFrameworkID: Int, initialChartID: Int) {
   var chartID by rememberSaveable { mutableIntStateOf(initialChartID) }
@@ -53,25 +56,35 @@ internal fun ChartScreen(navController: NavController, uiFrameworkID: Int, initi
       TopAppBar(
         title = { Text(charts[chartID].details.title) },
         navigationIcon = {
-          IconButton(navigateBack) {
-            Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
+          IconButton(onClick = navigateBack) {
+            Icon(imageVector = Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = "Back")
           }
         },
-        colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
         scrollBehavior = scrollBehavior,
+        colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
       )
     },
     bottomBar = {
-      Row(
-        Modifier.fillMaxWidth().navigationBarsPadding().height(64.dp),
-        Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally),
-        Alignment.CenterVertically,
+      Box(
+        modifier = Modifier.fillMaxWidth().navigationBarsPadding().height(64.dp),
+        contentAlignment = Alignment.Center,
       ) {
-        IconButton(onClick = { chartID-- }, enabled = chartID > 0) {
-          Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
-        }
-        IconButton(onClick = { chartID++ }, enabled = chartID < charts.lastIndex) {
-          Icon(imageVector = Icons.AutoMirrored.Filled.ArrowForward, contentDescription = null)
+        ButtonGroup(
+          overflowIndicator = ButtonGroupDefaults::OverflowIndicator,
+          verticalAlignment = Alignment.CenterVertically,
+        ) {
+          chartNavigationButton(
+            label = "Previous",
+            imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+            enabled = chartID > 0,
+            onClick = { chartID = (chartID - 1).coerceAtLeast(0) },
+          )
+          chartNavigationButton(
+            label = "Next",
+            imageVector = Icons.AutoMirrored.Rounded.ArrowForward,
+            enabled = chartID < charts.lastIndex,
+            onClick = { chartID = (chartID + 1).coerceAtMost(charts.lastIndex) },
+          )
         }
       }
     },
@@ -101,4 +114,41 @@ internal fun ChartScreen(navController: NavController, uiFrameworkID: Int, initi
       }
     }
   }
+}
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+private fun ButtonGroupScope.chartNavigationButton(
+  label: String,
+  imageVector: ImageVector,
+  enabled: Boolean,
+  onClick: () -> Unit,
+) {
+  customItem(
+    buttonGroupContent = {
+      val interactionSource = remember { MutableInteractionSource() }
+      FilledTonalIconButton(
+        onClick = onClick,
+        modifier = Modifier.animateWidth(interactionSource),
+        enabled = enabled,
+        colors =
+          IconButtonDefaults.filledTonalIconButtonColors(
+            disabledContainerColor = Color.Transparent
+          ),
+        interactionSource = interactionSource,
+      ) {
+        Icon(imageVector = imageVector, contentDescription = label)
+      }
+    },
+    menuContent = { menuState ->
+      DropdownMenuItem(
+        text = { Text(label) },
+        onClick = {
+          onClick()
+          menuState.dismiss()
+        },
+        enabled = enabled,
+        leadingIcon = { Icon(imageVector = imageVector, contentDescription = null) },
+      )
+    },
+  )
 }

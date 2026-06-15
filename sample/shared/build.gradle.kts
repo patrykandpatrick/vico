@@ -41,7 +41,7 @@ kotlin {
   sourceSets {
     androidMain.dependencies { implementation(project(":sample:charts:views")) }
     commonMain.dependencies {
-      implementation(libs.composeMaterial3)
+      implementation(libs.composeMaterial3Expressive)
       implementation(libs.composeMaterialIcons)
       implementation(libs.composeNavigation)
       implementation(libs.lifecycleRuntime)

@@ -41,6 +41,8 @@ fun SampleApp() {
       exitTransition = { slideOutHorizontally { -it / 3 } + fadeOut() },
       popEnterTransition = { slideInHorizontally { -it / 3 } + fadeIn() },
       popExitTransition = { slideOutHorizontally { it / 3 } + fadeOut() },
+      predictivePopEnterTransition = { _ -> slideInHorizontally { -it / 3 } + fadeIn() },
+      predictivePopExitTransition = { _ -> slideOutHorizontally { it / 3 } + fadeOut() },
     ) {
       composable<Destination.ChartList> { ChartListScreen(navController) }
       composable<Destination.Chart> { backStackEntry ->

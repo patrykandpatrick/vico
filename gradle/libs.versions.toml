@@ -6,15 +6,16 @@ androidXCore = "1.19.0"
 appcompat = "1.7.1"
 compose = "1.11.1"
 composeMaterial3 = "1.9.0"
+composeMaterial3Expressive = "1.12.0-alpha01"
 composeMaterialIcons = "1.7.3"
-composeNavigation = "2.9.2"
+composeNavigation = "2.10.0-alpha01"
 coroutines = "1.11.0"
 dateTime = "0.8.0-0.6.x-compat"
 dokka = "2.2.0"
 glance = "1.1.1"
 jetpackComposeBom = "2026.05.01"
 kotlin = "2.4.0"
-lifecycleRuntime = "2.10.0"
+lifecycleRuntime = "2.11.0-beta01"
 material = "1.14.0"
 mavenPublish = "0.36.0"
 mockK = "1.14.11"
@@ -34,6 +35,7 @@ composeDesktop = { group = "org.jetbrains.compose.desktop", name = "desktop-jvm"
 composeFoundation = { group = "org.jetbrains.compose.foundation", name = "foundation", version.ref = "compose" }
 composeMaterial = { group = "org.jetbrains.compose.material", name = "material", version.ref = "compose" }
 composeMaterial3 = { group = "org.jetbrains.compose.material3", name = "material3", version.ref = "composeMaterial3" }
+composeMaterial3Expressive = { group = "org.jetbrains.compose.material3", name = "material3", version.ref = "composeMaterial3Expressive" }
 composeMaterialIcons = { group = "org.jetbrains.compose.material", name = "material-icons-core", version.ref = "composeMaterialIcons" }
 composeNavigation = { group = "org.jetbrains.androidx.navigation", name = "navigation-compose", version.ref = "composeNavigation" }
 composeRuntime = { group = "org.jetbrains.compose.runtime", name = "runtime", version.ref = "compose" }
