@@ -11,7 +11,7 @@ on:
 
 jobs:
   copilot-setup-steps:
-    runs-on: blacksmith-2vcpu-ubuntu-2404-arm
+    runs-on: ubuntu-latest
     permissions:
       contents: read
     steps:
