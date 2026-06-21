@@ -1,0 +1,122 @@
+/*
+ * Copyright 2026 by Patryk Goworowski and Patrick Michalik.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.patrykandpatrick.vico.compose.cartesian.data
+
+import com.patrykandpatrick.vico.compose.cartesian.layer.CandlestickCartesianLayer
+import com.patrykandpatrick.vico.compose.common.lerp
+import com.patrykandpatrick.vico.compose.common.orZero
+
+/**
+ * Houses drawing information for a [CandlestickCartesianLayer]. [modelKey] identifies the source
+ * model, and [opacity] is the candles’ opacity.
+ */
+public class CandlestickCartesianLayerDrawingModel(
+  public val entries: Map<Double, Entry>,
+  public val modelKey: Any,
+  public val opacity: Float = 1f,
+) :
+  CartesianLayerDrawingModel<CandlestickCartesianLayerDrawingModel.Entry>(
+    listOf(entries),
+    listOf(modelKey),
+  ) {
+  public constructor(entries: Map<Double, Entry>, opacity: Float = 1f) : this(entries, 0, opacity)
+
+  @Deprecated(
+    "Layer-specific `CartesianLayerDrawingModelInterpolator` implementations now own " +
+      "interpolation policy. This hook remains for compatibility with custom interpolators."
+  )
+  override fun transform(
+    entries: List<Map<Double, Entry>>,
+    from: CartesianLayerDrawingModel<Entry>?,
+    fraction: Float,
+  ): CartesianLayerDrawingModel<Entry> {
+    val oldOpacity = (from as CandlestickCartesianLayerDrawingModel?)?.opacity.orZero
+    return CandlestickCartesianLayerDrawingModel(
+      entries = entries.first(),
+      modelKey = modelKey,
+      opacity = oldOpacity.lerp(opacity, fraction),
+    )
+  }
+
+  override fun equals(other: Any?): Boolean =
+    this === other ||
+      other is CandlestickCartesianLayerDrawingModel &&
+        entries == other.entries &&
+        modelKey == other.modelKey &&
+        opacity == other.opacity
+
+  override fun hashCode(): Int {
+    var result = entries.hashCode()
+    result = 31 * result + modelKey.hashCode()
+    result = 31 * result + opacity.hashCode()
+    return result
+  }
+
+  /**
+   * Houses positional information for a [CandlestickCartesianLayer]’s candle. Each position is
+   * stored as a distance from the bottom of the [CandlestickCartesianLayer]. The distances are
+   * expressed as fractions of the [CandlestickCartesianLayer]’s height.
+   *
+   * @property bodyBottomY the position of the body’s bottom edge.
+   * @property bodyTopY the position of the body’s top edge.
+   * @property bottomWickY the position of the bottom wick’s bottom edge.
+   * @property topWickY the position of the top wick’s top edge.
+   */
+  public class Entry(
+    public val bodyBottomY: Float,
+    public val bodyTopY: Float,
+    public val bottomWickY: Float,
+    public val topWickY: Float,
+  ) : CartesianLayerDrawingModel.Entry {
+    @Deprecated(
+      "Layer-specific `CartesianLayerDrawingModelInterpolator` implementations now own " +
+        "interpolation policy. Entries should only carry drawing information."
+    )
+    override fun transform(
+      from: CartesianLayerDrawingModel.Entry?,
+      fraction: Float,
+    ): CartesianLayerDrawingModel.Entry {
+      val old = from as? Entry
+      val oldBodyBottomY = old?.bodyBottomY.orZero
+      val oldBodyTopY = old?.bodyTopY.orZero
+      val oldBottomWickY = old?.bottomWickY.orZero
+      val oldTopWickY = old?.topWickY.orZero
+      return Entry(
+        oldBodyBottomY.lerp(bodyBottomY, fraction),
+        oldBodyTopY.lerp(bodyTopY, fraction),
+        oldBottomWickY.lerp(bottomWickY, fraction),
+        oldTopWickY.lerp(topWickY, fraction),
+      )
+    }
+
+    override fun equals(other: Any?): Boolean =
+      this === other ||
+        other is Entry &&
+          bodyBottomY == other.bodyBottomY &&
+          bodyTopY == other.bodyTopY &&
+          bottomWickY == other.bottomWickY &&
+          topWickY == other.topWickY
+
+    override fun hashCode(): Int {
+      var result = bodyBottomY.hashCode()
+      result = 31 * result + bodyTopY.hashCode()
+      result = 31 * result + bottomWickY.hashCode()
+      result = 31 * result + topWickY.hashCode()
+      return result
+    }
+  }
+}

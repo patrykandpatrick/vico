@@ -25,18 +25,6 @@ plugins {
   id("org.jetbrains.kotlin.plugin.compose")
 }
 
-val generatedCommonSources = layout.buildDirectory.dir("generated/commonMain/kotlin")
-
-val generateCommonSources by
-  tasks.registering(Sync::class) {
-    from("../shared/src/commonMain/kotlin") {
-      filter { line: String ->
-        line.replace("com.patrykandpatrick.vico.shared", "com.patrykandpatrick.vico.compose")
-      }
-    }
-    into(generatedCommonSources)
-  }
-
 kotlin {
   android {
     configure()
@@ -60,7 +48,6 @@ kotlin {
     binaries.executable()
   }
   sourceSets {
-    commonMain { kotlin.srcDir(generatedCommonSources) }
     commonMain.dependencies {
       implementation(libs.androidXAnnotation)
       implementation(libs.composeFoundation)
@@ -76,8 +63,6 @@ kotlin {
   }
   explicitApi()
 }
-
-tasks.matching { it.name.startsWith("compile") }.configureEach { dependsOn(generateCommonSources) }
 
 /*
  * Ensure `./gradlew test` includes this module’s test suite. In this module, the JVM-capable tests
