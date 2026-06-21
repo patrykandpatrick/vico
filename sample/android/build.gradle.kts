@@ -18,13 +18,10 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
   id("com.android.application")
-  alias(libs.plugins.screenshot)
-  id("org.jetbrains.compose")
   id("org.jetbrains.kotlin.plugin.compose")
 }
 
 android {
-  experimentalProperties["android.experimental.enableScreenshotTest"] = true
   buildTypes {
     release {
       isMinifyEnabled = false
@@ -42,21 +39,12 @@ android {
     versionName = Versions.VICO
   }
   namespace = "com.patrykandpatrick.vico.sample"
-  testOptions { screenshotTests { imageDifferenceThreshold = 0.01f } }
 }
 
 kotlin { compilerOptions { jvmTarget = JvmTarget.JVM_11 } }
 
 dependencies {
   implementation(project(":sample:shared"))
-  implementation(project(":vico:compose-glance"))
   implementation(libs.activityCompose)
   implementation(libs.material)
-  implementation(libs.glanceAppWidget)
-  debugImplementation(libs.composeUITooling)
-  screenshotTestImplementation(project(":sample:charts:compose"))
-  screenshotTestImplementation(libs.composeUI)
-  screenshotTestImplementation(platform(libs.jetpackComposeBom))
-  screenshotTestImplementation(libs.jetpackComposeUITooling)
-  screenshotTestImplementation(libs.screenshotValidationApi)
 }

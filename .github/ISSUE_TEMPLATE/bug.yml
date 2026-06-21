@@ -6,7 +6,7 @@ body:
     attributes:
       label: Example
       description: >
-        Provide either a minimal reproducible example or the name of an affected sample chart.
+        Provide a minimal reproducible example.
     validations:
       required: true
   - type: textarea
@@ -30,12 +30,6 @@ body:
       label: Module(s)
       multiple: true
       options:
-        - compose
-        - compose-m2
-        - compose-m3
-        - multiplatform
-        - multiplatform-m2
-        - multiplatform-m3
         - views
     validations:
       required: true
@@ -45,9 +39,6 @@ body:
       multiple: true
       options:
         - Android
-        - iOS
-        - Desktop
-        - Web
     validations:
       required: true
   - type: input

@@ -21,13 +21,7 @@ subprojects {
   version = Versions.VICO
 }
 
-dependencies {
-  dokka(project(":vico:compose"))
-  dokka(project(":vico:compose-glance"))
-  dokka(project(":vico:compose-m2"))
-  dokka(project(":vico:compose-m3"))
-  dokka(project(":vico:views"))
-}
+dependencies { dokka(project(":vico:views")) }
 
 dokka {
   pluginsConfiguration.html {

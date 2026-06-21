@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
-
 plugins {
   id("com.android.kotlin.multiplatform.library")
   id("org.jetbrains.compose")
@@ -29,15 +27,6 @@ kotlin {
     configure()
     namespace = "com.patrykandpatrick.vico.sample.app"
   }
-  listOf(iosArm64(), iosSimulatorArm64()).forEach { iosTarget ->
-    iosTarget.binaries.framework {
-      baseName = "Sample"
-      isStatic = true
-    }
-  }
-  jvm("desktop")
-  js { browser() }
-  @OptIn(ExperimentalWasmDsl::class) wasmJs { browser() }
   sourceSets {
     androidMain.dependencies { implementation(project(":sample:charts:views")) }
     commonMain.dependencies {
@@ -45,7 +34,6 @@ kotlin {
       implementation(libs.composeMaterialIcons)
       implementation(libs.composeNavigation)
       implementation(libs.lifecycleRuntime)
-      implementation(project(":sample:charts:compose"))
     }
   }
 }

@@ -1,15 +1,14 @@
 # Vico
 
-![](https://img.shields.io/maven-central/v/com.patrykandpatrick.vico/compose)
-![](https://img.shields.io/github/actions/workflow/status/patrykandpatrick/vico/build.yml?branch=master)
-![](https://kotlin-version.aws.icerock.dev/kotlin-version?group=com.patrykandpatrick.vico&name=compose)
+![](https://img.shields.io/maven-central/v/com.patrykandpatrick.vico/views)
+![](https://img.shields.io/github/actions/workflow/status/patrykandpatrick/vico/build.yml?branch=views)
+![](https://kotlin-version.aws.icerock.dev/kotlin-version?group=com.patrykandpatrick.vico&name=views)
 
 ![](https://patrykandpatrick.com/vico.png)
 
-Vico is a powerful and extensible multiplatform chart library. It offers native
-support for Compose Multiplatform and the Android view system.
-
-Learn more in [the guide](https://guide.vico.patrykandpatrick.com).
+This branch maintains Vico’s `views` artifact. Active Compose development
+happens on the `master` branch. The included Android sample uses Compose only as the
+host UI for view sample charts.
 
 ## Sponsored by [Software Mansion](https://swmansion.com)
 

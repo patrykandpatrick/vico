@@ -18,10 +18,9 @@ package com.patrykandpatrick.vico.sample.app
 
 import com.patrykandpatrick.vico.sample.charts.views.*
 
-actual val Charts.overridden: LinkedHashMap<UIFramework, List<Chart>>?
+actual val Charts.all: LinkedHashMap<UIFramework, List<Chart>>
   get() =
     linkedMapOf(
-      UIFramework.Compose to Compose,
       UIFramework.Views to
         default(
           { ViewBasicColumnChart(it) },
@@ -34,5 +33,5 @@ actual val Charts.overridden: LinkedHashMap<UIFramework, List<Chart>>?
           { ViewElectricCarSales(it) },
           { ViewRockMetalRatios(it) },
           { ViewGoldPrices(it) },
-        ),
+        )
     )

@@ -11,12 +11,6 @@ body:
         Leave this empty only if the question doesn’t concern a specific module or a set thereof.
       multiple: true
       options:
-        - compose
-        - compose-m2
-        - compose-m3
-        - multiplatform
-        - multiplatform-m2
-        - multiplatform-m3
         - views
   - type: dropdown
     attributes:
@@ -26,9 +20,6 @@ body:
       multiple: true
       options:
         - Android
-        - iOS
-        - Desktop
-        - Web
   - type: input
     attributes:
       label: Platform version(s)

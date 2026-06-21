@@ -31,17 +31,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Vico"
 
-include(
-  "sample:android",
-  "sample:charts:compose",
-  "sample:charts:views",
-  "sample:desktop",
-  "sample:shared",
-  "sample:web",
-  "vico",
-  "vico:compose",
-  "vico:compose-glance",
-  "vico:compose-m2",
-  "vico:compose-m3",
-  "vico:views",
-)
+include("sample:android", "sample:charts:views", "sample:shared", "vico", "vico:views")

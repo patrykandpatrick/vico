@@ -19,23 +19,8 @@ package com.patrykandpatrick.vico.sample.app
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.patrykandpatrick.vico.sample.app.Chart.Details
-import com.patrykandpatrick.vico.sample.charts.compose.*
 
 object Charts {
-  val Compose =
-    default(
-      { ComposeBasicColumnChart(it) },
-      { ComposeBasicLineChart(it) },
-      { ComposeBasicComboChart(it) },
-      { ComposeBasicPieChart(it) },
-      { ComposeAITestScores(it) },
-      { ComposeDailyDigitalMediaUse(it) },
-      { ComposeTemperatureAnomalies(it) },
-      { ComposeElectricCarSales(it) },
-      { ComposeRockMetalRatios(it) },
-      { ComposeGoldPrices(it) },
-    )
-
   fun default(
     basicColumnChart: @Composable (Modifier) -> Unit,
     basicLineChart: @Composable (Modifier) -> Unit,
@@ -62,7 +47,4 @@ object Charts {
     )
 }
 
-expect val Charts.overridden: LinkedHashMap<UIFramework, List<Chart>>?
-
-internal val Charts.all
-  get() = overridden ?: linkedMapOf(UIFramework.Compose to Compose)
+expect val Charts.all: LinkedHashMap<UIFramework, List<Chart>>
