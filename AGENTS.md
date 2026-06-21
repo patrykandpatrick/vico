@@ -3,7 +3,7 @@
 ## Overview
 
 Vico is a multiplatform chart library written in Kotlin, supporting Compose
-Multiplatform (iOS, Desktop, Web/WASM) and Android Views.
+Multiplatform (Android, iOS, Desktop, Web/WASM).
 
 ## Build & Test
 
@@ -22,12 +22,7 @@ hook and enforced by CI on every push and PR.
 
 ## Key Guidance
 
-1. **Dual implementation stacks:** `vico/compose` (Compose Multiplatform) and
-   `vico/views` (Android Views) are parallel implementations. Determine whether
-   changes need to be applied to both.
+1. **Compose-first:** Active development happens in the Compose modules. Android
+   Views support is maintained from the last shared-release branch only.
 2. **Explicit API mode:** All library modules require explicit visibility
    modifiers on public API.
-3. **Shared implementation code:** `vico/shared/src/commonMain/kotlin` contains
-   common sources that are generated into the Compose and Views packages at
-   build time. Do not import the canonical `com.patrykandpatrick.vico.shared`
-   package from stack source code.
