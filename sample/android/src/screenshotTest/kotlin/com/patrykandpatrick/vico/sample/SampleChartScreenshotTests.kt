@@ -19,16 +19,16 @@ package com.patrykandpatrick.vico.sample
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tools.screenshot.PreviewTest
-import com.patrykandpatrick.vico.sample.charts.compose.ComposeAITestScoresPreview
-import com.patrykandpatrick.vico.sample.charts.compose.ComposeBasicColumnChartPreview
-import com.patrykandpatrick.vico.sample.charts.compose.ComposeBasicComboChartPreview
-import com.patrykandpatrick.vico.sample.charts.compose.ComposeBasicLineChartPreview
-import com.patrykandpatrick.vico.sample.charts.compose.ComposeBasicPieChartPreview
-import com.patrykandpatrick.vico.sample.charts.compose.ComposeDailyDigitalMediaUsePreview
-import com.patrykandpatrick.vico.sample.charts.compose.ComposeElectricCarSalesPreview
-import com.patrykandpatrick.vico.sample.charts.compose.ComposeGoldPricesPreview
-import com.patrykandpatrick.vico.sample.charts.compose.ComposeRockMetalRatiosPreview
-import com.patrykandpatrick.vico.sample.charts.compose.ComposeTemperatureAnomaliesPreview
+import com.patrykandpatrick.vico.sample.charts.ComposeAITestScoresPreview
+import com.patrykandpatrick.vico.sample.charts.ComposeBasicColumnChartPreview
+import com.patrykandpatrick.vico.sample.charts.ComposeBasicComboChartPreview
+import com.patrykandpatrick.vico.sample.charts.ComposeBasicLineChartPreview
+import com.patrykandpatrick.vico.sample.charts.ComposeBasicPieChartPreview
+import com.patrykandpatrick.vico.sample.charts.ComposeDailyDigitalMediaUsePreview
+import com.patrykandpatrick.vico.sample.charts.ComposeElectricCarSalesPreview
+import com.patrykandpatrick.vico.sample.charts.ComposeGoldPricesPreview
+import com.patrykandpatrick.vico.sample.charts.ComposeRockMetalRatiosPreview
+import com.patrykandpatrick.vico.sample.charts.ComposeTemperatureAnomaliesPreview
 
 @PreviewTest
 @Preview

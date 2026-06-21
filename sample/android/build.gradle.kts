@@ -54,7 +54,7 @@ dependencies {
   implementation(libs.material)
   implementation(libs.glanceAppWidget)
   debugImplementation(libs.composeUITooling)
-  screenshotTestImplementation(project(":sample:charts:compose"))
+  screenshotTestImplementation(project(":sample:shared"))
   screenshotTestImplementation(libs.composeUI)
   screenshotTestImplementation(platform(libs.jetpackComposeBom))
   screenshotTestImplementation(libs.jetpackComposeUITooling)

@@ -14,25 +14,18 @@
  * limitations under the License.
  */
 
-import java.time.Year
+package com.patrykandpatrick.vico.sample.charts
 
-plugins { `dokka-convention` }
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.padding
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 
-subprojects {
-  group = "com.patrykandpatrick.vico"
-  version = Versions.VICO
-}
-
-dependencies {
-  dokka(project(":vico:compose"))
-  dokka(project(":vico:compose-glance"))
-  dokka(project(":vico:compose-m2"))
-  dokka(project(":vico:compose-m3"))
-}
-
-dokka {
-  pluginsConfiguration.html {
-    customStyleSheets.from("$rootDir/logo-styles.css")
-    footerMessage = "© ${Year.now().value} Patryk Goworowski and Patrick Michalik"
-  }
+@Composable
+internal fun PreviewBox(content: @Composable BoxScope.() -> Unit) {
+  Box(modifier = Modifier.background(Color.White).padding(16.dp), content = content)
 }

@@ -2,8 +2,6 @@
 activity = "1.13.0"
 agp = "9.2.1"
 androidXAnnotation = "1.10.0"
-androidXCore = "1.19.0"
-appcompat = "1.7.1"
 compose = "1.11.1"
 composeMaterial3 = "1.9.0"
 composeMaterial3Expressive = "1.12.0-alpha02"
@@ -27,8 +25,6 @@ activityCompose = { group = "androidx.activity", name = "activity-compose", vers
 androidApplication = { group = "com.android.application", name = "com.android.application.gradle.plugin", version.ref = "agp" }
 androidKotlinMultiplatformLibrary = { group = "com.android.kotlin.multiplatform.library", name = "com.android.kotlin.multiplatform.library.gradle.plugin", version.ref = "agp" }
 androidXAnnotation = { group = "androidx.annotation", name = "annotation", version.ref = "androidXAnnotation" }
-androidXCore = { group = "androidx.core", name = "core-ktx", version.ref = "androidXCore" }
-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 compose = { group = "org.jetbrains.compose", name = "compose-gradle-plugin", version.ref = "compose" }
 composeCompiler = { group = "org.jetbrains.kotlin.plugin.compose", name = "org.jetbrains.kotlin.plugin.compose.gradle.plugin", version.ref = "kotlin" }
 composeDesktop = { group = "org.jetbrains.compose.desktop", name = "desktop-jvm", version.ref = "compose" }
@@ -48,7 +44,6 @@ glanceAppWidget = { group = "androidx.glance", name = "glance-appwidget", versio
 jetpackComposeBom = { group = "androidx.compose", name = "compose-bom", version.ref = "jetpackComposeBom" }
 jetpackComposeUI = { group = "androidx.compose.ui", name = "ui" }
 jetpackComposeUITooling = { group = "androidx.compose.ui", name = "ui-tooling" }
-jetpackComposeViewBinding = { group = "androidx.compose.ui", name = "ui-viewbinding" }
 kotlinAndroid = { group = "org.jetbrains.kotlin.android", name = "org.jetbrains.kotlin.android.gradle.plugin", version.ref = "kotlin" }
 kotlinDateTime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "dateTime" }
 kotlinJvm = { group = "org.jetbrains.kotlin.jvm", name = "org.jetbrains.kotlin.jvm.gradle.plugin", version.ref = "kotlin" }

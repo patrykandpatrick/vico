@@ -16,18 +16,12 @@
 
 package com.patrykandpatrick.vico.sample.app
 
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -37,9 +31,7 @@ import androidx.navigation.NavController
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 internal fun ChartListScreen(navController: NavController) {
-  val uiFrameworks = Charts.all.keys.toList()
-  var uiFramework by rememberSaveable { mutableStateOf(uiFrameworks[0]) }
-  val charts = Charts.all.getValue(uiFramework)
+  val charts = Charts.all
   val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
   Scaffold(
     modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -56,44 +48,9 @@ internal fun ChartListScreen(navController: NavController) {
       contentPadding = paddingValues,
       verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap),
     ) {
-      if (uiFrameworks.size > 1) {
-        item {
-          ButtonGroup(
-            overflowIndicator = ButtonGroupDefaults::OverflowIndicator,
-            modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
-            horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
-          ) {
-            uiFrameworks.forEachIndexed { index, segmentUIFramework ->
-              customItem(
-                buttonGroupContent = {
-                  val interactionSource = remember { MutableInteractionSource() }
-                  ToggleButton(
-                    checked = uiFramework == segmentUIFramework,
-                    onCheckedChange = { uiFramework = segmentUIFramework },
-                    modifier = Modifier.weight(1f).animateWidth(interactionSource),
-                    shapes = connectedButtonShapes(index, uiFrameworks.size),
-                    interactionSource = interactionSource,
-                  ) {
-                    Text(segmentUIFramework.label)
-                  }
-                },
-                menuContent = { menuState ->
-                  DropdownMenuItem(
-                    text = { Text(segmentUIFramework.label) },
-                    onClick = {
-                      uiFramework = segmentUIFramework
-                      menuState.dismiss()
-                    },
-                  )
-                },
-              )
-            }
-          }
-        }
-      }
       items(charts.size) { chartID ->
         SegmentedListItem(
-          onClick = { navController.navigate(Destination.Chart(uiFramework.ordinal, chartID)) },
+          onClick = { navController.navigate(Destination.Chart(chartID)) },
           shapes = ListItemDefaults.segmentedShapes(chartID, charts.size),
           colors =
             ListItemDefaults.segmentedColors(
@@ -107,13 +64,3 @@ internal fun ChartListScreen(navController: NavController) {
     }
   }
 }
-
-@Composable
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
-private fun connectedButtonShapes(index: Int, count: Int): ToggleButtonShapes =
-  when {
-    count == 1 -> ToggleButtonDefaults.shapes()
-    index == 0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
-    index == count - 1 -> ButtonGroupDefaults.connectedTrailingButtonShapes()
-    else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
-  }

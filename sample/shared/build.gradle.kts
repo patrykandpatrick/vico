@@ -39,13 +39,17 @@ kotlin {
   js { browser() }
   @OptIn(ExperimentalWasmDsl::class) wasmJs { browser() }
   sourceSets {
-    androidMain.dependencies { implementation(project(":sample:charts:views")) }
+    androidMain.dependencies { implementation(libs.composeUITooling) }
     commonMain.dependencies {
+      implementation(libs.composeFoundation)
       implementation(libs.composeMaterial3Expressive)
       implementation(libs.composeMaterialIcons)
       implementation(libs.composeNavigation)
+      implementation(libs.composeUI)
+      implementation(libs.composeUIToolingPreview)
+      implementation(libs.kotlinDateTime)
       implementation(libs.lifecycleRuntime)
-      implementation(project(":sample:charts:compose"))
+      implementation(project(":vico:compose"))
     }
   }
 }

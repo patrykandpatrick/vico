@@ -14,25 +14,8 @@
  * limitations under the License.
  */
 
-import java.time.Year
+package com.patrykandpatrick.vico.sample.charts
 
-plugins { `dokka-convention` }
+import kotlinx.coroutines.CoroutineScope
 
-subprojects {
-  group = "com.patrykandpatrick.vico"
-  version = Versions.VICO
-}
-
-dependencies {
-  dokka(project(":vico:compose"))
-  dokka(project(":vico:compose-glance"))
-  dokka(project(":vico:compose-m2"))
-  dokka(project(":vico:compose-m3"))
-}
-
-dokka {
-  pluginsConfiguration.html {
-    customStyleSheets.from("$rootDir/logo-styles.css")
-    footerMessage = "© ${Year.now().value} Patryk Goworowski and Patrick Michalik"
-  }
-}
+internal expect val runBlocking: ((suspend CoroutineScope.() -> Unit) -> Unit)?
