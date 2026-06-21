@@ -31,15 +31,9 @@ import com.patrykandpatrick.vico.multiplatform.common.getStart
 internal abstract class BaseAreaFill(open val splitY: (ExtraStore) -> Number) :
   LineCartesianLayer.AreaFill {
   private val areaPath = Path()
-  private val clipPath = Path()
+  private val translatedPath = Path()
 
-  open fun reset() {}
-
-  abstract fun onTopAreasCreated(context: CartesianDrawingContext, path: Path, fillBounds: Rect)
-
-  abstract fun onBottomAreasCreated(context: CartesianDrawingContext, path: Path, fillBounds: Rect)
-
-  open fun onAreasCreated(context: CartesianDrawingContext, fillBounds: Rect) {}
+  abstract fun CartesianDrawingContext.drawAreas(areaPath: Path, canvasSplitY: Float)
 
   override fun draw(
     context: CartesianDrawingContext,
@@ -47,37 +41,31 @@ internal abstract class BaseAreaFill(open val splitY: (ExtraStore) -> Number) :
     halfLineThickness: Float,
     verticalAxisPosition: Axis.Position.Vertical?,
   ) {
-    reset()
     val areaBounds = linePath.getBounds()
     with(context) {
-      val canvasSplitY = getCanvasSplitY(splitY, halfLineThickness, verticalAxisPosition)
-      if (canvasSplitY > layerBounds.top) {
-        clipPath.rewind()
-        val fillBounds = Rect(layerBounds.left, layerBounds.top, layerBounds.right, canvasSplitY)
-        clipPath.addRect(fillBounds, Path.Direction.Clockwise)
-        with(areaPath) {
-          rewind()
-          addPath(linePath)
-          lineTo(areaBounds.getEnd(isLtr), layerBounds.bottom)
-          lineTo(areaBounds.getStart(isLtr), layerBounds.bottom)
-          close()
-        }
-        onTopAreasCreated(this, areaPath.and(clipPath), fillBounds)
+      val canvasSplitY =
+        getCanvasSplitY(splitY, halfLineThickness, verticalAxisPosition)
+          .coerceIn(layerBounds.top, layerBounds.bottom)
+      with(areaPath) {
+        rewind()
+        addPath(linePath)
+        lineTo(areaBounds.getEnd(isLtr), canvasSplitY)
+        lineTo(areaBounds.getStart(isLtr), canvasSplitY)
+        close()
       }
-      if (canvasSplitY < layerBounds.bottom) {
-        clipPath.rewind()
-        val fillBounds = Rect(layerBounds.left, canvasSplitY, layerBounds.right, layerBounds.bottom)
-        clipPath.addRect(fillBounds, Path.Direction.CounterClockwise)
-        with(areaPath) {
-          rewind()
-          addPath(linePath)
-          lineTo(areaBounds.getEnd(isLtr), layerBounds.top)
-          lineTo(areaBounds.getStart(isLtr), layerBounds.top)
-          close()
-        }
-        onBottomAreasCreated(this, areaPath.and(clipPath), fillBounds)
-      }
-      onAreasCreated(this, layerBounds)
+      drawAreas(areaPath, canvasSplitY)
+    }
+  }
+
+  protected fun CartesianDrawingContext.fillArea(areaPath: Path, paint: Paint, fillBounds: Rect) {
+    if (fillBounds.width <= 0f || fillBounds.height <= 0f) return
+    val (left, top) = fillBounds
+    translatedPath.rewind()
+    translatedPath.addPath(areaPath, Offset(-left, -top))
+    canvas.withSave {
+      canvas.clipRect(fillBounds)
+      canvas.translate(left, top)
+      canvas.drawPath(translatedPath, paint)
     }
   }
 }
@@ -87,35 +75,11 @@ internal data class SingleAreaFill(
   override val splitY: (ExtraStore) -> Number,
 ) : BaseAreaFill(splitY) {
   private val paint = Paint()
-  private val areaPath = Path()
 
-  override fun reset() {
-    areaPath.rewind()
-  }
-
-  override fun onTopAreasCreated(context: CartesianDrawingContext, path: Path, fillBounds: Rect) {
-    areaPath.addPath(path)
-  }
-
-  override fun onBottomAreasCreated(
-    context: CartesianDrawingContext,
-    path: Path,
-    fillBounds: Rect,
-  ) {
-    areaPath.addPath(path)
-  }
-
-  override fun onAreasCreated(context: CartesianDrawingContext, fillBounds: Rect) {
-    with(context) {
-      paint.color = fill.color
-      fill.brush?.applyTo(size = fillBounds.size, p = paint, alpha = 1f)
-      val (left, top) = fillBounds
-      canvas.withSave {
-        canvas.translate(left, top)
-        areaPath.translate(Offset(-left, -top))
-        canvas.drawPath(areaPath, paint)
-      }
-    }
+  override fun CartesianDrawingContext.drawAreas(areaPath: Path, canvasSplitY: Float) {
+    paint.color = fill.color
+    fill.brush?.applyTo(size = layerBounds.size, p = paint, alpha = 1f)
+    fillArea(areaPath, paint, layerBounds)
   }
 }
 
@@ -126,33 +90,18 @@ internal data class DoubleAreaFill(
 ) : BaseAreaFill(splitY) {
   private val paint = Paint()
 
-  override fun onTopAreasCreated(context: CartesianDrawingContext, path: Path, fillBounds: Rect) {
-    with(context) {
+  override fun CartesianDrawingContext.drawAreas(areaPath: Path, canvasSplitY: Float) {
+    if (canvasSplitY > layerBounds.top) {
+      val bounds = Rect(layerBounds.left, layerBounds.top, layerBounds.right, canvasSplitY)
       paint.color = topFill.color
-      topFill.brush?.applyTo(size = fillBounds.size, p = paint, alpha = 1f)
-      val (left, top) = fillBounds
-      canvas.withSave {
-        canvas.translate(left, top)
-        path.translate(Offset(-left, -top))
-        canvas.drawPath(path, paint)
-      }
+      topFill.brush?.applyTo(size = bounds.size, p = paint, alpha = 1f)
+      fillArea(areaPath, paint, bounds)
     }
-  }
-
-  override fun onBottomAreasCreated(
-    context: CartesianDrawingContext,
-    path: Path,
-    fillBounds: Rect,
-  ) {
-    with(context) {
+    if (canvasSplitY < layerBounds.bottom) {
+      val bounds = Rect(layerBounds.left, canvasSplitY, layerBounds.right, layerBounds.bottom)
       paint.color = bottomFill.color
-      bottomFill.brush?.applyTo(size = fillBounds.size, p = paint, alpha = 1f)
-      val (left, top) = fillBounds
-      canvas.withSave {
-        canvas.translate(left, top)
-        path.translate(Offset(-left, -top))
-        canvas.drawPath(path, paint)
-      }
+      bottomFill.brush?.applyTo(size = bounds.size, p = paint, alpha = 1f)
+      fillArea(areaPath, paint, bounds)
     }
   }
 }
