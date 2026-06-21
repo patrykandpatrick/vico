@@ -1,0 +1,60 @@
+# Axis
+
+[`Axis`](https://views.api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.axis/-axis/) draws an axis along one of a [`CartesianChart`](https://views.api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian/-cartesian-chart/)’s edges. There are two built-in implementations: [`HorizontalAxis`](https://views.api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.axis/-horizontal-axis/) and [`VerticalAxis`](https://views.api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.axis/-vertical-axis/). Numerous customization options are available—you can change the appearance of the labels, modify the axis lines, add titles, and more.
+
+[`BaseAxis.TickPosition`](https://views.api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.axis/-base-axis/-tick-position/) and [`BaseAxis.LineDrawingOrder`](https://views.api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.axis/-base-axis/-line-drawing-order/) let you place ticks outside, inside, or across the axis line and choose whether ticks and the axis line are drawn under or over the chart layers. In XML, use the `tickPosition` and `lineDrawingOrder` attributes on `AxisStyle`.
+
+## Creation
+
+Use the XML attributes to create [`HorizontalAxis`](https://views.api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.axis/-horizontal-axis/) and [`VerticalAxis`](https://views.api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.axis/-vertical-axis/) instances:
+
+```xml
+<style name="ChartStyle">
+    <item name="showStartAxis">true</item>
+    <item name="showTopAxis">true</item>
+    <item name="showEndAxis">true</item>
+    <item name="showBottomAxis">true</item>
+</style>
+```
+
+```xml
+<com.patrykandpatrick.vico.views.cartesian.CartesianChartView
+    app:chartStyle="@style/ChartStyle"
+    <!-- ... --> />
+```
+
+Alternatively, use [`VerticalAxis.start`](https://views.api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.axis/-vertical-axis/-companion/start), [`HorizontalAxis.top`](https://views.api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.axis/-horizontal-axis/-companion/top), [`VerticalAxis.end`](https://views.api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.axis/-vertical-axis/-companion/end), and [`HorizontalAxis.bottom`](https://views.api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.axis/-horizontal-axis/-companion/bottom):
+
+```kt
+cartesianChartView.chart =
+    CartesianChart(
+        startAxis = VerticalAxis.start(/* ... */),
+        topAxis = HorizontalAxis.top(/* ... */),
+        endAxis = VerticalAxis.end(/* ... */),
+        bottomAxis = HorizontalAxis.bottom(/* ... */),
+        // ...
+    )
+```
+
+## `ItemPlacer`
+
+[`HorizontalAxis.ItemPlacer`](https://views.api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.axis/-horizontal-axis/-item-placer/) and [`VerticalAxis.ItemPlacer`](https://views.api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.axis/-vertical-axis/-item-placer/) let you customize for what _x_- and _y_-values labels and lines are displayed. Four factory functions are available:
+
+* [`HorizontalAxis.ItemPlacer.aligned`](https://views.api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.axis/-horizontal-axis/-item-placer/-companion/aligned) (default)
+* [`HorizontalAxis.ItemPlacer.segmented`](https://views.api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.axis/-horizontal-axis/-item-placer/-companion/segmented)
+* [`VerticalAxis.ItemPlacer.step`](https://views.api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.axis/-vertical-axis/-item-placer/-companion/step) (default)
+* [`VerticalAxis.ItemPlacer.count`](https://views.api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.axis/-vertical-axis/-item-placer/-companion/count)
+
+Custom implementations can be created.
+
+## Sample charts
+
+* [“Basic column chart”](https://github.com/patrykandpatrick/vico/blob/views/sample/charts/views/src/main/kotlin/com/patrykandpatrick/vico/sample/charts/views/BasicColumnChart.kt)
+* [“Basic line chart”](https://github.com/patrykandpatrick/vico/blob/views/sample/charts/views/src/main/kotlin/com/patrykandpatrick/vico/sample/charts/views/BasicLineChart.kt)
+* [“Basic combo chart”](https://github.com/patrykandpatrick/vico/blob/views/sample/charts/views/src/main/kotlin/com/patrykandpatrick/vico/sample/charts/views/BasicComboChart.kt)
+* [“AI test scores”](https://github.com/patrykandpatrick/vico/blob/views/sample/charts/views/src/main/kotlin/com/patrykandpatrick/vico/sample/charts/views/AITestScores.kt)
+* [“Daily digital-media use (USA)”](https://github.com/patrykandpatrick/vico/blob/views/sample/charts/views/src/main/kotlin/com/patrykandpatrick/vico/sample/charts/views/DailyDigitalMediaUse.kt)
+* [“Temperature anomalies (June)”](https://github.com/patrykandpatrick/vico/blob/views/sample/charts/views/src/main/kotlin/com/patrykandpatrick/vico/sample/charts/views/TemperatureAnomalies.kt)
+* [“Electric-car sales (Norway)”](https://github.com/patrykandpatrick/vico/blob/views/sample/charts/views/src/main/kotlin/com/patrykandpatrick/vico/sample/charts/views/ElectricCarSales.kt)
+* [“Rock–metal ratios”](https://github.com/patrykandpatrick/vico/blob/views/sample/charts/views/src/main/kotlin/com/patrykandpatrick/vico/sample/charts/views/RockMetalRatios.kt)
+* [“Gold prices (12/30/2024)”](https://github.com/patrykandpatrick/vico/blob/views/sample/charts/views/src/main/kotlin/com/patrykandpatrick/vico/sample/charts/views/GoldPrices.kt)

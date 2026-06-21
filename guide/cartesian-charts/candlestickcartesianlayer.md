@@ -1,0 +1,92 @@
+# CandlestickCartesianLayer
+
+Use [`CandlestickCartesianLayer`](https://views.api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.layer/-candlestick-cartesian-layer/) to create candlestick charts. Each candle’s style is defined by its corresponding [`Candle`](https://views.api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.layer/-candlestick-cartesian-layer/-candle/) instance. These are provided by [`CandleProvider`](https://views.api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.layer/-candlestick-cartesian-layer/-candle-provider/):
+
+* To style candles based on their absolute price changes (closing vs. opening), use [`absolute`](https://views.api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.layer/absolute). This is commonly used for filled candles.
+* To style candles based on both their absolute price changes (closing vs. opening) and their relative price changes (closing vs. previous closing), use [`absoluteRelative`](https://views.api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.layer/absolute-relative). This is commonly used for hollow candles.
+* For custom behavior, implement `CandleProvider`.
+
+On a `CandlestickCartesianLayer` instance, you can set the minimum body height, change the candle spacing, and toggle wick scaling.
+
+## Creation
+
+To create a `CandlestickCartesianLayer` instance, use the XML attributes:
+
+```xml
+<style name="ChartStyle">
+    <item name="layers">candlestick</item>
+    <!-- ... -->
+</style>
+```
+
+```xml
+<com.patrykandpatrick.vico.views.cartesian.CartesianChartView
+    app:chartStyle="@style/ChartStyle"
+    <!-- ... --> />
+```
+
+Alternatively, instantiate `CandlestickCartesianLayer` via the constructor:
+
+```kt
+cartesianChartView.chart = CartesianChart(CandlestickCartesianLayer(/* ... */), /* ... */)
+```
+
+## `Transaction.candlestickSeries`
+
+Candlestick layers use [`CandlestickCartesianLayerModel`](https://views.api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.data/-candlestick-cartesian-layer-model/) instances. When using [`CartesianChartModelProducer`](https://views.api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.data/-cartesian-chart-model-producer/), add them via [`candlestickSeries`](https://views.api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.data/candlestick-series):
+
+```kt
+cartesianChartModelProducer.runTransaction {
+    candlestickSeries(
+        x = listOf(1, 2, 3, 4),
+        opening = listOf(2, 4, 6, 3),
+        closing = listOf(4, 5, 3, 3),
+        low = listOf(1, 4, 2, 2),
+        high = listOf(5, 6, 7, 4),
+    )
+    // ...
+}
+```
+
+`candlestickSeries` also has an overload with no `x` parameter, which uses the indices of the prices as the _x_-values:
+
+```kt
+candlestickSeries(
+    opening = listOf(2, 4, 6, 3),
+    closing = listOf(4, 5, 3, 3),
+    low = listOf(1, 4, 2, 2),
+    high = listOf(5, 6, 7, 4),
+)
+```
+
+## Manual `CandlestickCartesianLayerModel` creation
+
+When creating a [`CartesianChartModel`](https://views.api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.data/-cartesian-chart-model/) instance directly, you can add a candlestick-layer model by using [`build`](https://views.api.vico.patrykandpatrick.com/vico/views/com.patrykandpatrick.vico.views.cartesian.data/-candlestick-cartesian-layer-model/-companion/build):
+
+```kt
+CartesianChartModel(
+    CandlestickCartesianLayerModel.build(
+        x = listOf(1, 2, 3, 4),
+        opening = listOf(2, 4, 6, 3),
+        closing = listOf(4, 5, 3, 3),
+        low = listOf(1, 4, 2, 2),
+        high = listOf(5, 6, 7, 4),
+    ),
+    // ...
+)
+```
+
+This function also has an overload with no `x` parameter:
+
+```kt
+CandlestickCartesianLayerModel.build(
+    opening = listOf(2, 4, 6, 3),
+    closing = listOf(4, 5, 3, 3),
+    low = listOf(1, 4, 2, 2),
+    high = listOf(5, 6, 7, 4),
+)
+```
+
+## Sample charts
+
+* [“Gold prices (12/30/2024)”](https://github.com/patrykandpatrick/vico/blob/views/sample/charts/views/src/main/kotlin/com/patrykandpatrick/vico/sample/charts/views/GoldPrices.kt)
