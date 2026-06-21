@@ -15,24 +15,16 @@ Ensure the following:
 
 ## Dependencies
 
-Add only the modules you need.
+Add only the modules you need. `compose-m2` and `compose-m3` provide Material 2 and Material 3 theming, respectively.
 
 ```toml
 [versions]
-vico = "3.2.2"
+vico = "3.2.3"
 
 [libraries]
-# Compose Multiplatform
 vico-compose = { group = "com.patrykandpatrick.vico", name = "compose", version.ref = "vico" }
-
-# Material 2 theming in Compose Multiplatform
 vico-compose-m2 = { group = "com.patrykandpatrick.vico", name = "compose-m2", version.ref = "vico" }
-
-# Material 3 theming in Compose Multiplatform
 vico-compose-m3 = { group = "com.patrykandpatrick.vico", name = "compose-m3", version.ref = "vico" }
-
-# Android view system
-vico-views = { group = "com.patrykandpatrick.vico", name = "views", version.ref = "vico" }
 ```
 
 ```kt
@@ -40,6 +32,5 @@ dependencies {
     implementation(libs.vico.compose)
     implementation(libs.vico.compose.m2)
     implementation(libs.vico.compose.m3)
-    implementation(libs.vico.views)
 }
 ```

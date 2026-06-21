@@ -16,10 +16,7 @@ This guide serves as an overview, outlining Vico’s core features and providing
 
 ## Sample app
 
-Included in the repository is [a sample app](https://github.com/patrykandpatrick/vico/tree/stable/sample), which consists of sample charts. There are modules with sample charts for both supported UI frameworks:
-
-* [`sample:charts:compose`](https://github.com/patrykandpatrick/vico/tree/stable/sample/charts/compose/src/commonMain/kotlin/com/patrykandpatrick/vico/sample/charts/compose) (Compose Multiplatform)
-* [`sample:charts:views`](https://github.com/patrykandpatrick/vico/tree/stable/sample/charts/views/src/main/kotlin/com/patrykandpatrick/vico/sample/charts/views) (Android view system)
+Included in the repository is [a sample app](https://github.com/patrykandpatrick/vico/tree/stable/sample), which consists of [sample charts](https://github.com/patrykandpatrick/vico/tree/stable/sample/charts/compose/src/commonMain/kotlin/com/patrykandpatrick/vico/sample/charts/compose).
 
 The sample app is the most practical Vico learning resource, recommended for beginner and advanced users alike. Sample charts are referenced throughout the guide.
 
@@ -28,5 +25,5 @@ Follow the links above to view the code on GitHub. For Android, you can also [do
 ```sh
 git clone https://github.com/patrykandpatrick/vico
 cd vico
-git checkout v3.2.2
+git checkout v3.2.3
 ```

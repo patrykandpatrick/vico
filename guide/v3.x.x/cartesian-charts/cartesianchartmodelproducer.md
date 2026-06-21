@@ -21,7 +21,7 @@ Use [`runTransaction`](https://api.vico.patrykandpatrick.com/vico/compose/com.pa
 cartesianChartModelProducer.runTransaction { /* ... */ }
 ```
 
-This function returns when the update is complete—that is, once a new model has been generated, and the host has been notified. If there’s already an update in progress, the current coroutine is first suspended until the ongoing update’s completion.
+This function returns when the update is complete—that is, once a new model has been generated and the host has been notified. If there’s already an update in progress, the current coroutine is first suspended until the ongoing update’s completion.
 
 How data is added in a transaction depends on the layers in use, so we cover this later, on the pages that describe the individual [`CartesianLayer`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.layer/-cartesian-layer/) implementations.
 

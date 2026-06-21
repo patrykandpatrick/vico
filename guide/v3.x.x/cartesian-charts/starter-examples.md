@@ -28,7 +28,7 @@ CartesianChartHost(
 )
 ```
 
-<figure><img src="../../.gitbook/assets/image.png" alt="" width="375"><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image.png" alt="" width="375"><figcaption></figcaption></figure>
 
 ## Line chart
 
@@ -51,8 +51,8 @@ CartesianChartHost(
 )
 ```
 
-<figure><img src="../../.gitbook/assets/image (1).png" alt="" width="375"><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (1).png" alt="" width="375"><figcaption></figcaption></figure>
 
 ## More
 
-For more examples, refer to [the sample app](../../learning-resources.md#sample-app).
+For more examples, refer to [the sample app](../learning-resources.md#sample-app).
