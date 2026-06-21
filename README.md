@@ -6,8 +6,7 @@
 
 ![](https://patrykandpatrick.com/vico.png)
 
-Vico is a powerful and extensible multiplatform chart library. It offers native
-support for Compose Multiplatform and the Android view system.
+Vico is a powerful and extensible chart library for Compose Multiplatform.
 
 Learn more in [the guide](https://guide.vico.patrykandpatrick.com).
 
