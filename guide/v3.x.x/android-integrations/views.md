@@ -1,4 +1,4 @@
-# Android views
+# Views
 
 [Android is now Compose-first.](https://developer.android.com/develop/ui/compose/first) Vico’s `views` module remains available but, [like the official view-based Jetpack libraries](https://developer.android.com/develop/ui/compose/first#view-based-jetpack), will receive only critical fixes. [Read the `views` guide.](https://github.com/patrykandpatrick/vico/tree/views/guide)
 

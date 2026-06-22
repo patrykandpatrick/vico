@@ -4,7 +4,6 @@
 * [Getting started](getting-started.md)
 * [Learning resources](learning-resources.md)
 * [Contributing](contributing.md)
-* [Android views](android-views.md)
 
 ## Cartesian charts
 
@@ -35,3 +34,8 @@
 * [Shape](common/shape.md)
 * [Legend](common/legend.md)
 * [VicoTheme](common/vicotheme.md)
+
+## Android integrations
+
+* [Jetpack Glance](android-integrations/jetpack-glance.md)
+* [Views](android-integrations/views.md)
