@@ -10,12 +10,12 @@ Instantiate `PieChart` via [`rememberPieChart`](https://api.vico.patrykandpatric
 val chart = rememberPieChart(/* ... */)
 ```
 
-`PieChart` accepts a [`PieChart.SliceProvider`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.pie/-pie-chart/-slice-provider/) instance, which supplies [`PieChart.Slice`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.pie/-pie-chart/-slice/) instances for successive entries. Use [`PieChart.SliceProvider.series`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.pie/-pie-chart/-slice-provider/-companion/series) for the standard repeating-series setup.
+`PieChart` accepts a [`SliceProvider`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.pie/-pie-chart/-slice-provider/) instance, which supplies [`Slice`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.pie/-pie-chart/-slice/) instances for successive entries. Use [`SliceProvider.series`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.pie/-pie-chart/-slice-provider/-companion/series) for the standard repeating-series setup.
 
-Each pie-slice style can define fill, stroke, an offset from the center, and an optional [`PieChart.SliceLabel`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.pie/-pie-chart/-slice-label/). There are two built-in label types:
+Each pie-slice style can define fill, stroke, an offset from the center, and an optional [`SliceLabel`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.pie/-pie-chart/-slice-label/). There are two built-in label types:
 
-* [`PieChart.SliceLabel.Inside`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.pie/-pie-chart/-slice-label/-inside/)
-* [`PieChart.SliceLabel.Outside`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.pie/-pie-chart/-slice-label/-outside/)
+* [`Inside`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.pie/-pie-chart/-slice-label/-inside/)
+* [`Outside`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.pie/-pie-chart/-slice-label/-outside/)
 
 Use [`PieValueFormatter`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.pie.data/-pie-value-formatter/) to format slice labels.
 

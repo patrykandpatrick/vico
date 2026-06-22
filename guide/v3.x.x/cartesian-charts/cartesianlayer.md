@@ -21,18 +21,18 @@ These are discussed individually in the following sections.
 
 What _x_- and _y_-ranges a layer reports depends on its [`CartesianLayerRangeProvider`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-layer-range-provider/) instance. A layer passes its intrinsic _x_- and _y_-ranges—which depend on [`CartesianLayerModel`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-layer-model/)—to this instance, which returns the final ranges to report. The available singletons and factory functions are listed below. For more specific behavior, implement the interface.
 
-* [`CartesianLayerRangeProvider.auto`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-layer-range-provider/-companion/auto) (default)
-* [`CartesianLayerRangeProvider.fixed`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-layer-range-provider/-companion/fixed)
-* [`CartesianLayerRangeProvider.Intrinsic`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-layer-range-provider/-companion/-intrinsic)
+* [`auto`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-layer-range-provider/-companion/auto) (default)
+* [`fixed`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-layer-range-provider/-companion/fixed)
+* [`Intrinsic`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-layer-range-provider/-companion/-intrinsic)
 
 The default implementations of the `CartesianLayerRangeProvider` functions leave the _x_-range unchanged but do these two things:
 
 * They ensure that the _y_-range includes zero.
 * They apply a _y_-range of \[0, 1] if the minimum and maximum intrinsic _y_-values are both zero.
 
-This also applies to the implementation returned by `CartesianLayerRangeProvider.auto`. Custom `CartesianLayerRangeProvider` implementations can override this behavior. With `CartesianLayerRangeProvider.fixed`, `minY` and `maxY` take precedence.
+This also applies to the implementation returned by `auto`. Custom `CartesianLayerRangeProvider` implementations can override this behavior. With `fixed`, `minY` and `maxY` take precedence.
 
-When using [`CartesianChartModelProducer`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-chart-model-producer/), set the `CartesianLayerRangeProvider` instance for each layer only once. There are no restrictions on dynamic behavior, but it should be implemented as part of a single `CartesianLayerRangeProvider` instance, not by means of a mechanism that switches between `CartesianLayerRangeProvider` implementations. In particular, for charts powered by `CartesianChartModelProducer`, `CartesianLayerRangeProvider.fixed` should be used only for entirely static overrides.
+When using [`CartesianChartModelProducer`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-chart-model-producer/), set the `CartesianLayerRangeProvider` instance for each layer only once. There are no restrictions on dynamic behavior, but it should be implemented as part of a single `CartesianLayerRangeProvider` instance, not by means of a mechanism that switches between `CartesianLayerRangeProvider` implementations. In particular, for charts powered by `CartesianChartModelProducer`, `fixed` should be used only for entirely static overrides.
 
 When you need to perform calculations based on a layer’s intrinsic _x_- and _y_-ranges, use the values passed to the `CartesianLayerRangeProvider` functions. Beyond that, use extras if needed. These are important here not only for the usual synchronization reasons, but also because they’re updated via [`CartesianChartModelProducer.Transaction`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-chart-model-producer/-transaction/), and a transaction is required for a chart’s _x_- and _y_-ranges to be updated. A common use case for extras is switching between externally defined _x_- and _y_-ranges—both in synchronization with series updates and without series updates (for example, in response to changes in user-accessible range settings).
 
