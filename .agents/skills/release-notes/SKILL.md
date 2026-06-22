@@ -7,9 +7,9 @@ description:
     workflow context.
 ---
 
-# Release Notes
+# Release notes
 
-## Vico Style
+## Vico style
 
 Write GitHub release notes in the established Vico format:
 
@@ -31,7 +31,7 @@ Write GitHub release notes in the established Vico format:
 8. Keep the text concrete and user-facing. Do not list routine dependency bumps,
    formatting, release version commits, CI-only work, or internal refactors
    unless they affect public behavior.
-9. Avoid marketing language, "What's Changed" headings, commit hashes, and
+9. Avoid marketing language, “What’s changed” headings, commit hashes, and
    contributor thanks outside the overview metadata.
 
 ## Workflow
@@ -52,7 +52,7 @@ Write GitHub release notes in the established Vico format:
 8. Verify that the draft starts with `## Overview`, has no empty sections, and
    contains no claims unsupported by the inspected history.
 
-## Stable Releases After `next`
+## Stable releases after `next`
 
 Stable releases are usually preceded by one or more same-version `next`
 releases, and the stable release is expected to be identical to the final
@@ -85,5 +85,5 @@ same-version `next` tags such as `v3.2.0-next.1`, `v3.2.0-next.2`, and
 
 ## Changes
 
-- Fixed ...
+- Fixed …
 ```
