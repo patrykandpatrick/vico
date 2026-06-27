@@ -19,6 +19,7 @@ package com.patrykandpatrick.vico.sample.charts
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -36,12 +37,15 @@ import com.patrykandpatrick.vico.compose.common.component.TextComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
 
+internal val LocalMarkersEnabled = staticCompositionLocalOf { true }
+
 @Composable
 internal fun rememberMarker(
   valueFormatter: DefaultCartesianMarker.ValueFormatter =
     DefaultCartesianMarker.ValueFormatter.default(),
   showIndicator: Boolean = true,
-): CartesianMarker {
+): CartesianMarker? {
+  if (!LocalMarkersEnabled.current) return null
   val labelBackgroundShape = MarkerCornerBasedShape(CircleShape)
   val labelBackground =
     rememberShapeComponent(
