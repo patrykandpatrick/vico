@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 
 plugins {
   id("com.android.kotlin.multiplatform.library")
-  id("org.jetbrains.compose")
+  alias(libs.plugins.composeMultiplatformSample)
   id("org.jetbrains.kotlin.multiplatform")
   id("org.jetbrains.kotlin.plugin.compose")
   kotlin("plugin.serialization")

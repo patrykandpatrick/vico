@@ -3,6 +3,14 @@ activity = "1.13.0"
 agp = "9.2.1"
 androidXAnnotation = "1.10.0"
 compose = "1.11.1"
+# The sample adopts Material 3 Expressive, available only in a 1.12.0-alpha Compose
+# release, which drags the sample’s Compose runtime up to 1.12.0-alpha02. The Compose
+# Gradle plugin bundles the Skia/skiko runtime for the web (and desktop) targets and must
+# match that runtime, or the app fails to link. The sample modules therefore apply the
+# Compose plugin at this version (`composeMultiplatformSample`), while the library modules
+# stay on the stable `compose` version (`composeMultiplatform`), keeping their published
+# dependencies alpha-free.
+composeSample = "1.12.0-alpha02"
 composeMaterial3 = "1.9.0"
 composeMaterial3Expressive = "1.12.0-alpha02"
 composeMaterialIcons = "1.7.3"
@@ -25,7 +33,6 @@ activityCompose = { group = "androidx.activity", name = "activity-compose", vers
 androidApplication = { group = "com.android.application", name = "com.android.application.gradle.plugin", version.ref = "agp" }
 androidKotlinMultiplatformLibrary = { group = "com.android.kotlin.multiplatform.library", name = "com.android.kotlin.multiplatform.library.gradle.plugin", version.ref = "agp" }
 androidXAnnotation = { group = "androidx.annotation", name = "annotation", version.ref = "androidXAnnotation" }
-compose = { group = "org.jetbrains.compose", name = "compose-gradle-plugin", version.ref = "compose" }
 composeCompiler = { group = "org.jetbrains.kotlin.plugin.compose", name = "org.jetbrains.kotlin.plugin.compose.gradle.plugin", version.ref = "kotlin" }
 composeDesktop = { group = "org.jetbrains.compose.desktop", name = "desktop-jvm", version.ref = "compose" }
 composeFoundation = { group = "org.jetbrains.compose.foundation", name = "foundation", version.ref = "compose" }
@@ -59,4 +66,9 @@ serialization = { group = "org.jetbrains.kotlin.plugin.serialization", name = "o
 uiTextAndroid = { group = "androidx.compose.ui", name = "ui-text-android", version.ref = "uiTextAndroid" }
 
 [plugins]
+# `org.jetbrains.compose` is applied per module rather than shared through buildSrc, so the
+# library and the sample can track different Compose versions (see the `compose` /
+# `composeSample` versions above).
+composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "compose" }
+composeMultiplatformSample = { id = "org.jetbrains.compose", version.ref = "composeSample" }
 screenshot = { id = "com.android.compose.screenshot", version.ref = "screenshot" }

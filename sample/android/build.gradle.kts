@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
   id("com.android.application")
   alias(libs.plugins.screenshot)
-  id("org.jetbrains.compose")
+  alias(libs.plugins.composeMultiplatformSample)
   id("org.jetbrains.kotlin.plugin.compose")
 }
 

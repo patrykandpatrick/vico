@@ -18,7 +18,7 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-  id("org.jetbrains.compose")
+  alias(libs.plugins.composeMultiplatformSample)
   id("org.jetbrains.kotlin.jvm")
   id("org.jetbrains.kotlin.plugin.compose")
 }

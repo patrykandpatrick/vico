@@ -17,7 +17,7 @@
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 
 plugins {
-  id("org.jetbrains.compose")
+  alias(libs.plugins.composeMultiplatformSample)
   id("org.jetbrains.kotlin.multiplatform")
   id("org.jetbrains.kotlin.plugin.compose")
 }
