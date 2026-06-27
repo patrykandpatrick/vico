@@ -6,7 +6,7 @@ metaLinks:
 
 # Introduction
 
-<figure><img src="https://patrykandpatrick.com/vico.png" alt=""><figcaption></figcaption></figure>
+<figure><img src="https://raw.githubusercontent.com/patrykandpatrick/vico/master/cover.png" alt=""><figcaption></figcaption></figure>
 
 Vico is a powerful and extensible chart library for Compose Multiplatform.
 
