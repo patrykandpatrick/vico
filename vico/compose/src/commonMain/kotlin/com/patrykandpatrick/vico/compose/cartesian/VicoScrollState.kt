@@ -129,13 +129,13 @@ public class VicoScrollState {
    * @param snapAnimationSpec the [AnimationSpec] for snap scrolling.
    */
   public constructor(
-    scrollEnabled: Boolean,
-    initialScroll: Scroll.Absolute,
-    autoScroll: Scroll,
-    autoScrollCondition: AutoScrollCondition,
-    autoScrollAnimationSpec: AnimationSpec<Float>,
-    xSnapStep: Double?,
-    snapAnimationSpec: AnimationSpec<Float>,
+    scrollEnabled: Boolean = true,
+    initialScroll: Scroll.Absolute = Scroll.Absolute.Start,
+    autoScroll: Scroll = initialScroll,
+    autoScrollCondition: AutoScrollCondition = AutoScrollCondition.Never,
+    autoScrollAnimationSpec: AnimationSpec<Float> = spring(),
+    xSnapStep: Double? = null,
+    snapAnimationSpec: AnimationSpec<Float> = spring(),
   ) : this(
     scrollEnabled = scrollEnabled,
     initialScroll = initialScroll,

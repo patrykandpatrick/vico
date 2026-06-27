@@ -68,9 +68,9 @@ protected constructor(
   size: Size,
   titleComponent: TextComponent?,
   title: (ExtraStore) -> CharSequence?,
-  public val titlePosition: TitlePosition,
   tickPosition: TickPosition,
   lineDrawingOrder: LineDrawingOrder,
+  public val titlePosition: TitlePosition,
 ) :
   BaseAxis<P>(
     line,
@@ -106,9 +106,9 @@ protected constructor(
     itemPlacer: ItemPlacer,
     titleComponent: TextComponent?,
     title: (ExtraStore) -> CharSequence?,
-    titlePosition: TitlePosition,
     tickPosition: TickPosition,
     lineDrawingOrder: LineDrawingOrder,
+    titlePosition: TitlePosition,
   ) : this(
     position,
     line,
@@ -122,9 +122,9 @@ protected constructor(
     Size.Auto(),
     titleComponent,
     title,
-    titlePosition,
     tickPosition,
     lineDrawingOrder,
+    titlePosition,
   )
 
   override fun updateAxisDimensions(
@@ -771,9 +771,9 @@ protected constructor(
     size: Size = this.size,
     titleComponent: TextComponent? = this.titleComponent,
     title: (ExtraStore) -> CharSequence? = this.title,
-    titlePosition: TitlePosition = this.titlePosition,
     tickPosition: TickPosition = this.tickPosition,
     lineDrawingOrder: LineDrawingOrder = this.lineDrawingOrder,
+    titlePosition: TitlePosition = this.titlePosition,
   ): HorizontalAxis<P> =
     HorizontalAxis(
       position,
@@ -788,9 +788,9 @@ protected constructor(
       size,
       titleComponent,
       title,
-      titlePosition,
       tickPosition,
       lineDrawingOrder,
+      titlePosition,
     )
 
   override fun equals(other: Any?): Boolean =
@@ -973,9 +973,9 @@ protected constructor(
       size: Size = Size.Auto(),
       titleComponent: TextComponent? = null,
       title: (ExtraStore) -> CharSequence? = { null },
-      titlePosition: TitlePosition = TitlePosition.Side,
       tickPosition: TickPosition = TickPosition.Outside,
       lineDrawingOrder: LineDrawingOrder = LineDrawingOrder.UnderLayers,
+      titlePosition: TitlePosition = TitlePosition.Side,
     ): HorizontalAxis<Axis.Position.Horizontal.Top> =
       remember(
         line,
@@ -989,9 +989,9 @@ protected constructor(
         size,
         titleComponent,
         title,
-        titlePosition,
         tickPosition,
         lineDrawingOrder,
+        titlePosition,
       ) {
         HorizontalAxis(
           Axis.Position.Horizontal.Top,
@@ -1006,9 +1006,9 @@ protected constructor(
           size,
           titleComponent,
           title,
-          titlePosition,
           tickPosition,
           lineDrawingOrder,
+          titlePosition,
         )
       }
 
@@ -1026,9 +1026,9 @@ protected constructor(
       size: Size = Size.Auto(),
       titleComponent: TextComponent? = null,
       title: (ExtraStore) -> CharSequence? = { null },
-      titlePosition: TitlePosition = TitlePosition.Side,
       tickPosition: TickPosition = TickPosition.Outside,
       lineDrawingOrder: LineDrawingOrder = LineDrawingOrder.UnderLayers,
+      titlePosition: TitlePosition = TitlePosition.Side,
     ): HorizontalAxis<Axis.Position.Horizontal.Bottom> =
       remember(
         line,
@@ -1042,9 +1042,9 @@ protected constructor(
         size,
         titleComponent,
         title,
-        titlePosition,
         tickPosition,
         lineDrawingOrder,
+        titlePosition,
       ) {
         HorizontalAxis(
           Axis.Position.Horizontal.Bottom,
@@ -1059,9 +1059,9 @@ protected constructor(
           size,
           titleComponent,
           title,
-          titlePosition,
           tickPosition,
           lineDrawingOrder,
+          titlePosition,
         )
       }
   }
