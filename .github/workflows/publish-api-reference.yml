@@ -14,12 +14,11 @@ jobs:
     runs-on: ubuntu-latest
     if: github.repository == 'patrykandpatrick/vico'
     environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    permissions:
-      contents: read
-      pages: write
-      id-token: write
+      name: api-reference
+      url: ${{ steps.deploy.outputs.url }}
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_TEAM_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_API_REFERENCE_PROJECT_ID }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -30,6 +29,9 @@ jobs:
           distribution: zulu
           java-version: 17
       - uses: gradle/actions/setup-gradle@v6
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
       - name: Resolve tag
         run: |
           cd ${{ github.workspace }}/vico
@@ -92,8 +94,7 @@ jobs:
         run: |
           cd ${{ github.workspace }}/vico
           ./gradlew dokkaGenerate
-      - uses: actions/configure-pages@v6
-      - name: Build GitHub Pages site
+      - name: Build site
         run: |
           SITE_DIR=${{ github.workspace }}/site
           rm -rf "$SITE_DIR" ${{ github.workspace }}/vico-stable
@@ -116,10 +117,19 @@ jobs:
           else
             cp -R ${{ github.workspace }}/vico/vico/build/dokka/html/. "$SITE_DIR"
           fi
-
-          touch "$SITE_DIR/.nojekyll"
-      - uses: actions/upload-pages-artifact@v5
-        with:
-          path: ${{ github.workspace }}/site
-      - id: deployment
-        uses: actions/deploy-pages@v5
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+      - name: Link Vercel project
+        run: vercel pull --yes --environment=production --token="${{ secrets.VERCEL_TOKEN }}"
+      - name: Assemble Vercel build output
+        run: |
+          rm -rf .vercel/output
+          mkdir -p .vercel/output/static
+          cp -R ${{ github.workspace }}/site/. .vercel/output/static/
+          echo '{ "version": 3 }' > .vercel/output/config.json
+      - name: Deploy to Vercel
+        id: deploy
+        run: |
+          URL=$(vercel deploy --prebuilt --prod --token="${{ secrets.VERCEL_TOKEN }}")
+          echo "url=$URL" >> "$GITHUB_OUTPUT"
+          echo "Deployed $TAG_NAME to $URL" >> "$GITHUB_STEP_SUMMARY"
