@@ -25,6 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.compose.cartesian.axis.VerticalAxis
@@ -71,7 +72,7 @@ private fun ComposeDailyDigitalMediaUse(
   modifier: Modifier = Modifier,
 ) {
   val columnColors = listOf(Color(0xff6438a7), Color(0xff3490de), Color(0xff73e8dc))
-  val legendItemLabelComponent = rememberTextComponent(TextStyle(vicoTheme.textColor))
+  val legendItemLabelComponent = rememberTextComponent(TextStyle(vicoTheme.textColor, 12.sp))
   CartesianChartHost(
     chart =
       rememberCartesianChart(
