@@ -97,6 +97,7 @@ internal fun rememberCartesianMeasuringContext(
       cacheStore,
     ) {
       MutableCartesianMeasuringContext(
+        canvasWidth = 0f,
         canvasSize = Size.Zero,
         fontFamilyResolver = fontFamilyResolver,
         density = density,

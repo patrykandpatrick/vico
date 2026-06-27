@@ -23,6 +23,7 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Size
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChart.PersistentMarkerScope
 import com.patrykandpatrick.vico.compose.cartesian.axis.Axis
 import com.patrykandpatrick.vico.compose.cartesian.axis.AxisManager
@@ -288,10 +289,22 @@ internal constructor(
     layerBounds = Rect(left, top, right, bottom)
   }
 
-  internal fun prepare(
+  private fun marginUpdaters(): List<CartesianLayerMarginUpdater<CartesianChartModel>> = buildList {
+    add(this@CartesianChart)
+    addAll(axisManager.axisCache)
+    marker?.let(::add)
+    addAll(persistentMarkerMap.values)
+  }
+
+  /**
+   * Populates [layerMargins] (and [layerDimensions]) and returns the legend height. The result
+   * depends on [CartesianMeasuringContext.canvasWidth] but not the canvas height, so it can be used
+   * to measure the chart before its height is known.
+   */
+  private fun measure(
     context: CartesianMeasuringContext,
     layerDimensions: MutableCartesianLayerDimensions,
-  ) {
+  ): Float =
     with(context) {
       _markerTargets.clear()
       layerMargins.clear()
@@ -310,18 +323,34 @@ internal constructor(
       topAxis?.updateLayerDimensions(context, layerDimensions)
       endAxis?.updateLayerDimensions(context, layerDimensions)
       bottomAxis?.updateLayerDimensions(context, layerDimensions)
-      val marginUpdaters = buildList {
-        add(this@CartesianChart)
-        addAll(axisManager.axisCache)
-        marker?.let(::add)
-        addAll(persistentMarkerMap.values)
-      }
-      marginUpdaters.forEach { updater ->
+      marginUpdaters().forEach { updater ->
         updater.updateLayerMargins(context, layerMargins, layerDimensions, model)
       }
-      val legendHeight = legend?.getHeight(context, canvasSize.width).orZero
+      legend?.getHeight(context, canvasWidth).orZero
+    }
+
+  /**
+   * Returns the total vertical space taken up by the layer margins and the legend—i.e., the height
+   * the chart needs in addition to the coordinate system. This is height-independent, so it can be
+   * used to derive the chart’s height from a desired coordinate-system height.
+   */
+  internal fun getVerticalExtras(
+    context: CartesianMeasuringContext,
+    layerDimensions: MutableCartesianLayerDimensions,
+  ): Float {
+    val legendHeight = measure(context, layerDimensions)
+    return layerMargins.vertical + legendHeight
+  }
+
+  internal fun prepare(
+    context: CartesianMeasuringContext,
+    layerDimensions: MutableCartesianLayerDimensions,
+    canvasSize: Size,
+  ) {
+    with(context) {
+      val legendHeight = measure(context, layerDimensions)
       val freeHeight = canvasSize.height - layerMargins.vertical - legendHeight
-      marginUpdaters.forEach { updater ->
+      marginUpdaters().forEach { updater ->
         updater.updateHorizontalLayerMargins(context, layerMargins, freeHeight, model)
       }
       setLayerBounds(

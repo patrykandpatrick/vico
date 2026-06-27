@@ -22,6 +22,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.cartesian.data.*
 import com.patrykandpatrick.vico.compose.cartesian.layer.MutableCartesianLayerDimensions
@@ -29,7 +31,6 @@ import com.patrykandpatrick.vico.compose.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.compose.cartesian.marker.CartesianMarkerController.Lock
 import com.patrykandpatrick.vico.compose.cartesian.marker.Interaction
 import com.patrykandpatrick.vico.compose.common.*
-import com.patrykandpatrick.vico.compose.common.Defaults.CHART_HEIGHT
 import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 import kotlin.math.abs
 import kotlinx.coroutines.CoroutineStart
@@ -77,6 +78,9 @@ internal fun narrowMarkerTargets(
  * @param animationSpec the [AnimationSpec] for difference animations.
  * @param initialAnimationSpec the [AnimationSpec] for the initial (reveal) animation. Defaults to
  *   [animationSpec]. Set to `null` to skip the initial animation.
+ * @param chartAreaHeight the default height of the coordinate system, to which the heights of the
+ *   legend, the marker, and other components are added. Used only when the height isn’t otherwise
+ *   constrained (e.g., via [Modifier.height]).
  * @param placeholder shown when no [CartesianChartModel] is available.
  */
 @Composable
@@ -88,6 +92,7 @@ public fun CartesianChartHost(
   zoomState: VicoZoomState = rememberDefaultVicoZoomState(scrollState.scrollEnabled),
   animationSpec: AnimationSpec<Float>? = defaultCartesianDiffAnimationSpec,
   initialAnimationSpec: AnimationSpec<Float>? = animationSpec,
+  chartAreaHeight: Dp = Defaults.CARTESIAN_CHART_AREA_HEIGHT.dp,
   placeholder: @Composable BoxScope.() -> Unit = {},
 ) {
   val mutableRanges = remember { MutableCartesianChartRanges() }
@@ -95,20 +100,20 @@ public fun CartesianChartHost(
     modelProducer.collectAsState(chart, animationSpec, initialAnimationSpec, mutableRanges)
   val (model, previousModel, ranges, extraStore) = modelWrapper
 
-  CartesianChartHostBox(modifier) {
-    if (model != null) {
-      CartesianChartHostImpl(
-        chart,
-        model,
-        scrollState,
-        zoomState,
-        ranges,
-        previousModel,
-        extraStore,
-      )
-    } else {
-      placeholder()
-    }
+  if (model != null) {
+    CartesianChartHostImpl(
+      chart,
+      model,
+      modifier,
+      scrollState,
+      zoomState,
+      ranges,
+      chartAreaHeight,
+      previousModel,
+      extraStore,
+    )
+  } else {
+    ChartHostBox(modifier, chartAreaHeight, measureExtras = null) { placeholder() }
   }
 }
 
@@ -125,6 +130,9 @@ public fun CartesianChartHost(
  * @param animationSpec the [AnimationSpec] for difference animations.
  * @param animateIn whether to run an initial animation when the [CartesianChartHost] enters
  *   composition. The animation is skipped for previews.
+ * @param chartAreaHeight the default height of the coordinate system, to which the heights of the
+ *   legend, the marker, and other components are added. Used only when the height isn’t otherwise
+ *   constrained (e.g., via [Modifier.height]).
  * @param placeholder shown when no [CartesianChartModel] is available.
  */
 @Deprecated("Set `initialAnimationSpec` to `null` to skip the initial animation.")
@@ -137,6 +145,7 @@ public fun CartesianChartHost(
   zoomState: VicoZoomState = rememberDefaultVicoZoomState(scrollState.scrollEnabled),
   animationSpec: AnimationSpec<Float>? = defaultCartesianDiffAnimationSpec,
   animateIn: Boolean,
+  chartAreaHeight: Dp = Defaults.CARTESIAN_CHART_AREA_HEIGHT.dp,
   placeholder: @Composable BoxScope.() -> Unit = {},
 ) {
   CartesianChartHost(
@@ -147,6 +156,7 @@ public fun CartesianChartHost(
     zoomState = zoomState,
     animationSpec = animationSpec,
     initialAnimationSpec = if (animateIn) animationSpec else null,
+    chartAreaHeight = chartAreaHeight,
     placeholder = placeholder,
   )
 }
@@ -162,6 +172,9 @@ public fun CartesianChartHost(
  *   customization and programmatic scrolling.
  * @param zoomState houses information on the [CartesianChart]’s zoom factor. Allows for zoom
  *   customization.
+ * @param chartAreaHeight the default height of the coordinate system, to which the heights of the
+ *   legend, the marker, and other components are added. Used only when the height isn’t otherwise
+ *   constrained (e.g., via [Modifier.height]).
  */
 @Composable
 public fun CartesianChartHost(
@@ -170,24 +183,33 @@ public fun CartesianChartHost(
   modifier: Modifier = Modifier,
   scrollState: VicoScrollState = rememberVicoScrollState(),
   zoomState: VicoZoomState = rememberDefaultVicoZoomState(scrollState.scrollEnabled),
+  chartAreaHeight: Dp = Defaults.CARTESIAN_CHART_AREA_HEIGHT.dp,
 ) {
   val ranges = remember { MutableCartesianChartRanges() }
   remember(chart, model) {
     ranges.reset()
     chart.updateRanges(ranges, model)
   }
-  CartesianChartHostBox(modifier) {
-    CartesianChartHostImpl(chart, model, scrollState, zoomState, ranges.toImmutable())
-  }
+  CartesianChartHostImpl(
+    chart,
+    model,
+    modifier,
+    scrollState,
+    zoomState,
+    ranges.toImmutable(),
+    chartAreaHeight,
+  )
 }
 
 @Composable
 internal fun CartesianChartHostImpl(
   chart: CartesianChart,
   model: CartesianChartModel,
+  modifier: Modifier,
   scrollState: VicoScrollState,
   zoomState: VicoZoomState,
   ranges: CartesianChartRanges,
+  chartAreaHeight: Dp,
   previousModel: CartesianChartModel? = null,
   extraStore: ExtraStore = ExtraStore.Empty,
 ) {
@@ -211,6 +233,18 @@ internal fun CartesianChartHostImpl(
   val coroutineScope = rememberCoroutineScope()
   var lastHandledModel by remember { ValueWrapper(model) }
   val layerDimensions = remember { MutableCartesianLayerDimensions() }
+  val measureLayerDimensions = remember { MutableCartesianLayerDimensions() }
+  val measureExtras =
+    remember(chart, measuringContext, measureLayerDimensions, chartAreaHeight) {
+      { widthPx: Int ->
+        val context = measuringContext.value
+        val width = widthPx.toFloat()
+        context.canvasWidth = width
+        context.canvasSize = Size(width, with(context) { chartAreaHeight.pixels })
+        measureLayerDimensions.clear()
+        chart.getVerticalExtras(context, measureLayerDimensions)
+      }
+    }
 
   val onInteraction =
     remember(chart, layerDimensions, scrollState, ranges) {
@@ -275,61 +309,66 @@ internal fun CartesianChartHostImpl(
 
   DisposableEffect(scrollState) { onDispose { scrollState.clearUpdated() } }
 
-  Canvas(
-    modifier =
-      Modifier.fillMaxSize()
-        .pointerInput(
-          scrollState = scrollState,
-          consumeMoveEvents = chart.markerController.consumeMoveEvents,
-          onInteraction = onInteraction,
-          onZoom =
-            remember(zoomState, scrollState, coroutineScope) {
-              if (zoomState.zoomEnabled) {
-                { factor, centroid ->
-                  coroutineScope.launch { zoomState.zoom(factor, centroid.x) { scrollState.value } }
+  ChartHostBox(modifier, chartAreaHeight, measureExtras) {
+    Canvas(
+      modifier =
+        Modifier.fillMaxSize()
+          .pointerInput(
+            scrollState = scrollState,
+            consumeMoveEvents = chart.markerController.consumeMoveEvents,
+            onInteraction = onInteraction,
+            onZoom =
+              remember(zoomState, scrollState, coroutineScope) {
+                if (zoomState.zoomEnabled) {
+                  { factor, centroid ->
+                    coroutineScope.launch {
+                      zoomState.zoom(factor, centroid.x) { scrollState.value }
+                    }
+                  }
+                } else {
+                  null
                 }
-              } else {
-                null
-              }
-            },
-          longPressEnabled = chart.markerController.acceptsLongPress,
-        )
-  ) {
-    if (size.isEmpty()) return@Canvas
-    measuringContext.value.canvasSize = size
+              },
+            longPressEnabled = chart.markerController.acceptsLongPress,
+          )
+    ) {
+      if (size.isEmpty()) return@Canvas
+      measuringContext.value.canvasWidth = size.width
+      measuringContext.value.canvasSize = size
 
-    layerDimensions.clear()
-    chart.prepare(measuringContext.value, layerDimensions)
+      layerDimensions.clear()
+      chart.prepare(measuringContext.value, layerDimensions, size)
 
-    if (chart.layerBounds.isEmpty) return@Canvas
+      if (chart.layerBounds.isEmpty) return@Canvas
 
-    zoomState.update(measuringContext.value, layerDimensions, chart.layerBounds, scrollState.value)
-    scrollState.update(measuringContext.value, chart.layerBounds, layerDimensions)
-
-    if (model != lastHandledModel) {
-      coroutineScope.launch(start = CoroutineStart.UNDISPATCHED) {
-        scrollState.autoScroll(model, previousModel)
-      }
-      lastHandledModel = model
-    }
-
-    val drawingContext =
-      CartesianDrawingContext(
+      zoomState.update(
         measuringContext.value,
-        drawContext.canvas,
         layerDimensions,
         chart.layerBounds,
         scrollState.value,
-        zoomState.value,
-        MutableDrawScope(this),
       )
+      scrollState.update(measuringContext.value, chart.layerBounds, layerDimensions)
 
-    chart.draw(drawingContext)
-    measuringContext.value.cacheStore.purge()
+      if (model != lastHandledModel) {
+        coroutineScope.launch(start = CoroutineStart.UNDISPATCHED) {
+          scrollState.autoScroll(model, previousModel)
+        }
+        lastHandledModel = model
+      }
+
+      val drawingContext =
+        CartesianDrawingContext(
+          measuringContext.value,
+          drawContext.canvas,
+          layerDimensions,
+          chart.layerBounds,
+          scrollState.value,
+          zoomState.value,
+          MutableDrawScope(this),
+        )
+
+      chart.draw(drawingContext)
+      measuringContext.value.cacheStore.purge()
+    }
   }
-}
-
-@Composable
-private fun CartesianChartHostBox(modifier: Modifier, content: @Composable BoxScope.() -> Unit) {
-  Box(modifier = modifier.heightIn(max = CHART_HEIGHT.dp).fillMaxWidth(), content = content)
 }

@@ -30,7 +30,6 @@ import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.geometry.center
 import com.patrykandpatrick.vico.compose.cartesian.layer.MutableCartesianLayerDimensions
 import com.patrykandpatrick.vico.compose.cartesian.layer.copyScaled
 import com.patrykandpatrick.vico.compose.cartesian.layer.scale
@@ -116,7 +115,7 @@ public class VicoZoomState {
         val unscaled = if (value != 0f) layerDimensions.copyScaled(1f / value) else layerDimensions
         val newValue = zoom.getValue(context, unscaled, bounds)
         if (newValue != value) {
-          rawZoom(newValue / value, context.canvasSize.center.x) { scroll }
+          rawZoom(newValue / value, context.canvasWidth / 2f) { scroll }
         }
       }
     }

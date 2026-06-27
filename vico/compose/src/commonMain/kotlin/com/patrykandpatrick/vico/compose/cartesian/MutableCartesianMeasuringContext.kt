@@ -28,7 +28,8 @@ import com.patrykandpatrick.vico.compose.common.data.CacheStore
 import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 
 internal class MutableCartesianMeasuringContext(
-  override var canvasSize: Size,
+  override var canvasWidth: Float,
+  @Suppress("OVERRIDE_DEPRECATION") override var canvasSize: Size,
   override val fontFamilyResolver: FontFamily.Resolver,
   override var density: Density,
   override var extraStore: ExtraStore,

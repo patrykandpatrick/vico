@@ -16,7 +16,6 @@
 
 package com.patrykandpatrick.vico.sample.charts
 
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -115,7 +114,7 @@ private fun ComposeDailyDigitalMediaUse(
         markerController = CartesianMarkerController.rememberToggleOnTap(),
       ),
     modelProducer = modelProducer,
-    modifier = modifier.height(248.dp),
+    modifier = modifier,
     zoomState = rememberVicoZoomState(zoomEnabled = false),
   )
 }

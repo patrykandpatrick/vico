@@ -200,6 +200,11 @@ public abstract class BaseAxis<P : Axis.Position>(
      *
      * @property fraction the fraction of the available space that the axis should use.
      */
+    @Deprecated(
+      "Use `Auto` (optionally with `min` and `max`), `Fixed`, or `Text`. If you used `Fraction` " +
+        "to keep the chart area’s height constant as the x-axis height changed, set the chart " +
+        "area’s size directly instead; see the `chartAreaHeight` parameter of `CartesianChartHost`."
+    )
     public class Fraction(public val fraction: Float) : Size() {
       init {
         require(fraction in MIN..MAX) {
@@ -207,6 +212,7 @@ public abstract class BaseAxis<P : Axis.Position>(
         }
       }
 
+      @Suppress("DEPRECATION")
       override fun equals(other: Any?): Boolean =
         this === other || other is Fraction && fraction == other.fraction
 

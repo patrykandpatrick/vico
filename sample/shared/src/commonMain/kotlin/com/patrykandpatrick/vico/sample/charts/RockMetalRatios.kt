@@ -16,7 +16,6 @@
 
 package com.patrykandpatrick.vico.sample.charts
 
-import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -99,7 +98,7 @@ private fun ComposeRockMetalRatios(
         layerPadding = { CartesianLayerPadding(scalableStart = 8.dp, scalableEnd = 8.dp) },
       ),
     modelProducer = modelProducer,
-    modifier = modifier.height(216.dp),
+    modifier = modifier,
     scrollState = rememberVicoScrollState(scrollEnabled = false),
   )
 }

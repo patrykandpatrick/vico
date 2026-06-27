@@ -16,13 +16,11 @@
 
 package com.patrykandpatrick.vico.sample.charts
 
-import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.CartesianMeasuringContext
 import com.patrykandpatrick.vico.compose.cartesian.axis.Axis
@@ -92,7 +90,7 @@ private fun ComposeGoldPrices(
       marker = rememberMarker(valueFormatter = MarkerValueFormatter, showIndicator = false),
     ),
     modelProducer,
-    modifier.height(216.dp),
+    modifier,
   )
 }
 

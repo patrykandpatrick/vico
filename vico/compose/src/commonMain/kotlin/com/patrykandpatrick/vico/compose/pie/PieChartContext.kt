@@ -49,7 +49,8 @@ public interface PieChartDrawingContext : DrawingContext, PieChartMeasuringConte
 }
 
 internal class MutablePieChartMeasuringContext(
-  override var canvasSize: Size,
+  override var canvasWidth: Float,
+  @Suppress("OVERRIDE_DEPRECATION") override var canvasSize: Size,
   override val fontFamilyResolver: FontFamily.Resolver,
   override var density: Density,
   override var extraStore: ExtraStore,
@@ -70,6 +71,7 @@ internal fun rememberPieChartMeasuringContext(
   return rememberUpdatedState(
     remember(fontFamilyResolver, density, extraStore, layoutDirection, model, cacheStore) {
       MutablePieChartMeasuringContext(
+        canvasWidth = 0f,
         canvasSize = Size.Zero,
         fontFamilyResolver = fontFamilyResolver,
         density = density,

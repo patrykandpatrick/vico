@@ -472,7 +472,7 @@ protected constructor(
           ?.takeIf { titlePosition == TitlePosition.End }
           ?.let { title ->
             titleComponent
-              ?.getWidth(context = context, text = title, maxWidth = canvasSize.width.toInt())
+              ?.getWidth(context = context, text = title, maxWidth = canvasWidth.toInt())
               ?.let { it.half + lineThickness.half }
           }
           .orZero
@@ -499,7 +499,7 @@ protected constructor(
           ?.let { title ->
             titleComponent?.getHeight(
               context = context,
-              maxWidth = canvasSize.width.toInt(),
+              maxWidth = canvasWidth.toInt(),
               text = title,
             )
           }
@@ -531,6 +531,7 @@ protected constructor(
           TickPosition.Inside -> 0f
           TickPosition.Cross -> this.tickLength / 2
         }
+      @Suppress("DEPRECATION")
       when (size) {
         is Size.Auto -> {
           val titleComponentWidth =
@@ -557,7 +558,7 @@ protected constructor(
           )
         }
         is Size.Fixed -> size.value.pixels
-        is Size.Fraction -> canvasSize.width * size.fraction
+        is Size.Fraction -> canvasWidth * size.fraction
         is Size.Text ->
           label
             ?.getWidth(context = this, text = size.text, rotationDegrees = labelRotationDegrees)

@@ -16,7 +16,6 @@
 
 package com.patrykandpatrick.vico.sample.charts
 
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -104,7 +103,7 @@ private fun ComposeTemperatureAnomalies(
         marker = rememberMarker(MarkerValueFormatter),
       ),
     modelProducer = modelProducer,
-    modifier = modifier.height(234.dp),
+    modifier = modifier,
     scrollState = rememberVicoScrollState(initialScroll = Scroll.Absolute.End),
   )
 }

@@ -16,7 +16,6 @@
 
 package com.patrykandpatrick.vico.sample.charts
 
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
@@ -136,7 +135,7 @@ private fun ComposeAITestScores(
       marker = rememberMarker(),
     ),
     modelProducer,
-    modifier.height(294.dp),
+    modifier,
     rememberVicoScrollState(scrollEnabled = false),
   )
 }

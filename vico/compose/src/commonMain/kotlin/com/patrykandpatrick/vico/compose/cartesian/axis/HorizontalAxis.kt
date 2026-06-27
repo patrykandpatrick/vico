@@ -644,7 +644,7 @@ protected constructor(
             titleComponent?.getWidth(
               context = context,
               text = title,
-              maxWidth = context.canvasSize.width.toInt(),
+              maxWidth = context.canvasWidth.toInt(),
             )
           }
           .orZero
@@ -671,6 +671,7 @@ protected constructor(
           TickPosition.Cross -> this.tickLength / 2
         }
 
+      @Suppress("DEPRECATION")
       when (size) {
         is Size.Auto -> {
           val labelHeight = getMaxLabelHeight(layerDimensions, fullXRange, maxLabelWidth)
@@ -698,14 +699,14 @@ protected constructor(
                     ?.let {
                       titleComponent?.getHeight(
                         context = context,
-                        maxWidth = canvasSize.width.toInt(),
+                        maxWidth = canvasWidth.toInt(),
                         text = it,
                       )
                     }
                     .orZero,
                 )
             }
-            .coerceAtMost(canvasSize.height / MAX_HEIGHT_DIVISOR)
+            .coerceAtMost(MAX_AUTO_HEIGHT.pixels)
             .coerceIn(size.min.pixels, size.max.pixels)
         }
         is Size.Fixed -> size.value.pixels
@@ -956,7 +957,7 @@ protected constructor(
 
   /** Houses [HorizontalAxis] factory functions. */
   public companion object {
-    private const val MAX_HEIGHT_DIVISOR = 3
+    private val MAX_AUTO_HEIGHT = 64.dp
 
     /** Creates and remembers a top [HorizontalAxis]. */
     @Composable

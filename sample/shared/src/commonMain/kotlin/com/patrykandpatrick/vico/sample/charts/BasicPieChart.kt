@@ -16,7 +16,6 @@
 
 package com.patrykandpatrick.vico.sample.charts
 
-import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -24,7 +23,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.common.Fill
 import com.patrykandpatrick.vico.compose.common.component.TextComponent
 import com.patrykandpatrick.vico.compose.common.vicoTheme
@@ -58,7 +56,7 @@ private fun ComposeBasicPieChart(
         valueFormatter = PieValueFormatter { _, value, _ -> "${value.toInt()}%" },
       ),
     modelProducer = modelProducer,
-    modifier = modifier.height(240.dp),
+    modifier = modifier,
   )
 }
 
