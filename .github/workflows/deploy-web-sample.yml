@@ -5,8 +5,10 @@ on:
       - published
   workflow_dispatch:
     inputs:
-      tag_name:
-        description: Version tag to deploy. Defaults to the newest stable version tag.
+      ref:
+        description: >-
+          Tag, branch, or commit to deploy. Defaults to the newest stable
+          version tag.
         required: false
         type: string
 jobs:
@@ -33,26 +35,26 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: 24
-      - name: Resolve tag
+      - name: Resolve ref
         run: |
           if [ "${{ github.event_name }}" = "release" ]; then
-            TAG_NAME="${{ github.event.release.tag_name }}"
+            REF="${{ github.event.release.tag_name }}"
           else
-            TAG_NAME="${{ inputs.tag_name }}"
+            REF="${{ inputs.ref }}"
           fi
 
-          if [ -z "$TAG_NAME" ]; then
-            TAG_NAME=$(git tag --list 'v*' --sort=-version:refname | grep -Ev 'alpha|beta|next' | head -n1)
+          if [ -z "$REF" ]; then
+            REF=$(git tag --list 'v*' --sort=-version:refname | grep -Ev 'alpha|beta|next' | head -n1)
           fi
 
-          if [ -z "$TAG_NAME" ]; then
-            echo "No version tag found."
+          if [ -z "$REF" ]; then
+            echo "No ref to deploy."
             exit 1
           fi
 
-          echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
-      - name: Check out tag
-        run: git checkout "$TAG_NAME"
+          echo "REF=$REF" >> $GITHUB_ENV
+      - name: Check out ref
+        run: git checkout "$REF"
       - name: Build web sample
         run: ./gradlew :sample:web:wasmJsBrowserDistribution
       - name: Install Vercel CLI
@@ -70,4 +72,4 @@ jobs:
         run: |
           URL=$(vercel deploy --prebuilt --prod --token="${{ secrets.VERCEL_TOKEN }}")
           echo "url=$URL" >> "$GITHUB_OUTPUT"
-          echo "Deployed $TAG_NAME to $URL" >> "$GITHUB_STEP_SUMMARY"
+          echo "Deployed $REF to $URL" >> "$GITHUB_STEP_SUMMARY"
