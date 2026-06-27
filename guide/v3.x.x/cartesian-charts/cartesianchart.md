@@ -7,8 +7,6 @@ metaLinks:
 
 # CartesianChart
 
-## Anatomy
-
 [`CartesianChart`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-cartesian-chart/) draws a chart based on a Cartesian coordinate plane. The chart includes one or more data layers, drawn by [`CartesianLayer`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.layer/-cartesian-layer/) instances. Each layer has its own data.
 
 ## Creation

@@ -7,8 +7,6 @@ metaLinks:
 
 # CartesianLayer
 
-## Implementations
-
 There are three built-in [`CartesianLayer`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.layer/-cartesian-layer/) implementations:
 
 * [`CandlestickCartesianLayer`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.layer/-candlestick-cartesian-layer/)
