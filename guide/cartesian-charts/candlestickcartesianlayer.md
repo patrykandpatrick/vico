@@ -15,7 +15,7 @@ Each candle’s style is defined by its corresponding [`Candle`](https://api.vic
 * To style candles based on both their absolute price changes (closing vs. opening) and their relative price changes (closing vs. previous closing), use [`absoluteRelative`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.layer/absolute-relative). This is commonly used for hollow candles and provides corresponding defaults.
 * For custom behavior, implement `CandleProvider`.
 
-In `rememberCandlestickCartesianLayer`, you can set the minimum body height, change the candle spacing, and toggle wick scaling.
+In `rememberCandlestickCartesianLayer`, you can set the minimum body height, change the candle spacing, and toggle wick scaling. For an example, see the [“Gold prices (12/30/2024)”](https://github.com/patrykandpatrick/vico/blob/stable/sample/charts/compose/src/commonMain/kotlin/com/patrykandpatrick/vico/sample/charts/compose/GoldPrices.kt) sample chart.
 
 ## `Transaction.candlestickSeries`
 
@@ -72,7 +72,3 @@ CandlestickCartesianLayerModel.build(
     high = listOf(5, 6, 7, 4),
 )
 ```
-
-## Sample charts
-
-* [“Gold prices (12/30/2024)”](https://github.com/patrykandpatrick/vico/blob/stable/sample/charts/compose/src/commonMain/kotlin/com/patrykandpatrick/vico/sample/charts/compose/GoldPrices.kt)
