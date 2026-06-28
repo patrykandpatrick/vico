@@ -95,6 +95,12 @@ internal constructor(public val entries: List<Entry>, public val extraStore: Ext
 }
 
 /** Sets pie data in a [PieChartModelProducer.Transaction]. */
-public fun PieChartModelProducer.Transaction.pieSeries(block: PieChartModel.Builder.() -> Unit) {
+public fun PieChartModelProducer.Transaction.pieModel(block: PieChartModel.Builder.() -> Unit) {
   set(PieChartModel.Builder().apply(block).build())
+}
+
+/** Sets pie data in a [PieChartModelProducer.Transaction]. */
+@Deprecated("Use `pieModel`.", ReplaceWith("pieModel(block)"))
+public fun PieChartModelProducer.Transaction.pieSeries(block: PieChartModel.Builder.() -> Unit) {
+  pieModel(block)
 }

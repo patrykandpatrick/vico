@@ -30,7 +30,7 @@ import com.patrykandpatrick.vico.compose.pie.PieChart
 import com.patrykandpatrick.vico.compose.pie.PieChartHost
 import com.patrykandpatrick.vico.compose.pie.data.PieChartModelProducer
 import com.patrykandpatrick.vico.compose.pie.data.PieValueFormatter
-import com.patrykandpatrick.vico.compose.pie.data.pieSeries
+import com.patrykandpatrick.vico.compose.pie.data.pieModel
 import com.patrykandpatrick.vico.compose.pie.rememberPieChart
 
 @Composable
@@ -63,7 +63,7 @@ private fun ComposeBasicPieChart(
 @Composable
 fun ComposeBasicPieChart(modifier: Modifier = Modifier) {
   val modelProducer = remember { PieChartModelProducer() }
-  LaunchedEffect(Unit) { modelProducer.runTransaction { pieSeries { series(60, 20, 20) } } }
+  LaunchedEffect(Unit) { modelProducer.runTransaction { pieModel { series(60, 20, 20) } } }
   ComposeBasicPieChart(modelProducer, modifier)
 }
 
@@ -72,6 +72,6 @@ fun ComposeBasicPieChart(modifier: Modifier = Modifier) {
 fun ComposeBasicPieChartPreview() {
   val modelProducer = remember { PieChartModelProducer() }
   // Use `runBlocking` only for previews, which don’t support asynchronous execution.
-  runBlocking?.invoke { modelProducer.runTransaction { pieSeries { series(60, 20, 20) } } }
+  runBlocking?.invoke { modelProducer.runTransaction { pieModel { series(60, 20, 20) } } }
   PreviewBox { ComposeBasicPieChart(modelProducer) }
 }
