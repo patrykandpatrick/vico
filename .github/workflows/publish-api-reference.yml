@@ -1,0 +1,109 @@
+name: Publish API reference
+on:
+  release:
+    types:
+      - published
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: >-
+          Tag, branch, or commit to publish. Defaults to the newest stable
+          version tag.
+        required: false
+        type: string
+jobs:
+  publish-api-reference:
+    runs-on: ubuntu-latest
+    if: github.repository == 'patrykandpatrick/vico'
+    environment:
+      name: views-api-reference
+      url: ${{ steps.deploy.outputs.url }}
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_TEAM_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_VIEWS_API_REFERENCE_PROJECT_ID }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          path: vico
+          fetch-depth: 0
+      - uses: actions/setup-java@v5
+        with:
+          distribution: zulu
+          java-version: 17
+      - uses: gradle/actions/setup-gradle@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+      - name: Resolve ref
+        run: |
+          cd ${{ github.workspace }}/vico
+          if [ "${{ github.event_name }}" = "release" ]; then
+            REF="${{ github.event.release.tag_name }}"
+          else
+            REF="${{ inputs.ref }}"
+          fi
+
+          if [ -z "$REF" ]; then
+            REF=$(git tag --list 'v*' --sort=-version:refname | grep -Ev 'alpha|beta|next' | head -n1)
+          fi
+
+          if [ -z "$REF" ]; then
+            echo "No ref to publish."
+            exit 1
+          fi
+
+          IS_PRERELEASE=false
+          if git rev-parse --verify --quiet "refs/tags/$REF" > /dev/null &&
+            echo "${REF#v}" | grep -q "alpha\|beta\|next"; then
+            IS_PRERELEASE=true
+          fi
+
+          echo "REF=$REF" >> $GITHUB_ENV
+          echo "IS_PRERELEASE=$IS_PRERELEASE" >> $GITHUB_ENV
+      - name: Check out ref
+        run: |
+          cd ${{ github.workspace }}/vico
+          git checkout "$REF"
+      - name: Build current API reference
+        run: |
+          cd ${{ github.workspace }}/vico
+          ./gradlew dokkaGenerate
+      - name: Build site
+        run: |
+          SITE_DIR=${{ github.workspace }}/site
+          rm -rf "$SITE_DIR" ${{ github.workspace }}/vico-stable
+          mkdir -p "$SITE_DIR"
+
+          if $IS_PRERELEASE; then
+            cd ${{ github.workspace }}/vico
+            STABLE_REF=$(git tag --list 'v*' --sort=-version:refname | grep -Ev 'alpha|beta|next' | head -n1)
+            if [ -z "$STABLE_REF" ]; then
+              echo "No stable ref found."
+              exit 1
+            fi
+
+            git worktree add ${{ github.workspace }}/vico-stable "$STABLE_REF"
+            cd ${{ github.workspace }}/vico-stable
+            ./gradlew dokkaGenerate
+            cp -R ${{ github.workspace }}/vico-stable/vico/build/dokka/html/. "$SITE_DIR"
+            mkdir -p "$SITE_DIR/$REF"
+            cp -R ${{ github.workspace }}/vico/vico/build/dokka/html/. "$SITE_DIR/$REF"
+          else
+            cp -R ${{ github.workspace }}/vico/vico/build/dokka/html/. "$SITE_DIR"
+          fi
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+      - name: Link Vercel project
+        run: vercel pull --yes --environment=production --token="${{ secrets.VERCEL_TOKEN }}"
+      - name: Assemble Vercel build output
+        run: |
+          rm -rf .vercel/output
+          mkdir -p .vercel/output/static
+          cp -R ${{ github.workspace }}/site/. .vercel/output/static/
+          echo '{ "version": 3 }' > .vercel/output/config.json
+      - name: Deploy to Vercel
+        id: deploy
+        run: |
+          URL=$(vercel deploy --prebuilt --prod --token="${{ secrets.VERCEL_TOKEN }}")
+          echo "url=$URL" >> "$GITHUB_OUTPUT"
+          echo "Deployed $REF to $URL" >> "$GITHUB_STEP_SUMMARY"
