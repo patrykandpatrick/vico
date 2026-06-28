@@ -36,6 +36,8 @@ These cover most use cases. You can use both colors and brushes, and you can app
 
 For an example of an area fill, see the [“Electric-car sales (Norway)”](https://github.com/patrykandpatrick/vico/blob/stable/sample/charts/compose/src/commonMain/kotlin/com/patrykandpatrick/vico/sample/charts/compose/ElectricCarSales.kt) sample chart.
 
+<figure><img src="../.gitbook/assets/electric-car-sales.png" alt="" width="375"><figcaption><p>The <a href="https://github.com/patrykandpatrick/vico/blob/stable/sample/charts/compose/src/commonMain/kotlin/com/patrykandpatrick/vico/sample/charts/compose/ElectricCarSales.kt">“Electric-car sales (Norway)”</a> sample chart, which combines an area fill with <code>catmullRom</code> interpolation</p></figcaption></figure>
+
 ## `Interpolator`
 
 Use [`Interpolator`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.layer/-line-cartesian-layer/-interpolator/) to define how a line passes through its points. Three built-in implementations are available:

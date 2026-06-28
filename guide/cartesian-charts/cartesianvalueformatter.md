@@ -40,6 +40,8 @@ CartesianValueFormatter { context, x, _ ->
 
 For an example, see the [“Rock–metal ratios”](https://github.com/patrykandpatrick/vico/blob/stable/sample/charts/compose/src/commonMain/kotlin/com/patrykandpatrick/vico/sample/charts/compose/RockMetalRatios.kt) sample chart.
 
+<figure><img src="../.gitbook/assets/rock-metal-ratios.png" alt="" width="375"><figcaption><p>The <a href="https://github.com/patrykandpatrick/vico/blob/stable/sample/charts/compose/src/commonMain/kotlin/com/patrykandpatrick/vico/sample/charts/compose/RockMetalRatios.kt">“Rock–metal ratios”</a> sample chart, whose <em>x</em>-axis labels are category names</p></figcaption></figure>
+
 ## Dates
 
 Another common use case is mapping dates to _y_-values. The dates will be spaced out proportionally. If you need nonproportional spacing, use the approach from the previous subsection. This is also worth considering if there are no gaps in your data, in which case there’s no distinction between proportional and nonproportional spacing; the category approach will be simpler.
@@ -77,3 +79,5 @@ CartesianValueFormatter { context, x, _ ->
 ```
 
 For an example, see the [“Gold prices (12/30/2024)”](https://github.com/patrykandpatrick/vico/blob/stable/sample/charts/compose/src/commonMain/kotlin/com/patrykandpatrick/vico/sample/charts/compose/GoldPrices.kt) sample chart.
+
+<figure><img src="../.gitbook/assets/gold-prices.png" alt="" width="375"><figcaption><p>The <a href="https://github.com/patrykandpatrick/vico/blob/stable/sample/charts/compose/src/commonMain/kotlin/com/patrykandpatrick/vico/sample/charts/compose/GoldPrices.kt">“Gold prices (12/30/2024)”</a> sample chart, whose <em>x</em>-axis labels are dates</p></figcaption></figure>

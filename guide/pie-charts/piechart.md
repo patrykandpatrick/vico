@@ -22,3 +22,5 @@ Use [`PieValueFormatter`](https://api.vico.patrykandpatrick.com/vico/compose/com
 You can also customize slice spacing, the start angle, and the inner and outer sizes. A nonzero inner size produces a donut chart.
 
 For an example, see the [“Basic pie chart”](https://github.com/patrykandpatrick/vico/blob/stable/sample/charts/compose/src/commonMain/kotlin/com/patrykandpatrick/vico/sample/charts/compose/BasicPieChart.kt) sample chart.
+
+<figure><img src="../.gitbook/assets/basic-pie-chart.png" alt="" width="375"><figcaption></figcaption></figure>

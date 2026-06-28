@@ -28,7 +28,7 @@ CartesianChartHost(
 )
 ```
 
-<figure><img src="../.gitbook/assets/column.png" alt="" width="375"><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/basic-column-chart.png" alt="" width="375"><figcaption></figcaption></figure>
 
 ## Line chart
 
@@ -51,7 +51,7 @@ CartesianChartHost(
 )
 ```
 
-<figure><img src="../.gitbook/assets/line.png" alt="" width="375"><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/basic-line-chart.png" alt="" width="375"><figcaption></figcaption></figure>
 
 ## Combo chart
 
@@ -86,7 +86,7 @@ CartesianChartHost(
 )
 ```
 
-<figure><img src="../.gitbook/assets/combo.png" alt="" width="375"><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/basic-combo-chart.png" alt="" width="375"><figcaption></figcaption></figure>
 
 ## More
 
