@@ -27,7 +27,7 @@ val labelListKey = ExtraStore.Key<List<String>>()
 
 ```kt
 cartesianChartModelProducer.runTransaction {
-    columnSeries { series(data.values) }
+    columnModel { series(data.values) }
     extras { it[labelListKey] = data.keys.toList() }
 }
 ```
@@ -60,7 +60,7 @@ val xToDateMapKey = ExtraStore.Key<Map<Float, LocalDate>>()
 ```kt
 val xToDates = data.keys.associateBy { it.toEpochDay().toFloat() }
 cartesianChartModelProducer.runTransaction {
-    lineSeries { series(xToDates.keys, data.values) }
+    lineModel { series(xToDates.keys, data.values) }
     extras { it[xToDateMapKey] = xToDates }
 }
 ```

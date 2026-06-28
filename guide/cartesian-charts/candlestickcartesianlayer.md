@@ -17,13 +17,13 @@ Each candle’s style is defined by its corresponding [`Candle`](https://api.vic
 
 In `rememberCandlestickCartesianLayer`, you can set the minimum body height, change the candle spacing, and toggle wick scaling. For an example, see the [“Gold prices (12/30/2024)”](https://github.com/patrykandpatrick/vico/blob/stable/sample/charts/compose/src/commonMain/kotlin/com/patrykandpatrick/vico/sample/charts/compose/GoldPrices.kt) sample chart.
 
-## `Transaction.candlestickSeries`
+## `Transaction.candlestickModel`
 
-Candlestick layers use [`CandlestickCartesianLayerModel`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-candlestick-cartesian-layer-model/) instances. When using [`CartesianChartModelProducer`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-chart-model-producer/), add them via [`candlestickSeries`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/candlestick-series):
+Candlestick layers use [`CandlestickCartesianLayerModel`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-candlestick-cartesian-layer-model/) instances. When using [`CartesianChartModelProducer`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-chart-model-producer/), add them via [`candlestickModel`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/candlestick-model):
 
 ```kt
 cartesianChartModelProducer.runTransaction {
-    candlestickSeries(
+    candlestickModel(
         x = listOf(1, 2, 3, 4),
         opening = listOf(2, 4, 6, 3),
         closing = listOf(4, 5, 3, 3),
@@ -34,10 +34,10 @@ cartesianChartModelProducer.runTransaction {
 }
 ```
 
-`candlestickSeries` also has an overload with no `x` parameter, which uses the indices of the prices as the _x_-values:
+`candlestickModel` also has an overload with no `x` parameter, which uses the indices of the prices as the _x_-values:
 
 ```kt
-candlestickSeries(
+candlestickModel(
     opening = listOf(2, 4, 6, 3),
     closing = listOf(4, 5, 3, 3),
     low = listOf(1, 4, 2, 2),
