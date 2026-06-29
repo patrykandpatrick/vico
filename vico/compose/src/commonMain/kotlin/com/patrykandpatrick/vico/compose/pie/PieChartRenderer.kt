@@ -44,6 +44,7 @@ public fun PieChart.renderToImageBitmap(
   val cacheStore = CacheStore()
   val measuringContext =
     MutablePieChartMeasuringContext(
+      canvasWidth = size.width,
       canvasSize = size,
       fontFamilyResolver = fontFamilyResolver,
       density = density,

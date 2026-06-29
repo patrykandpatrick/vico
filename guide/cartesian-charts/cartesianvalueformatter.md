@@ -1,0 +1,83 @@
+---
+metaLinks:
+  alternates:
+    - >-
+      https://app.gitbook.com/s/Wpa2ykTaKZoySxzNtySN/multiplatform/cartesian-charts/cartesianvalueformatter
+---
+
+# CartesianValueFormatter
+
+_x_- and _y_-values are numerical. You can use [`CartesianValueFormatter`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-value-formatter/) to format them for display. They can remain numbers, or they can be transformed to dates, category names, and so on.
+
+There are two factory functions for `CartesianValueFormatter`: [`decimal`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-value-formatter/-companion/decimal) and [`yPercent`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-value-formatter/-companion/y-percent). For more complex use cases, create custom implementations. `CartesianValueFormatter` instances are most commonly used with [`HorizontalAxis`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.axis/-horizontal-axis/) and [`VerticalAxis`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.axis/-vertical-axis/)—see the `valueFormatter` parameters and properties. However, these aren’t the only APIs that accept `CartesianValueFormatter` instances.
+
+When the values remain numerical, formatting is straightforward. Thus, on this page, we focus on formatting with nonnumerical results. The aim in such cases is to find a predictable mapping. The optimal approach depends on the use case. Some common situations are discussed below.
+
+## Categories
+
+A chart’s domain can be a list of categories. An easy way to implement this pattern is to use _x_-values that serve as indices. As previously discussed, the series-creating functions have overloads that add such _x_-values automatically.
+
+```kt
+val data = mapOf("A" to 8f, "B" to 4f, "C" to 6f)
+```
+
+```kt
+val labelListKey = ExtraStore.Key<List<String>>()
+```
+
+```kt
+cartesianChartModelProducer.runTransaction {
+    columnModel { series(data.values) }
+    extras { it[labelListKey] = data.keys.toList() }
+}
+```
+
+```kt
+CartesianValueFormatter { context, x, _ ->
+    context.model.extraStore[labelListKey][x.toInt()]
+}
+```
+
+For an example, see the [“Rock–metal ratios”](https://github.com/patrykandpatrick/vico/blob/stable/sample/charts/compose/src/commonMain/kotlin/com/patrykandpatrick/vico/sample/charts/compose/RockMetalRatios.kt) sample chart.
+
+<figure><img src="../.gitbook/assets/rock-metal-ratios.png" alt="" width="375"><figcaption><p>The <a href="https://github.com/patrykandpatrick/vico/blob/stable/sample/charts/compose/src/commonMain/kotlin/com/patrykandpatrick/vico/sample/charts/compose/RockMetalRatios.kt">“Rock–metal ratios”</a> sample chart, whose <em>x</em>-axis labels are category names</p></figcaption></figure>
+
+## Dates
+
+Another common use case is mapping dates to _y_-values. The dates will be spaced out proportionally. If you need nonproportional spacing, use the approach from the previous subsection. This is also worth considering if there are no gaps in your data, in which case there’s no distinction between proportional and nonproportional spacing; the category approach will be simpler.
+
+```kt
+val data =
+    mapOf(
+        LocalDate.parse("2022-07-01") to 2f,
+        LocalDate.parse("2022-07-02") to 6f,
+        LocalDate.parse("2022-07-04") to 4f,
+    )
+```
+
+```kt
+val xToDateMapKey = ExtraStore.Key<Map<Float, LocalDate>>()
+```
+
+```kt
+val xToDates = data.keys.associateBy { it.toEpochDay().toFloat() }
+cartesianChartModelProducer.runTransaction {
+    lineModel { series(xToDates.keys, data.values) }
+    extras { it[xToDateMapKey] = xToDates }
+}
+```
+
+```kt
+val dateTimeFormatter = DateTimeFormatter.ofPattern("d MMM")
+```
+
+```kt
+CartesianValueFormatter { context, x, _ ->
+    (context.model.extraStore[xToDateMapKey][x] ?: LocalDate.ofEpochDay(x.toLong()))
+        .format(dateTimeFormatter)
+}
+```
+
+For an example, see the [“Gold prices (12/30/2024)”](https://github.com/patrykandpatrick/vico/blob/stable/sample/charts/compose/src/commonMain/kotlin/com/patrykandpatrick/vico/sample/charts/compose/GoldPrices.kt) sample chart.
+
+<figure><img src="../.gitbook/assets/gold-prices.png" alt="" width="375"><figcaption><p>The <a href="https://github.com/patrykandpatrick/vico/blob/stable/sample/charts/compose/src/commonMain/kotlin/com/patrykandpatrick/vico/sample/charts/compose/GoldPrices.kt">“Gold prices (12/30/2024)”</a> sample chart, whose <em>x</em>-axis labels are dates</p></figcaption></figure>

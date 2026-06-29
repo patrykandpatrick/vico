@@ -33,8 +33,6 @@ rootProject.name = "Vico"
 
 include(
   "sample:android",
-  "sample:charts:compose",
-  "sample:charts:views",
   "sample:desktop",
   "sample:shared",
   "sample:web",
@@ -43,5 +41,4 @@ include(
   "vico:compose-glance",
   "vico:compose-m2",
   "vico:compose-m3",
-  "vico:views",
 )

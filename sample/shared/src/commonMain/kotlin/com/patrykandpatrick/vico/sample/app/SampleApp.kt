@@ -47,7 +47,7 @@ fun SampleApp() {
       composable<Destination.ChartList> { ChartListScreen(navController) }
       composable<Destination.Chart> { backStackEntry ->
         val destination = backStackEntry.toRoute<Destination.Chart>()
-        ChartScreen(navController, destination.uiFrameworkID, destination.initialChartID)
+        ChartScreen(navController, destination.initialChartID)
       }
     }
   }

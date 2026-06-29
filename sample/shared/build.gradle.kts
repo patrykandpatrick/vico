@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 
 plugins {
   id("com.android.kotlin.multiplatform.library")
-  id("org.jetbrains.compose")
+  alias(libs.plugins.composeMultiplatformSample)
   id("org.jetbrains.kotlin.multiplatform")
   id("org.jetbrains.kotlin.plugin.compose")
   kotlin("plugin.serialization")
@@ -39,13 +39,17 @@ kotlin {
   js { browser() }
   @OptIn(ExperimentalWasmDsl::class) wasmJs { browser() }
   sourceSets {
-    androidMain.dependencies { implementation(project(":sample:charts:views")) }
+    androidMain.dependencies { implementation(libs.composeUITooling) }
     commonMain.dependencies {
+      implementation(libs.composeFoundation)
       implementation(libs.composeMaterial3Expressive)
       implementation(libs.composeMaterialIcons)
       implementation(libs.composeNavigation)
+      implementation(libs.composeUI)
+      implementation(libs.composeUIToolingPreview)
+      implementation(libs.kotlinDateTime)
       implementation(libs.lifecycleRuntime)
-      implementation(project(":sample:charts:compose"))
+      implementation(project(":vico:compose"))
     }
   }
 }

@@ -42,9 +42,9 @@ import androidx.navigation.NavController
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-internal fun ChartScreen(navController: NavController, uiFrameworkID: Int, initialChartID: Int) {
+internal fun ChartScreen(navController: NavController, initialChartID: Int) {
   var chartID by rememberSaveable { mutableIntStateOf(initialChartID) }
-  val charts = Charts.all.getValue(UIFramework.entries[uiFrameworkID])
+  val charts = Charts.all
   val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
   val lifecycle = LocalLifecycleOwner.current.lifecycle
   val navigateBack = {

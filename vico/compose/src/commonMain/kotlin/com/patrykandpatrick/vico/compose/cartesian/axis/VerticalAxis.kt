@@ -72,9 +72,9 @@ protected constructor(
   size: Size,
   titleComponent: TextComponent?,
   title: (ExtraStore) -> CharSequence?,
-  public val titlePosition: TitlePosition,
   tickPosition: TickPosition,
   lineDrawingOrder: LineDrawingOrder,
+  public val titlePosition: TitlePosition,
 ) :
   BaseAxis<P>(
     line,
@@ -119,9 +119,9 @@ protected constructor(
     itemPlacer: ItemPlacer,
     titleComponent: TextComponent?,
     title: (ExtraStore) -> CharSequence?,
-    titlePosition: TitlePosition,
     tickPosition: TickPosition,
     lineDrawingOrder: LineDrawingOrder,
+    titlePosition: TitlePosition,
   ) : this(
     position,
     line,
@@ -137,9 +137,9 @@ protected constructor(
     Size.Auto(),
     titleComponent,
     title,
-    titlePosition,
     tickPosition,
     lineDrawingOrder,
+    titlePosition,
   )
 
   override fun updateAxisDimensions(
@@ -472,7 +472,7 @@ protected constructor(
           ?.takeIf { titlePosition == TitlePosition.End }
           ?.let { title ->
             titleComponent
-              ?.getWidth(context = context, text = title, maxWidth = canvasSize.width.toInt())
+              ?.getWidth(context = context, text = title, maxWidth = canvasWidth.toInt())
               ?.let { it.half + lineThickness.half }
           }
           .orZero
@@ -499,7 +499,7 @@ protected constructor(
           ?.let { title ->
             titleComponent?.getHeight(
               context = context,
-              maxWidth = canvasSize.width.toInt(),
+              maxWidth = canvasWidth.toInt(),
               text = title,
             )
           }
@@ -531,6 +531,7 @@ protected constructor(
           TickPosition.Inside -> 0f
           TickPosition.Cross -> this.tickLength / 2
         }
+      @Suppress("DEPRECATION")
       when (size) {
         is Size.Auto -> {
           val titleComponentWidth =
@@ -557,7 +558,7 @@ protected constructor(
           )
         }
         is Size.Fixed -> size.value.pixels
-        is Size.Fraction -> canvasSize.width * size.fraction
+        is Size.Fraction -> canvasWidth * size.fraction
         is Size.Text ->
           label
             ?.getWidth(context = this, text = size.text, rotationDegrees = labelRotationDegrees)
@@ -618,9 +619,9 @@ protected constructor(
     size: Size = this.size,
     titleComponent: TextComponent? = this.titleComponent,
     title: (ExtraStore) -> CharSequence? = this.title,
-    titlePosition: TitlePosition = this.titlePosition,
     tickPosition: TickPosition = this.tickPosition,
     lineDrawingOrder: LineDrawingOrder = this.lineDrawingOrder,
+    titlePosition: TitlePosition = this.titlePosition,
   ): VerticalAxis<P> =
     VerticalAxis(
       position,
@@ -637,9 +638,9 @@ protected constructor(
       size,
       titleComponent,
       title,
-      titlePosition,
       tickPosition,
       lineDrawingOrder,
+      titlePosition,
     )
 
   override fun equals(other: Any?): Boolean =
@@ -783,10 +784,10 @@ protected constructor(
       size: Size = Size.Auto(),
       titleComponent: TextComponent? = null,
       title: (ExtraStore) -> CharSequence? = { null },
-      titlePosition: TitlePosition = TitlePosition.Side,
       tickPosition: TickPosition =
         if (horizontalLabelPosition == Outside) TickPosition.Outside else TickPosition.Inside,
       lineDrawingOrder: LineDrawingOrder = LineDrawingOrder.UnderLayers,
+      titlePosition: TitlePosition = TitlePosition.Side,
     ): VerticalAxis<Axis.Position.Vertical.Start> =
       remember(
         line,
@@ -802,9 +803,9 @@ protected constructor(
         size,
         titleComponent,
         title,
-        titlePosition,
         tickPosition,
         lineDrawingOrder,
+        titlePosition,
       ) {
         VerticalAxis(
           Axis.Position.Vertical.Start,
@@ -821,9 +822,9 @@ protected constructor(
           size,
           titleComponent,
           title,
-          titlePosition,
           tickPosition,
           lineDrawingOrder,
+          titlePosition,
         )
       }
 
@@ -843,10 +844,10 @@ protected constructor(
       size: Size = Size.Auto(),
       titleComponent: TextComponent? = null,
       title: (ExtraStore) -> CharSequence? = { null },
-      titlePosition: TitlePosition = TitlePosition.Side,
       tickPosition: TickPosition =
         if (horizontalLabelPosition == Outside) TickPosition.Outside else TickPosition.Inside,
       lineDrawingOrder: LineDrawingOrder = LineDrawingOrder.UnderLayers,
+      titlePosition: TitlePosition = TitlePosition.Side,
     ): VerticalAxis<Axis.Position.Vertical.End> =
       remember(
         line,
@@ -862,9 +863,9 @@ protected constructor(
         size,
         titleComponent,
         title,
-        titlePosition,
         tickPosition,
         lineDrawingOrder,
+        titlePosition,
       ) {
         VerticalAxis(
           Axis.Position.Vertical.End,
@@ -881,9 +882,9 @@ protected constructor(
           size,
           titleComponent,
           title,
-          titlePosition,
           tickPosition,
           lineDrawingOrder,
+          titlePosition,
         )
       }
   }

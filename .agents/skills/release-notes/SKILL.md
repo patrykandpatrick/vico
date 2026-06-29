@@ -7,9 +7,9 @@ description:
     workflow context.
 ---
 
-# Release Notes
+# Release notes
 
-## Vico Style
+## Vico style
 
 Write GitHub release notes in the established Vico format:
 
@@ -18,12 +18,7 @@ Write GitHub release notes in the established Vico format:
     - `breaking changes: none`, `negligible`, `minor`, `moderate`, or `major`
     - `addressed: #123, #456`
     - `external contributors: @username`
-3. Follow with only the nonempty implementation sections needed for the release:
-    - `## Common` for shared APIs, data models, rendering, markers, axes, and
-      behavior spanning Compose and Android Views.
-    - ``## `compose` `` for Compose Multiplatform-specific APIs and fixes.
-    - ``## `views` `` for Android Views-specific APIs, XML attributes, and
-      fixes.
+3. Follow with `## Changes` for user-visible changes.
 4. Use bullets for short releases. Use numbered lists when a section contains
    several related API changes that build on one another.
 5. Prefer concise maintainer verbs: `Added`, `Fixed`, `Improved`, `Introduced`,
@@ -36,7 +31,7 @@ Write GitHub release notes in the established Vico format:
 8. Keep the text concrete and user-facing. Do not list routine dependency bumps,
    formatting, release version commits, CI-only work, or internal refactors
    unless they affect public behavior.
-9. Avoid marketing language, "What's Changed" headings, commit hashes, and
+9. Avoid marketing language, “What’s changed” headings, commit hashes, and
    contributor thanks outside the overview metadata.
 
 ## Workflow
@@ -49,9 +44,7 @@ Write GitHub release notes in the established Vico format:
    `HEAD` if the target tag does not exist yet.
 4. Review commits, pull requests, linked issues, discussions, and relevant diffs
    to find user-visible changes.
-5. Group each change under the most specific Vico section. If a change touches
-   both `vico/compose` and `vico/views` through shared code, place it under
-   `Common`.
+5. Group all user-visible changes under `## Changes`.
 6. Classify breaking changes conservatively. Use only `none`, `negligible`,
    `minor`, `moderate`, or `major`. Treat source-incompatible public API changes
    as at least `minor`, even when deprecated overloads cover most callers.
@@ -59,7 +52,7 @@ Write GitHub release notes in the established Vico format:
 8. Verify that the draft starts with `## Overview`, has no empty sections, and
    contains no claims unsupported by the inspected history.
 
-## Stable Releases After `next`
+## Stable releases after `next`
 
 Stable releases are usually preceded by one or more same-version `next`
 releases, and the stable release is expected to be identical to the final
@@ -90,15 +83,7 @@ same-version `next` tags such as `v3.2.0-next.1`, `v3.2.0-next.2`, and
 - addressed: #123
 - external contributors: @username
 
-## Common
+## Changes
 
-- Fixed ...
-
-## `compose`
-
-- Added ...
-
-## `views`
-
-- Exposed ...
+- Fixed …
 ```

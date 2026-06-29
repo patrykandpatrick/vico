@@ -19,10 +19,10 @@ package com.patrykandpatrick.vico.sample.app
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.patrykandpatrick.vico.sample.app.Chart.Details
-import com.patrykandpatrick.vico.sample.charts.compose.*
+import com.patrykandpatrick.vico.sample.charts.*
 
 object Charts {
-  val Compose =
+  val all =
     default(
       { ComposeBasicColumnChart(it) },
       { ComposeBasicLineChart(it) },
@@ -61,8 +61,3 @@ object Charts {
       Chart(Details.GoldPrices, goldPrices),
     )
 }
-
-expect val Charts.overridden: LinkedHashMap<UIFramework, List<Chart>>?
-
-internal val Charts.all
-  get() = overridden ?: linkedMapOf(UIFramework.Compose to Compose)

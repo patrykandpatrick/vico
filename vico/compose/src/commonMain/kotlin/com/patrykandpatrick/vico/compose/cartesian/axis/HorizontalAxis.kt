@@ -68,9 +68,9 @@ protected constructor(
   size: Size,
   titleComponent: TextComponent?,
   title: (ExtraStore) -> CharSequence?,
-  public val titlePosition: TitlePosition,
   tickPosition: TickPosition,
   lineDrawingOrder: LineDrawingOrder,
+  public val titlePosition: TitlePosition,
 ) :
   BaseAxis<P>(
     line,
@@ -106,9 +106,9 @@ protected constructor(
     itemPlacer: ItemPlacer,
     titleComponent: TextComponent?,
     title: (ExtraStore) -> CharSequence?,
-    titlePosition: TitlePosition,
     tickPosition: TickPosition,
     lineDrawingOrder: LineDrawingOrder,
+    titlePosition: TitlePosition,
   ) : this(
     position,
     line,
@@ -122,9 +122,9 @@ protected constructor(
     Size.Auto(),
     titleComponent,
     title,
-    titlePosition,
     tickPosition,
     lineDrawingOrder,
+    titlePosition,
   )
 
   override fun updateAxisDimensions(
@@ -644,7 +644,7 @@ protected constructor(
             titleComponent?.getWidth(
               context = context,
               text = title,
-              maxWidth = context.canvasSize.width.toInt(),
+              maxWidth = context.canvasWidth.toInt(),
             )
           }
           .orZero
@@ -671,6 +671,7 @@ protected constructor(
           TickPosition.Cross -> this.tickLength / 2
         }
 
+      @Suppress("DEPRECATION")
       when (size) {
         is Size.Auto -> {
           val labelHeight = getMaxLabelHeight(layerDimensions, fullXRange, maxLabelWidth)
@@ -698,14 +699,14 @@ protected constructor(
                     ?.let {
                       titleComponent?.getHeight(
                         context = context,
-                        maxWidth = canvasSize.width.toInt(),
+                        maxWidth = canvasWidth.toInt(),
                         text = it,
                       )
                     }
                     .orZero,
                 )
             }
-            .coerceAtMost(canvasSize.height / MAX_HEIGHT_DIVISOR)
+            .coerceAtMost(MAX_AUTO_HEIGHT.pixels)
             .coerceIn(size.min.pixels, size.max.pixels)
         }
         is Size.Fixed -> size.value.pixels
@@ -770,9 +771,9 @@ protected constructor(
     size: Size = this.size,
     titleComponent: TextComponent? = this.titleComponent,
     title: (ExtraStore) -> CharSequence? = this.title,
-    titlePosition: TitlePosition = this.titlePosition,
     tickPosition: TickPosition = this.tickPosition,
     lineDrawingOrder: LineDrawingOrder = this.lineDrawingOrder,
+    titlePosition: TitlePosition = this.titlePosition,
   ): HorizontalAxis<P> =
     HorizontalAxis(
       position,
@@ -787,9 +788,9 @@ protected constructor(
       size,
       titleComponent,
       title,
-      titlePosition,
       tickPosition,
       lineDrawingOrder,
+      titlePosition,
     )
 
   override fun equals(other: Any?): Boolean =
@@ -956,7 +957,7 @@ protected constructor(
 
   /** Houses [HorizontalAxis] factory functions. */
   public companion object {
-    private const val MAX_HEIGHT_DIVISOR = 3
+    private val MAX_AUTO_HEIGHT = 64.dp
 
     /** Creates and remembers a top [HorizontalAxis]. */
     @Composable
@@ -972,9 +973,9 @@ protected constructor(
       size: Size = Size.Auto(),
       titleComponent: TextComponent? = null,
       title: (ExtraStore) -> CharSequence? = { null },
-      titlePosition: TitlePosition = TitlePosition.Side,
       tickPosition: TickPosition = TickPosition.Outside,
       lineDrawingOrder: LineDrawingOrder = LineDrawingOrder.UnderLayers,
+      titlePosition: TitlePosition = TitlePosition.Side,
     ): HorizontalAxis<Axis.Position.Horizontal.Top> =
       remember(
         line,
@@ -988,9 +989,9 @@ protected constructor(
         size,
         titleComponent,
         title,
-        titlePosition,
         tickPosition,
         lineDrawingOrder,
+        titlePosition,
       ) {
         HorizontalAxis(
           Axis.Position.Horizontal.Top,
@@ -1005,9 +1006,9 @@ protected constructor(
           size,
           titleComponent,
           title,
-          titlePosition,
           tickPosition,
           lineDrawingOrder,
+          titlePosition,
         )
       }
 
@@ -1025,9 +1026,9 @@ protected constructor(
       size: Size = Size.Auto(),
       titleComponent: TextComponent? = null,
       title: (ExtraStore) -> CharSequence? = { null },
-      titlePosition: TitlePosition = TitlePosition.Side,
       tickPosition: TickPosition = TickPosition.Outside,
       lineDrawingOrder: LineDrawingOrder = LineDrawingOrder.UnderLayers,
+      titlePosition: TitlePosition = TitlePosition.Side,
     ): HorizontalAxis<Axis.Position.Horizontal.Bottom> =
       remember(
         line,
@@ -1041,9 +1042,9 @@ protected constructor(
         size,
         titleComponent,
         title,
-        titlePosition,
         tickPosition,
         lineDrawingOrder,
+        titlePosition,
       ) {
         HorizontalAxis(
           Axis.Position.Horizontal.Bottom,
@@ -1058,9 +1059,9 @@ protected constructor(
           size,
           titleComponent,
           title,
-          titlePosition,
           tickPosition,
           lineDrawingOrder,
+          titlePosition,
         )
       }
   }

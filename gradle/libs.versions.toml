@@ -2,9 +2,15 @@
 activity = "1.13.0"
 agp = "9.2.1"
 androidXAnnotation = "1.10.0"
-androidXCore = "1.19.0"
-appcompat = "1.7.1"
 compose = "1.11.1"
+# The sample adopts Material 3 Expressive, available only in a 1.12.0-alpha Compose
+# release, which drags the sample’s Compose runtime up to 1.12.0-alpha02. The Compose
+# Gradle plugin bundles the Skia/skiko runtime for the web (and desktop) targets and must
+# match that runtime, or the app fails to link. The sample modules therefore apply the
+# Compose plugin at this version (`composeMultiplatformSample`), while the library modules
+# stay on the stable `compose` version (`composeMultiplatform`), keeping their published
+# dependencies alpha-free.
+composeSample = "1.12.0-alpha02"
 composeMaterial3 = "1.9.0"
 composeMaterial3Expressive = "1.12.0-alpha02"
 composeMaterialIcons = "1.7.3"
@@ -13,23 +19,20 @@ coroutines = "1.11.0"
 dateTime = "0.8.0-0.6.x-compat"
 dokka = "2.2.0"
 glance = "1.1.1"
-jetpackComposeBom = "2026.05.01"
+jetpackComposeBom = "2026.06.00"
 kotlin = "2.4.0"
 lifecycleRuntime = "2.11.0-beta02"
 material = "1.14.0"
-mavenPublish = "0.36.0"
+mavenPublish = "0.37.0"
 mockK = "1.14.11"
 screenshot = "0.0.1-alpha15"
-uiTextAndroid = "1.11.2"
+uiTextAndroid = "1.11.3"
 
 [libraries]
 activityCompose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity" }
 androidApplication = { group = "com.android.application", name = "com.android.application.gradle.plugin", version.ref = "agp" }
 androidKotlinMultiplatformLibrary = { group = "com.android.kotlin.multiplatform.library", name = "com.android.kotlin.multiplatform.library.gradle.plugin", version.ref = "agp" }
 androidXAnnotation = { group = "androidx.annotation", name = "annotation", version.ref = "androidXAnnotation" }
-androidXCore = { group = "androidx.core", name = "core-ktx", version.ref = "androidXCore" }
-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
-compose = { group = "org.jetbrains.compose", name = "compose-gradle-plugin", version.ref = "compose" }
 composeCompiler = { group = "org.jetbrains.kotlin.plugin.compose", name = "org.jetbrains.kotlin.plugin.compose.gradle.plugin", version.ref = "kotlin" }
 composeDesktop = { group = "org.jetbrains.compose.desktop", name = "desktop-jvm", version.ref = "compose" }
 composeFoundation = { group = "org.jetbrains.compose.foundation", name = "foundation", version.ref = "compose" }
@@ -48,7 +51,6 @@ glanceAppWidget = { group = "androidx.glance", name = "glance-appwidget", versio
 jetpackComposeBom = { group = "androidx.compose", name = "compose-bom", version.ref = "jetpackComposeBom" }
 jetpackComposeUI = { group = "androidx.compose.ui", name = "ui" }
 jetpackComposeUITooling = { group = "androidx.compose.ui", name = "ui-tooling" }
-jetpackComposeViewBinding = { group = "androidx.compose.ui", name = "ui-viewbinding" }
 kotlinAndroid = { group = "org.jetbrains.kotlin.android", name = "org.jetbrains.kotlin.android.gradle.plugin", version.ref = "kotlin" }
 kotlinDateTime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "dateTime" }
 kotlinJvm = { group = "org.jetbrains.kotlin.jvm", name = "org.jetbrains.kotlin.jvm.gradle.plugin", version.ref = "kotlin" }
@@ -64,4 +66,9 @@ serialization = { group = "org.jetbrains.kotlin.plugin.serialization", name = "o
 uiTextAndroid = { group = "androidx.compose.ui", name = "ui-text-android", version.ref = "uiTextAndroid" }
 
 [plugins]
+# `org.jetbrains.compose` is applied per module rather than shared through buildSrc, so the
+# library and the sample can track different Compose versions (see the `compose` /
+# `composeSample` versions above).
+composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "compose" }
+composeMultiplatformSample = { id = "org.jetbrains.compose", version.ref = "composeSample" }
 screenshot = { id = "com.android.compose.screenshot", version.ref = "screenshot" }

@@ -50,6 +50,7 @@ public fun CartesianChart.renderToImageBitmap(
   val cacheStore = CacheStore()
   val measuringContext =
     MutableCartesianMeasuringContext(
+      canvasWidth = size.width,
       canvasSize = size,
       fontFamilyResolver = fontFamilyResolver,
       density = density,
@@ -67,7 +68,7 @@ public fun CartesianChart.renderToImageBitmap(
 
   val layerDimensions = MutableCartesianLayerDimensions()
   layerDimensions.clear()
-  prepare(measuringContext, layerDimensions)
+  prepare(measuringContext, layerDimensions, size)
 
   if (!layerBounds.isEmpty) {
     CanvasDrawScope().draw(density, layoutDirection, canvas, size) {

@@ -1,0 +1,35 @@
+---
+metaLinks:
+  alternates:
+    - >-
+      https://app.gitbook.com/s/Wpa2ykTaKZoySxzNtySN/multiplatform/cartesian-charts/axis
+---
+
+# Axis
+
+[`Axis`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.axis/-axis/) draws an axis along an edge of a [`CartesianChart`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-cartesian-chart/) instance. There are two built-in implementations: [`HorizontalAxis`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.axis/-horizontal-axis/) and [`VerticalAxis`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.axis/-vertical-axis/). Use [`VerticalAxis.rememberStart`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.axis/-vertical-axis/-companion/remember-start), [`HorizontalAxis.rememberTop`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.axis/-horizontal-axis/-companion/remember-top), [`VerticalAxis.rememberEnd`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.axis/-vertical-axis/-companion/remember-end), and [`HorizontalAxis.rememberBottom`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.axis/-horizontal-axis/-companion/remember-bottom) to instantiate these:
+
+```kt
+rememberCartesianChart(
+    startAxis = VerticalAxis.rememberStart(/* ... */),
+    topAxis = HorizontalAxis.rememberTop(/* ... */),
+    endAxis = VerticalAxis.rememberEnd(/* ... */),
+    bottomAxis = HorizontalAxis.rememberBottom(/* ... */),
+    // ...
+)
+```
+
+Numerous customization options are available; you can change the appearance of the labels, modify the axis lines, add titles, and more.
+
+[`BaseAxis.TickPosition`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.axis/-base-axis/-tick-position/) and [`BaseAxis.LineDrawingOrder`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.axis/-base-axis/-line-drawing-order/) let you place ticks outside, inside, or across the axis line and choose whether ticks and the axis line are drawn under or over the chart layers.
+
+## `ItemPlacer`
+
+[`HorizontalAxis.ItemPlacer`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.axis/-horizontal-axis/-item-placer/) and [`VerticalAxis.ItemPlacer`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.axis/-vertical-axis/-item-placer/) let you customize for what _x_- and _y_-values labels and lines are displayed. Four factory functions are available:
+
+* [`HorizontalAxis.ItemPlacer.aligned`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.axis/-horizontal-axis/-item-placer/-companion/aligned) (default)
+* [`HorizontalAxis.ItemPlacer.segmented`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.axis/-horizontal-axis/-item-placer/-companion/segmented)
+* [`VerticalAxis.ItemPlacer.step`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.axis/-vertical-axis/-item-placer/-companion/step) (default)
+* [`VerticalAxis.ItemPlacer.count`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.axis/-vertical-axis/-item-placer/-companion/count)
+
+Custom implementations can be created.

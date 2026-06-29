@@ -21,7 +21,7 @@ plugins {
   `dokka-convention`
   `publishing-convention`
   id("com.android.library")
-  id("org.jetbrains.compose")
+  alias(libs.plugins.composeMultiplatform)
   id("org.jetbrains.kotlin.plugin.compose")
 }
 

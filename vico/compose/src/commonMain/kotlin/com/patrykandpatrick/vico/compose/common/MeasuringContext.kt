@@ -27,7 +27,21 @@ import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 
 /** Holds data used for measuring and drawing. */
 public interface MeasuringContext {
+  /** The [Canvas] width. */
+  public val canvasWidth: Float
+
   /** The [Canvas] size. */
+  @Deprecated(
+    "With the chart hosts’ `chartAreaHeight` parameter, the canvas height isn’t necessarily " +
+      "known by the measuring phase, so `MeasuringContext` exposes only `canvasWidth`. When " +
+      "drawing, read the full size from `DrawingContext.canvasSize` instead; if you see this " +
+      "warning while drawing, narrow your receiver from `MeasuringContext` to its subtype " +
+      "`DrawingContext`. If you need the height while measuring and your chart’s height is fixed " +
+      "(e.g., via `Modifier.height`), use that value directly, hoisting it into a constant " +
+      "shared by the modifier and your code. Otherwise, don’t depend on the height here. Until " +
+      "`canvasSize` is removed, `canvasSize.height` stays exact for a pinned height, and for the " +
+      "automatic case, it represents the chart-area height."
+  )
   public val canvasSize: Size
 
   /** The [FontFamily.Resolver]. */

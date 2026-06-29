@@ -21,5 +21,5 @@ import kotlinx.serialization.Serializable
 sealed interface Destination {
   @Serializable object ChartList : Destination
 
-  @Serializable class Chart(val uiFrameworkID: Int, val initialChartID: Int) : Destination
+  @Serializable class Chart(val initialChartID: Int) : Destination
 }

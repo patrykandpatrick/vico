@@ -58,7 +58,8 @@ internal object Defaults {
   const val POINT_SIZE: Float = 8f
   const val POINT_SPACING: Float = 32f
   const val TEXT_COMPONENT_TEXT_SIZE: Float = 12f
-  const val CHART_HEIGHT: Float = 200f
+  const val CARTESIAN_CHART_AREA_HEIGHT: Float = 192f
+  const val PIE_CHART_AREA_HEIGHT: Float = 232f
   const val LEGEND_COLUMN_SPACING: Float = 16f
   const val LEGEND_ICON_LABEL_SPACING: Float = 8f
   const val LEGEND_ICON_SIZE: Float = 8f

@@ -74,7 +74,7 @@ internal constructor(
   }
 
   internal fun getLegendHeight(context: PieChartMeasuringContext): Float =
-    legend?.getHeight(context, context.canvasSize.width).orZero
+    legend?.getHeight(context, context.canvasWidth).orZero
 
   internal fun draw(context: PieChartDrawingContext, drawingModel: PieChartDrawingModel) {
     val circleBounds = getCircleBounds(context, drawingModel)

@@ -137,13 +137,13 @@ public class VicoScrollState {
    * @param dataUpdateScrollAnchor defines what happens to the scroll value when the data changes.
    */
   public constructor(
-    scrollEnabled: Boolean,
-    initialScroll: Scroll.Absolute,
-    autoScroll: Scroll,
-    autoScrollCondition: AutoScrollCondition,
-    autoScrollAnimationSpec: AnimationSpec<Float>,
-    xSnapStep: Double?,
-    snapAnimationSpec: AnimationSpec<Float>,
+    scrollEnabled: Boolean = true,
+    initialScroll: Scroll.Absolute = Scroll.Absolute.Start,
+    autoScroll: Scroll = initialScroll,
+    autoScrollCondition: AutoScrollCondition = AutoScrollCondition.Never,
+    autoScrollAnimationSpec: AnimationSpec<Float> = spring(),
+    xSnapStep: Double? = null,
+    snapAnimationSpec: AnimationSpec<Float> = spring(),
     dataUpdateScrollAnchor: DataUpdateScrollAnchor = DataUpdateScrollAnchor.Start,
   ) : this(
     scrollEnabled = scrollEnabled,

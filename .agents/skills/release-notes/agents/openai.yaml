@@ -1,4 +1,4 @@
 interface:
-  display_name: "Release Notes"
+  display_name: "Release notes"
   short_description: "Draft Vico GitHub release notes"
   default_prompt: "Use $release-notes to draft Vico GitHub release notes for the current version."
