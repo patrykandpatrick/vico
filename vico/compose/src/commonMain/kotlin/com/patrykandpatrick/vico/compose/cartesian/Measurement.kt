@@ -17,9 +17,8 @@
 package com.patrykandpatrick.vico.compose.cartesian
 
 /**
- * A snapshot of the layout data from a single measurement, used by
- * [DataUpdateScrollAnchor.VisibleXRange] to keep the same _x_ coordinates visible when the dataset
- * changes.
+ * A snapshot of the layout data from a single measurement, used to keep the same _x_ coordinates
+ * visible when the dataset changes.
  *
  * @property minX the smallest _x_ value in the chart’s data.
  * @property xStep the difference between neighboring _x_ values.

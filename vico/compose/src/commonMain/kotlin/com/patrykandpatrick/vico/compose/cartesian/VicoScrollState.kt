@@ -50,7 +50,6 @@ public class VicoScrollState {
   private val autoScrollCondition: AutoScrollCondition
   private val autoScrollAnimationSpec: AnimationSpec<Float>
   internal val snapAnimationSpec: AnimationSpec<Float>
-  private val dataUpdateScrollAnchor: DataUpdateScrollAnchor
   private val _value: MutableFloatState
   private val _maxValue = mutableFloatStateOf(0f)
   private var initialScrollHandled: Boolean
@@ -62,8 +61,8 @@ public class VicoScrollState {
   internal val consumedXDeltas = MutableSharedFlow<Float>(extraBufferCapacity = 1)
   internal val unconsumedXDeltas = MutableSharedFlow<Float>(extraBufferCapacity = 1)
 
-  // Previous-measurement layout data, used by `DataUpdateScrollAnchor.VisibleXRange` to keep the
-  // same `x` coordinates visible when the dataset changes.
+  // Previous-measurement layout data, used to keep the same `x` coordinates visible when the
+  // dataset changes.
   private var previousMeasurement: Measurement? = null
 
   internal val scrollableState = ScrollableState { delta ->
@@ -106,7 +105,6 @@ public class VicoScrollState {
     autoScrollAnimationSpec: AnimationSpec<Float>,
     xSnapStep: Double?,
     snapAnimationSpec: AnimationSpec<Float>,
-    dataUpdateScrollAnchor: DataUpdateScrollAnchor,
     value: Float,
     initialScrollHandled: Boolean,
   ) {
@@ -117,7 +115,6 @@ public class VicoScrollState {
     this.autoScrollAnimationSpec = autoScrollAnimationSpec
     this.xSnapStep = xSnapStep
     this.snapAnimationSpec = snapAnimationSpec
-    this.dataUpdateScrollAnchor = dataUpdateScrollAnchor
     _value = mutableFloatStateOf(value)
     this.initialScrollHandled = initialScrollHandled
   }
@@ -134,7 +131,6 @@ public class VicoScrollState {
    * @param xSnapStep if not null, the scroll will snap to multiples of this _x_-axis step after the
    *   user stops scrolling.
    * @param snapAnimationSpec the [AnimationSpec] for snap scrolling.
-   * @param dataUpdateScrollAnchor defines what happens to the scroll value when the data changes.
    */
   public constructor(
     scrollEnabled: Boolean = true,
@@ -144,7 +140,6 @@ public class VicoScrollState {
     autoScrollAnimationSpec: AnimationSpec<Float> = spring(),
     xSnapStep: Double? = null,
     snapAnimationSpec: AnimationSpec<Float> = spring(),
-    dataUpdateScrollAnchor: DataUpdateScrollAnchor = DataUpdateScrollAnchor.Start,
   ) : this(
     scrollEnabled = scrollEnabled,
     initialScroll = initialScroll,
@@ -153,7 +148,6 @@ public class VicoScrollState {
     autoScrollAnimationSpec = autoScrollAnimationSpec,
     xSnapStep = xSnapStep,
     snapAnimationSpec = snapAnimationSpec,
-    dataUpdateScrollAnchor = dataUpdateScrollAnchor,
     value = 0f,
     initialScrollHandled = false,
   )
@@ -184,8 +178,7 @@ public class VicoScrollState {
       value = initialScroll.getValue(context, layerDimensions, bounds, maxValue)
       initialScrollHandled = true
     } else if (
-      dataUpdateScrollAnchor == DataUpdateScrollAnchor.VisibleXRange &&
-        previous != null &&
+      previous != null &&
         previous.xSpacing != 0f &&
         ranges.xStep != 0.0 &&
         (ranges.minX != previous.minX || ranges.xStep != previous.xStep)
@@ -304,7 +297,6 @@ public class VicoScrollState {
       autoScrollAnimationSpec: AnimationSpec<Float>,
       xSnapStep: Double?,
       snapAnimationSpec: AnimationSpec<Float>,
-      dataUpdateScrollAnchor: DataUpdateScrollAnchor,
     ) =
       Saver<VicoScrollState, Pair<Float, Boolean>>(
         save = { it.value to it.initialScrollHandled },
@@ -317,7 +309,6 @@ public class VicoScrollState {
             autoScrollAnimationSpec,
             xSnapStep,
             snapAnimationSpec,
-            dataUpdateScrollAnchor,
             value,
             initialScrollHandled,
           )
@@ -332,7 +323,6 @@ public class VicoScrollState {
  * @param xSnapStep if not null, the scroll will snap to multiples of this _x_-axis step after the
  *   user stops scrolling.
  * @param snapAnimationSpec the [AnimationSpec] for snap scrolling.
- * @param dataUpdateScrollAnchor defines what happens to the scroll value when the data changes.
  */
 @Composable
 public fun rememberVicoScrollState(
@@ -343,7 +333,6 @@ public fun rememberVicoScrollState(
   autoScrollAnimationSpec: AnimationSpec<Float> = spring(),
   xSnapStep: Double? = null,
   snapAnimationSpec: AnimationSpec<Float> = spring(),
-  dataUpdateScrollAnchor: DataUpdateScrollAnchor = DataUpdateScrollAnchor.Start,
 ): VicoScrollState {
   val state =
     rememberSaveable(
@@ -353,7 +342,6 @@ public fun rememberVicoScrollState(
       autoScrollAnimationSpec,
       xSnapStep,
       snapAnimationSpec,
-      dataUpdateScrollAnchor,
       saver =
         remember(
           scrollEnabled,
@@ -362,7 +350,6 @@ public fun rememberVicoScrollState(
           autoScrollAnimationSpec,
           xSnapStep,
           snapAnimationSpec,
-          dataUpdateScrollAnchor,
         ) {
           VicoScrollState.Saver(
             scrollEnabled,
@@ -372,7 +359,6 @@ public fun rememberVicoScrollState(
             autoScrollAnimationSpec,
             xSnapStep,
             snapAnimationSpec,
-            dataUpdateScrollAnchor,
           )
         },
     ) {
@@ -384,7 +370,6 @@ public fun rememberVicoScrollState(
         autoScrollAnimationSpec,
         xSnapStep,
         snapAnimationSpec,
-        dataUpdateScrollAnchor,
       )
     }
   SideEffect { state.scrollEnabled = scrollEnabled }
