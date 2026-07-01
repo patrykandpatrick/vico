@@ -61,6 +61,10 @@ public class VicoScrollState {
   internal val consumedXDeltas = MutableSharedFlow<Float>(extraBufferCapacity = 1)
   internal val unconsumedXDeltas = MutableSharedFlow<Float>(extraBufferCapacity = 1)
 
+  // Previous-measurement layout data, used to keep the same `x` coordinates visible when the
+  // dataset changes.
+  private var previousMeasurement: Measurement? = null
+
   internal val scrollableState = ScrollableState { delta ->
     val oldValue = value
     value += delta
@@ -168,10 +172,35 @@ public class VicoScrollState {
     this.layerDimensions = layerDimensions
     this.bounds = bounds
     maxValue = context.getMaxScrollDistance(bounds.width, layerDimensions)
+    val ranges = context.ranges
+    val previous = previousMeasurement
     if (!initialScrollHandled) {
       value = initialScroll.getValue(context, layerDimensions, bounds, maxValue)
       initialScrollHandled = true
+    } else if (
+      previous != null &&
+        previous.xSpacing != 0f &&
+        ranges.xStep != 0.0 &&
+        (ranges.minX != previous.minX || ranges.xStep != previous.xStep)
+    ) {
+      // The `x` range changed (data was added or removed). Reposition so that the `x` coordinate
+      // that was at the chart’s start edge stays there, rather than keeping the raw pixel scroll
+      // value—which would make the chart jump when, e.g., older points are prepended. This runs
+      // during measurement, so the corrected value is used by the same frame that draws the new
+      // data (no flicker).
+      val startEdgeX =
+        previous.minX + (value - previous.startPadding) / previous.xSpacing * previous.xStep
+      value =
+        layerDimensions.startPadding +
+          ((startEdgeX - ranges.minX) / ranges.xStep).toFloat() * layerDimensions.xSpacing
     }
+    previousMeasurement =
+      Measurement(
+        minX = ranges.minX,
+        xStep = ranges.xStep,
+        xSpacing = layerDimensions.xSpacing,
+        startPadding = layerDimensions.startPadding,
+      )
   }
 
   internal suspend fun autoScroll(model: CartesianChartModel, oldModel: CartesianChartModel?) {
