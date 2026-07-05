@@ -36,8 +36,15 @@ kotlin {
     }
   }
   jvm("desktop")
-  js { browser() }
-  @OptIn(ExperimentalWasmDsl::class) wasmJs { browser() }
+  js {
+    browser()
+    binaries.executable()
+  }
+  @OptIn(ExperimentalWasmDsl::class)
+  wasmJs {
+    browser()
+    binaries.executable()
+  }
   sourceSets {
     androidMain.dependencies { implementation(libs.composeUITooling) }
     commonMain.dependencies {
