@@ -41,16 +41,30 @@ import org.junit.jupiter.api.Timeout
 class VicoScrollStateTest {
   @MockK private lateinit var context: CartesianMeasuringContext
   @MockK private lateinit var ranges: CartesianChartRanges
+  private var minX = 0.0
+  private var maxX = 10.0
+  private var xLength = 10.0
+  private var xStep = 1.0
+  private var layoutDirection = LayoutDirection.Ltr
+  private val layoutDirectionMultiplier: Int
+    get() = if (layoutDirection == LayoutDirection.Ltr) 1 else -1
 
   @BeforeTest
   fun setUp() {
     MockKAnnotations.init(this, relaxed = true)
-    every { context.layoutDirection } returns LayoutDirection.Ltr
+    minX = 0.0
+    maxX = 10.0
+    xLength = 10.0
+    xStep = 1.0
+    layoutDirection = LayoutDirection.Ltr
+    every { context.layoutDirection } answers { layoutDirection }
+    every { context.isLtr } answers { layoutDirection == LayoutDirection.Ltr }
+    every { context.layoutDirectionMultiplier } answers { layoutDirectionMultiplier }
     every { context.ranges } returns ranges
-    every { ranges.minX } returns 0.0
-    every { ranges.maxX } returns 10.0
-    every { ranges.xLength } returns 10.0
-    every { ranges.xStep } returns 1.0
+    every { ranges.minX } answers { minX }
+    every { ranges.maxX } answers { maxX }
+    every { ranges.xLength } answers { xLength }
+    every { ranges.xStep } answers { xStep }
   }
 
   @Test
@@ -139,14 +153,70 @@ class VicoScrollStateTest {
       assertEquals(38f, sut.getSnapDelta(targetValue = 49f))
     }
 
+  @Test
+  fun `When x range shifts, then update preserves the visible x range`() = runBlocking {
+    maxX = 20.0
+    xLength = 20.0
+    val bounds = Rect(0f, 0f, 100f, 100f)
+    val layerDimensions =
+      MutableCartesianLayerDimensions(
+        xSpacing = 10f,
+        scalableStartPadding = 6f,
+        unscalableStartPadding = 4f,
+      )
+    val sut =
+      createScrollState(
+        initialScroll = Scroll.Absolute.pixels(40f),
+        layerDimensions = layerDimensions,
+      )
+
+    val visibleStart = context.getVisibleXRange(layerDimensions, bounds, sut.value).start
+
+    minX = -2.0
+    xLength = 22.0
+    sut.update(context = context, bounds = bounds, layerDimensions = layerDimensions)
+
+    assertEquals(visibleStart, context.getVisibleXRange(layerDimensions, bounds, sut.value).start)
+    assertEquals(60f, sut.value)
+  }
+
+  @Test
+  fun `When x range shifts in RTL, then update preserves the visible x range`() = runBlocking {
+    layoutDirection = LayoutDirection.Rtl
+    maxX = 20.0
+    xLength = 20.0
+    val bounds = Rect(0f, 0f, 100f, 100f)
+    val layerDimensions =
+      MutableCartesianLayerDimensions(
+        xSpacing = 10f,
+        scalableStartPadding = 6f,
+        unscalableStartPadding = 4f,
+      )
+    val sut =
+      createScrollState(
+        initialScroll = Scroll.Absolute.pixels(-40f),
+        layerDimensions = layerDimensions,
+      )
+
+    val visibleStart = context.getVisibleXRange(layerDimensions, bounds, sut.value).start
+
+    minX = -2.0
+    xLength = 22.0
+    sut.update(context = context, bounds = bounds, layerDimensions = layerDimensions)
+
+    assertEquals(visibleStart, context.getVisibleXRange(layerDimensions, bounds, sut.value).start)
+    assertEquals(-20f, sut.value)
+  }
+
   private fun createScrollState(
     xSnapStep: Double? = null,
+    initialScroll: Scroll.Absolute = Scroll.Absolute.Start,
     layerDimensions: MutableCartesianLayerDimensions =
       MutableCartesianLayerDimensions(xSpacing = 20f),
   ): VicoScrollState =
     VicoScrollState(
         scrollEnabled = true,
-        initialScroll = Scroll.Absolute.Start,
+        initialScroll = initialScroll,
         autoScroll = Scroll.Absolute.Start,
         autoScrollCondition = AutoScrollCondition.Never,
         autoScrollAnimationSpec = tween(),

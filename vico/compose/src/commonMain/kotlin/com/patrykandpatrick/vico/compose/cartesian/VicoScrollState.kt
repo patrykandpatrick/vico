@@ -60,6 +60,7 @@ public class VicoScrollState {
   internal val xSnapStep: Double?
   internal val consumedXDeltas = MutableSharedFlow<Float>(extraBufferCapacity = 1)
   internal val unconsumedXDeltas = MutableSharedFlow<Float>(extraBufferCapacity = 1)
+  private var previousScrollLayout: ScrollLayout? = null
 
   internal val scrollableState = ScrollableState { delta ->
     val oldValue = value
@@ -168,10 +169,34 @@ public class VicoScrollState {
     this.layerDimensions = layerDimensions
     this.bounds = bounds
     maxValue = context.getMaxScrollDistance(bounds.width, layerDimensions)
+    val ranges = context.ranges
+    val previous = previousScrollLayout
     if (!initialScrollHandled) {
       value = initialScroll.getValue(context, layerDimensions, bounds, maxValue)
       initialScrollHandled = true
+    } else if (
+      previous != null &&
+        previous.xSpacing != 0f &&
+        ranges.xStep != 0.0 &&
+        (ranges.minX != previous.minX || ranges.xStep != previous.xStep)
+    ) {
+      val startEdgeX =
+        previous.minX +
+          (previous.layoutDirectionMultiplier * value - previous.startPadding) / previous.xSpacing *
+            previous.xStep
+      value =
+        context.layoutDirectionMultiplier *
+          (layerDimensions.startPadding +
+            ((startEdgeX - ranges.minX) / ranges.xStep).toFloat() * layerDimensions.xSpacing)
     }
+    previousScrollLayout =
+      ScrollLayout(
+        minX = ranges.minX,
+        xStep = ranges.xStep,
+        xSpacing = layerDimensions.xSpacing,
+        startPadding = layerDimensions.startPadding,
+        layoutDirectionMultiplier = context.layoutDirectionMultiplier,
+      )
   }
 
   internal suspend fun autoScroll(model: CartesianChartModel, oldModel: CartesianChartModel?) {
@@ -346,3 +371,11 @@ public fun rememberVicoScrollState(
   SideEffect { state.scrollEnabled = scrollEnabled }
   return state
 }
+
+private data class ScrollLayout(
+  val minX: Double,
+  val xStep: Double,
+  val xSpacing: Float,
+  val startPadding: Float,
+  val layoutDirectionMultiplier: Int,
+)
