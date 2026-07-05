@@ -60,10 +60,7 @@ public class VicoScrollState {
   internal val xSnapStep: Double?
   internal val consumedXDeltas = MutableSharedFlow<Float>(extraBufferCapacity = 1)
   internal val unconsumedXDeltas = MutableSharedFlow<Float>(extraBufferCapacity = 1)
-
-  // Previous-measurement layout data, used to keep the same `x` coordinates visible when the
-  // dataset changes.
-  private var previousMeasurement: Measurement? = null
+  private var previousScrollLayout: ScrollLayout? = null
 
   internal val scrollableState = ScrollableState { delta ->
     val oldValue = value
@@ -173,7 +170,7 @@ public class VicoScrollState {
     this.bounds = bounds
     maxValue = context.getMaxScrollDistance(bounds.width, layerDimensions)
     val ranges = context.ranges
-    val previous = previousMeasurement
+    val previous = previousScrollLayout
     if (!initialScrollHandled) {
       value = initialScroll.getValue(context, layerDimensions, bounds, maxValue)
       initialScrollHandled = true
@@ -183,23 +180,22 @@ public class VicoScrollState {
         ranges.xStep != 0.0 &&
         (ranges.minX != previous.minX || ranges.xStep != previous.xStep)
     ) {
-      // The `x` range changed (data was added or removed). Reposition so that the `x` coordinate
-      // that was at the chart’s start edge stays there, rather than keeping the raw pixel scroll
-      // value—which would make the chart jump when, e.g., older points are prepended. This runs
-      // during measurement, so the corrected value is used by the same frame that draws the new
-      // data (no flicker).
       val startEdgeX =
-        previous.minX + (value - previous.startPadding) / previous.xSpacing * previous.xStep
+        previous.minX +
+          (previous.layoutDirectionMultiplier * value - previous.startPadding) / previous.xSpacing *
+            previous.xStep
       value =
-        layerDimensions.startPadding +
-          ((startEdgeX - ranges.minX) / ranges.xStep).toFloat() * layerDimensions.xSpacing
+        context.layoutDirectionMultiplier *
+          (layerDimensions.startPadding +
+            ((startEdgeX - ranges.minX) / ranges.xStep).toFloat() * layerDimensions.xSpacing)
     }
-    previousMeasurement =
-      Measurement(
+    previousScrollLayout =
+      ScrollLayout(
         minX = ranges.minX,
         xStep = ranges.xStep,
         xSpacing = layerDimensions.xSpacing,
         startPadding = layerDimensions.startPadding,
+        layoutDirectionMultiplier = context.layoutDirectionMultiplier,
       )
   }
 
@@ -375,3 +371,11 @@ public fun rememberVicoScrollState(
   SideEffect { state.scrollEnabled = scrollEnabled }
   return state
 }
+
+private data class ScrollLayout(
+  val minX: Double,
+  val xStep: Double,
+  val xSpacing: Float,
+  val startPadding: Float,
+  val layoutDirectionMultiplier: Int,
+)
