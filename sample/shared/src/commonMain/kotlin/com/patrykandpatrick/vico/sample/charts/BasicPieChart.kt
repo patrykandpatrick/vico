@@ -31,13 +31,16 @@ import com.patrykandpatrick.vico.compose.pie.PieChartHost
 import com.patrykandpatrick.vico.compose.pie.data.PieChartModelProducer
 import com.patrykandpatrick.vico.compose.pie.data.PieValueFormatter
 import com.patrykandpatrick.vico.compose.pie.data.pieModel
+import com.patrykandpatrick.vico.compose.pie.pieRotation
 import com.patrykandpatrick.vico.compose.pie.rememberPieChart
+import com.patrykandpatrick.vico.compose.pie.rememberPieRotationState
 
 @Composable
 private fun ComposeBasicPieChart(
   modelProducer: PieChartModelProducer,
   modifier: Modifier = Modifier,
 ) {
+  val rotation = rememberPieRotationState()
   PieChartHost(
     chart =
       rememberPieChart(
@@ -53,10 +56,11 @@ private fun ComposeBasicPieChart(
               )
             }
           ),
+        startAngle = -90f + rotation.angle,
         valueFormatter = PieValueFormatter { _, value, _ -> "${value.toInt()}%" },
       ),
     modelProducer = modelProducer,
-    modifier = modifier,
+    modifier = modifier.pieRotation(rotation),
   )
 }
 
