@@ -208,6 +208,37 @@ class VicoScrollStateTest {
     assertEquals(-20f, sut.value)
   }
 
+  @Test
+  fun `When data is trimmed on the start side while pinned to the end, then update keeps the scroll pinned to the end`() =
+    runBlocking {
+      maxX = 19.0
+      xLength = 19.0
+      val bounds = Rect(0f, 0f, 100f, 100f)
+      val layerDimensions =
+        MutableCartesianLayerDimensions(
+          xSpacing = 10f,
+          scalableStartPadding = 6f,
+          unscalableStartPadding = 4f,
+        )
+      // The initial content is 100px wider than the chart, so the end-pinned scroll value is 100,
+      // matching the max scroll distance. The scroll is at the end.
+      val sut = createScrollState(initialScroll = Scroll.Absolute.End, layerDimensions = layerDimensions)
+      assertEquals(sut.maxValue, sut.value)
+
+      val visibleStart = context.getVisibleXRange(layerDimensions, bounds, sut.value).start
+
+      // Trim the five oldest points. The remaining content still overflows the chart, so the new
+      // max scroll distance is smaller than the old scroll value.
+      minX = 5.0
+      xLength = 14.0
+      sut.update(context = context, bounds = bounds, layerDimensions = layerDimensions)
+
+      // The visible x range is unchanged (the trimmed points were off-screen), and the scroll stays
+      // pinned to the end rather than rolling toward the start by the size of the trim.
+      assertEquals(visibleStart, context.getVisibleXRange(layerDimensions, bounds, sut.value).start)
+      assertEquals(sut.maxValue, sut.value)
+    }
+
   private fun createScrollState(
     xSnapStep: Double? = null,
     initialScroll: Scroll.Absolute = Scroll.Absolute.Start,
