@@ -30,6 +30,7 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
@@ -238,6 +239,27 @@ class VicoScrollStateTest {
       assertEquals(visibleStart, context.getVisibleXRange(layerDimensions, bounds, sut.value).start)
       assertEquals(sut.maxValue, sut.value)
     }
+
+  @Test
+  fun `When a scroll is in progress, then scroll with a max value is skipped`() = runBlocking {
+    val sut = createScrollState()
+    val maxValueBefore = sut.maxValue
+    // Hold a scroll in progress so isScrollInProgress stays true for the duration of the test.
+    val holdJob =
+      launch(start = CoroutineStart.UNDISPATCHED) {
+        sut.scrollableState.scroll { suspendCancellableCoroutine<Unit> {} }
+      }
+    assertTrue(sut.scrollableState.isScrollInProgress)
+
+    // A zoom emits stale scroll compensation with its own max value. It must be dropped rather than
+    // applied once the scroll stops, so maxValue is left untouched. (Without the fix this would
+    // suspend until the scroll ends and time out.)
+    sut.scroll(Scroll.Absolute.pixels(0f), maxScroll = maxValueBefore + 500f)
+
+    assertEquals(maxValueBefore, sut.maxValue)
+
+    holdJob.cancelAndJoin()
+  }
 
   private fun createScrollState(
     xSnapStep: Double? = null,

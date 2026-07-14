@@ -229,7 +229,14 @@ public class VicoScrollState {
   }
 
   internal suspend fun scroll(scroll: Scroll, maxScroll: Float) {
-    isScrollInProgress.first { !it }
+    // This receives the scroll compensation for a zoom gesture—an absolute target computed from the
+    // scroll value and the content width at the time of the zoom event. It’s valid only while the
+    // user isn’t scrolling: if a pan or fling is already in progress (e.g., the pinch turned into a
+    // pan without the scroll ever becoming idle for a frame), then by the time the scroll stops both
+    // the target and `maxScroll` are stale, and applying them would roll the viewport back to the
+    // position at the time of the zoom. Drop the stale compensation; the zoom handler emits a fresh
+    // one on every zoom event.
+    if (scrollableState.isScrollInProgress) return
     maxValue = maxScroll
     withUpdated { context, layerDimensions, bounds ->
       scrollableState.scrollBy(scroll.getDelta(context, layerDimensions, bounds, maxValue, value))
