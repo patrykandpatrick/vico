@@ -1,6 +1,6 @@
 [versions]
 activity = "1.13.0"
-agp = "9.2.1"
+agp = "9.3.0"
 androidXAnnotation = "1.10.0"
 compose = "1.11.1"
 # The sample adopts Material 3 Expressive, available only in a 1.12.0-alpha Compose
