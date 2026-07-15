@@ -31,6 +31,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
@@ -223,7 +224,8 @@ class VicoScrollStateTest {
         )
       // The initial content is 100px wider than the chart, so the end-pinned scroll value is 100,
       // matching the max scroll distance. The scroll is at the end.
-      val sut = createScrollState(initialScroll = Scroll.Absolute.End, layerDimensions = layerDimensions)
+      val sut =
+        createScrollState(initialScroll = Scroll.Absolute.End, layerDimensions = layerDimensions)
       assertEquals(sut.maxValue, sut.value)
 
       val visibleStart = context.getVisibleXRange(layerDimensions, bounds, sut.value).start
@@ -241,24 +243,39 @@ class VicoScrollStateTest {
     }
 
   @Test
-  fun `When a scroll is in progress, then scroll with a max value is skipped`() = runBlocking {
-    val sut = createScrollState()
-    val maxValueBefore = sut.maxValue
-    // Hold a scroll in progress so isScrollInProgress stays true for the duration of the test.
-    val holdJob =
+  fun `When a scroll is in progress, then a zoom's pending scroll is dropped`() = runBlocking {
+    val scrollState = createScrollState()
+    val zoomState = createZoomState()
+    val maxValueBefore = scrollState.maxValue
+
+    // Mirror CartesianChartHost's wiring: the zoom state's pending scroll flows into the scroll
+    // state. `processed` completes only once the collector returns from `scroll`, so awaiting it
+    // catches the pre-fix behavior, where `scroll` suspends until the in-progress scroll ends.
+    val processed = CompletableDeferred<Unit>()
+    val collector =
       launch(start = CoroutineStart.UNDISPATCHED) {
-        sut.scrollableState.scroll { suspendCancellableCoroutine<Unit> {} }
+        zoomState.pendingScroll.collect { (scroll, maxValue) ->
+          scrollState.scroll(scroll, maxValue)
+          processed.complete(Unit)
+        }
       }
-    assertTrue(sut.scrollableState.isScrollInProgress)
 
-    // A zoom emits stale scroll compensation with its own max value. It must be dropped rather than
-    // applied once the scroll stops, so maxValue is left untouched. (Without the fix this would
-    // suspend until the scroll ends and time out.)
-    sut.scroll(Scroll.Absolute.pixels(0f), maxScroll = maxValueBefore + 500f)
+    // Begin a scroll and keep it in progress.
+    val scrollJob =
+      launch(start = CoroutineStart.UNDISPATCHED) {
+        scrollState.scrollableState.scroll { suspendCancellableCoroutine<Unit> {} }
+      }
+    assertTrue(scrollState.scrollableState.isScrollInProgress)
 
-    assertEquals(maxValueBefore, sut.maxValue)
+    // A zoom emits scroll compensation while the scroll is in progress. The compensation is stale,
+    // so it must be dropped rather than applied, leaving maxValue untouched.
+    zoomState.zoom(factor = 2f, centroidX = 50f) { scrollState.value }
+    processed.await()
 
-    holdJob.cancelAndJoin()
+    assertEquals(maxValueBefore, scrollState.maxValue)
+
+    scrollJob.cancelAndJoin()
+    collector.cancelAndJoin()
   }
 
   private fun createScrollState(
@@ -283,6 +300,22 @@ class VicoScrollStateTest {
           layerDimensions = layerDimensions,
         )
         it.maxValue = 100f
+      }
+
+  private fun createZoomState(): VicoZoomState =
+    VicoZoomState(
+        zoomEnabled = true,
+        initialZoom = Zoom.fixed(1f),
+        minZoom = Zoom.fixed(1f),
+        maxZoom = Zoom.fixed(4f),
+      )
+      .also {
+        it.update(
+          context = context,
+          layerDimensions = MutableCartesianLayerDimensions(xSpacing = 10f),
+          bounds = Rect(0f, 0f, 100f, 100f),
+          scroll = 0f,
+        )
       }
 
   private class SuspendingFrameClock : MonotonicFrameClock {
