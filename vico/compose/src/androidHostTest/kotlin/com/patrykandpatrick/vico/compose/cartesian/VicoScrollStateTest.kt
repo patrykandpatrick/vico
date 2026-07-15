@@ -30,6 +30,8 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertTrue
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
@@ -208,6 +210,74 @@ class VicoScrollStateTest {
     assertEquals(-20f, sut.value)
   }
 
+  @Test
+  fun `When data is trimmed on the start side while pinned to the end, then update keeps the scroll pinned to the end`() =
+    runBlocking {
+      maxX = 19.0
+      xLength = 19.0
+      val bounds = Rect(0f, 0f, 100f, 100f)
+      val layerDimensions =
+        MutableCartesianLayerDimensions(
+          xSpacing = 10f,
+          scalableStartPadding = 6f,
+          unscalableStartPadding = 4f,
+        )
+      // The initial content is 100px wider than the chart, so the end-pinned scroll value is 100,
+      // matching the max scroll distance. The scroll is at the end.
+      val sut =
+        createScrollState(initialScroll = Scroll.Absolute.End, layerDimensions = layerDimensions)
+      assertEquals(sut.maxValue, sut.value)
+
+      val visibleStart = context.getVisibleXRange(layerDimensions, bounds, sut.value).start
+
+      // Trim the five oldest points. The remaining content still overflows the chart, so the new
+      // max scroll distance is smaller than the old scroll value.
+      minX = 5.0
+      xLength = 14.0
+      sut.update(context = context, bounds = bounds, layerDimensions = layerDimensions)
+
+      // The visible x range is unchanged (the trimmed points were off-screen), and the scroll stays
+      // pinned to the end rather than rolling toward the start by the size of the trim.
+      assertEquals(visibleStart, context.getVisibleXRange(layerDimensions, bounds, sut.value).start)
+      assertEquals(sut.maxValue, sut.value)
+    }
+
+  @Test
+  fun `When a scroll is in progress, then a zoom's pending scroll is dropped`() = runBlocking {
+    val scrollState = createScrollState()
+    val zoomState = createZoomState()
+    val maxValueBefore = scrollState.maxValue
+
+    // Mirror CartesianChartHost's wiring: the zoom state's pending scroll flows into the scroll
+    // state. `processed` completes only once the collector returns from `scroll`, so awaiting it
+    // catches the pre-fix behavior, where `scroll` suspends until the in-progress scroll ends.
+    val processed = CompletableDeferred<Unit>()
+    val collector =
+      launch(start = CoroutineStart.UNDISPATCHED) {
+        zoomState.pendingScroll.collect { (scroll, maxValue) ->
+          scrollState.scroll(scroll, maxValue)
+          processed.complete(Unit)
+        }
+      }
+
+    // Begin a scroll and keep it in progress.
+    val scrollJob =
+      launch(start = CoroutineStart.UNDISPATCHED) {
+        scrollState.scrollableState.scroll { suspendCancellableCoroutine<Unit> {} }
+      }
+    assertTrue(scrollState.scrollableState.isScrollInProgress)
+
+    // A zoom emits scroll compensation while the scroll is in progress. The compensation is stale,
+    // so it must be dropped rather than applied, leaving maxValue untouched.
+    zoomState.zoom(factor = 2f, centroidX = 50f) { scrollState.value }
+    processed.await()
+
+    assertEquals(maxValueBefore, scrollState.maxValue)
+
+    scrollJob.cancelAndJoin()
+    collector.cancelAndJoin()
+  }
+
   private fun createScrollState(
     xSnapStep: Double? = null,
     initialScroll: Scroll.Absolute = Scroll.Absolute.Start,
@@ -230,6 +300,22 @@ class VicoScrollStateTest {
           layerDimensions = layerDimensions,
         )
         it.maxValue = 100f
+      }
+
+  private fun createZoomState(): VicoZoomState =
+    VicoZoomState(
+        zoomEnabled = true,
+        initialZoom = Zoom.fixed(1f),
+        minZoom = Zoom.fixed(1f),
+        maxZoom = Zoom.fixed(4f),
+      )
+      .also {
+        it.update(
+          context = context,
+          layerDimensions = MutableCartesianLayerDimensions(xSpacing = 10f),
+          bounds = Rect(0f, 0f, 100f, 100f),
+          scroll = 0f,
+        )
       }
 
   private class SuspendingFrameClock : MonotonicFrameClock {
