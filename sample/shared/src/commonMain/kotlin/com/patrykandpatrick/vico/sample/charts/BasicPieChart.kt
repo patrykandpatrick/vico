@@ -32,6 +32,7 @@ import com.patrykandpatrick.vico.compose.pie.data.PieChartModelProducer
 import com.patrykandpatrick.vico.compose.pie.data.PieValueFormatter
 import com.patrykandpatrick.vico.compose.pie.data.pieModel
 import com.patrykandpatrick.vico.compose.pie.rememberPieChart
+import com.patrykandpatrick.vico.compose.pie.rememberVicoPieRotationState
 
 @Composable
 private fun ComposeBasicPieChart(
@@ -57,6 +58,7 @@ private fun ComposeBasicPieChart(
       ),
     modelProducer = modelProducer,
     modifier = modifier,
+    rotationState = rememberVicoPieRotationState(rotationEnabled = true),
   )
 }
 

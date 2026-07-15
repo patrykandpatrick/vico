@@ -69,6 +69,8 @@ internal constructor(
 ) : Bounded {
   override var bounds: Rect = Rect.Zero
 
+  internal var gestureGeometry: PieGestureGeometry = PieGestureGeometry.Zero
+
   init {
     require(spacing >= 0.dp) { "Slice spacing must be nonnegative." }
   }
@@ -76,11 +78,16 @@ internal constructor(
   internal fun getLegendHeight(context: PieChartMeasuringContext): Float =
     legend?.getHeight(context, context.canvasWidth).orZero
 
-  internal fun draw(context: PieChartDrawingContext, drawingModel: PieChartDrawingModel) {
-    val circleBounds = getCircleBounds(context, drawingModel)
+  internal fun draw(
+    context: PieChartDrawingContext,
+    drawingModel: PieChartDrawingModel,
+    startAngle: Float = this.startAngle,
+  ) {
+    val circleBounds = getCircleBounds(context, drawingModel, startAngle)
     val outerRadius = circleBounds.width / 2f
     val holeRadius = innerSize.getRadius(context, circleBounds.width, circleBounds.height)
     require(outerRadius > holeRadius) { "The outer size must be greater than the inner size." }
+    gestureGeometry = PieGestureGeometry(circleBounds.center, outerRadius, holeRadius)
     val spacingPx = with(context) { spacing.pixels }
     val spacingDegrees = if (outerRadius > 0f) spacingToDegrees(context, outerRadius) else 0f
     var currentAngle = startAngle
@@ -141,6 +148,7 @@ internal constructor(
   private fun getCircleBounds(
     context: PieChartDrawingContext,
     drawingModel: PieChartDrawingModel,
+    startAngle: Float,
   ): Rect {
     val baseRadius = outerSize.getRadius(context, bounds.width, bounds.height)
     val entries = context.model.entries
