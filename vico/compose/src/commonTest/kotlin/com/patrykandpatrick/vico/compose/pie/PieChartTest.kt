@@ -16,10 +16,31 @@
 
 package com.patrykandpatrick.vico.compose.pie
 
+import com.patrykandpatrick.vico.compose.common.toRadians
+import kotlin.math.sin
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class PieChartTest {
+
+  @Test
+  fun `Donut spacing yields the same gap width at the inner and outer radii`() {
+    val halfSpacing = 4f
+    val outerRadius = 100f
+    val innerRadius = 40f
+
+    // A trimmed edge’s perpendicular offset from the radial line is radius * sin(trim).
+    val outerOffset = outerRadius * sin(asinDegrees(halfSpacing / outerRadius).toRadians()).toFloat()
+    val innerOffset = innerRadius * sin(asinDegrees(halfSpacing / innerRadius).toRadians()).toFloat()
+
+    assertEquals(halfSpacing, outerOffset, absoluteTolerance = 0.001f)
+    assertEquals(halfSpacing, innerOffset, absoluteTolerance = 0.001f)
+  }
+
+  @Test
+  fun `asinDegrees clamps out-of-range input to a right angle`() {
+    assertEquals(90f, asinDegrees(Float.POSITIVE_INFINITY), absoluteTolerance = 0.001f)
+  }
 
   @Test
   fun `Inside label max width does not collapse for a full sweep`() {
