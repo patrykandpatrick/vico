@@ -62,8 +62,9 @@ public open class ShapeComponent(
     require(strokeThickness >= 0.dp) { "`strokeThickness` must be nonnegative." }
   }
 
-  private fun getShadowPainters(shadows: List<Shadow>) =
-    shadows.map { DropShadowPainter(shape, it) }
+  private fun getShadowPainters(shadows: List<Shadow>) = shadows.map {
+    DropShadowPainter(shape, it)
+  }
 
   protected fun applyBrushes(size: Size) {
     fill.brush?.applyTo(size = size, p = paint, alpha = 1f)

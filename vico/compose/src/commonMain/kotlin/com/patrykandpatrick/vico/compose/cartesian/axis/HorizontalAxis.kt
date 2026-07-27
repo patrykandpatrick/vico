@@ -462,49 +462,47 @@ protected constructor(
     context: CartesianDrawingContext,
     maxLabelWidth: Float,
     axisDimensions: Map<Axis.Position, AxisDimensions>,
-  ) =
-    context.run {
-      val lineLeft =
-        if (context.isLtr) {
-          getLineStart(context, axisDimensions)
-        } else {
-          getLineEnd(context, axisDimensions)
-        }
-
-      val defaultLineLeft =
-        bounds.left -
-          itemPlacer.getStartLayerMargin(this, layerDimensions, tickThickness, maxLabelWidth)
-
-      if (lineLeft != null) {
-        minOf(lineLeft, defaultLineLeft)
+  ) = context.run {
+    val lineLeft =
+      if (context.isLtr) {
+        getLineStart(context, axisDimensions)
       } else {
-        defaultLineLeft
+        getLineEnd(context, axisDimensions)
       }
+
+    val defaultLineLeft =
+      bounds.left -
+        itemPlacer.getStartLayerMargin(this, layerDimensions, tickThickness, maxLabelWidth)
+
+    if (lineLeft != null) {
+      minOf(lineLeft, defaultLineLeft)
+    } else {
+      defaultLineLeft
     }
+  }
 
   private fun getLineRight(
     context: CartesianDrawingContext,
     maxLabelWidth: Float,
     axisDimensions: Map<Axis.Position, AxisDimensions>,
-  ) =
-    context.run {
-      val lineRight =
-        if (context.isLtr) {
-          getLineEnd(context, axisDimensions)
-        } else {
-          getLineStart(context, axisDimensions)
-        }
-
-      val defaultLineRight =
-        bounds.right +
-          itemPlacer.getEndLayerMargin(this, layerDimensions, tickThickness, maxLabelWidth)
-
-      if (lineRight != null) {
-        maxOf(lineRight, defaultLineRight)
+  ) = context.run {
+    val lineRight =
+      if (context.isLtr) {
+        getLineEnd(context, axisDimensions)
       } else {
-        defaultLineRight
+        getLineStart(context, axisDimensions)
       }
+
+    val defaultLineRight =
+      bounds.right +
+        itemPlacer.getEndLayerMargin(this, layerDimensions, tickThickness, maxLabelWidth)
+
+    if (lineRight != null) {
+      maxOf(lineRight, defaultLineRight)
+    } else {
+      defaultLineRight
     }
+  }
 
   protected open fun drawGuidelines(
     context: CartesianDrawingContext,

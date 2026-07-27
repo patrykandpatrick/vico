@@ -46,19 +46,18 @@ internal actual fun Modifier.extraPointerInput(scrollState: VicoScrollState): Mo
     orientation = Orientation.Horizontal,
     onDragStopped = { velocity ->
       scrollJob?.cancel()
-      scrollJob =
-        coroutineScope.launch {
-          if (scrollState.xSnapStep == null) {
-            AnimationState(scrollState.value, velocity).animateDecay(animationSpec) {
-              launch { scrollState.scroll(Scroll.Absolute.pixels(value)) }
-            }
-          } else {
-            scrollState.performSnap(
-              targetValue = animationSpec.calculateTargetValue(scrollState.value, velocity),
-              initialVelocity = velocity,
-            )
+      scrollJob = coroutineScope.launch {
+        if (scrollState.xSnapStep == null) {
+          AnimationState(scrollState.value, velocity).animateDecay(animationSpec) {
+            launch { scrollState.scroll(Scroll.Absolute.pixels(value)) }
           }
+        } else {
+          scrollState.performSnap(
+            targetValue = animationSpec.calculateTargetValue(scrollState.value, velocity),
+            initialVelocity = velocity,
+          )
         }
+      }
     },
     reverseDirection = true,
   )

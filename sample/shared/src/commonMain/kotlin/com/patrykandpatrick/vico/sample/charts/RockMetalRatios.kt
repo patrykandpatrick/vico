@@ -55,22 +55,21 @@ private val BottomAxisValueFormatter = CartesianValueFormatter { context, x, _ -
   context.model.extraStore[BottomAxisLabelKey][x.toInt()]
 }
 
-private val MarkerValueFormatter =
-  DefaultCartesianMarker.ValueFormatter { _, targets ->
-    val column = (targets[0] as ColumnCartesianLayerMarkerTarget).columns[0]
-    buildAnnotatedString {
-      withStyle(SpanStyle(column.color)) {
-        val value = (column.entry.y / Y_DIVISOR).toString()
-        val decimalSeparatorIndex = value.indexOf('.')
-        if (decimalSeparatorIndex >= 0) {
-          append(value.substring(0, decimalSeparatorIndex + 3))
-        } else {
-          append(value)
-        }
-        append("K")
+private val MarkerValueFormatter = DefaultCartesianMarker.ValueFormatter { _, targets ->
+  val column = (targets[0] as ColumnCartesianLayerMarkerTarget).columns[0]
+  buildAnnotatedString {
+    withStyle(SpanStyle(column.color)) {
+      val value = (column.entry.y / Y_DIVISOR).toString()
+      val decimalSeparatorIndex = value.indexOf('.')
+      if (decimalSeparatorIndex >= 0) {
+        append(value.substring(0, decimalSeparatorIndex + 3))
+      } else {
+        append(value)
       }
+      append("K")
     }
   }
+}
 
 private val data =
   mapOf("Ag" to 22378, "Mo" to 4478, "U" to 3624, "Sn" to 2231, "Li" to 1634, "W" to 1081)

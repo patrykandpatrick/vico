@@ -161,19 +161,18 @@ public open class DefaultCartesianMarker(
 
         LabelPosition.AroundPoint,
         LabelPosition.AbovePoint -> {
-          val topPointY =
-            targets.minOf { target ->
-              when (target) {
-                is CandlestickCartesianLayerMarkerTarget -> target.highCanvasY
-                is ColumnCartesianLayerMarkerTarget ->
-                  target.columns.minOf(ColumnCartesianLayerMarkerTarget.Column::canvasY)
+          val topPointY = targets.minOf { target ->
+            when (target) {
+              is CandlestickCartesianLayerMarkerTarget -> target.highCanvasY
+              is ColumnCartesianLayerMarkerTarget ->
+                target.columns.minOf(ColumnCartesianLayerMarkerTarget.Column::canvasY)
 
-                is LineCartesianLayerMarkerTarget ->
-                  target.points.minOf(LineCartesianLayerMarkerTarget.Point::canvasY)
+              is LineCartesianLayerMarkerTarget ->
+                target.points.minOf(LineCartesianLayerMarkerTarget.Point::canvasY)
 
-                else -> error("Unexpected `CartesianMarker.Target` implementation.")
-              }
+              else -> error("Unexpected `CartesianMarker.Target` implementation.")
             }
+          }
           val flip =
             labelPosition == LabelPosition.AroundPoint &&
               topPointY - labelBounds.height - tickSize.pixels < context.layerBounds.top
@@ -187,17 +186,16 @@ public open class DefaultCartesianMarker(
           verticalPosition = if (flip) Position.Vertical.Bottom else Position.Vertical.Top
         }
         LabelPosition.BelowPoint -> {
-          val bottomPointY =
-            targets.maxOf { target ->
-              when (target) {
-                is CandlestickCartesianLayerMarkerTarget -> target.lowCanvasY
-                is ColumnCartesianLayerMarkerTarget ->
-                  target.columns.maxOf(ColumnCartesianLayerMarkerTarget.Column::canvasY)
-                is LineCartesianLayerMarkerTarget ->
-                  target.points.maxOf(LineCartesianLayerMarkerTarget.Point::canvasY)
-                else -> error("Unexpected `CartesianMarker.Target` implementation.")
-              }
+          val bottomPointY = targets.maxOf { target ->
+            when (target) {
+              is CandlestickCartesianLayerMarkerTarget -> target.lowCanvasY
+              is ColumnCartesianLayerMarkerTarget ->
+                target.columns.maxOf(ColumnCartesianLayerMarkerTarget.Column::canvasY)
+              is LineCartesianLayerMarkerTarget ->
+                target.points.maxOf(LineCartesianLayerMarkerTarget.Point::canvasY)
+              else -> error("Unexpected `CartesianMarker.Target` implementation.")
             }
+          }
           tickPosition = MarkerCornerBasedShape.TickPosition.Top
           y = bottomPointY + tickSize.pixels
           verticalPosition = Position.Vertical.Bottom

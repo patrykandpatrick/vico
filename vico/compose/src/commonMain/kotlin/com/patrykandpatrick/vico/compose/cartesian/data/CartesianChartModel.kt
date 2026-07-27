@@ -153,37 +153,36 @@ internal fun CartesianChartModelProducer.collectAsState(
         isInitialAnimation = false
         if (spec != null && !isInPreview) {
           isAnimationRunning = true
-          mainAnimationJob =
-            scope.launch {
-              animate(
-                initialValue = Animation.range.start,
-                targetValue = Animation.range.endInclusive,
-                animationSpec = spec,
-              ) { fraction, _ ->
-                when {
-                  !isAnimationRunning -> return@animate
-                  !isAnimationFrameGenerationRunning -> {
-                    isAnimationFrameGenerationRunning = true
-                    animationFrameJob =
-                      scope.launch {
-                        transformModel(chartID, fraction)
-                        isAnimationFrameGenerationRunning = false
-                      }
+          mainAnimationJob = scope.launch {
+            animate(
+              initialValue = Animation.range.start,
+              targetValue = Animation.range.endInclusive,
+              animationSpec = spec,
+            ) { fraction, _ ->
+              when {
+                !isAnimationRunning -> return@animate
+                !isAnimationFrameGenerationRunning -> {
+                  isAnimationFrameGenerationRunning = true
+                  animationFrameJob = scope.launch {
+                    transformModel(chartID, fraction)
+                    isAnimationFrameGenerationRunning = false
                   }
-                  fraction == 1f -> {
-                    finalAnimationFrameJob =
-                      scope.launch(Dispatchers.Default) {
-                        animationFrameJob?.cancelAndJoin()
-                        transformModel(chartID, fraction)
-                        isAnimationFrameGenerationRunning = false
-                      }
-                  }
+                }
+                fraction == 1f -> {
+                  finalAnimationFrameJob =
+                    scope.launch(Dispatchers.Default) {
+                      animationFrameJob?.cancelAndJoin()
+                      transformModel(chartID, fraction)
+                      isAnimationFrameGenerationRunning = false
+                    }
                 }
               }
             }
+          }
         } else {
-          finalAnimationFrameJob =
-            scope.launch { transformModel(chartID, Animation.range.endInclusive) }
+          finalAnimationFrameJob = scope.launch {
+            transformModel(chartID, Animation.range.endInclusive)
+          }
         }
       }
     scope.launch {

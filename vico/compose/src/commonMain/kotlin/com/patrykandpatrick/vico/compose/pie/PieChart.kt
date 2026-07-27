@@ -383,7 +383,8 @@ internal constructor(
       public val angledSegmentLength: Dp = Defaults.PIE_OUTSIDE_LABEL_ANGLED_SEGMENT_LENGTH.dp,
       public val horizontalSegmentLength: Dp =
         Defaults.PIE_OUTSIDE_LABEL_HORIZONTAL_SEGMENT_LENGTH.dp,
-      public val maxWidthToBoundsRatio: Float = Defaults.PIE_OUTSIDE_LABEL_MAX_WIDTH_TO_BOUNDS_RATIO,
+      public val maxWidthToBoundsRatio: Float =
+        Defaults.PIE_OUTSIDE_LABEL_MAX_WIDTH_TO_BOUNDS_RATIO,
     ) : SliceLabel() {
       init {
         require(maxWidthToBoundsRatio < 1f) { "`maxWidthToBoundsRatio` must be below 1." }

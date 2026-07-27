@@ -37,5 +37,7 @@ internal operator fun <T> ValueWrapper<T>.component1(): T = value
 internal operator fun <T> ValueWrapper<T>.component2(): (T) -> Unit = { value = it }
 
 @Composable
-internal fun <T> rememberWrappedValue(value: T): ValueWrapper<T> =
-  remember { ValueWrapper(value) }.also { it.value = value }
+internal fun <T> rememberWrappedValue(value: T): ValueWrapper<T> = remember {
+  ValueWrapper(value)
+}
+  .also { it.value = value }

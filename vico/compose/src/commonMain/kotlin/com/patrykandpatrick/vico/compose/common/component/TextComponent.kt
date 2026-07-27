@@ -110,15 +110,14 @@ public open class TextComponent(
         val paddingRight = padding.getRight(context)
         val baseWidth = getBaseWidth(maxWidth, maxHeight, rotationDegrees, textLayoutResult)
 
-        textBounds =
-          textBounds.run {
-            Rect(
-              center.x - baseWidth.half - paddingLeft,
-              top - padding.top.pixels,
-              center.x + baseWidth.half + paddingRight,
-              bottom + padding.bottom.pixels,
-            )
-          }
+        textBounds = textBounds.run {
+          Rect(
+            center.x - baseWidth.half - paddingLeft,
+            top - padding.top.pixels,
+            center.x + baseWidth.half + paddingRight,
+            bottom + padding.bottom.pixels,
+          )
+        }
 
         var xCorrection = 0f
         var yCorrection = 0f
@@ -318,53 +317,51 @@ public open class TextComponent(
     width: Int = Constraints.Infinity,
     height: Int = Constraints.Infinity,
     rotationDegrees: Float = 0f,
-  ) =
-    context.run {
-      val measurer =
-        cacheStore.getOrSet(cacheKeyNamespace, fontFamilyResolver, density, layoutDirection) {
-          TextMeasurer(
-            defaultFontFamilyResolver = fontFamilyResolver,
-            defaultDensity = density,
-            defaultLayoutDirection = layoutDirection,
-            cacheSize = 0,
-          )
-        }
-
-      val widthWithoutMargins = width - margins.horizontal.pixels.toInt()
-      val heightWithoutMargins = height - margins.vertical.pixels.toInt()
-
-      val correctedWidth =
-        (when {
-            rotationDegrees % 1f.piRad == 0f -> widthWithoutMargins
-            rotationDegrees % 0.5f.piRad == 0f -> heightWithoutMargins
-            else -> {
-              val measuringResult =
-                measurer.measure(text, textStyle, textOverflow, lineCount, width, height)
-              val cumulatedHeight =
-                lineCount * measuringResult.size.height + padding.vertical.pixels.toInt()
-              val alpha = rotationDegrees.toRadians()
-              val absSinAlpha = sin(alpha).absoluteValue
-              val absCosAlpha = cos(alpha).absoluteValue
-              val basedOnWidth = (widthWithoutMargins - cumulatedHeight * absSinAlpha) / absCosAlpha
-              val basedOnHeight =
-                (heightWithoutMargins - cumulatedHeight * absCosAlpha) / absSinAlpha
-              min(basedOnWidth, basedOnHeight).toInt()
-            }
-          } - padding.horizontal.pixels.toInt())
-          .coerceAtLeast(0)
-
-      cacheStore.getOrSet(
-        cacheKeyNamespace,
-        text,
-        textStyle,
-        textOverflow,
-        lineCount,
-        correctedWidth,
-        height,
-      ) {
-        measurer.measure(text, textStyle, textOverflow, lineCount, correctedWidth, height)
+  ) = context.run {
+    val measurer =
+      cacheStore.getOrSet(cacheKeyNamespace, fontFamilyResolver, density, layoutDirection) {
+        TextMeasurer(
+          defaultFontFamilyResolver = fontFamilyResolver,
+          defaultDensity = density,
+          defaultLayoutDirection = layoutDirection,
+          cacheSize = 0,
+        )
       }
+
+    val widthWithoutMargins = width - margins.horizontal.pixels.toInt()
+    val heightWithoutMargins = height - margins.vertical.pixels.toInt()
+
+    val correctedWidth =
+      (when {
+          rotationDegrees % 1f.piRad == 0f -> widthWithoutMargins
+          rotationDegrees % 0.5f.piRad == 0f -> heightWithoutMargins
+          else -> {
+            val measuringResult =
+              measurer.measure(text, textStyle, textOverflow, lineCount, width, height)
+            val cumulatedHeight =
+              lineCount * measuringResult.size.height + padding.vertical.pixels.toInt()
+            val alpha = rotationDegrees.toRadians()
+            val absSinAlpha = sin(alpha).absoluteValue
+            val absCosAlpha = cos(alpha).absoluteValue
+            val basedOnWidth = (widthWithoutMargins - cumulatedHeight * absSinAlpha) / absCosAlpha
+            val basedOnHeight = (heightWithoutMargins - cumulatedHeight * absCosAlpha) / absSinAlpha
+            min(basedOnWidth, basedOnHeight).toInt()
+          }
+        } - padding.horizontal.pixels.toInt())
+        .coerceAtLeast(0)
+
+    cacheStore.getOrSet(
+      cacheKeyNamespace,
+      text,
+      textStyle,
+      textOverflow,
+      lineCount,
+      correctedWidth,
+      height,
+    ) {
+      measurer.measure(text, textStyle, textOverflow, lineCount, correctedWidth, height)
     }
+  }
 
   private inline fun DrawingContext.withSavedCanvas(block: Canvas.() -> Unit) {
     canvas.save()
@@ -443,13 +440,12 @@ public open class TextComponent(
           maxWidth: Int,
           maxHeight: Int,
           rotationDegrees: Float,
-        ) =
-          context.run {
-            textComponent
-              .getTextLayoutResult(context, text, maxWidth, maxHeight, rotationDegrees)
-              .size
-              .width + textComponent.padding.horizontal.pixels
-          }
+        ) = context.run {
+          textComponent
+            .getTextLayoutResult(context, text, maxWidth, maxHeight, rotationDegrees)
+            .size
+            .width + textComponent.padding.horizontal.pixels
+        }
 
         override fun equals(other: Any?) = this === other || other is Text && text == other.text
 

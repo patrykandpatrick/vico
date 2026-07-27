@@ -814,7 +814,11 @@ protected constructor(
     drawFullLineLength: Boolean = false,
     action:
       (
-        entry: LineCartesianLayerModel.Entry, x: Float, y: Float, previousX: Float?, nextX: Float?,
+        entry: LineCartesianLayerModel.Entry,
+        x: Float,
+        y: Float,
+        previousX: Float?,
+        nextX: Float?,
       ) -> Unit,
   ) {
     val minX = ranges.minX
