@@ -25,7 +25,7 @@ lifecycleRuntime = "2.11.0"
 material = "1.14.0"
 mavenPublish = "0.37.0"
 mockK = "1.14.11"
-screenshot = "0.0.1-alpha15"
+screenshot = "0.0.1-alpha16"
 uiTextAndroid = "1.11.4"
 
 [libraries]
