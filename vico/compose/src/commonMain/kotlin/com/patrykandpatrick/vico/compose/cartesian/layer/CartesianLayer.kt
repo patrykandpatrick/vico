@@ -36,6 +36,28 @@ public interface CartesianLayer<M : CartesianLayerModel> : CartesianLayerMarginU
   /** Draws the [CartesianLayer]. */
   public fun draw(context: CartesianDrawingContext, model: M)
 
+  /**
+   * Draws the part of the [CartesianLayer] associated with [pass]. [CartesianLayer]s whose area
+   * fills can’t be drawn separately from their strokes draw all of their content during
+   * [DrawingPass.Strokes].
+   */
+  public fun draw(context: CartesianDrawingContext, model: M, pass: DrawingPass) {
+    if (pass != DrawingPass.Fills) draw(context, model)
+  }
+
+  /** Denotes what part of a [CartesianLayer] is being drawn. */
+  public enum class DrawingPass {
+    /** Denotes that the entire [CartesianLayer] is being drawn. */
+    All,
+    /** Denotes that only the [CartesianLayer]’s area fills are being drawn. */
+    Fills,
+    /**
+     * Denotes that everything except for the [CartesianLayer]’s area fills is being drawn—this
+     * includes strokes, points, and data labels.
+     */
+    Strokes,
+  }
+
   /** Updates [dimensions] to match this [CartesianLayer]’s dimensions. */
   public fun updateDimensions(
     context: CartesianMeasuringContext,
