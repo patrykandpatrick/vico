@@ -22,6 +22,7 @@ import com.android.tools.screenshot.PreviewTest
 import com.patrykandpatrick.vico.sample.charts.ComposeAITestScoresPreview
 import com.patrykandpatrick.vico.sample.charts.ComposeBasicColumnChartPreview
 import com.patrykandpatrick.vico.sample.charts.ComposeBasicComboChartPreview
+import com.patrykandpatrick.vico.sample.charts.ComposeBasicDonutChartPreview
 import com.patrykandpatrick.vico.sample.charts.ComposeBasicLineChartPreview
 import com.patrykandpatrick.vico.sample.charts.ComposeBasicPieChartPreview
 import com.patrykandpatrick.vico.sample.charts.ComposeDailyDigitalMediaUsePreview
@@ -56,6 +57,13 @@ internal fun BasicComboChartScreenshotTest() {
 @Composable
 internal fun BasicPieChartScreenshotTest() {
   ComposeBasicPieChartPreview()
+}
+
+@PreviewTest
+@Preview(widthDp = 360, heightDp = 320)
+@Composable
+internal fun BasicDonutChartScreenshotTest() {
+  ComposeBasicDonutChartPreview()
 }
 
 @PreviewTest
