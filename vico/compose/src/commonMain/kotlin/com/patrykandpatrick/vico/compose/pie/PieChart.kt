@@ -36,6 +36,7 @@ import com.patrykandpatrick.vico.compose.common.Defaults
 import com.patrykandpatrick.vico.compose.common.DrawingContext
 import com.patrykandpatrick.vico.compose.common.Fill
 import com.patrykandpatrick.vico.compose.common.Legend
+import com.patrykandpatrick.vico.compose.common.MeasuringContext
 import com.patrykandpatrick.vico.compose.common.Position
 import com.patrykandpatrick.vico.compose.common.ValueWrapper
 import com.patrykandpatrick.vico.compose.common.component.TextComponent
@@ -77,8 +78,14 @@ internal constructor(
   internal fun getLegendHeight(context: PieChartMeasuringContext): Float =
     legend?.getHeight(context, context.canvasWidth).orZero
 
-  internal fun draw(context: PieChartDrawingContext, drawingModel: PieChartDrawingModel) {
-    val circleBounds = getCircleBounds(context, drawingModel)
+  internal fun draw(
+    context: PieChartDrawingContext,
+    drawingModel: PieChartDrawingModel,
+    fitLabelsInBounds: Boolean = true,
+  ) {
+    val circleBounds =
+      if (fitLabelsInBounds) getCircleBounds(context, drawingModel)
+      else getCircleBounds(context, bounds)
     val outerRadius = circleBounds.width / 2f
     val holeRadius = innerSize.getRadius(context, circleBounds.width, circleBounds.height)
     require(outerRadius > holeRadius) { "The outer size must be greater than the inner size." }
@@ -218,6 +225,59 @@ internal constructor(
     )
   }
 
+  internal fun getLabelInsets(context: PieChartMeasuringContext, chartBounds: Rect): PieInsets {
+    val circleBounds = getCircleBounds(context, chartBounds)
+    var insets = PieInsets()
+    val topAngle = -90f
+    val bottomAngle = 90f
+    context.model.entries.forEachIndexed { index, entry ->
+      val slice = sliceProvider.getSlice(entry, index, context.model.extraStore)
+      val sliceLabel = slice.label as? SliceLabel.Outside ?: return@forEachIndexed
+      val label = valueFormatter.format(context, entry.value, index)
+      val top =
+        sliceLabel.getInsets(
+          context = context,
+          chartBounds = chartBounds,
+          circleBounds = circleBounds.translate(slice.getOffset(context, topAngle)),
+          angle = topAngle,
+          label = label,
+        )
+      val bottom =
+        sliceLabel.getInsets(
+          context = context,
+          chartBounds = chartBounds,
+          circleBounds = circleBounds.translate(slice.getOffset(context, bottomAngle)),
+          angle = bottomAngle,
+          label = label,
+        )
+      insets = insets.plus(PieInsets(top = top.top, bottom = bottom.bottom))
+    }
+    return insets
+  }
+
+  private fun getCircleBounds(context: PieChartMeasuringContext, availableBounds: Rect): Rect {
+    val maxOffset =
+      context.model.entries.indices.maxOfOrNull { index ->
+        with(context) {
+          sliceProvider
+            .getSlice(context.model.entries[index], index, context.model.extraStore)
+            .offsetFromCenter
+            .pixels
+        }
+      } ?: 0f
+    val radius =
+      max(
+        0f,
+        outerSize.getRadius(context, availableBounds.width, availableBounds.height) - maxOffset,
+      )
+    return Rect(
+      left = availableBounds.center.x - radius,
+      top = availableBounds.center.y - radius,
+      right = availableBounds.center.x + radius,
+      bottom = availableBounds.center.y + radius,
+    )
+  }
+
   /** Defines the appearance of a pie slice. */
   @Immutable
   public open class Slice(
@@ -231,7 +291,7 @@ internal constructor(
     private val strokePaint: Paint = Paint()
     internal val path: Path = Path()
 
-    internal fun getOffset(context: DrawingContext, angle: Float): Offset {
+    internal fun getOffset(context: MeasuringContext, angle: Float): Offset {
       val distance = with(context) { offsetFromCenter.pixels }
       val radians = angle.toRadians()
       return Offset((cos(radians) * distance).toFloat(), (sin(radians) * distance).toFloat())
@@ -306,7 +366,7 @@ internal constructor(
   @Immutable
   public sealed class SliceLabel {
     internal abstract fun getInsets(
-      context: DrawingContext,
+      context: MeasuringContext,
       chartBounds: Rect,
       circleBounds: Rect,
       angle: Float,
@@ -329,7 +389,7 @@ internal constructor(
     @Immutable
     public class Inside(public val textComponent: TextComponent = TextComponent()) : SliceLabel() {
       override fun getInsets(
-        context: DrawingContext,
+        context: MeasuringContext,
         chartBounds: Rect,
         circleBounds: Rect,
         angle: Float,
@@ -391,7 +451,7 @@ internal constructor(
       }
 
       override fun getInsets(
-        context: DrawingContext,
+        context: MeasuringContext,
         chartBounds: Rect,
         circleBounds: Rect,
         angle: Float,
@@ -455,7 +515,7 @@ internal constructor(
       }
 
       private fun getAngledPoint(
-        context: DrawingContext,
+        context: MeasuringContext,
         circleBounds: Rect,
         angle: Float,
       ): Offset {
@@ -467,7 +527,11 @@ internal constructor(
         )
       }
 
-      private fun getFinalPoint(context: DrawingContext, circleBounds: Rect, angle: Float): Offset {
+      private fun getFinalPoint(
+        context: MeasuringContext,
+        circleBounds: Rect,
+        angle: Float,
+      ): Offset {
         val bend = getAngledPoint(context, circleBounds, angle)
         val horizontalDistance = with(context) { horizontalSegmentLength.pixels }
         return Offset(
