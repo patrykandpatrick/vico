@@ -139,13 +139,8 @@ protected constructor(
       fillCanvas: Canvas,
       verticalAxisPosition: Axis.Position.Vertical?,
     ) {
-      with(context) {
-        stroke.apply(this, linePaint)
-        val halfThickness = stroke.thickness.pixels.half
-        areaFill?.draw(context, path, halfThickness, verticalAxisPosition)
-        lineCanvas.drawPath(path, linePaint)
-        withCanvas(fillCanvas) { fill.draw(context, halfThickness, verticalAxisPosition) }
-      }
+      drawAreaFill(context, path, verticalAxisPosition)
+      drawStroke(context, path, lineCanvas, fillCanvas, verticalAxisPosition)
     }
 
     /** The [LineFill]’s solid [Color], or `null` if the [LineFill] has no single solid [Color]. */
@@ -159,10 +154,48 @@ protected constructor(
       color: Color,
       verticalAxisPosition: Axis.Position.Vertical?,
     ) {
+      drawAreaFill(context, path, verticalAxisPosition)
+      drawStroke(context, path, color, verticalAxisPosition)
+    }
+
+    /** Draws the line’s area fill. */
+    public fun drawAreaFill(
+      context: CartesianDrawingContext,
+      path: Path,
+      verticalAxisPosition: Axis.Position.Vertical?,
+    ) {
       with(context) {
         stroke.apply(this, linePaint)
-        val halfThickness = stroke.thickness.pixels.half
-        areaFill?.draw(context, path, halfThickness, verticalAxisPosition)
+        areaFill?.draw(context, path, stroke.thickness.pixels.half, verticalAxisPosition)
+      }
+    }
+
+    /** Draws the line’s stroke. */
+    public fun drawStroke(
+      context: CartesianDrawingContext,
+      path: Path,
+      lineCanvas: Canvas,
+      fillCanvas: Canvas,
+      verticalAxisPosition: Axis.Position.Vertical?,
+    ) {
+      with(context) {
+        stroke.apply(this, linePaint)
+        lineCanvas.drawPath(path, linePaint)
+        withCanvas(fillCanvas) {
+          fill.draw(context, stroke.thickness.pixels.half, verticalAxisPosition)
+        }
+      }
+    }
+
+    /** Draws the line’s stroke, using [color]. */
+    public fun drawStroke(
+      context: CartesianDrawingContext,
+      path: Path,
+      color: Color,
+      verticalAxisPosition: Axis.Position.Vertical?,
+    ) {
+      with(context) {
+        stroke.apply(this, linePaint)
         linePaint.color = color
         canvas.drawPath(path, linePaint)
       }
@@ -529,8 +562,16 @@ protected constructor(
   )
 
   override fun drawInternal(context: CartesianDrawingContext, model: LineCartesianLayerModel) {
+    drawInternal(context, model, CartesianLayer.DrawingPass.All)
+  }
+
+  override fun drawInternal(
+    context: CartesianDrawingContext,
+    model: LineCartesianLayerModel,
+    pass: CartesianLayer.DrawingPass,
+  ) {
     with(context) {
-      resetTempData()
+      if (pass != CartesianLayer.DrawingPass.Fills) resetTempData()
 
       val drawingModel = extraStore.getOrNull(drawingModelKey)
       val sweepFraction = drawingModel?.sweepFraction ?: 1f
@@ -583,8 +624,17 @@ protected constructor(
           connectPoints(line.interpolator, points, visibleIndexRange)
         }
 
+        if (pass == CartesianLayer.DrawingPass.Fills) {
+          line.drawAreaFill(context, linePath, verticalAxisPosition)
+          return@forEachIndexed
+        }
+
+        if (pass == CartesianLayer.DrawingPass.All) {
+          line.drawAreaFill(context, linePath, verticalAxisPosition)
+        }
+
         line.fillColor?.let { color ->
-          line.draw(context, linePath, color, verticalAxisPosition)
+          line.drawStroke(context, linePath, color, verticalAxisPosition)
           forEachPointInBounds(series, drawingStart, pointInfoMap) { entry, x, y, _, _ ->
             updateMarkerTargets(entry, seriesKey, x, y, color)
           }
@@ -593,7 +643,7 @@ protected constructor(
             val (lineBitmap, lineCanvas) = getBitmap(cacheKeyNamespace, seriesIndex, "line")
             val (lineFillBitmap, lineFillCanvas) =
               getBitmap(cacheKeyNamespace, seriesIndex, "lineFill")
-            line.draw(context, linePath, lineCanvas, lineFillCanvas, verticalAxisPosition)
+            line.drawStroke(context, linePath, lineCanvas, lineFillCanvas, verticalAxisPosition)
             lineCanvas.drawImage(lineFillBitmap, Offset.Zero, srcInPaint)
             canvas.drawImage(lineBitmap, Offset.Zero, EmptyPaint)
             forEachPointInBounds(series, drawingStart, pointInfoMap) { entry, x, y, _, _ ->

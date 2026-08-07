@@ -75,6 +75,7 @@ protected constructor(
   tickPosition: TickPosition,
   lineDrawingOrder: LineDrawingOrder,
   public val titlePosition: TitlePosition,
+  guidelineDrawingOrder: GuidelineDrawingOrder = GuidelineDrawingOrder.UnderLayers,
 ) :
   BaseAxis<P>(
     line,
@@ -89,6 +90,7 @@ protected constructor(
     title,
     tickPosition,
     lineDrawingOrder,
+    guidelineDrawingOrder,
   ) {
   protected val areLabelsOutsideAtStartOrInsideAtEnd: Boolean
     get() =
@@ -122,6 +124,7 @@ protected constructor(
     tickPosition: TickPosition,
     lineDrawingOrder: LineDrawingOrder,
     titlePosition: TitlePosition,
+    guidelineDrawingOrder: GuidelineDrawingOrder,
   ) : this(
     position,
     line,
@@ -140,6 +143,7 @@ protected constructor(
     tickPosition,
     lineDrawingOrder,
     titlePosition,
+    guidelineDrawingOrder,
   )
 
   override fun updateAxisDimensions(
@@ -163,7 +167,13 @@ protected constructor(
     context: CartesianDrawingContext,
     axisDimensions: Map<Axis.Position, AxisDimensions>,
   ) {
+    if (guidelineDrawingOrder == GuidelineDrawingOrder.UnderLayers) drawGuidelines(context)
+    if (lineDrawingOrder == LineDrawingOrder.UnderLayers) drawLineAndTicks(context)
+  }
+
+  protected open fun drawGuidelines(context: CartesianDrawingContext) {
     with(context) {
+      val guideline = guideline ?: return
       var centerY: Float
       val yRange = ranges.getYRange(position)
       val maxLabelHeight = maxLabelHeight
@@ -177,7 +187,7 @@ protected constructor(
             getLineCanvasYCorrection(guidelineThickness, lineValue)
 
         guideline
-          ?.takeIf {
+          .takeIf {
             isNotInRestrictedBounds(
               left = layerBounds.left,
               top = centerY - guidelineThickness.half,
@@ -192,8 +202,14 @@ protected constructor(
             y = centerY,
           )
       }
-      if (lineDrawingOrder == LineDrawingOrder.UnderLayers) drawLineAndTicks(context)
     }
+  }
+
+  override fun drawOverLayerFills(
+    context: CartesianDrawingContext,
+    axisDimensions: Map<Axis.Position, AxisDimensions>,
+  ) {
+    if (guidelineDrawingOrder == GuidelineDrawingOrder.UnderLayerStrokes) drawGuidelines(context)
   }
 
   override fun drawOverLayers(
@@ -201,6 +217,7 @@ protected constructor(
     axisDimensions: Map<Axis.Position, AxisDimensions>,
   ) {
     with(context) {
+      if (guidelineDrawingOrder == GuidelineDrawingOrder.OverLayers) drawGuidelines(context)
       if (lineDrawingOrder == LineDrawingOrder.OverLayers) drawLineAndTicks(context)
 
       val label = label
@@ -622,6 +639,7 @@ protected constructor(
     tickPosition: TickPosition = this.tickPosition,
     lineDrawingOrder: LineDrawingOrder = this.lineDrawingOrder,
     titlePosition: TitlePosition = this.titlePosition,
+    guidelineDrawingOrder: GuidelineDrawingOrder = this.guidelineDrawingOrder,
   ): VerticalAxis<P> =
     VerticalAxis(
       position,
@@ -641,6 +659,7 @@ protected constructor(
       tickPosition,
       lineDrawingOrder,
       titlePosition,
+      guidelineDrawingOrder,
     )
 
   override fun equals(other: Any?): Boolean =
@@ -788,6 +807,7 @@ protected constructor(
         if (horizontalLabelPosition == Outside) TickPosition.Outside else TickPosition.Inside,
       lineDrawingOrder: LineDrawingOrder = LineDrawingOrder.UnderLayers,
       titlePosition: TitlePosition = TitlePosition.Side,
+      guidelineDrawingOrder: GuidelineDrawingOrder = GuidelineDrawingOrder.UnderLayers,
     ): VerticalAxis<Axis.Position.Vertical.Start> =
       remember(
         line,
@@ -806,6 +826,7 @@ protected constructor(
         tickPosition,
         lineDrawingOrder,
         titlePosition,
+        guidelineDrawingOrder,
       ) {
         VerticalAxis(
           Axis.Position.Vertical.Start,
@@ -825,6 +846,7 @@ protected constructor(
           tickPosition,
           lineDrawingOrder,
           titlePosition,
+          guidelineDrawingOrder,
         )
       }
 
@@ -848,6 +870,7 @@ protected constructor(
         if (horizontalLabelPosition == Outside) TickPosition.Outside else TickPosition.Inside,
       lineDrawingOrder: LineDrawingOrder = LineDrawingOrder.UnderLayers,
       titlePosition: TitlePosition = TitlePosition.Side,
+      guidelineDrawingOrder: GuidelineDrawingOrder = GuidelineDrawingOrder.UnderLayers,
     ): VerticalAxis<Axis.Position.Vertical.End> =
       remember(
         line,
@@ -866,6 +889,7 @@ protected constructor(
         tickPosition,
         lineDrawingOrder,
         titlePosition,
+        guidelineDrawingOrder,
       ) {
         VerticalAxis(
           Axis.Position.Vertical.End,
@@ -885,6 +909,7 @@ protected constructor(
           tickPosition,
           lineDrawingOrder,
           titlePosition,
+          guidelineDrawingOrder,
         )
       }
   }
