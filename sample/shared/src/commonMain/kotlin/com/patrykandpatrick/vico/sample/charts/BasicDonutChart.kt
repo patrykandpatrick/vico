@@ -24,6 +24,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.common.Fill
+import com.patrykandpatrick.vico.compose.common.Insets
 import com.patrykandpatrick.vico.compose.common.component.TextComponent
 import com.patrykandpatrick.vico.compose.common.vicoTheme
 import com.patrykandpatrick.vico.compose.pie.PieChart
@@ -49,14 +50,18 @@ private fun ComposeBasicDonutChart(
                 fill = Fill(color),
                 label =
                   PieChart.SliceLabel.Outside(
-                    textComponent = TextComponent(TextStyle(vicoTheme.textColor)),
+                    textComponent =
+                      TextComponent(
+                        textStyle = TextStyle(vicoTheme.textColor),
+                        margins = Insets(horizontal = 4.dp),
+                      ),
                     lineColor = vicoTheme.textColor,
                   ),
               )
             }
           ),
         innerSize = PieSize.Inner.fixed(128.dp),
-        spacing = 12.dp,
+        spacing = 8.dp,
         valueFormatter = PieValueFormatter { _, value, _ -> "${value.toInt()}%" },
       ),
     modelProducer = modelProducer,
