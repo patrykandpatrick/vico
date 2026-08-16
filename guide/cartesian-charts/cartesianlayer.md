@@ -15,6 +15,16 @@ There are three built-in [`CartesianLayer`][cartesian-layer] implementations:
 
 These are discussed individually in the following sections.
 
+## Drawing-model interpolation
+
+The [`CartesianLayerDrawingModelInterpolator`][cartesian-layer-drawing-model-interpolator] interface controls how a layer is animated between drawing models. Use the factory function for the layer type:
+
+* [`line`][line]
+* [`column`][column]
+* [`candlestick`][candlestick]
+
+Pass the result as the layer’s `drawingModelInterpolator` argument. For more specific behavior, implement the interface.
+
 ## `CartesianLayerRangeProvider`
 
 What _x_- and _y_-ranges a layer reports depends on its [`CartesianLayerRangeProvider`][cartesian-layer-range-provider] instance. A layer passes its intrinsic _x_- and _y_-ranges—which depend on [`CartesianLayerModel`][cartesian-layer-model]—to this instance, which returns the final ranges to report. The available singletons and factory functions are listed below. For more specific behavior, implement the interface.
@@ -42,6 +52,10 @@ A [`CartesianChart`][cartesian-chart] can have two separate _y_-ranges, one for 
 [candlestick-cartesian-layer]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.layer/-candlestick-cartesian-layer/
 [column-cartesian-layer]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.layer/-column-cartesian-layer/
 [line-cartesian-layer]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.layer/-line-cartesian-layer/
+[cartesian-layer-drawing-model-interpolator]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-layer-drawing-model-interpolator/
+[line]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-layer-drawing-model-interpolator/-companion/line.html
+[column]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-layer-drawing-model-interpolator/-companion/column.html
+[candlestick]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-layer-drawing-model-interpolator/-companion/candlestick.html
 [cartesian-layer-range-provider]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-layer-range-provider/
 [cartesian-layer-model]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-layer-model/
 [auto]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-layer-range-provider/-companion/auto.html

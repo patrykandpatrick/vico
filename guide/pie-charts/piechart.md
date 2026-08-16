@@ -21,6 +21,8 @@ Use [`PieValueFormatter`][pie-value-formatter] to format slice labels.
 
 You can also customize slice spacing, the start angle, and the inner and outer sizes. A nonzero inner size produces a donut chart.
 
+The chart host reserves vertical space for outside labels, so they don’t reduce the pie diameter or get clipped. For an example that combines outside labels, slice spacing, and a nonzero inner size, see the [“Basic donut chart”][basic-donut-chart] sample chart.
+
 For an example, see the [“Basic pie chart”][basic-pie-chart] sample chart.
 
 <figure><img src="../.gitbook/assets/basic-pie-chart.png" alt="" width="375"><figcaption></figcaption></figure>
@@ -34,4 +36,5 @@ For an example, see the [“Basic pie chart”][basic-pie-chart] sample chart.
 [inside]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.pie/-pie-chart/-slice-label/-inside/
 [outside]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.pie/-pie-chart/-slice-label/-outside/
 [pie-value-formatter]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.pie.data/-pie-value-formatter/
-[basic-pie-chart]: https://github.com/patrykandpatrick/vico/blob/stable/sample/charts/compose/src/commonMain/kotlin/com/patrykandpatrick/vico/sample/charts/compose/BasicPieChart.kt
+[basic-donut-chart]: https://github.com/patrykandpatrick/vico/blob/stable/sample/shared/src/commonMain/kotlin/com/patrykandpatrick/vico/sample/charts/BasicDonutChart.kt
+[basic-pie-chart]: https://github.com/patrykandpatrick/vico/blob/stable/sample/shared/src/commonMain/kotlin/com/patrykandpatrick/vico/sample/charts/BasicPieChart.kt

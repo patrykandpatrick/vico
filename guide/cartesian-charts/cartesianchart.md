@@ -23,7 +23,7 @@ _x_- and _y_-range customization is discussed in [a later subsection][a-later-su
 
 The _x_-step is a reference _x_-increment. Together with `CartesianLayer` settings, it determines the intrinsic mapping between data and screen units (before zoom). Other components also use it for calibration; for instance, the built-in axis-item placers use it as the default label and line spacing. An _x_-value is considered _major_ if it’s a natural number of _x_-steps away from the minimum.
 
-By default, the _x_-step is the greatest common divisor of the differences between consecutive _x_-values the flattened _x_-series. For example, if these _x_-values are $$\{0, 1, 2, 3\}$$, the _x_-step is 1; if the _x_ values are $$\{0, 2, 4, 6\}$$, the _x_-step is 2.
+By default, the _x_-step is the greatest common divisor of the differences between consecutive _x_-values in the flattened _x_-series. For example, if these _x_-values are $$\{0, 1, 2, 3\}$$, the _x_-step is 1; if the _x_ values are $$\{0, 2, 4, 6\}$$, the _x_-step is 2.
 
 To customize the _x_-step, use `rememberCartesianChart`’s `getXStep` parameter, which accepts a `(CartesianChartModel) -> Double` lambda:
 

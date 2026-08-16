@@ -40,7 +40,7 @@ CartesianValueFormatter { context, x, _ ->
 
 For an example, see the [“Rock–metal ratios”][rock-metal-ratios] sample chart.
 
-<figure><img src="../.gitbook/assets/rock-metal-ratios.png" alt="" width="375"><figcaption><p>The <a href="https://github.com/patrykandpatrick/vico/blob/stable/sample/charts/compose/src/commonMain/kotlin/com/patrykandpatrick/vico/sample/charts/compose/RockMetalRatios.kt">“Rock–metal ratios”</a> sample chart, whose <em>x</em>-axis labels are category names</p></figcaption></figure>
+<figure><img src="../.gitbook/assets/rock-metal-ratios.png" alt="" width="375"><figcaption><p>The <a href="https://github.com/patrykandpatrick/vico/blob/stable/sample/shared/src/commonMain/kotlin/com/patrykandpatrick/vico/sample/charts/RockMetalRatios.kt">“Rock–metal ratios”</a> sample chart, whose <em>x</em>-axis labels are category names</p></figcaption></figure>
 
 ## Dates
 
@@ -80,12 +80,12 @@ CartesianValueFormatter { context, x, _ ->
 
 For an example, see the [“Gold prices (12/30/2024)”][gold-prices-12-30-2024] sample chart.
 
-<figure><img src="../.gitbook/assets/gold-prices.png" alt="" width="375"><figcaption><p>The <a href="https://github.com/patrykandpatrick/vico/blob/stable/sample/charts/compose/src/commonMain/kotlin/com/patrykandpatrick/vico/sample/charts/compose/GoldPrices.kt">“Gold prices (12/30/2024)”</a> sample chart, whose <em>x</em>-axis labels are dates</p></figcaption></figure>
+<figure><img src="../.gitbook/assets/gold-prices.png" alt="" width="375"><figcaption><p>The <a href="https://github.com/patrykandpatrick/vico/blob/stable/sample/shared/src/commonMain/kotlin/com/patrykandpatrick/vico/sample/charts/GoldPrices.kt">“Gold prices (12/30/2024)”</a> sample chart, whose <em>x</em>-axis labels are dates</p></figcaption></figure>
 
 [cartesian-value-formatter]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-value-formatter/
 [decimal]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-value-formatter/-companion/decimal.html
 [y-percent]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-value-formatter/-companion/y-percent.html
 [horizontal-axis]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.axis/-horizontal-axis/
 [vertical-axis]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.axis/-vertical-axis/
-[rock-metal-ratios]: https://github.com/patrykandpatrick/vico/blob/stable/sample/charts/compose/src/commonMain/kotlin/com/patrykandpatrick/vico/sample/charts/compose/RockMetalRatios.kt
-[gold-prices-12-30-2024]: https://github.com/patrykandpatrick/vico/blob/stable/sample/charts/compose/src/commonMain/kotlin/com/patrykandpatrick/vico/sample/charts/compose/GoldPrices.kt
+[rock-metal-ratios]: https://github.com/patrykandpatrick/vico/blob/stable/sample/shared/src/commonMain/kotlin/com/patrykandpatrick/vico/sample/charts/RockMetalRatios.kt
+[gold-prices-12-30-2024]: https://github.com/patrykandpatrick/vico/blob/stable/sample/shared/src/commonMain/kotlin/com/patrykandpatrick/vico/sample/charts/GoldPrices.kt

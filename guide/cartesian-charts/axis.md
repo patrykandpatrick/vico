@@ -23,6 +23,15 @@ Numerous customization options are available; you can change the appearance of t
 
 [`BaseAxis.TickPosition`][base-axis-tick-position] and [`BaseAxis.LineDrawingOrder`][base-axis-line-drawing-order] let you place ticks outside, inside, or across the axis line and choose whether ticks and the axis line are drawn under or over the chart layers.
 
+## Titles
+
+[`BaseAxis.TitlePosition`][base-axis-title-position] defines where an axis title is drawn. There are two options:
+
+* [`Side`][side] uses the conventional position beside the axis.
+* [`End`][end] places the title at the leading end of the axis line.
+
+Select an option via the `titlePosition` parameter.
+
 ## `ItemPlacer`
 
 [`HorizontalAxis.ItemPlacer`][horizontal-axis-item-placer] and [`VerticalAxis.ItemPlacer`][vertical-axis-item-placer] let you customize for what _x_- and _y_-values labels and lines are displayed. Four factory functions are available:
@@ -34,6 +43,8 @@ Numerous customization options are available; you can change the appearance of t
 
 Custom implementations can be created.
 
+By default, `HorizontalAxis.ItemPlacer.aligned` reserves horizontal margins so the extreme labels fit. Set `shiftExtremeLabels` to `true` to anchor these labels to the coordinate-system edges instead, keeping them visible without shrinking the coordinate system.
+
 [axis]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.axis/-axis/
 [cartesian-chart]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-cartesian-chart/
 [horizontal-axis]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.axis/-horizontal-axis/
@@ -44,6 +55,9 @@ Custom implementations can be created.
 [horizontal-axis-remember-bottom]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.axis/-horizontal-axis/-companion/remember-bottom.html
 [base-axis-tick-position]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.axis/-base-axis/-tick-position/
 [base-axis-line-drawing-order]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.axis/-base-axis/-line-drawing-order/
+[base-axis-title-position]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.axis/-base-axis/-title-position/
+[side]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.axis/-base-axis/-title-position/-side/
+[end]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.axis/-base-axis/-title-position/-end/
 [horizontal-axis-item-placer]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.axis/-horizontal-axis/-item-placer/
 [vertical-axis-item-placer]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.axis/-vertical-axis/-item-placer/
 [horizontal-axis-item-placer-aligned]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.axis/-horizontal-axis/-item-placer/-companion/aligned.html

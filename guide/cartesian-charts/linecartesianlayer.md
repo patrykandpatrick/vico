@@ -11,6 +11,17 @@ Use [`LineCartesianLayer`][line-cartesian-layer] to create line charts. Instanti
 
 Each line is associated with a [`Line`][line] instance. Create these via [`rememberLine`][remember-line]. These are provided by [`LineProvider`][line-provider]. A base implementation of this interface can be instantiated via [`LineProvider.series`][line-provider-series]. You can customize line fills, backgrounds, shapes, and other properties. You can also add data labels, points, and interpolation.
 
+## Animation
+
+Line animations are configured via [`CartesianLayerDrawingModelInterpolator.line`][cartesian-layer-drawing-model-interpolator-line]. By default, a line grows from the baseline and fades in during its initial animation. Set `sweep` to `true` to instead animate the initial appearance as a clip sweeping in from the start edge:
+
+```kt
+rememberLineCartesianLayer(
+    drawingModelInterpolator = CartesianLayerDrawingModelInterpolator.line(sweep = true),
+    /* ... */
+)
+```
+
 ## `LineStroke`
 
 Line strokes are customized via [`LineStroke`][line-stroke], which has two implementations:
@@ -36,17 +47,17 @@ These cover most use cases. You can use both colors and brushes, and you can app
 
 For an example of an area fill, see the [“Electric-car sales (Norway)”][electric-car-sales-norway] sample chart.
 
-<figure><img src="../.gitbook/assets/electric-car-sales.png" alt="" width="375"><figcaption><p>The <a href="https://github.com/patrykandpatrick/vico/blob/stable/sample/charts/compose/src/commonMain/kotlin/com/patrykandpatrick/vico/sample/charts/compose/ElectricCarSales.kt">“Electric-car sales (Norway)”</a> sample chart, which combines an area fill with <code>catmullRom</code> interpolation</p></figcaption></figure>
+<figure><img src="../.gitbook/assets/electric-car-sales.png" alt="" width="375"><figcaption><p>The <a href="https://github.com/patrykandpatrick/vico/blob/stable/sample/shared/src/commonMain/kotlin/com/patrykandpatrick/vico/sample/charts/ElectricCarSales.kt">“Electric-car sales (Norway)”</a> sample chart, which combines an area fill with <code>catmullRom</code> interpolation</p></figcaption></figure>
 
 ## `Interpolator`
 
 Use [`Interpolator`][interpolator] to define how a line passes through its points. Three built-in implementations are available:
 
-* [`Sharp`][sharp]
-* [`cubic`][cubic]
-* [`catmullRom`][catmull-rom]
+* [`Sharp`][sharp] uses straight line segments.
+* [`cubic`][cubic] uses cubic Bézier curves.
+* [`catmullRom`][catmull-rom] passes through all points and keeps collinear segments straight.
 
-The first uses straight line segments. The second uses cubic Bézier curves. The third passes through all points and keeps collinear segments straight. The [“Electric-car sales (Norway)”][electric-car-sales-norway] sample chart uses `catmullRom`.
+The [“Electric-car sales (Norway)”][electric-car-sales-norway] sample chart uses `catmullRom`.
 
 ## `PointProvider`
 
@@ -94,6 +105,7 @@ CartesianChartModel(
 [remember-line]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.layer/remember-line.html
 [line-provider]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.layer/-line-cartesian-layer/-line-provider/
 [line-provider-series]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.layer/-line-cartesian-layer/-line-provider/-companion/series.html
+[cartesian-layer-drawing-model-interpolator-line]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-layer-drawing-model-interpolator/-companion/line.html
 [line-stroke]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.layer/-line-cartesian-layer/-line-stroke/
 [continuous]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.layer/-line-cartesian-layer/-line-stroke/-continuous/
 [dashed]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.layer/-line-cartesian-layer/-line-stroke/-dashed/
@@ -105,14 +117,14 @@ CartesianChartModel(
 [double-2]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.layer/-line-cartesian-layer/-area-fill/-companion/double.html
 [line-fill-color-scale]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.layer/-line-cartesian-layer/-line-fill/-companion/color-scale.html
 [area-fill-color-scale]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.layer/-line-cartesian-layer/-area-fill/-companion/color-scale.html
-[electric-car-sales-norway]: https://github.com/patrykandpatrick/vico/blob/stable/sample/charts/compose/src/commonMain/kotlin/com/patrykandpatrick/vico/sample/charts/compose/ElectricCarSales.kt
+[electric-car-sales-norway]: https://github.com/patrykandpatrick/vico/blob/stable/sample/shared/src/commonMain/kotlin/com/patrykandpatrick/vico/sample/charts/ElectricCarSales.kt
 [interpolator]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.layer/-line-cartesian-layer/-interpolator/
 [sharp]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.layer/-line-cartesian-layer/-interpolator/-companion/-sharp.html
 [cubic]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.layer/-line-cartesian-layer/-interpolator/-companion/cubic.html
 [catmull-rom]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.layer/-line-cartesian-layer/-interpolator/-companion/catmull-rom.html
 [point-provider]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.layer/-line-cartesian-layer/-point-provider/
 [point-provider-single]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.layer/-line-cartesian-layer/-point-provider/-companion/single.html
-[ai-test-scores]: https://github.com/patrykandpatrick/vico/blob/stable/sample/charts/compose/src/commonMain/kotlin/com/patrykandpatrick/vico/sample/charts/compose/AITestScores.kt
+[ai-test-scores]: https://github.com/patrykandpatrick/vico/blob/stable/sample/shared/src/commonMain/kotlin/com/patrykandpatrick/vico/sample/charts/AITestScores.kt
 [line-cartesian-layer-model]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-line-cartesian-layer-model/
 [cartesian-chart-model-producer]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-chart-model-producer/
 [line-model]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/line-model.html

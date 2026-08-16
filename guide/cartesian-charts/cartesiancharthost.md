@@ -19,6 +19,16 @@ You can also use a manually created [`CartesianChartModel`][cartesian-chart-mode
 CartesianChartHost(rememberCartesianChart(/* ... */), model, /* ... */)
 ```
 
+## Sizing
+
+The [`chartAreaHeight`][chart-area-height] parameter sets the default height of the coordinate system. Its default value is 192 dp. Axis margins, legends, markers, and other components add to this height instead of being fitted inside it.
+
+This default applies only when the host’s height isn’t otherwise constrained. [`Modifier.height`][modifier-height] and similar modifiers set the total host height, within which the chart and its components are fitted.
+
+## Animation
+
+For model producers, [`animationSpec`][animation-spec] defines how differences between models are animated. [`initialAnimationSpec`][initial-animation-spec] separately defines the initial animation and defaults to `animationSpec`. Set `initialAnimationSpec` to `null` to skip the initial animation.
+
 ## Scroll
 
 `CartesianChartHost` accepts [`VicoScrollState`][vico-scroll-state] instances, enabling scroll customization and programmatic scrolling. Use [`rememberVicoScrollState`][remember-vico-scroll-state] to instantiate `VicoScrollState`:
@@ -27,6 +37,12 @@ CartesianChartHost(rememberCartesianChart(/* ... */), model, /* ... */)
 val scrollState = rememberVicoScrollState(/* ... */)
 CartesianChartHost(scrollState = scrollState, /* ... */)
 ```
+
+From a coroutine, call [`VicoScrollState.scroll`][vico-scroll-state-scroll] to scroll immediately or [`VicoScrollState.animateScroll`][vico-scroll-state-animate-scroll] to animate the change.
+
+To snap the scroll position to multiples of an _x_-step after a fling, set [`xSnapStep`][x-snap-step]. Use [`snapAnimationSpec`][snap-animation-spec] to customize the animation.
+
+When the data’s minimum _x_-value or _x_-step changes, the scroll state preserves the visible _x_-range. For example, prepending historical data doesn’t move the viewport to the new start edge.
 
 [`Scroll`][scroll] represents scroll values—either absolute (from zero) or relative (from the current value). [`Scroll.Absolute`][scroll-absolute] and [`Scroll.Relative`][scroll-relative] cover the two cases. The following factory functions are available:
 
@@ -51,6 +67,8 @@ val zoomState = rememberVicoZoomState(/* ... */)
 CartesianChartHost(zoomState = zoomState, /* ... */)
 ```
 
+From a coroutine, call [`VicoZoomState.zoom`][vico-zoom-state-zoom] to zoom immediately or [`VicoZoomState.animateZoom`][vico-zoom-state-animate-zoom] to animate the change.
+
 [`Zoom`][zoom] defines zoom factors. The following singletons and factory functions are available:
 
 * [`Content`][content]
@@ -65,8 +83,16 @@ You can create custom implementations of `Zoom` for more specific behavior.
 [cartesian-chart]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-cartesian-chart/
 [cartesian-chart-model-producer]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-chart-model-producer/
 [cartesian-chart-model]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-chart-model/
+[chart-area-height]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-cartesian-chart-host.html
+[modifier-height]: https://developer.android.com/develop/ui/compose/modifiers-list#Size
+[animation-spec]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-cartesian-chart-host.html
+[initial-animation-spec]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-cartesian-chart-host.html
 [vico-scroll-state]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-vico-scroll-state/
 [remember-vico-scroll-state]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/remember-vico-scroll-state.html
+[vico-scroll-state-scroll]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-vico-scroll-state/scroll.html
+[vico-scroll-state-animate-scroll]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-vico-scroll-state/animate-scroll.html
+[x-snap-step]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/remember-vico-scroll-state.html
+[snap-animation-spec]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/remember-vico-scroll-state.html
 [scroll]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-scroll/
 [scroll-absolute]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-scroll/-absolute/
 [scroll-relative]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-scroll/-relative/
@@ -79,6 +105,8 @@ You can create custom implementations of `Zoom` for more specific behavior.
 [on-model-growth]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-auto-scroll-condition/-companion/-on-model-growth.html
 [vico-zoom-state]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-vico-zoom-state/
 [remember-vico-zoom-state]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/remember-vico-zoom-state.html
+[vico-zoom-state-zoom]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-vico-zoom-state/zoom.html
+[vico-zoom-state-animate-zoom]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-vico-zoom-state/animate-zoom.html
 [zoom]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-zoom/
 [content]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-zoom/-companion/-content.html
 [max]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-zoom/-companion/max.html
