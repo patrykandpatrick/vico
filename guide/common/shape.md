@@ -10,5 +10,8 @@ Vico’s Compose APIs use `Shape` instances. You can use Compose’s built-in im
 
 Vico provides the following additional `Shape` implementations:
 
-* [`DashedShape`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.common/-dashed-shape/) alternates a base `Shape` instance with gaps.
-* [`MarkerCornerBasedShape`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.common/-marker-corner-based-shape/) wraps a `CornerBasedShape` instance and adds a triangular marker tick.
+* [`DashedShape`][dashed-shape] alternates a base `Shape` instance with gaps.
+* [`MarkerCornerBasedShape`][marker-corner-based-shape] wraps a `CornerBasedShape` instance and adds a triangular marker tick.
+
+[dashed-shape]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.common/-dashed-shape/
+[marker-corner-based-shape]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.common/-marker-corner-based-shape/

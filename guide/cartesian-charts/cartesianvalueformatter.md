@@ -7,9 +7,9 @@ metaLinks:
 
 # CartesianValueFormatter
 
-_x_- and _y_-values are numerical. You can use [`CartesianValueFormatter`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-value-formatter/) to format them for display. They can remain numbers, or they can be transformed to dates, category names, and so on.
+_x_- and _y_-values are numerical. You can use [`CartesianValueFormatter`][cartesian-value-formatter] to format them for display. They can remain numbers, or they can be transformed to dates, category names, and so on.
 
-There are two factory functions for `CartesianValueFormatter`: [`decimal`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-value-formatter/-companion/decimal.html) and [`yPercent`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-value-formatter/-companion/y-percent.html). For more complex use cases, create custom implementations. `CartesianValueFormatter` instances are most commonly used with [`HorizontalAxis`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.axis/-horizontal-axis/) and [`VerticalAxis`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.axis/-vertical-axis/)—see the `valueFormatter` parameters and properties. However, these aren’t the only APIs that accept `CartesianValueFormatter` instances.
+There are two factory functions for `CartesianValueFormatter`: [`decimal`][decimal] and [`yPercent`][y-percent]. For more complex use cases, create custom implementations. `CartesianValueFormatter` instances are most commonly used with [`HorizontalAxis`][horizontal-axis] and [`VerticalAxis`][vertical-axis]—see the `valueFormatter` parameters and properties. However, these aren’t the only APIs that accept `CartesianValueFormatter` instances.
 
 When the values remain numerical, formatting is straightforward. Thus, on this page, we focus on formatting with nonnumerical results. The aim in such cases is to find a predictable mapping. The optimal approach depends on the use case. Some common situations are discussed below.
 
@@ -38,7 +38,7 @@ CartesianValueFormatter { context, x, _ ->
 }
 ```
 
-For an example, see the [“Rock–metal ratios”](https://github.com/patrykandpatrick/vico/blob/stable/sample/charts/compose/src/commonMain/kotlin/com/patrykandpatrick/vico/sample/charts/compose/RockMetalRatios.kt) sample chart.
+For an example, see the [“Rock–metal ratios”][rock-metal-ratios] sample chart.
 
 <figure><img src="../.gitbook/assets/rock-metal-ratios.png" alt="" width="375"><figcaption><p>The <a href="https://github.com/patrykandpatrick/vico/blob/stable/sample/charts/compose/src/commonMain/kotlin/com/patrykandpatrick/vico/sample/charts/compose/RockMetalRatios.kt">“Rock–metal ratios”</a> sample chart, whose <em>x</em>-axis labels are category names</p></figcaption></figure>
 
@@ -78,6 +78,14 @@ CartesianValueFormatter { context, x, _ ->
 }
 ```
 
-For an example, see the [“Gold prices (12/30/2024)”](https://github.com/patrykandpatrick/vico/blob/stable/sample/charts/compose/src/commonMain/kotlin/com/patrykandpatrick/vico/sample/charts/compose/GoldPrices.kt) sample chart.
+For an example, see the [“Gold prices (12/30/2024)”][gold-prices-12-30-2024] sample chart.
 
 <figure><img src="../.gitbook/assets/gold-prices.png" alt="" width="375"><figcaption><p>The <a href="https://github.com/patrykandpatrick/vico/blob/stable/sample/charts/compose/src/commonMain/kotlin/com/patrykandpatrick/vico/sample/charts/compose/GoldPrices.kt">“Gold prices (12/30/2024)”</a> sample chart, whose <em>x</em>-axis labels are dates</p></figcaption></figure>
+
+[cartesian-value-formatter]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-value-formatter/
+[decimal]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-value-formatter/-companion/decimal.html
+[y-percent]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-value-formatter/-companion/y-percent.html
+[horizontal-axis]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.axis/-horizontal-axis/
+[vertical-axis]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.axis/-vertical-axis/
+[rock-metal-ratios]: https://github.com/patrykandpatrick/vico/blob/stable/sample/charts/compose/src/commonMain/kotlin/com/patrykandpatrick/vico/sample/charts/compose/RockMetalRatios.kt
+[gold-prices-12-30-2024]: https://github.com/patrykandpatrick/vico/blob/stable/sample/charts/compose/src/commonMain/kotlin/com/patrykandpatrick/vico/sample/charts/compose/GoldPrices.kt

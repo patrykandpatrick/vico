@@ -7,17 +7,17 @@ metaLinks:
 
 # CartesianChart
 
-[`CartesianChart`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-cartesian-chart/) draws a chart based on a Cartesian coordinate plane. The chart includes one or more data layers, drawn by [`CartesianLayer`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.layer/-cartesian-layer/) instances. Each layer has its own data.
+[`CartesianChart`][cartesian-chart] draws a chart based on a Cartesian coordinate plane. The chart includes one or more data layers, drawn by [`CartesianLayer`][cartesian-layer] instances. Each layer has its own data.
 
 ## Creation
 
-Instantiate `CartesianChart` via [`rememberCartesianChart`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/remember-cartesian-chart.html).
+Instantiate `CartesianChart` via [`rememberCartesianChart`][remember-cartesian-chart].
 
 ## Ranges
 
 A chart’s _x_- and _y_-ranges depend on those reported by its layers. The _x_-range is the narrowest one that includes all layers’ _x_-ranges. By default, there’s an analogously determined shared _y_-range, but two separate _y_-ranges can also be introduced.
 
-_x_- and _y_-range customization is discussed in [a later subsection](cartesianlayer.md#cartesianlayerrangeprovider).
+_x_- and _y_-range customization is discussed in [a later subsection][a-later-subsection].
 
 ## _x_-step
 
@@ -38,3 +38,8 @@ For a daily column chart that may have gaps in the data, locking the _x_-step to
 For line charts, both increasing and decreasing the _x_-step relative to the default can be useful. For column and candlestick charts, only increasing it is practical; the opposite could cause overlaps.
 
 Note that the _x_-step is different from zoom. Zoom scales the entire chart—including column widths, for example—whereas the _x_-step changes the logical interpretation of the data’s spacing. The effects described above aren’t achievable with zoom alone.
+
+[cartesian-chart]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-cartesian-chart/
+[cartesian-layer]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.layer/-cartesian-layer/
+[remember-cartesian-chart]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/remember-cartesian-chart.html
+[a-later-subsection]: cartesianlayer.md#cartesianlayerrangeprovider

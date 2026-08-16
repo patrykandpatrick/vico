@@ -7,21 +7,21 @@ metaLinks:
 
 # CartesianLayer
 
-There are three built-in [`CartesianLayer`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.layer/-cartesian-layer/) implementations:
+There are three built-in [`CartesianLayer`][cartesian-layer] implementations:
 
-* [`CandlestickCartesianLayer`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.layer/-candlestick-cartesian-layer/)
-* [`ColumnCartesianLayer`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.layer/-column-cartesian-layer/)
-* [`LineCartesianLayer`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.layer/-line-cartesian-layer/)
+* [`CandlestickCartesianLayer`][candlestick-cartesian-layer]
+* [`ColumnCartesianLayer`][column-cartesian-layer]
+* [`LineCartesianLayer`][line-cartesian-layer]
 
 These are discussed individually in the following sections.
 
 ## `CartesianLayerRangeProvider`
 
-What _x_- and _y_-ranges a layer reports depends on its [`CartesianLayerRangeProvider`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-layer-range-provider/) instance. A layer passes its intrinsic _x_- and _y_-ranges—which depend on [`CartesianLayerModel`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-layer-model/)—to this instance, which returns the final ranges to report. The available singletons and factory functions are listed below. For more specific behavior, implement the interface.
+What _x_- and _y_-ranges a layer reports depends on its [`CartesianLayerRangeProvider`][cartesian-layer-range-provider] instance. A layer passes its intrinsic _x_- and _y_-ranges—which depend on [`CartesianLayerModel`][cartesian-layer-model]—to this instance, which returns the final ranges to report. The available singletons and factory functions are listed below. For more specific behavior, implement the interface.
 
-* [`auto`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-layer-range-provider/-companion/auto.html) (default)
-* [`fixed`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-layer-range-provider/-companion/fixed.html)
-* [`Intrinsic`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-layer-range-provider/-companion/-intrinsic.html)
+* [`auto`][auto] (default)
+* [`fixed`][fixed]
+* [`Intrinsic`][intrinsic]
 
 The default implementations of the `CartesianLayerRangeProvider` functions leave the _x_-range unchanged but do these two things:
 
@@ -30,10 +30,26 @@ The default implementations of the `CartesianLayerRangeProvider` functions leave
 
 This also applies to the implementation returned by `auto`. Custom `CartesianLayerRangeProvider` implementations can override this behavior. With `fixed`, `minY` and `maxY` take precedence.
 
-When using [`CartesianChartModelProducer`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-chart-model-producer/), set the `CartesianLayerRangeProvider` instance for each layer only once. There are no restrictions on dynamic behavior, but it should be implemented as part of a single `CartesianLayerRangeProvider` instance, not by means of a mechanism that switches between `CartesianLayerRangeProvider` implementations. In particular, for charts powered by `CartesianChartModelProducer`, `fixed` should be used only for entirely static overrides.
+When using [`CartesianChartModelProducer`][cartesian-chart-model-producer], set the `CartesianLayerRangeProvider` instance for each layer only once. There are no restrictions on dynamic behavior, but it should be implemented as part of a single `CartesianLayerRangeProvider` instance, not by means of a mechanism that switches between `CartesianLayerRangeProvider` implementations. In particular, for charts powered by `CartesianChartModelProducer`, `fixed` should be used only for entirely static overrides.
 
-When you need to perform calculations based on a layer’s intrinsic _x_- and _y_-ranges, use the values passed to the `CartesianLayerRangeProvider` functions. Beyond that, use extras if needed. These are important here not only for the usual synchronization reasons, but also because they’re updated via [`CartesianChartModelProducer.Transaction`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-chart-model-producer/-transaction/), and a transaction is required for a chart’s _x_- and _y_-ranges to be updated. A common use case for extras is switching between externally defined _x_- and _y_-ranges—both in synchronization with series updates and without series updates (for example, in response to changes in user-accessible range settings).
+When you need to perform calculations based on a layer’s intrinsic _x_- and _y_-ranges, use the values passed to the `CartesianLayerRangeProvider` functions. Beyond that, use extras if needed. These are important here not only for the usual synchronization reasons, but also because they’re updated via [`CartesianChartModelProducer.Transaction`][cartesian-chart-model-producer-transaction], and a transaction is required for a chart’s _x_- and _y_-ranges to be updated. A common use case for extras is switching between externally defined _x_- and _y_-ranges—both in synchronization with series updates and without series updates (for example, in response to changes in user-accessible range settings).
 
 ## `Axis.Position.Vertical`
 
-A [`CartesianChart`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-cartesian-chart/) can have two separate _y_-ranges, one for the start _y_-axis and one for the end _y_-axis. (The presence of two _y_-axes isn’t strictly necessary, but it’s generally needed for unambiguity.) You can assign each layer to an [`Axis.Position.Vertical`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.axis/-axis/-position/-vertical/) subclass—either [`Start`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.axis/-axis/-position/-vertical/-start/) or [`End`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.axis/-axis/-position/-vertical/-end/). The final _y_-range for either subclass is the narrowest range that includes the _y_-ranges of all linked layers. Thus, you get two independently scaled groups of layers, and the two _y_-axes are disconnected.
+A [`CartesianChart`][cartesian-chart] can have two separate _y_-ranges, one for the start _y_-axis and one for the end _y_-axis. (The presence of two _y_-axes isn’t strictly necessary, but it’s generally needed for unambiguity.) You can assign each layer to an [`Axis.Position.Vertical`][axis-position-vertical] subclass—either [`Start`][start] or [`End`][end]. The final _y_-range for either subclass is the narrowest range that includes the _y_-ranges of all linked layers. Thus, you get two independently scaled groups of layers, and the two _y_-axes are disconnected.
+
+[cartesian-layer]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.layer/-cartesian-layer/
+[candlestick-cartesian-layer]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.layer/-candlestick-cartesian-layer/
+[column-cartesian-layer]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.layer/-column-cartesian-layer/
+[line-cartesian-layer]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.layer/-line-cartesian-layer/
+[cartesian-layer-range-provider]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-layer-range-provider/
+[cartesian-layer-model]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-layer-model/
+[auto]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-layer-range-provider/-companion/auto.html
+[fixed]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-layer-range-provider/-companion/fixed.html
+[intrinsic]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-layer-range-provider/-companion/-intrinsic.html
+[cartesian-chart-model-producer]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-chart-model-producer/
+[cartesian-chart-model-producer-transaction]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-chart-model-producer/-transaction/
+[cartesian-chart]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-cartesian-chart/
+[axis-position-vertical]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.axis/-axis/-position/-vertical/
+[start]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.axis/-axis/-position/-vertical/-start/
+[end]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.axis/-axis/-position/-vertical/-end/
