@@ -11,7 +11,7 @@ metaLinks:
 
 ## Creation
 
-Instantiate `CartesianChart` via [`rememberCartesianChart`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/remember-cartesian-chart).
+Instantiate `CartesianChart` via [`rememberCartesianChart`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/remember-cartesian-chart.html).
 
 ## Ranges
 

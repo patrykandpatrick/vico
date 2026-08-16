@@ -19,9 +19,9 @@ These are discussed individually in the following sections.
 
 What _x_- and _y_-ranges a layer reports depends on its [`CartesianLayerRangeProvider`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-layer-range-provider/) instance. A layer passes its intrinsic _x_- and _y_-ranges—which depend on [`CartesianLayerModel`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-layer-model/)—to this instance, which returns the final ranges to report. The available singletons and factory functions are listed below. For more specific behavior, implement the interface.
 
-* [`auto`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-layer-range-provider/-companion/auto) (default)
-* [`fixed`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-layer-range-provider/-companion/fixed)
-* [`Intrinsic`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-layer-range-provider/-companion/-intrinsic)
+* [`auto`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-layer-range-provider/-companion/auto.html) (default)
+* [`fixed`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-layer-range-provider/-companion/fixed.html)
+* [`Intrinsic`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-layer-range-provider/-companion/-intrinsic.html)
 
 The default implementations of the `CartesianLayerRangeProvider` functions leave the _x_-range unchanged but do these two things:
 

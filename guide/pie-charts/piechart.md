@@ -4,13 +4,13 @@
 
 ## Creation
 
-Instantiate `PieChart` via [`rememberPieChart`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.pie/remember-pie-chart).
+Instantiate `PieChart` via [`rememberPieChart`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.pie/remember-pie-chart.html).
 
 ```kt
 val chart = rememberPieChart(/* ... */)
 ```
 
-`PieChart` accepts a [`SliceProvider`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.pie/-pie-chart/-slice-provider/) instance, which supplies [`Slice`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.pie/-pie-chart/-slice/) instances for successive entries. Use [`SliceProvider.series`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.pie/-pie-chart/-slice-provider/-companion/series) for the standard repeating-series setup.
+`PieChart` accepts a [`SliceProvider`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.pie/-pie-chart/-slice-provider/) instance, which supplies [`Slice`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.pie/-pie-chart/-slice/) instances for successive entries. Use [`SliceProvider.series`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.pie/-pie-chart/-slice-provider/-companion/series.html) for the standard repeating-series setup.
 
 Each pie-slice style can define fill, stroke, an offset from the center, and an optional [`SliceLabel`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.pie/-pie-chart/-slice-label/). There are two built-in label types:
 

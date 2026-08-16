@@ -2,7 +2,7 @@
 
 The `compose-glance` module lets Jetpack Glance app widgets display Vico charts. Use [`CartesianChartImage`](https://api.vico.patrykandpatrick.com/vico/compose-glance/com.patrykandpatrick.vico.compose.glance.cartesian/-cartesian-chart-image.html) and [`PieChartImage`](https://api.vico.patrykandpatrick.com/vico/compose-glance/com.patrykandpatrick.vico.compose.glance.pie/-pie-chart-image.html) in widget content. These functions render charts off-screen to bitmaps and display the result as a static Glance image.
 
-This differs from the interactive chart hosts [`CartesianChartHost`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-cartesian-chart-host) and [`PieChartHost`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.pie/-pie-chart-host/). Glance doesn’t support the Compose canvas, so the image functions are the supported entry points for app widgets. Because the result is static, chart interactions such as scroll, zoom, and markers are unavailable.
+This differs from the interactive chart hosts [`CartesianChartHost`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-cartesian-chart-host.html) and [`PieChartHost`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.pie/-pie-chart-host.html). Glance doesn’t support the Compose canvas, so the image functions are the supported entry points for app widgets. Because the result is static, chart interactions such as scroll, zoom, and markers are unavailable.
 
 ## Cartesian charts
 

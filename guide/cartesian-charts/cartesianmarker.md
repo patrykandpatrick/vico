@@ -9,7 +9,7 @@ metaLinks:
 
 [`CartesianMarker`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.marker/-cartesian-marker/) instances highlight points on charts. There are two types:
 
-* Standard markers are shown on tap. Add these via the `marker` parameter of [`rememberCartesianChart`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/remember-cartesian-chart).
+* Standard markers are shown on tap. Add these via the `marker` parameter of [`rememberCartesianChart`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/remember-cartesian-chart.html).
 * Persistent markers are shown permanently at given _x_-values. Add these via the `persistentMarkers` parameter of `rememberCartesianChart`.
 
 There are two ways of creating `CartesianMarker` instances:
@@ -19,11 +19,11 @@ There are two ways of creating `CartesianMarker` instances:
 
 ## `DefaultCartesianMarker`
 
-A common means of creating `CartesianMarker` instances is [`DefaultCartesianMarker`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.marker/-default-cartesian-marker/), instantiated via [`rememberDefaultCartesianMarker`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.marker/remember-default-cartesian-marker). It accepts three main components—a label, a point indicator, and a vertical line—and offers several customization options.
+A common means of creating `CartesianMarker` instances is [`DefaultCartesianMarker`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.marker/-default-cartesian-marker/), instantiated via [`rememberDefaultCartesianMarker`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.marker/remember-default-cartesian-marker.html). It accepts three main components—a label, a point indicator, and a vertical line—and offers several customization options.
 
 `DefaultCartesianMarker` label text is created by [`ValueFormatter`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.marker/-default-cartesian-marker/-value-formatter/). A dedicated formatting contract is required here because `CartesianMarker` instances can highlight multiple points at once. The general principle is the same as with [`CartesianValueFormatter`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-value-formatter/), but the required information must first be [retrieved from `targets`](cartesianmarker.md#cartesianmarkertarget).
 
-A base `ValueFormatter` implementation can be instantiated via [`ValueFormatter.default`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.marker/-default-cartesian-marker/-value-formatter/-companion/default). This implementation uses `DecimalFormat` to format _y_-values. You can provide a custom `DecimalFormat` instance and toggle the color-coding of _y_-values. The former enables you not only to change how the _y_-values themselves are formatted, but also to add prefixes and suffixes.
+A base `ValueFormatter` implementation can be instantiated via [`ValueFormatter.default`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.marker/-default-cartesian-marker/-value-formatter/-companion/default.html). This implementation uses `DecimalFormat` to format _y_-values. You can provide a custom `DecimalFormat` instance and toggle the color-coding of _y_-values. The former enables you not only to change how the _y_-values themselves are formatted, but also to add prefixes and suffixes.
 
 `DefaultCartesianMarker` is open for subclassing.
 
@@ -35,9 +35,9 @@ You can listen for visibility changes of standard markers via [`CartesianMarkerV
 
 By default, a standard marker appears on press and disappears on release. You can customize this with [`CartesianMarkerController`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.marker/-cartesian-marker-controller/), which has built-in implementations instantiated via the following:
 
-* [`rememberShowOnPress`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.marker/-cartesian-marker-controller/-companion/remember-show-on-press) (default)
-* [`rememberToggleOnTap`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.marker/-cartesian-marker-controller/-companion/remember-toggle-on-tap)
-* [`rememberShowOnHover`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.marker/-cartesian-marker-controller/-companion/remember-show-on-hover)
+* [`rememberShowOnPress`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.marker/-cartesian-marker-controller/-companion/remember-show-on-press.html) (default)
+* [`rememberToggleOnTap`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.marker/-cartesian-marker-controller/-companion/remember-toggle-on-tap.html)
+* [`rememberShowOnHover`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.marker/-cartesian-marker-controller/-companion/remember-show-on-hover.html)
 
 For more specific behavior, create a custom implementation.
 

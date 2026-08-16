@@ -1,8 +1,8 @@
 # PieChartModelProducer
 
-[`PieChartModelProducer`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.pie.data/-pie-chart-model-producer/) creates and updates [`PieChartModel`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.pie.data/-pie-chart-model/) instances for [`PieChartHost`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.pie/-pie-chart-host/).
+[`PieChartModelProducer`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.pie.data/-pie-chart-model-producer/) creates and updates [`PieChartModel`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.pie.data/-pie-chart-model/) instances for [`PieChartHost`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.pie/-pie-chart-host.html).
 
-Use [`pieSeries`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.pie.data/pie-series) inside a transaction:
+Use [`pieSeries`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.pie.data/pie-series.html) inside a transaction:
 
 ```kt
 val modelProducer = remember { PieChartModelProducer() }
@@ -13,6 +13,6 @@ LaunchedEffect(Unit) {
 }
 ```
 
-[`PieChartModel.Builder.series`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.pie.data/-pie-chart-model/-builder/series) accepts either a `vararg` list of values or an iterable collection. Values must be nonnegative.
+[`PieChartModel.Builder.series`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.pie.data/-pie-chart-model/-builder/series.html) accepts either a `vararg` list of values or an iterable collection. Values must be nonnegative.
 
 For static data, you can bypass the model producer and provide a [`PieChartModel`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.pie.data/-pie-chart-model/) instance directly to `PieChartHost`.
