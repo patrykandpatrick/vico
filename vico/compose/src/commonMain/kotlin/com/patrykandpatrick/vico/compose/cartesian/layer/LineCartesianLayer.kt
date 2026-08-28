@@ -534,7 +534,10 @@ protected constructor(
 
       val drawingModel = extraStore.getOrNull(drawingModelKey)
       val sweepFraction = drawingModel?.sweepFraction ?: 1f
-      if (sweepFraction < 1f) {
+      // Evaluate this once to work around an Android 10 ART JIT bug that can make repeated float
+      // comparisons disagree, unbalancing the save and restore calls. See b/553511933.
+      val isSweepInProgress = sweepFraction < 1f
+      if (isSweepInProgress) {
         val sweepRight =
           if (isLtr) {
             layerBounds.left + layerBounds.width * sweepFraction
@@ -605,7 +608,7 @@ protected constructor(
       }
 
       canvas.restore()
-      if (sweepFraction < 1f) canvas.restore()
+      if (isSweepInProgress) canvas.restore()
     }
   }
 
