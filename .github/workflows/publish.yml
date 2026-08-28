@@ -14,7 +14,6 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          path: vico
           fetch-depth: 0
       - uses: actions/setup-java@v6
         with:
@@ -22,7 +21,6 @@ jobs:
           java-version: 17
       - uses: gradle/actions/setup-gradle@v6
       - run: |
-          cd ${{ github.workspace }}/vico
           VERSION_NAME=$(grep -oP "(?<=const val VICO = \")[^\"]*" buildSrc/src/main/kotlin/Versions.kt)
           echo "VERSION_NAME=$VERSION_NAME" >> $GITHUB_ENV
           echo "TAG_NAME=v$VERSION_NAME" >> $GITHUB_ENV
@@ -41,19 +39,36 @@ jobs:
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          claude_args: --model claude-opus-5 --add-dir "${{ github.workspace }}/vico"
+          claude_args: |
+            --model claude-opus-5
+            --add-dir "${{ runner.temp }}"
           settings: |
             {
               "permissions": {
-                "allow": ["Bash(*)"]
+                "allow": [
+                  "Bash(gh api --method GET *)",
+                  "Bash(gh issue list *)",
+                  "Bash(gh issue view *)",
+                  "Bash(gh pr list *)",
+                  "Bash(gh pr view *)",
+                  "Bash(gh release list *)",
+                  "Bash(gh release view *)",
+                  "Bash(gh repo view *)",
+                  "Bash(gh search issues *)",
+                  "Bash(gh search prs *)",
+                  "Edit(/${{ runner.temp }}/release-notes.md)",
+                  "Skill",
+                  "WebFetch",
+                  "WebSearch"
+                ]
               }
             }
           prompt: |
             /release-notes Write GitHub release notes for `${{ env.TAG_NAME }}`.
 
-            The repository is checked out at `${{ github.workspace }}/vico`.
-            Write only the final release body to `${{ runner.temp }}/release-notes.md`.
-            Do not modify repository files.
+            The repository is checked out at `${{ github.workspace }}`. Use only read-only GitHub CLI
+            operations. For `gh api`, always pass `--method GET`. Write only the final release body to
+            `${{ runner.temp }}/release-notes.md`. Do not modify repository files.
       - name: Validate generated release notes
         run: |
           release_notes_path="${{ runner.temp }}/release-notes.md"
@@ -70,7 +85,6 @@ jobs:
             exit 1
           fi
 
-          cd ${{ github.workspace }}/vico
           git_status="$(git status --porcelain)"
           if [[ -n "$git_status" ]]; then
             echo "::error::Release notes generation modified repository files."
@@ -81,12 +95,10 @@ jobs:
         with:
           draft: true
           body_path: ${{ runner.temp }}/release-notes.md
-          files: ${{ github.workspace }}/vico/sample/android/build/outputs/apk/debug/android-sample-debug.apk
+          files: ${{ github.workspace }}/sample/android/build/outputs/apk/debug/android-sample-debug.apk
           prerelease: ${{ env.IS_PRERELEASE }}
           tag_name: ${{ env.TAG_NAME }}
-      - run: |
-          cd ${{ github.workspace }}/vico
-          ./gradlew publishToMavenCentral --no-configuration-cache
+      - run: ./gradlew publishToMavenCentral --no-configuration-cache
         env:
           ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
           ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
