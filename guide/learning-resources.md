@@ -25,11 +25,11 @@ Follow the links above to view the code on GitHub. For Android, you can also [do
 ```sh
 git clone https://github.com/patrykandpatrick/vico
 cd vico
-git checkout v3.3.0
+git checkout v3.3.1
 ```
 
 [the-api-reference]: https://api.vico.patrykandpatrick.com/
 [a-sample-app]: https://github.com/patrykandpatrick/vico/tree/stable/sample
 [sample-charts]: https://github.com/patrykandpatrick/vico/tree/stable/sample/shared/src/commonMain/kotlin/com/patrykandpatrick/vico/sample/charts
-[download-the-apk]: https://github.com/patrykandpatrick/vico/releases/download/v3.3.0/android-sample-debug.apk
+[download-the-apk]: https://github.com/patrykandpatrick/vico/releases/download/v3.3.1/android-sample-debug.apk
 [sample]: https://github.com/patrykandpatrick/vico/tree/stable/sample
