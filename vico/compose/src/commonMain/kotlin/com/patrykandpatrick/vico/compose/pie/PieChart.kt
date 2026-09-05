@@ -63,13 +63,14 @@ internal constructor(
   public val spacing: Dp,
   public val outerSize: PieSize.Outer,
   public val innerSize: PieSize.Inner,
-  public val startAngle: Float,
   internal val valueFormatter: PieValueFormatter,
   internal val legend: Legend<PieChartMeasuringContext, PieChartDrawingContext>?,
   internal val drawingModelInterpolator: PieChartDrawingModelInterpolator,
   internal val id: Uuid = Uuid.random(),
 ) : Bounded {
   override var bounds: Rect = Rect.Zero
+
+  internal var gestureGeometry: PieGestureGeometry = PieGestureGeometry.Zero
 
   init {
     require(spacing >= 0.dp) { "Slice spacing must be nonnegative." }
@@ -81,17 +82,19 @@ internal constructor(
   internal fun draw(
     context: PieChartDrawingContext,
     drawingModel: PieChartDrawingModel,
+    startAngle: Float = -90f,
     fitLabelsInBounds: Boolean = true,
   ) {
     val circleBounds =
       if (fitLabelsInBounds) {
-        getCircleBounds(context, drawingModel)
+        getCircleBounds(context, drawingModel, startAngle)
       } else {
         getCircleBounds(context, bounds)
       }
     val outerRadius = circleBounds.width / 2f
     val holeRadius = innerSize.getRadius(context, circleBounds.width, circleBounds.height)
     require(outerRadius > holeRadius) { "The outer size must be greater than the inner size." }
+    gestureGeometry = PieGestureGeometry(circleBounds.center, outerRadius, holeRadius)
     val spacingPx = with(context) { spacing.pixels }
     val donut = holeRadius > 0f
     val outerTrim =
@@ -180,6 +183,7 @@ internal constructor(
   private fun getCircleBounds(
     context: PieChartDrawingContext,
     drawingModel: PieChartDrawingModel,
+    startAngle: Float,
   ): Rect {
     val baseRadius = outerSize.getRadius(context, bounds.width, bounds.height)
     val entries = context.model.entries
@@ -584,7 +588,6 @@ internal constructor(
     spacing: Dp = this.spacing,
     outerSize: PieSize.Outer = this.outerSize,
     innerSize: PieSize.Inner = this.innerSize,
-    startAngle: Float = this.startAngle,
     valueFormatter: PieValueFormatter = this.valueFormatter,
     legend: Legend<PieChartMeasuringContext, PieChartDrawingContext>? = this.legend,
   ): PieChart =
@@ -593,7 +596,6 @@ internal constructor(
       spacing,
       outerSize,
       innerSize,
-      startAngle,
       valueFormatter,
       legend,
       drawingModelInterpolator,
@@ -729,7 +731,6 @@ public fun rememberPieChart(
   spacing: Dp = 0.dp,
   outerSize: PieSize.Outer = PieSize.Outer.Fill,
   innerSize: PieSize.Inner = PieSize.Inner.Zero,
-  startAngle: Float = -90f,
   valueFormatter: PieValueFormatter = PieValueFormatter.Value,
   legend: Legend<PieChartMeasuringContext, PieChartDrawingContext>? = null,
 ): PieChart {
@@ -739,7 +740,6 @@ public fun rememberPieChart(
     spacing,
     outerSize,
     innerSize,
-    startAngle,
     valueFormatter,
     legend,
   ) {
@@ -749,7 +749,6 @@ public fun rememberPieChart(
         spacing = spacing,
         outerSize = outerSize,
         innerSize = innerSize,
-        startAngle = startAngle,
         valueFormatter = valueFormatter,
         legend = legend,
       )
@@ -758,7 +757,6 @@ public fun rememberPieChart(
           spacing,
           outerSize,
           innerSize,
-          startAngle,
           valueFormatter,
           legend,
           defaultPieChartDrawingModelInterpolator(),

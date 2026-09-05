@@ -32,6 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -54,6 +55,8 @@ internal val defaultPieDiffAnimationSpec: AnimationSpec<Float> =
  * @param chart the [PieChart].
  * @param modelProducer creates and updates the [PieChartModel].
  * @param modifier the modifier to be applied to the chart.
+ * @param rotationState houses information on the [PieChart]’s rotation. Passing a
+ *   [PieRotationState] with rotation enabled turns on drag-to-rotate.
  * @param animationSpec the [AnimationSpec] for difference animations.
  * @param animateIn whether to run an initial animation when the [PieChartHost] enters composition.
  *   The animation is skipped for previews.
@@ -67,6 +70,7 @@ public fun PieChartHost(
   chart: PieChart,
   modelProducer: PieChartModelProducer,
   modifier: Modifier = Modifier,
+  rotationState: PieRotationState = rememberPieRotationState(),
   animationSpec: AnimationSpec<Float>? = defaultPieDiffAnimationSpec,
   animateIn: Boolean = true,
   chartAreaHeight: Dp = Defaults.PIE_CHART_AREA_HEIGHT.dp,
@@ -104,7 +108,7 @@ public fun PieChartHost(
   if (model == null || dm == null) {
     ChartHostBox(modifier, chartAreaHeight, measureExtras = null) { placeholder() }
   } else {
-    PieChartHostImpl(chart, model, dm, modifier, chartAreaHeight)
+    PieChartHostImpl(chart, model, dm, modifier, rotationState, chartAreaHeight)
   }
 }
 
@@ -114,6 +118,8 @@ public fun PieChartHost(
  * @param chart the [PieChart].
  * @param model the [PieChartModel].
  * @param modifier the modifier to be applied to the chart.
+ * @param rotationState houses information on the [PieChart]’s rotation. Passing a
+ *   [PieRotationState] with rotation enabled turns on drag-to-rotate.
  * @param chartAreaHeight the default diameter of the pie, to which the heights of the legend and
  *   other components are added. Used only when the height isn’t otherwise constrained (e.g., via
  *   [Modifier.height]).
@@ -123,9 +129,10 @@ public fun PieChartHost(
   chart: PieChart,
   model: PieChartModel,
   modifier: Modifier = Modifier,
+  rotationState: PieRotationState = rememberPieRotationState(),
   chartAreaHeight: Dp = Defaults.PIE_CHART_AREA_HEIGHT.dp,
 ) {
-  PieChartHostImpl(chart, model, model.toDrawingModel(), modifier, chartAreaHeight)
+  PieChartHostImpl(chart, model, model.toDrawingModel(), modifier, rotationState, chartAreaHeight)
 }
 
 @Composable
@@ -134,6 +141,7 @@ internal fun PieChartHostImpl(
   model: PieChartModel,
   drawingModel: PieChartDrawingModel,
   modifier: Modifier,
+  rotationState: PieRotationState,
   chartAreaHeight: Dp,
 ) {
   val measuringContext = rememberPieChartMeasuringContext(model, model.extraStore)
@@ -153,7 +161,12 @@ internal fun PieChartHostImpl(
     }
 
   ChartHostBox(modifier, chartAreaHeight, measureExtras) {
-    Canvas(modifier = Modifier.fillMaxSize()) {
+    Canvas(
+      modifier =
+        Modifier.fillMaxSize().pointerInput(chart, rotationState) {
+          detectPieRotationGestures(rotationState) { chart.gestureGeometry }
+        }
+    ) {
       if (size.isEmpty()) return@Canvas
       measuringContext.value.canvasWidth = size.width
       measuringContext.value.canvasSize = size
@@ -176,7 +189,7 @@ internal fun PieChartHostImpl(
           chartBounds,
           mutableDrawScope,
         )
-      chart.draw(drawingContext, drawingModel, fitLabelsInBounds = false)
+      chart.draw(drawingContext, drawingModel, rotationState.angle, fitLabelsInBounds = false)
       measuringContext.value.cacheStore.purge()
     }
   }
