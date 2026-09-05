@@ -227,18 +227,36 @@ public class VicoScrollState {
     }
   }
 
-  internal suspend fun scroll(scroll: Scroll, maxScroll: Float) {
-    // This receives the scroll compensation for a zoom gesture—an absolute target computed
-    // from the scroll value and the content width at the time of the zoom event. It’s valid
-    // only while the user isn’t scrolling: if a pan or fling is already in progress (e.g., the
-    // pinch turned into a pan without the scroll ever becoming idle for a frame), then by the
-    // time the scroll stops, the target and `maxScroll` are stale, and applying them would
-    // roll the viewport back to the position at the time of the zoom. Drop the stale
-    // compensation; the zoom handler emits a fresh one on every zoom event.
-    if (scrollableState.isScrollInProgress) return
-    maxValue = maxScroll
-    withUpdated { context, layerDimensions, bounds ->
-      scrollableState.scrollBy(scroll.getDelta(context, layerDimensions, bounds, maxValue, value))
+  /**
+   * Applies a zoom’s scroll compensation, which keeps the content under the zoom anchor in place.
+   *
+   * [VicoZoomState] calls this synchronously, in the same dispatch in which it updates the zoom
+   * factor, so that no frame renders a new zoom factor with an uncompensated scroll value.
+   *
+   * The compensation deliberately bypasses [scrollableState]: it isn’t a scroll gesture but a
+   * correction to one that has already been decided, so it must neither wait for an in-progress
+   * scroll nor be dropped because of one. During a pinch, the zoom detector consumes the pointer
+   * events, so no drag starts to stop a fling left over from a previous pan; gating the
+   * compensation on [ScrollableState.isScrollInProgress] would therefore mis-anchor the whole
+   * gesture. Writing [value] directly is also what makes the update atomic with the zoom factor, as
+   * going through [scrollableState] would require suspending.
+   *
+   * A fling that scrolls by deltas—the default fling behavior—carries on correctly against the
+   * corrected value. One that animates toward a target captured before the zoom does not:
+   * [SnapFlingBehavior] and [performSnap] derive their deltas from the pre-zoom
+   * [CartesianLayerDimensions.xSpacing], and the desktop and web decay flings replay absolute
+   * scroll values, so a zoom landing mid-fling leaves the scroll off-target until the next gesture.
+   * Anchoring correctly through such a fling would require invalidating it, which this doesn’t do.
+   */
+  internal fun applyZoomScroll(value: Float, maxValue: Float) {
+    // No-op while detached from a host, as the removed `scroll(Scroll, Float)` also was: `update`
+    // supplies these and `clearUpdated` nulls them on disposal, and both this instance's measured
+    // maximum and whatever reads the result belong to a host that is no longer drawing it.
+    withUpdated { _, _, _ ->
+      // Set `maxValue` first: its setter re-clamps `value` to the new maximum, and the incoming
+      // value is already expressed in terms of that maximum.
+      this.maxValue = maxValue
+      this.value = value
     }
   }
 

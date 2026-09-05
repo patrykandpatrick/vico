@@ -34,8 +34,7 @@ import com.patrykandpatrick.vico.compose.cartesian.layer.MutableCartesianLayerDi
 import com.patrykandpatrick.vico.compose.cartesian.layer.copyScaled
 import com.patrykandpatrick.vico.compose.cartesian.layer.scale
 import com.patrykandpatrick.vico.compose.common.Defaults
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
+import com.patrykandpatrick.vico.compose.common.getStart
 
 /** Houses information on a [CartesianChart]’s zoom factor. Allows for zoom customization. */
 public class VicoZoomState {
@@ -49,9 +48,13 @@ public class VicoZoomState {
   private var context: CartesianMeasuringContext? = null
   private var layerDimensions: MutableCartesianLayerDimensions? = null
   private var bounds: Rect? = null
-  private var scroll = 0f
-  private val _pendingScroll = MutableSharedFlow<Pair<Scroll, Float>>()
-  internal val pendingScroll = _pendingScroll.asSharedFlow()
+  private var scrollState: VicoScrollState? = null
+  /**
+   * The zoom factor by which [layerDimensions] is currently scaled. [update] rescales
+   * [layerDimensions] to match [value], but that happens once per draw, while any number of zooms
+   * can occur in between, so [value] alone doesn’t describe [layerDimensions]’ current scale.
+   */
+  private var layerDimensionsZoom = 0f
   private val zoomMutatorMutex = MutatorMutex()
 
   /** The current zoom factor. */
@@ -112,11 +115,9 @@ public class VicoZoomState {
   public suspend fun zoom(zoom: Zoom) {
     zoomMutatorMutex.mutate {
       withUpdated { context, layerDimensions, bounds ->
-        val unscaled = if (value != 0f) layerDimensions.copyScaled(1f / value) else layerDimensions
+        val unscaled = unscale(layerDimensions)
         val newValue = zoom.getValue(context, unscaled, bounds)
-        if (newValue != value) {
-          rawZoom(newValue / value, context.canvasWidth / 2f) { scroll }
-        }
+        if (newValue != value) rawZoom(newValue / value, getCentroidX(context, bounds, bias = 0.5f))
       }
     }
   }
@@ -134,14 +135,14 @@ public class VicoZoomState {
   ) {
     zoomMutatorMutex.mutate {
       withUpdated { context, layerDimensions, bounds ->
-        val unscaled = if (value != 0f) layerDimensions.copyScaled(1f / value) else layerDimensions
+        val unscaled = unscale(layerDimensions)
         val target = zoom.getValue(context, unscaled, bounds).coerceIn(valueRange)
         if (target == value) return@withUpdated
-        val centroidX = bounds.left + bias * bounds.width
+        val centroidX = getCentroidX(context, bounds, bias)
         val anim = TargetBasedAnimation(animationSpec, Float.VectorConverter, value, target)
         val durationNanos = anim.durationNanos
         if (durationNanos == 0L) {
-          rawZoom(target / value, centroidX) { scroll }
+          rawZoom(target / value, centroidX)
           return@withUpdated
         }
         var startNanos = -1L
@@ -153,13 +154,30 @@ public class VicoZoomState {
           }
           val current = anim.getValueFromNanos(playTime).coerceIn(valueRange)
           val factor = if (value != 0f) current / value else 1f
-          rawZoom(factor, centroidX) { scroll }
+          rawZoom(factor, centroidX)
         }
         val finalFactor = if (value != 0f) target / value else 1f
-        rawZoom(finalFactor, centroidX) { scroll }
+        rawZoom(finalFactor, centroidX)
       }
     }
   }
+
+  /**
+   * Returns the _x_ coordinate of the zoom anchor at [bias], which runs from 0 at the [bounds]’
+   * start edge to 1 at their end edge. [bounds] are the [CartesianChart]’s layer bounds, which are
+   * inset from the canvas by the axes, so the canvas’s coordinates can’t stand in for theirs.
+   */
+  private fun getCentroidX(context: CartesianMeasuringContext, bounds: Rect, bias: Float): Float =
+    bounds.getStart(context.isLtr) + context.layoutDirectionMultiplier * bias * bounds.width
+
+  private fun unscale(
+    layerDimensions: MutableCartesianLayerDimensions
+  ): MutableCartesianLayerDimensions =
+    if (layerDimensionsZoom != 0f) {
+      layerDimensions.copyScaled(1f / layerDimensionsZoom)
+    } else {
+      layerDimensions
+    }
 
   private inline fun withUpdated(
     block: (CartesianMeasuringContext, MutableCartesianLayerDimensions, Rect) -> Unit
@@ -172,16 +190,26 @@ public class VicoZoomState {
     }
   }
 
+  /**
+   * Sets the [VicoScrollState] whose scroll value anchors zooms, or `null` when there is none.
+   *
+   * This is deliberately separate from [update], which runs in the draw pass: a host can replace
+   * its [VicoScrollState] without a draw following—it returns early before [update] when the chart
+   * has no area—and a zoom in that window would otherwise anchor against, and write to, the state
+   * that was discarded.
+   */
+  internal fun setScrollState(scrollState: VicoScrollState?) {
+    this.scrollState = scrollState
+  }
+
   internal fun update(
     context: CartesianMeasuringContext,
     layerDimensions: MutableCartesianLayerDimensions,
     bounds: Rect,
-    scroll: Float,
   ) {
     this.context = context
     this.layerDimensions = layerDimensions
     this.bounds = bounds
-    this.scroll = scroll
 
     val minValue = minZoom.getValue(context, layerDimensions, bounds)
     val maxValue = maxZoom.getValue(context, layerDimensions, bounds)
@@ -192,27 +220,70 @@ public class VicoZoomState {
     valueRange = minValue..maxValue
     if (!overridden) value = initialZoom.getValue(context, layerDimensions, bounds)
     layerDimensions.scale(value)
+    layerDimensionsZoom = value
   }
 
-  internal suspend fun zoom(factor: Float, centroidX: Float, scroll: () -> Float) {
-    zoomMutatorMutex.mutate { rawZoom(factor, centroidX, scroll) }
+  internal fun clearUpdated() {
+    context = null
+    layerDimensions = null
+    bounds = null
+    layerDimensionsZoom = 0f
   }
 
-  private suspend fun rawZoom(factor: Float, centroidX: Float, scroll: () -> Float) {
+  internal suspend fun zoom(factor: Float, centroidX: Float) {
+    zoomMutatorMutex.mutate { rawZoom(factor, centroidX) }
+  }
+
+  /**
+   * Updates [value] and, to keep the content under the zoom anchor in place, the scroll value.
+   *
+   * This is deliberately non-suspending, and it applies both updates itself rather than handing the
+   * scroll compensation off to a collector. A zoom factor is only meaningful together with the
+   * scroll value that anchors it, so the two must be applied in the same dispatch: if the scroll
+   * compensation were applied later, a frame could render the new zoom factor with the old scroll
+   * value, scaling the content around the wrong anchor and correcting it a frame later—a visible
+   * sideways jump, most noticeable on the last, largest step of a fast pinch. Suspending here would
+   * also mean the compensation could be canceled after [value] had already been updated (by
+   * [zoomMutatorMutex], when the next zoom event arrives mid-gesture), permanently mis-anchoring
+   * the content: each step's compensation is an absolute scroll value derived from the current one,
+   * so a step that never lands isn't recovered by the steps that follow.
+   */
+  private fun rawZoom(factor: Float, centroidX: Float) {
     withUpdated { context, layerDimensions, bounds ->
-      overridden = true
       val oldValue = value
       value *= factor
+      // Only now, once the zoom has actually moved. `overridden` permanently stops `update` from
+      // re-applying `initialZoom`, and the `Saver` persists it, so a zoom that changes nothing—a
+      // pinch that's already clamped at `minZoom` or `maxZoom`—must not set it.
       if (value == oldValue) return@withUpdated
-      val scroll = scroll()
+      overridden = true
+      if (layerDimensionsZoom == 0f) return@withUpdated
+      val scrollState = this.scrollState ?: return@withUpdated
+      val scroll = scrollState.value
+      // Scale `layerDimensions` from the zoom factor they’re currently scaled by, not from
+      // `oldValue`. The two diverge as soon as a second zoom occurs before the next draw, and
+      // scaling by the step ratio would then describe `layerDimensionsZoom * factor` rather than
+      // `value`, understating the maximum scroll value and clamping the compensation away.
       val maxScrollDistance =
-        context.getMaxScrollDistance(bounds.width, layerDimensions.copyScaled(value / oldValue))
+        context.getMaxScrollDistance(
+          bounds.width,
+          layerDimensions.copyScaled(value / layerDimensionsZoom),
+        )
+      // The anchor’s distance from the content’s start edge, in scalable content pixels. Scroll
+      // values are signed by the layout direction—`layoutDirectionMultiplier * scroll` is the
+      // distance from the content’s start edge to the bounds’ start edge—and the anchor’s offset
+      // from that edge runs the same way, so the two are converted together. Unlike the dimensions
+      // above, the anchor scales by the step ratio, converting `scroll` from `oldValue`’s pixels to
+      // `value`’s.
       val transformationAxisX =
-        scroll + centroidX - bounds.left - layerDimensions.unscalableStartPadding
+        context.layoutDirectionMultiplier * (scroll + centroidX - bounds.getStart(context.isLtr)) -
+          layerDimensions.unscalableStartPadding
       val zoomedTransformationAxisX = transformationAxisX * (value / oldValue)
-      _pendingScroll.emit(
-        Scroll.Absolute.pixels(scroll + zoomedTransformationAxisX - transformationAxisX) to
-          maxScrollDistance
+      scrollState.applyZoomScroll(
+        value =
+          scroll +
+            context.layoutDirectionMultiplier * (zoomedTransformationAxisX - transformationAxisX),
+        maxValue = maxScrollDistance,
       )
     }
   }

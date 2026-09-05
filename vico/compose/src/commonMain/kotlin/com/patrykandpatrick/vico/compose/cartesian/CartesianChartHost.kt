@@ -296,18 +296,28 @@ internal fun CartesianChartHostImpl(
 
   LaunchedEffect(model) { onViewportChange() }
 
-  LaunchedEffect(scrollState.consumedXDeltas, scrollState.unconsumedXDeltas) {
-    merge(scrollState.consumedXDeltas, scrollState.unconsumedXDeltas).collect { onViewportChange() }
-  }
-
-  LaunchedEffect(zoomState, scrollState) {
-    zoomState.pendingScroll.collect { (scroll, maxValue) ->
-      scrollState.scroll(scroll, maxValue)
-      onViewportChange()
-    }
+  // The zoom factor is observed rather than reported by the zoom handler: a zoom changes the
+  // viewport whether or not it moves the scroll value, and `zoom(Zoom)` and `animateZoom` change it
+  // without going through any handler at all.
+  LaunchedEffect(scrollState, zoomState) {
+    merge(
+        scrollState.consumedXDeltas,
+        scrollState.unconsumedXDeltas,
+        snapshotFlow { zoomState.value },
+      )
+      .collect { onViewportChange() }
   }
 
   DisposableEffect(scrollState) { onDispose { scrollState.clearUpdated() } }
+
+  DisposableEffect(zoomState) { onDispose { zoomState.clearUpdated() } }
+
+  // Keyed on both, so that replacing either is picked up here rather than at the next draw, which
+  // may never come.
+  DisposableEffect(zoomState, scrollState) {
+    zoomState.setScrollState(scrollState)
+    onDispose { zoomState.setScrollState(null) }
+  }
 
   ChartHostBox(modifier, chartAreaHeight, measureExtras) {
     Canvas(
@@ -318,11 +328,19 @@ internal fun CartesianChartHostImpl(
             consumeMoveEvents = chart.markerController.consumeMoveEvents,
             onInteraction = onInteraction,
             onZoom =
+              // `scrollState` is a key even though this lambda no longer reads it. The
+              // `pointerInput` this is passed to is keyed on `onZoom`, and its gesture loop closes
+              // over `scrollState`, so without this key a replaced scroll state would leave that
+              // loop bound to the old one.
               remember(zoomState, scrollState, coroutineScope) {
                 if (zoomState.zoomEnabled) {
                   { factor, centroid ->
-                    coroutineScope.launch {
-                      zoomState.zoom(factor, centroid.x) { scrollState.value }
+                    // `UNDISPATCHED` so that the zoom factor and its scroll compensation are
+                    // applied within this pointer event, before the next frame is drawn. `zoom`
+                    // reaches them without suspending unless a programmatic zoom is in progress,
+                    // which it cancels.
+                    coroutineScope.launch(start = CoroutineStart.UNDISPATCHED) {
+                      zoomState.zoom(factor, centroid.x)
                     }
                   }
                 } else {
@@ -341,12 +359,7 @@ internal fun CartesianChartHostImpl(
 
       if (chart.layerBounds.isEmpty) return@Canvas
 
-      zoomState.update(
-        measuringContext.value,
-        layerDimensions,
-        chart.layerBounds,
-        scrollState.value,
-      )
+      zoomState.update(measuringContext.value, layerDimensions, chart.layerBounds)
       scrollState.update(measuringContext.value, chart.layerBounds, layerDimensions)
 
       if (model != lastHandledModel) {
