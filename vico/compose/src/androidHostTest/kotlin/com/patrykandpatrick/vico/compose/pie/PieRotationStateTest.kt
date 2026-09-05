@@ -30,16 +30,16 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import org.junit.jupiter.api.Timeout
 
 @Timeout(1)
-class VicoPieRotationStateTest {
+class PieRotationStateTest {
   @Test
   fun `When created, then the angle equals the initial rotation`() {
-    assertEquals(45f, VicoPieRotationState(45f).angle)
+    assertEquals(45f, PieRotationState(45f).angle)
   }
 
   @Test
   fun `When rotateBy accumulates past 360 degrees, then the angle is not normalized mid-gesture`() =
     runBlocking {
-      val sut = VicoPieRotationState(0f)
+      val sut = PieRotationState(0f)
 
       sut.rotateBy(400f)
 
@@ -48,7 +48,7 @@ class VicoPieRotationStateTest {
 
   @Test
   fun `When settle is called, then the angle is normalized`() = runBlocking {
-    val sut = VicoPieRotationState(0f)
+    val sut = PieRotationState(0f)
 
     sut.rotateBy(725f)
     sut.settle()
@@ -59,7 +59,7 @@ class VicoPieRotationStateTest {
   @Test
   fun `When a fling completes, then the angle is normalized`() =
     runBlocking(AutoAdvancingFrameClock()) {
-      val sut = VicoPieRotationState(350f)
+      val sut = PieRotationState(350f)
 
       sut.fling(720f)
 
@@ -69,7 +69,7 @@ class VicoPieRotationStateTest {
   @Test
   fun `When stop is called during a fling, then the fling is superseded without settling`() =
     runBlocking(SuspendingFrameClock()) {
-      val sut = VicoPieRotationState(350f)
+      val sut = PieRotationState(350f)
 
       val fling = launch(start = CoroutineStart.UNDISPATCHED) { sut.fling(720f) }
       assertFalse(fling.isCompleted)
@@ -82,10 +82,9 @@ class VicoPieRotationStateTest {
 
   @Test
   fun `When the state is saved and restored, then the normalized angle is preserved`() {
-    val saver = VicoPieRotationState.Saver
+    val saver = PieRotationState.Saver
 
-    val restored =
-      saver.restore(with(saver) { SaverScope { true }.save(VicoPieRotationState(405f))!! })
+    val restored = saver.restore(with(saver) { SaverScope { true }.save(PieRotationState(405f))!! })
 
     assertEquals(45f, restored?.angle)
   }

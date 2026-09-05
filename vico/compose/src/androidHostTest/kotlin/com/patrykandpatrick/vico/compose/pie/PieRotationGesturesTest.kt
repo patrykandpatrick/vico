@@ -17,7 +17,18 @@
 package com.patrykandpatrick.vico.compose.pie
 
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.pointer.AwaitPointerEventScope
+import androidx.compose.ui.input.pointer.PointerEvent
+import androidx.compose.ui.input.pointer.PointerEventPass
+import androidx.compose.ui.input.pointer.PointerId
+import androidx.compose.ui.input.pointer.PointerInputChange
+import androidx.compose.ui.input.pointer.util.VelocityTracker
+import androidx.compose.ui.input.pointer.util.addPointerInputChange
 import androidx.compose.ui.unit.Velocity
+import io.mockk.mockk
+import kotlin.coroutines.Continuation
+import kotlin.coroutines.EmptyCoroutineContext
+import kotlin.coroutines.startCoroutine
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -26,6 +37,95 @@ import kotlin.test.assertTrue
 class PieRotationGesturesTest {
   private val geometry =
     PieGestureGeometry(center = Offset.Zero, outerRadius = 100f, holeRadius = 30f)
+
+  @Test
+  fun `When released after a pause, then the tracked velocity is zero`() {
+    val tracker = VelocityTracker()
+    tracker.addPosition(0, Offset.Zero)
+    val completed =
+      withPointerEvents(
+        PointerEvent(listOf(pointer(10, 10f))),
+        PointerEvent(listOf(pointer(20, 20f))),
+        PointerEvent(listOf(pointer(30, 30f))),
+        PointerEvent(listOf(pointer(200, 30f, pressed = false))),
+      ) {
+        trackPieRotationDrag(PointerId(1)) {
+          if (it.pressed) {
+            tracker.addPosition(it.uptimeMillis, it.position)
+          } else {
+            assertTrue(tracker.calculateVelocity().x > 0f)
+            tracker.addPointerInputChange(it)
+          }
+        }
+      }
+    assertTrue(completed)
+    assertEquals(Velocity.Zero, tracker.calculateVelocity())
+  }
+
+  @Test
+  fun `When the original finger lifts with another down, then rotation is canceled`() {
+    val trackedIds = mutableListOf<PointerId>()
+    val completed =
+      withPointerEvents(
+        PointerEvent(listOf(pointer(20, 10f, pressed = false), pointer(20, -100f, id = 2)))
+      ) {
+        trackPieRotationDrag(PointerId(1)) { trackedIds.add(it.id) }
+      }
+    assertFalse(completed)
+    assertEquals(listOf(PointerId(1)), trackedIds)
+  }
+
+  @Test
+  fun `When movement is consumed, then rotation is canceled without tracking it`() {
+    val change = pointer(20, 10f).also { it.consume() }
+    val completed =
+      withPointerEvents(PointerEvent(listOf(change))) {
+        trackPieRotationDrag(PointerId(1)) { error("Consumed event was tracked") }
+      }
+    assertFalse(completed)
+  }
+
+  private fun <T> withPointerEvents(
+    vararg events: PointerEvent,
+    block: suspend AwaitPointerEventScope.() -> T,
+  ): T {
+    val iterator = events.iterator()
+    val scope =
+      object : AwaitPointerEventScope by mockk<AwaitPointerEventScope>() {
+        override suspend fun awaitPointerEvent(pass: PointerEventPass): PointerEvent =
+          iterator.next()
+      }
+    var completion: Result<T>? = null
+    block.startCoroutine(
+      scope,
+      object : Continuation<T> {
+        override val context = EmptyCoroutineContext
+
+        override fun resumeWith(result: Result<T>) {
+          completion = result
+        }
+      },
+    )
+    return checkNotNull(completion) { "Pointer event block did not complete" }.getOrThrow()
+  }
+
+  private fun pointer(
+    time: Long,
+    x: Float,
+    pressed: Boolean = true,
+    previouslyPressed: Boolean = true,
+    id: Long = 1,
+  ): PointerInputChange =
+    PointerInputChange(
+      id = PointerId(id),
+      uptimeMillis = time,
+      position = Offset(x, 0f),
+      pressed = pressed,
+      previousUptimeMillis = (time - 10).coerceAtLeast(0),
+      previousPosition = Offset(x - 10f, 0f),
+      previousPressed = previouslyPressed,
+      isInitiallyConsumed = false,
+    )
 
   @Test
   fun `When the drag at slop is tangential, then the gesture is captured`() {

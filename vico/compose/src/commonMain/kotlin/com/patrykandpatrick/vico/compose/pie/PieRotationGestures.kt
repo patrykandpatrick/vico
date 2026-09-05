@@ -19,8 +19,10 @@ package com.patrykandpatrick.vico.compose.pie
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.awaitTouchSlopOrCancellation
-import androidx.compose.foundation.gestures.drag
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.pointer.AwaitPointerEventScope
+import androidx.compose.ui.input.pointer.PointerId
+import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.compose.ui.input.pointer.util.VelocityTracker
 import androidx.compose.ui.input.pointer.util.addPointerInputChange
@@ -93,13 +95,28 @@ internal fun angularFlingVelocity(velocity: Velocity, radialOffset: Offset): Flo
 /** Normalizes [angle] to [0, 360). */
 internal fun normalizeAngle(angle: Float): Float = (angle % 360f + 360f) % 360f
 
+/** Tracks the original pointer through release, canceling if another finger remains down. */
+internal suspend fun AwaitPointerEventScope.trackPieRotationDrag(
+  pointerId: PointerId,
+  onChange: (PointerInputChange) -> Unit,
+): Boolean {
+  while (true) {
+    val event = awaitPointerEvent()
+    val change = event.changes.firstOrNull { it.id == pointerId } ?: return false
+    if (change.isConsumed) return false
+    onChange(change)
+    if (!change.pressed) return event.changes.none { it.pressed }
+    change.consume()
+  }
+}
+
 /**
  * Detects drag-to-rotate gestures for a [PieChart]. The tangential-or-radial decision is made once,
  * at touch slop: tangential drags are captured and consumed, and radial and ambiguous drags are
  * left entirely to the parent.
  */
 internal suspend fun PointerInputScope.detectPieRotationGestures(
-  state: VicoPieRotationState,
+  state: PieRotationState,
   geometry: () -> PieGestureGeometry,
 ): Unit = coroutineScope {
   val deadZoneRadius = PIE_ROTATION_DEAD_ZONE_RADIUS.toPx()
@@ -114,31 +131,32 @@ internal suspend fun PointerInputScope.detectPieRotationGestures(
     var captured = false
     val slopChange =
       awaitTouchSlopOrCancellation(down.id) { change, _ ->
-        if (!decided) {
+        if (!decided && change.id == down.id) {
           decided = true
           captured = isTangentialDrag(change.position - down.position, down.position - geom.center)
         }
         if (captured) change.consume()
       }
 
-    if (slopChange == null || !captured) {
+    if (slopChange == null || !captured || slopChange.id != down.id) {
       launch { state.settle() }
       return@awaitEachGesture
     }
 
     val velocityTracker = VelocityTracker()
+    velocityTracker.addPointerInputChange(down)
     velocityTracker.addPointerInputChange(slopChange)
     var previousPosition = slopChange.position
-    launch {
-      state.rotateBy(angleDelta(down.position - geom.center, previousPosition - geom.center))
-    }
+    val initialDelta = angleDelta(down.position - geom.center, previousPosition - geom.center)
+    launch { state.rotateBy(initialDelta) }
     val completed =
-      drag(slopChange.id) { change ->
+      trackPieRotationDrag(slopChange.id) { change ->
         velocityTracker.addPointerInputChange(change)
-        val delta = angleDelta(previousPosition - geom.center, change.position - geom.center)
-        previousPosition = change.position
-        launch { state.rotateBy(delta) }
-        change.consume()
+        if (change.pressed) {
+          val delta = angleDelta(previousPosition - geom.center, change.position - geom.center)
+          previousPosition = change.position
+          launch { state.rotateBy(delta) }
+        }
       }
     if (completed) {
       val velocity =

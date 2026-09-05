@@ -63,7 +63,6 @@ internal constructor(
   public val spacing: Dp,
   public val outerSize: PieSize.Outer,
   public val innerSize: PieSize.Inner,
-  public val startAngle: Float,
   internal val valueFormatter: PieValueFormatter,
   internal val legend: Legend<PieChartMeasuringContext, PieChartDrawingContext>?,
   internal val drawingModelInterpolator: PieChartDrawingModelInterpolator,
@@ -83,7 +82,7 @@ internal constructor(
   internal fun draw(
     context: PieChartDrawingContext,
     drawingModel: PieChartDrawingModel,
-    startAngle: Float = this.startAngle,
+    startAngle: Float = -90f,
     fitLabelsInBounds: Boolean = true,
   ) {
     val circleBounds =
@@ -589,7 +588,6 @@ internal constructor(
     spacing: Dp = this.spacing,
     outerSize: PieSize.Outer = this.outerSize,
     innerSize: PieSize.Inner = this.innerSize,
-    startAngle: Float = this.startAngle,
     valueFormatter: PieValueFormatter = this.valueFormatter,
     legend: Legend<PieChartMeasuringContext, PieChartDrawingContext>? = this.legend,
   ): PieChart =
@@ -598,7 +596,6 @@ internal constructor(
       spacing,
       outerSize,
       innerSize,
-      startAngle,
       valueFormatter,
       legend,
       drawingModelInterpolator,
@@ -734,7 +731,6 @@ public fun rememberPieChart(
   spacing: Dp = 0.dp,
   outerSize: PieSize.Outer = PieSize.Outer.Fill,
   innerSize: PieSize.Inner = PieSize.Inner.Zero,
-  startAngle: Float = -90f,
   valueFormatter: PieValueFormatter = PieValueFormatter.Value,
   legend: Legend<PieChartMeasuringContext, PieChartDrawingContext>? = null,
 ): PieChart {
@@ -744,7 +740,6 @@ public fun rememberPieChart(
     spacing,
     outerSize,
     innerSize,
-    startAngle,
     valueFormatter,
     legend,
   ) {
@@ -754,7 +749,6 @@ public fun rememberPieChart(
         spacing = spacing,
         outerSize = outerSize,
         innerSize = innerSize,
-        startAngle = startAngle,
         valueFormatter = valueFormatter,
         legend = legend,
       )
@@ -763,7 +757,6 @@ public fun rememberPieChart(
           spacing,
           outerSize,
           innerSize,
-          startAngle,
           valueFormatter,
           legend,
           defaultPieChartDrawingModelInterpolator(),

@@ -27,7 +27,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 
 /** Houses information on a [PieChart]’s rotation. */
-public class VicoPieRotationState internal constructor(angle: Float) {
+public class PieRotationState internal constructor(angle: Float) {
   private val animatable = Animatable(angle)
 
   internal var rotationEnabled: Boolean by mutableStateOf(false)
@@ -55,24 +55,23 @@ public class VicoPieRotationState internal constructor(angle: Float) {
   }
 
   internal companion object {
-    val Saver: Saver<VicoPieRotationState, Float> =
-      Saver(save = { normalizeAngle(it.angle) }, restore = { VicoPieRotationState(it) })
+    val Saver: Saver<PieRotationState, Float> =
+      Saver(save = { normalizeAngle(it.angle) }, restore = { PieRotationState(it) })
   }
 }
 
 /**
- * Creates and remembers a [VicoPieRotationState] instance.
+ * Creates and remembers a [PieRotationState] instance.
  *
  * @param rotationEnabled whether drag-to-rotate is enabled.
  * @param initialRotation the initial rotation (in degrees).
  */
 @Composable
-public fun rememberVicoPieRotationState(
+public fun rememberPieRotationState(
   rotationEnabled: Boolean = false,
   initialRotation: Float = -90f,
-): VicoPieRotationState {
-  val state =
-    rememberSaveable(saver = VicoPieRotationState.Saver) { VicoPieRotationState(initialRotation) }
+): PieRotationState {
+  val state = rememberSaveable(saver = PieRotationState.Saver) { PieRotationState(initialRotation) }
   SideEffect { state.rotationEnabled = rotationEnabled }
   return state
 }

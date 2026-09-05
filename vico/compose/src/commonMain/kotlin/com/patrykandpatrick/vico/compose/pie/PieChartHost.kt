@@ -56,7 +56,7 @@ internal val defaultPieDiffAnimationSpec: AnimationSpec<Float> =
  * @param modelProducer creates and updates the [PieChartModel].
  * @param modifier the modifier to be applied to the chart.
  * @param rotationState houses information on the [PieChart]’s rotation. Passing a
- *   [VicoPieRotationState] with rotation enabled turns on drag-to-rotate.
+ *   [PieRotationState] with rotation enabled turns on drag-to-rotate.
  * @param animationSpec the [AnimationSpec] for difference animations.
  * @param animateIn whether to run an initial animation when the [PieChartHost] enters composition.
  *   The animation is skipped for previews.
@@ -70,8 +70,7 @@ public fun PieChartHost(
   chart: PieChart,
   modelProducer: PieChartModelProducer,
   modifier: Modifier = Modifier,
-  rotationState: VicoPieRotationState =
-    rememberVicoPieRotationState(initialRotation = chart.startAngle),
+  rotationState: PieRotationState = rememberPieRotationState(),
   animationSpec: AnimationSpec<Float>? = defaultPieDiffAnimationSpec,
   animateIn: Boolean = true,
   chartAreaHeight: Dp = Defaults.PIE_CHART_AREA_HEIGHT.dp,
@@ -120,7 +119,7 @@ public fun PieChartHost(
  * @param model the [PieChartModel].
  * @param modifier the modifier to be applied to the chart.
  * @param rotationState houses information on the [PieChart]’s rotation. Passing a
- *   [VicoPieRotationState] with rotation enabled turns on drag-to-rotate.
+ *   [PieRotationState] with rotation enabled turns on drag-to-rotate.
  * @param chartAreaHeight the default diameter of the pie, to which the heights of the legend and
  *   other components are added. Used only when the height isn’t otherwise constrained (e.g., via
  *   [Modifier.height]).
@@ -130,8 +129,7 @@ public fun PieChartHost(
   chart: PieChart,
   model: PieChartModel,
   modifier: Modifier = Modifier,
-  rotationState: VicoPieRotationState =
-    rememberVicoPieRotationState(initialRotation = chart.startAngle),
+  rotationState: PieRotationState = rememberPieRotationState(),
   chartAreaHeight: Dp = Defaults.PIE_CHART_AREA_HEIGHT.dp,
 ) {
   PieChartHostImpl(chart, model, model.toDrawingModel(), modifier, rotationState, chartAreaHeight)
@@ -143,7 +141,7 @@ internal fun PieChartHostImpl(
   model: PieChartModel,
   drawingModel: PieChartDrawingModel,
   modifier: Modifier,
-  rotationState: VicoPieRotationState,
+  rotationState: PieRotationState,
   chartAreaHeight: Dp,
 ) {
   val measuringContext = rememberPieChartMeasuringContext(model, model.extraStore)
