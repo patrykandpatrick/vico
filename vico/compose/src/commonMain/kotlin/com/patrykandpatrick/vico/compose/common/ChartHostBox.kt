@@ -52,16 +52,16 @@ private fun Modifier.chartAreaHeight(
   chartAreaHeight: Dp,
   measureExtras: ((widthPx: Int) -> Float)?,
 ): Modifier = layout { measurable, constraints ->
+  val extras =
+    if (measureExtras != null && constraints.hasBoundedWidth) {
+      measureExtras(constraints.maxWidth).roundToInt()
+    } else {
+      0
+    }
   val height =
     if (constraints.hasFixedHeight) {
       constraints.maxHeight
     } else {
-      val extras =
-        if (measureExtras != null && constraints.hasBoundedWidth) {
-          measureExtras(constraints.maxWidth).roundToInt()
-        } else {
-          0
-        }
       (chartAreaHeight.roundToPx() + extras).coerceIn(constraints.minHeight, constraints.maxHeight)
     }
   val placeable = measurable.measure(constraints.copy(minHeight = height, maxHeight = height))

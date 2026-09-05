@@ -32,7 +32,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.unit.Dp
@@ -148,14 +147,18 @@ internal fun PieChartHostImpl(
   chartAreaHeight: Dp,
 ) {
   val measuringContext = rememberPieChartMeasuringContext(model, model.extraStore)
+  val labelInsets = remember { ValueWrapper(PieInsets()) }
   val measureExtras =
     remember(chart, measuringContext, chartAreaHeight) {
       { widthPx: Int ->
         val context = measuringContext.value
         val width = widthPx.toFloat()
+        val chartAreaHeightPx = with(context) { chartAreaHeight.pixels }
+        val chartAreaBounds = Rect(0f, 0f, width, chartAreaHeightPx)
         context.canvasWidth = width
-        context.canvasSize = Size(width, with(context) { chartAreaHeight.pixels })
-        chart.getLegendHeight(context)
+        context.canvasSize = chartAreaBounds.size
+        labelInsets.value = chart.getLabelInsets(context, chartAreaBounds)
+        chart.getLegendHeight(context) + labelInsets.value.top + labelInsets.value.bottom
       }
     }
 
@@ -171,10 +174,16 @@ internal fun PieChartHostImpl(
       measuringContext.value.canvasSize = size
       val mutableDrawScope = MutableDrawScope(this)
       val legendHeight = chart.getLegendHeight(measuringContext.value)
-      val chartBounds = Rect(0f, 0f, size.width, size.height - legendHeight)
+      val chartBounds =
+        Rect(
+          left = 0f,
+          top = labelInsets.value.top,
+          right = size.width,
+          bottom = size.height - legendHeight - labelInsets.value.bottom,
+        )
       if (chartBounds.isEmpty) return@Canvas
       chart.bounds = chartBounds
-      chart.legend?.setBounds(0f, chartBounds.bottom, size.width, chartBounds.bottom + legendHeight)
+      chart.legend?.setBounds(0f, size.height - legendHeight, size.width, size.height)
       val drawingContext =
         PieChartDrawingContext(
           measuringContext.value,
@@ -182,7 +191,7 @@ internal fun PieChartHostImpl(
           chartBounds,
           mutableDrawScope,
         )
-      chart.draw(drawingContext, drawingModel, rotationState.angle)
+      chart.draw(drawingContext, drawingModel, rotationState.angle, fitLabelsInBounds = false)
       measuringContext.value.cacheStore.purge()
     }
   }

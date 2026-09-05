@@ -12,6 +12,10 @@ Vico is a powerful and extensible chart library for Compose Multiplatform.
 
 ## Sponsored by Software Mansion
 
-Founded in 2012, [Software Mansion](https://swmansion.com) is a software agency with experience in building web and mobile apps. We are core React Native contributors and experts in dealing with all kinds of React Native issues. We can help you build your next dream product—[hire us](https://swmansion.com/contact/projects?utm_source=vico\&utm_medium=readme).
+Founded in 2012, [Software Mansion][software-mansion] is a software agency with experience in building web and mobile apps. We are core React Native contributors and experts in dealing with all kinds of React Native issues. We can help you build your next dream product—[hire us][hire-us].
 
-[![](https://logo.swmansion.com/logo?color=white\&variant=desktop\&width=152\&tag=vico-github)](https://swmansion.com)
+[![][software-mansion-logo]][software-mansion]
+
+[software-mansion]: https://swmansion.com
+[hire-us]: https://swmansion.com/contact/projects?utm_source=vico\&utm_medium=readme
+[software-mansion-logo]: https://logo.swmansion.com/logo?color=white\&variant=desktop\&width=152\&tag=vico-github

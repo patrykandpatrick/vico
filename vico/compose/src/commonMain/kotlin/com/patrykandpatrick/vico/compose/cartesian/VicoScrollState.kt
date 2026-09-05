@@ -168,6 +168,13 @@ public class VicoScrollState {
     this.context = context
     this.layerDimensions = layerDimensions
     this.bounds = bounds
+    // Capture the scroll value before updating `maxValue`. The `maxValue` setter clamps `value` to
+    // the new maximum, so when the content shrinks on the start side (e.g., the data window was
+    // trimmed) while the scroll is pinned to the end (`value == maxValue`), the clamp shifts
+    // `value` back by the trimmed amount before the repositioning below runs. The repositioning
+    // would then compute `startEdgeX` from the already-clamped value and roll the viewport toward
+    // the start by the size of the trim.
+    val preClampValue = value
     maxValue = context.getMaxScrollDistance(bounds.width, layerDimensions)
     val ranges = context.ranges
     val previous = previousScrollLayout
@@ -182,8 +189,8 @@ public class VicoScrollState {
     ) {
       val startEdgeX =
         previous.minX +
-          (previous.layoutDirectionMultiplier * value - previous.startPadding) / previous.xSpacing *
-            previous.xStep
+          (previous.layoutDirectionMultiplier * preClampValue - previous.startPadding) /
+            previous.xSpacing * previous.xStep
       value =
         context.layoutDirectionMultiplier *
           (layerDimensions.startPadding +
@@ -221,7 +228,14 @@ public class VicoScrollState {
   }
 
   internal suspend fun scroll(scroll: Scroll, maxScroll: Float) {
-    isScrollInProgress.first { !it }
+    // This receives the scroll compensation for a zoom gesture—an absolute target computed
+    // from the scroll value and the content width at the time of the zoom event. It’s valid
+    // only while the user isn’t scrolling: if a pan or fling is already in progress (e.g., the
+    // pinch turned into a pan without the scroll ever becoming idle for a frame), then by the
+    // time the scroll stops, the target and `maxScroll` are stale, and applying them would
+    // roll the viewport back to the position at the time of the zoom. Drop the stale
+    // compensation; the zoom handler emits a fresh one on every zoom event.
+    if (scrollableState.isScrollInProgress) return
     maxValue = maxScroll
     withUpdated { context, layerDimensions, bounds ->
       scrollableState.scrollBy(scroll.getDelta(context, layerDimensions, bounds, maxValue, value))

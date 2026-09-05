@@ -115,22 +115,21 @@ internal class AlignedHorizontalAxisItemPlacer(
     visibleXRange: ClosedFloatingPointRange<Double>,
     fullXRange: ClosedFloatingPointRange<Double>,
     maxLabelWidth: Float,
-  ) =
-    context.run {
-      val spacing = getSpacingOrThrow()
-      getLabelValues(
-        visibleXRange = visibleXRange,
-        fullXRange = fullXRange,
-        offset = getOffsetOrThrow(),
-        spacing =
-          spacing *
-            if (addExtremeLabelPadding && maxLabelWidth != 0f) {
-              ceil(maxLabelWidth / (context.layerDimensions.xSpacing * spacing)).toInt()
-            } else {
-              1
-            },
-      )
-    }
+  ) = context.run {
+    val spacing = getSpacingOrThrow()
+    getLabelValues(
+      visibleXRange = visibleXRange,
+      fullXRange = fullXRange,
+      offset = getOffsetOrThrow(),
+      spacing =
+        spacing *
+          if (addExtremeLabelPadding && maxLabelWidth != 0f) {
+            ceil(maxLabelWidth / (context.layerDimensions.xSpacing * spacing)).toInt()
+          } else {
+            1
+          },
+    )
+  }
 
   override fun getWidthMeasurementLabelValues(
     context: CartesianMeasuringContext,

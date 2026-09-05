@@ -22,8 +22,9 @@ import kotlin.test.assertEquals
 class XDeltaGcdTest {
   private data class Entry(override val x: Double) : CartesianLayerModel.Entry
 
-  private fun getEntries(vararg x: Number): List<CartesianLayerModel.Entry> =
-    x.map { value -> Entry(value.toDouble()) }
+  private fun getEntries(vararg x: Number): List<CartesianLayerModel.Entry> = x.map { value ->
+    Entry(value.toDouble())
+  }
 
   @Test
   fun `Ensure 1 is returned for empty collection`() {

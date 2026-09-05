@@ -62,8 +62,9 @@ public open class ShapeComponent(
     require(strokeThickness >= 0.dp) { "`strokeThickness` must be nonnegative." }
   }
 
-  private fun getShadowPainters(shadows: List<Shadow>) =
-    shadows.map { DropShadowPainter(shape, it) }
+  private fun getShadowPainters(shadows: List<Shadow>) = shadows.map {
+    DropShadowPainter(shape, it)
+  }
 
   protected fun applyBrushes(size: Size) {
     fill.brush?.applyTo(size = size, p = paint, alpha = 1f)
@@ -85,11 +86,10 @@ public open class ShapeComponent(
         adjustedBottom -= strokeThickness.half
         if (adjustedLeft > adjustedRight || adjustedTop > adjustedBottom) return
       }
-      path.rewind()
       val width = adjustedRight - adjustedLeft
       val height = adjustedBottom - adjustedTop
+      val outline = shape.createOutline(Size(width, height), layoutDirection, density)
       applyBrushes(Size(width, height))
-      shape.outline(density, layoutDirection, path, 0f, 0f, width, height)
       if (shadowPainters.isNotEmpty()) {
         with(mutableDrawScope) {
           size = Size(width, height)
@@ -100,10 +100,10 @@ public open class ShapeComponent(
       }
       canvas.withSave {
         canvas.translate(adjustedLeft, adjustedTop)
-        canvas.drawPath(path, paint)
+        canvas.drawOutline(outline, paint)
         if (strokeThickness == 0f || strokeFill.color.alpha == 0f) return@withSave
         strokePaint.strokeWidth = strokeThickness
-        canvas.drawPath(path, strokePaint)
+        canvas.drawOutline(outline, strokePaint)
       }
     }
   }

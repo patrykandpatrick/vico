@@ -139,7 +139,7 @@ internal fun CartesianChartModelProducer.collectAsState(
       model
     }
   }
-  LaunchRegistration(chart.id, isInPreview) {
+  LaunchRegistration(chart.id, isInPreview) { chartID ->
     var mainAnimationJob: Job? = null
     var animationFrameJob: Job? = null
     var finalAnimationFrameJob: Job? = null
@@ -153,42 +153,41 @@ internal fun CartesianChartModelProducer.collectAsState(
         isInitialAnimation = false
         if (spec != null && !isInPreview) {
           isAnimationRunning = true
-          mainAnimationJob =
-            scope.launch {
-              animate(
-                initialValue = Animation.range.start,
-                targetValue = Animation.range.endInclusive,
-                animationSpec = spec,
-              ) { fraction, _ ->
-                when {
-                  !isAnimationRunning -> return@animate
-                  !isAnimationFrameGenerationRunning -> {
-                    isAnimationFrameGenerationRunning = true
-                    animationFrameJob =
-                      scope.launch {
-                        transformModel(chartState.value.id, fraction)
-                        isAnimationFrameGenerationRunning = false
-                      }
+          mainAnimationJob = scope.launch {
+            animate(
+              initialValue = Animation.range.start,
+              targetValue = Animation.range.endInclusive,
+              animationSpec = spec,
+            ) { fraction, _ ->
+              when {
+                !isAnimationRunning -> return@animate
+                !isAnimationFrameGenerationRunning -> {
+                  isAnimationFrameGenerationRunning = true
+                  animationFrameJob = scope.launch {
+                    transformModel(chartID, fraction)
+                    isAnimationFrameGenerationRunning = false
                   }
-                  fraction == 1f -> {
-                    finalAnimationFrameJob =
-                      scope.launch(Dispatchers.Default) {
-                        animationFrameJob?.cancelAndJoin()
-                        transformModel(chartState.value.id, fraction)
-                        isAnimationFrameGenerationRunning = false
-                      }
-                  }
+                }
+                fraction == 1f -> {
+                  finalAnimationFrameJob =
+                    scope.launch(Dispatchers.Default) {
+                      animationFrameJob?.cancelAndJoin()
+                      transformModel(chartID, fraction)
+                      isAnimationFrameGenerationRunning = false
+                    }
                 }
               }
             }
+          }
         } else {
-          finalAnimationFrameJob =
-            scope.launch { transformModel(chartState.value.id, Animation.range.endInclusive) }
+          finalAnimationFrameJob = scope.launch {
+            transformModel(chartID, Animation.range.endInclusive)
+          }
         }
       }
     scope.launch {
       registerForUpdates(
-        key = chartState.value.id,
+        key = chartID,
         restoredModel = restoredModel,
         cancelAnimation = {
           mainAnimationJob?.cancelAndJoin()
@@ -212,21 +211,25 @@ internal fun CartesianChartModelProducer.collectAsState(
       mainAnimationJob?.cancel()
       animationFrameJob?.cancel()
       finalAnimationFrameJob?.cancel()
-      unregisterFromUpdates(chartState.value.id)
+      unregisterFromUpdates(chartID)
     }
   }
   return dataState
 }
 
 @Composable
-private fun LaunchRegistration(chartID: Uuid, isInPreview: Boolean, block: () -> () -> Unit) {
+private fun LaunchRegistration(
+  chartID: Uuid,
+  isInPreview: Boolean,
+  block: (chartID: Uuid) -> () -> Unit,
+) {
   val runBlocking = runBlocking
   if (isInPreview && runBlocking != null) {
-    runBlocking(getCoroutineContext(isPreview = true)) { block() }
+    runBlocking(getCoroutineContext(isPreview = true)) { block(chartID) }
   } else {
     LaunchedEffect(chartID) {
       withContext(getCoroutineContext(isPreview = false)) {
-        val disposable = block()
+        val disposable = block(chartID)
         currentCoroutineContext().job.invokeOnCompletion { disposable() }
       }
     }

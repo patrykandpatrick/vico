@@ -9,7 +9,7 @@ metaLinks:
 
 ## Column chart
 
-The following has been adapted from the [“Basic column chart”](https://github.com/patrykandpatrick/vico/blob/stable/sample/charts/compose/src/commonMain/kotlin/com/patrykandpatrick/vico/sample/charts/compose/BasicColumnChart.kt) sample chart.
+The following has been adapted from the [“Basic column chart”][basic-column-chart] sample chart.
 
 ```kt
 val modelProducer = remember { CartesianChartModelProducer() }
@@ -32,7 +32,7 @@ CartesianChartHost(
 
 ## Line chart
 
-The following has been adapted from the [“Basic line chart”](https://github.com/patrykandpatrick/vico/blob/stable/sample/charts/compose/src/commonMain/kotlin/com/patrykandpatrick/vico/sample/charts/compose/BasicLineChart.kt) sample chart.
+The following has been adapted from the [“Basic line chart”][basic-line-chart] sample chart.
 
 ```kt
 val modelProducer = remember { CartesianChartModelProducer() }
@@ -55,7 +55,7 @@ CartesianChartHost(
 
 ## Combo chart
 
-The following has been adapted from the [“Basic combo chart”](https://github.com/patrykandpatrick/vico/blob/stable/sample/charts/compose/src/commonMain/kotlin/com/patrykandpatrick/vico/sample/charts/compose/BasicComboChart.kt) sample chart.
+The following has been adapted from the [“Basic combo chart”][basic-combo-chart] sample chart.
 
 ```kt
 val modelProducer = remember { CartesianChartModelProducer() }
@@ -90,4 +90,9 @@ CartesianChartHost(
 
 ## More
 
-For more examples, refer to [the sample app](../learning-resources.md#sample-app).
+For more examples, refer to [the sample app][the-sample-app].
+
+[basic-column-chart]: https://github.com/patrykandpatrick/vico/blob/stable/sample/shared/src/commonMain/kotlin/com/patrykandpatrick/vico/sample/charts/BasicColumnChart.kt
+[basic-line-chart]: https://github.com/patrykandpatrick/vico/blob/stable/sample/shared/src/commonMain/kotlin/com/patrykandpatrick/vico/sample/charts/BasicLineChart.kt
+[basic-combo-chart]: https://github.com/patrykandpatrick/vico/blob/stable/sample/shared/src/commonMain/kotlin/com/patrykandpatrick/vico/sample/charts/BasicComboChart.kt
+[the-sample-app]: ../learning-resources.md#sample-app

@@ -17,14 +17,14 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - uses: actions/setup-java@v5
+      - uses: actions/setup-java@v6
         with:
           distribution: zulu
           java-version: 17
 
       - name: Install ktfmt
         run: |
-          curl -sSL -o /tmp/ktfmt.jar https://github.com/facebook/ktfmt/releases/download/v0.59/ktfmt-0.59-with-dependencies.jar
+          curl -sSL -o /tmp/ktfmt.jar https://github.com/facebook/ktfmt/releases/download/v0.64/ktfmt-0.64-with-dependencies.jar
           sudo mkdir -p /usr/local/lib/ktfmt
           sudo mv /tmp/ktfmt.jar /usr/local/lib/ktfmt/ktfmt.jar
           sudo tee /usr/local/bin/ktfmt >/dev/null <<'EOF'

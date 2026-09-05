@@ -42,22 +42,23 @@ internal fun Cover() {
     Box(contentAlignment = Alignment.Center) {
       Row(Modifier.background(Color(0xfff2f2f3)).padding(48.dp), Arrangement.spacedBy(24.dp)) {
         Column {
-          Card { ComposeBasicColumnChartPreview() }
-          Card { ComposeElectricCarSalesPreview() }
-          Card { ComposeBasicPieChartPreview() }
-        }
-        Column {
           Card { ComposeAITestScoresPreview() }
-          Card { ComposeRockMetalRatiosPreview() }
-        }
-        Column {
-          Card { ComposeBasicLineChartPreview() }
-          Card { ComposeBasicComboChartPreview() }
-          Card { ComposeTemperatureAnomaliesPreview() }
+          Card { ComposeBasicDonutChartPreview() }
         }
         Column {
           Card { ComposeDailyDigitalMediaUsePreview() }
+          Card { ComposeElectricCarSalesPreview() }
+          Card { ComposeRockMetalRatiosPreview() }
+        }
+        Column {
+          Card { ComposeTemperatureAnomaliesPreview() }
+          Card { ComposeBasicPieChartPreview() }
+          Card { ComposeBasicColumnChartPreview() }
+        }
+        Column {
+          Card { ComposeBasicLineChartPreview() }
           Card { ComposeGoldPricesPreview() }
+          Card { ComposeBasicComboChartPreview() }
         }
       }
     }

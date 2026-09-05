@@ -7,7 +7,7 @@ metaLinks:
 
 # CartesianChartModelProducer
 
-A chart’s data is stored in its model, represented by [`CartesianChartModel`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-chart-model/). Much like [`CartesianChart`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-cartesian-chart/) combines [`CartesianLayer`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.layer/-cartesian-layer/) instances, [`CartesianChartModel`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-chart-model/) combines [`CartesianLayerModel`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-layer-model/) instances. Use the transaction-based [`CartesianChartModelProducer`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-chart-model-producer/) to create models.
+A chart’s data is stored in its model, represented by [`CartesianChartModel`][cartesian-chart-model]. Much like [`CartesianChart`][cartesian-chart] combines [`CartesianLayer`][cartesian-layer] instances, [`CartesianChartModel`][cartesian-chart-model] combines [`CartesianLayerModel`][cartesian-layer-model] instances. Use the transaction-based [`CartesianChartModelProducer`][cartesian-chart-model-producer] to create models.
 
 ## Creation
 
@@ -15,7 +15,7 @@ Instantiate `CartesianChartModelProducer` via the constructor. Since data update
 
 ## `Transaction`
 
-Use [`runTransaction`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-chart-model-producer/run-transaction) to perform an update in a transaction. This is a suspending function:
+Use [`runTransaction`][run-transaction] to perform an update in a transaction. This is a suspending function:
 
 ```kt
 cartesianChartModelProducer.runTransaction { /* ... */ }
@@ -23,7 +23,7 @@ cartesianChartModelProducer.runTransaction { /* ... */ }
 
 This function returns when the update is complete—that is, once a new model has been generated and the host has been notified. If there’s already an update in progress, the current coroutine is first suspended until the ongoing update’s completion.
 
-How data is added in a transaction depends on the layers in use, so we cover this later, on the pages that describe the individual [`CartesianLayer`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.layer/-cartesian-layer/) implementations.
+How data is added in a transaction depends on the layers in use, so we cover this later, on the pages that describe the individual [`CartesianLayer`][cartesian-layer] implementations.
 
 ## Asynchrony
 
@@ -34,13 +34,13 @@ How data is added in a transaction depends on the layers in use, so we cover thi
 
 These solutions don’t have the tight coupling with the transaction mechanism that synchronization requires and may thus produce improper, unpredictable results.
 
-For setup derived from series data, the correct, argument-based approach is straightforward, with the data being readily available in the model and its ranges. Functions may receive these directly, but they’re usually accessed via [`CartesianMeasuringContext`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-cartesian-measuring-context/) and its subtypes; see [`model`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-cartesian-measuring-context/model) and [`ranges`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-cartesian-measuring-context/ranges).
+For setup derived from series data, the correct, argument-based approach is straightforward, with the data being readily available in the model and its ranges. Functions may receive these directly, but they’re usually accessed via [`CartesianMeasuringContext`][cartesian-measuring-context] and its subtypes; see [`model`][model] and [`ranges`][ranges].
 
 However, changes that aren’t directly derived from series data may also need to be aligned with model updates. We thus need a means of sending additional information through the same channel that’s used for series data. This is where extras, described in the following subsection, come in.
 
 ## Extras
 
-Extras are a means of adding auxiliary data to models. They’re stored in [`extraStore`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-chart-model/extra-store) and use typed keys ([`ExtraStore.Key`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.common.data/-extra-store/-key/) instances), enabling you to save any kind of data in a type-safe manner. To add extras, use [`extras`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-chart-model-producer/-transaction/extras), as shown below. (This is, of course, a simplified example. Extras are used for values that change; static values don’t require synchronization.)
+Extras are a means of adding auxiliary data to models. They’re stored in [`extraStore`][extra-store] and use typed keys ([`ExtraStore.Key`][extra-store-key] instances), enabling you to save any kind of data in a type-safe manner. To add extras, use [`extras`][extras], as shown below. (This is, of course, a simplified example. Extras are used for values that change; static values don’t require synchronization.)
 
 ```kt
 val UnitKey = ExtraStore.Key<String>()
@@ -56,7 +56,7 @@ cartesianChartModelProducer.runTransaction {
 }
 ```
 
-Just like series data, extras can be accessed via function arguments. In [`ExtraStore`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.common.data/-extra-store/)-focused contexts, an `ExtraStore` instance is provided explicitly. Where this isn’t the case, use `CartesianChartModel.extraStore`, obtaining the model as described above. (That’s `context.model.extraStore` in most cases.)
+Just like series data, extras can be accessed via function arguments. In [`ExtraStore`][extra-store-2]-focused contexts, an `ExtraStore` instance is provided explicitly. Where this isn’t the case, use `CartesianChartModel.extraStore`, obtaining the model as described above. (That’s `context.model.extraStore` in most cases.)
 
 Extras are read like `Map` elements. Assume you have an `ExtraStore` reference called `extraStore` and an `ExtraStore.Key` reference called `Key`. If the extra is added on every transaction, use the following:
 
@@ -77,10 +77,27 @@ extraStore.getOrNull(Key)
 
 See the following sample charts for examples of extra usage:
 
-* [“AI test scores”](https://github.com/patrykandpatrick/vico/blob/stable/sample/charts/compose/src/commonMain/kotlin/com/patrykandpatrick/vico/sample/charts/compose/AITestScores.kt)
-* [“Daily digital-media use (USA)”](https://github.com/patrykandpatrick/vico/blob/stable/sample/charts/compose/src/commonMain/kotlin/com/patrykandpatrick/vico/sample/charts/compose/DailyDigitalMediaUse.kt)
-* [“Rock–metal ratios”](https://github.com/patrykandpatrick/vico/blob/stable/sample/charts/compose/src/commonMain/kotlin/com/patrykandpatrick/vico/sample/charts/compose/RockMetalRatios.kt)
+* [“AI test scores”][ai-test-scores]
+* [“Daily digital-media use (USA)”][daily-digital-media-use-usa]
+* [“Rock–metal ratios”][rock-metal-ratios]
 
 ## Manual `CartesianChartModel` creation
 
 Using `CartesianChartModelProducer` is recommended because it offers performance benefits and supports animations. However, you can create models manually via the `CartesianChartModel` constructor, which takes a list of `CartesianLayerModel` instances. When `CartesianChartHost` receives such a model, it handles it synchronously. Any asynchronous processing is explicitly handled by the consumer. Thus, extras are unneeded.
+
+[cartesian-chart-model]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-chart-model/
+[cartesian-chart]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-cartesian-chart/
+[cartesian-layer]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.layer/-cartesian-layer/
+[cartesian-layer-model]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-layer-model/
+[cartesian-chart-model-producer]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-chart-model-producer/
+[run-transaction]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-chart-model-producer/run-transaction.html
+[cartesian-measuring-context]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-cartesian-measuring-context/
+[model]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-cartesian-measuring-context/model.html
+[ranges]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-cartesian-measuring-context/ranges.html
+[extra-store]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-chart-model/extra-store.html
+[extra-store-key]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.common.data/-extra-store/-key/
+[extras]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-chart-model-producer/-transaction/extras.html
+[extra-store-2]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.common.data/-extra-store/
+[ai-test-scores]: https://github.com/patrykandpatrick/vico/blob/stable/sample/shared/src/commonMain/kotlin/com/patrykandpatrick/vico/sample/charts/AITestScores.kt
+[daily-digital-media-use-usa]: https://github.com/patrykandpatrick/vico/blob/stable/sample/shared/src/commonMain/kotlin/com/patrykandpatrick/vico/sample/charts/DailyDigitalMediaUse.kt
+[rock-metal-ratios]: https://github.com/patrykandpatrick/vico/blob/stable/sample/shared/src/commonMain/kotlin/com/patrykandpatrick/vico/sample/charts/RockMetalRatios.kt

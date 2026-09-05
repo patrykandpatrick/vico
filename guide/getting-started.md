@@ -19,7 +19,7 @@ Add only the modules you need. `compose-m2` and `compose-m3` provide Material 2 
 
 ```toml
 [versions]
-vico = "3.2.3"
+vico = "3.3.1"
 
 [libraries]
 vico-compose = { group = "com.patrykandpatrick.vico", name = "compose", version.ref = "vico" }

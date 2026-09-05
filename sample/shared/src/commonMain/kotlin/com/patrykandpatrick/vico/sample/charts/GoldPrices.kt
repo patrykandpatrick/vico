@@ -57,11 +57,10 @@ private val StartAxisItemPlacer = VerticalAxis.ItemPlacer.step({ Y_STEP })
 
 private val BottomAxisValueFormatter =
   object : CartesianValueFormatter {
-    private val dateTimeFormat =
-      LocalTime.Format {
-        amPmHour(Padding.SPACE)
-        amPmMarker(" AM", " PM")
-      }
+    private val dateTimeFormat = LocalTime.Format {
+      amPmHour(Padding.SPACE)
+      amPmMarker(" AM", " PM")
+    }
 
     override fun format(
       context: CartesianMeasuringContext,

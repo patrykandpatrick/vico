@@ -53,13 +53,12 @@ public class LineCartesianLayerModel : CartesianLayerModel {
     require(series.size == seriesKeys.size) { "`series` and `seriesKeys` must have the same size." }
     require(seriesKeys.toSet().size == seriesKeys.size) { "Series keys must be unique." }
     this.seriesKeys = seriesKeys.toList()
-    this.series =
-      series.mapIndexed { seriesIndex, entries ->
-        require(entries.isNotEmpty()) { "Series can’t be empty." }
-        entries
-          .sortedBy { entry -> entry.x }
-          .map { entry -> Entry(entry.x, entry.y, seriesKeys[seriesIndex], seriesIndex) }
-      }
+    this.series = series.mapIndexed { seriesIndex, entries ->
+      require(entries.isNotEmpty()) { "Series can’t be empty." }
+      entries
+        .sortedBy { entry -> entry.x }
+        .map { entry -> Entry(entry.x, entry.y, seriesKeys[seriesIndex], seriesIndex) }
+    }
     this.entries = this.series.flatten()
     val xRange = this.series.rangeOfPair { it.first().x to it.last().x }
     val yRange = entries.rangeOf { it.y }

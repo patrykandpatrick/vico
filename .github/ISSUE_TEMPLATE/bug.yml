@@ -33,9 +33,6 @@ body:
         - compose
         - compose-m2
         - compose-m3
-        - multiplatform
-        - multiplatform-m2
-        - multiplatform-m3
         - views
     validations:
       required: true
@@ -61,8 +58,8 @@ body:
       description: For outdated versions, try updating Vico first.
       multiple: true
       options:
-        - 3.2.3
-        - 2.5.2
+        - 3.3.1 (compose, compose-m2, compose-m3)
+        - 3.2.3 (views)
     validations:
       required: true
   - type: textarea

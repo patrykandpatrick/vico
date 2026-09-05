@@ -36,6 +36,7 @@ import com.patrykandpatrick.vico.compose.common.Defaults
 import com.patrykandpatrick.vico.compose.common.DrawingContext
 import com.patrykandpatrick.vico.compose.common.Fill
 import com.patrykandpatrick.vico.compose.common.Legend
+import com.patrykandpatrick.vico.compose.common.MeasuringContext
 import com.patrykandpatrick.vico.compose.common.Position
 import com.patrykandpatrick.vico.compose.common.ValueWrapper
 import com.patrykandpatrick.vico.compose.common.component.TextComponent
@@ -48,6 +49,7 @@ import com.patrykandpatrick.vico.compose.common.toRadians
 import com.patrykandpatrick.vico.compose.common.vicoTheme
 import com.patrykandpatrick.vico.compose.pie.data.PieChartModel
 import com.patrykandpatrick.vico.compose.pie.data.PieValueFormatter
+import kotlin.math.asin
 import kotlin.math.cos
 import kotlin.math.max
 import kotlin.math.sin
@@ -82,13 +84,23 @@ internal constructor(
     context: PieChartDrawingContext,
     drawingModel: PieChartDrawingModel,
     startAngle: Float = this.startAngle,
+    fitLabelsInBounds: Boolean = true,
   ) {
-    val circleBounds = getCircleBounds(context, drawingModel, startAngle)
+    val circleBounds =
+      if (fitLabelsInBounds) {
+        getCircleBounds(context, drawingModel, startAngle)
+      } else {
+        getCircleBounds(context, bounds)
+      }
     val outerRadius = circleBounds.width / 2f
     val holeRadius = innerSize.getRadius(context, circleBounds.width, circleBounds.height)
     require(outerRadius > holeRadius) { "The outer size must be greater than the inner size." }
     gestureGeometry = PieGestureGeometry(circleBounds.center, outerRadius, holeRadius)
     val spacingPx = with(context) { spacing.pixels }
+    val donut = holeRadius > 0f
+    val outerTrim =
+      if (spacingPx > 0f && outerRadius > 0f) asinDegrees((spacingPx / 2f) / outerRadius) else 0f
+    val innerTrim = if (donut && spacingPx > 0f) asinDegrees((spacingPx / 2f) / holeRadius) else 0f
     val spacingDegrees = if (outerRadius > 0f) spacingToDegrees(context, outerRadius) else 0f
     var currentAngle = startAngle
     context.model.entries.forEachIndexed { index, entry ->
@@ -98,30 +110,40 @@ internal constructor(
       val centerAngle = currentAngle + degrees / 2f
       val offset = slice.getOffset(context, centerAngle)
       val correctedBounds = circleBounds.translate(offset)
-      val correctedStartAngle = currentAngle + spacingDegrees / 2f
-      val correctedSweepAngle = (degrees - spacingDegrees).coerceAtLeast(0f)
-      if (correctedSweepAngle > 0f) {
-        val centerOffset =
-          if (spacingPx > 0f && holeRadius == 0f && degrees < 360f) {
-            val halfSweepRadians = (degrees / 2f).toRadians()
-            val sinHalf = sin(halfSweepRadians).toFloat()
-            if (sinHalf > 0.001f) {
-              val tipDistance = spacingPx / sinHalf
-              val bisectorRadians = centerAngle.toRadians()
-              Offset(
-                cos(bisectorRadians).toFloat() * tipDistance,
-                sin(bisectorRadians).toFloat() * tipDistance,
-              )
-            } else Offset.Zero
-          } else Offset.Zero
-        slice.buildPath(
-          circleBounds = correctedBounds,
-          holeRadius = holeRadius,
-          startAngle = correctedStartAngle,
-          sweepAngle = correctedSweepAngle,
-          centerOffset = centerOffset,
-          destination = slice.path,
-        )
+
+      val sweepAngle: Float
+      val drawn: Boolean
+      if (donut && degrees < 360f) {
+        sweepAngle = (degrees - 2f * outerTrim).coerceAtLeast(0f)
+        drawn = sweepAngle > 0f
+        if (drawn) {
+          slice.buildParallelPath(
+            circleBounds = correctedBounds,
+            holeRadius = holeRadius,
+            startAngle = currentAngle,
+            sweepAngle = degrees,
+            outerTrim = outerTrim,
+            innerTrim = innerTrim,
+            destination = slice.path,
+          )
+        }
+      } else {
+        sweepAngle = (degrees - spacingDegrees).coerceAtLeast(0f)
+        drawn = sweepAngle > 0f
+        if (drawn) {
+          val centerOffset = tipOffset(spacingPx, degrees, centerAngle)
+          slice.buildPath(
+            circleBounds = correctedBounds,
+            holeRadius = holeRadius,
+            startAngle = currentAngle + spacingDegrees / 2f,
+            sweepAngle = sweepAngle,
+            centerOffset = centerOffset,
+            destination = slice.path,
+          )
+        }
+      }
+
+      if (drawn) {
         slice.draw(context, slice.path, correctedBounds, sliceInfo?.sliceOpacity ?: 1f)
         slice.label?.draw(
           context = context,
@@ -129,7 +151,7 @@ internal constructor(
           circleBounds = correctedBounds,
           holeRadius = holeRadius,
           angle = centerAngle,
-          sweepAngle = correctedSweepAngle,
+          sweepAngle = sweepAngle,
           label = valueFormatter.format(context, entry.value, index),
           slicePath = slice.path,
           opacity = sliceInfo?.labelOpacity ?: 1f,
@@ -138,6 +160,20 @@ internal constructor(
       currentAngle += degrees
     }
     legend?.draw(context)
+  }
+
+  /** Offsets a holeless slice’s tip so trimmed edges don’t just meet at the true center. */
+  private fun tipOffset(spacingPx: Float, sweepDegrees: Float, bisectorAngle: Float): Offset {
+    if (spacingPx <= 0f || sweepDegrees >= 360f) return Offset.Zero
+    val halfSweepRadians = (sweepDegrees / 2f).toRadians()
+    val sinHalf = sin(halfSweepRadians).toFloat()
+    if (sinHalf <= 0.001f) return Offset.Zero
+    val tipDistance = spacingPx / sinHalf
+    val bisectorRadians = bisectorAngle.toRadians()
+    return Offset(
+      cos(bisectorRadians).toFloat() * tipDistance,
+      sin(bisectorRadians).toFloat() * tipDistance,
+    )
   }
 
   private fun spacingToDegrees(context: PieChartDrawingContext, outerRadius: Float): Float {
@@ -197,6 +233,59 @@ internal constructor(
     )
   }
 
+  internal fun getLabelInsets(context: PieChartMeasuringContext, chartBounds: Rect): PieInsets {
+    val circleBounds = getCircleBounds(context, chartBounds)
+    var insets = PieInsets()
+    val topAngle = -90f
+    val bottomAngle = 90f
+    context.model.entries.forEachIndexed { index, entry ->
+      val slice = sliceProvider.getSlice(entry, index, context.model.extraStore)
+      val sliceLabel = slice.label as? SliceLabel.Outside ?: return@forEachIndexed
+      val label = valueFormatter.format(context, entry.value, index)
+      val top =
+        sliceLabel.getInsets(
+          context = context,
+          chartBounds = chartBounds,
+          circleBounds = circleBounds.translate(slice.getOffset(context, topAngle)),
+          angle = topAngle,
+          label = label,
+        )
+      val bottom =
+        sliceLabel.getInsets(
+          context = context,
+          chartBounds = chartBounds,
+          circleBounds = circleBounds.translate(slice.getOffset(context, bottomAngle)),
+          angle = bottomAngle,
+          label = label,
+        )
+      insets = insets.plus(PieInsets(top = top.top, bottom = bottom.bottom))
+    }
+    return insets
+  }
+
+  private fun getCircleBounds(context: PieChartMeasuringContext, availableBounds: Rect): Rect {
+    val maxOffset =
+      context.model.entries.indices.maxOfOrNull { index ->
+        with(context) {
+          sliceProvider
+            .getSlice(context.model.entries[index], index, context.model.extraStore)
+            .offsetFromCenter
+            .pixels
+        }
+      } ?: 0f
+    val radius =
+      max(
+        0f,
+        outerSize.getRadius(context, availableBounds.width, availableBounds.height) - maxOffset,
+      )
+    return Rect(
+      left = availableBounds.center.x - radius,
+      top = availableBounds.center.y - radius,
+      right = availableBounds.center.x + radius,
+      bottom = availableBounds.center.y + radius,
+    )
+  }
+
   /** Defines the appearance of a pie slice. */
   @Immutable
   public open class Slice(
@@ -210,7 +299,7 @@ internal constructor(
     private val strokePaint: Paint = Paint()
     internal val path: Path = Path()
 
-    internal fun getOffset(context: DrawingContext, angle: Float): Offset {
+    internal fun getOffset(context: MeasuringContext, angle: Float): Offset {
       val distance = with(context) { offsetFromCenter.pixels }
       val radians = angle.toRadians()
       return Offset((cos(radians) * distance).toFloat(), (sin(radians) * distance).toFloat())
@@ -250,6 +339,28 @@ internal constructor(
       )
     }
 
+    internal fun buildParallelPath(
+      circleBounds: Rect,
+      holeRadius: Float,
+      startAngle: Float,
+      sweepAngle: Float,
+      outerTrim: Float,
+      innerTrim: Float,
+      destination: Path,
+    ) {
+      destination.rewind()
+      destination.addPath(
+        createParallelSlicePath(
+          circleBounds,
+          holeRadius,
+          startAngle,
+          sweepAngle,
+          outerTrim,
+          innerTrim,
+        )
+      )
+    }
+
     public open fun copy(
       fill: Fill = this.fill,
       strokeFill: Fill = this.strokeFill,
@@ -263,7 +374,7 @@ internal constructor(
   @Immutable
   public sealed class SliceLabel {
     internal abstract fun getInsets(
-      context: DrawingContext,
+      context: MeasuringContext,
       chartBounds: Rect,
       circleBounds: Rect,
       angle: Float,
@@ -286,7 +397,7 @@ internal constructor(
     @Immutable
     public class Inside(public val textComponent: TextComponent = TextComponent()) : SliceLabel() {
       override fun getInsets(
-        context: DrawingContext,
+        context: MeasuringContext,
         chartBounds: Rect,
         circleBounds: Rect,
         angle: Float,
@@ -340,14 +451,15 @@ internal constructor(
       public val angledSegmentLength: Dp = Defaults.PIE_OUTSIDE_LABEL_ANGLED_SEGMENT_LENGTH.dp,
       public val horizontalSegmentLength: Dp =
         Defaults.PIE_OUTSIDE_LABEL_HORIZONTAL_SEGMENT_LENGTH.dp,
-      public val maxWidthToBoundsRatio: Float = Defaults.PIE_OUTSIDE_LABEL_MAX_WIDTH_TO_BOUNDS_RATIO,
+      public val maxWidthToBoundsRatio: Float =
+        Defaults.PIE_OUTSIDE_LABEL_MAX_WIDTH_TO_BOUNDS_RATIO,
     ) : SliceLabel() {
       init {
         require(maxWidthToBoundsRatio < 1f) { "`maxWidthToBoundsRatio` must be below 1." }
       }
 
       override fun getInsets(
-        context: DrawingContext,
+        context: MeasuringContext,
         chartBounds: Rect,
         circleBounds: Rect,
         angle: Float,
@@ -411,7 +523,7 @@ internal constructor(
       }
 
       private fun getAngledPoint(
-        context: DrawingContext,
+        context: MeasuringContext,
         circleBounds: Rect,
         angle: Float,
       ): Offset {
@@ -423,7 +535,11 @@ internal constructor(
         )
       }
 
-      private fun getFinalPoint(context: DrawingContext, circleBounds: Rect, angle: Float): Offset {
+      private fun getFinalPoint(
+        context: MeasuringContext,
+        circleBounds: Rect,
+        angle: Float,
+      ): Offset {
         val bend = getAngledPoint(context, circleBounds, angle)
         val horizontalDistance = with(context) { horizontalSegmentLength.pixels }
         return Offset(
@@ -515,38 +631,80 @@ internal fun createSlicePath(
   sweepAngle: Float,
   centerOffset: Offset = Offset.Zero,
 ): Path {
-  val offsetBounds =
-    if (centerOffset == Offset.Zero) circleBounds else circleBounds.translate(centerOffset)
   val fullSweep = sweepAngle >= 360f
   val path = Path()
   if (fullSweep) {
     path.fillType = PathFillType.EvenOdd
-    path.addOval(offsetBounds)
+    path.addOval(circleBounds)
     if (holeRadius > 0f) {
       val innerBounds =
         Rect(
-          left = offsetBounds.center.x - holeRadius,
-          top = offsetBounds.center.y - holeRadius,
-          right = offsetBounds.center.x + holeRadius,
-          bottom = offsetBounds.center.y + holeRadius,
+          left = circleBounds.center.x - holeRadius,
+          top = circleBounds.center.y - holeRadius,
+          right = circleBounds.center.x + holeRadius,
+          bottom = circleBounds.center.y + holeRadius,
         )
       path.addOval(innerBounds)
     }
     return path
   }
 
-  path.arcTo(offsetBounds, startAngle, sweepAngle, false)
+  path.arcTo(circleBounds, startAngle, sweepAngle, false)
   if (holeRadius > 0f) {
     val innerBounds =
       Rect(
-        left = offsetBounds.center.x - holeRadius,
-        top = offsetBounds.center.y - holeRadius,
-        right = offsetBounds.center.x + holeRadius,
-        bottom = offsetBounds.center.y + holeRadius,
+        left = circleBounds.center.x - holeRadius,
+        top = circleBounds.center.y - holeRadius,
+        right = circleBounds.center.x + holeRadius,
+        bottom = circleBounds.center.y + holeRadius,
       )
     path.arcTo(innerBounds, startAngle + sweepAngle, -sweepAngle, false)
   } else {
-    path.lineTo(offsetBounds.center.x, offsetBounds.center.y)
+    path.lineTo(circleBounds.center.x + centerOffset.x, circleBounds.center.y + centerOffset.y)
+  }
+  path.close()
+  return path
+}
+
+internal fun asinDegrees(value: Float): Float =
+  (asin(value.coerceIn(-1f, 1f)) * 180.0 / kotlin.math.PI).toFloat()
+
+/**
+ * Builds a donut-slice path whose straight edges are offset by half the spacing, so the gaps to the
+ * neighboring slices have a constant width. [outerTrim] and [innerTrim] are the angles (in degrees)
+ * by which the outer and inner arcs are shortened at each end.
+ */
+internal fun createParallelSlicePath(
+  circleBounds: Rect,
+  holeRadius: Float,
+  startAngle: Float,
+  sweepAngle: Float,
+  outerTrim: Float,
+  innerTrim: Float,
+): Path {
+  val path = Path()
+  val outerSweep = (sweepAngle - 2f * outerTrim).coerceAtLeast(0f)
+  path.arcTo(circleBounds, startAngle + outerTrim, outerSweep, forceMoveTo = true)
+  val innerSweep = sweepAngle - 2f * innerTrim
+  if (holeRadius > 0f && innerSweep > 0f) {
+    val innerBounds =
+      Rect(
+        left = circleBounds.center.x - holeRadius,
+        top = circleBounds.center.y - holeRadius,
+        right = circleBounds.center.x + holeRadius,
+        bottom = circleBounds.center.y + holeRadius,
+      )
+    path.arcTo(innerBounds, startAngle + sweepAngle - innerTrim, -innerSweep, forceMoveTo = false)
+  } else {
+    val halfSweepRadians = (sweepAngle / 2f).toRadians()
+    val sinHalfSweep = sin(halfSweepRadians).toFloat()
+    val halfSpacing = circleBounds.width.half * sin(outerTrim.toRadians()).toFloat()
+    val tipRadius = if (sinHalfSweep > 0.0001f) halfSpacing / sinHalfSweep else holeRadius
+    val midRadians = (startAngle + sweepAngle / 2f).toRadians()
+    path.lineTo(
+      circleBounds.center.x + cos(midRadians).toFloat() * tipRadius,
+      circleBounds.center.y + sin(midRadians).toFloat() * tipRadius,
+    )
   }
   path.close()
   return path
