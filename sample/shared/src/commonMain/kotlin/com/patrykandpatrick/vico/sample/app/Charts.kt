@@ -35,6 +35,7 @@ object Charts {
       { ComposeElectricCarSales(it) },
       { ComposeRockMetalRatios(it) },
       { ComposeGoldPrices(it) },
+      { ComposeGuidelinesOverAreaFills(it) },
     )
 
   fun default(
@@ -49,6 +50,7 @@ object Charts {
     electricCarSales: @Composable (Modifier) -> Unit,
     rockMetalRatios: @Composable (Modifier) -> Unit,
     goldPrices: @Composable (Modifier) -> Unit,
+    guidelinesOverAreaFills: @Composable (Modifier) -> Unit,
   ) =
     listOf(
       Chart(Details.BasicColumnChart, basicColumnChart),
@@ -62,5 +64,6 @@ object Charts {
       Chart(Details.ElectricCarSales, electricCarSales),
       Chart(Details.RockMetalRatios, rockMetalRatios),
       Chart(Details.GoldPrices, goldPrices),
+      Chart(Details.GuidelinesOverAreaFills, guidelinesOverAreaFills),
     )
 }
