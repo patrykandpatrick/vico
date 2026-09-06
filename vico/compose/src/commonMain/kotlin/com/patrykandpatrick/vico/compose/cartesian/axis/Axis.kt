@@ -41,6 +41,23 @@ public interface Axis<P : Axis.Position> :
     axisDimensions: Map<Position, AxisDimensions>,
   )
 
+  /**
+   * Draws content over the [CartesianLayer]s’ area fills and under the rest of their content. Only
+   * called when [hasContentOverAreaFills] is `true`.
+   */
+  public fun drawOverAreaFills(
+    context: CartesianDrawingContext,
+    axisDimensions: Map<Position, AxisDimensions>,
+  ) {}
+
+  /**
+   * Whether [drawOverAreaFills] draws anything for this [Axis]’s current configuration. Returning
+   * `true` makes the [CartesianChart] interrupt layer drawing, so return `false` when there’s
+   * nothing to draw.
+   */
+  public val hasContentOverAreaFills: Boolean
+    get() = false
+
   /** Draws content over the [CartesianLayer]s. */
   public fun drawOverLayers(
     context: CartesianDrawingContext,

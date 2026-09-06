@@ -20,6 +20,7 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.patrykandpatrick.vico.compose.cartesian.CartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.compose.cartesian.layer.CartesianLayer
 import com.patrykandpatrick.vico.compose.common.MeasuringContext
@@ -43,8 +44,9 @@ import com.patrykandpatrick.vico.compose.common.setAll
  * @property titleComponent the title [TextComponent].
  * @property title returns the title text.
  * @property tickPosition defines the position of each tick relative to the axis line.
- * @property lineDrawingOrder whether to draw ticks and the axis line under or over the
+ * @property lineDrawingOrder where to draw the ticks and the axis line relative to the
  *   [CartesianLayer]s.
+ * @property guidelineDrawingOrder where to draw the guidelines relative to the [CartesianLayer]s.
  */
 public abstract class BaseAxis<P : Axis.Position>(
   protected val line: LineComponent?,
@@ -58,8 +60,16 @@ public abstract class BaseAxis<P : Axis.Position>(
   protected val titleComponent: TextComponent?,
   protected val title: (ExtraStore) -> CharSequence?,
   public val tickPosition: TickPosition,
-  public val lineDrawingOrder: LineDrawingOrder,
+  public val lineDrawingOrder: CartesianChart.DrawingOrder,
+  public val guidelineDrawingOrder: CartesianChart.DrawingOrder =
+    CartesianChart.DrawingOrder.UnderLayers,
 ) : Axis<P> {
+  final override val hasContentOverAreaFills: Boolean
+    get() =
+      (guideline != null && guidelineDrawingOrder == CartesianChart.DrawingOrder.OverAreaFills) ||
+        ((line != null || tick != null) &&
+          lineDrawingOrder == CartesianChart.DrawingOrder.OverAreaFills)
+
   private val restrictedBounds: MutableList<Rect> = mutableListOf()
 
   override var bounds: Rect = Rect.Zero
@@ -105,7 +115,8 @@ public abstract class BaseAxis<P : Axis.Position>(
         titleComponent == other.titleComponent &&
         title == other.title &&
         tickPosition == other.tickPosition &&
-        lineDrawingOrder == other.lineDrawingOrder
+        lineDrawingOrder == other.lineDrawingOrder &&
+        guidelineDrawingOrder == other.guidelineDrawingOrder
 
   override fun hashCode(): Int {
     var result = line.hashCode()
@@ -121,6 +132,7 @@ public abstract class BaseAxis<P : Axis.Position>(
     result = 31 * result + title.hashCode()
     result = 31 * result + tickPosition.hashCode()
     result = 31 * result + lineDrawingOrder.hashCode()
+    result = 31 * result + guidelineDrawingOrder.hashCode()
     return result
   }
 
@@ -134,12 +146,20 @@ public abstract class BaseAxis<P : Axis.Position>(
     Cross,
   }
 
-  /** Defines whether ticks and the axis line are drawn under or over the [CartesianLayer]s. */
-  public enum class LineDrawingOrder {
-    /** Draws ticks and the axis line under the [CartesianLayer]s. */
-    UnderLayers,
-    /** Draws ticks and the axis line over the [CartesianLayer]s. */
-    OverLayers,
+  /** Superseded by [CartesianChart.DrawingOrder], which is also used for the guidelines. */
+  @Deprecated(
+    "Use `CartesianChart.DrawingOrder`.",
+    ReplaceWith(
+      "CartesianChart.DrawingOrder",
+      "com.patrykandpatrick.vico.compose.cartesian.CartesianChart",
+    ),
+  )
+  public object LineDrawingOrder {
+    /** Superseded by [CartesianChart.DrawingOrder.UnderLayers]. */
+    public val UnderLayers: CartesianChart.DrawingOrder = CartesianChart.DrawingOrder.UnderLayers
+
+    /** Superseded by [CartesianChart.DrawingOrder.OverLayers]. */
+    public val OverLayers: CartesianChart.DrawingOrder = CartesianChart.DrawingOrder.OverLayers
   }
 
   /** Defines the position of a [BaseAxis] title. */

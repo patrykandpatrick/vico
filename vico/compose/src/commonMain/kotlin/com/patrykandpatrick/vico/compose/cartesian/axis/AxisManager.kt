@@ -130,9 +130,17 @@ internal class AxisManager {
     axisCache.forEach { axis -> axis.drawUnderLayers(context, axisDimensions) }
   }
 
+  fun drawOverAreaFills(context: CartesianDrawingContext) {
+    axisCache.forEach { axis ->
+      if (axis.hasContentOverAreaFills) axis.drawOverAreaFills(context, axisDimensions)
+    }
+  }
+
   fun drawOverLayers(context: CartesianDrawingContext) {
     axisCache.forEach { axis -> axis.drawOverLayers(context, axisDimensions) }
   }
+
+  fun hasContentOverAreaFills(): Boolean = axisCache.any { it.hasContentOverAreaFills }
 
   private fun <S : Axis.Position, T : Axis<S>?> cacheInList(): ReadWriteProperty<AxisManager, T?> =
     object : ReadWriteProperty<AxisManager, T?> {

@@ -21,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.patrykandpatrick.vico.compose.cartesian.CartesianChart.DrawingOrder
 import com.patrykandpatrick.vico.compose.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.compose.cartesian.CartesianMeasuringContext
 import com.patrykandpatrick.vico.compose.cartesian.axis.VerticalAxis.HorizontalLabelPosition.Inside
@@ -73,8 +74,9 @@ protected constructor(
   titleComponent: TextComponent?,
   title: (ExtraStore) -> CharSequence?,
   tickPosition: TickPosition,
-  lineDrawingOrder: LineDrawingOrder,
+  lineDrawingOrder: DrawingOrder,
   public val titlePosition: TitlePosition,
+  guidelineDrawingOrder: DrawingOrder = DrawingOrder.UnderLayers,
 ) :
   BaseAxis<P>(
     line,
@@ -89,6 +91,7 @@ protected constructor(
     title,
     tickPosition,
     lineDrawingOrder,
+    guidelineDrawingOrder,
   ) {
   protected val areLabelsOutsideAtStartOrInsideAtEnd: Boolean
     get() =
@@ -120,8 +123,9 @@ protected constructor(
     titleComponent: TextComponent?,
     title: (ExtraStore) -> CharSequence?,
     tickPosition: TickPosition,
-    lineDrawingOrder: LineDrawingOrder,
+    lineDrawingOrder: DrawingOrder,
     titlePosition: TitlePosition,
+    guidelineDrawingOrder: DrawingOrder,
   ) : this(
     position,
     line,
@@ -140,6 +144,7 @@ protected constructor(
     tickPosition,
     lineDrawingOrder,
     titlePosition,
+    guidelineDrawingOrder,
   )
 
   override fun updateAxisDimensions(
@@ -163,7 +168,13 @@ protected constructor(
     context: CartesianDrawingContext,
     axisDimensions: Map<Axis.Position, AxisDimensions>,
   ) {
+    if (guidelineDrawingOrder == DrawingOrder.UnderLayers) drawGuidelines(context)
+    if (lineDrawingOrder == DrawingOrder.UnderLayers) drawLineAndTicks(context)
+  }
+
+  protected open fun drawGuidelines(context: CartesianDrawingContext) {
     with(context) {
+      val guideline = guideline ?: return
       var centerY: Float
       val yRange = ranges.getYRange(position)
       val maxLabelHeight = maxLabelHeight
@@ -177,7 +188,7 @@ protected constructor(
             getLineCanvasYCorrection(guidelineThickness, lineValue)
 
         guideline
-          ?.takeIf {
+          .takeIf {
             isNotInRestrictedBounds(
               left = layerBounds.left,
               top = centerY - guidelineThickness.half,
@@ -192,8 +203,15 @@ protected constructor(
             y = centerY,
           )
       }
-      if (lineDrawingOrder == LineDrawingOrder.UnderLayers) drawLineAndTicks(context)
     }
+  }
+
+  override fun drawOverAreaFills(
+    context: CartesianDrawingContext,
+    axisDimensions: Map<Axis.Position, AxisDimensions>,
+  ) {
+    if (guidelineDrawingOrder == DrawingOrder.OverAreaFills) drawGuidelines(context)
+    if (lineDrawingOrder == DrawingOrder.OverAreaFills) drawLineAndTicks(context)
   }
 
   override fun drawOverLayers(
@@ -201,7 +219,8 @@ protected constructor(
     axisDimensions: Map<Axis.Position, AxisDimensions>,
   ) {
     with(context) {
-      if (lineDrawingOrder == LineDrawingOrder.OverLayers) drawLineAndTicks(context)
+      if (guidelineDrawingOrder == DrawingOrder.OverLayers) drawGuidelines(context)
+      if (lineDrawingOrder == DrawingOrder.OverLayers) drawLineAndTicks(context)
 
       val label = label
       val labelValues = itemPlacer.getLabelValues(this, bounds.height, maxLabelHeight, position)
@@ -620,8 +639,9 @@ protected constructor(
     titleComponent: TextComponent? = this.titleComponent,
     title: (ExtraStore) -> CharSequence? = this.title,
     tickPosition: TickPosition = this.tickPosition,
-    lineDrawingOrder: LineDrawingOrder = this.lineDrawingOrder,
+    lineDrawingOrder: DrawingOrder = this.lineDrawingOrder,
     titlePosition: TitlePosition = this.titlePosition,
+    guidelineDrawingOrder: DrawingOrder = this.guidelineDrawingOrder,
   ): VerticalAxis<P> =
     VerticalAxis(
       position,
@@ -641,6 +661,7 @@ protected constructor(
       tickPosition,
       lineDrawingOrder,
       titlePosition,
+      guidelineDrawingOrder,
     )
 
   override fun equals(other: Any?): Boolean =
@@ -786,8 +807,9 @@ protected constructor(
       title: (ExtraStore) -> CharSequence? = { null },
       tickPosition: TickPosition =
         if (horizontalLabelPosition == Outside) TickPosition.Outside else TickPosition.Inside,
-      lineDrawingOrder: LineDrawingOrder = LineDrawingOrder.UnderLayers,
+      lineDrawingOrder: DrawingOrder = DrawingOrder.UnderLayers,
       titlePosition: TitlePosition = TitlePosition.Side,
+      guidelineDrawingOrder: DrawingOrder = DrawingOrder.UnderLayers,
     ): VerticalAxis<Axis.Position.Vertical.Start> =
       remember(
         line,
@@ -806,6 +828,7 @@ protected constructor(
         tickPosition,
         lineDrawingOrder,
         titlePosition,
+        guidelineDrawingOrder,
       ) {
         VerticalAxis(
           Axis.Position.Vertical.Start,
@@ -825,6 +848,7 @@ protected constructor(
           tickPosition,
           lineDrawingOrder,
           titlePosition,
+          guidelineDrawingOrder,
         )
       }
 
@@ -846,8 +870,9 @@ protected constructor(
       title: (ExtraStore) -> CharSequence? = { null },
       tickPosition: TickPosition =
         if (horizontalLabelPosition == Outside) TickPosition.Outside else TickPosition.Inside,
-      lineDrawingOrder: LineDrawingOrder = LineDrawingOrder.UnderLayers,
+      lineDrawingOrder: DrawingOrder = DrawingOrder.UnderLayers,
       titlePosition: TitlePosition = TitlePosition.Side,
+      guidelineDrawingOrder: DrawingOrder = DrawingOrder.UnderLayers,
     ): VerticalAxis<Axis.Position.Vertical.End> =
       remember(
         line,
@@ -866,6 +891,7 @@ protected constructor(
         tickPosition,
         lineDrawingOrder,
         titlePosition,
+        guidelineDrawingOrder,
       ) {
         VerticalAxis(
           Axis.Position.Vertical.End,
@@ -885,6 +911,7 @@ protected constructor(
           tickPosition,
           lineDrawingOrder,
           titlePosition,
+          guidelineDrawingOrder,
         )
       }
   }

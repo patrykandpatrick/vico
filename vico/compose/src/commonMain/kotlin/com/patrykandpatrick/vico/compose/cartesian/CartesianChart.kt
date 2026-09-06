@@ -24,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.drawscope.CanvasDrawScope
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChart.PersistentMarkerScope
 import com.patrykandpatrick.vico.compose.cartesian.axis.Axis
@@ -659,6 +660,35 @@ internal constructor(
     result = 31 * result + id.hashCode()
     result = 31 * result + markerController.hashCode()
     return result
+  }
+
+  /**
+   * Defines where content is drawn relative to the [CartesianLayer]s. Used by [Axis]es,
+   * [Decoration]s, and [CartesianMarker]s.
+   *
+   * [OverAreaFills] requires interrupting layer drawing, which is subject to the following rules.
+   * 1. An interruption never splits a [CartesianLayer]’s opacity group. While a difference
+   *    animation is in progress, [OverAreaFills] behaves like [UnderLayers]. (Inserting content
+   *    into an opacity group changes how the group’s own contents composite, and the opacity is the
+   *    [CartesianLayer]’s, so it can’t be hoisted.)
+   * 2. Content drawn at an interruption goes to the same [Canvas] and `DrawScope` as the
+   *    [CartesianLayer]s’ content, so it composites with them rather than beneath them.
+   * 3. Content drawn at an interruption is clipped to [CartesianDrawingContext.layerBounds], as
+   *    [CartesianLayer] content is.
+   * 4. [CartesianLayer]s that have no area fills, or that can’t draw them separately, are drawn
+   *    entirely over such content. [CartesianLayer] order is otherwise preserved: the only content
+   *    that moves is a participating [CartesianLayer]’s own area fills.
+   */
+  public enum class DrawingOrder {
+    /** Draws the content under the [CartesianLayer]s. */
+    UnderLayers,
+    /**
+     * Draws the content over the [CartesianLayer]s’ area fills and under the rest of their
+     * content—strokes, points, and data labels.
+     */
+    OverAreaFills,
+    /** Draws the content over the [CartesianLayer]s. */
+    OverLayers,
   }
 
   /** Facilitates adding persistent [CartesianMarker]s to [CartesianChart]s. */

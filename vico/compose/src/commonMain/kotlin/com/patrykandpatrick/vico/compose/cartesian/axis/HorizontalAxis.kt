@@ -22,6 +22,7 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.patrykandpatrick.vico.compose.cartesian.CartesianChart.DrawingOrder
 import com.patrykandpatrick.vico.compose.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.compose.cartesian.CartesianMeasuringContext
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModel
@@ -69,8 +70,9 @@ protected constructor(
   titleComponent: TextComponent?,
   title: (ExtraStore) -> CharSequence?,
   tickPosition: TickPosition,
-  lineDrawingOrder: LineDrawingOrder,
+  lineDrawingOrder: DrawingOrder,
   public val titlePosition: TitlePosition,
+  guidelineDrawingOrder: DrawingOrder = DrawingOrder.UnderLayers,
 ) :
   BaseAxis<P>(
     line,
@@ -85,6 +87,7 @@ protected constructor(
     title,
     tickPosition,
     lineDrawingOrder,
+    guidelineDrawingOrder,
   ) {
   protected val Axis.Position.Horizontal.textVerticalPosition: Position.Vertical
     get() =
@@ -94,6 +97,13 @@ protected constructor(
       }
 
   private val clipPath = Path()
+
+  /**
+   * The guideline positions computed by [drawUnderLayers], which the [CartesianChart] always runs
+   * before the other drawing hooks. Reused by them so that the [ItemPlacer] queries and label
+   * measurements behind these values happen once per frame.
+   */
+  private val guidelinePlacement = GuidelinePlacement()
 
   internal constructor(
     position: P,
@@ -107,8 +117,9 @@ protected constructor(
     titleComponent: TextComponent?,
     title: (ExtraStore) -> CharSequence?,
     tickPosition: TickPosition,
-    lineDrawingOrder: LineDrawingOrder,
+    lineDrawingOrder: DrawingOrder,
     titlePosition: TitlePosition,
+    guidelineDrawingOrder: DrawingOrder,
   ) : this(
     position,
     line,
@@ -125,6 +136,7 @@ protected constructor(
     tickPosition,
     lineDrawingOrder,
     titlePosition,
+    guidelineDrawingOrder,
   )
 
   override fun updateAxisDimensions(
@@ -231,7 +243,7 @@ protected constructor(
         )
       }
 
-      if (lineDrawingOrder == LineDrawingOrder.UnderLayers) {
+      if (lineDrawingOrder == DrawingOrder.UnderLayers) {
         drawLineAndTicks(context, axisDimensions)
       }
 
@@ -249,8 +261,23 @@ protected constructor(
         titleComponent?.drawTitle(this, titleText, lineLeft, lineRight)
       }
 
-      drawGuidelines(context, baseCanvasX, fullXRange, labelValues, lineValues)
+      guidelinePlacement.baseCanvasX = baseCanvasX
+      guidelinePlacement.fullXRange = fullXRange
+      guidelinePlacement.labelValues = labelValues
+      guidelinePlacement.lineValues = lineValues
+      if (guidelineDrawingOrder == DrawingOrder.UnderLayers) drawGuidelines(context)
     }
+  }
+
+  private fun drawGuidelines(context: CartesianDrawingContext) {
+    val placement = guidelinePlacement
+    drawGuidelines(
+      context,
+      placement.baseCanvasX,
+      placement.fullXRange,
+      placement.labelValues,
+      placement.lineValues,
+    )
   }
 
   private fun TextComponent.drawTitle(
@@ -558,11 +585,20 @@ protected constructor(
       else -> 0f
     } * layoutDirectionMultiplier
 
+  override fun drawOverAreaFills(
+    context: CartesianDrawingContext,
+    axisDimensions: Map<Axis.Position, AxisDimensions>,
+  ) {
+    if (guidelineDrawingOrder == DrawingOrder.OverAreaFills) drawGuidelines(context)
+    if (lineDrawingOrder == DrawingOrder.OverAreaFills) drawLineAndTicks(context, axisDimensions)
+  }
+
   override fun drawOverLayers(
     context: CartesianDrawingContext,
     axisDimensions: Map<Axis.Position, AxisDimensions>,
   ) {
-    if (lineDrawingOrder == LineDrawingOrder.OverLayers) drawLineAndTicks(context, axisDimensions)
+    if (guidelineDrawingOrder == DrawingOrder.OverLayers) drawGuidelines(context)
+    if (lineDrawingOrder == DrawingOrder.OverLayers) drawLineAndTicks(context, axisDimensions)
   }
 
   override fun updateLayerDimensions(
@@ -770,8 +806,9 @@ protected constructor(
     titleComponent: TextComponent? = this.titleComponent,
     title: (ExtraStore) -> CharSequence? = this.title,
     tickPosition: TickPosition = this.tickPosition,
-    lineDrawingOrder: LineDrawingOrder = this.lineDrawingOrder,
+    lineDrawingOrder: DrawingOrder = this.lineDrawingOrder,
     titlePosition: TitlePosition = this.titlePosition,
+    guidelineDrawingOrder: DrawingOrder = this.guidelineDrawingOrder,
   ): HorizontalAxis<P> =
     HorizontalAxis(
       position,
@@ -789,6 +826,7 @@ protected constructor(
       tickPosition,
       lineDrawingOrder,
       titlePosition,
+      guidelineDrawingOrder,
     )
 
   override fun equals(other: Any?): Boolean =
@@ -953,6 +991,13 @@ protected constructor(
     }
   }
 
+  private class GuidelinePlacement {
+    var baseCanvasX: Float = 0f
+    var fullXRange: ClosedFloatingPointRange<Double> = 0.0..0.0
+    var labelValues: List<Double> = emptyList()
+    var lineValues: List<Double>? = null
+  }
+
   /** Houses [HorizontalAxis] factory functions. */
   public companion object {
     private val MAX_AUTO_HEIGHT = 64.dp
@@ -972,8 +1017,9 @@ protected constructor(
       titleComponent: TextComponent? = null,
       title: (ExtraStore) -> CharSequence? = { null },
       tickPosition: TickPosition = TickPosition.Outside,
-      lineDrawingOrder: LineDrawingOrder = LineDrawingOrder.UnderLayers,
+      lineDrawingOrder: DrawingOrder = DrawingOrder.UnderLayers,
       titlePosition: TitlePosition = TitlePosition.Side,
+      guidelineDrawingOrder: DrawingOrder = DrawingOrder.UnderLayers,
     ): HorizontalAxis<Axis.Position.Horizontal.Top> =
       remember(
         line,
@@ -990,6 +1036,7 @@ protected constructor(
         tickPosition,
         lineDrawingOrder,
         titlePosition,
+        guidelineDrawingOrder,
       ) {
         HorizontalAxis(
           Axis.Position.Horizontal.Top,
@@ -1007,6 +1054,7 @@ protected constructor(
           tickPosition,
           lineDrawingOrder,
           titlePosition,
+          guidelineDrawingOrder,
         )
       }
 
@@ -1025,8 +1073,9 @@ protected constructor(
       titleComponent: TextComponent? = null,
       title: (ExtraStore) -> CharSequence? = { null },
       tickPosition: TickPosition = TickPosition.Outside,
-      lineDrawingOrder: LineDrawingOrder = LineDrawingOrder.UnderLayers,
+      lineDrawingOrder: DrawingOrder = DrawingOrder.UnderLayers,
       titlePosition: TitlePosition = TitlePosition.Side,
+      guidelineDrawingOrder: DrawingOrder = DrawingOrder.UnderLayers,
     ): HorizontalAxis<Axis.Position.Horizontal.Bottom> =
       remember(
         line,
@@ -1043,6 +1092,7 @@ protected constructor(
         tickPosition,
         lineDrawingOrder,
         titlePosition,
+        guidelineDrawingOrder,
       ) {
         HorizontalAxis(
           Axis.Position.Horizontal.Bottom,
@@ -1060,6 +1110,7 @@ protected constructor(
           tickPosition,
           lineDrawingOrder,
           titlePosition,
+          guidelineDrawingOrder,
         )
       }
   }
