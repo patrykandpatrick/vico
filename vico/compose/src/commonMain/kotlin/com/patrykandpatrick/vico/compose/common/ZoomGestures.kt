@@ -19,7 +19,6 @@ package com.patrykandpatrick.vico.compose.common
 import androidx.compose.foundation.gestures.*
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.PointerInputScope
-import androidx.compose.ui.input.pointer.positionChanged
 import kotlin.math.abs
 
 internal suspend fun PointerInputScope.detectZoomGestures(
@@ -44,7 +43,15 @@ internal suspend fun PointerInputScope.detectZoomGestures(
         if (pastTouchSlop) {
           val centroid = event.calculateCentroid(useCurrent = false)
           if (zoomChange != 1f) onGesture(centroid, zoomChange)
-          event.changes.forEach { if (it.positionChanged()) it.consume() }
+          // Every change, not only the moved ones. While a pinch is in progress, `scrollable`’s
+          // drag node parks in a gesture-pickup state, which re-enters touch-slop detection on the
+          // first event whose changes are *all* unconsumed, seeding the detector with
+          // `changes.first().position - initialDown.position`. `changes.first()` isn’t necessarily
+          // the pointer `initialDown` belongs to, so when one finger lifts, that seed becomes the
+          // lifted finger’s entire travel: the remaining finger clears the slop threshold at once
+          // and a drag starts, jerking the content sideways just as the pinch ends. Consuming
+          // unconditionally keeps the pickup from ever seeing such an event.
+          event.changes.forEach { it.consume() }
         }
       }
     } while (!canceled && event.changes.any { it.pressed })
