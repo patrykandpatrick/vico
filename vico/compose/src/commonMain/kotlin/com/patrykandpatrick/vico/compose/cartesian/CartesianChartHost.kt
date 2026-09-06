@@ -296,18 +296,25 @@ internal fun CartesianChartHostImpl(
 
   LaunchedEffect(model) { onViewportChange() }
 
-  LaunchedEffect(scrollState.consumedXDeltas, scrollState.unconsumedXDeltas) {
-    merge(scrollState.consumedXDeltas, scrollState.unconsumedXDeltas).collect { onViewportChange() }
-  }
-
-  LaunchedEffect(zoomState, scrollState) {
-    zoomState.pendingScroll.collect { (scroll, maxValue) ->
-      scrollState.scroll(scroll, maxValue)
-      onViewportChange()
-    }
+  // Observe programmatic zooms and zooms that leave the scroll value unchanged, too.
+  LaunchedEffect(scrollState, zoomState) {
+    merge(
+        scrollState.consumedXDeltas,
+        scrollState.unconsumedXDeltas,
+        snapshotFlow { zoomState.value },
+      )
+      .collect { onViewportChange() }
   }
 
   DisposableEffect(scrollState) { onDispose { scrollState.clearUpdated() } }
+
+  DisposableEffect(zoomState) { onDispose { zoomState.clearUpdated() } }
+
+  // Bind outside the draw pass, which is skipped when the chart has no area.
+  DisposableEffect(zoomState, scrollState) {
+    zoomState.setScrollState(scrollState)
+    onDispose { zoomState.setScrollState(null) }
+  }
 
   ChartHostBox(modifier, chartAreaHeight, measureExtras) {
     Canvas(
@@ -318,11 +325,13 @@ internal fun CartesianChartHostImpl(
             consumeMoveEvents = chart.markerController.consumeMoveEvents,
             onInteraction = onInteraction,
             onZoom =
+              // Changing onZoom restarts the pointer-input loop with the current scroll state.
               remember(zoomState, scrollState, coroutineScope) {
                 if (zoomState.zoomEnabled) {
                   { factor, centroid ->
-                    coroutineScope.launch {
-                      zoomState.zoom(factor, centroid.x) { scrollState.value }
+                    // Apply gesture zooms within the pointer event, before the next draw.
+                    coroutineScope.launch(start = CoroutineStart.UNDISPATCHED) {
+                      zoomState.zoom(factor, centroid.x)
                     }
                   }
                 } else {
@@ -341,12 +350,7 @@ internal fun CartesianChartHostImpl(
 
       if (chart.layerBounds.isEmpty) return@Canvas
 
-      zoomState.update(
-        measuringContext.value,
-        layerDimensions,
-        chart.layerBounds,
-        scrollState.value,
-      )
+      zoomState.update(measuringContext.value, layerDimensions, chart.layerBounds)
       scrollState.update(measuringContext.value, chart.layerBounds, layerDimensions)
 
       if (model != lastHandledModel) {

@@ -34,8 +34,7 @@ import com.patrykandpatrick.vico.compose.cartesian.layer.MutableCartesianLayerDi
 import com.patrykandpatrick.vico.compose.cartesian.layer.copyScaled
 import com.patrykandpatrick.vico.compose.cartesian.layer.scale
 import com.patrykandpatrick.vico.compose.common.Defaults
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
+import com.patrykandpatrick.vico.compose.common.getStart
 
 /** Houses information on a [CartesianChart]’s zoom factor. Allows for zoom customization. */
 public class VicoZoomState {
@@ -49,9 +48,9 @@ public class VicoZoomState {
   private var context: CartesianMeasuringContext? = null
   private var layerDimensions: MutableCartesianLayerDimensions? = null
   private var bounds: Rect? = null
-  private var scroll = 0f
-  private val _pendingScroll = MutableSharedFlow<Pair<Scroll, Float>>()
-  internal val pendingScroll = _pendingScroll.asSharedFlow()
+  private var scrollState: VicoScrollState? = null
+  // The dimensions’ scale can lag behind the zoom value between draws.
+  private var layerDimensionsZoom = 0f
   private val zoomMutatorMutex = MutatorMutex()
 
   /** The current zoom factor. */
@@ -112,11 +111,9 @@ public class VicoZoomState {
   public suspend fun zoom(zoom: Zoom) {
     zoomMutatorMutex.mutate {
       withUpdated { context, layerDimensions, bounds ->
-        val unscaled = if (value != 0f) layerDimensions.copyScaled(1f / value) else layerDimensions
+        val unscaled = unscale(layerDimensions)
         val newValue = zoom.getValue(context, unscaled, bounds)
-        if (newValue != value) {
-          rawZoom(newValue / value, context.canvasWidth / 2f) { scroll }
-        }
+        if (newValue != value) rawZoom(newValue / value, getCentroidX(context, bounds, bias = 0.5f))
       }
     }
   }
@@ -134,14 +131,14 @@ public class VicoZoomState {
   ) {
     zoomMutatorMutex.mutate {
       withUpdated { context, layerDimensions, bounds ->
-        val unscaled = if (value != 0f) layerDimensions.copyScaled(1f / value) else layerDimensions
+        val unscaled = unscale(layerDimensions)
         val target = zoom.getValue(context, unscaled, bounds).coerceIn(valueRange)
         if (target == value) return@withUpdated
-        val centroidX = bounds.left + bias * bounds.width
+        val centroidX = getCentroidX(context, bounds, bias)
         val anim = TargetBasedAnimation(animationSpec, Float.VectorConverter, value, target)
         val durationNanos = anim.durationNanos
         if (durationNanos == 0L) {
-          rawZoom(target / value, centroidX) { scroll }
+          rawZoom(target / value, centroidX)
           return@withUpdated
         }
         var startNanos = -1L
@@ -153,13 +150,25 @@ public class VicoZoomState {
           }
           val current = anim.getValueFromNanos(playTime).coerceIn(valueRange)
           val factor = if (value != 0f) current / value else 1f
-          rawZoom(factor, centroidX) { scroll }
+          rawZoom(factor, centroidX)
         }
         val finalFactor = if (value != 0f) target / value else 1f
-        rawZoom(finalFactor, centroidX) { scroll }
+        rawZoom(finalFactor, centroidX)
       }
     }
   }
+
+  private fun getCentroidX(context: CartesianMeasuringContext, bounds: Rect, bias: Float): Float =
+    bounds.getStart(context.isLtr) + context.layoutDirectionMultiplier * bias * bounds.width
+
+  private fun unscale(
+    layerDimensions: MutableCartesianLayerDimensions
+  ): MutableCartesianLayerDimensions =
+    if (layerDimensionsZoom != 0f) {
+      layerDimensions.copyScaled(1f / layerDimensionsZoom)
+    } else {
+      layerDimensions
+    }
 
   private inline fun withUpdated(
     block: (CartesianMeasuringContext, MutableCartesianLayerDimensions, Rect) -> Unit
@@ -172,16 +181,18 @@ public class VicoZoomState {
     }
   }
 
+  internal fun setScrollState(scrollState: VicoScrollState?) {
+    this.scrollState = scrollState
+  }
+
   internal fun update(
     context: CartesianMeasuringContext,
     layerDimensions: MutableCartesianLayerDimensions,
     bounds: Rect,
-    scroll: Float,
   ) {
     this.context = context
     this.layerDimensions = layerDimensions
     this.bounds = bounds
-    this.scroll = scroll
 
     val minValue = minZoom.getValue(context, layerDimensions, bounds)
     val maxValue = maxZoom.getValue(context, layerDimensions, bounds)
@@ -192,27 +203,49 @@ public class VicoZoomState {
     valueRange = minValue..maxValue
     if (!overridden) value = initialZoom.getValue(context, layerDimensions, bounds)
     layerDimensions.scale(value)
+    layerDimensionsZoom = value
   }
 
-  internal suspend fun zoom(factor: Float, centroidX: Float, scroll: () -> Float) {
-    zoomMutatorMutex.mutate { rawZoom(factor, centroidX, scroll) }
+  internal fun clearUpdated() {
+    context = null
+    layerDimensions = null
+    bounds = null
+    layerDimensionsZoom = 0f
   }
 
-  private suspend fun rawZoom(factor: Float, centroidX: Float, scroll: () -> Float) {
+  internal suspend fun zoom(factor: Float, centroidX: Float) {
+    zoomMutatorMutex.mutate { rawZoom(factor, centroidX) }
+  }
+
+  /**
+   * Updates zoom and its scroll compensation without suspension so neither can be applied alone.
+   */
+  private fun rawZoom(factor: Float, centroidX: Float) {
     withUpdated { context, layerDimensions, bounds ->
-      overridden = true
       val oldValue = value
       value *= factor
+      // A clamped no-op must not disable future initial zoom updates.
       if (value == oldValue) return@withUpdated
-      val scroll = scroll()
+      overridden = true
+      if (layerDimensionsZoom == 0f) return@withUpdated
+      val scrollState = this.scrollState ?: return@withUpdated
+      val scroll = scrollState.value
+      // Use the dimensions’ last-drawn scale, which may differ from the previous zoom value.
       val maxScrollDistance =
-        context.getMaxScrollDistance(bounds.width, layerDimensions.copyScaled(value / oldValue))
+        context.getMaxScrollDistance(
+          bounds.width,
+          layerDimensions.copyScaled(value / layerDimensionsZoom),
+        )
+      // Convert the anchor to scalable pixels from the content’s start edge, accounting for RTL.
       val transformationAxisX =
-        scroll + centroidX - bounds.left - layerDimensions.unscalableStartPadding
+        context.layoutDirectionMultiplier * (scroll + centroidX - bounds.getStart(context.isLtr)) -
+          layerDimensions.unscalableStartPadding
       val zoomedTransformationAxisX = transformationAxisX * (value / oldValue)
-      _pendingScroll.emit(
-        Scroll.Absolute.pixels(scroll + zoomedTransformationAxisX - transformationAxisX) to
-          maxScrollDistance
+      scrollState.applyZoomScroll(
+        value =
+          scroll +
+            context.layoutDirectionMultiplier * (zoomedTransformationAxisX - transformationAxisX),
+        maxValue = maxScrollDistance,
       )
     }
   }
