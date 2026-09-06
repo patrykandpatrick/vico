@@ -55,6 +55,9 @@ public interface CartesianLayer<M : CartesianLayerModel> : CartesianLayerMarginU
    * fills, or a configuration that keeps them next to the content they belong to—or when separating
    * them would be incorrect, as during a difference animation, where the two phases would land in
    * different opacity groups.
+   *
+   * Queried more than once per frame, so it should be cheap, and it must return the same value
+   * throughout a frame.
    */
   public fun canSeparateAreaFills(context: CartesianDrawingContext, model: M): Boolean = false
 
