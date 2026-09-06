@@ -296,9 +296,7 @@ internal fun CartesianChartHostImpl(
 
   LaunchedEffect(model) { onViewportChange() }
 
-  // The zoom factor is observed rather than reported by the zoom handler: a zoom changes the
-  // viewport whether or not it moves the scroll value, and `zoom(Zoom)` and `animateZoom` change it
-  // without going through any handler at all.
+  // Observe programmatic zooms and zooms that leave the scroll value unchanged, too.
   LaunchedEffect(scrollState, zoomState) {
     merge(
         scrollState.consumedXDeltas,
@@ -312,8 +310,7 @@ internal fun CartesianChartHostImpl(
 
   DisposableEffect(zoomState) { onDispose { zoomState.clearUpdated() } }
 
-  // Keyed on both, so that replacing either is picked up here rather than at the next draw, which
-  // may never come.
+  // Bind outside the draw pass, which is skipped when the chart has no area.
   DisposableEffect(zoomState, scrollState) {
     zoomState.setScrollState(scrollState)
     onDispose { zoomState.setScrollState(null) }
@@ -328,17 +325,11 @@ internal fun CartesianChartHostImpl(
             consumeMoveEvents = chart.markerController.consumeMoveEvents,
             onInteraction = onInteraction,
             onZoom =
-              // `scrollState` is a key even though this lambda no longer reads it. The
-              // `pointerInput` this is passed to is keyed on `onZoom`, and its gesture loop closes
-              // over `scrollState`, so without this key a replaced scroll state would leave that
-              // loop bound to the old one.
+              // Changing onZoom restarts the pointer-input loop with the current scroll state.
               remember(zoomState, scrollState, coroutineScope) {
                 if (zoomState.zoomEnabled) {
                   { factor, centroid ->
-                    // `UNDISPATCHED` so that the zoom factor and its scroll compensation are
-                    // applied within this pointer event, before the next frame is drawn. `zoom`
-                    // reaches them without suspending unless a programmatic zoom is in progress,
-                    // which it cancels.
+                    // Apply gesture zooms within the pointer event, before the next draw.
                     coroutineScope.launch(start = CoroutineStart.UNDISPATCHED) {
                       zoomState.zoom(factor, centroid.x)
                     }

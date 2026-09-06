@@ -228,33 +228,15 @@ public class VicoScrollState {
   }
 
   /**
-   * Applies a zoom’s scroll compensation, which keeps the content under the zoom anchor in place.
+   * Applies zoom anchoring synchronously with the zoom factor. Bypasses [scrollableState] so an
+   * ongoing scroll cannot delay or discard the compensation.
    *
-   * [VicoZoomState] calls this synchronously, in the same dispatch in which it updates the zoom
-   * factor, so that no frame renders a new zoom factor with an uncompensated scroll value.
-   *
-   * The compensation deliberately bypasses [scrollableState]: it isn’t a scroll gesture but a
-   * correction to one that has already been decided, so it must neither wait for an in-progress
-   * scroll nor be dropped because of one. During a pinch, the zoom detector consumes the pointer
-   * events, so no drag starts to stop a fling left over from a previous pan; gating the
-   * compensation on [ScrollableState.isScrollInProgress] would therefore mis-anchor the whole
-   * gesture. Writing [value] directly is also what makes the update atomic with the zoom factor, as
-   * going through [scrollableState] would require suspending.
-   *
-   * A fling that scrolls by deltas—the default fling behavior—carries on correctly against the
-   * corrected value. One that animates toward a target captured before the zoom does not:
-   * [SnapFlingBehavior] and [performSnap] derive their deltas from the pre-zoom
-   * [CartesianLayerDimensions.xSpacing], and the desktop and web decay flings replay absolute
-   * scroll values, so a zoom landing mid-fling leaves the scroll off-target until the next gesture.
-   * Anchoring correctly through such a fling would require invalidating it, which this doesn’t do.
+   * This does not invalidate in-flight animations: snap flings and desktop/web decay flings may
+   * still settle off-target after a zoom.
    */
   internal fun applyZoomScroll(value: Float, maxValue: Float) {
-    // No-op while detached from a host, as the removed `scroll(Scroll, Float)` also was: `update`
-    // supplies these and `clearUpdated` nulls them on disposal, and both this instance's measured
-    // maximum and whatever reads the result belong to a host that is no longer drawing it.
     withUpdated { _, _, _ ->
-      // Set `maxValue` first: its setter re-clamps `value` to the new maximum, and the incoming
-      // value is already expressed in terms of that maximum.
+      // Update the clamping range before applying the compensated value.
       this.maxValue = maxValue
       this.value = value
     }

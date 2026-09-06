@@ -45,9 +45,7 @@ class VicoZoomStateTest {
   @MockK private lateinit var context: CartesianMeasuringContext
   @MockK private lateinit var ranges: CartesianChartRanges
 
-  // As in CartesianChartHostImpl, one MutableCartesianLayerDimensions instance is shared: the zoom
-  // state scales it, and the scroll state then derives its maximum from it. The content is much
-  // wider than the bounds so that the scroll compensation isn’t clamped.
+  // Share dimensions as the host does, with enough content to avoid clamping most anchors.
   private val layerDimensions = MutableCartesianLayerDimensions(xSpacing = 100f)
   private var bounds = Rect(0f, 0f, 100f, 100f)
   private var layoutDirection = LayoutDirection.Ltr
@@ -155,8 +153,7 @@ class VicoZoomStateTest {
       // The host applies gesture zooms undispatched, so this mirrors what a pointer event does.
       launch(start = CoroutineStart.UNDISPATCHED) { sut.zoom(factor = 2f, centroidX = 50f) }
 
-      // Both updates have already been applied, with no suspension in between for a frame to be
-      // drawn with the new zoom factor and the old scroll value.
+      // Both values must update before the launch returns.
       assertEquals(2f, sut.value)
       assertNotEquals(scrollBefore, scrollState.value)
       assertEquals(150f, scrollState.value)
@@ -169,9 +166,6 @@ class VicoZoomStateTest {
       val sut = createZoomState(scrollState)
       scrollState.scroll(Scroll.Absolute.pixels(50f))
 
-      // Two events arriving back to back, as during a fast pinch. Neither may lose its
-      // compensation: each one’s is an absolute scroll value derived from the current one, so a
-      // dropped step permanently mis-anchors the content.
       repeat(2) {
         launch(start = CoroutineStart.UNDISPATCHED) { sut.zoom(factor = 1.5f, centroidX = 50f) }
       }
@@ -188,9 +182,7 @@ class VicoZoomStateTest {
       // Near the end of the content, where an understated maximum clamps the compensation.
       scrollState.scroll(Scroll.Absolute.pixels(800f))
 
-      // Two steps between draws, so `layerDimensions` stays scaled to the zoom factor of the last
-      // one. The second step's maximum must describe the total zoom (2.25x), not the step ratio
-      // (1.5x) applied to the last-drawn dimensions.
+      // No draw between events: the dimensions still reflect the initial zoom.
       repeat(2) {
         launch(start = CoroutineStart.UNDISPATCHED) { sut.zoom(factor = 1.5f, centroidX = 50f) }
       }
@@ -198,8 +190,7 @@ class VicoZoomStateTest {
       assertEquals(2.25f, sut.value)
       // Content is 10 * 100 * 2.25 = 2250 wide against 100 of viewport.
       assertEquals(2150f, scrollState.maxValue)
-      // Unclamped, so the anchor is preserved. A maximum computed from the step ratio would be
-      // 1400, clamping this to 1400 and mis-anchoring the content by 462.5px.
+      // Anchor: (800 + 50) * 2.25 - 50 = 1862.5.
       assertEquals(1862.5f, scrollState.value)
     }
 
@@ -210,8 +201,7 @@ class VicoZoomStateTest {
       val sut = createZoomState(scrollState)
       scrollState.scroll(Scroll.Absolute.pixels(50f))
 
-      // A fling left over from a previous pan. During a pinch the zoom detector consumes the
-      // pointer events, so no drag starts to stop it; the compensation must not be gated on it.
+      // Keep a scroll active throughout the zoom, as a leftover fling would be.
       val scrollJob =
         launch(start = CoroutineStart.UNDISPATCHED) {
           scrollState.scrollableState.scroll { suspendCancellableCoroutine<Unit> {} }
@@ -234,9 +224,7 @@ class VicoZoomStateTest {
     // In RTL the scroll value is negative, running from 0 at the content's start edge.
     assertEquals(-900f, scrollState.maxValue)
 
-    // The anchor is the bounds' left edge, which in RTL is 100px into the content from the start
-    // edge. Doubling the zoom moves that content point to 200px, so the viewport's start edge has
-    // to move to 100px into the content, i.e. a scroll value of -100.
+    // The anchor is 100px from the RTL start edge; doubling zoom requires -100px of scroll.
     sut.zoom(factor = 2f, centroidX = bounds.left)
 
     assertEquals(2f, sut.value)
@@ -249,8 +237,6 @@ class VicoZoomStateTest {
     val scrollState = createScrollState()
     val sut = createZoomState(scrollState)
 
-    // The bounds' right edge is the start edge in RTL, so the anchor sits on the content's start
-    // edge and there is nothing to compensate—mirroring a zoom at `bounds.left` in LTR.
     sut.zoom(factor = 2f, centroidX = bounds.right)
 
     assertEquals(2f, sut.value)
@@ -264,9 +250,7 @@ class VicoZoomStateTest {
     val sut = createZoomState(scrollState)
     scrollState.scroll(Scroll.Absolute.pixels(-300f))
 
-    // Start edge 300px into the content, anchor a further 50px in (bounds are 100 wide), so the
-    // anchored content point is at 350px and moves to 700px. Keeping it 50px from the start edge
-    // puts that edge at 650px.
+    // Anchor: (300 + 50) * 2 - 50 = 650px from the RTL start edge.
     sut.zoom(factor = 2f, centroidX = 50f)
 
     assertEquals(2f, sut.value)
@@ -288,8 +272,6 @@ class VicoZoomStateTest {
     sut.update(context, MutableCartesianLayerDimensions(xSpacing = 100f), bounds)
     assertEquals(1f, sut.value)
 
-    // Already at minZoom, so this is clamped back and nothing moves on screen. It must therefore
-    // not mark the state overridden, which would permanently suppress initialZoom.
     sut.zoom(factor = 0.5f, centroidX = 50f)
     assertEquals(1f, sut.value)
 
@@ -325,8 +307,7 @@ class VicoZoomStateTest {
   @Test
   fun `When the layer bounds are inset, then zoom and animateZoom anchor identically`() =
     runBlocking {
-      // A 400px canvas with a 60px start axis, so the layer bounds' center (230) differs from the
-      // canvas' (200).
+      // The layer center is 230px; the canvas center is 200px.
       bounds = Rect(60f, 0f, 400f, 100f)
 
       val zoomScrollState = createScrollState()
@@ -339,8 +320,7 @@ class VicoZoomStateTest {
 
       assertEquals(2f, zoomed.value)
       assertEquals(2f, animated.value)
-      // Anchored on the layer bounds' center: 230 - 60 = 170px into the content, doubling to 340,
-      // so the start edge moves to 170. Anchoring on the canvas' center would give 140.
+      // Layer-relative anchor: 230 - 60 = 170px; canvas-relative anchoring would give 140px.
       assertEquals(170f, zoomScrollState.value)
       assertEquals(animatedScrollState.value, zoomScrollState.value)
     }
@@ -353,7 +333,6 @@ class VicoZoomStateTest {
     val scrollBefore = scrollState.value
     val maxValueBefore = scrollState.maxValue
 
-    // As the host does when it leaves composition.
     scrollState.clearUpdated()
     sut.zoom(factor = 2f, centroidX = 50f)
 
