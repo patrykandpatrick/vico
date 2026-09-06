@@ -16,6 +16,7 @@
 
 package com.patrykandpatrick.vico.compose.cartesian.decoration
 
+import com.patrykandpatrick.vico.compose.cartesian.CartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.compose.cartesian.axis.Axis
 import com.patrykandpatrick.vico.compose.cartesian.axis.VerticalAxis
@@ -37,6 +38,7 @@ import com.patrykandpatrick.vico.compose.common.half
  * @property labelRotationDegrees the rotation of the label (in degrees).
  * @property verticalAxisPosition the position of the [VerticalAxis] whose scale the
  *   [HorizontalLine] should use when interpreting [y].
+ * @property drawingOrder where to draw the [HorizontalLine] relative to the [CartesianLayer]s.
  */
 public class HorizontalLine(
   private val y: (ExtraStore) -> Double,
@@ -47,8 +49,24 @@ public class HorizontalLine(
   private val verticalLabelPosition: Position.Vertical = Position.Vertical.Top,
   private val labelRotationDegrees: Float = 0f,
   private val verticalAxisPosition: Axis.Position.Vertical? = null,
+  public val drawingOrder: CartesianChart.DrawingOrder = CartesianChart.DrawingOrder.OverLayers,
 ) : Decoration {
+  override val hasContentOverAreaFills: Boolean
+    get() = drawingOrder == CartesianChart.DrawingOrder.OverAreaFills
+
+  override fun drawUnderLayers(context: CartesianDrawingContext) {
+    if (drawingOrder == CartesianChart.DrawingOrder.UnderLayers) drawInternal(context)
+  }
+
+  override fun drawOverAreaFills(context: CartesianDrawingContext) {
+    if (drawingOrder == CartesianChart.DrawingOrder.OverAreaFills) drawInternal(context)
+  }
+
   override fun drawOverLayers(context: CartesianDrawingContext) {
+    if (drawingOrder == CartesianChart.DrawingOrder.OverLayers) drawInternal(context)
+  }
+
+  private fun drawInternal(context: CartesianDrawingContext) {
     with(context) {
       val yRange = ranges.getYRange(verticalAxisPosition)
       val y = y(model.extraStore)
@@ -102,7 +120,8 @@ public class HorizontalLine(
         horizontalLabelPosition == other.horizontalLabelPosition &&
         verticalLabelPosition == other.verticalLabelPosition &&
         labelRotationDegrees == other.labelRotationDegrees &&
-        verticalAxisPosition == other.verticalAxisPosition
+        verticalAxisPosition == other.verticalAxisPosition &&
+        drawingOrder == other.drawingOrder
 
   override fun hashCode(): Int {
     var result = y.hashCode()
@@ -113,6 +132,7 @@ public class HorizontalLine(
     result = 31 * result + verticalLabelPosition.hashCode()
     result = 31 * result + labelRotationDegrees.hashCode()
     result = 31 * result + verticalAxisPosition.hashCode()
+    result = 31 * result + drawingOrder.hashCode()
     return result
   }
 }

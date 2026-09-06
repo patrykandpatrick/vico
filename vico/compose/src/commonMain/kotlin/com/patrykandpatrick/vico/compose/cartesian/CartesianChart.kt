@@ -437,7 +437,7 @@ internal constructor(
    * traversals and change nothing.
    */
   private fun hasContentOverAreaFills(context: CartesianDrawingContext): Boolean =
-    axisManager.hasContentOverAreaFills() &&
+    (axisManager.hasContentOverAreaFills() || decorations.any { it.hasContentOverAreaFills }) &&
       with(context) {
         separabilityConsumer.context = context
         separabilityConsumer.result = false
@@ -467,6 +467,9 @@ internal constructor(
               drawingConsumer.apply { startTraversal(CartesianLayer.DrawingPhase.AreaFills) }
             )
             axisManager.drawOverAreaFills(context)
+            decorations.forEach {
+              if (it.hasContentOverAreaFills) it.drawOverAreaFills(context)
+            }
             model.forEachWithLayer(
               drawingConsumer.apply { startTraversal(CartesianLayer.DrawingPhase.Content) }
             )
