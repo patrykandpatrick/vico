@@ -24,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.drawscope.CanvasDrawScope
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChart.PersistentMarkerScope
 import com.patrykandpatrick.vico.compose.cartesian.axis.Axis
 import com.patrykandpatrick.vico.compose.cartesian.axis.AxisManager
@@ -89,6 +90,7 @@ internal constructor(
   }
 
   private val layerMargins = CartesianLayerMargins()
+  private val layerDrawScope = CanvasDrawScope()
   private val axisManager = AxisManager()
   private val _markerTargets = mutableMapOf<Double, MutableList<CartesianMarker.Target>>()
 
@@ -380,8 +382,13 @@ internal constructor(
       decorations.forEach { it.drawUnderLayers(context) }
       axisManager.drawUnderLayers(context)
       val (layerBitmap, layerCanvas) = getBitmap(cacheKeyNamespace)
-      withCanvas(layerCanvas) {
-        model.forEachWithLayer(drawingConsumer.apply { this.context = context })
+      // The layer canvas needs a matching `DrawScope`: components that draw via
+      // `mutableDrawScope` (shadows) would otherwise paint onto the main canvas, which is
+      // composited under `layerBitmap`, detaching them from the components they belong to.
+      layerDrawScope.draw(density, layoutDirection, layerCanvas, canvasSize) {
+        withCanvas(layerCanvas, MutableDrawScope(this)) {
+          model.forEachWithLayer(drawingConsumer.apply { this.context = context })
+        }
       }
       val sortedMarkerTargetPairs = _markerTargets.toList().sortedBy { it.first }
       _markerTargets.clear()

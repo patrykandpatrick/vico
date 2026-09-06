@@ -75,12 +75,19 @@ internal fun CartesianDrawingContext(
 
     override val zoom: Float = zoom
 
-    override val mutableDrawScope: MutableDrawScope = mutableDrawScope
+    override var mutableDrawScope: MutableDrawScope = mutableDrawScope
 
-    override fun withCanvas(canvas: Canvas, block: () -> Unit) {
+    override fun withCanvas(
+      canvas: Canvas,
+      drawScope: MutableDrawScope,
+      block: () -> Unit,
+    ) {
       val originalCanvas = this.canvas
+      val originalDrawScope = this.mutableDrawScope
       this.canvas = canvas
+      this.mutableDrawScope = drawScope
       block()
       this.canvas = originalCanvas
+      this.mutableDrawScope = originalDrawScope
     }
   }

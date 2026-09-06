@@ -38,9 +38,19 @@ public interface DrawingContext : MeasuringContext {
 
   /**
    * Updates the value of [DrawingContext.canvas] to [canvas], runs [block], and restores the
-   * previous [DrawingContext.canvas] value.
+   * previous [DrawingContext.canvas] value. [DrawingContext.mutableDrawScope] is left as is, so if
+   * [block] draws components that use it—component shadows, for one—their output goes to the
+   * previous [Canvas]. Use the overload with a `drawScope` parameter in that case.
    */
-  public fun withCanvas(canvas: Canvas, block: () -> Unit)
+  public fun withCanvas(canvas: Canvas, block: () -> Unit): Unit =
+    withCanvas(canvas, mutableDrawScope, block)
+
+  /**
+   * Updates the values of [DrawingContext.canvas] and [DrawingContext.mutableDrawScope] to [canvas]
+   * and [drawScope], runs [block], and restores the previous values. [drawScope] must draw into
+   * [canvas].
+   */
+  public fun withCanvas(canvas: Canvas, drawScope: MutableDrawScope, block: () -> Unit)
 }
 
 private val saveLayerPaint = Paint()
