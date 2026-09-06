@@ -33,8 +33,47 @@ public interface CartesianLayer<M : CartesianLayerModel> : CartesianLayerMarginU
   /** Links _x_ values to [CartesianMarker.Target]s. */
   public val markerTargets: Map<Double, List<CartesianMarker.Target>>
 
-  /** Draws the [CartesianLayer]. */
-  public fun draw(context: CartesianDrawingContext, model: M)
+  /**
+   * Draws the parts of the [CartesianLayer] that belong to [phases]. Within one frame, each
+   * [DrawingPhase] is passed exactly once, in declaration order—either together in a single call,
+   * or one per call, so that the [CartesianChart] can draw other content in between.
+   *
+   * Implementations guard each phase independently:
+   * ```
+   * if (DrawingPhase.AreaFills in phases) { /* … */ }
+   * if (DrawingPhase.Content in phases) { /* … */ }
+   * ```
+   *
+   * [phases] can be ignored unless [canSeparateAreaFills] is overridden to return `true`, because a
+   * [CartesianLayer] that never separates its area fills is always passed every phase at once.
+   */
+  public fun draw(context: CartesianDrawingContext, model: M, phases: Set<DrawingPhase>)
+
+  /**
+   * Whether this [CartesianLayer] can draw [DrawingPhase.AreaFills] separately from
+   * [DrawingPhase.Content] for [model]. Return `false` when there’s nothing to separate—no area
+   * fills, or a configuration that keeps them next to the content they belong to—or when separating
+   * them would be incorrect, as during a difference animation, where the two phases would land in
+   * different opacity groups.
+   */
+  public fun canSeparateAreaFills(context: CartesianDrawingContext, model: M): Boolean = false
+
+  /** Denotes a part of a [CartesianLayer], for the purpose of drawing order. */
+  public enum class DrawingPhase {
+    /** Denotes the [CartesianLayer]’s area fills. */
+    AreaFills,
+    /**
+     * Denotes everything except for the [CartesianLayer]’s area fills—strokes, points, and data
+     * labels.
+     */
+    Content;
+
+    /** Houses [DrawingPhase] constants. */
+    public companion object {
+      /** Every [DrawingPhase]. */
+      public val All: Set<DrawingPhase> = entries.toSet()
+    }
+  }
 
   /** Updates [dimensions] to match this [CartesianLayer]’s dimensions. */
   public fun updateDimensions(

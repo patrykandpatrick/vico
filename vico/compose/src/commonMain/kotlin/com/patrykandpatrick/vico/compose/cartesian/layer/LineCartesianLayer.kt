@@ -58,6 +58,8 @@ import kotlin.math.*
  * @property verticalAxisPosition the position of the [VerticalAxis] with which the
  *   [LineCartesianLayer] should be associated. Use this for independent [CartesianLayer] scaling.
  * @property drawingModelInterpolator interpolates the [LineCartesianLayerDrawingModel]s.
+ * @property seriesDrawingOrder defines the order in which the series’ area fills and other content
+ *   are drawn.
  */
 @Stable
 public open class LineCartesianLayer
@@ -73,7 +75,26 @@ protected constructor(
     > =
     CartesianLayerDrawingModelInterpolator.line(),
   protected val drawingModelKey: ExtraStore.Key<LineCartesianLayerDrawingModel>,
+  public val seriesDrawingOrder: SeriesDrawingOrder = SeriesDrawingOrder.Sequential,
 ) : BaseCartesianLayer<LineCartesianLayerModel>() {
+  /**
+   * Defines the order in which a [LineCartesianLayer]’s series’ area fills and other content are
+   * drawn.
+   */
+  public enum class SeriesDrawingOrder {
+    /**
+     * Draws each series in full before the next one, so a series’ area fill can cover a preceding
+     * series’ stroke.
+     */
+    Sequential,
+    /**
+     * Draws every series’ area fill before any series’ stroke, points, and data labels, so no area
+     * fill covers a stroke. Required for a [CartesianChart.DrawingOrder.OverAreaFills] [Axis],
+     * [Decoration], or [CartesianMarker] to be drawn over this [LineCartesianLayer]’s area fills.
+     */
+    AreaFillsFirst,
+  }
+
   /**
    * Defines the appearance of a line in a line chart.
    *
@@ -139,10 +160,32 @@ protected constructor(
       fillCanvas: Canvas,
       verticalAxisPosition: Axis.Position.Vertical?,
     ) {
+      drawAreaFill(context, path, verticalAxisPosition)
+      drawStroke(context, path, lineCanvas, fillCanvas, verticalAxisPosition)
+    }
+
+    /** Draws the line’s area fill. */
+    public fun drawAreaFill(
+      context: CartesianDrawingContext,
+      path: Path,
+      verticalAxisPosition: Axis.Position.Vertical?,
+    ) {
+      with(context) {
+        areaFill?.draw(context, path, stroke.thickness.pixels.half, verticalAxisPosition)
+      }
+    }
+
+    /** Draws the line’s stroke. */
+    public fun drawStroke(
+      context: CartesianDrawingContext,
+      path: Path,
+      lineCanvas: Canvas,
+      fillCanvas: Canvas,
+      verticalAxisPosition: Axis.Position.Vertical?,
+    ) {
       with(context) {
         stroke.apply(this, linePaint)
         val halfThickness = stroke.thickness.pixels.half
-        areaFill?.draw(context, path, halfThickness, verticalAxisPosition)
         lineCanvas.drawPath(path, linePaint)
         withCanvas(fillCanvas) { fill.draw(context, halfThickness, verticalAxisPosition) }
       }
@@ -159,10 +202,19 @@ protected constructor(
       color: Color,
       verticalAxisPosition: Axis.Position.Vertical?,
     ) {
+      drawAreaFill(context, path, verticalAxisPosition)
+      drawStroke(context, path, color, verticalAxisPosition)
+    }
+
+    /** Draws the line’s stroke, using [color]. */
+    public fun drawStroke(
+      context: CartesianDrawingContext,
+      path: Path,
+      color: Color,
+      verticalAxisPosition: Axis.Position.Vertical?,
+    ) {
       with(context) {
         stroke.apply(this, linePaint)
-        val halfThickness = stroke.thickness.pixels.half
-        areaFill?.draw(context, path, halfThickness, verticalAxisPosition)
         linePaint.color = color
         canvas.drawPath(path, linePaint)
       }
@@ -519,6 +571,7 @@ protected constructor(
         LineCartesianLayerDrawingModel,
       > =
       CartesianLayerDrawingModelInterpolator.line(),
+    seriesDrawingOrder: SeriesDrawingOrder = SeriesDrawingOrder.Sequential,
   ) : this(
     lineProvider,
     pointSpacing,
@@ -526,11 +579,27 @@ protected constructor(
     verticalAxisPosition,
     drawingModelInterpolator,
     ExtraStore.Key(),
+    seriesDrawingOrder,
   )
 
-  override fun drawInternal(context: CartesianDrawingContext, model: LineCartesianLayerModel) {
+  override fun canSeparateAreaFills(
+    context: CartesianDrawingContext,
+    model: LineCartesianLayerModel,
+  ): Boolean =
+    seriesDrawingOrder == SeriesDrawingOrder.AreaFillsFirst &&
+      // Splitting the phases would put the area fills and the strokes in separate opacity groups,
+      // changing how they composite with each other. See `CartesianChart.DrawingOrder`.
+      (context.extraStore.getOrNull(drawingModelKey)?.opacity ?: 1f) == 1f
+
+  override fun drawInternal(
+    context: CartesianDrawingContext,
+    model: LineCartesianLayerModel,
+    phases: Set<CartesianLayer.DrawingPhase>,
+  ) {
     with(context) {
-      resetTempData()
+      val drawAreaFills = CartesianLayer.DrawingPhase.AreaFills in phases
+      val drawContent = CartesianLayer.DrawingPhase.Content in phases
+      if (drawContent) resetTempData()
 
       val drawingModel = extraStore.getOrNull(drawingModelKey)
       val sweepFraction = drawingModel?.sweepFraction ?: 1f
@@ -558,58 +627,105 @@ protected constructor(
       // inter-series bleed-through.
       saveLayer(opacity = drawingModel?.opacity ?: 1f)
 
-      model.series.forEachIndexed { seriesIndex, series ->
-        val seriesKey = model.seriesKeys[seriesIndex]
-        val pointInfoMap = drawingModel?.getOrNull(seriesIndex)
-
-        linePath.rewind()
-        val line = lineProvider.getLineOrThrow(seriesKey, seriesIndex, model.extraStore)
-
-        val drawingStartAlignmentCorrection =
-          layoutDirectionMultiplier * layerDimensions.startPadding
-
-        val drawingStart =
-          layerBounds.getStart(isLtr = isLtr) + drawingStartAlignmentCorrection - scroll
-
-        val points = mutableListOf<Offset>()
-        val visibleIndexRange =
-          collectPointsAndVisibleIndexRange(
-            interpolator = line.interpolator,
-            series = series,
-            drawingStart = drawingStart,
-            pointInfoMap = pointInfoMap,
-            drawFullLineLength = line.stroke is LineStroke.Dashed,
-            points = points,
-          )
-
-        if (points.isNotEmpty() && !visibleIndexRange.isEmpty()) {
-          connectPoints(line.interpolator, points, visibleIndexRange)
+      if (drawAreaFills && drawContent && seriesDrawingOrder == SeriesDrawingOrder.Sequential) {
+        forEachSeries(model, drawingModel) { seriesIndex, seriesKey, series, line, drawingStart ->
+          line.drawAreaFill(context, linePath, verticalAxisPosition)
+          drawContent(line, series, seriesKey, seriesIndex, drawingStart, drawingModel)
         }
-
-        line.fillColor?.let { color ->
-          line.draw(context, linePath, color, verticalAxisPosition)
-          forEachPointInBounds(series, drawingStart, pointInfoMap) { entry, x, y, _, _ ->
-            updateMarkerTargets(entry, seriesKey, x, y, color)
+      } else {
+        // The geometry is rebuilt for the second loop. That is the cost of separating the phases,
+        // and it is paid only when something is drawn between them or `AreaFillsFirst` is set.
+        if (drawAreaFills) {
+          forEachSeries(model, drawingModel) { _, _, _, line, _ ->
+            line.drawAreaFill(context, linePath, verticalAxisPosition)
           }
         }
-          ?: run {
-            val (lineBitmap, lineCanvas) = getBitmap(cacheKeyNamespace, seriesIndex, "line")
-            val (lineFillBitmap, lineFillCanvas) =
-              getBitmap(cacheKeyNamespace, seriesIndex, "lineFill")
-            line.draw(context, linePath, lineCanvas, lineFillCanvas, verticalAxisPosition)
-            lineCanvas.drawImage(lineFillBitmap, Offset.Zero, srcInPaint)
-            canvas.drawImage(lineBitmap, Offset.Zero, EmptyPaint)
-            forEachPointInBounds(series, drawingStart, pointInfoMap) { entry, x, y, _, _ ->
-              updateMarkerTargets(entry, seriesKey, x, y, lineFillBitmap)
-            }
+        if (drawContent) {
+          forEachSeries(model, drawingModel) { seriesIndex, seriesKey, series, line, drawingStart ->
+            drawContent(line, series, seriesKey, seriesIndex, drawingStart, drawingModel)
           }
-
-        drawPointsAndDataLabels(line, series, seriesKey, seriesIndex, drawingStart, pointInfoMap)
+        }
       }
 
       canvas.restore()
       if (isSweepInProgress) canvas.restore()
     }
+  }
+
+  /**
+   * Runs [block] for each of [model]’s series, having populated [linePath] with that series’ line.
+   */
+  private inline fun CartesianDrawingContext.forEachSeries(
+    model: LineCartesianLayerModel,
+    drawingModel: LineCartesianLayerDrawingModel?,
+    block:
+      (
+        seriesIndex: Int,
+        seriesKey: Any,
+        series: List<LineCartesianLayerModel.Entry>,
+        line: Line,
+        drawingStart: Float,
+      ) -> Unit,
+  ) {
+    model.series.forEachIndexed { seriesIndex, series ->
+      val seriesKey = model.seriesKeys[seriesIndex]
+      val pointInfoMap = drawingModel?.getOrNull(seriesIndex)
+
+      linePath.rewind()
+      val line = lineProvider.getLineOrThrow(seriesKey, seriesIndex, model.extraStore)
+
+      val drawingStartAlignmentCorrection = layoutDirectionMultiplier * layerDimensions.startPadding
+
+      val drawingStart =
+        layerBounds.getStart(isLtr = isLtr) + drawingStartAlignmentCorrection - scroll
+
+      val points = mutableListOf<Offset>()
+      val visibleIndexRange =
+        collectPointsAndVisibleIndexRange(
+          interpolator = line.interpolator,
+          series = series,
+          drawingStart = drawingStart,
+          pointInfoMap = pointInfoMap,
+          drawFullLineLength = line.stroke is LineStroke.Dashed,
+          points = points,
+        )
+
+      if (points.isNotEmpty() && !visibleIndexRange.isEmpty()) {
+        connectPoints(line.interpolator, points, visibleIndexRange)
+      }
+
+      block(seriesIndex, seriesKey, series, line, drawingStart)
+    }
+  }
+
+  /** Draws everything except for [line]’s area fill, and collects its [markerTargets]. */
+  private fun CartesianDrawingContext.drawContent(
+    line: Line,
+    series: List<LineCartesianLayerModel.Entry>,
+    seriesKey: Any,
+    seriesIndex: Int,
+    drawingStart: Float,
+    drawingModel: LineCartesianLayerDrawingModel?,
+  ) {
+    val pointInfoMap = drawingModel?.getOrNull(seriesIndex)
+    line.fillColor?.let { color ->
+      line.drawStroke(this, linePath, color, verticalAxisPosition)
+      forEachPointInBounds(series, drawingStart, pointInfoMap) { entry, x, y, _, _ ->
+        updateMarkerTargets(entry, seriesKey, x, y, color)
+      }
+    }
+      ?: run {
+        val (lineBitmap, lineCanvas) = getBitmap(cacheKeyNamespace, seriesIndex, "line")
+        val (lineFillBitmap, lineFillCanvas) = getBitmap(cacheKeyNamespace, seriesIndex, "lineFill")
+        line.drawStroke(this, linePath, lineCanvas, lineFillCanvas, verticalAxisPosition)
+        lineCanvas.drawImage(lineFillBitmap, Offset.Zero, srcInPaint)
+        canvas.drawImage(lineBitmap, Offset.Zero, EmptyPaint)
+        forEachPointInBounds(series, drawingStart, pointInfoMap) { entry, x, y, _, _ ->
+          updateMarkerTargets(entry, seriesKey, x, y, lineFillBitmap)
+        }
+      }
+
+    drawPointsAndDataLabels(line, series, seriesKey, seriesIndex, drawingStart, pointInfoMap)
   }
 
   protected open fun CartesianDrawingContext.updateMarkerTargets(
@@ -993,6 +1109,7 @@ protected constructor(
         LineCartesianLayerDrawingModel,
       > =
       this.drawingModelInterpolator,
+    seriesDrawingOrder: SeriesDrawingOrder = this.seriesDrawingOrder,
   ): LineCartesianLayer =
     LineCartesianLayer(
       lineProvider,
@@ -1001,6 +1118,7 @@ protected constructor(
       verticalAxisPosition,
       drawingModelInterpolator,
       drawingModelKey,
+      seriesDrawingOrder,
     )
 
   override fun equals(other: Any?): Boolean =
@@ -1010,7 +1128,8 @@ protected constructor(
         pointSpacing == other.pointSpacing &&
         rangeProvider == other.rangeProvider &&
         verticalAxisPosition == other.verticalAxisPosition &&
-        drawingModelInterpolator == other.drawingModelInterpolator
+        drawingModelInterpolator == other.drawingModelInterpolator &&
+        seriesDrawingOrder == other.seriesDrawingOrder
 
   override fun hashCode(): Int {
     var result = lineProvider.hashCode()
@@ -1018,6 +1137,7 @@ protected constructor(
     result = 31 * result + rangeProvider.hashCode()
     result = 31 * result + (verticalAxisPosition?.hashCode() ?: 0)
     result = 31 * result + drawingModelInterpolator.hashCode()
+    result = 31 * result + seriesDrawingOrder.hashCode()
     return result
   }
 
@@ -1077,6 +1197,8 @@ public fun rememberLineCartesianLayer(
     remember {
       CartesianLayerDrawingModelInterpolator.line()
     },
+  seriesDrawingOrder: LineCartesianLayer.SeriesDrawingOrder =
+    LineCartesianLayer.SeriesDrawingOrder.Sequential,
 ): LineCartesianLayer {
   var lineCartesianLayerWrapper by remember { ValueWrapper<LineCartesianLayer?>(null) }
   return remember(
@@ -1085,6 +1207,7 @@ public fun rememberLineCartesianLayer(
     rangeProvider,
     verticalAxisPosition,
     drawingModelInterpolator,
+    seriesDrawingOrder,
   ) {
     val lineCartesianLayer =
       lineCartesianLayerWrapper?.copy(
@@ -1093,6 +1216,7 @@ public fun rememberLineCartesianLayer(
         rangeProvider,
         verticalAxisPosition,
         drawingModelInterpolator,
+        seriesDrawingOrder,
       )
         ?: LineCartesianLayer(
           lineProvider,
@@ -1100,6 +1224,7 @@ public fun rememberLineCartesianLayer(
           rangeProvider,
           verticalAxisPosition,
           drawingModelInterpolator,
+          seriesDrawingOrder,
         )
     lineCartesianLayerWrapper = lineCartesianLayer
     lineCartesianLayer

@@ -25,9 +25,17 @@ import com.patrykandpatrick.vico.compose.common.inClip
 public abstract class BaseCartesianLayer<T : CartesianLayerModel> : CartesianLayer<T> {
   private val margins: CartesianLayerMargins = CartesianLayerMargins()
 
-  protected abstract fun drawInternal(context: CartesianDrawingContext, model: T)
+  protected abstract fun drawInternal(
+    context: CartesianDrawingContext,
+    model: T,
+    phases: Set<CartesianLayer.DrawingPhase>,
+  )
 
-  override fun draw(context: CartesianDrawingContext, model: T) {
+  final override fun draw(
+    context: CartesianDrawingContext,
+    model: T,
+    phases: Set<CartesianLayer.DrawingPhase>,
+  ) {
     with(context) {
       margins.clear()
       updateLayerMargins(this, margins, layerDimensions, model)
@@ -36,7 +44,7 @@ public abstract class BaseCartesianLayer<T : CartesianLayerModel> : CartesianLay
       val right = layerBounds.right + margins.getRight(isLtr)
       val bottom = layerBounds.bottom + margins.bottom
       mutableDrawScope.clipRect(left, top, right, bottom) {
-        canvas.inClip(left, top, right, bottom) { drawInternal(context, model) }
+        canvas.inClip(left, top, right, bottom) { drawInternal(context, model, phases) }
       }
     }
   }

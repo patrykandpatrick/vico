@@ -117,6 +117,7 @@ protected constructor(
   override fun drawInternal(
     context: CartesianDrawingContext,
     model: CandlestickCartesianLayerModel,
+    phases: Set<CartesianLayer.DrawingPhase>,
   ): Unit =
     with(context) {
       _markerTargets.clear()

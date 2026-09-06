@@ -121,7 +121,11 @@ protected constructor(
     ExtraStore.Key(),
   )
 
-  override fun drawInternal(context: CartesianDrawingContext, model: ColumnCartesianLayerModel) {
+  override fun drawInternal(
+    context: CartesianDrawingContext,
+    model: ColumnCartesianLayerModel,
+    phases: Set<CartesianLayer.DrawingPhase>,
+  ) {
     with(context) {
       _markerTargets.clear()
       drawChartInternal(model, ranges, extraStore.getOrNull(drawingModelKey))

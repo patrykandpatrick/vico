@@ -48,6 +48,10 @@ import kotlin.math.abs
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
+private val AreaFillsPhase = setOf(CartesianLayer.DrawingPhase.AreaFills)
+
+private val ContentPhase = setOf(CartesianLayer.DrawingPhase.Content)
+
 private fun getDefaultXStep(model: CartesianChartModel, minX: Double): Double {
   var gcd = model.getXDeltaGcd()
   if (model.models.isEmpty()) return gcd
@@ -99,11 +103,65 @@ internal constructor(
     object : ModelAndLayerConsumer {
       lateinit var context: CartesianDrawingContext
 
+      /**
+       * The [CartesianLayer.DrawingPhase] this traversal draws, or `null` to draw every phase in
+       * one pass.
+       */
+      private var phase: CartesianLayer.DrawingPhase? = null
+
+      private var pastFirstSeparableLayer = false
+
+      fun startTraversal(phase: CartesianLayer.DrawingPhase?) {
+        this.phase = phase
+        pastFirstSeparableLayer = false
+      }
+
       override fun <T : CartesianLayerModel> invoke(model: T?, layer: CartesianLayer<T>) {
-        layer.draw(context, model ?: return)
-        layer.markerTargets.forEach {
-          _markerTargets.getOrPut(it.key) { mutableListOf() } += it.value
+        val layerModel = model ?: return
+        val phases = phases(layerModel, layer) ?: return
+        layer.draw(context, layerModel, phases)
+        if (CartesianLayer.DrawingPhase.Content in phases) {
+          layer.markerTargets.forEach {
+            _markerTargets.getOrPut(it.key) { mutableListOf() } += it.value
+          }
         }
+      }
+
+      /**
+       * The phases [layer] draws during this traversal, or `null` if it draws nothing. A
+       * [CartesianLayer] that can’t separate its area fills is drawn in full, during whichever
+       * traversal keeps its position relative to the other [CartesianLayer]s—so the only content
+       * that the interruption moves is a separating [CartesianLayer]’s own area fills.
+       */
+      private fun <T : CartesianLayerModel> phases(
+        model: T,
+        layer: CartesianLayer<T>,
+      ): Set<CartesianLayer.DrawingPhase>? {
+        val phase = phase ?: return CartesianLayer.DrawingPhase.All
+        if (layer.canSeparateAreaFills(context, model)) {
+          pastFirstSeparableLayer = true
+          return when (phase) {
+            CartesianLayer.DrawingPhase.AreaFills -> AreaFillsPhase
+            CartesianLayer.DrawingPhase.Content -> ContentPhase
+          }
+        }
+        val drawsInFull =
+          if (pastFirstSeparableLayer) {
+            phase == CartesianLayer.DrawingPhase.Content
+          } else {
+            phase == CartesianLayer.DrawingPhase.AreaFills
+          }
+        return if (drawsInFull) CartesianLayer.DrawingPhase.All else null
+      }
+    }
+
+  private val separabilityConsumer =
+    object : ModelAndLayerConsumer {
+      lateinit var context: CartesianDrawingContext
+      var result: Boolean = false
+
+      override fun <T : CartesianLayerModel> invoke(model: T?, layer: CartesianLayer<T>) {
+        if (!result && model != null) result = layer.canSeparateAreaFills(context, model)
       }
     }
 
@@ -372,6 +430,21 @@ internal constructor(
     }
   }
 
+  /**
+   * Whether layer drawing should be interrupted so that content can be drawn over the
+   * [CartesianLayer]s’ area fills. Requires both a participant that draws there and a
+   * [CartesianLayer] that can separate its area fills—otherwise the interruption would cost two
+   * traversals and change nothing.
+   */
+  private fun hasContentOverAreaFills(context: CartesianDrawingContext): Boolean =
+    axisManager.hasContentOverAreaFills() &&
+      with(context) {
+        separabilityConsumer.context = context
+        separabilityConsumer.result = false
+        model.forEachWithLayer(separabilityConsumer)
+        separabilityConsumer.result
+      }
+
   private fun updatePersistentMarkers(extraStore: ExtraStore) {
     persistentMarkerMap.clear()
     persistentMarkers?.invoke(persistentMarkerScope, extraStore)
@@ -388,7 +461,18 @@ internal constructor(
       // composited under `layerBitmap`, detaching them from the components they belong to.
       layerDrawScope.draw(density, layoutDirection, layerCanvas, canvasSize) {
         withCanvas(layerCanvas, MutableDrawScope(this)) {
-          model.forEachWithLayer(drawingConsumer.apply { this.context = context })
+          drawingConsumer.context = context
+          if (hasContentOverAreaFills(context)) {
+            model.forEachWithLayer(
+              drawingConsumer.apply { startTraversal(CartesianLayer.DrawingPhase.AreaFills) }
+            )
+            axisManager.drawOverAreaFills(context)
+            model.forEachWithLayer(
+              drawingConsumer.apply { startTraversal(CartesianLayer.DrawingPhase.Content) }
+            )
+          } else {
+            model.forEachWithLayer(drawingConsumer.apply { startTraversal(null) })
+          }
         }
       }
       val sortedMarkerTargetPairs = _markerTargets.toList().sortedBy { it.first }
