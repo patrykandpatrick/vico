@@ -99,6 +99,15 @@ internal constructor(
   private val axisManager = AxisManager()
   private val _markerTargets = mutableMapOf<Double, MutableList<CartesianMarker.Target>>()
 
+  /**
+   * Whether each [CartesianLayer] separates its area fills this frame, in [layers] order, and the
+   * index of the first one that does, or −1. Recorded once per frame by [separabilityConsumer] so
+   * that the drawing traversals don’t have to ask again.
+   */
+  private val layerSeparability = mutableListOf<Boolean>()
+
+  private var firstSeparableLayerIndex = -1
+
   private val drawingConsumer =
     object : ModelAndLayerConsumer {
       lateinit var context: CartesianDrawingContext
@@ -109,16 +118,17 @@ internal constructor(
        */
       private var phase: CartesianLayer.DrawingPhase? = null
 
-      private var pastFirstSeparableLayer = false
+      private var index = 0
 
       fun startTraversal(phase: CartesianLayer.DrawingPhase?) {
         this.phase = phase
-        pastFirstSeparableLayer = false
+        index = 0
       }
 
       override fun <T : CartesianLayerModel> invoke(model: T?, layer: CartesianLayer<T>) {
+        val index = index++
         val layerModel = model ?: return
-        val phases = phases(layerModel, layer) ?: return
+        val phases = phases(index) ?: return
         layer.draw(context, layerModel, phases)
         if (CartesianLayer.DrawingPhase.Content in phases) {
           layer.markerTargets.forEach {
@@ -128,40 +138,40 @@ internal constructor(
       }
 
       /**
-       * The phases [layer] draws during this traversal, or `null` if it draws nothing. A
-       * [CartesianLayer] that can’t separate its area fills is drawn in full, during whichever
-       * traversal keeps its position relative to the other [CartesianLayer]s—so the only content
-       * that the interruption moves is a separating [CartesianLayer]’s own area fills.
+       * The phases the [CartesianLayer] at [index] draws during this traversal, or `null` if it
+       * draws nothing. A [CartesianLayer] that can’t separate its area fills is drawn in full,
+       * during whichever traversal keeps its position relative to the other [CartesianLayer]s—so
+       * the only content that the interruption moves is a separating [CartesianLayer]’s own area
+       * fills.
        */
-      private fun <T : CartesianLayerModel> phases(
-        model: T,
-        layer: CartesianLayer<T>,
-      ): Set<CartesianLayer.DrawingPhase>? {
+      private fun phases(index: Int): Set<CartesianLayer.DrawingPhase>? {
         val phase = phase ?: return CartesianLayer.DrawingPhase.All
-        if (layer.canSeparateAreaFills(context, model)) {
-          pastFirstSeparableLayer = true
+        if (layerSeparability.getOrElse(index) { false }) {
           return when (phase) {
             CartesianLayer.DrawingPhase.AreaFills -> AreaFillsPhase
             CartesianLayer.DrawingPhase.Content -> ContentPhase
           }
         }
-        val drawsInFull =
-          if (pastFirstSeparableLayer) {
-            phase == CartesianLayer.DrawingPhase.Content
+        val fullDrawPhase =
+          if (index > firstSeparableLayerIndex) {
+            CartesianLayer.DrawingPhase.Content
           } else {
-            phase == CartesianLayer.DrawingPhase.AreaFills
+            CartesianLayer.DrawingPhase.AreaFills
           }
-        return if (drawsInFull) CartesianLayer.DrawingPhase.All else null
+        return if (phase == fullDrawPhase) CartesianLayer.DrawingPhase.All else null
       }
     }
 
   private val separabilityConsumer =
     object : ModelAndLayerConsumer {
       lateinit var context: CartesianDrawingContext
-      var result: Boolean = false
 
       override fun <T : CartesianLayerModel> invoke(model: T?, layer: CartesianLayer<T>) {
-        if (!result && model != null) result = layer.canSeparateAreaFills(context, model)
+        val separatesAreaFills = model != null && layer.canSeparateAreaFills(context, model)
+        if (separatesAreaFills && firstSeparableLayerIndex < 0) {
+          firstSeparableLayerIndex = layerSeparability.size
+        }
+        layerSeparability += separatesAreaFills
       }
     }
 
@@ -433,17 +443,25 @@ internal constructor(
   /**
    * Whether layer drawing should be interrupted so that content can be drawn over the
    * [CartesianLayer]s’ area fills. Requires both a participant that draws there and a
-   * [CartesianLayer] that can separate its area fills—otherwise the interruption would cost two
-   * traversals and change nothing.
+   * [CartesianLayer] that can separate its area fills—otherwise there’s nothing to interrupt, and
+   * the participants draw at the [DrawingOrder.UnderLayers] position instead. Records
+   * [layerSeparability] and [firstSeparableLayerIndex] for the drawing traversals.
    */
-  private fun hasContentOverAreaFills(context: CartesianDrawingContext): Boolean =
-    (axisManager.hasContentOverAreaFills() || decorations.any { it.hasContentOverAreaFills }) &&
-      with(context) {
-        separabilityConsumer.context = context
-        separabilityConsumer.result = false
-        model.forEachWithLayer(separabilityConsumer)
-        separabilityConsumer.result
-      }
+  private fun hasContentOverAreaFills(context: CartesianDrawingContext): Boolean {
+    if (!axisManager.hasContentOverAreaFills() && decorations.none { it.hasContentOverAreaFills }) {
+      return false
+    }
+    layerSeparability.clear()
+    firstSeparableLayerIndex = -1
+    separabilityConsumer.context = context
+    context.model.forEachWithLayer(separabilityConsumer)
+    return firstSeparableLayerIndex >= 0
+  }
+
+  private fun drawOverAreaFills(context: CartesianDrawingContext) {
+    axisManager.drawOverAreaFills(context)
+    decorations.forEach { if (it.hasContentOverAreaFills) it.drawOverAreaFills(context) }
+  }
 
   private fun updatePersistentMarkers(extraStore: ExtraStore) {
     persistentMarkerMap.clear()
@@ -466,14 +484,14 @@ internal constructor(
             model.forEachWithLayer(
               drawingConsumer.apply { startTraversal(CartesianLayer.DrawingPhase.AreaFills) }
             )
-            axisManager.drawOverAreaFills(context)
-            decorations.forEach {
-              if (it.hasContentOverAreaFills) it.drawOverAreaFills(context)
-            }
+            drawOverAreaFills(context)
             model.forEachWithLayer(
               drawingConsumer.apply { startTraversal(CartesianLayer.DrawingPhase.Content) }
             )
           } else {
+            // Nothing to interrupt, so the `OverAreaFills` participants fall back to the
+            // `UnderLayers` position rather than not being drawn at all.
+            drawOverAreaFills(context)
             model.forEachWithLayer(drawingConsumer.apply { startTraversal(null) })
           }
         }
@@ -490,6 +508,10 @@ internal constructor(
         draw(context)
         canvas.restore()
       }
+      // Drawn outside the fading-edges group, for the axes and the decorations alike: the fade
+      // applies to the layers’ content, not to what’s drawn over them. `VerticalAxis` draws its
+      // labels here, and `HorizontalLabelPosition.Inside` puts them within `layerBounds`, where
+      // the fade would erase them.
       axisManager.drawOverLayers(context)
       decorations.forEach { it.drawOverLayers(context) }
       forEachPersistentMarker { marker, targets -> marker.drawOverLayers(context, targets) }
@@ -625,7 +647,7 @@ internal constructor(
     layer: CartesianLayer<T>,
     consumer: ModelAndLayerConsumer,
   ) {
-    val model = filterIsInstance<T>().firstOrNull()
+    @Suppress("UNCHECKED_CAST") val model = firstOrNull { it is T } as T?
     consumer(model, layer)
     if (model != null) remove(model)
   }
@@ -750,21 +772,28 @@ internal constructor(
   }
 
   /**
-   * Defines where content is drawn relative to the [CartesianLayer]s. Used by [Axis]es,
-   * [Decoration]s, and [CartesianMarker]s.
+   * Defines where content is drawn relative to the [CartesianLayer]s. Used by [Axis]es and
+   * [Decoration]s.
    *
    * [OverAreaFills] requires interrupting layer drawing, which is subject to the following rules.
-   * 1. An interruption never splits a [CartesianLayer]’s opacity group. While a difference
-   *    animation is in progress, [OverAreaFills] behaves like [UnderLayers]. (Inserting content
+   * 1. An interruption never splits a [CartesianLayer]’s opacity group, so it’s skipped while a
+   *    [CartesianLayer] is fading in—as one does when its model first appears. (Inserting content
    *    into an opacity group changes how the group’s own contents composite, and the opacity is the
-   *    [CartesianLayer]’s, so it can’t be hoisted.)
+   *    [CartesianLayer]’s, so it can’t be hoisted.) It’s likewise skipped when no [CartesianLayer]
+   *    can separate its area fills, since then there’s nothing to interrupt. In both cases the
+   *    content is drawn under the [CartesianLayer]s instead, though into the same offscreen
+   *    [Canvas] as their content rather than onto the [CartesianChart]’s own, so it’s over anything
+   *    a [CartesianMarker] draws under the layers.
    * 2. Content drawn at an interruption goes to the same [Canvas] and `DrawScope` as the
    *    [CartesianLayer]s’ content, so it composites with them rather than beneath them.
-   * 3. Content drawn at an interruption is clipped to [CartesianDrawingContext.layerBounds], as
-   *    [CartesianLayer] content is.
-   * 4. [CartesianLayer]s that have no area fills, or that can’t draw them separately, are drawn
-   *    entirely over such content. [CartesianLayer] order is otherwise preserved: the only content
-   *    that moves is a participating [CartesianLayer]’s own area fills.
+   * 3. Content drawn at an interruption isn’t clipped. A participant that draws beyond
+   *    [CartesianDrawingContext.layerBounds] does so—the axis line and the outward halves of the
+   *    ticks, for instance—and one that shouldn’t clips itself.
+   * 4. [CartesianLayer] order is preserved: the only content that moves is a participating
+   *    [CartesianLayer]’s own area fills, which are drawn under the content at the interruption. A
+   *    [CartesianLayer] that has no area fills, or that can’t draw them separately, is drawn in
+   *    full, on whichever side of the interruption keeps its position relative to the other
+   *    [CartesianLayer]s.
    */
   public enum class DrawingOrder {
     /** Draws the content under the [CartesianLayer]s. */

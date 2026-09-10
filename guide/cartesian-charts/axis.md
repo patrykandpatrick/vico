@@ -31,9 +31,9 @@ Numerous customization options are available; you can change the appearance of t
 * [`OverAreaFills`][over-area-fills] draws the content over the layers’ area fills and under the rest of their content—strokes, points, and data labels.
 * [`OverLayers`][over-layers] draws the content over the layers.
 
-An axis has two independent positions: `lineDrawingOrder`, for the ticks and the axis line, and `guidelineDrawingOrder`, for the guidelines. [`Decoration`][decoration] instances take the same positions via `drawingOrder`.
+An axis has two independent positions: `lineDrawingOrder`, for the ticks and the axis line, and `guidelineDrawingOrder`, for the guidelines. [`BaseDecoration`][base-decoration] subclasses, including [`HorizontalLine`][horizontal-line] and [`HorizontalBox`][horizontal-box], take the same positions via `drawingOrder`.
 
-[`OverAreaFills`][over-area-fills] addresses the case where a [`LineCartesianLayer`][line-cartesian-layer] instance with an [`AreaFill`][area-fill] would otherwise hide the guidelines. It requires the layer to draw its area fills separately, which [`LineCartesianLayer.SeriesDrawingOrder.AreaFillsFirst`][area-fills-first] enables:
+[`OverAreaFills`][over-area-fills] addresses the case where a [`LineCartesianLayer`][line-cartesian-layer] instance with an [`AreaFill`][area-fill] instance would otherwise hide the guidelines. It requires the layer to draw its area fills separately, which [`LineCartesianLayer.SeriesDrawingOrder.AreaFillsFirst`][area-fills-first] enables:
 
 ```kt
 rememberCartesianChart(
@@ -49,7 +49,7 @@ rememberCartesianChart(
 )
 ```
 
-[`AreaFillsFirst`][area-fills-first] is useful on its own too: it draws every series’ area fill before any series’ stroke, so no area fill covers a stroke. Layers that don’t draw their area fills separately—a [`ColumnCartesianLayer`][column-cartesian-layer] instance, which has none—are drawn entirely over content at this position, and keep their position relative to the other layers.
+[`AreaFillsFirst`][area-fills-first] is useful on its own too: it draws every series’ area fill before any series’ stroke, so no area fill covers a stroke. Layer order is preserved: the only content that moves is a participating layer’s own area fills, which are drawn under the content at this position. A layer that doesn’t draw its area fills separately—a [`ColumnCartesianLayer`][column-cartesian-layer] instance, which has none—is drawn in full, keeping its position relative to the other layers. If no layer draws its area fills separately, the content is drawn under the layers instead—as it is while a layer fades in, since interrupting a layer that isn’t fully opaque would change how its own content composites.
 
 ## Titles
 
@@ -86,7 +86,9 @@ By default, `HorizontalAxis.ItemPlacer.aligned` reserves horizontal margins so t
 [under-layers]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-cartesian-chart/-drawing-order/-under-layers/
 [over-area-fills]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-cartesian-chart/-drawing-order/-over-area-fills/
 [over-layers]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-cartesian-chart/-drawing-order/-over-layers/
-[decoration]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.decoration/-decoration/
+[base-decoration]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.decoration/-base-decoration/
+[horizontal-line]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.decoration/-horizontal-line/
+[horizontal-box]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.decoration/-horizontal-box/
 [line-cartesian-layer]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.layer/-line-cartesian-layer/
 [area-fill]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.layer/-line-cartesian-layer/-area-fill/
 [area-fills-first]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.layer/-line-cartesian-layer/-series-drawing-order/-area-fills-first/

@@ -44,8 +44,9 @@ public interface CartesianLayer<M : CartesianLayerModel> : CartesianLayerMarginU
    * if (DrawingPhase.Content in phases) { /* … */ }
    * ```
    *
-   * [phases] can be ignored unless [canSeparateAreaFills] is overridden to return `true`, because a
-   * [CartesianLayer] that never separates its area fills is always passed every phase at once.
+   * [phases] can be ignored unless this [CartesianLayer] reports that it separates its area fills,
+   * because one that never does is always passed every phase at once. [BaseCartesianLayer]
+   * subclasses report it by overriding `separatesAreaFills`.
    */
   public fun draw(context: CartesianDrawingContext, model: M, phases: Set<DrawingPhase>)
 
@@ -53,11 +54,12 @@ public interface CartesianLayer<M : CartesianLayerModel> : CartesianLayerMarginU
    * Whether this [CartesianLayer] can draw [DrawingPhase.AreaFills] separately from
    * [DrawingPhase.Content] for [model]. Return `false` when there’s nothing to separate—no area
    * fills, or a configuration that keeps them next to the content they belong to—or when separating
-   * them would be incorrect, as during a difference animation, where the two phases would land in
-   * different opacity groups.
+   * them would be incorrect, as while this [CartesianLayer] fades in, where the two phases would
+   * land in different opacity groups.
    *
-   * Queried more than once per frame, so it should be cheap, and it must return the same value
-   * throughout a frame.
+   * Queried once per [CartesianLayer] per frame, and not at all unless an [Axis] or a [Decoration]
+   * is set to [CartesianChart.DrawingOrder.OverAreaFills]. [BaseCartesianLayer] implements this in
+   * terms of `separatesAreaFills` and `opacity`; override those instead.
    */
   public fun canSeparateAreaFills(context: CartesianDrawingContext, model: M): Boolean = false
 

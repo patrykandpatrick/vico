@@ -98,13 +98,6 @@ protected constructor(
 
   private val clipPath = Path()
 
-  /**
-   * The guideline positions computed by [drawUnderLayers], which the [CartesianChart] always runs
-   * before the other drawing hooks. Reused by them so that the [ItemPlacer] queries and label
-   * measurements behind these values happen once per frame.
-   */
-  private val guidelinePlacement = GuidelinePlacement()
-
   internal constructor(
     position: P,
     line: LineComponent?,
@@ -261,23 +254,27 @@ protected constructor(
         titleComponent?.drawTitle(this, titleText, lineLeft, lineRight)
       }
 
-      guidelinePlacement.baseCanvasX = baseCanvasX
-      guidelinePlacement.fullXRange = fullXRange
-      guidelinePlacement.labelValues = labelValues
-      guidelinePlacement.lineValues = lineValues
-      if (guidelineDrawingOrder == DrawingOrder.UnderLayers) drawGuidelines(context)
+      if (guidelineDrawingOrder == DrawingOrder.UnderLayers) {
+        drawGuidelines(context, baseCanvasX, fullXRange, labelValues, lineValues)
+      }
     }
   }
 
   private fun drawGuidelines(context: CartesianDrawingContext) {
-    val placement = guidelinePlacement
-    drawGuidelines(
-      context,
-      placement.baseCanvasX,
-      placement.fullXRange,
-      placement.labelValues,
-      placement.lineValues,
-    )
+    with(context) {
+      val fullXRange = internalGetFullXRange(layerDimensions)
+      val maxLabelWidth = getMaxLabelWidth(layerDimensions, fullXRange)
+      val baseCanvasX =
+        bounds.getStart(isLtr) - scroll + layerDimensions.startPadding * layoutDirectionMultiplier
+      val visibleXRange = getVisibleXRange()
+      drawGuidelines(
+        context,
+        baseCanvasX,
+        fullXRange,
+        itemPlacer.getLabelValues(this, visibleXRange, fullXRange, maxLabelWidth),
+        itemPlacer.getLineValues(this, visibleXRange, fullXRange, maxLabelWidth),
+      )
+    }
   }
 
   private fun TextComponent.drawTitle(
@@ -989,13 +986,6 @@ protected constructor(
       public fun extremes(shiftExtremeLines: Boolean = true): ItemPlacer =
         ExtremesHorizontalAxisItemPlacer(shiftExtremeLines)
     }
-  }
-
-  private class GuidelinePlacement {
-    var baseCanvasX: Float = 0f
-    var fullXRange: ClosedFloatingPointRange<Double> = 0.0..0.0
-    var labelValues: List<Double> = emptyList()
-    var lineValues: List<Double>? = null
   }
 
   /** Houses [HorizontalAxis] factory functions. */

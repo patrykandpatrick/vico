@@ -20,6 +20,7 @@ import com.patrykandpatrick.vico.compose.cartesian.CartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.compose.cartesian.axis.Axis
 import com.patrykandpatrick.vico.compose.cartesian.axis.VerticalAxis
+import com.patrykandpatrick.vico.compose.cartesian.layer.CartesianLayer
 import com.patrykandpatrick.vico.compose.common.*
 import com.patrykandpatrick.vico.compose.common.component.ShapeComponent
 import com.patrykandpatrick.vico.compose.common.component.TextComponent
@@ -38,7 +39,8 @@ import com.patrykandpatrick.vico.compose.common.half
  * @property labelRotationDegrees the rotation of the label (in degrees).
  * @property verticalAxisPosition the position of the [VerticalAxis] whose scale the [HorizontalBox]
  *   should use when interpreting [y].
- * @property drawingOrder where to draw the [HorizontalBox] relative to the [CartesianLayer]s.
+ * @property drawingOrder where to draw the [HorizontalBox] relative to the [CartesianLayer]s. See
+ *   [BaseDecoration].
  */
 public class HorizontalBox(
   private val y: (ExtraStore) -> ClosedFloatingPointRange<Double>,
@@ -49,24 +51,9 @@ public class HorizontalBox(
   private val verticalLabelPosition: Position.Vertical = Position.Vertical.Top,
   private val labelRotationDegrees: Float = 0f,
   private val verticalAxisPosition: Axis.Position.Vertical? = null,
-  public val drawingOrder: CartesianChart.DrawingOrder = CartesianChart.DrawingOrder.OverLayers,
-) : Decoration {
-  override val hasContentOverAreaFills: Boolean
-    get() = drawingOrder == CartesianChart.DrawingOrder.OverAreaFills
-
-  override fun drawUnderLayers(context: CartesianDrawingContext) {
-    if (drawingOrder == CartesianChart.DrawingOrder.UnderLayers) drawInternal(context)
-  }
-
-  override fun drawOverAreaFills(context: CartesianDrawingContext) {
-    if (drawingOrder == CartesianChart.DrawingOrder.OverAreaFills) drawInternal(context)
-  }
-
-  override fun drawOverLayers(context: CartesianDrawingContext) {
-    if (drawingOrder == CartesianChart.DrawingOrder.OverLayers) drawInternal(context)
-  }
-
-  private fun drawInternal(context: CartesianDrawingContext) {
+  drawingOrder: CartesianChart.DrawingOrder = CartesianChart.DrawingOrder.OverLayers,
+) : BaseDecoration(drawingOrder) {
+  override fun draw(context: CartesianDrawingContext) {
     with(context) {
       val yRange = ranges.getYRange(verticalAxisPosition)
       val y = y(model.extraStore)

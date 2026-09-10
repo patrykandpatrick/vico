@@ -65,13 +65,24 @@ class DrawingOrderTest {
       guidelineDrawingOrder,
     )
 
-  private fun lineLayer(seriesDrawingOrder: LineCartesianLayer.SeriesDrawingOrder) =
+  private fun lineLayer(
+    seriesDrawingOrder: LineCartesianLayer.SeriesDrawingOrder,
+    areaFill: LineCartesianLayer.AreaFill? = LineCartesianLayer.AreaFill.single(Fill.Black),
+  ) =
     LineCartesianLayer(
       lineProvider =
         LineCartesianLayer.LineProvider.series(
-          LineCartesianLayer.Line(LineCartesianLayer.LineFill.single(Fill.Black))
+          LineCartesianLayer.Line(
+            fill = LineCartesianLayer.LineFill.single(Fill.Black),
+            areaFill = areaFill,
+          )
         ),
       seriesDrawingOrder = seriesDrawingOrder,
+    )
+
+  private fun lineModel() =
+    LineCartesianLayerModel(
+      listOf(listOf(LineCartesianLayerModel.Entry(0, 0), LineCartesianLayerModel.Entry(1, 1)))
     )
 
   private fun drawingContext(extraStore: ExtraStore = MutableExtraStore()) =
@@ -125,24 +136,28 @@ class DrawingOrderTest {
   fun `Given a Sequential LineCartesianLayer, when it is asked, then it declines to separate its area fills`() {
     val layer = lineLayer(LineCartesianLayer.SeriesDrawingOrder.Sequential)
 
-    assertFalse(layer.canSeparateAreaFills(drawingContext(), mockk()))
+    assertFalse(layer.canSeparateAreaFills(drawingContext(), lineModel()))
   }
 
   @Test
   fun `Given an AreaFillsFirst LineCartesianLayer, when it is asked, then it separates its area fills`() {
     val layer = lineLayer(LineCartesianLayer.SeriesDrawingOrder.AreaFillsFirst)
 
-    assertTrue(layer.canSeparateAreaFills(drawingContext(), mockk()))
+    assertTrue(layer.canSeparateAreaFills(drawingContext(), lineModel()))
+  }
+
+  @Test
+  fun `Given an AreaFillsFirst LineCartesianLayer with no area fill, when it is asked, then it declines to separate its area fills`() {
+    val layer = lineLayer(LineCartesianLayer.SeriesDrawingOrder.AreaFillsFirst, areaFill = null)
+
+    assertFalse(layer.canSeparateAreaFills(drawingContext(), lineModel()))
   }
 
   @Test
   fun `Given a difference animation is in progress, when an AreaFillsFirst LineCartesianLayer is asked, then it declines to separate its area fills`() =
     runBlocking {
       val layer = lineLayer(LineCartesianLayer.SeriesDrawingOrder.AreaFillsFirst)
-      val model =
-        LineCartesianLayerModel(
-          listOf(listOf(LineCartesianLayerModel.Entry(0, 0), LineCartesianLayerModel.Entry(1, 1)))
-        )
+      val model = lineModel()
       val ranges = MutableCartesianChartRanges()
       CartesianChart(layer).updateRanges(ranges, CartesianChartModel(model))
       val extraStore = MutableExtraStore()

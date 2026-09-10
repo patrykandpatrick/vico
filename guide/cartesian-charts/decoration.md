@@ -9,7 +9,7 @@ metaLinks:
 
 A decoration, represented by [`Decoration`][decoration], adds an additional layer of data to a chart. There are two built-in implementations—[`HorizontalLine`][horizontal-line] and [`HorizontalBox`][horizontal-box]—and you can add your own.
 
-[`CartesianChart.DrawingOrder`][cartesian-chart-drawing-order], described under [Axis][axis-drawing-order], also applies to decorations, via `drawingOrder`. A decoration is drawn over the chart layers by default.
+[`CartesianChart.DrawingOrder`][cartesian-chart-drawing-order], described under [Axis][axis-drawing-order], also applies to decorations. [`BaseDecoration`][base-decoration], which the built-in implementations extend, takes a position via `drawingOrder` and draws itself over the chart layers by default. A [`Decoration`][decoration] implementation of your own positions itself by overriding the drawing functions it needs.
 
 For an example, see the [“AI test scores”][ai-test-scores] sample chart.
 
@@ -18,6 +18,7 @@ For an example, see the [“AI test scores”][ai-test-scores] sample chart.
 [decoration]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.decoration/-decoration/
 [horizontal-line]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.decoration/-horizontal-line/
 [horizontal-box]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.decoration/-horizontal-box/
-[ai-test-scores]: https://github.com/patrykandpatrick/vico/blob/stable/sample/shared/src/commonMain/kotlin/com/patrykandpatrick/vico/sample/charts/AITestScores.kt
 [cartesian-chart-drawing-order]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-cartesian-chart/-drawing-order/
 [axis-drawing-order]: axis.md#drawing-order
+[base-decoration]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.decoration/-base-decoration/
+[ai-test-scores]: https://github.com/patrykandpatrick/vico/blob/stable/sample/shared/src/commonMain/kotlin/com/patrykandpatrick/vico/sample/charts/AITestScores.kt

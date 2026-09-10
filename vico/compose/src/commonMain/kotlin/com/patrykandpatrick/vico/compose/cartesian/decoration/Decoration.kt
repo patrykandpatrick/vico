@@ -40,8 +40,9 @@ public interface Decoration {
 
   /**
    * Whether [drawOverAreaFills] draws anything for this [Decoration]’s current configuration.
-   * Returning `true` makes the [CartesianChart] interrupt layer drawing, so return `false` when
-   * there’s nothing to draw.
+   * Returning `true` lets the [CartesianChart] interrupt layer drawing—it does so only if a
+   * [CartesianLayer] can also separate its area fills—so return `false` when there’s nothing to
+   * draw.
    */
   public val hasContentOverAreaFills: Boolean
     get() = false

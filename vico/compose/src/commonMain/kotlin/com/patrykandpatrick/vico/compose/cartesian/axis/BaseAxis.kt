@@ -64,7 +64,7 @@ public abstract class BaseAxis<P : Axis.Position>(
   public val guidelineDrawingOrder: CartesianChart.DrawingOrder =
     CartesianChart.DrawingOrder.UnderLayers,
 ) : Axis<P> {
-  final override val hasContentOverAreaFills: Boolean
+  override val hasContentOverAreaFills: Boolean
     get() =
       (guideline != null && guidelineDrawingOrder == CartesianChart.DrawingOrder.OverAreaFills) ||
         ((line != null || tick != null) &&

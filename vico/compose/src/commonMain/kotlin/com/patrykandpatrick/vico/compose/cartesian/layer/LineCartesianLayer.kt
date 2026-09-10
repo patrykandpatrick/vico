@@ -25,12 +25,14 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.patrykandpatrick.vico.compose.cartesian.CartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.compose.cartesian.CartesianMeasuringContext
 import com.patrykandpatrick.vico.compose.cartesian.ColorScale
 import com.patrykandpatrick.vico.compose.cartesian.axis.Axis
 import com.patrykandpatrick.vico.compose.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.compose.cartesian.data.*
+import com.patrykandpatrick.vico.compose.cartesian.decoration.Decoration
 import com.patrykandpatrick.vico.compose.cartesian.getVisibleXRange
 import com.patrykandpatrick.vico.compose.cartesian.layer.LineCartesianLayer.Line
 import com.patrykandpatrick.vico.compose.cartesian.layer.LineCartesianLayer.PointConnector
@@ -89,8 +91,8 @@ protected constructor(
     Sequential,
     /**
      * Draws every series’ area fill before any series’ stroke, points, and data labels, so no area
-     * fill covers a stroke. Required for a [CartesianChart.DrawingOrder.OverAreaFills] [Axis],
-     * [Decoration], or [CartesianMarker] to be drawn over this [LineCartesianLayer]’s area fills.
+     * fill covers a stroke. Required for a [CartesianChart.DrawingOrder.OverAreaFills] [Axis] or
+     * [Decoration] to be drawn over this [LineCartesianLayer]’s area fills.
      */
     AreaFillsFirst,
   }
@@ -194,6 +196,9 @@ protected constructor(
     /** The [LineFill]’s solid [Color], or `null` if the [LineFill] has no single solid [Color]. */
     public val fillColor: Color?
       get() = (fill as? SingleLineFill)?.takeIf { it.fill.brush == null }?.fill?.color
+
+    internal val hasAreaFill: Boolean
+      get() = areaFill != null
 
     /** Draws the line. */
     public fun draw(
@@ -582,14 +587,19 @@ protected constructor(
     seriesDrawingOrder,
   )
 
-  override fun canSeparateAreaFills(
+  override fun separatesAreaFills(
     context: CartesianDrawingContext,
     model: LineCartesianLayerModel,
   ): Boolean =
     seriesDrawingOrder == SeriesDrawingOrder.AreaFillsFirst &&
-      // Splitting the phases would put the area fills and the strokes in separate opacity groups,
-      // changing how they composite with each other. See `CartesianChart.DrawingOrder`.
-      (context.extraStore.getOrNull(drawingModelKey)?.opacity ?: 1f) == 1f
+      model.series.indices.any {
+        lineProvider.getLineOrThrow(model.seriesKeys[it], it, model.extraStore).hasAreaFill
+      }
+
+  override fun opacity(
+    context: CartesianDrawingContext,
+    model: LineCartesianLayerModel,
+  ): Float = context.extraStore.getOrNull(drawingModelKey)?.opacity ?: 1f
 
   override fun drawInternal(
     context: CartesianDrawingContext,
@@ -628,21 +638,33 @@ protected constructor(
       saveLayer(opacity = drawingModel?.opacity ?: 1f)
 
       if (drawAreaFills && drawContent && seriesDrawingOrder == SeriesDrawingOrder.Sequential) {
-        forEachSeries(model, drawingModel) { seriesIndex, seriesKey, series, line, drawingStart ->
+        forEachSeries(model, drawingModel) {
+          seriesIndex,
+          seriesKey,
+          series,
+          line,
+          drawingStart,
+          pointInfoMap ->
           line.drawAreaFill(context, linePath, verticalAxisPosition)
-          drawContent(line, series, seriesKey, seriesIndex, drawingStart, drawingModel)
+          drawContent(line, series, seriesKey, seriesIndex, drawingStart, pointInfoMap)
         }
       } else {
         // The geometry is rebuilt for the second loop. That is the cost of separating the phases,
         // and it is paid only when something is drawn between them or `AreaFillsFirst` is set.
         if (drawAreaFills) {
-          forEachSeries(model, drawingModel) { _, _, _, line, _ ->
+          forEachSeries(model, drawingModel) { _, _, _, line, _, _ ->
             line.drawAreaFill(context, linePath, verticalAxisPosition)
           }
         }
         if (drawContent) {
-          forEachSeries(model, drawingModel) { seriesIndex, seriesKey, series, line, drawingStart ->
-            drawContent(line, series, seriesKey, seriesIndex, drawingStart, drawingModel)
+          forEachSeries(model, drawingModel) {
+            seriesIndex,
+            seriesKey,
+            series,
+            line,
+            drawingStart,
+            pointInfoMap ->
+            drawContent(line, series, seriesKey, seriesIndex, drawingStart, pointInfoMap)
           }
         }
       }
@@ -665,6 +687,7 @@ protected constructor(
         series: List<LineCartesianLayerModel.Entry>,
         line: Line,
         drawingStart: Float,
+        pointInfoMap: Map<Double, LineCartesianLayerDrawingModel.Entry>?,
       ) -> Unit,
   ) {
     model.series.forEachIndexed { seriesIndex, series ->
@@ -694,7 +717,7 @@ protected constructor(
         connectPoints(line.interpolator, points, visibleIndexRange)
       }
 
-      block(seriesIndex, seriesKey, series, line, drawingStart)
+      block(seriesIndex, seriesKey, series, line, drawingStart, pointInfoMap)
     }
   }
 
@@ -705,9 +728,8 @@ protected constructor(
     seriesKey: Any,
     seriesIndex: Int,
     drawingStart: Float,
-    drawingModel: LineCartesianLayerDrawingModel?,
+    pointInfoMap: Map<Double, LineCartesianLayerDrawingModel.Entry>?,
   ) {
-    val pointInfoMap = drawingModel?.getOrNull(seriesIndex)
     line.fillColor?.let { color ->
       line.drawStroke(this, linePath, color, verticalAxisPosition)
       forEachPointInBounds(series, drawingStart, pointInfoMap) { entry, x, y, _, _ ->

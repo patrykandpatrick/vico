@@ -31,6 +31,26 @@ public abstract class BaseCartesianLayer<T : CartesianLayerModel> : CartesianLay
     phases: Set<CartesianLayer.DrawingPhase>,
   )
 
+  /**
+   * Whether this [CartesianLayer] has area fills that it can draw separately from the rest of its
+   * content for [model]. This is the hook to override—[canSeparateAreaFills] is `final` and
+   * combines this with [opacity], so an implementation needn’t account for fade-ins itself.
+   */
+  protected open fun separatesAreaFills(context: CartesianDrawingContext, model: T): Boolean = false
+
+  /**
+   * The opacity this [CartesianLayer] draws itself with for [model]. Override this alongside
+   * [separatesAreaFills] whenever this [CartesianLayer] composites itself at anything other than
+   * full opacity—typically while it fades in, as it does when its model first appears—so that
+   * [canSeparateAreaFills] can keep an interruption out of the resulting opacity group.
+   */
+  protected open fun opacity(context: CartesianDrawingContext, model: T): Float = 1f
+
+  final override fun canSeparateAreaFills(context: CartesianDrawingContext, model: T): Boolean =
+    // An interruption must not split the layer's opacity group, which is what separating the
+    // phases would do while `opacity` is below 1. See `CartesianChart.DrawingOrder`.
+    separatesAreaFills(context, model) && opacity(context, model) == 1f
+
   final override fun draw(
     context: CartesianDrawingContext,
     model: T,
