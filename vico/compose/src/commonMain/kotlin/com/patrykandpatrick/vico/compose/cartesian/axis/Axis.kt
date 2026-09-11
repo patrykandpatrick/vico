@@ -18,6 +18,7 @@ package com.patrykandpatrick.vico.compose.cartesian.axis
 
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.Canvas
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.compose.cartesian.CartesianMeasuringContext
@@ -58,7 +59,17 @@ public interface Axis<P : Axis.Position> :
   public val hasContentOverAreaFills: Boolean
     get() = false
 
-  /** Draws content over the [CartesianLayer]s. */
+  /**
+   * Draws content over the [CartesianLayer]s, into the same offscreen [Canvas] as their content, so
+   * that it’s composited with them—clipped and faded as they are. Plot-area content belongs here;
+   * axis chrome, which shouldn’t fade with the data, belongs in [drawOverLayers].
+   */
+  public fun drawOverLayerContent(
+    context: CartesianDrawingContext,
+    axisDimensions: Map<Position, AxisDimensions>,
+  ) {}
+
+  /** Draws content over the [CartesianLayer]s, and over anything composited with them. */
   public fun drawOverLayers(
     context: CartesianDrawingContext,
     axisDimensions: Map<Position, AxisDimensions>,

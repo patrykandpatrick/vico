@@ -29,6 +29,8 @@ import androidx.compose.ui.graphics.drawscope.CanvasDrawScope
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChart.PersistentMarkerScope
 import com.patrykandpatrick.vico.compose.cartesian.axis.Axis
 import com.patrykandpatrick.vico.compose.cartesian.axis.AxisManager
+import com.patrykandpatrick.vico.compose.cartesian.axis.HorizontalAxis
+import com.patrykandpatrick.vico.compose.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartRanges
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianLayerModel
@@ -494,6 +496,9 @@ internal constructor(
             drawOverAreaFills(context)
             model.forEachWithLayer(drawingConsumer.apply { startTraversal(null) })
           }
+          // `OverLayers` guidelines go into the layer bitmap, over every layer’s content, so
+          // they’re composited with the plot—clipped and faded along with it.
+          axisManager.drawOverLayerContent(context)
         }
       }
       val sortedMarkerTargetPairs = _markerTargets.toList().sortedBy { it.first }
@@ -508,10 +513,10 @@ internal constructor(
         draw(context)
         canvas.restore()
       }
-      // Drawn outside the fading-edges group, for the axes and the decorations alike: the fade
-      // applies to the layers’ content, not to what’s drawn over them. `VerticalAxis` draws its
-      // labels here, and `HorizontalLabelPosition.Inside` puts them within `layerBounds`, where
-      // the fade would erase them.
+      // Drawn outside the fading-edges group, so axis chrome doesn’t fade with the data:
+      // `VerticalAxis` draws its labels here, and `HorizontalLabelPosition.Inside` puts them
+      // within `layerBounds`, where the fade would otherwise erase them. Decorations follow,
+      // uncomposited with the layers for the same reason.
       axisManager.drawOverLayers(context)
       decorations.forEach { it.drawOverLayers(context) }
       forEachPersistentMarker { marker, targets -> marker.drawOverLayers(context, targets) }
@@ -803,7 +808,14 @@ internal constructor(
      * content—strokes, points, and data labels.
      */
     OverAreaFills,
-    /** Draws the content over the [CartesianLayer]s. */
+    /**
+     * Draws the content over the [CartesianLayer]s. An [Axis]’s guidelines are composited with the
+     * [CartesianLayer]s’ content, so [FadingEdges] fade them along with the data. Its line and
+     * ticks are drawn over the result instead, so they keep full strength, as do a [VerticalAxis]’s
+     * labels. (A [HorizontalAxis]’s labels are drawn under the [CartesianLayer]s, so they fade with
+     * them where they overlap.) A [Decoration] at this position isn’t composited with the
+     * [CartesianLayer]s either, so it doesn’t fade.
+     */
     OverLayers,
   }
 

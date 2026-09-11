@@ -29,9 +29,9 @@ Numerous customization options are available; you can change the appearance of t
 
 * [`UnderLayers`][under-layers] draws the content under the layers.
 * [`OverAreaFills`][over-area-fills] draws the content over the layers’ area fills and under the rest of their content—strokes, points, and data labels.
-* [`OverLayers`][over-layers] draws the content over the layers.
+* [`OverLayers`][over-layers] draws the content over the layers. An axis’s guidelines are composited with the layers, so [`FadingEdges`][fading-edges] fade them along with the data; its line and ticks are drawn over the result, and so is a decoration.
 
-An axis has two independent positions: `lineDrawingOrder`, for the ticks and the axis line, and `guidelineDrawingOrder`, for the guidelines. [`BaseDecoration`][base-decoration] subclasses, including [`HorizontalLine`][horizontal-line] and [`HorizontalBox`][horizontal-box], take the same positions via `drawingOrder`.
+An axis has two independent positions: `lineDrawingOrder`, for the ticks and the axis line, and `guidelineDrawingOrder`, for the guidelines. [`BaseDecoration`][base-decoration] subclasses, including [`HorizontalLine`][horizontal-line] and [`HorizontalBox`][horizontal-box], take the same positions via `drawingOrder`, though a decoration is never composited with the layers.
 
 [`OverAreaFills`][over-area-fills] addresses the case where a [`LineCartesianLayer`][line-cartesian-layer] instance with an [`AreaFill`][area-fill] instance would otherwise hide the guidelines. It requires the layer to draw its area fills separately, which [`LineCartesianLayer.SeriesDrawingOrder.AreaFillsFirst`][area-fills-first] enables:
 
@@ -86,6 +86,7 @@ By default, `HorizontalAxis.ItemPlacer.aligned` reserves horizontal margins so t
 [under-layers]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-cartesian-chart/-drawing-order/-under-layers/
 [over-area-fills]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-cartesian-chart/-drawing-order/-over-area-fills/
 [over-layers]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-cartesian-chart/-drawing-order/-over-layers/
+[fading-edges]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-fading-edges/
 [base-decoration]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.decoration/-base-decoration/
 [horizontal-line]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.decoration/-horizontal-line/
 [horizontal-box]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.decoration/-horizontal-box/

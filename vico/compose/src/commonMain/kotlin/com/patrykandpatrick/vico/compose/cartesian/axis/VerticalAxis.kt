@@ -214,12 +214,18 @@ protected constructor(
     if (lineDrawingOrder == DrawingOrder.OverAreaFills) drawLineAndTicks(context)
   }
 
+  override fun drawOverLayerContent(
+    context: CartesianDrawingContext,
+    axisDimensions: Map<Axis.Position, AxisDimensions>,
+  ) {
+    if (guidelineDrawingOrder == DrawingOrder.OverLayers) drawGuidelines(context)
+  }
+
   override fun drawOverLayers(
     context: CartesianDrawingContext,
     axisDimensions: Map<Axis.Position, AxisDimensions>,
   ) {
     with(context) {
-      if (guidelineDrawingOrder == DrawingOrder.OverLayers) drawGuidelines(context)
       if (lineDrawingOrder == DrawingOrder.OverLayers) drawLineAndTicks(context)
 
       val label = label

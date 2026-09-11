@@ -136,6 +136,10 @@ internal class AxisManager {
     }
   }
 
+  fun drawOverLayerContent(context: CartesianDrawingContext) {
+    axisCache.forEach { axis -> axis.drawOverLayerContent(context, axisDimensions) }
+  }
+
   fun drawOverLayers(context: CartesianDrawingContext) {
     axisCache.forEach { axis -> axis.drawOverLayers(context, axisDimensions) }
   }

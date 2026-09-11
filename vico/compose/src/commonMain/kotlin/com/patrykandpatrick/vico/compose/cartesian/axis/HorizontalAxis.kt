@@ -590,11 +590,17 @@ protected constructor(
     if (lineDrawingOrder == DrawingOrder.OverAreaFills) drawLineAndTicks(context, axisDimensions)
   }
 
-  override fun drawOverLayers(
+  override fun drawOverLayerContent(
     context: CartesianDrawingContext,
     axisDimensions: Map<Axis.Position, AxisDimensions>,
   ) {
     if (guidelineDrawingOrder == DrawingOrder.OverLayers) drawGuidelines(context)
+  }
+
+  override fun drawOverLayers(
+    context: CartesianDrawingContext,
+    axisDimensions: Map<Axis.Position, AxisDimensions>,
+  ) {
     if (lineDrawingOrder == DrawingOrder.OverLayers) drawLineAndTicks(context, axisDimensions)
   }
 
