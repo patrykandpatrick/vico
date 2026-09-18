@@ -510,10 +510,15 @@ protected constructor(
           mergeMode.columnSpacing.pixels * (entryCollectionSize - 1)
 
       is MergeMode.GroupedStacked ->
-        mergeMode.getGroupKeys(seriesKeys).sumOf { groupKey ->
-          getGroupThickness(groupKey, seriesKeys, mergeMode, model.extraStore).pixels.toDouble()
-        }.toFloat() +
-          mergeMode.columnSpacing.pixels * (mergeMode.getGroupKeys(seriesKeys).size - 1)
+        with(
+          createGroupedStackedLayout(
+            seriesKeys = seriesKeys,
+            mergeMode = mergeMode,
+            extraStore = model.extraStore,
+          )
+        ) {
+          collectionWidth()
+        }
     }
 
   protected open fun CartesianDrawingContext.getDrawingStart(
@@ -589,10 +594,10 @@ protected constructor(
     extraStore: ExtraStore,
     includeDataLabelLayout: Boolean,
   ) {
-    private val seriesKeys = model.seriesKeys
-    val groupKeysBySeriesIndex = seriesKeys.map(mergeMode.groupKeySelector)
-    val orderedGroupKeys = groupKeysBySeriesIndex.distinct()
-    val widestColumnsBySeriesIndex: List<LineComponent>
+    private val groupLayout = createGroupedStackedLayout(model.seriesKeys, mergeMode, extraStore)
+    val groupKeysBySeriesIndex = groupLayout.groupKeysBySeriesIndex
+    val orderedGroupKeys = groupLayout.orderedGroupKeys
+    val widestColumnsBySeriesIndex = groupLayout.widestColumnsBySeriesIndex
     val drawingStartsBySeriesIndex: List<Float>
     private val lastPresentGroupSeriesIndices: Map<Pair<Double, Any>, Int> =
       if (includeDataLabelLayout) {
@@ -606,25 +611,11 @@ protected constructor(
       }
 
     init {
-      val widestColumnsByGroupKey =
-        orderedGroupKeys.associateWith { groupKey ->
-          seriesKeys.indices
-            .filter { groupKeysBySeriesIndex[it] == groupKey }
-            .map { seriesIndex ->
-              columnProvider.getWidestSeriesColumnOrThrow(
-                seriesKeys[seriesIndex],
-                seriesIndex,
-                extraStore,
-              )
-            }
-            .maxBy(LineComponent::thickness)
-        }
-      widestColumnsBySeriesIndex = groupKeysBySeriesIndex.map(widestColumnsByGroupKey::getValue)
       val groupOffsets = mutableMapOf<Any, Float>()
       var collectionWidth = 0f
       orderedGroupKeys.forEachIndexed { index, groupKey ->
         groupOffsets[groupKey] = collectionWidth
-        collectionWidth += with(context) { widestColumnsByGroupKey.getValue(groupKey).thickness.pixels }
+        collectionWidth += with(context) { groupLayout.widestColumnsByGroupKey.getValue(groupKey).thickness.pixels }
         if (index != orderedGroupKeys.lastIndex) collectionWidth += with(context) { mergeMode.columnSpacing.pixels }
       }
       drawingStartsBySeriesIndex =
@@ -640,6 +631,48 @@ protected constructor(
       seriesIndex: Int,
       x: Double,
     ): Boolean = lastPresentGroupSeriesIndices[x to groupKeysBySeriesIndex[seriesIndex]] == seriesIndex
+  }
+
+  private fun createGroupedStackedLayout(
+    seriesKeys: List<Any>,
+    mergeMode: MergeMode.GroupedStacked,
+    extraStore: ExtraStore,
+  ): GroupedStackedLayout {
+    val groupKeysBySeriesIndex = ArrayList<Any>(seriesKeys.size)
+    val widestColumnsByGroupKey = LinkedHashMap<Any, LineComponent>()
+    for (seriesIndex in seriesKeys.indices) {
+      val groupKey = mergeMode.groupKeySelector(seriesKeys[seriesIndex])
+      val column =
+        columnProvider.getWidestSeriesColumnOrThrow(seriesKeys[seriesIndex], seriesIndex, extraStore)
+      groupKeysBySeriesIndex += groupKey
+      if (
+        widestColumnsByGroupKey[groupKey] == null ||
+          column.thickness > widestColumnsByGroupKey.getValue(groupKey).thickness
+      ) {
+        widestColumnsByGroupKey[groupKey] = column
+      }
+    }
+    return GroupedStackedLayout(
+      groupKeysBySeriesIndex,
+      widestColumnsByGroupKey,
+      mergeMode.columnSpacing,
+    )
+  }
+
+  private data class GroupedStackedLayout(
+    val groupKeysBySeriesIndex: List<Any>,
+    val widestColumnsByGroupKey: LinkedHashMap<Any, LineComponent>,
+    val columnSpacing: Dp,
+  ) {
+    val orderedGroupKeys: List<Any> = widestColumnsByGroupKey.keys.toList()
+    val widestColumnsBySeriesIndex: List<LineComponent> =
+      groupKeysBySeriesIndex.map(widestColumnsByGroupKey::getValue)
+
+    fun CartesianMeasuringContext.collectionWidth(): Float {
+      var width = 0f
+      for (column in widestColumnsByGroupKey.values) width += column.thickness.pixels
+      return width + columnSpacing.pixels * (widestColumnsByGroupKey.size - 1)
+    }
   }
 
   /** Defines how a [ColumnCartesianLayer] should draw columns in column collections. */

@@ -126,6 +126,33 @@ class ColumnCartesianLayerHostTest {
   }
 
   @Test
+  fun `GroupedStacked lays out signed group members independently around zero`() {
+    val columns = listOf(RecordingColumn(4.dp), RecordingColumn(4.dp))
+    val layer =
+      ColumnCartesianLayer(
+        columnProvider = ColumnCartesianLayer.ColumnProvider.series(columns),
+        mergeMode = { ColumnCartesianLayer.MergeMode.GroupedStacked(groupKeySelector = { "group" }) },
+      )
+    val model =
+      ColumnCartesianLayerModel(
+        series =
+          listOf(
+            listOf(ColumnCartesianLayerModel.Entry(0.0, 2.0)),
+            listOf(ColumnCartesianLayerModel.Entry(0.0, -3.0)),
+          ),
+      )
+
+    layer.draw(createContext(layer, model), model)
+
+    assertEquals(columns[0].centers.single(), columns[1].centers.single())
+    assertEquals(columns[0].bottoms.single(), columns[1].tops.single())
+    assertTrue(columns[0].tops.single() < columns[0].bottoms.single())
+    assertTrue(columns[1].tops.single() < columns[1].bottoms.single())
+    val targets = layer.markerTargets.getValue(0.0).single() as ColumnCartesianLayerMarkerTarget
+    assertEquals(listOf(2.0, -3.0), targets.columns.map { it.entry.y })
+  }
+
+  @Test
   fun `GroupedStacked preserves marker suppression by legacy overrides`() {
     val layer =
       TrackingLayer(
