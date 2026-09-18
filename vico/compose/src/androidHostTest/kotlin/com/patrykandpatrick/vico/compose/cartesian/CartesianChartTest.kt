@@ -21,6 +21,7 @@ import android.graphics.Paint
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianLayerRangeProvider
+import com.patrykandpatrick.vico.compose.cartesian.data.ColumnCartesianLayerModel
 import com.patrykandpatrick.vico.compose.cartesian.data.LineCartesianLayerModel
 import com.patrykandpatrick.vico.compose.cartesian.data.MutableCartesianChartRanges
 import com.patrykandpatrick.vico.compose.cartesian.layer.CartesianLayerPadding
@@ -157,6 +158,41 @@ class CartesianChartTest {
     chart.updateRanges(ranges, model)
 
     assertEquals(1.0, ranges.xStep)
+  }
+
+  @Test
+  fun `Given grouped stacked columns, when ranges are updated, then y range aggregates each group independently`() {
+    val chart =
+      CartesianChart(
+        ColumnCartesianLayer(
+          columnProvider = ColumnCartesianLayer.ColumnProvider.series(LineComponent(Fill.Black)),
+          mergeMode = {
+            ColumnCartesianLayer.MergeMode.GroupedStacked(groupKeySelector = { seriesKey ->
+              if (seriesKey == "incomeActual" || seriesKey == "incomeForecast") "income"
+              else "expenses"
+            })
+          },
+        )
+      )
+    val ranges = MutableCartesianChartRanges()
+    val model =
+      CartesianChartModel(
+        ColumnCartesianLayerModel(
+          series =
+            listOf(
+              listOf(ColumnCartesianLayerModel.Entry(x = 0.0, y = 4.0)),
+              listOf(ColumnCartesianLayerModel.Entry(x = 0.0, y = 3.0)),
+              listOf(ColumnCartesianLayerModel.Entry(x = 0.0, y = -6.0)),
+              listOf(ColumnCartesianLayerModel.Entry(x = 0.0, y = -5.0)),
+            ),
+          seriesKeys = listOf("incomeActual", "incomeForecast", "rent", "food"),
+        )
+      )
+
+    chart.updateRanges(ranges, model)
+
+    assertEquals(-11.0, ranges.getYRange(null).minY)
+    assertEquals(7.0, ranges.getYRange(null).maxY)
   }
 
   private companion object {
