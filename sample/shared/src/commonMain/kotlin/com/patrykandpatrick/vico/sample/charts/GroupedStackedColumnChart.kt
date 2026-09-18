@@ -70,8 +70,7 @@ private val BottomAxisValueFormatter =
     ) =
       value
         .takeIf { it.isFinite() && it == it.toInt().toDouble() }
-        ?.let { Months.getOrElse(it.toInt()) { "" } }
-        ?: ""
+        ?.let { Months.getOrElse(it.toInt()) { "" } } ?: ""
   }
 
 @Composable
@@ -79,7 +78,8 @@ private fun ComposeGroupedStackedColumnChart(
   modelProducer: CartesianChartModelProducer,
   modifier: Modifier = Modifier,
 ) {
-  val columnColors = listOf(Color(0xff4f6bed), Color(0xfff2a65a), Color(0xffdc6b87), Color(0xff73b88d))
+  val columnColors =
+    listOf(Color(0xff4f6bed), Color(0xfff2a65a), Color(0xffdc6b87), Color(0xff73b88d))
   val legendItemLabelComponent = rememberTextComponent(TextStyle(vicoTheme.textColor, 12.sp))
   CartesianChartHost(
     chart =
@@ -87,11 +87,15 @@ private fun ComposeGroupedStackedColumnChart(
         rememberColumnCartesianLayer(
           columnProvider =
             ColumnCartesianLayer.ColumnProvider.series(
-              columnColors.map { color -> rememberLineComponent(fill = Fill(color), thickness = 16.dp) }
+              columnColors.map { color ->
+                rememberLineComponent(fill = Fill(color), thickness = 16.dp)
+              }
             ),
           mergeMode = {
             ColumnCartesianLayer.MergeMode.GroupedStacked(
-              groupKeySelector = { seriesKey -> if (seriesKey == "Income") "Income" else "Expenses" }
+              groupKeySelector = { seriesKey ->
+                if (seriesKey == "Income") "Income" else "Expenses"
+              }
             )
           },
         ),
