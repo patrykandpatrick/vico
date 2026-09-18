@@ -33,7 +33,8 @@ class ColumnCartesianLayerModelTest {
     val range = entries.getAggregateYRange { seriesKey ->
       when (seriesKey) {
         "income" -> "income"
-        "home", "car" -> "spending"
+        "home",
+        "car" -> "spending"
         else -> error("Unexpected series key: $seriesKey")
       }
     }

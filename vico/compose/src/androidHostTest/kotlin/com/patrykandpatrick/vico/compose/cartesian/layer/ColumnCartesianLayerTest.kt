@@ -20,8 +20,8 @@ import android.graphics.BlendMode
 import android.graphics.Paint
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.unit.Density
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.compose.cartesian.data.ColumnCartesianLayerModel
@@ -75,7 +75,9 @@ class ColumnCartesianLayerHostTest {
         columnProvider = ColumnCartesianLayer.ColumnProvider.series(columns),
         mergeMode = {
           ColumnCartesianLayer.MergeMode.GroupedStacked(
-            groupKeySelector = { seriesKey -> if (seriesKey == "a" || seriesKey == "b") "income" else "expenses" },
+            groupKeySelector = { seriesKey ->
+              if (seriesKey == "a" || seriesKey == "b") "income" else "expenses"
+            },
             columnSpacing = 10.dp,
           )
         },
@@ -105,6 +107,7 @@ class ColumnCartesianLayerHostTest {
         override val density = Density(1f)
         override val androidx.compose.ui.unit.Dp.pixels: Float
           get() = value
+
         override val layoutDirection = LayoutDirection.Ltr
         override val isLtr = true
         override val layoutDirectionMultiplier = 1
@@ -121,7 +124,9 @@ class ColumnCartesianLayerHostTest {
     assertEquals(columns[0].tops.single(), columns[1].bottoms.single())
     val targets = layer.markerTargets.getValue(0.0).map { it as ColumnCartesianLayerMarkerTarget }
     assertEquals(2, targets.size)
-    assertTrue(targets.any { target -> target.columns.map { it.entry.seriesKey } == listOf("a", "b") })
+    assertTrue(
+      targets.any { target -> target.columns.map { it.entry.seriesKey } == listOf("a", "b") }
+    )
     assertTrue(targets.any { target -> target.columns.map { it.entry.seriesKey } == listOf("c") })
   }
 
@@ -131,7 +136,9 @@ class ColumnCartesianLayerHostTest {
     val layer =
       ColumnCartesianLayer(
         columnProvider = ColumnCartesianLayer.ColumnProvider.series(columns),
-        mergeMode = { ColumnCartesianLayer.MergeMode.GroupedStacked(groupKeySelector = { "group" }) },
+        mergeMode = {
+          ColumnCartesianLayer.MergeMode.GroupedStacked(groupKeySelector = { "group" })
+        },
       )
     val model =
       ColumnCartesianLayerModel(
@@ -139,7 +146,7 @@ class ColumnCartesianLayerHostTest {
           listOf(
             listOf(ColumnCartesianLayerModel.Entry(0.0, 2.0)),
             listOf(ColumnCartesianLayerModel.Entry(0.0, -3.0)),
-          ),
+          )
       )
 
     layer.draw(createContext(layer, model), model)
@@ -156,8 +163,11 @@ class ColumnCartesianLayerHostTest {
   fun `GroupedStacked preserves marker suppression by legacy overrides`() {
     val layer =
       TrackingLayer(
-        columnProvider = ColumnCartesianLayer.ColumnProvider.series(RecordingColumn(4.dp), RecordingColumn(4.dp)),
-        mergeMode = { ColumnCartesianLayer.MergeMode.GroupedStacked(groupKeySelector = { "group" }) },
+        columnProvider =
+          ColumnCartesianLayer.ColumnProvider.series(RecordingColumn(4.dp), RecordingColumn(4.dp)),
+        mergeMode = {
+          ColumnCartesianLayer.MergeMode.GroupedStacked(groupKeySelector = { "group" })
+        },
       )
     val model =
       ColumnCartesianLayerModel(
@@ -165,7 +175,7 @@ class ColumnCartesianLayerHostTest {
           listOf(
             listOf(ColumnCartesianLayerModel.Entry(0.0, 2.0)),
             listOf(ColumnCartesianLayerModel.Entry(0.0, 3.0)),
-          ),
+          )
       )
 
     layer.draw(createContext(layer, model), model)
@@ -230,6 +240,7 @@ class ColumnCartesianLayerHostTest {
       override val density = Density(1f)
       override val androidx.compose.ui.unit.Dp.pixels: Float
         get() = value
+
       override val layoutDirection = LayoutDirection.Ltr
       override val isLtr = true
       override val layoutDirectionMultiplier = 1
