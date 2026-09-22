@@ -17,6 +17,45 @@ In `rememberColumnCartesianLayer`, you can also change column spacing. Data labe
 
 <figure><img src="../.gitbook/assets/daily-digital-media-use.png" alt="" width="375"><figcaption><p>The <a href="https://github.com/patrykandpatrick/vico/blob/stable/sample/shared/src/commonMain/kotlin/com/patrykandpatrick/vico/sample/charts/DailyDigitalMediaUse.kt">“Daily digital-media use (USA)”</a> sample chart, which stacks its column series</p></figcaption></figure>
 
+## Grouped stacking
+
+Use [`ColumnCartesianLayer.MergeMode.GroupedStacked`][grouped-stacked] to place groups side by side and stack the series in each group. Its key selector receives the key supplied to [`series`][series] and returns a group key. Give each series a stable key so the selector does not depend on its position in the model.
+
+Positive and negative values accumulate independently within each group: positive columns stack upward from zero and negative columns stack downward from zero. Axis labels remain independent of the merge mode. Configure them on [`HorizontalAxis.rememberBottom`][horizontal-axis-remember-bottom], for example with a value formatter for month names.
+
+```kt
+val months = listOf("Jan", "Feb", "Mar", "Apr")
+val x = listOf<Number>(0, 1, 2, 3)
+
+val layer =
+  rememberColumnCartesianLayer(
+    mergeMode = {
+      ColumnCartesianLayer.MergeMode.GroupedStacked(
+        groupKeySelector = { seriesKey -> if (seriesKey == "Income") "Income" else "Expenses" }
+      )
+    }
+  )
+
+val bottomAxis =
+  HorizontalAxis.rememberBottom(
+    valueFormatter = { _, value, _ ->
+      value
+        .takeIf { it.isFinite() && it == it.toInt().toDouble() }
+        ?.let { months.getOrElse(it.toInt()) { "" } }
+        ?: ""
+    },
+  )
+
+cartesianChartModelProducer.runTransaction {
+  columnModel {
+    series(x = x, y = listOf(8, 9, 10, 11), key = "Income")
+    series(x = x, y = listOf(3, 3, 4, 3), key = "House")
+    series(x = x, y = listOf(2, 2, 1, 2), key = "Car")
+    series(x = x, y = listOf(1, 2, 2, 2), key = "Food")
+  }
+}
+```
+
 ## `Transaction.columnModel`
 
 Column layers use [`ColumnCartesianLayerModel`][column-cartesian-layer-model] instances. When using [`CartesianChartModelProducer`][cartesian-chart-model-producer], add them via [`columnModel`][column-model]:
@@ -66,3 +105,5 @@ CartesianChartModel(
 [series]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-column-cartesian-layer-model/-builder-scope/series.html
 [cartesian-chart-model]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-chart-model/
 [build]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-column-cartesian-layer-model/-companion/build.html
+[grouped-stacked]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.layer/-column-cartesian-layer/-merge-mode/-grouped-stacked/
+[horizontal-axis-remember-bottom]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.axis/-horizontal-axis/-companion/remember-bottom.html
