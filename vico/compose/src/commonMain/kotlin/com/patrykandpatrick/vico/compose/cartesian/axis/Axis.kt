@@ -41,6 +41,12 @@ public interface Axis<P : Axis.Position> :
     axisDimensions: Map<Position, AxisDimensions>,
   )
 
+  /** Draws content over the [CartesianLayer]s’ area fills and under their strokes. */
+  public fun drawOverLayerFills(
+    context: CartesianDrawingContext,
+    axisDimensions: Map<Position, AxisDimensions>,
+  ) {}
+
   /** Draws content over the [CartesianLayer]s. */
   public fun drawOverLayers(
     context: CartesianDrawingContext,
