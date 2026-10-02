@@ -25,6 +25,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.patrykandpatrick.vico.compose.cartesian.accessibility.AccessibilityHighlighter
+import com.patrykandpatrick.vico.compose.cartesian.accessibility.isTouchExplorationEnabled
 import com.patrykandpatrick.vico.compose.cartesian.data.*
 import com.patrykandpatrick.vico.compose.cartesian.layer.MutableCartesianLayerDimensions
 import com.patrykandpatrick.vico.compose.cartesian.marker.CartesianMarker
@@ -373,6 +375,16 @@ internal fun CartesianChartHostImpl(
 
       chart.draw(drawingContext)
       measuringContext.value.cacheStore.purge()
+    }
+
+    if (isTouchExplorationEnabled()) {
+      AccessibilityHighlighter(
+        targets = chart.allTargets,
+        layerDimensions = layerDimensions,
+        layerBounds = chart.layerBounds,
+        context = measuringContext.value,
+        contentDescriptionProvider = chart.contentDescriptionProvider,
+      )
     }
   }
 }
