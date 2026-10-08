@@ -85,8 +85,16 @@ protected constructor(
 ) : BaseCartesianLayer<ColumnCartesianLayerModel>() {
   private val _markerTargets =
     mutableMapOf<Double, MutableList<MutableColumnCartesianLayerMarkerTarget>>()
+  private var markerTargetSink = _markerTargets
+  private val markerTargetScratchList = mutableListOf<MutableColumnCartesianLayerMarkerTarget>()
+  private val markerTargetScratchSink =
+    mutableMapOf<Double, MutableList<MutableColumnCartesianLayerMarkerTarget>>()
+  private val markerTargetScratch = MutableColumnCartesianLayerMarkerTarget(0.0, 0f)
+  private val markerTargetsByGroup =
+    mutableMapOf<Pair<Double, Any>, MutableColumnCartesianLayerMarkerTarget>()
 
   protected val stackInfo: MutableMap<Double, StackInfo> = mutableMapOf()
+  private val groupedStackInfo: MutableMap<Pair<Double, Any>, StackInfo> = mutableMapOf()
 
   override val markerTargets: Map<Double, List<CartesianMarker.Target>> = _markerTargets
 
@@ -124,8 +132,11 @@ protected constructor(
   override fun drawInternal(context: CartesianDrawingContext, model: ColumnCartesianLayerModel) {
     with(context) {
       _markerTargets.clear()
+      markerTargetSink = _markerTargets
+      markerTargetsByGroup.clear()
       drawChartInternal(model, ranges, extraStore.getOrNull(drawingModelKey))
       stackInfo.clear()
+      groupedStackInfo.clear()
     }
   }
 
@@ -145,13 +156,21 @@ protected constructor(
     val zeroLinePosition =
       layerBounds.bottom + (yRange.minY / yRange.length).toFloat() * layerBounds.height
     val mergeMode = mergeMode(model.extraStore)
+    val groupLayout =
+      (mergeMode as? MergeMode.GroupedStacked)?.let {
+        GroupLayout(this, it, model, model.extraStore, dataLabel != null)
+      }
     val visibleXRange = getVisibleXRange()
 
     saveLayer(opacity = drawingModel?.opacity ?: 1f)
 
     model.series.forEachIndexed { index, entryCollection ->
       val seriesKey = model.seriesKeys[index]
-      drawingStart = getDrawingStart(index, model.series.size, model.seriesKeys, mergeMode) - scroll
+      val groupKey = groupLayout?.groupKeysBySeriesIndex?.get(index) ?: Unit
+      val groupCount = groupLayout?.orderedGroupKeys?.size ?: model.series.size
+      drawingStart =
+        (groupLayout?.drawingStartsBySeriesIndex?.get(index)
+          ?: getDrawingStart(index, model.series.size, model.seriesKeys, mergeMode)) - scroll
 
       val visibleIndices =
         entryCollection.getSliceIndices(visibleXRange.start, visibleXRange.endInclusive)
@@ -166,8 +185,12 @@ protected constructor(
         columnCenterX =
           drawingStart +
             (layerDimensions.xSpacing * xSpacingMultiplier +
-              columnProvider
-                .getWidestSeriesColumnOrThrow(seriesKey, index, model.extraStore)
+              (groupLayout?.widestColumnsBySeriesIndex?.get(index)
+                  ?: columnProvider.getWidestSeriesColumnOrThrow(
+                    seriesKey,
+                    index,
+                    model.extraStore,
+                  ))
                 .thickness
                 .pixels
                 .half * zoom) * layoutDirectionMultiplier
@@ -175,6 +198,15 @@ protected constructor(
         when (mergeMode) {
           MergeMode.Stacked -> {
             val stackInfo = stackInfo.getOrPut(entry.x) { StackInfo() }
+            columnBottom =
+              if (entry.y >= 0) zeroLinePosition - stackInfo.topHeight
+              else zeroLinePosition + stackInfo.bottomHeight + height
+            columnTop = (columnBottom - height).coerceAtMost(columnBottom)
+            stackInfo.update(entry.y, height)
+          }
+
+          is MergeMode.GroupedStacked -> {
+            val stackInfo = groupedStackInfo.getOrPut(entry.x to groupKey) { StackInfo() }
             columnBottom =
               if (entry.y >= 0) {
                 zeroLinePosition - stackInfo.topHeight
@@ -193,15 +225,28 @@ protected constructor(
 
         val columnSignificantY = if (entry.y < 0f) columnBottom else columnTop
 
-        updateMarkerTargets(
-          entry = entry,
-          seriesKey = seriesKey,
-          canvasX = columnCenterX,
-          canvasY = columnSignificantY,
-          columnHeight = columnBottom - columnTop,
-          column = column,
-          mergeMode = mergeMode,
-        )
+        if (mergeMode is MergeMode.GroupedStacked) {
+          updateGroupedStackedMarkerTargets(
+            entry,
+            seriesKey,
+            groupKey,
+            columnCenterX,
+            columnSignificantY,
+            columnBottom - columnTop,
+            column,
+            mergeMode,
+          )
+        } else {
+          updateMarkerTargets(
+            entry,
+            seriesKey,
+            columnCenterX,
+            columnSignificantY,
+            columnBottom - columnTop,
+            column,
+            mergeMode,
+          )
+        }
 
         column.drawVertical(this, columnCenterX, columnTop, columnBottom, zoom)
 
@@ -216,11 +261,24 @@ protected constructor(
             isLast = index == model.series.lastIndex && entry.x == ranges.maxX,
             mergeMode = mergeMode,
           )
-        } else if (index == model.series.lastIndex) {
+        } else if (
+          mergeMode == MergeMode.Stacked && index == model.series.lastIndex ||
+            dataLabel != null &&
+              mergeMode is MergeMode.GroupedStacked &&
+              groupLayout!!.isLastPresentGroupSeries(index, entry.x)
+        ) {
           drawStackedDataLabel(
-            modelEntriesSize = model.series.size,
-            columnThickness = column.thickness,
-            stackInfo = stackInfo.getValue(entry.x),
+            modelEntriesSize =
+              if (mergeMode is MergeMode.GroupedStacked) groupCount else model.series.size,
+            columnThickness =
+              groupLayout?.widestColumnsBySeriesIndex?.get(index)?.thickness
+                ?: columnProvider
+                  .getWidestSeriesColumnOrThrow(seriesKey, index, model.extraStore)
+                  .thickness,
+            stackInfo =
+              if (mergeMode is MergeMode.GroupedStacked)
+                groupedStackInfo.getValue(entry.x to groupKey)
+              else stackInfo.getValue(entry.x),
             x = columnCenterX,
             zeroLinePosition = zeroLinePosition,
             heightMultiplier = heightMultiplier,
@@ -284,11 +342,17 @@ protected constructor(
   ) {
     dataLabel?.let { textComponent ->
       val canUseXSpacing =
-        mergeMode == MergeMode.Stacked || mergeMode is MergeMode.Grouped && modelEntriesSize == 1
+        mergeMode == MergeMode.Stacked ||
+          (mergeMode is MergeMode.Grouped || mergeMode is MergeMode.GroupedStacked) &&
+            modelEntriesSize == 1
       var maxWidth =
         when {
           canUseXSpacing -> layerDimensions.xSpacing
           mergeMode is MergeMode.Grouped ->
+            (columnThickness.pixels +
+              min(columnCollectionSpacing.pixels, mergeMode.columnSpacing.pixels).half) * zoom
+
+          mergeMode is MergeMode.GroupedStacked ->
             (columnThickness.pixels +
               min(columnCollectionSpacing.pixels, mergeMode.columnSpacing.pixels).half) * zoom
 
@@ -355,17 +419,59 @@ protected constructor(
     val targetColumn = ColumnCartesianLayerMarkerTarget.Column(entry, limitedCanvasY, markerColor)
     when (mergeMode) {
       is MergeMode.Grouped ->
-        _markerTargets.getOrPut(entry.x) { mutableListOf() } +=
+        markerTargetSink.getOrPut(entry.x) { mutableListOf() } +=
           MutableColumnCartesianLayerMarkerTarget(entry.x, canvasX, mutableListOf(targetColumn))
 
       MergeMode.Stacked ->
-        _markerTargets
+        markerTargetSink
           .getOrPut(entry.x) {
             mutableListOf(MutableColumnCartesianLayerMarkerTarget(entry.x, canvasX))
           }
           .first()
           .columns += targetColumn
+
+      is MergeMode.GroupedStacked -> {
+        markerTargetScratch.run {
+          x = entry.x
+          this.canvasX = canvasX
+          columns.clear()
+          columns += targetColumn
+        }
+        markerTargetScratchList.clear()
+        markerTargetScratchList += markerTargetScratch
+        markerTargetScratchSink.clear()
+        markerTargetScratchSink[entry.x] = markerTargetScratchList
+      }
     }
+  }
+
+  private fun CartesianDrawingContext.updateGroupedStackedMarkerTargets(
+    entry: ColumnCartesianLayerModel.Entry,
+    seriesKey: Any,
+    groupKey: Any,
+    canvasX: Float,
+    canvasY: Float,
+    columnHeight: Float,
+    column: LineComponent,
+    mergeMode: MergeMode,
+  ) {
+    markerTargetScratch.columns.clear()
+    markerTargetScratchList.clear()
+    markerTargetScratchSink.clear()
+    markerTargetSink = markerTargetScratchSink
+    try {
+      updateMarkerTargets(entry, seriesKey, canvasX, canvasY, columnHeight, column, mergeMode)
+    } finally {
+      markerTargetSink = _markerTargets
+    }
+    val targetColumn = markerTargetScratch.columns.singleOrNull() ?: return
+    markerTargetsByGroup
+      .getOrPut(entry.x to groupKey) {
+        MutableColumnCartesianLayerMarkerTarget(entry.x, canvasX).also {
+          _markerTargets.getOrPut(entry.x) { mutableListOf() } += it
+        }
+      }
+      .columns += targetColumn
   }
 
   override fun updateChartRanges(
@@ -425,6 +531,17 @@ protected constructor(
       is MergeMode.Grouped ->
         getCumulatedThickness(entryCollectionSize, seriesKeys) +
           mergeMode.columnSpacing.pixels * (entryCollectionSize - 1)
+
+      is MergeMode.GroupedStacked ->
+        with(
+          createGroupedStackedLayout(
+            seriesKeys = seriesKeys,
+            mergeMode = mergeMode,
+            extraStore = model.extraStore,
+          )
+        ) {
+          collectionWidth()
+        }
     }
 
   protected open fun CartesianDrawingContext.getDrawingStart(
@@ -435,6 +552,20 @@ protected constructor(
   ): Float {
     val mergeModeComponent =
       when (mergeMode) {
+        is MergeMode.GroupedStacked -> {
+          val groupKey = mergeMode.getGroupKey(seriesKeys[entryCollectionIndex])
+          val groupIndex = mergeMode.getGroupKeys(seriesKeys).indexOf(groupKey)
+          mergeMode
+            .getGroupKeys(seriesKeys)
+            .take(groupIndex)
+            .sumOf { previousGroupKey ->
+              getGroupThickness(previousGroupKey, seriesKeys, mergeMode, model.extraStore)
+                .pixels
+                .toDouble()
+            }
+            .toFloat() + mergeMode.columnSpacing.pixels * groupIndex
+        }
+
         is MergeMode.Grouped ->
           getCumulatedThickness(entryCollectionIndex, seriesKeys) +
             mergeMode.columnSpacing.pixels * entryCollectionIndex
@@ -462,6 +593,123 @@ protected constructor(
     return thickness.pixels
   }
 
+  private fun MergeMode.getGroupKey(seriesKey: Any): Any =
+    if (this is MergeMode.GroupedStacked) groupKeySelector(seriesKey) else Unit
+
+  private fun MergeMode.getGroupKeys(seriesKeys: List<Any>): List<Any> =
+    if (this is MergeMode.GroupedStacked) seriesKeys.map(groupKeySelector).distinct()
+    else listOf(Unit)
+
+  private fun getGroupThickness(
+    groupKey: Any,
+    seriesKeys: List<Any>,
+    mergeMode: MergeMode,
+    extraStore: ExtraStore,
+  ): Dp =
+    seriesKeys.indices
+      .filter { mergeMode.getGroupKey(seriesKeys[it]) == groupKey }
+      .maxOf { seriesIndex ->
+        columnProvider
+          .getWidestSeriesColumnOrThrow(seriesKeys[seriesIndex], seriesIndex, extraStore)
+          .thickness
+      }
+
+  private inner class GroupLayout(
+    context: CartesianDrawingContext,
+    mergeMode: MergeMode.GroupedStacked,
+    model: ColumnCartesianLayerModel,
+    extraStore: ExtraStore,
+    includeDataLabelLayout: Boolean,
+  ) {
+    private val groupLayout = createGroupedStackedLayout(model.seriesKeys, mergeMode, extraStore)
+    val groupKeysBySeriesIndex = groupLayout.groupKeysBySeriesIndex
+    val orderedGroupKeys = groupLayout.orderedGroupKeys
+    val widestColumnsBySeriesIndex = groupLayout.widestColumnsBySeriesIndex
+    val drawingStartsBySeriesIndex: List<Float>
+    private val lastPresentGroupSeriesIndices: Map<Pair<Double, Any>, Int> =
+      if (includeDataLabelLayout) {
+        buildMap {
+          model.series.forEachIndexed { seriesIndex, entries ->
+            entries.forEach { entry ->
+              put(entry.x to groupKeysBySeriesIndex[seriesIndex], seriesIndex)
+            }
+          }
+        }
+      } else {
+        emptyMap()
+      }
+
+    init {
+      val groupOffsets = mutableMapOf<Any, Float>()
+      var collectionWidth = 0f
+      orderedGroupKeys.forEachIndexed { index, groupKey ->
+        groupOffsets[groupKey] = collectionWidth
+        collectionWidth +=
+          with(context) { groupLayout.widestColumnsByGroupKey.getValue(groupKey).thickness.pixels }
+        if (index != orderedGroupKeys.lastIndex)
+          collectionWidth += with(context) { mergeMode.columnSpacing.pixels }
+      }
+      drawingStartsBySeriesIndex = groupKeysBySeriesIndex.map { groupKey ->
+        context.layerBounds.getStart(context.isLtr) +
+          (context.layerDimensions.startPadding +
+            (groupOffsets.getValue(groupKey) - collectionWidth.half) * context.zoom) *
+            context.layoutDirectionMultiplier
+      }
+    }
+
+    fun isLastPresentGroupSeries(
+      seriesIndex: Int,
+      x: Double,
+    ): Boolean =
+      lastPresentGroupSeriesIndices[x to groupKeysBySeriesIndex[seriesIndex]] == seriesIndex
+  }
+
+  private fun createGroupedStackedLayout(
+    seriesKeys: List<Any>,
+    mergeMode: MergeMode.GroupedStacked,
+    extraStore: ExtraStore,
+  ): GroupedStackedLayout {
+    val groupKeysBySeriesIndex = ArrayList<Any>(seriesKeys.size)
+    val widestColumnsByGroupKey = LinkedHashMap<Any, LineComponent>()
+    for (seriesIndex in seriesKeys.indices) {
+      val groupKey = mergeMode.groupKeySelector(seriesKeys[seriesIndex])
+      val column =
+        columnProvider.getWidestSeriesColumnOrThrow(
+          seriesKeys[seriesIndex],
+          seriesIndex,
+          extraStore,
+        )
+      groupKeysBySeriesIndex += groupKey
+      if (
+        widestColumnsByGroupKey[groupKey] == null ||
+          column.thickness > widestColumnsByGroupKey.getValue(groupKey).thickness
+      ) {
+        widestColumnsByGroupKey[groupKey] = column
+      }
+    }
+    return GroupedStackedLayout(
+      groupKeysBySeriesIndex,
+      widestColumnsByGroupKey,
+      mergeMode.columnSpacing,
+    )
+  }
+
+  private data class GroupedStackedLayout(
+    val groupKeysBySeriesIndex: List<Any>,
+    val widestColumnsByGroupKey: LinkedHashMap<Any, LineComponent>,
+    val columnSpacing: Dp,
+  ) {
+    val orderedGroupKeys: List<Any> = widestColumnsByGroupKey.keys.toList()
+    val widestColumnsBySeriesIndex: List<LineComponent> =
+      groupKeysBySeriesIndex.map(widestColumnsByGroupKey::getValue)
+
+    fun CartesianMeasuringContext.collectionWidth(): Float {
+      var width = 0f
+      for (column in widestColumnsByGroupKey.values) width += column.thickness.pixels
+      return width + columnSpacing.pixels * (widestColumnsByGroupKey.size - 1)
+    }
+  }
+
   /** Defines how a [ColumnCartesianLayer] should draw columns in column collections. */
   @Immutable
   public sealed interface MergeMode {
@@ -484,6 +732,29 @@ protected constructor(
         this === other || other is Grouped && columnSpacing == other.columnSpacing
 
       override fun hashCode(): Int = columnSpacing.hashCode()
+    }
+
+    /**
+     * Groups columns horizontally by [groupKeySelector] and stacks columns in each group with
+     * matching _x_ values. Groups are positioned [columnSpacing] apart.
+     */
+    public class GroupedStacked(
+      internal val groupKeySelector: (Any) -> Any,
+      internal val columnSpacing: Dp = Defaults.GROUPED_COLUMN_SPACING.dp,
+    ) : MergeMode {
+      override fun getMinY(model: ColumnCartesianLayerModel): Double =
+        model.series.flatten().getAggregateYRange(groupKeySelector).start
+
+      override fun getMaxY(model: ColumnCartesianLayerModel): Double =
+        model.series.flatten().getAggregateYRange(groupKeySelector).endInclusive
+
+      override fun equals(other: Any?): Boolean =
+        this === other ||
+          other is GroupedStacked &&
+            groupKeySelector == other.groupKeySelector &&
+            columnSpacing == other.columnSpacing
+
+      override fun hashCode(): Int = 31 * groupKeySelector.hashCode() + columnSpacing.hashCode()
     }
 
     /** Stacks columns with matching _x_ values. */
