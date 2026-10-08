@@ -119,7 +119,14 @@ internal fun Double.format(
   val isNegative = this < 0
   val factor = 10.0.pow(decimalCount)
   val truncated = floor(factor * absoluteValue) / factor
-  val trimmed = truncated.toString().trimEnd('0').trimEnd('.').replace(".", decimalSeparator)
+  val string = truncated.toString()
+  val trimmed =
+    if (string.contains('.')) {
+        string.trimEnd('0').trimEnd('.')
+      } else {
+        string
+      }
+      .replace(".", decimalSeparator)
   val value = if (isNegative) "−$trimmed" else trimmed
   return buildString {
     append(prefix)
