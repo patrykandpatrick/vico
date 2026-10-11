@@ -109,6 +109,16 @@ internal fun Float.lerp(to: Float, fraction: Float): Float = this + (to - this) 
 
 internal fun Number.toRadians(): Double = toDouble() * PI / PI_RAD
 
+/** The number of significant digits that any decimal retains in a round trip through [Double]. */
+private const val SIGNIFICANT_DIGITS = 15
+
+/**
+ * Formats this value with up to [decimalCount] decimal digits, rounding half away from zero. The
+ * value is first rounded to [SIGNIFICANT_DIGITS] significant digits, which recovers the decimal
+ * that it represents (e.g., 1.005 rather than 1.00499999999999989…). The digits are computed
+ * arithmetically, as [Double.toString] differs between platforms (e.g., in its use of scientific
+ * notation).
+ */
 internal fun Double.format(
   decimalCount: Int = 2,
   decimalSeparator: String = ".",
@@ -116,33 +126,69 @@ internal fun Double.format(
   prefix: String = "",
   suffix: String = "",
 ): String {
-  val isNegative = this < 0
-  val factor = 10.0.pow(decimalCount)
-  val truncated = floor(factor * absoluteValue) / factor
-  // On Kotlin/JS, `toString` omits `.0` for whole numbers, so only trim when there's a fraction.
-  val string = truncated.toString()
-  val withoutTrailingZeros = if ('.' in string) string.trimEnd('0').trimEnd('.') else string
-  val trimmed = withoutTrailingZeros.replace(".", decimalSeparator)
-  val value = if (isNegative) "−$trimmed" else trimmed
+  if (!isFinite()) return "$prefix${if (this < 0) "−" else ""}$absoluteValue$suffix"
+  val (integerDigits, fractionDigits) = absoluteValue.toDecimalDigits(decimalCount.coerceAtLeast(0))
+  val isNegative = this < 0 && (integerDigits != "0" || fractionDigits.isNotEmpty())
   return buildString {
     append(prefix)
-    append(value.addThousandsSeparator(decimalSeparator, thousandsSeparator))
+    if (isNegative) append('−')
+    append(integerDigits.withThousandsSeparator(thousandsSeparator))
+    if (fractionDigits.isNotEmpty()) {
+      append(decimalSeparator)
+      append(fractionDigits)
+    }
     append(suffix)
   }
 }
 
-private fun String.addThousandsSeparator(
-  decimalSeparator: String,
-  thousandsSeparator: String,
-): String {
-  val parts = split(decimalSeparator)
-  val integerPart = parts[0]
-  val withCommas = integerPart.reversed().chunked(3).joinToString(thousandsSeparator).reversed()
-  return buildString {
-    append(withCommas)
-    if (parts.size > 1) {
-      append(decimalSeparator)
-      append(parts[1])
-    }
+/**
+ * Returns the integer and fractional digits of this finite, nonnegative value rounded to
+ * [SIGNIFICANT_DIGITS] significant digits and then half up to [decimalCount] decimal places. The
+ * fractional digits have no trailing zeros.
+ */
+private fun Double.toDecimalDigits(decimalCount: Int): Pair<String, String> {
+  if (this == 0.0) return "0" to ""
+  val exponent = floor(log10(this)).toInt()
+  // Values below 10^(−decimalCount − 1) round to zero.
+  if (exponent < -decimalCount - 1) return "0" to ""
+  // `this` ≈ `significand` × 10^−`scale`, where `significand` has `SIGNIFICANT_DIGITS` digits.
+  var scale = SIGNIFICANT_DIGITS - 1 - exponent
+  var significand = timesPowerOfTen(scale).roundToLong()
+  // `log10` may underestimate, and rounding may carry into an extra digit.
+  if (significand >= longPowerOfTen(SIGNIFICANT_DIGITS)) {
+    scale--
+    significand = timesPowerOfTen(scale).roundToLong()
+  }
+  if (scale > decimalCount) {
+    val divisor = longPowerOfTen(scale - decimalCount)
+    significand = (significand + divisor / 2) / divisor
+    scale = decimalCount
+  }
+  val digits = significand.toString()
+  return when {
+    scale <= 0 -> digits + "0".repeat(-scale) to ""
+    digits.length > scale -> digits.dropLast(scale) to digits.takeLast(scale).trimEnd('0')
+    else -> "0" to digits.padStart(scale, '0').trimEnd('0')
   }
 }
+
+/** Multiplies this value by 10^[exponent], splitting the multiplication to avoid overflow. */
+private fun Double.timesPowerOfTen(exponent: Int): Double =
+  if (exponent >= 0) {
+    this * 10.0.pow(exponent / 2) * 10.0.pow(exponent - exponent / 2)
+  } else {
+    this / 10.0.pow(-exponent)
+  }
+
+private fun longPowerOfTen(exponent: Int): Long {
+  var result = 1L
+  repeat(exponent) { result *= 10 }
+  return result
+}
+
+private fun String.withThousandsSeparator(separator: String): String =
+  if (separator.isEmpty()) {
+    this
+  } else {
+    reversed().chunked(3).asReversed().joinToString(separator) { it.reversed() }
+  }
