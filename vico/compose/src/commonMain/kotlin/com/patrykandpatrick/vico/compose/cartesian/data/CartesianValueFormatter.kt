@@ -86,7 +86,8 @@ public fun interface CartesianValueFormatter {
     }
 
     /**
-     * Formats values to include up to [decimalCount] decimal digits. Trailing zeros are skipped.
+     * Formats values to include up to [decimalCount] decimal digits, rounding half away from zero.
+     * Trailing zeros are skipped. If [decimalCount] is negative, zero is used.
      */
     public fun decimal(
       decimalCount: Int = 2,
@@ -99,7 +100,8 @@ public fun interface CartesianValueFormatter {
 
     /**
      * Divides values by [CartesianChartRanges.YRange.maxY] and formats the resulting quotients to
-     * include up to [decimalCount] decimal digits. Trailing zeros are skipped.
+     * include up to [decimalCount] decimal digits, rounding half away from zero. Trailing zeros are
+     * skipped. If [decimalCount] is negative, zero is used.
      */
     public fun yPercent(decimalCount: Int = 2): CartesianValueFormatter = YPercent(decimalCount)
   }
