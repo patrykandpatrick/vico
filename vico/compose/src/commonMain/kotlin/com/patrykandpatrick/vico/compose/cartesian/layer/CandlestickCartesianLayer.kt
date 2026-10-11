@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.compose.cartesian.CartesianMeasuringContext
+import com.patrykandpatrick.vico.compose.cartesian.accessibility.CandlestickCartesianLayerAggregation
 import com.patrykandpatrick.vico.compose.cartesian.axis.Axis
 import com.patrykandpatrick.vico.compose.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.compose.cartesian.data.*
@@ -58,7 +59,7 @@ protected constructor(
   protected val candleSpacing: Dp,
   protected val scaleCandleWicks: Boolean,
   protected val rangeProvider: CartesianLayerRangeProvider,
-  protected val verticalAxisPosition: Axis.Position.Vertical?,
+  public override val verticalAxisPosition: Axis.Position.Vertical?,
   protected val drawingModelInterpolator:
     CartesianLayerDrawingModelInterpolator<
       CandlestickCartesianLayerDrawingModel.Entry,
@@ -266,6 +267,28 @@ protected constructor(
       rangeProvider.getMaxY(model.minY, model.maxY, model.extraStore),
       verticalAxisPosition,
     )
+  }
+
+  override fun getAggregation(
+    model: CandlestickCartesianLayerModel,
+    x: ClosedFloatingPointRange<Double>,
+    layerIndex: Int,
+  ): CandlestickCartesianLayerAggregation? {
+    val inRange = model.series.filter { it.x in x }
+    return if (inRange.isNotEmpty()) {
+      CandlestickCartesianLayerAggregation(
+        key = model.key,
+        opening = inRange.first().opening,
+        closing = inRange.last().closing,
+        low = inRange.minOf { it.low },
+        high = inRange.maxOf { it.high },
+        count = inRange.size,
+        layerIndex = layerIndex,
+        verticalAxisPosition = verticalAxisPosition,
+      )
+    } else {
+      null
+    }
   }
 
   override fun updateDimensions(

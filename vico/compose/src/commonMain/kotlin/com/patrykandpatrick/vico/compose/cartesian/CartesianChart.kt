@@ -36,7 +36,9 @@ import com.patrykandpatrick.vico.compose.cartesian.layer.*
 import com.patrykandpatrick.vico.compose.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.compose.cartesian.marker.CartesianMarkerController
 import com.patrykandpatrick.vico.compose.cartesian.marker.CartesianMarkerVisibilityListener
-import com.patrykandpatrick.vico.compose.cartesian.marker.ContentDescriptionProvider
+import com.patrykandpatrick.vico.compose.cartesian.accessibility.CartesianAggregation
+import com.patrykandpatrick.vico.compose.cartesian.accessibility.CartesianChartDescriptionProvider
+import com.patrykandpatrick.vico.compose.cartesian.accessibility.CartesianLayerAggregation
 import com.patrykandpatrick.vico.compose.common.*
 import com.patrykandpatrick.vico.compose.common.data.CacheStore
 import com.patrykandpatrick.vico.compose.common.data.ExtraStore
@@ -80,8 +82,8 @@ internal constructor(
     getDefaultXStep(model, minX)
   },
   public val markerController: CartesianMarkerController = CartesianMarkerController.showOnPress(),
-  public val contentDescriptionProvider: ContentDescriptionProvider =
-    ContentDescriptionProvider.default,
+  public val contentDescriptionProvider: CartesianChartDescriptionProvider? =
+    CartesianChartDescriptionProvider.default(),
   internal val id: Uuid = Uuid.random(),
   private var previousMarkerTargetHashCode: Int? = null,
   private val persistentMarkerMap: MutableMap<Double, CartesianMarker> = mutableMapOf(),
@@ -558,7 +560,7 @@ internal constructor(
     persistentMarkers: (PersistentMarkerScope.(ExtraStore) -> Unit)? = this.persistentMarkers,
     getXStep: ((CartesianChartModel, Double, Double) -> Double) = this.getXStep,
     markerController: CartesianMarkerController = CartesianMarkerController.showOnPress(),
-    contentDescriptionProvider: ContentDescriptionProvider = this.contentDescriptionProvider,
+    contentDescriptionProvider: CartesianChartDescriptionProvider? = this.contentDescriptionProvider,
   ): CartesianChart =
     CartesianChart(
       layers = layers,
@@ -603,7 +605,7 @@ internal constructor(
     persistentMarkers: (PersistentMarkerScope.(ExtraStore) -> Unit)? = this.persistentMarkers,
     getXStep: ((CartesianChartModel) -> Double),
     markerController: CartesianMarkerController = CartesianMarkerController.showOnPress(),
-    contentDescriptionProvider: ContentDescriptionProvider = this.contentDescriptionProvider,
+    contentDescriptionProvider: CartesianChartDescriptionProvider? = this.contentDescriptionProvider,
   ): CartesianChart =
     copy(
       layers = layers,
@@ -661,6 +663,32 @@ internal constructor(
     return result
   }
 
+  /** Returns aggregated data for [x]. */
+  public fun getAggregation(
+    model: CartesianChartModel,
+    x: ClosedFloatingPointRange<Double>,
+  ): CartesianAggregation {
+    val aggregations = mutableListOf<CartesianLayerAggregation>()
+    var layerIndex = 0
+    val consumer =
+      object : ModelAndLayerConsumer {
+        override fun <T : CartesianLayerModel> invoke(model: T?, layer: CartesianLayer<T>) {
+          if (model != null) {
+            layer.getAggregation(model, x, layerIndex)?.let { aggregations.add(it) }
+          }
+          layerIndex++
+        }
+      }
+    model.forEachWithLayer(consumer)
+    return CartesianAggregation(x, aggregations)
+  }
+
+  /** Returns aggregated data for [x]. */
+  public fun getAggregation(
+    context: CartesianMeasuringContext,
+    x: ClosedFloatingPointRange<Double>,
+  ): CartesianAggregation = getAggregation(context.model, x)
+
   /** Facilitates adding persistent [CartesianMarker]s to [CartesianChart]s. */
   public fun interface PersistentMarkerScope {
     /** Adds this [CartesianMarker] at [x]. */
@@ -713,7 +741,9 @@ public fun rememberCartesianChart(
     getDefaultXStep(model, minX)
   },
   markerController: CartesianMarkerController = CartesianMarkerController.rememberShowOnPress(),
-  contentDescriptionProvider: ContentDescriptionProvider = ContentDescriptionProvider.default,
+  contentDescriptionProvider: CartesianChartDescriptionProvider? = remember {
+    CartesianChartDescriptionProvider.default()
+  },
 ): CartesianChart {
   val wrapper = remember { ValueWrapper<CartesianChart?>(null) }
   return remember(
@@ -772,9 +802,6 @@ public fun rememberCartesianChart(
     cartesianChart
   }
 }
-
-internal val CartesianChart.allTargets: List<CartesianMarker.Target>
-  get() = layers.flatMap { it.markerTargets.values }.flatten()
 
 /**
  * Creates and remembers a [CartesianChart].

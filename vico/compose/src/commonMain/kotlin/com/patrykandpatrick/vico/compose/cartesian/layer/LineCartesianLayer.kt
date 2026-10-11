@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.compose.cartesian.CartesianMeasuringContext
 import com.patrykandpatrick.vico.compose.cartesian.ColorScale
+import com.patrykandpatrick.vico.compose.cartesian.accessibility.LineCartesianLayerAggregation
 import com.patrykandpatrick.vico.compose.cartesian.axis.Axis
 import com.patrykandpatrick.vico.compose.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.compose.cartesian.data.*
@@ -65,7 +66,7 @@ protected constructor(
   protected val lineProvider: LineProvider,
   protected val pointSpacing: Dp = Defaults.POINT_SPACING.dp,
   protected val rangeProvider: CartesianLayerRangeProvider = CartesianLayerRangeProvider.auto(),
-  protected val verticalAxisPosition: Axis.Position.Vertical? = null,
+  public override val verticalAxisPosition: Axis.Position.Vertical? = null,
   protected val drawingModelInterpolator:
     CartesianLayerDrawingModelInterpolator<
       LineCartesianLayerDrawingModel.Entry,
@@ -925,6 +926,33 @@ protected constructor(
       rangeProvider.getMaxY(minY, maxY, model.extraStore),
       verticalAxisPosition,
     )
+  }
+
+  override fun getAggregation(
+    model: LineCartesianLayerModel,
+    x: ClosedFloatingPointRange<Double>,
+    layerIndex: Int,
+  ): LineCartesianLayerAggregation? {
+    val seriesAggregates = mutableListOf<LineCartesianLayerAggregation.Series>()
+    model.series.forEachIndexed { seriesIndex, series ->
+      val inRange = series.filter { it.x in x }
+      if (inRange.isNotEmpty()) {
+        seriesAggregates.add(
+          LineCartesianLayerAggregation.Series(
+            key = model.seriesKeys[seriesIndex],
+            min = inRange.minBy { it.y },
+            max = inRange.maxBy { it.y },
+            first = inRange.first(),
+            last = inRange.last(),
+          )
+        )
+      }
+    }
+    return if (seriesAggregates.isNotEmpty()) {
+      LineCartesianLayerAggregation(seriesAggregates, layerIndex, verticalAxisPosition)
+    } else {
+      null
+    }
   }
 
   override fun updateLayerMargins(
