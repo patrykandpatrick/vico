@@ -19,6 +19,8 @@ package com.patrykandpatrick.vico.compose.cartesian.layer
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.compose.cartesian.CartesianMeasuringContext
+import com.patrykandpatrick.vico.compose.cartesian.accessibility.CartesianLayerAggregation
+import com.patrykandpatrick.vico.compose.cartesian.axis.Axis
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartRanges
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianLayerModel
 import com.patrykandpatrick.vico.compose.cartesian.data.MutableCartesianChartRanges
@@ -32,6 +34,23 @@ import com.patrykandpatrick.vico.compose.common.data.MutableExtraStore
 public interface CartesianLayer<M : CartesianLayerModel> : CartesianLayerMarginUpdater<M> {
   /** Links _x_ values to [CartesianMarker.Target]s. */
   public val markerTargets: Map<Double, List<CartesianMarker.Target>>
+
+  /** The position of the vertical axis with which this [CartesianLayer] is associated. */
+  public val verticalAxisPosition: Axis.Position.Vertical?
+    get() = null
+
+  /** Returns an aggregate of [model] for [x]. */
+  public fun getAggregation(
+    model: M,
+    x: ClosedFloatingPointRange<Double>,
+    layerIndex: Int = 0,
+  ): CartesianLayerAggregation? = null
+
+  /** Returns the series keys for [model]. */
+  public fun getSeriesKeys(model: M): List<Any> = model.seriesKeys
+
+  /** Returns all _x_ values present in [model]. */
+  public fun getXValues(model: M): List<Double> = model.getXValues()
 
   /** Draws the [CartesianLayer]. */
   public fun draw(context: CartesianDrawingContext, model: M)

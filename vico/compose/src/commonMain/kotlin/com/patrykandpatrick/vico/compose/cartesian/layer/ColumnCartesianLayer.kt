@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.compose.cartesian.CartesianMeasuringContext
+import com.patrykandpatrick.vico.compose.cartesian.accessibility.ColumnCartesianLayerAggregation
 import com.patrykandpatrick.vico.compose.cartesian.axis.Axis
 import com.patrykandpatrick.vico.compose.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.compose.cartesian.data.*
@@ -74,7 +75,7 @@ protected constructor(
     CartesianValueFormatter.decimal(),
   protected val dataLabelRotationDegrees: Float = 0f,
   protected val rangeProvider: CartesianLayerRangeProvider = CartesianLayerRangeProvider.auto(),
-  protected val verticalAxisPosition: Axis.Position.Vertical? = null,
+  public override val verticalAxisPosition: Axis.Position.Vertical? = null,
   protected val drawingModelInterpolator:
     CartesianLayerDrawingModelInterpolator<
       ColumnCartesianLayerDrawingModel.Entry,
@@ -382,6 +383,34 @@ protected constructor(
       rangeProvider.getMaxY(minY, maxY, model.extraStore),
       verticalAxisPosition,
     )
+  }
+
+  override fun getAggregation(
+    model: ColumnCartesianLayerModel,
+    x: ClosedFloatingPointRange<Double>,
+    layerIndex: Int,
+  ): ColumnCartesianLayerAggregation? {
+    val seriesAggregates = mutableListOf<ColumnCartesianLayerAggregation.Series>()
+    model.series.forEachIndexed { seriesIndex, series ->
+      val inRange = series.filterInRange(x)
+      if (inRange.isNotEmpty()) {
+        val sum = inRange.sumOf { it.y }
+        seriesAggregates.add(
+          ColumnCartesianLayerAggregation.Series(
+            key = model.seriesKeys[seriesIndex],
+            sum = sum,
+            mean = sum / inRange.size,
+            count = inRange.size,
+            firstY = inRange.first().y,
+          )
+        )
+      }
+    }
+    return if (seriesAggregates.isNotEmpty()) {
+      ColumnCartesianLayerAggregation(seriesAggregates, layerIndex, verticalAxisPosition)
+    } else {
+      null
+    }
   }
 
   override fun updateDimensions(

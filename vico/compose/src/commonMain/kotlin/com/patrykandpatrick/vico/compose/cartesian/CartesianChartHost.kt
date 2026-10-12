@@ -23,8 +23,11 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.patrykandpatrick.vico.compose.cartesian.accessibility.AccessibilityOverlay
 import com.patrykandpatrick.vico.compose.cartesian.data.*
 import com.patrykandpatrick.vico.compose.cartesian.layer.MutableCartesianLayerDimensions
 import com.patrykandpatrick.vico.compose.cartesian.marker.CartesianMarker
@@ -316,7 +319,22 @@ internal fun CartesianChartHostImpl(
     onDispose { zoomState.setScrollState(null) }
   }
 
-  ChartHostBox(modifier, chartAreaHeight, measureExtras) {
+  val descriptionProvider = chart.descriptionProvider
+  ChartHostBox(
+    modifier =
+      modifier.semantics {
+        if (descriptionProvider != null && model.models.isNotEmpty()) {
+          val fullXRange = ranges.minX..ranges.maxX
+          val summaryAggregation = chart.getAggregation(model, fullXRange)
+          val summary = descriptionProvider.getSummary(measuringContext.value, summaryAggregation)
+          if (summary.isNotEmpty()) {
+            contentDescription = summary.toString()
+          }
+        }
+      },
+    chartAreaHeight = chartAreaHeight,
+    measureExtras = measureExtras,
+  ) {
     Canvas(
       modifier =
         Modifier.fillMaxSize()
@@ -374,5 +392,16 @@ internal fun CartesianChartHostImpl(
       chart.draw(drawingContext)
       measuringContext.value.cacheStore.purge()
     }
+
+    AccessibilityOverlay(
+      chart = chart,
+      model = model,
+      ranges = ranges,
+      layerDimensions = layerDimensions,
+      layerBounds = chart.layerBounds,
+      scrollState = scrollState,
+      zoomState = zoomState,
+      context = measuringContext.value,
+    )
   }
 }

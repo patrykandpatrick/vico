@@ -42,6 +42,13 @@ public interface CartesianLayerModel {
   /** Returns the greatest common divisor of the _x_ values’ differences. */
   public fun getXDeltaGcd(): Double
 
+  /** The series keys. */
+  public val seriesKeys: List<Any>
+    get() = emptyList()
+
+  /** Returns all _x_ values present in this model. */
+  public fun getXValues(): List<Double> = emptyList()
+
   /** Creates a copy of this [CartesianLayerModel] with the given [ExtraStore]. */
   public fun copy(extraStore: ExtraStore): CartesianLayerModel
 
@@ -138,4 +145,28 @@ internal fun <T : CartesianLayerModel.Entry> List<T>.getSliceIndices(
   val start = (firstVisible - visiblePadding).coerceAtLeast(0)
   val endExclusive = (lastVisibleExclusive + visiblePadding).coerceAtMost(size)
   return if (endExclusive <= start) IntRange.EMPTY else start..<endExclusive
+}
+
+internal fun <T : CartesianLayerModel.Entry> List<T>.filterInRange(
+  x: ClosedFloatingPointRange<Double>
+): List<T> {
+  if (isEmpty() || x.start > last().x || x.endInclusive < first().x) return emptyList()
+  var fromIndex = binarySearch { it.x.compareTo(x.start) }
+  if (fromIndex < 0) {
+    fromIndex = (-fromIndex) - 1
+  } else {
+    while (fromIndex > 0 && this[fromIndex - 1].x >= x.start) {
+      fromIndex -= 1
+    }
+  }
+  var toIndex = binarySearch { it.x.compareTo(x.endInclusive) }
+  if (toIndex < 0) {
+    toIndex = (-toIndex) - 1
+  } else {
+    while (toIndex < size - 1 && this[toIndex + 1].x <= x.endInclusive) {
+      toIndex += 1
+    }
+    toIndex += 1
+  }
+  return if (fromIndex < toIndex) subList(fromIndex, toIndex) else emptyList()
 }

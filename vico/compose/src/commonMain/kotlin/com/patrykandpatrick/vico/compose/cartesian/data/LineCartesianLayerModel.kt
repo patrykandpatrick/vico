@@ -29,7 +29,7 @@ public class LineCartesianLayerModel : CartesianLayerModel {
   public val series: List<List<Entry>>
 
   /** The keys identifying the series. */
-  public val seriesKeys: List<Any>
+  override val seriesKeys: List<Any>
 
   override val minX: Double
 
@@ -90,6 +90,18 @@ public class LineCartesianLayerModel : CartesianLayerModel {
   }
 
   override fun getXDeltaGcd(): Double = entries.getXDeltaGcd()
+
+  private val cachedXValues: List<Double> by lazy {
+    if (series.size == 1) {
+      series[0].map { it.x }
+    } else {
+      val set = mutableSetOf<Double>()
+      series.forEach { s -> s.forEach { set.add(it.x) } }
+      set.sorted()
+    }
+  }
+
+  override fun getXValues(): List<Double> = cachedXValues
 
   override fun copy(extraStore: ExtraStore): CartesianLayerModel =
     LineCartesianLayerModel(entries, series, seriesKeys, minX, maxX, minY, maxY, extraStore)
