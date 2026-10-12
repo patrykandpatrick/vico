@@ -319,112 +319,89 @@ internal fun CartesianChartHostImpl(
     onDispose { zoomState.setScrollState(null) }
   }
 
-  val chartSummary =
-    remember(chart, model, chart.contentDescriptionProvider, ranges) {
-      if (chart.contentDescriptionProvider != null && model.models.isNotEmpty()) {
-        val fullXRange = ranges.minX..ranges.maxX
-        val summaryAggregation = chart.getAggregation(model, fullXRange)
-        chart.contentDescriptionProvider.getSummary(measuringContext.value, summaryAggregation)
-      } else {
-        null
-      }
-    }
-
+  val descriptionProvider = chart.descriptionProvider
   ChartHostBox(
     modifier =
       modifier.semantics {
-        if (!chartSummary.isNullOrEmpty()) {
-          contentDescription = chartSummary.toString()
+        if (descriptionProvider != null && model.models.isNotEmpty()) {
+          val fullXRange = ranges.minX..ranges.maxX
+          val summaryAggregation = chart.getAggregation(model, fullXRange)
+          val summary = descriptionProvider.getSummary(measuringContext.value, summaryAggregation)
+          if (summary.isNotEmpty()) {
+            contentDescription = summary.toString()
+          }
         }
       },
     chartAreaHeight = chartAreaHeight,
     measureExtras = measureExtras,
   ) {
-    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-      val canvasWidth = if (constraints.hasBoundedWidth) constraints.maxWidth.toFloat() else 0f
-      val canvasHeight = if (constraints.hasBoundedHeight) constraints.maxHeight.toFloat() else 0f
-      if (canvasWidth > 0 && canvasHeight > 0) {
-        val size = Size(canvasWidth, canvasHeight)
-        val context = measuringContext.value
-        context.canvasWidth = canvasWidth
-        context.canvasSize = size
-
-        layerDimensions.clear()
-        chart.prepare(context, layerDimensions, size)
-
-        zoomState.update(context, layerDimensions, chart.layerBounds)
-        scrollState.update(context, chart.layerBounds, layerDimensions)
-      }
-
-      Canvas(
-        modifier =
-          Modifier.fillMaxSize()
-            .pointerInput(
-              scrollState = scrollState,
-              consumeMoveEvents = chart.markerController.consumeMoveEvents,
-              onInteraction = onInteraction,
-              onZoom =
-                // Changing onZoom restarts the pointer-input loop with the current scroll state.
-                remember(zoomState, scrollState, coroutineScope) {
-                  if (zoomState.zoomEnabled) {
-                    { factor, centroid ->
-                      // Apply gesture zooms within the pointer event, before the next draw.
-                      coroutineScope.launch(start = CoroutineStart.UNDISPATCHED) {
-                        zoomState.zoom(factor, centroid.x)
-                      }
+    Canvas(
+      modifier =
+        Modifier.fillMaxSize()
+          .pointerInput(
+            scrollState = scrollState,
+            consumeMoveEvents = chart.markerController.consumeMoveEvents,
+            onInteraction = onInteraction,
+            onZoom =
+              // Changing onZoom restarts the pointer-input loop with the current scroll state.
+              remember(zoomState, scrollState, coroutineScope) {
+                if (zoomState.zoomEnabled) {
+                  { factor, centroid ->
+                    // Apply gesture zooms within the pointer event, before the next draw.
+                    coroutineScope.launch(start = CoroutineStart.UNDISPATCHED) {
+                      zoomState.zoom(factor, centroid.x)
                     }
-                  } else {
-                    null
                   }
-                },
-              longPressEnabled = chart.markerController.acceptsLongPress,
-            )
-      ) {
-        if (size.isEmpty()) return@Canvas
-        measuringContext.value.canvasWidth = size.width
-        measuringContext.value.canvasSize = size
-
-        layerDimensions.clear()
-        chart.prepare(measuringContext.value, layerDimensions, size)
-
-        if (chart.layerBounds.isEmpty) return@Canvas
-
-        zoomState.update(measuringContext.value, layerDimensions, chart.layerBounds)
-        scrollState.update(measuringContext.value, chart.layerBounds, layerDimensions)
-
-        if (model != lastHandledModel) {
-          coroutineScope.launch(start = CoroutineStart.UNDISPATCHED) {
-            scrollState.autoScroll(model, previousModel)
-          }
-          lastHandledModel = model
-        }
-
-        val drawingContext =
-          CartesianDrawingContext(
-            measuringContext.value,
-            drawContext.canvas,
-            layerDimensions,
-            chart.layerBounds,
-            scrollState.value,
-            zoomState.value,
-            MutableDrawScope(this),
+                } else {
+                  null
+                }
+              },
+            longPressEnabled = chart.markerController.acceptsLongPress,
           )
+    ) {
+      if (size.isEmpty()) return@Canvas
+      measuringContext.value.canvasWidth = size.width
+      measuringContext.value.canvasSize = size
 
-        chart.draw(drawingContext)
-        measuringContext.value.cacheStore.purge()
+      layerDimensions.clear()
+      chart.prepare(measuringContext.value, layerDimensions, size)
+
+      if (chart.layerBounds.isEmpty) return@Canvas
+
+      zoomState.update(measuringContext.value, layerDimensions, chart.layerBounds)
+      scrollState.update(measuringContext.value, chart.layerBounds, layerDimensions)
+
+      if (model != lastHandledModel) {
+        coroutineScope.launch(start = CoroutineStart.UNDISPATCHED) {
+          scrollState.autoScroll(model, previousModel)
+        }
+        lastHandledModel = model
       }
 
-      AccessibilityOverlay(
-        chart = chart,
-        model = model,
-        ranges = ranges,
-        layerDimensions = layerDimensions,
-        layerBounds = chart.layerBounds,
-        scroll = scrollState.value,
-        zoom = zoomState.value,
-        context = measuringContext.value,
-        onIntervalFocused = { markerX = it },
-      )
+      val drawingContext =
+        CartesianDrawingContext(
+          measuringContext.value,
+          drawContext.canvas,
+          layerDimensions,
+          chart.layerBounds,
+          scrollState.value,
+          zoomState.value,
+          MutableDrawScope(this),
+        )
+
+      chart.draw(drawingContext)
+      measuringContext.value.cacheStore.purge()
     }
+
+    AccessibilityOverlay(
+      chart = chart,
+      model = model,
+      ranges = ranges,
+      layerDimensions = layerDimensions,
+      layerBounds = chart.layerBounds,
+      scrollState = scrollState,
+      zoomState = zoomState,
+      context = measuringContext.value,
+    )
   }
 }

@@ -16,26 +16,30 @@
 
 package com.patrykandpatrick.vico.compose.cartesian.accessibility
 
-import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.CartesianMeasuringContext
+import com.patrykandpatrick.vico.compose.cartesian.VicoScrollState
+import com.patrykandpatrick.vico.compose.cartesian.VicoZoomState
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartRanges
 import com.patrykandpatrick.vico.compose.cartesian.getVisibleXRange
 import com.patrykandpatrick.vico.compose.cartesian.layer.CartesianLayerDimensions
+import com.patrykandpatrick.vico.compose.common.getStart
+import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
 
@@ -46,84 +50,152 @@ internal fun AccessibilityOverlay(
   ranges: CartesianChartRanges,
   layerDimensions: CartesianLayerDimensions,
   layerBounds: Rect,
-  scroll: Float,
-  zoom: Float,
+  scrollState: VicoScrollState,
+  zoomState: VicoZoomState,
   context: CartesianMeasuringContext,
-  onIntervalFocused: (Double) -> Unit,
 ) {
-  val provider = chart.contentDescriptionProvider ?: return
-  if (layerBounds.isEmpty || model.models.isEmpty() || layerDimensions.xSpacing <= 0f) return
+  val provider = chart.descriptionProvider ?: return
+  if (
+    layerBounds.isEmpty ||
+      model.models.isEmpty() ||
+      layerDimensions.xSpacing <= 0f ||
+      ranges.xStep <= 0.0
+  )
+    return
 
   val density = LocalDensity.current
-  val visibleXRange = remember(context, layerDimensions, layerBounds, scroll, zoom) {
-    context.getVisibleXRange(layerDimensions, layerBounds, scroll)
-  }
-
-  val visibleXValues = remember(model, visibleXRange) {
-    model.getXValues().filter { it in visibleXRange }
-  }
-
-  if (visibleXValues.isEmpty()) return
+  val allXValues = remember(model) { model.getXValues() }
+  if (allXValues.isEmpty()) return
 
   val minIntervalWidthPx = with(density) { 48.dp.toPx() }
-  val maxIntervalCount = (layerBounds.width / minIntervalWidthPx).toInt().coerceAtLeast(1)
-  val intervalCount = min(visibleXValues.size, maxIntervalCount)
-  if (intervalCount <= 0) return
 
-  val widthPx = layerBounds.width / intervalCount
-  val topPx = layerBounds.top
-  val heightPx = layerBounds.height
+  val intervals by
+    remember(allXValues, layerBounds, layerDimensions, ranges, context, minIntervalWidthPx) {
+      derivedStateOf {
+        val scroll = scrollState.value
+        val zoom = zoomState.value
+        if (layerBounds.isEmpty || layerDimensions.xSpacing <= 0f || ranges.xStep <= 0.0) {
+          return@derivedStateOf emptyList<ChartInterval>()
+        }
+        val visibleXRange = context.getVisibleXRange(layerDimensions, layerBounds, scroll)
+        if (
+          visibleXRange.start > allXValues.last() || visibleXRange.endInclusive < allXValues.first()
+        ) {
+          return@derivedStateOf emptyList<ChartInterval>()
+        }
+
+        var fromIndex = allXValues.binarySearch(visibleXRange.start)
+        if (fromIndex < 0) {
+          fromIndex = -fromIndex - 1
+        } else {
+          while (fromIndex > 0 && allXValues[fromIndex - 1] >= visibleXRange.start) {
+            fromIndex -= 1
+          }
+        }
+
+        var toIndex = allXValues.binarySearch(visibleXRange.endInclusive)
+        if (toIndex < 0) {
+          toIndex = -toIndex - 2
+        } else {
+          while (
+            toIndex < allXValues.size - 1 && allXValues[toIndex + 1] <= visibleXRange.endInclusive
+          ) {
+            toIndex += 1
+          }
+        }
+
+        if (fromIndex > toIndex || fromIndex >= allXValues.size || toIndex < 0) {
+          return@derivedStateOf emptyList<ChartInterval>()
+        }
+
+        val visibleCount = toIndex - fromIndex + 1
+        val maxIntervalCount = (layerBounds.width / minIntervalWidthPx).toInt().coerceAtLeast(1)
+        val intervalCount = min(visibleCount, maxIntervalCount)
+        if (intervalCount <= 0) return@derivedStateOf emptyList<ChartInterval>()
+
+        List(intervalCount) { i ->
+          val sliceStart = fromIndex + (i * visibleCount) / intervalCount
+          val sliceEnd =
+            (fromIndex + ((i + 1) * visibleCount) / intervalCount - 1).coerceAtLeast(sliceStart)
+          val startX = allXValues[sliceStart]
+          val endX = allXValues[sliceEnd]
+          val startXBound =
+            if (sliceStart == 0) {
+              startX - ranges.xStep / 2.0
+            } else {
+              (allXValues[sliceStart - 1] + startX) / 2.0
+            }
+          val endXBound =
+            if (sliceEnd == allXValues.lastIndex) {
+              endX + ranges.xStep / 2.0
+            } else {
+              (endX + allXValues[sliceEnd + 1]) / 2.0
+            }
+          ChartInterval(
+            startX = startX,
+            endX = endX,
+            startXBound = startXBound,
+            endXBound = endXBound,
+          )
+        }
+      }
+    }
+
+  if (intervals.isEmpty()) return
 
   Layout(
     content = {
-      for (i in 0 until intervalCount) {
-        val fromIndex = i * visibleXValues.size / intervalCount
-        val toIndex = ((i + 1) * visibleXValues.size / intervalCount - 1).coerceAtLeast(fromIndex)
-        val startX = visibleXValues[fromIndex]
-        val endX = visibleXValues[toIndex]
-        val intervalRange = startX..endX
-
-        val intervalAggregation = remember(chart, model, intervalRange) {
-          chart.getAggregation(model, intervalRange)
-        }
-
-        val description = remember(provider, context, intervalAggregation) {
-          provider.getIntervalDescription(context, intervalAggregation).toString()
-        }
-
-        val midIndex = (fromIndex + toIndex) / 2
-        val representativeX = visibleXValues[midIndex]
-
+      for (interval in intervals) {
         Box(
-          modifier = Modifier
-            .size(
-              width = with(density) { widthPx.toDp() },
-              height = with(density) { heightPx.toDp() },
-            )
-            .onFocusChanged { focusState ->
-              if (focusState.isFocused) {
-                onIntervalFocused(representativeX)
+          modifier =
+            Modifier.semantics {
+              val aggregation = chart.getAggregation(model, interval.startX..interval.endX)
+              val description = provider.getIntervalDescription(context, aggregation)
+              if (description.isNotEmpty()) {
+                contentDescription = description.toString()
               }
-            }
-            .focusable()
-            .semantics {
-              this.contentDescription = description
             }
         )
       }
     },
     modifier = Modifier.fillMaxSize(),
   ) { measurables, constraints ->
-    val placeables = measurables.map { it.measure(constraints) }
+    val scroll = scrollState.value
+    fun getCanvasX(x: Double): Float {
+      val drawingStart =
+        layerBounds.getStart(context.isLtr) +
+          context.layoutDirectionMultiplier * layerDimensions.startPadding - scroll
+      return drawingStart +
+        context.layoutDirectionMultiplier *
+          layerDimensions.xSpacing *
+          ((x - ranges.minX) / ranges.xStep).toFloat()
+    }
+
+    val placeableData = measurables.mapIndexed { index, measurable ->
+      val interval = intervals[index]
+      val c1 = getCanvasX(interval.startXBound)
+      val c2 = getCanvasX(interval.endXBound)
+      val minX = min(c1, c2)
+      val maxX = max(c1, c2)
+      val leftInt = minX.coerceIn(layerBounds.left, layerBounds.right).roundToInt()
+      val rightInt = maxX.coerceIn(layerBounds.left, layerBounds.right).roundToInt()
+      val widthPx = (rightInt - leftInt).coerceAtLeast(1)
+      val heightPx = layerBounds.height.roundToInt().coerceAtLeast(1)
+      val placeable = measurable.measure(Constraints.fixed(widthPx, heightPx))
+      Triple(placeable, leftInt, layerBounds.top.roundToInt())
+    }
+
     layout(constraints.maxWidth, constraints.maxHeight) {
-      placeables.forEachIndexed { i, placeable ->
-        val leftPx = if (context.isLtr) {
-          layerBounds.left + i * widthPx
-        } else {
-          layerBounds.right - (i + 1) * widthPx
-        }
-        placeable.place(leftPx.roundToInt(), topPx.roundToInt())
+      placeableData.forEach { (placeable, leftInt, topInt) ->
+        placeable.place(leftInt, topInt)
       }
     }
   }
 }
+
+private data class ChartInterval(
+  val startX: Double,
+  val endX: Double,
+  val startXBound: Double,
+  val endXBound: Double,
+)

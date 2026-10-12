@@ -274,7 +274,7 @@ protected constructor(
     x: ClosedFloatingPointRange<Double>,
     layerIndex: Int,
   ): CandlestickCartesianLayerAggregation? {
-    val inRange = model.series.filter { it.x in x }
+    val inRange = model.series.filterInRange(x)
     return if (inRange.isNotEmpty()) {
       CandlestickCartesianLayerAggregation(
         key = model.key,

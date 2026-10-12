@@ -935,7 +935,7 @@ protected constructor(
   ): LineCartesianLayerAggregation? {
     val seriesAggregates = mutableListOf<LineCartesianLayerAggregation.Series>()
     model.series.forEachIndexed { seriesIndex, series ->
-      val inRange = series.filter { it.x in x }
+      val inRange = series.filterInRange(x)
       if (inRange.isNotEmpty()) {
         seriesAggregates.add(
           LineCartesianLayerAggregation.Series(

@@ -20,25 +20,31 @@ package com.patrykandpatrick.vico.compose.cartesian
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChart.PersistentMarkerScope
+import com.patrykandpatrick.vico.compose.cartesian.accessibility.CartesianAggregation
+import com.patrykandpatrick.vico.compose.cartesian.accessibility.CartesianChartDescriptionProvider
+import com.patrykandpatrick.vico.compose.cartesian.accessibility.CartesianLayerAggregation
 import com.patrykandpatrick.vico.compose.cartesian.axis.Axis
 import com.patrykandpatrick.vico.compose.cartesian.axis.AxisManager
+import com.patrykandpatrick.vico.compose.cartesian.data.CandlestickCartesianLayerModel
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartRanges
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianLayerModel
+import com.patrykandpatrick.vico.compose.cartesian.data.ColumnCartesianLayerModel
+import com.patrykandpatrick.vico.compose.cartesian.data.LineCartesianLayerModel
 import com.patrykandpatrick.vico.compose.cartesian.data.MutableCartesianChartRanges
 import com.patrykandpatrick.vico.compose.cartesian.decoration.Decoration
 import com.patrykandpatrick.vico.compose.cartesian.layer.*
 import com.patrykandpatrick.vico.compose.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.compose.cartesian.marker.CartesianMarkerController
 import com.patrykandpatrick.vico.compose.cartesian.marker.CartesianMarkerVisibilityListener
-import com.patrykandpatrick.vico.compose.cartesian.accessibility.CartesianAggregation
-import com.patrykandpatrick.vico.compose.cartesian.accessibility.CartesianChartDescriptionProvider
-import com.patrykandpatrick.vico.compose.cartesian.accessibility.CartesianLayerAggregation
 import com.patrykandpatrick.vico.compose.common.*
 import com.patrykandpatrick.vico.compose.common.data.CacheStore
 import com.patrykandpatrick.vico.compose.common.data.ExtraStore
@@ -82,7 +88,7 @@ internal constructor(
     getDefaultXStep(model, minX)
   },
   public val markerController: CartesianMarkerController = CartesianMarkerController.showOnPress(),
-  public val contentDescriptionProvider: CartesianChartDescriptionProvider? =
+  public val descriptionProvider: CartesianChartDescriptionProvider? =
     CartesianChartDescriptionProvider.default(),
   internal val id: Uuid = Uuid.random(),
   private var previousMarkerTargetHashCode: Int? = null,
@@ -165,7 +171,7 @@ internal constructor(
       }
     }
 
-  internal var layerBounds: Rect = Rect.Zero
+  internal var layerBounds: Rect by mutableStateOf(Rect.Zero)
 
   /** The [CartesianLayer]s of which this [CartesianChart] is composed. */
   public val layers: List<CartesianLayer<*>> = layers.toList()
@@ -467,7 +473,17 @@ internal constructor(
         is ColumnCartesianLayer -> freeModels.consume(layer, consumer)
         is LineCartesianLayer -> freeModels.consume(layer, consumer)
         is CandlestickCartesianLayer -> freeModels.consume(layer, consumer)
-        else -> throw IllegalArgumentException("Unexpected `CartesianLayer` implementation.")
+        else -> {
+          val model =
+            freeModels.firstOrNull {
+              it !is ColumnCartesianLayerModel &&
+                it !is LineCartesianLayerModel &&
+                it !is CandlestickCartesianLayerModel
+            } ?: freeModels.firstOrNull()
+          @Suppress("UNCHECKED_CAST")
+          (layer as CartesianLayer<CartesianLayerModel>).let { consumer(model, it) }
+          if (model != null) freeModels.remove(model)
+        }
       }
     }
   }
@@ -560,7 +576,7 @@ internal constructor(
     persistentMarkers: (PersistentMarkerScope.(ExtraStore) -> Unit)? = this.persistentMarkers,
     getXStep: ((CartesianChartModel, Double, Double) -> Double) = this.getXStep,
     markerController: CartesianMarkerController = CartesianMarkerController.showOnPress(),
-    contentDescriptionProvider: CartesianChartDescriptionProvider? = this.contentDescriptionProvider,
+    descriptionProvider: CartesianChartDescriptionProvider? = this.descriptionProvider,
   ): CartesianChart =
     CartesianChart(
       layers = layers,
@@ -577,7 +593,7 @@ internal constructor(
       persistentMarkers = persistentMarkers,
       getXStep = getXStep,
       markerController = markerController,
-      contentDescriptionProvider = contentDescriptionProvider,
+      descriptionProvider = descriptionProvider,
       id = id,
       previousMarkerTargetHashCode = previousMarkerTargetHashCode,
       persistentMarkerMap = persistentMarkerMap,
@@ -605,7 +621,7 @@ internal constructor(
     persistentMarkers: (PersistentMarkerScope.(ExtraStore) -> Unit)? = this.persistentMarkers,
     getXStep: ((CartesianChartModel) -> Double),
     markerController: CartesianMarkerController = CartesianMarkerController.showOnPress(),
-    contentDescriptionProvider: CartesianChartDescriptionProvider? = this.contentDescriptionProvider,
+    descriptionProvider: CartesianChartDescriptionProvider? = this.descriptionProvider,
   ): CartesianChart =
     copy(
       layers = layers,
@@ -622,7 +638,7 @@ internal constructor(
       persistentMarkers = persistentMarkers,
       getXStep = { model, _, _ -> getXStep(model) },
       markerController = markerController,
-      contentDescriptionProvider = contentDescriptionProvider,
+      descriptionProvider = descriptionProvider,
     )
 
   override fun equals(other: Any?): Boolean =
@@ -664,7 +680,7 @@ internal constructor(
   }
 
   /** Returns aggregated data for [x]. */
-  public fun getAggregation(
+  internal fun getAggregation(
     model: CartesianChartModel,
     x: ClosedFloatingPointRange<Double>,
   ): CartesianAggregation {
@@ -676,18 +692,12 @@ internal constructor(
           if (model != null) {
             layer.getAggregation(model, x, layerIndex)?.let { aggregations.add(it) }
           }
-          layerIndex++
+          layerIndex += 1
         }
       }
     model.forEachWithLayer(consumer)
     return CartesianAggregation(x, aggregations)
   }
-
-  /** Returns aggregated data for [x]. */
-  public fun getAggregation(
-    context: CartesianMeasuringContext,
-    x: ClosedFloatingPointRange<Double>,
-  ): CartesianAggregation = getAggregation(context.model, x)
 
   /** Facilitates adding persistent [CartesianMarker]s to [CartesianChart]s. */
   public fun interface PersistentMarkerScope {
@@ -741,7 +751,7 @@ public fun rememberCartesianChart(
     getDefaultXStep(model, minX)
   },
   markerController: CartesianMarkerController = CartesianMarkerController.rememberShowOnPress(),
-  contentDescriptionProvider: CartesianChartDescriptionProvider? = remember {
+  descriptionProvider: CartesianChartDescriptionProvider? = remember {
     CartesianChartDescriptionProvider.default()
   },
 ): CartesianChart {
@@ -761,7 +771,7 @@ public fun rememberCartesianChart(
     persistentMarkers,
     getXStep,
     markerController,
-    contentDescriptionProvider,
+    descriptionProvider,
   ) {
     val cartesianChart =
       wrapper.value?.copy(
@@ -779,7 +789,7 @@ public fun rememberCartesianChart(
         persistentMarkers = persistentMarkers,
         getXStep = getXStep,
         markerController = markerController,
-        contentDescriptionProvider = contentDescriptionProvider,
+        descriptionProvider = descriptionProvider,
       )
         ?: CartesianChart(
           layers = layers,
@@ -796,7 +806,7 @@ public fun rememberCartesianChart(
           persistentMarkers = persistentMarkers,
           getXStep = getXStep,
           markerController = markerController,
-          contentDescriptionProvider = contentDescriptionProvider,
+          descriptionProvider = descriptionProvider,
         )
     wrapper.value = cartesianChart
     cartesianChart

@@ -61,7 +61,7 @@ kotlin {
     val desktopTest by getting {
       dependencies {
         implementation(compose.desktop.currentOs)
-        implementation("org.jetbrains.compose.ui:ui-test")
+        implementation(libs.composeUITest)
       }
     }
     // MockK isn’t multiplatform, so host-side JVM tests get it here.

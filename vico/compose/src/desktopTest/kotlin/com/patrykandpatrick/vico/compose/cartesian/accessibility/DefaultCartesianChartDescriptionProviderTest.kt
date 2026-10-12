@@ -63,7 +63,9 @@ class DefaultCartesianChartDescriptionProviderTest {
       verticalAxisPosition = verticalAxisPosition,
     )
 
-  private fun createCandlestickLayer(verticalAxisPosition: Axis.Position.Vertical? = null): CandlestickCartesianLayer {
+  private fun createCandlestickLayer(
+    verticalAxisPosition: Axis.Position.Vertical? = null
+  ): CandlestickCartesianLayer {
     val candle = CandlestickCartesianLayer.Candle(LineComponent(Fill.Black))
     return CandlestickCartesianLayer(
       candleProvider =
@@ -80,8 +82,9 @@ class DefaultCartesianChartDescriptionProviderTest {
     )
   }
 
-  private val wholeNumberFormatter =
-    CartesianValueFormatter { _, value, _ -> value.toInt().toString() }
+  private val wholeNumberFormatter = CartesianValueFormatter { _, value, _ ->
+    value.toInt().toString()
+  }
 
   private val provider =
     CartesianChartDescriptionProvider.default(
@@ -103,6 +106,7 @@ class DefaultCartesianChartDescriptionProviderTest {
       override val canvasSize: Size = Size(800f, 400f)
       override val fontFamilyResolver: FontFamily.Resolver
         get() = error("Unused in test")
+
       override val density: Density = Density(1f)
       override val extraStore: ExtraStore = ExtraStore.Empty
       override val layoutDirection: LayoutDirection = LayoutDirection.Ltr
@@ -117,7 +121,7 @@ class DefaultCartesianChartDescriptionProviderTest {
           series(10, 30, 20, 50)
         }
       )
-    val chart = CartesianChart(createLineLayer(), contentDescriptionProvider = provider)
+    val chart = CartesianChart(createLineLayer(), descriptionProvider = provider)
     val context = createContext(model)
     val aggregation = chart.getAggregation(model, 0.0..3.0)
 
@@ -138,7 +142,7 @@ class DefaultCartesianChartDescriptionProviderTest {
           series(20, 15)
         }
       )
-    val chart = CartesianChart(createLineLayer(), contentDescriptionProvider = provider)
+    val chart = CartesianChart(createLineLayer(), descriptionProvider = provider)
     val context = createContext(model)
     val aggregation = chart.getAggregation(model, 0.0..1.0)
 
@@ -158,7 +162,7 @@ class DefaultCartesianChartDescriptionProviderTest {
           series(10, 30, 20, 50)
         }
       )
-    val chart = CartesianChart(createLineLayer(), contentDescriptionProvider = provider)
+    val chart = CartesianChart(createLineLayer(), descriptionProvider = provider)
     val context = createContext(model)
     val aggregation = chart.getAggregation(model, 1.0..1.0)
 
@@ -175,7 +179,7 @@ class DefaultCartesianChartDescriptionProviderTest {
           series(10, 30, 20, 50)
         }
       )
-    val chart = CartesianChart(createLineLayer(), contentDescriptionProvider = provider)
+    val chart = CartesianChart(createLineLayer(), descriptionProvider = provider)
     val context = createContext(model)
     val aggregation = chart.getAggregation(model, 0.0..2.0)
 
@@ -192,7 +196,7 @@ class DefaultCartesianChartDescriptionProviderTest {
           series(10, 20, 30)
         }
       )
-    val chart = CartesianChart(createColumnLayer(), contentDescriptionProvider = provider)
+    val chart = CartesianChart(createColumnLayer(), descriptionProvider = provider)
     val context = createContext(model)
     val aggregation = chart.getAggregation(model, 0.0..2.0)
 
@@ -213,7 +217,7 @@ class DefaultCartesianChartDescriptionProviderTest {
           series(30, 40)
         }
       )
-    val chart = CartesianChart(createColumnLayer(), contentDescriptionProvider = provider)
+    val chart = CartesianChart(createColumnLayer(), descriptionProvider = provider)
     val context = createContext(model)
     val aggregation = chart.getAggregation(model, 0.0..1.0)
 
@@ -233,7 +237,7 @@ class DefaultCartesianChartDescriptionProviderTest {
           series(10, 20, 30)
         }
       )
-    val chart = CartesianChart(createColumnLayer(), contentDescriptionProvider = provider)
+    val chart = CartesianChart(createColumnLayer(), descriptionProvider = provider)
     val context = createContext(model)
     val aggregation = chart.getAggregation(model, 1.0..1.0)
 
@@ -250,7 +254,7 @@ class DefaultCartesianChartDescriptionProviderTest {
           series(10, 20, 30)
         }
       )
-    val chart = CartesianChart(createColumnLayer(), contentDescriptionProvider = provider)
+    val chart = CartesianChart(createColumnLayer(), descriptionProvider = provider)
     val context = createContext(model)
     val aggregation = chart.getAggregation(model, 0.0..1.0)
 
@@ -270,7 +274,7 @@ class DefaultCartesianChartDescriptionProviderTest {
           high = listOf(120, 115),
         )
       )
-    val chart = CartesianChart(createCandlestickLayer(), contentDescriptionProvider = provider)
+    val chart = CartesianChart(createCandlestickLayer(), descriptionProvider = provider)
     val context = createContext(model)
     val aggregation = chart.getAggregation(model, 0.0..1.0)
 
@@ -293,7 +297,7 @@ class DefaultCartesianChartDescriptionProviderTest {
           high = listOf(120, 115),
         )
       )
-    val chart = CartesianChart(createCandlestickLayer(), contentDescriptionProvider = provider)
+    val chart = CartesianChart(createCandlestickLayer(), descriptionProvider = provider)
     val context = createContext(model)
     val aggregation = chart.getAggregation(model, 0.0..0.0)
 
@@ -309,7 +313,8 @@ class DefaultCartesianChartDescriptionProviderTest {
         LineCartesianLayerModel.build { series(10, 20) },
         ColumnCartesianLayerModel.build { series(30, 40) },
       )
-    val chart = CartesianChart(createLineLayer(), createColumnLayer(), contentDescriptionProvider = provider)
+    val chart =
+      CartesianChart(createLineLayer(), createColumnLayer(), descriptionProvider = provider)
     val context = createContext(model)
     val aggregation = chart.getAggregation(model, 0.0..1.0)
 
@@ -329,11 +334,8 @@ class DefaultCartesianChartDescriptionProviderTest {
         yValueFormatter = wholeNumberFormatter,
         seriesLabel = { _, layerIndex, key -> "Layer $layerIndex Data $key" },
       )
-    val model =
-      CartesianChartModel(
-        LineCartesianLayerModel.build { series(10, 20) }
-      )
-    val chart = CartesianChart(createLineLayer(), contentDescriptionProvider = customProvider)
+    val model = CartesianChartModel(LineCartesianLayerModel.build { series(10, 20) })
+    val chart = CartesianChart(createLineLayer(), descriptionProvider = customProvider)
     val context = createContext(model)
     val aggregation = chart.getAggregation(model, 0.0..1.0)
 
@@ -348,13 +350,11 @@ class DefaultCartesianChartDescriptionProviderTest {
   @Test
   fun customAxisFormattersAndVerticalAxisPositionAreRespected() {
     var receivedPosition: Axis.Position.Vertical? = null
-    val customYFormatter =
-      CartesianValueFormatter { _, value, verticalAxisPosition ->
-        receivedPosition = verticalAxisPosition
-        "$$value"
-      }
-    val customXFormatter =
-      CartesianValueFormatter { _, value, _ -> "Point $value" }
+    val customYFormatter = CartesianValueFormatter { _, value, verticalAxisPosition ->
+      receivedPosition = verticalAxisPosition
+      "$$value"
+    }
+    val customXFormatter = CartesianValueFormatter { _, value, _ -> "Point $value" }
 
     val customProvider =
       CartesianChartDescriptionProvider.default(
@@ -362,12 +362,9 @@ class DefaultCartesianChartDescriptionProviderTest {
         yValueFormatter = customYFormatter,
       )
 
-    val model =
-      CartesianChartModel(
-        LineCartesianLayerModel.build { series(10.0, 20.0) }
-      )
+    val model = CartesianChartModel(LineCartesianLayerModel.build { series(10.0, 20.0) })
     val configuredLineLayer = createLineLayer(verticalAxisPosition = Axis.Position.Vertical.End)
-    val chart = CartesianChart(configuredLineLayer, contentDescriptionProvider = customProvider)
+    val chart = CartesianChart(configuredLineLayer, descriptionProvider = customProvider)
     val context = createContext(model)
     val aggregation = chart.getAggregation(model, 0.0..1.0)
 
@@ -386,10 +383,29 @@ class DefaultCartesianChartDescriptionProviderTest {
       object : CartesianLayer<LineCartesianLayerModel> {
         override val markerTargets: Map<Double, List<CartesianMarker.Target>> = emptyMap()
         override val verticalAxisPosition: Axis.Position.Vertical? = null
-        override fun draw(context: com.patrykandpatrick.vico.compose.cartesian.CartesianDrawingContext, model: LineCartesianLayerModel) {}
-        override fun updateDimensions(context: CartesianMeasuringContext, dimensions: MutableCartesianLayerDimensions, model: LineCartesianLayerModel) {}
-        override fun updateChartRanges(chartRanges: com.patrykandpatrick.vico.compose.cartesian.data.MutableCartesianChartRanges, model: LineCartesianLayerModel) {}
-        override fun prepareForTransformation(model: LineCartesianLayerModel?, ranges: CartesianChartRanges, extraStore: MutableExtraStore) {}
+
+        override fun draw(
+          context: com.patrykandpatrick.vico.compose.cartesian.CartesianDrawingContext,
+          model: LineCartesianLayerModel,
+        ) {}
+
+        override fun updateDimensions(
+          context: CartesianMeasuringContext,
+          dimensions: MutableCartesianLayerDimensions,
+          model: LineCartesianLayerModel,
+        ) {}
+
+        override fun updateChartRanges(
+          chartRanges: com.patrykandpatrick.vico.compose.cartesian.data.MutableCartesianChartRanges,
+          model: LineCartesianLayerModel,
+        ) {}
+
+        override fun prepareForTransformation(
+          model: LineCartesianLayerModel?,
+          ranges: CartesianChartRanges,
+          extraStore: MutableExtraStore,
+        ) {}
+
         override suspend fun transform(extraStore: MutableExtraStore, fraction: Float) {}
       }
 
@@ -429,7 +445,7 @@ class DefaultCartesianChartDescriptionProviderTest {
           series(listOf(2, 3), listOf(30, 40))
         }
       )
-    val chart = CartesianChart(createLineLayer(), contentDescriptionProvider = provider)
+    val chart = CartesianChart(createLineLayer(), descriptionProvider = provider)
     val context = createContext(model)
     val aggregation = chart.getAggregation(model, 2.0..3.0)
 

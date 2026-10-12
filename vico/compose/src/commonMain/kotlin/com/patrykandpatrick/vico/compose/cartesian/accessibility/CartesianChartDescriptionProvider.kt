@@ -18,36 +18,26 @@ package com.patrykandpatrick.vico.compose.cartesian.accessibility
 
 import androidx.compose.runtime.Immutable
 import com.patrykandpatrick.vico.compose.cartesian.CartesianMeasuringContext
-import com.patrykandpatrick.vico.compose.cartesian.data.CandlestickCartesianLayerModel
+import com.patrykandpatrick.vico.compose.cartesian.axis.Axis
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianValueFormatter
-import com.patrykandpatrick.vico.compose.cartesian.data.ColumnCartesianLayerModel
-import com.patrykandpatrick.vico.compose.cartesian.data.LineCartesianLayerModel
 
-/**
- * Provides content descriptions for Cartesian charts and their intervals.
- */
+/** Provides content descriptions for Cartesian charts and their intervals. */
 @Immutable
 public interface CartesianChartDescriptionProvider {
 
-  /**
-   * Returns a content description summarizing the entire chart.
-   */
+  /** Returns a content description summarizing the entire chart. */
   public fun getSummary(
     context: CartesianMeasuringContext,
     summary: CartesianAggregation,
   ): CharSequence
 
-  /**
-   * Returns a content description for a specific visible interval.
-   */
+  /** Returns a content description for a specific visible interval. */
   public fun getIntervalDescription(
     context: CartesianMeasuringContext,
     interval: CartesianAggregation,
   ): CharSequence
 
-  /**
-   * Houses factory functions for [CartesianChartDescriptionProvider].
-   */
+  /** Houses factory functions for [CartesianChartDescriptionProvider]. */
   public companion object {
     /**
      * Creates the default [CartesianChartDescriptionProvider] implementation.
@@ -55,57 +45,34 @@ public interface CartesianChartDescriptionProvider {
      * @param xValueFormatter formats x values.
      * @param yValueFormatter formats y values.
      * @param seriesLabel generates labels for individual series. When null or returning null, the
-     *   series name is omitted for single-series charts and falls back to "Series 1", "Series 2", etc.
-     *   for multi-series charts.
+     *   series name is omitted for single-series charts and falls back to "Series 1", "Series 2",
+     *   etc. for multi-series charts.
      */
     public fun default(
       xValueFormatter: CartesianValueFormatter = CartesianValueFormatter.decimal(),
       yValueFormatter: CartesianValueFormatter = CartesianValueFormatter.decimal(),
-      seriesLabel: ((context: CartesianMeasuringContext, layerIndex: Int, seriesKey: Any) -> CharSequence?)? =
+      seriesLabel:
+        ((context: CartesianMeasuringContext, layerIndex: Int, seriesKey: Any) -> CharSequence?)? =
         null,
     ): CartesianChartDescriptionProvider =
       DefaultCartesianChartDescriptionProvider(xValueFormatter, yValueFormatter, seriesLabel)
   }
 }
 
-/**
- * An alias for [CartesianChartDescriptionProvider].
- */
-public typealias ContentDescriptionProvider = CartesianChartDescriptionProvider
-
-/**
- * An alias for [CartesianChartDescriptionProvider].
- */
-public typealias CartesianContentDescriptionProvider = CartesianChartDescriptionProvider
-
 internal class DefaultCartesianChartDescriptionProvider(
   private val xValueFormatter: CartesianValueFormatter,
   private val yValueFormatter: CartesianValueFormatter,
-  private val seriesLabel: ((context: CartesianMeasuringContext, layerIndex: Int, seriesKey: Any) -> CharSequence?)?,
+  private val seriesLabel:
+    ((context: CartesianMeasuringContext, layerIndex: Int, seriesKey: Any) -> CharSequence?)?,
 ) : CartesianChartDescriptionProvider {
 
   private fun getTotalSeriesCount(
     context: CartesianMeasuringContext,
     aggregation: CartesianAggregation,
   ): Int {
-    val fromModel = context.model.models.sumOf { model ->
-      when (model) {
-        is LineCartesianLayerModel -> model.seriesKeys.size
-        is ColumnCartesianLayerModel -> model.seriesKeys.size
-        is CandlestickCartesianLayerModel -> 1
-        else -> 0
-      }
-    }
+    val fromModel = context.model.models.sumOf { it.seriesKeys.size }
     if (fromModel > 0) return fromModel
-
-    return aggregation.layerAggregations.sumOf { layerAggregation ->
-      when (layerAggregation) {
-        is LineCartesianLayerAggregation -> layerAggregation.series.size
-        is ColumnCartesianLayerAggregation -> layerAggregation.series.size
-        is CandlestickCartesianLayerAggregation -> 1
-        else -> 0
-      }
-    }
+    return aggregation.layerAggregations.sumOf { it.seriesCount }
   }
 
   private fun getSeriesLabel(
@@ -123,22 +90,12 @@ internal class DefaultCartesianChartDescriptionProvider(
     var found = false
     for (i in 0 until layerIndex) {
       if (i < context.model.models.size) {
-        number += when (val model = context.model.models[i]) {
-          is LineCartesianLayerModel -> model.seriesKeys.size
-          is ColumnCartesianLayerModel -> model.seriesKeys.size
-          is CandlestickCartesianLayerModel -> 1
-          else -> 0
-        }
+        number += context.model.models[i].seriesKeys.size
       }
     }
     if (layerIndex < context.model.models.size) {
       val model = context.model.models[layerIndex]
-      val keyIndex = when (model) {
-        is LineCartesianLayerModel -> model.seriesKeys.indexOf(seriesKey)
-        is ColumnCartesianLayerModel -> model.seriesKeys.indexOf(seriesKey)
-        is CandlestickCartesianLayerModel -> 0
-        else -> -1
-      }
+      val keyIndex = model.seriesKeys.indexOf(seriesKey)
       if (keyIndex >= 0) {
         number += keyIndex + 1
         found = true
@@ -163,20 +120,111 @@ internal class DefaultCartesianChartDescriptionProvider(
     }
   }
 
+  private fun formatXRange(
+    context: CartesianMeasuringContext,
+    range: ClosedFloatingPointRange<Double>,
+    isSummary: Boolean,
+  ): String {
+    val startX = xValueFormatter.format(context, range.start, null)
+    val endX = xValueFormatter.format(context, range.endInclusive, null)
+    return if (range.start == range.endInclusive) {
+      "X: $startX."
+    } else if (isSummary) {
+      "X from $startX to $endX."
+    } else {
+      "X: $startX to $endX."
+    }
+  }
+
+  private fun StringBuilder.appendSeriesPrefix(
+    context: CartesianMeasuringContext,
+    layerIndex: Int,
+    seriesKey: Any,
+    totalSeriesCount: Int,
+    fallbackSeriesNumber: Int,
+  ) {
+    append(" ")
+    val label =
+      getSeriesLabel(
+        context = context,
+        layerIndex = layerIndex,
+        seriesKey = seriesKey,
+        totalSeriesCount = totalSeriesCount,
+        fallbackSeriesNumber = fallbackSeriesNumber,
+      )
+    if (label != null) {
+      append(label).append(": ")
+    }
+  }
+
+  private fun formatLineSeries(
+    context: CartesianMeasuringContext,
+    series: LineCartesianLayerAggregation.Series,
+    verticalAxisPosition: Axis.Position.Vertical?,
+    isSummary: Boolean,
+  ): String {
+    val firstY = yValueFormatter.format(context, series.first.y, verticalAxisPosition)
+    val lastY = yValueFormatter.format(context, series.last.y, verticalAxisPosition)
+    val minY = yValueFormatter.format(context, series.min.y, verticalAxisPosition)
+    val maxY = yValueFormatter.format(context, series.max.y, verticalAxisPosition)
+    return if (isSummary) {
+      val minX = xValueFormatter.format(context, series.min.x, null)
+      val maxX = xValueFormatter.format(context, series.max.x, null)
+      val change = series.last.y - series.first.y
+      val changeSign = if (change > 0) "+" else ""
+      val changeStr = "$changeSign${yValueFormatter.format(context, change, verticalAxisPosition)}"
+      "Min: $minY at $minX, max: $maxY at $maxX, first: $firstY, last: $lastY (change: $changeStr)."
+    } else if (series.first.x == series.last.x) {
+      "Y: $firstY."
+    } else {
+      "Min: $minY, max: $maxY, first: $firstY, last: $lastY."
+    }
+  }
+
+  private fun formatColumnSeries(
+    context: CartesianMeasuringContext,
+    series: ColumnCartesianLayerAggregation.Series,
+    verticalAxisPosition: Axis.Position.Vertical?,
+    isSummary: Boolean,
+  ): String {
+    return if (!isSummary && series.count == 1) {
+      val y = yValueFormatter.format(context, series.firstY, verticalAxisPosition)
+      "Y: $y."
+    } else {
+      val sum = yValueFormatter.format(context, series.sum, verticalAxisPosition)
+      val mean = yValueFormatter.format(context, series.mean, verticalAxisPosition)
+      "Sum: $sum, mean: $mean."
+    }
+  }
+
+  private fun formatCandlestick(
+    context: CartesianMeasuringContext,
+    aggregation: CandlestickCartesianLayerAggregation,
+    isSummary: Boolean,
+  ): String {
+    val open =
+      yValueFormatter.format(context, aggregation.opening, aggregation.verticalAxisPosition)
+    val high = yValueFormatter.format(context, aggregation.high, aggregation.verticalAxisPosition)
+    val low = yValueFormatter.format(context, aggregation.low, aggregation.verticalAxisPosition)
+    val close =
+      yValueFormatter.format(context, aggregation.closing, aggregation.verticalAxisPosition)
+    return if (isSummary) {
+      val change = aggregation.closing - aggregation.opening
+      val changeSign = if (change > 0) "+" else ""
+      val changeStr =
+        "$changeSign${yValueFormatter.format(context, change, aggregation.verticalAxisPosition)}"
+      "Open: $open, high: $high, low: $low, close: $close (change: $changeStr)."
+    } else {
+      "Open: $open, high: $high, low: $low, close: $close."
+    }
+  }
+
   override fun getSummary(
     context: CartesianMeasuringContext,
     summary: CartesianAggregation,
   ): CharSequence = buildString {
-    append(getChartType(summary))
-    append(". ")
-
-    val startX = xValueFormatter.format(context, summary.x.start, null)
-    val endX = xValueFormatter.format(context, summary.x.endInclusive, null)
-    if (summary.x.start == summary.x.endInclusive) {
-      append("X: ").append(startX).append(".")
-    } else {
-      append("X from ").append(startX).append(" to ").append(endX).append(".")
-    }
+    append(getChartType(summary)).append(". ")
+    append(formatXRange(context, summary.x, isSummary = true))
 
     val totalSeriesCount = getTotalSeriesCount(context, summary)
     var seriesCounter = 1
@@ -185,91 +233,56 @@ internal class DefaultCartesianChartDescriptionProvider(
       when (layerAggregation) {
         is LineCartesianLayerAggregation -> {
           layerAggregation.series.forEach { series ->
-            append(" ")
-            val label =
-              getSeriesLabel(
-                context = context,
-                layerIndex = layerAggregation.layerIndex,
-                seriesKey = series.key,
-                totalSeriesCount = totalSeriesCount,
-                fallbackSeriesNumber = seriesCounter,
+            appendSeriesPrefix(
+              context,
+              layerAggregation.layerIndex,
+              series.key,
+              totalSeriesCount,
+              seriesCounter,
+            )
+            seriesCounter += 1
+            append(
+              formatLineSeries(
+                context,
+                series,
+                layerAggregation.verticalAxisPosition,
+                isSummary = true,
               )
-            seriesCounter++
-            if (label != null) {
-              append(label).append(": ")
-            }
-
-            val minY = yValueFormatter.format(context, series.min.y, layerAggregation.verticalAxisPosition)
-            val minX = xValueFormatter.format(context, series.min.x, null)
-            val maxY = yValueFormatter.format(context, series.max.y, layerAggregation.verticalAxisPosition)
-            val maxX = xValueFormatter.format(context, series.max.x, null)
-            val firstY = yValueFormatter.format(context, series.first.y, layerAggregation.verticalAxisPosition)
-            val lastY = yValueFormatter.format(context, series.last.y, layerAggregation.verticalAxisPosition)
-            val change = series.last.y - series.first.y
-            val changeSign = if (change > 0) "+" else ""
-            val changeStr = "$changeSign${yValueFormatter.format(context, change, layerAggregation.verticalAxisPosition)}"
-
-            append("Min: ").append(minY).append(" at ").append(minX)
-            append(", max: ").append(maxY).append(" at ").append(maxX)
-            append(", first: ").append(firstY).append(", last: ").append(lastY)
-            append(" (change: ").append(changeStr).append(").")
+            )
           }
         }
-
         is ColumnCartesianLayerAggregation -> {
           layerAggregation.series.forEach { series ->
-            append(" ")
-            val label =
-              getSeriesLabel(
-                context = context,
-                layerIndex = layerAggregation.layerIndex,
-                seriesKey = series.key,
-                totalSeriesCount = totalSeriesCount,
-                fallbackSeriesNumber = seriesCounter,
-              )
-            seriesCounter++
-            if (label != null) {
-              append(label).append(": ")
-            }
-
-            val sum = yValueFormatter.format(context, series.sum, layerAggregation.verticalAxisPosition)
-            val mean = yValueFormatter.format(context, series.mean, layerAggregation.verticalAxisPosition)
-
-            append("Sum: ").append(sum).append(", mean: ").append(mean).append(".")
-          }
-        }
-
-        is CandlestickCartesianLayerAggregation -> {
-          append(" ")
-          val label =
-            getSeriesLabel(
-              context = context,
-              layerIndex = layerAggregation.layerIndex,
-              seriesKey = layerAggregation.key,
-              totalSeriesCount = totalSeriesCount,
-              fallbackSeriesNumber = seriesCounter,
+            appendSeriesPrefix(
+              context,
+              layerAggregation.layerIndex,
+              series.key,
+              totalSeriesCount,
+              seriesCounter,
             )
-          seriesCounter++
-          if (label != null) {
-            append(label).append(": ")
+            seriesCounter += 1
+            append(
+              formatColumnSeries(
+                context,
+                series,
+                layerAggregation.verticalAxisPosition,
+                isSummary = true,
+              )
+            )
           }
-
-          val open = yValueFormatter.format(context, layerAggregation.opening, layerAggregation.verticalAxisPosition)
-          val high = yValueFormatter.format(context, layerAggregation.high, layerAggregation.verticalAxisPosition)
-          val low = yValueFormatter.format(context, layerAggregation.low, layerAggregation.verticalAxisPosition)
-          val close = yValueFormatter.format(context, layerAggregation.closing, layerAggregation.verticalAxisPosition)
-          val change = layerAggregation.closing - layerAggregation.opening
-          val changeSign = if (change > 0) "+" else ""
-          val changeStr = "$changeSign${yValueFormatter.format(context, change, layerAggregation.verticalAxisPosition)}"
-
-          append("Open: ").append(open).append(", high: ").append(high)
-          append(", low: ").append(low).append(", close: ").append(close)
-          append(" (change: ").append(changeStr).append(").")
         }
-
-        else -> {
-          // Unknown layer aggregation is safely ignored
+        is CandlestickCartesianLayerAggregation -> {
+          appendSeriesPrefix(
+            context,
+            layerAggregation.layerIndex,
+            layerAggregation.key,
+            totalSeriesCount,
+            seriesCounter,
+          )
+          seriesCounter += 1
+          append(formatCandlestick(context, layerAggregation, isSummary = true))
         }
+        else -> {}
       }
     }
   }
@@ -278,13 +291,7 @@ internal class DefaultCartesianChartDescriptionProvider(
     context: CartesianMeasuringContext,
     interval: CartesianAggregation,
   ): CharSequence = buildString {
-    val startX = xValueFormatter.format(context, interval.x.start, null)
-    val endX = xValueFormatter.format(context, interval.x.endInclusive, null)
-    if (interval.x.start == interval.x.endInclusive) {
-      append("X: ").append(startX).append(".")
-    } else {
-      append("X: ").append(startX).append(" to ").append(endX).append(".")
-    }
+    append(formatXRange(context, interval.x, isSummary = false))
 
     val totalSeriesCount = getTotalSeriesCount(context, interval)
     var seriesCounter = 1
@@ -293,88 +300,56 @@ internal class DefaultCartesianChartDescriptionProvider(
       when (layerAggregation) {
         is LineCartesianLayerAggregation -> {
           layerAggregation.series.forEach { series ->
-            append(" ")
-            val label =
-              getSeriesLabel(
-                context = context,
-                layerIndex = layerAggregation.layerIndex,
-                seriesKey = series.key,
-                totalSeriesCount = totalSeriesCount,
-                fallbackSeriesNumber = seriesCounter,
+            appendSeriesPrefix(
+              context,
+              layerAggregation.layerIndex,
+              series.key,
+              totalSeriesCount,
+              seriesCounter,
+            )
+            seriesCounter += 1
+            append(
+              formatLineSeries(
+                context,
+                series,
+                layerAggregation.verticalAxisPosition,
+                isSummary = false,
               )
-            seriesCounter++
-            if (label != null) {
-              append(label).append(": ")
-            }
-
-            if (series.first.x == series.last.x) {
-              val y = yValueFormatter.format(context, series.first.y, layerAggregation.verticalAxisPosition)
-              append("Y: ").append(y).append(".")
-            } else {
-              val minY = yValueFormatter.format(context, series.min.y, layerAggregation.verticalAxisPosition)
-              val maxY = yValueFormatter.format(context, series.max.y, layerAggregation.verticalAxisPosition)
-              val firstY = yValueFormatter.format(context, series.first.y, layerAggregation.verticalAxisPosition)
-              val lastY = yValueFormatter.format(context, series.last.y, layerAggregation.verticalAxisPosition)
-              append("Min: ").append(minY).append(", max: ").append(maxY)
-              append(", first: ").append(firstY).append(", last: ").append(lastY).append(".")
-            }
+            )
           }
         }
-
         is ColumnCartesianLayerAggregation -> {
           layerAggregation.series.forEach { series ->
-            append(" ")
-            val label =
-              getSeriesLabel(
-                context = context,
-                layerIndex = layerAggregation.layerIndex,
-                seriesKey = series.key,
-                totalSeriesCount = totalSeriesCount,
-                fallbackSeriesNumber = seriesCounter,
-              )
-            seriesCounter++
-            if (label != null) {
-              append(label).append(": ")
-            }
-
-            if (series.count == 1) {
-              val y = yValueFormatter.format(context, series.firstY, layerAggregation.verticalAxisPosition)
-              append("Y: ").append(y).append(".")
-            } else {
-              val sum = yValueFormatter.format(context, series.sum, layerAggregation.verticalAxisPosition)
-              val mean = yValueFormatter.format(context, series.mean, layerAggregation.verticalAxisPosition)
-              append("Sum: ").append(sum).append(", mean: ").append(mean).append(".")
-            }
-          }
-        }
-
-        is CandlestickCartesianLayerAggregation -> {
-          append(" ")
-          val label =
-            getSeriesLabel(
-              context = context,
-              layerIndex = layerAggregation.layerIndex,
-              seriesKey = layerAggregation.key,
-              totalSeriesCount = totalSeriesCount,
-              fallbackSeriesNumber = seriesCounter,
+            appendSeriesPrefix(
+              context,
+              layerAggregation.layerIndex,
+              series.key,
+              totalSeriesCount,
+              seriesCounter,
             )
-          seriesCounter++
-          if (label != null) {
-            append(label).append(": ")
+            seriesCounter += 1
+            append(
+              formatColumnSeries(
+                context,
+                series,
+                layerAggregation.verticalAxisPosition,
+                isSummary = false,
+              )
+            )
           }
-
-          val open = yValueFormatter.format(context, layerAggregation.opening, layerAggregation.verticalAxisPosition)
-          val high = yValueFormatter.format(context, layerAggregation.high, layerAggregation.verticalAxisPosition)
-          val low = yValueFormatter.format(context, layerAggregation.low, layerAggregation.verticalAxisPosition)
-          val close = yValueFormatter.format(context, layerAggregation.closing, layerAggregation.verticalAxisPosition)
-
-          append("Open: ").append(open).append(", high: ").append(high)
-          append(", low: ").append(low).append(", close: ").append(close).append(".")
         }
-
-        else -> {
-          // Unknown layer aggregation is safely ignored
+        is CandlestickCartesianLayerAggregation -> {
+          appendSeriesPrefix(
+            context,
+            layerAggregation.layerIndex,
+            layerAggregation.key,
+            totalSeriesCount,
+            seriesCounter,
+          )
+          seriesCounter += 1
+          append(formatCandlestick(context, layerAggregation, isSummary = false))
         }
+        else -> {}
       }
     }
   }

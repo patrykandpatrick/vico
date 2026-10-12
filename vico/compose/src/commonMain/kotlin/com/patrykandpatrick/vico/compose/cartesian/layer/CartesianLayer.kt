@@ -46,6 +46,12 @@ public interface CartesianLayer<M : CartesianLayerModel> : CartesianLayerMarginU
     layerIndex: Int = 0,
   ): CartesianLayerAggregation? = null
 
+  /** Returns the series keys for [model]. */
+  public fun getSeriesKeys(model: M): List<Any> = model.seriesKeys
+
+  /** Returns all _x_ values present in [model]. */
+  public fun getXValues(model: M): List<Double> = model.getXValues()
+
   /** Draws the [CartesianLayer]. */
   public fun draw(context: CartesianDrawingContext, model: M)
 

@@ -37,9 +37,7 @@ public class CartesianAggregation(
 ) {
   override fun equals(other: Any?): Boolean =
     this === other ||
-      other is CartesianAggregation &&
-        x == other.x &&
-        layerAggregations == other.layerAggregations
+      other is CartesianAggregation && x == other.x && layerAggregations == other.layerAggregations
 
   override fun hashCode(): Int = 31 * x.hashCode() + layerAggregations.hashCode()
 
@@ -47,20 +45,18 @@ public class CartesianAggregation(
     "CartesianAggregation(x=$x, layerAggregations=$layerAggregations)"
 }
 
-/**
- * Houses aggregated data for a single [CartesianLayer].
- */
+/** Houses aggregated data for a single [CartesianLayer]. */
 @Immutable
 public interface CartesianLayerAggregation {
-  /**
-   * The index of the layer in the chart.
-   */
+  /** The index of the layer in the chart. */
   public val layerIndex: Int
 
-  /**
-   * The position of the vertical axis associated with the layer, if any.
-   */
+  /** The position of the vertical axis associated with the layer, if any. */
   public val verticalAxisPosition: Axis.Position.Vertical?
+
+  /** The number of series in this aggregation. */
+  public val seriesCount: Int
+    get() = 1
 }
 
 /**
@@ -76,6 +72,9 @@ public class LineCartesianLayerAggregation(
   override val layerIndex: Int = 0,
   override val verticalAxisPosition: Axis.Position.Vertical? = null,
 ) : CartesianLayerAggregation {
+
+  override val seriesCount: Int
+    get() = series.size
 
   /**
    * Houses aggregated data for a single series in a [LineCartesianLayer].
@@ -126,6 +125,9 @@ public class ColumnCartesianLayerAggregation(
   override val verticalAxisPosition: Axis.Position.Vertical? = null,
 ) : CartesianLayerAggregation {
 
+  override val seriesCount: Int
+    get() = series.size
+
   /**
    * Houses aggregated data for a single series in a [ColumnCartesianLayer].
    *
@@ -139,8 +141,8 @@ public class ColumnCartesianLayerAggregation(
     public val key: Any,
     public val sum: Double,
     public val mean: Double,
-    public val count: Int = 1,
-    public val firstY: Double = 0.0,
+    public val count: Int,
+    public val firstY: Double,
   )
 
   override fun equals(other: Any?): Boolean =
@@ -185,6 +187,9 @@ public class CandlestickCartesianLayerAggregation(
   override val verticalAxisPosition: Axis.Position.Vertical? = null,
 ) : CartesianLayerAggregation {
 
+  override val seriesCount: Int
+    get() = 1
+
   override fun equals(other: Any?): Boolean =
     this === other ||
       other is CandlestickCartesianLayerAggregation &&
@@ -213,25 +218,11 @@ public class CandlestickCartesianLayerAggregation(
     "CandlestickCartesianLayerAggregation(key=$key, opening=$opening, closing=$closing, low=$low, high=$high, count=$count, layerIndex=$layerIndex, verticalAxisPosition=$verticalAxisPosition)"
 }
 
-internal fun com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModel.getXValues(): List<Double> {
+internal fun com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModel.getXValues():
+  List<Double> {
+  if (models.isEmpty()) return emptyList()
+  if (models.size == 1) return models[0].getXValues()
   val xValues = mutableSetOf<Double>()
-  models.forEach { model ->
-    when (model) {
-      is LineCartesianLayerModel -> {
-        model.series.forEach { series ->
-          series.forEach { entry -> xValues.add(entry.x) }
-        }
-      }
-      is com.patrykandpatrick.vico.compose.cartesian.data.ColumnCartesianLayerModel -> {
-        model.series.forEach { series ->
-          series.forEach { entry -> xValues.add(entry.x) }
-        }
-      }
-      is com.patrykandpatrick.vico.compose.cartesian.data.CandlestickCartesianLayerModel -> {
-        model.series.forEach { entry -> xValues.add(entry.x) }
-      }
-      else -> {}
-    }
-  }
+  models.forEach { model -> xValues.addAll(model.getXValues()) }
   return xValues.sorted()
 }

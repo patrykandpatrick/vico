@@ -392,7 +392,7 @@ protected constructor(
   ): ColumnCartesianLayerAggregation? {
     val seriesAggregates = mutableListOf<ColumnCartesianLayerAggregation.Series>()
     model.series.forEachIndexed { seriesIndex, series ->
-      val inRange = series.filter { it.x in x }
+      val inRange = series.filterInRange(x)
       if (inRange.isNotEmpty()) {
         val sum = inRange.sumOf { it.y }
         seriesAggregates.add(
