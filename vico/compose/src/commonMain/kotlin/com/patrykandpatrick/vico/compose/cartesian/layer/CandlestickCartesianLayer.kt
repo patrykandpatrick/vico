@@ -59,7 +59,7 @@ protected constructor(
   protected val candleSpacing: Dp,
   protected val scaleCandleWicks: Boolean,
   protected val rangeProvider: CartesianLayerRangeProvider,
-  public override val verticalAxisPosition: Axis.Position.Vertical?,
+  protected val verticalAxisPosition: Axis.Position.Vertical?,
   protected val drawingModelInterpolator:
     CartesianLayerDrawingModelInterpolator<
       CandlestickCartesianLayerDrawingModel.Entry,
@@ -290,6 +290,10 @@ protected constructor(
       null
     }
   }
+
+  override fun getSeriesKeys(model: CandlestickCartesianLayerModel): List<Any> = listOf(model.key)
+
+  override fun getXValues(model: CandlestickCartesianLayerModel): List<Double> = model.xValues
 
   override fun updateDimensions(
     context: CartesianMeasuringContext,

@@ -18,6 +18,7 @@ package com.patrykandpatrick.vico.compose.cartesian.accessibility
 
 import androidx.compose.runtime.Immutable
 import com.patrykandpatrick.vico.compose.cartesian.axis.Axis
+import com.patrykandpatrick.vico.compose.cartesian.data.ColumnCartesianLayerModel
 import com.patrykandpatrick.vico.compose.cartesian.data.LineCartesianLayerModel
 import com.patrykandpatrick.vico.compose.cartesian.layer.CandlestickCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.layer.CartesianLayer
@@ -29,20 +30,37 @@ import com.patrykandpatrick.vico.compose.cartesian.layer.LineCartesianLayer
  *
  * @property x the range of x values covered by this aggregate.
  * @property layerAggregations the aggregates produced by the chart's layers.
+ * @property seriesCount the total number of series in the chart.
  */
 @Immutable
 public class CartesianAggregation(
   public val x: ClosedFloatingPointRange<Double>,
   public val layerAggregations: List<CartesianLayerAggregation>,
+  public val seriesCount: Int,
+  private val seriesOffsets: List<Int>,
 ) {
+  /** Returns the 1-based, chart-wide number of the series at [seriesIndex] in the layer at [layerIndex]. */
+  public fun getSeriesNumber(layerIndex: Int, seriesIndex: Int): Int =
+    seriesOffsets.getOrElse(layerIndex) { 0 } + seriesIndex + 1
+
   override fun equals(other: Any?): Boolean =
     this === other ||
-      other is CartesianAggregation && x == other.x && layerAggregations == other.layerAggregations
+      other is CartesianAggregation &&
+        x == other.x &&
+        layerAggregations == other.layerAggregations &&
+        seriesCount == other.seriesCount &&
+        seriesOffsets == other.seriesOffsets
 
-  override fun hashCode(): Int = 31 * x.hashCode() + layerAggregations.hashCode()
+  override fun hashCode(): Int {
+    var result = x.hashCode()
+    result = 31 * result + layerAggregations.hashCode()
+    result = 31 * result + seriesCount.hashCode()
+    result = 31 * result + seriesOffsets.hashCode()
+    return result
+  }
 
   override fun toString(): String =
-    "CartesianAggregation(x=$x, layerAggregations=$layerAggregations)"
+    "CartesianAggregation(x=$x, layerAggregations=$layerAggregations, seriesCount=$seriesCount, seriesOffsets=$seriesOffsets)"
 }
 
 /** Houses aggregated data for a single [CartesianLayer]. */
@@ -69,7 +87,7 @@ public interface CartesianLayerAggregation {
 @Immutable
 public class LineCartesianLayerAggregation(
   public val series: List<Series>,
-  override val layerIndex: Int = 0,
+  override val layerIndex: Int,
   override val verticalAxisPosition: Axis.Position.Vertical? = null,
 ) : CartesianLayerAggregation {
 
@@ -80,6 +98,7 @@ public class LineCartesianLayerAggregation(
    * Houses aggregated data for a single series in a [LineCartesianLayer].
    *
    * @property key the series key.
+   * @property index the index of the series within the layer.
    * @property min the entry with the minimum y value in the range.
    * @property max the entry with the maximum y value in the range.
    * @property first the first entry in the range.
@@ -87,6 +106,7 @@ public class LineCartesianLayerAggregation(
    */
   public data class Series(
     public val key: Any,
+    public val index: Int,
     public val min: LineCartesianLayerModel.Entry,
     public val max: LineCartesianLayerModel.Entry,
     public val first: LineCartesianLayerModel.Entry,
@@ -121,7 +141,7 @@ public class LineCartesianLayerAggregation(
 @Immutable
 public class ColumnCartesianLayerAggregation(
   public val series: List<Series>,
-  override val layerIndex: Int = 0,
+  override val layerIndex: Int,
   override val verticalAxisPosition: Axis.Position.Vertical? = null,
 ) : CartesianLayerAggregation {
 
@@ -132,17 +152,25 @@ public class ColumnCartesianLayerAggregation(
    * Houses aggregated data for a single series in a [ColumnCartesianLayer].
    *
    * @property key the series key.
+   * @property index the index of the series within the layer.
+   * @property min the entry with the minimum y value in the range.
+   * @property max the entry with the maximum y value in the range.
+   * @property first the first entry in the range.
+   * @property last the last entry in the range.
    * @property sum the sum of all y values in the range.
    * @property mean the arithmetic mean of all y values in the range.
    * @property count the number of entries in the range.
-   * @property firstY the y value of the first entry in the range.
    */
   public data class Series(
     public val key: Any,
+    public val index: Int,
+    public val min: ColumnCartesianLayerModel.Entry,
+    public val max: ColumnCartesianLayerModel.Entry,
+    public val first: ColumnCartesianLayerModel.Entry,
+    public val last: ColumnCartesianLayerModel.Entry,
     public val sum: Double,
     public val mean: Double,
     public val count: Int,
-    public val firstY: Double,
   )
 
   override fun equals(other: Any?): Boolean =
@@ -182,8 +210,8 @@ public class CandlestickCartesianLayerAggregation(
   public val closing: Double,
   public val low: Double,
   public val high: Double,
-  public val count: Int = 1,
-  override val layerIndex: Int = 0,
+  public val count: Int,
+  override val layerIndex: Int,
   override val verticalAxisPosition: Axis.Position.Vertical? = null,
 ) : CartesianLayerAggregation {
 
@@ -216,13 +244,4 @@ public class CandlestickCartesianLayerAggregation(
 
   override fun toString(): String =
     "CandlestickCartesianLayerAggregation(key=$key, opening=$opening, closing=$closing, low=$low, high=$high, count=$count, layerIndex=$layerIndex, verticalAxisPosition=$verticalAxisPosition)"
-}
-
-internal fun com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModel.getXValues():
-  List<Double> {
-  if (models.isEmpty()) return emptyList()
-  if (models.size == 1) return models[0].getXValues()
-  val xValues = mutableSetOf<Double>()
-  models.forEach { model -> xValues.addAll(model.getXValues()) }
-  return xValues.sorted()
 }

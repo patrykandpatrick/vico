@@ -19,6 +19,8 @@ package com.patrykandpatrick.vico.compose.cartesian.accessibility
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -33,51 +35,81 @@ import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.CartesianMeasuringContext
 import com.patrykandpatrick.vico.compose.cartesian.VicoScrollState
-import com.patrykandpatrick.vico.compose.cartesian.VicoZoomState
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModel
-import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartRanges
-import com.patrykandpatrick.vico.compose.cartesian.getVisibleXRange
 import com.patrykandpatrick.vico.compose.cartesian.layer.CartesianLayerDimensions
 import com.patrykandpatrick.vico.compose.common.getStart
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
 
+@Immutable
+internal data class AccessibilityMapping(
+  val layerBounds: Rect,
+  val xSpacing: Float,
+  val startPadding: Float,
+  val minX: Double,
+  val xStep: Double,
+  val layoutDirectionMultiplier: Float,
+) {
+  val isLtr: Boolean
+    get() = layoutDirectionMultiplier > 0f
+
+  fun visibleXRange(scroll: Float): ClosedFloatingPointRange<Double> {
+    val fullRangeStart = minX - (startPadding / xSpacing) * xStep
+    val start = fullRangeStart + (layoutDirectionMultiplier * scroll / xSpacing) * xStep
+    val end = start + (layerBounds.width / xSpacing) * xStep
+    return start..end
+  }
+
+  fun canvasX(x: Double, scroll: Float): Float {
+    val drawingStart =
+      layerBounds.getStart(isLtr) + layoutDirectionMultiplier * startPadding - scroll
+    return drawingStart +
+      layoutDirectionMultiplier * xSpacing * ((x - minX) / xStep).toFloat()
+  }
+}
+
+internal fun AccessibilityMapping(
+  layerBounds: Rect,
+  layerDimensions: CartesianLayerDimensions,
+  context: CartesianMeasuringContext,
+): AccessibilityMapping =
+  AccessibilityMapping(
+    layerBounds = layerBounds,
+    xSpacing = layerDimensions.xSpacing,
+    startPadding = layerDimensions.startPadding,
+    minX = context.ranges.minX,
+    xStep = context.ranges.xStep,
+    layoutDirectionMultiplier = context.layoutDirectionMultiplier.toFloat(),
+  )
+
 @Composable
 internal fun AccessibilityOverlay(
   chart: CartesianChart,
   model: CartesianChartModel,
-  ranges: CartesianChartRanges,
-  layerDimensions: CartesianLayerDimensions,
-  layerBounds: Rect,
+  mapping: State<AccessibilityMapping?>,
   scrollState: VicoScrollState,
-  zoomState: VicoZoomState,
-  context: CartesianMeasuringContext,
+  measuringContext: State<CartesianMeasuringContext>,
 ) {
   val provider = chart.descriptionProvider ?: return
-  if (
-    layerBounds.isEmpty ||
-      model.models.isEmpty() ||
-      layerDimensions.xSpacing <= 0f ||
-      ranges.xStep <= 0.0
-  )
-    return
+  if (model.models.isEmpty()) return
 
   val density = LocalDensity.current
-  val allXValues = remember(model) { model.getXValues() }
+  val allXValues = remember(chart, model) { chart.getXValues(model) }
   if (allXValues.isEmpty()) return
 
   val minIntervalWidthPx = with(density) { 48.dp.toPx() }
 
   val intervals by
-    remember(allXValues, layerBounds, layerDimensions, ranges, context, minIntervalWidthPx) {
+    remember(allXValues, mapping, scrollState, minIntervalWidthPx) {
       derivedStateOf {
+        val currentMapping = mapping.value ?: return@derivedStateOf emptyList<ChartInterval>()
         val scroll = scrollState.value
-        val zoom = zoomState.value
-        if (layerBounds.isEmpty || layerDimensions.xSpacing <= 0f || ranges.xStep <= 0.0) {
+        val layerBounds = currentMapping.layerBounds
+        if (layerBounds.isEmpty || currentMapping.xSpacing <= 0f || currentMapping.xStep <= 0.0) {
           return@derivedStateOf emptyList<ChartInterval>()
         }
-        val visibleXRange = context.getVisibleXRange(layerDimensions, layerBounds, scroll)
+        val visibleXRange = currentMapping.visibleXRange(scroll)
         if (
           visibleXRange.start > allXValues.last() || visibleXRange.endInclusive < allXValues.first()
         ) {
@@ -121,13 +153,13 @@ internal fun AccessibilityOverlay(
           val endX = allXValues[sliceEnd]
           val startXBound =
             if (sliceStart == 0) {
-              startX - ranges.xStep / 2.0
+              startX - currentMapping.xStep / 2.0
             } else {
               (allXValues[sliceStart - 1] + startX) / 2.0
             }
           val endXBound =
             if (sliceEnd == allXValues.lastIndex) {
-              endX + ranges.xStep / 2.0
+              endX + currentMapping.xStep / 2.0
             } else {
               (endX + allXValues[sliceEnd + 1]) / 2.0
             }
@@ -150,7 +182,7 @@ internal fun AccessibilityOverlay(
           modifier =
             Modifier.semantics {
               val aggregation = chart.getAggregation(model, interval.startX..interval.endX)
-              val description = provider.getIntervalDescription(context, aggregation)
+              val description = provider.getIntervalDescription(measuringContext.value, aggregation)
               if (description.isNotEmpty()) {
                 contentDescription = description.toString()
               }
@@ -160,21 +192,14 @@ internal fun AccessibilityOverlay(
     },
     modifier = Modifier.fillMaxSize(),
   ) { measurables, constraints ->
+    val currentMapping = mapping.value
+    val layerBounds = currentMapping?.layerBounds ?: Rect.Zero
     val scroll = scrollState.value
-    fun getCanvasX(x: Double): Float {
-      val drawingStart =
-        layerBounds.getStart(context.isLtr) +
-          context.layoutDirectionMultiplier * layerDimensions.startPadding - scroll
-      return drawingStart +
-        context.layoutDirectionMultiplier *
-          layerDimensions.xSpacing *
-          ((x - ranges.minX) / ranges.xStep).toFloat()
-    }
 
     val placeableData = measurables.mapIndexed { index, measurable ->
       val interval = intervals[index]
-      val c1 = getCanvasX(interval.startXBound)
-      val c2 = getCanvasX(interval.endXBound)
+      val c1 = currentMapping?.canvasX(interval.startXBound, scroll) ?: 0f
+      val c2 = currentMapping?.canvasX(interval.endXBound, scroll) ?: 0f
       val minX = min(c1, c2)
       val maxX = max(c1, c2)
       val leftInt = minX.coerceIn(layerBounds.left, layerBounds.right).roundToInt()

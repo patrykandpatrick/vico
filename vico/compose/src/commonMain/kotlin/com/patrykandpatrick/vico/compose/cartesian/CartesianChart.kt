@@ -88,6 +88,10 @@ internal constructor(
     getDefaultXStep(model, minX)
   },
   public val markerController: CartesianMarkerController = CartesianMarkerController.showOnPress(),
+  /**
+   * Provides content descriptions for screen readers. Enabled by default; set to `null` to
+   * disable. Describes the whole chart and up to one interval per 48 dp of the visible range.
+   */
   public val descriptionProvider: CartesianChartDescriptionProvider? =
     CartesianChartDescriptionProvider.default(),
   internal val id: Uuid = Uuid.random(),
@@ -171,7 +175,7 @@ internal constructor(
       }
     }
 
-  internal var layerBounds: Rect by mutableStateOf(Rect.Zero)
+  internal var layerBounds: Rect = Rect.Zero
 
   /** The [CartesianLayer]s of which this [CartesianChart] is composed. */
   public val layers: List<CartesianLayer<*>> = layers.toList()
@@ -198,6 +202,26 @@ internal constructor(
     axisManager.bottomAxis = bottomAxis
   }
 
+  /**
+   * Creates a [CartesianChart].
+   *
+   * @param layers the [CartesianLayer]s.
+   * @param startAxis the start [Axis].
+   * @param topAxis the top [Axis].
+   * @param endAxis the end [Axis].
+   * @param bottomAxis the bottom [Axis].
+   * @param marker appears when the [CartesianChart] is tapped.
+   * @param markerVisibilityListener allows for listening to [marker] visibility changes.
+   * @param layerPadding returns the [CartesianLayerPadding].
+   * @param legend the legend.
+   * @param fadingEdges applies a horizontal fade to the edges of the [CartesianChart], provided
+   *   that it’s scrollable.
+   * @param decorations the [Decoration]s.
+   * @param persistentMarkers adds persistent [CartesianMarker]s.
+   * @param getXStep defines the _x_-step (the difference between neighboring major _x_-values).
+   * @param markerController controls [marker] visibility.
+   * @param descriptionProvider provides content descriptions for screen readers.
+   */
   protected constructor(
     vararg layers: CartesianLayer<*>,
     startAxis: Axis<Axis.Position.Vertical.Start>? = null,
@@ -215,6 +239,8 @@ internal constructor(
       getDefaultXStep(model, minX)
     },
     markerController: CartesianMarkerController = CartesianMarkerController.showOnPress(),
+    descriptionProvider: CartesianChartDescriptionProvider? =
+      CartesianChartDescriptionProvider.default(),
   ) : this(
     layers = layers,
     startAxis = startAxis,
@@ -230,6 +256,7 @@ internal constructor(
     persistentMarkers = persistentMarkers,
     getXStep = getXStep,
     markerController = markerController,
+    descriptionProvider = descriptionProvider,
     id = Uuid.random(),
     previousMarkerTargetHashCode = null,
     persistentMarkerMap = mutableMapOf(),
@@ -254,6 +281,7 @@ internal constructor(
    * @param persistentMarkers adds persistent [CartesianMarker]s.
    * @param getXStep defines the _x_-step (the difference between neighboring major _x_-values).
    * @param markerController controls [marker] visibility.
+   * @param descriptionProvider provides content descriptions for screen readers.
    */
   @Deprecated(
     message =
@@ -275,6 +303,8 @@ internal constructor(
     persistentMarkers: (PersistentMarkerScope.(ExtraStore) -> Unit)? = null,
     getXStep: ((CartesianChartModel) -> Double),
     markerController: CartesianMarkerController = CartesianMarkerController.showOnPress(),
+    descriptionProvider: CartesianChartDescriptionProvider? =
+      CartesianChartDescriptionProvider.default(),
   ) : this(
     layers = layers,
     startAxis = startAxis,
@@ -290,6 +320,7 @@ internal constructor(
     persistentMarkers = persistentMarkers,
     getXStep = { model, _, _ -> getXStep(model) },
     markerController = markerController,
+    descriptionProvider = descriptionProvider,
     id = Uuid.random(),
     previousMarkerTargetHashCode = null,
     persistentMarkerMap = mutableMapOf(),
@@ -473,17 +504,7 @@ internal constructor(
         is ColumnCartesianLayer -> freeModels.consume(layer, consumer)
         is LineCartesianLayer -> freeModels.consume(layer, consumer)
         is CandlestickCartesianLayer -> freeModels.consume(layer, consumer)
-        else -> {
-          val model =
-            freeModels.firstOrNull {
-              it !is ColumnCartesianLayerModel &&
-                it !is LineCartesianLayerModel &&
-                it !is CandlestickCartesianLayerModel
-            } ?: freeModels.firstOrNull()
-          @Suppress("UNCHECKED_CAST")
-          (layer as CartesianLayer<CartesianLayerModel>).let { consumer(model, it) }
-          if (model != null) freeModels.remove(model)
-        }
+        else -> throw IllegalArgumentException("Unexpected `CartesianLayer` implementation.")
       }
     }
   }
@@ -658,7 +679,8 @@ internal constructor(
         topAxis == other.topAxis &&
         endAxis == other.endAxis &&
         bottomAxis == other.bottomAxis &&
-        markerController == other.markerController
+        markerController == other.markerController &&
+        descriptionProvider == other.descriptionProvider
 
   override fun hashCode(): Int {
     var result = marker.hashCode()
@@ -676,6 +698,7 @@ internal constructor(
     result = 31 * result + bottomAxis.hashCode()
     result = 31 * result + id.hashCode()
     result = 31 * result + markerController.hashCode()
+    result = 31 * result + descriptionProvider.hashCode()
     return result
   }
 
@@ -685,18 +708,41 @@ internal constructor(
     x: ClosedFloatingPointRange<Double>,
   ): CartesianAggregation {
     val aggregations = mutableListOf<CartesianLayerAggregation>()
+    val seriesOffsets = ArrayList<Int>(layers.size)
+    var totalSeriesCount = 0
     var layerIndex = 0
     val consumer =
       object : ModelAndLayerConsumer {
         override fun <T : CartesianLayerModel> invoke(model: T?, layer: CartesianLayer<T>) {
+          seriesOffsets.add(totalSeriesCount)
           if (model != null) {
+            totalSeriesCount += layer.getSeriesKeys(model).size
             layer.getAggregation(model, x, layerIndex)?.let { aggregations.add(it) }
           }
           layerIndex += 1
         }
       }
     model.forEachWithLayer(consumer)
-    return CartesianAggregation(x, aggregations)
+    return CartesianAggregation(
+      x = x,
+      layerAggregations = aggregations,
+      seriesCount = totalSeriesCount,
+      seriesOffsets = seriesOffsets,
+    )
+  }
+
+  internal fun getXValues(model: CartesianChartModel): List<Double> {
+    val xValues = mutableSetOf<Double>()
+    val consumer =
+      object : ModelAndLayerConsumer {
+        override fun <T : CartesianLayerModel> invoke(model: T?, layer: CartesianLayer<T>) {
+          if (model != null) {
+            xValues.addAll(layer.getXValues(model))
+          }
+        }
+      }
+    model.forEachWithLayer(consumer)
+    return xValues.sorted()
   }
 
   /** Facilitates adding persistent [CartesianMarker]s to [CartesianChart]s. */
@@ -729,6 +775,9 @@ internal constructor(
  * @param getXStep defines the _x_-step (the difference between neighboring major _x_-values).
  *   Receives the model and the final minimum and maximum _x_-values.
  * @param markerController controls [marker] visibility.
+ * @param descriptionProvider provides content descriptions for screen readers. Enabled by
+ *   default; set to `null` to disable. Describes the whole chart and up to one interval per 48 dp
+ *   of the visible range.
  * @see rememberCandlestickCartesianLayer
  * @see rememberColumnCartesianLayer
  * @see rememberLineCartesianLayer
@@ -831,6 +880,9 @@ public fun rememberCartesianChart(
  * @param persistentMarkers adds persistent [CartesianMarker]s.
  * @param getXStep defines the _x_-step (the difference between neighboring major _x_-values).
  * @param markerController controls [marker] visibility.
+ * @param descriptionProvider provides content descriptions for screen readers. Enabled by
+ *   default; set to `null` to disable. Describes the whole chart and up to one interval per 48 dp
+ *   of the visible range.
  * @see rememberCandlestickCartesianLayer
  * @see rememberColumnCartesianLayer
  * @see rememberLineCartesianLayer
@@ -855,6 +907,9 @@ public fun rememberCartesianChart(
   persistentMarkers: (PersistentMarkerScope.(ExtraStore) -> Unit)? = null,
   getXStep: ((CartesianChartModel) -> Double),
   markerController: CartesianMarkerController = CartesianMarkerController.rememberShowOnPress(),
+  descriptionProvider: CartesianChartDescriptionProvider? = remember {
+    CartesianChartDescriptionProvider.default()
+  },
 ): CartesianChart =
   rememberCartesianChart(
     layers = layers,
@@ -871,4 +926,5 @@ public fun rememberCartesianChart(
     persistentMarkers = persistentMarkers,
     getXStep = { model, _, _ -> getXStep(model) },
     markerController = markerController,
+    descriptionProvider = descriptionProvider,
   )

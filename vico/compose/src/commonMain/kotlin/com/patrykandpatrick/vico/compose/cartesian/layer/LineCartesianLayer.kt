@@ -66,7 +66,7 @@ protected constructor(
   protected val lineProvider: LineProvider,
   protected val pointSpacing: Dp = Defaults.POINT_SPACING.dp,
   protected val rangeProvider: CartesianLayerRangeProvider = CartesianLayerRangeProvider.auto(),
-  public override val verticalAxisPosition: Axis.Position.Vertical? = null,
+  protected val verticalAxisPosition: Axis.Position.Vertical? = null,
   protected val drawingModelInterpolator:
     CartesianLayerDrawingModelInterpolator<
       LineCartesianLayerDrawingModel.Entry,
@@ -940,6 +940,7 @@ protected constructor(
         seriesAggregates.add(
           LineCartesianLayerAggregation.Series(
             key = model.seriesKeys[seriesIndex],
+            index = seriesIndex,
             min = inRange.minBy { it.y },
             max = inRange.maxBy { it.y },
             first = inRange.first(),
@@ -954,6 +955,10 @@ protected constructor(
       null
     }
   }
+
+  override fun getSeriesKeys(model: LineCartesianLayerModel): List<Any> = model.seriesKeys
+
+  override fun getXValues(model: LineCartesianLayerModel): List<Double> = model.xValues
 
   override fun updateLayerMargins(
     context: CartesianMeasuringContext,

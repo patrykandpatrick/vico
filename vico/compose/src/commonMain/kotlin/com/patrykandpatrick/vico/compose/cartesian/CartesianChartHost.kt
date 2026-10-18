@@ -27,6 +27,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.patrykandpatrick.vico.compose.cartesian.accessibility.AccessibilityMapping
 import com.patrykandpatrick.vico.compose.cartesian.accessibility.AccessibilityOverlay
 import com.patrykandpatrick.vico.compose.cartesian.data.*
 import com.patrykandpatrick.vico.compose.cartesian.layer.MutableCartesianLayerDimensions
@@ -236,6 +237,7 @@ internal fun CartesianChartHostImpl(
   val coroutineScope = rememberCoroutineScope()
   var lastHandledModel by remember { ValueWrapper(model) }
   val layerDimensions = remember { MutableCartesianLayerDimensions() }
+  val accessibilityMapping = remember { mutableStateOf<AccessibilityMapping?>(null) }
   val measureLayerDimensions = remember { MutableCartesianLayerDimensions() }
   val measureExtras =
     remember(chart, measuringContext, measureLayerDimensions, chartAreaHeight) {
@@ -391,17 +393,19 @@ internal fun CartesianChartHostImpl(
 
       chart.draw(drawingContext)
       measuringContext.value.cacheStore.purge()
+
+      if (chart.descriptionProvider != null) {
+        accessibilityMapping.value =
+          AccessibilityMapping(chart.layerBounds, layerDimensions, measuringContext.value)
+      }
     }
 
     AccessibilityOverlay(
       chart = chart,
       model = model,
-      ranges = ranges,
-      layerDimensions = layerDimensions,
-      layerBounds = chart.layerBounds,
+      mapping = accessibilityMapping,
       scrollState = scrollState,
-      zoomState = zoomState,
-      context = measuringContext.value,
+      measuringContext = measuringContext,
     )
   }
 }

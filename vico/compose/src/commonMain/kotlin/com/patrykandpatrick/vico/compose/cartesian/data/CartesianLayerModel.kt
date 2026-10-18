@@ -42,13 +42,6 @@ public interface CartesianLayerModel {
   /** Returns the greatest common divisor of the _x_ values’ differences. */
   public fun getXDeltaGcd(): Double
 
-  /** The series keys. */
-  public val seriesKeys: List<Any>
-    get() = emptyList()
-
-  /** Returns all _x_ values present in this model. */
-  public fun getXValues(): List<Double> = emptyList()
-
   /** Creates a copy of this [CartesianLayerModel] with the given [ExtraStore]. */
   public fun copy(extraStore: ExtraStore): CartesianLayerModel
 

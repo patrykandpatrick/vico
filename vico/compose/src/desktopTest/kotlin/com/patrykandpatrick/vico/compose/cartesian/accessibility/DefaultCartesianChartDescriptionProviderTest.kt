@@ -43,6 +43,7 @@ import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 import com.patrykandpatrick.vico.compose.common.data.MutableExtraStore
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertNotEquals
 import kotlin.test.assertNull
 
@@ -203,7 +204,7 @@ class DefaultCartesianChartDescriptionProviderTest {
     val summary = provider.getSummary(context, aggregation).toString()
 
     assertEquals(
-      "Column chart. X from 0 to 2. Sum: 60, mean: 20.",
+      "Column chart. X from 0 to 2. Min: 10 at 0, max: 30 at 2, first: 10, last: 30 (change: +20), sum: 60, mean: 20.",
       summary,
     )
   }
@@ -224,7 +225,7 @@ class DefaultCartesianChartDescriptionProviderTest {
     val summary = provider.getSummary(context, aggregation).toString()
 
     assertEquals(
-      "Column chart. X from 0 to 1. Series 1: Sum: 30, mean: 15. Series 2: Sum: 70, mean: 35.",
+      "Column chart. X from 0 to 1. Series 1: Min: 10 at 0, max: 20 at 1, first: 10, last: 20 (change: +10), sum: 30, mean: 15. Series 2: Min: 30 at 0, max: 40 at 1, first: 30, last: 40 (change: +10), sum: 70, mean: 35.",
       summary,
     )
   }
@@ -260,7 +261,7 @@ class DefaultCartesianChartDescriptionProviderTest {
 
     val intervalDesc = provider.getIntervalDescription(context, aggregation).toString()
 
-    assertEquals("X: 0 to 1. Sum: 30, mean: 15.", intervalDesc)
+    assertEquals("X: 0 to 1. Min: 10, max: 20, sum: 30, mean: 15.", intervalDesc)
   }
 
   @Test
@@ -321,7 +322,7 @@ class DefaultCartesianChartDescriptionProviderTest {
     val summary = provider.getSummary(context, aggregation).toString()
 
     assertEquals(
-      "Cartesian chart. X from 0 to 1. Series 1: Min: 10 at 0, max: 20 at 1, first: 10, last: 20 (change: +10). Series 2: Sum: 70, mean: 35.",
+      "Cartesian chart. X from 0 to 1. Series 1: Min: 10 at 0, max: 20 at 1, first: 10, last: 20 (change: +10). Series 2: Min: 30 at 0, max: 40 at 1, first: 30, last: 40 (change: +10), sum: 70, mean: 35.",
       summary,
     )
   }
@@ -382,7 +383,6 @@ class DefaultCartesianChartDescriptionProviderTest {
     val unknownLayer =
       object : CartesianLayer<LineCartesianLayerModel> {
         override val markerTargets: Map<Double, List<CartesianMarker.Target>> = emptyMap()
-        override val verticalAxisPosition: Axis.Position.Vertical? = null
 
         override fun draw(
           context: com.patrykandpatrick.vico.compose.cartesian.CartesianDrawingContext,
@@ -452,5 +452,117 @@ class DefaultCartesianChartDescriptionProviderTest {
     val intervalDesc = provider.getIntervalDescription(context, aggregation).toString()
 
     assertEquals("X: 2 to 3. Series 2: Min: 30, max: 40, first: 30, last: 40.", intervalDesc)
+  }
+
+  @Test
+  fun duplicateXForSingleSeriesIsDeduplicatedAndDescribedAsMinMax() {
+    val model =
+      CartesianChartModel(
+        LineCartesianLayerModel.build {
+          series(listOf(0.0, 1.0, 1.0, 2.0), listOf(10, 20, 25, 30))
+        }
+      )
+    val chart = CartesianChart(createLineLayer(), descriptionProvider = provider)
+    val context = createContext(model)
+    val aggregation = chart.getAggregation(model, 1.0..1.0)
+
+    val intervalDesc = provider.getIntervalDescription(context, aggregation).toString()
+
+    assertEquals("X: 1. Min: 20, max: 25.", intervalDesc)
+  }
+
+  @Test
+  fun seriesNumberingMatchesLayerOrderWhenModelOrderDiffers() {
+    val columnModel =
+      ColumnCartesianLayerModel.build {
+        series(10, 20)
+        series(30, 40)
+      }
+    val lineModel = LineCartesianLayerModel.build { series(50, 60) }
+    val model = CartesianChartModel(lineModel, columnModel)
+    val chart =
+      CartesianChart(createColumnLayer(), createLineLayer(), descriptionProvider = provider)
+    val context = createContext(model)
+    val aggregation = chart.getAggregation(model, 0.0..1.0)
+
+    val summary = provider.getSummary(context, aggregation).toString()
+
+    assertEquals(
+      "Cartesian chart. X from 0 to 1. Series 1: Min: 10 at 0, max: 20 at 1, first: 10, last: 20 (change: +10), sum: 30, mean: 15. Series 2: Min: 30 at 0, max: 40 at 1, first: 30, last: 40 (change: +10), sum: 70, mean: 35. Series 3: Min: 50 at 0, max: 60 at 1, first: 50, last: 60 (change: +10).",
+      summary,
+    )
+  }
+
+  @Test
+  fun cartesianChartEqualityIncludesDescriptionProvider() {
+    val chart = CartesianChart(createLineLayer(), descriptionProvider = provider)
+    val copy = chart.copy()
+    val copyWithDifferentProvider = chart.copy(descriptionProvider = null)
+
+    assertEquals(chart, copy)
+    assertEquals(chart.hashCode(), copy.hashCode())
+    assertNotEquals(chart, copyWithDifferentProvider)
+  }
+
+  @Test
+  fun unknownLayerWithoutForEachWithLayerOverrideThrowsException() {
+    val unknownLayer =
+      object : CartesianLayer<LineCartesianLayerModel> {
+        override val markerTargets: Map<Double, List<CartesianMarker.Target>> = emptyMap()
+
+        override fun draw(
+          context: com.patrykandpatrick.vico.compose.cartesian.CartesianDrawingContext,
+          model: LineCartesianLayerModel,
+        ) {}
+
+        override fun updateDimensions(
+          context: CartesianMeasuringContext,
+          dimensions: MutableCartesianLayerDimensions,
+          model: LineCartesianLayerModel,
+        ) {}
+
+        override fun updateChartRanges(
+          chartRanges: com.patrykandpatrick.vico.compose.cartesian.data.MutableCartesianChartRanges,
+          model: LineCartesianLayerModel,
+        ) {}
+
+        override fun prepareForTransformation(
+          model: LineCartesianLayerModel?,
+          ranges: CartesianChartRanges,
+          extraStore: MutableExtraStore,
+        ) {}
+
+        override suspend fun transform(extraStore: MutableExtraStore, fraction: Float) {}
+      }
+
+    val model = CartesianChartModel(LineCartesianLayerModel.build { series(10, 20) })
+    val chart = CartesianChart(unknownLayer, descriptionProvider = provider)
+
+    assertFailsWith<IllegalArgumentException> {
+      chart.getAggregation(model, 0.0..1.0)
+    }
+  }
+
+  @Test
+  fun layerSwapUpdatesSeriesNumbering() {
+    val columnModel =
+      ColumnCartesianLayerModel.build {
+        series(10, 20)
+        series(30, 40)
+      }
+    val lineModel = LineCartesianLayerModel.build { series(50, 60) }
+    val model = CartesianChartModel(lineModel, columnModel)
+    val chart =
+      CartesianChart(createColumnLayer(), createLineLayer(), descriptionProvider = provider)
+    val swappedChart = chart.copy(layers = arrayOf(createLineLayer(), createColumnLayer()))
+    val context = createContext(model)
+    val aggregation = swappedChart.getAggregation(model, 0.0..1.0)
+
+    val summary = provider.getSummary(context, aggregation).toString()
+
+    assertEquals(
+      "Cartesian chart. X from 0 to 1. Series 1: Min: 50 at 0, max: 60 at 1, first: 50, last: 60 (change: +10). Series 2: Min: 10 at 0, max: 20 at 1, first: 10, last: 20 (change: +10), sum: 30, mean: 15. Series 3: Min: 30 at 0, max: 40 at 1, first: 30, last: 40 (change: +10), sum: 70, mean: 35.",
+      summary,
+    )
   }
 }

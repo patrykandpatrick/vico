@@ -75,7 +75,7 @@ protected constructor(
     CartesianValueFormatter.decimal(),
   protected val dataLabelRotationDegrees: Float = 0f,
   protected val rangeProvider: CartesianLayerRangeProvider = CartesianLayerRangeProvider.auto(),
-  public override val verticalAxisPosition: Axis.Position.Vertical? = null,
+  protected val verticalAxisPosition: Axis.Position.Vertical? = null,
   protected val drawingModelInterpolator:
     CartesianLayerDrawingModelInterpolator<
       ColumnCartesianLayerDrawingModel.Entry,
@@ -398,10 +398,14 @@ protected constructor(
         seriesAggregates.add(
           ColumnCartesianLayerAggregation.Series(
             key = model.seriesKeys[seriesIndex],
+            index = seriesIndex,
+            min = inRange.minBy { it.y },
+            max = inRange.maxBy { it.y },
+            first = inRange.first(),
+            last = inRange.last(),
             sum = sum,
             mean = sum / inRange.size,
             count = inRange.size,
-            firstY = inRange.first().y,
           )
         )
       }
@@ -412,6 +416,10 @@ protected constructor(
       null
     }
   }
+
+  override fun getSeriesKeys(model: ColumnCartesianLayerModel): List<Any> = model.seriesKeys
+
+  override fun getXValues(model: ColumnCartesianLayerModel): List<Double> = model.xValues
 
   override fun updateDimensions(
     context: CartesianMeasuringContext,
