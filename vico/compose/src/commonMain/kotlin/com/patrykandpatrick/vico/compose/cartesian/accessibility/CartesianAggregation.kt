@@ -31,13 +31,14 @@ import com.patrykandpatrick.vico.compose.cartesian.layer.LineCartesianLayer
  * @property x the range of x values covered by this aggregate.
  * @property layerAggregations the aggregates produced by the chart's layers.
  * @property seriesCount the total number of series in the chart.
+ * @property seriesOffsets the 0-based series index offsets for each layer in the chart.
  */
 @Immutable
 public class CartesianAggregation(
   public val x: ClosedFloatingPointRange<Double>,
   public val layerAggregations: List<CartesianLayerAggregation>,
   public val seriesCount: Int,
-  private val seriesOffsets: List<Int>,
+  public val seriesOffsets: List<Int> = emptyList(),
 ) {
   /** Returns the 1-based, chart-wide number of the series at [seriesIndex] in the layer at [layerIndex]. */
   public fun getSeriesNumber(layerIndex: Int, seriesIndex: Int): Int =
