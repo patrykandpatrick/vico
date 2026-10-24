@@ -28,6 +28,7 @@ class Chart(internal val details: Details, internal val content: @Composable (Mo
   class Details(internal val title: String, internal val citation: String? = null) {
     companion object {
       val BasicColumnChart = Details("Basic column chart")
+      val GroupedStackedColumnChart = Details("Grouped stacked column chart")
       val BasicLineChart = Details("Basic line chart")
       val BasicComboChart = Details("Basic combo chart")
       val BasicPieChart = Details("Basic pie chart")
