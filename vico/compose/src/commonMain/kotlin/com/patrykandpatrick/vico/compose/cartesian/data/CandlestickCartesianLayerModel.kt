@@ -74,6 +74,8 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
 
   override fun getXDeltaGcd(): Double = series.getXDeltaGcd()
 
+  internal val xValues: List<Double> by lazy { series.map { it.x }.distinct() }
+
   override fun copy(extraStore: ExtraStore): CartesianLayerModel =
     CandlestickCartesianLayerModel(series, key, minX, maxX, minY, maxY, extraStore)
 

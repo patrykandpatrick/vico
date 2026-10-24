@@ -19,6 +19,7 @@ package com.patrykandpatrick.vico.compose.cartesian.layer
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.compose.cartesian.CartesianMeasuringContext
+import com.patrykandpatrick.vico.compose.cartesian.accessibility.CartesianLayerAggregation
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartRanges
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianLayerModel
 import com.patrykandpatrick.vico.compose.cartesian.data.MutableCartesianChartRanges
@@ -32,6 +33,32 @@ import com.patrykandpatrick.vico.compose.common.data.MutableExtraStore
 public interface CartesianLayer<M : CartesianLayerModel> : CartesianLayerMarginUpdater<M> {
   /** Links _x_ values to [CartesianMarker.Target]s. */
   public val markerTargets: Map<Double, List<CartesianMarker.Target>>
+
+  /**
+   * Returns an aggregate of [model] for [x], or `null` if the layer has no data in [x] or does
+   * not support aggregation.
+   *
+   * @param model the [CartesianLayerModel].
+   * @param x the range of _x_ values to aggregate.
+   * @param layerIndex the index of this layer in [CartesianChart.layers].
+   */
+  public fun getAggregation(
+    model: M,
+    x: ClosedFloatingPointRange<Double>,
+    layerIndex: Int,
+  ): CartesianLayerAggregation? = null
+
+  /**
+   * Returns the series keys for [model]. The default implementation returns an empty list,
+   * indicating that the layer contributes no series to the chart summary or interval descriptions.
+   */
+  public fun getSeriesKeys(model: M): List<Any> = emptyList()
+
+  /**
+   * Returns all _x_ values present in [model]. The default implementation returns an empty list,
+   * indicating that the layer contributes no intervals to the accessibility overlay.
+   */
+  public fun getXValues(model: M): List<Double> = emptyList()
 
   /** Draws the [CartesianLayer]. */
   public fun draw(context: CartesianDrawingContext, model: M)
