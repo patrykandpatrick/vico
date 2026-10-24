@@ -32,6 +32,8 @@ Numerous customization options are available; you can change the appearance of t
 
 Select an option via the `titlePosition` parameter.
 
+[`BaseAxis.GuidelineDrawingOrder`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.axis/-base-axis/-guideline-drawing-order/) controls where the guidelines are drawn relative to the chart layers, independently of `BaseAxis.LineDrawingOrder`. Besides under and over the layers, the guidelines can be drawn over the layers’ area fills and under their strokes, points, and data labels—useful when a [`LineCartesianLayer`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.layer/-line-cartesian-layer/) with an [`AreaFill`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.layer/-line-cartesian-layer/-area-fill/) would otherwise cover the guidelines. Layers whose area fills can’t be drawn separately from their strokes, such as [`ColumnCartesianLayer`](https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.layer/-column-cartesian-layer/), are drawn entirely over the guidelines.
+
 ## `ItemPlacer`
 
 [`HorizontalAxis.ItemPlacer`][horizontal-axis-item-placer] and [`VerticalAxis.ItemPlacer`][vertical-axis-item-placer] let you customize for what _x_- and _y_-values labels and lines are displayed. Four factory functions are available:
