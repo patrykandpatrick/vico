@@ -42,7 +42,7 @@ class CartesianChartModelProducerTest {
     }
     withContext(dispatcher) {
       isUpdateInProgress = true
-      producer.Transaction().apply { lineSeries { series(1, 2, 3) } }.commit()
+      producer.Transaction().apply { lineModel { series(1, 2, 3) } }.commit()
     }
     assertFalse(producer.isRegistered(secondKey))
   }
