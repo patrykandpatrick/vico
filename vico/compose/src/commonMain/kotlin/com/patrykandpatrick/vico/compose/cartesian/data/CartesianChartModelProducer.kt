@@ -18,6 +18,9 @@ package com.patrykandpatrick.vico.compose.cartesian.data
 
 import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 import com.patrykandpatrick.vico.compose.common.data.MutableExtraStore
+import kotlin.concurrent.atomics.AtomicReference
+import kotlin.concurrent.atomics.ExperimentalAtomicApi
+import kotlin.concurrent.atomics.update
 import kotlin.coroutines.AbstractCoroutineContextElement
 import kotlin.coroutines.CoroutineContext
 import kotlinx.coroutines.*
@@ -25,13 +28,15 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
 /** Creates [CartesianChartModel]s and handles difference animations. */
+@OptIn(ExperimentalAtomicApi::class)
 public class CartesianChartModelProducer {
   private var lastPartials = emptyList<CartesianLayerModel.Partial>()
   private var lastTransactionExtraStore = MutableExtraStore()
   private var cachedModel: CartesianChartModel? = null
   private var cachedModelPartialHashCode: Int? = null
   private val mutex = Mutex()
-  private val updateReceivers = mutableMapOf<Any, UpdateReceiver>()
+  // Copy-on-write: charts unregister from the main thread without `mutex` while `update` iterates.
+  private val updateReceivers = AtomicReference(emptyMap<Any, UpdateReceiver>())
 
   private suspend fun update(
     partials: List<CartesianLayerModel.Partial>,
@@ -46,7 +51,9 @@ public class CartesianChartModelProducer {
         ) {
           return@coroutineScope
         }
-        updateReceivers.values
+        updateReceivers
+          .load()
+          .values
           .map { launch { it.handleUpdate(immutablePartials, transactionExtraStore) } }
           .joinAll()
         lastPartials = immutablePartials
@@ -72,7 +79,7 @@ public class CartesianChartModelProducer {
     model: CartesianChartModel?,
     ranges: CartesianChartRanges,
   ) {
-    with(updateReceivers[key] ?: return) {
+    with(updateReceivers.load()[key] ?: return) {
       withContext(getDispatcher()) {
         transform(hostExtraStore, fraction)
         currentCoroutineContext().ensureActive()
@@ -105,16 +112,16 @@ public class CartesianChartModelProducer {
           updateRanges,
         )
       mutex.withLock {
-        updateReceivers[key] = receiver
+        updateReceivers.update { it + (key to receiver) }
         receiver.handleUpdate(lastPartials, lastTransactionExtraStore, restoredModel)
       }
     }
   }
 
-  internal fun isRegistered(key: Any): Boolean = updateReceivers.containsKey(key)
+  internal fun isRegistered(key: Any): Boolean = key in updateReceivers.load()
 
   internal fun unregisterFromUpdates(key: Any) {
-    updateReceivers.remove(key)
+    updateReceivers.update { it - key }
   }
 
   internal fun getCachedData(
