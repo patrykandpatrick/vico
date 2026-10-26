@@ -18,13 +18,11 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
   id("com.android.application")
-  alias(libs.plugins.screenshot)
   alias(libs.plugins.composeMultiplatformSample)
   id("org.jetbrains.kotlin.plugin.compose")
 }
 
 android {
-  experimentalProperties["android.experimental.enableScreenshotTest"] = true
   buildTypes {
     release {
       isMinifyEnabled = false
@@ -42,7 +40,20 @@ android {
     versionName = Versions.VICO
   }
   namespace = "com.patrykandpatrick.vico.sample"
-  testOptions { screenshotTests { imageDifferenceThreshold = 0.01f } }
+  testOptions {
+    screenshotTests.create("screenshotTest") {
+      engineVersion = libs.versions.screenshot.get()
+      imageDifferenceThreshold = 0.01f
+      targetVariants.add("debug")
+      dependencies {
+        implementation(project.dependencies.project(":sample:shared"))
+        implementation(libs.composeUI)
+        implementation(project.dependencies.platform(libs.jetpackComposeBom))
+        implementation(libs.jetpackComposeUITooling)
+        implementation(libs.screenshotValidationApi)
+      }
+    }
+  }
 }
 
 kotlin { compilerOptions { jvmTarget = JvmTarget.JVM_11 } }
@@ -54,9 +65,4 @@ dependencies {
   implementation(libs.material)
   implementation(libs.glanceAppWidget)
   debugImplementation(libs.composeUITooling)
-  screenshotTestImplementation(project(":sample:shared"))
-  screenshotTestImplementation(libs.composeUI)
-  screenshotTestImplementation(platform(libs.jetpackComposeBom))
-  screenshotTestImplementation(libs.jetpackComposeUITooling)
-  screenshotTestImplementation(libs.screenshotValidationApi)
 }
