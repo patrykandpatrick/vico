@@ -20,13 +20,16 @@ import android.graphics.BlendMode
 import android.graphics.Paint
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModel
+import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartRanges
 import com.patrykandpatrick.vico.compose.cartesian.data.ColumnCartesianLayerModel
 import com.patrykandpatrick.vico.compose.cartesian.data.MutableCartesianChartRanges
 import com.patrykandpatrick.vico.compose.cartesian.marker.ColumnCartesianLayerMarkerTarget
+import com.patrykandpatrick.vico.compose.common.DrawingContext
 import com.patrykandpatrick.vico.compose.common.Fill
 import com.patrykandpatrick.vico.compose.common.component.LineComponent
 import com.patrykandpatrick.vico.compose.common.data.ExtraStore
@@ -39,20 +42,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class ColumnCartesianLayerHostTest {
-  private class CompatibleLayer :
-    ColumnCartesianLayer(ColumnProvider.series(LineComponent(Fill.Black))) {
-    override fun CartesianDrawingContext.updateMarkerTargets(
-      entry: ColumnCartesianLayerModel.Entry,
-      seriesKey: Any,
-      canvasX: Float,
-      canvasY: Float,
-      columnHeight: Float,
-      column: LineComponent,
-      mergeMode: MergeMode,
-    ) {}
-  }
-
+class ColumnCartesianLayerTest {
   @BeforeTest
   fun setUp() {
     mockkConstructor(Paint::class)
@@ -92,28 +82,8 @@ class ColumnCartesianLayerHostTest {
           ),
         seriesKeys = listOf("a", "b", "c"),
       )
-    val ranges = MutableCartesianChartRanges().also { layer.updateChartRanges(it, model) }
-    val dimensions = MutableCartesianLayerDimensions(xSpacing = 100f, scalableStartPadding = 20f)
-    val baseContext = mockk<CartesianDrawingContext>(relaxed = true)
-    every { baseContext.model } returns CartesianChartModel(model)
-    every { baseContext.ranges } returns ranges
-    every { baseContext.layerBounds } returns Rect(0f, 0f, 200f, 100f)
-    every { baseContext.layerDimensions } returns dimensions
-    every { baseContext.scroll } returns 0f
-    every { baseContext.zoom } returns 1f
-    val context =
-      object : CartesianDrawingContext by baseContext {
-        override val extraStore = ExtraStore.Empty
-        override val density = Density(1f)
-        override val androidx.compose.ui.unit.Dp.pixels: Float
-          get() = value
 
-        override val layoutDirection = LayoutDirection.Ltr
-        override val isLtr = true
-        override val layoutDirectionMultiplier = 1
-      }
-
-    layer.draw(context, model)
+    layer.draw(createContext(layer, model), model)
 
     assertEquals(columns[0].centers.single(), columns[1].centers.single())
     assertEquals(
@@ -125,7 +95,7 @@ class ColumnCartesianLayerHostTest {
     val targets = layer.markerTargets.getValue(0.0).map { it as ColumnCartesianLayerMarkerTarget }
     assertEquals(2, targets.size)
     assertTrue(
-      targets.any { target -> target.columns.map { it.entry.seriesKey } == listOf("a", "b") }
+      targets.any { target -> target.columns.map { it.entry.seriesKey } == listOf("a", "b") },
     )
     assertTrue(targets.any { target -> target.columns.map { it.entry.seriesKey } == listOf("c") })
   }
@@ -146,7 +116,7 @@ class ColumnCartesianLayerHostTest {
           listOf(
             listOf(ColumnCartesianLayerModel.Entry(0.0, 2.0)),
             listOf(ColumnCartesianLayerModel.Entry(0.0, -3.0)),
-          )
+          ),
       )
 
     layer.draw(createContext(layer, model), model)
@@ -175,7 +145,7 @@ class ColumnCartesianLayerHostTest {
           listOf(
             listOf(ColumnCartesianLayerModel.Entry(0.0, 2.0)),
             listOf(ColumnCartesianLayerModel.Entry(0.0, 3.0)),
-          )
+          ),
       )
 
     layer.draw(createContext(layer, model), model)
@@ -184,14 +154,13 @@ class ColumnCartesianLayerHostTest {
     assertTrue(layer.markerTargets.isEmpty())
   }
 
-  private class RecordingColumn(thickness: androidx.compose.ui.unit.Dp) :
-    LineComponent(Fill.Black, thickness) {
+  private class RecordingColumn(thickness: Dp) : LineComponent(Fill.Black, thickness) {
     val centers = mutableListOf<Float>()
     val tops = mutableListOf<Float>()
     val bottoms = mutableListOf<Float>()
 
     override fun drawVertical(
-      context: com.patrykandpatrick.vico.compose.common.DrawingContext,
+      context: DrawingContext,
       x: Float,
       top: Float,
       bottom: Float,
@@ -225,25 +194,39 @@ class ColumnCartesianLayerHostTest {
   private fun createContext(
     layer: ColumnCartesianLayer,
     model: ColumnCartesianLayerModel,
+    layoutDirection: LayoutDirection = LayoutDirection.Ltr,
+    zoom: Float = 1f,
+    scroll: Float = 0f,
+    density: Float = 1f,
+    layerBounds: Rect = Rect(0f, 0f, 200f, 100f),
+    dimensions: MutableCartesianLayerDimensions =
+      MutableCartesianLayerDimensions(xSpacing = 100f, scalableStartPadding = 20f),
+    extraStore: ExtraStore = ExtraStore.Empty,
+    chartModel: CartesianChartModel = CartesianChartModel(model),
+    ranges: CartesianChartRanges =
+      MutableCartesianChartRanges().also { layer.updateChartRanges(it, model) },
   ): CartesianDrawingContext {
-    val ranges = MutableCartesianChartRanges().also { layer.updateChartRanges(it, model) }
-    val dimensions = MutableCartesianLayerDimensions(xSpacing = 100f, scalableStartPadding = 20f)
+    val scaledDimensions = dimensions.copyScaled(zoom)
     val baseContext = mockk<CartesianDrawingContext>(relaxed = true)
-    every { baseContext.model } returns CartesianChartModel(model)
+    every { baseContext.model } returns chartModel
     every { baseContext.ranges } returns ranges
-    every { baseContext.layerBounds } returns Rect(0f, 0f, 200f, 100f)
-    every { baseContext.layerDimensions } returns dimensions
-    every { baseContext.scroll } returns 0f
-    every { baseContext.zoom } returns 1f
+    every { baseContext.layerBounds } returns layerBounds
+    every { baseContext.layerDimensions } returns scaledDimensions
+    every { baseContext.scroll } returns scroll
+    every { baseContext.zoom } returns zoom
+    val ltr = layoutDirection == LayoutDirection.Ltr
+    val contextExtraStore = extraStore
+    val contextDensity = Density(density)
+    val contextLayoutDirection = layoutDirection
     return object : CartesianDrawingContext by baseContext {
-      override val extraStore = ExtraStore.Empty
-      override val density = Density(1f)
-      override val androidx.compose.ui.unit.Dp.pixels: Float
-        get() = value
+      override val extraStore = contextExtraStore
+      override val density = contextDensity
+      override val Dp.pixels: Float
+        get() = value * contextDensity.density
 
-      override val layoutDirection = LayoutDirection.Ltr
-      override val isLtr = true
-      override val layoutDirectionMultiplier = 1
+      override val layoutDirection = contextLayoutDirection
+      override val isLtr = ltr
+      override val layoutDirectionMultiplier = if (ltr) 1 else -1
     }
   }
 }
