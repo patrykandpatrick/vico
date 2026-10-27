@@ -25,7 +25,10 @@ public fun interface PieValueFormatter {
   public fun format(context: PieChartMeasuringContext, value: Float, index: Int): CharSequence
 
   public companion object {
-    /** Returns the value as a string. */
+    /**
+     * Formats values to include up to two decimal digits, rounding half away from zero. Trailing
+     * zeros are skipped.
+     */
     public val Value: PieValueFormatter = PieValueFormatter { _, value, _ ->
       value.toDouble().format()
     }

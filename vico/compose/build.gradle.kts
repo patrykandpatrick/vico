@@ -58,6 +58,7 @@ kotlin {
     }
     // Keep Kotlin test APIs in `commonTest` so target-specific test source sets inherit them.
     commonTest.dependencies { implementation(libs.kotlinTest) }
+    val desktopTest by getting { dependencies { implementation(compose.desktop.currentOs) } }
     // MockK isn’t multiplatform, so host-side JVM tests get it here.
     val androidHostTest by getting { dependencies { implementation(libs.mockK) } }
   }
@@ -66,16 +67,16 @@ kotlin {
 
 /*
  * Ensure `./gradlew test` includes this module’s test suite. In this module, the JVM-capable tests
- * live under Android host tests.
+ * live under Android host tests and desktop tests.
  */
 val testTask = tasks.findByName("test")
 
 if (testTask != null) {
-  testTask.dependsOn("testAndroidHostTest")
+  testTask.dependsOn("testAndroidHostTest", "desktopTest")
 } else {
   tasks.register("test") {
     group = LifecycleBasePlugin.VERIFICATION_GROUP
-    description = "Runs the vico-compose test suite on the JVM (Android host tests)."
-    dependsOn("testAndroidHostTest")
+    description = "Runs the vico-compose test suite on the JVM (Android host and desktop tests)."
+    dependsOn("testAndroidHostTest", "desktopTest")
   }
 }

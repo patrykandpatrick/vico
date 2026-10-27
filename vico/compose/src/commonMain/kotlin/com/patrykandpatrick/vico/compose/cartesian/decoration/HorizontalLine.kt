@@ -31,7 +31,8 @@ import com.patrykandpatrick.vico.compose.common.half
  * @property y returns the _y_ value.
  * @property line the [LineComponent] for the line.
  * @property labelComponent the label [TextComponent].
- * @property label returns the label text.
+ * @property label returns the label text. By default, the _y_ value is formatted to include up to
+ *   two decimal digits, rounding half away from zero.
  * @property horizontalLabelPosition defines the horizontal position of the label.
  * @property verticalLabelPosition defines the vertical position of the label.
  * @property labelRotationDegrees the rotation of the label (in degrees).

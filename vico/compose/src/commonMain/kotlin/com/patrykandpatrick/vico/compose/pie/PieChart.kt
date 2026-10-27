@@ -333,9 +333,9 @@ internal constructor(
       destination: Path,
     ) {
       destination.rewind()
-      destination.addPath(
-        createSlicePath(circleBounds, holeRadius, startAngle, sweepAngle, centerOffset)
-      )
+      val path = createSlicePath(circleBounds, holeRadius, startAngle, sweepAngle, centerOffset)
+      destination.fillType = path.fillType
+      destination.addPath(path)
     }
 
     internal fun buildParallelPath(

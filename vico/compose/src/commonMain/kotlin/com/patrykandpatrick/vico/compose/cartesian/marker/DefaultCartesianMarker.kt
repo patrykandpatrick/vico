@@ -311,8 +311,8 @@ public open class DefaultCartesianMarker(
       /**
        * Creates an instance of the default [ValueFormatter] implementation. The labels produced
        * include the [CartesianLayerModel.Entry] _y_ values, which are formatted to include up to
-       * [decimalCount] decimal digits and, if [colorCode] is true, color-coded. Trailing zeros are
-       * skipped.
+       * [decimalCount] decimal digits (rounding half away from zero) and, if [colorCode] is true,
+       * color-coded. Trailing zeros are skipped. If [decimalCount] is negative, zero is used.
        */
       public fun default(
         decimalCount: Int = 2,
