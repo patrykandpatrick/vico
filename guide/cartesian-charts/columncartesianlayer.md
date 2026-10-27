@@ -19,40 +19,31 @@ In `rememberColumnCartesianLayer`, you can also change column spacing. Data labe
 
 ## Grouped stacking
 
-Use [`ColumnCartesianLayer.MergeMode.GroupedStacked`][grouped-stacked] to place groups side by side and stack the series in each group. Its key selector receives the key supplied to [`series`][series] and returns a group key. Give each series a stable key so the selector does not depend on its position in the model.
+To place stacks side by side, pass a `stackKey` selector to [`ColumnCartesianLayer.MergeMode.Grouped`][grouped]. The selector receives the key supplied to [`series`][series], or the series index if no key is supplied. It must be pure, and it may run on a background thread.
 
-Positive and negative values accumulate independently within each group: positive columns stack upward from zero and negative columns stack downward from zero. Axis labels remain independent of the merge mode. Configure them on [`HorizontalAxis.rememberBottom`][horizontal-axis-remember-bottom], for example with a value formatter for month names.
+Series whose selector results are equal according to `equals` share a stack, and returning `null` keeps a series in its own column. Without a selector, columns are grouped horizontally without stacking.
+
+Stacks are ordered by the first series belonging to each stack, and each stack is as wide as its widest column. Positive and negative values accumulate separately, upward and downward from zero. Data labels show each stack’s totals, and markers receive one target per stack at each _x_-value where that stack has data. The [“Grouped stacked column chart”][grouped-stacked-column-chart] sample chart stacks three expense series and keeps income in its own column.
+
+<figure><img src="../.gitbook/assets/grouped-stacked-columns.png" alt="" width="375"><figcaption><p>The <a href="https://github.com/patrykandpatrick/vico/blob/stable/sample/shared/src/commonMain/kotlin/com/patrykandpatrick/vico/sample/charts/GroupedStackedColumnChart.kt">“Grouped stacked column chart”</a> sample chart, which places an income column next to a stack of expenses</p></figcaption></figure>
 
 ```kt
-val months = listOf("Jan", "Feb", "Mar", "Apr")
-val x = listOf<Number>(0, 1, 2, 3)
-
 val layer =
-  rememberColumnCartesianLayer(
-    mergeMode = {
-      ColumnCartesianLayer.MergeMode.GroupedStacked(
-        groupKeySelector = { seriesKey -> if (seriesKey == "Income") "Income" else "Expenses" }
-      )
-    }
-  )
-
-val bottomAxis =
-  HorizontalAxis.rememberBottom(
-    valueFormatter = { _, value, _ ->
-      value
-        .takeIf { it.isFinite() && it == it.toInt().toDouble() }
-        ?.let { months.getOrElse(it.toInt()) { "" } }
-        ?: ""
-    },
-  )
+    rememberColumnCartesianLayer(
+        mergeMode = {
+            ColumnCartesianLayer.MergeMode.Grouped(
+                stackKey = { seriesKey -> if (seriesKey == "Income") null else "Expenses" }
+            )
+        }
+    )
 
 cartesianChartModelProducer.runTransaction {
-  columnModel {
-    series(x = x, y = listOf(8, 9, 10, 11), key = "Income")
-    series(x = x, y = listOf(3, 3, 4, 3), key = "House")
-    series(x = x, y = listOf(2, 2, 1, 2), key = "Car")
-    series(x = x, y = listOf(1, 2, 2, 2), key = "Food")
-  }
+    columnModel {
+        series(y = listOf(8, 9, 10, 11), key = "Income")
+        series(y = listOf(3, 3, 4, 3), key = "House")
+        series(y = listOf(2, 2, 1, 2), key = "Car")
+        series(y = listOf(1, 2, 2, 2), key = "Food")
+    }
 }
 ```
 
@@ -105,5 +96,5 @@ CartesianChartModel(
 [series]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-column-cartesian-layer-model/-builder-scope/series.html
 [cartesian-chart-model]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-cartesian-chart-model/
 [build]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.data/-column-cartesian-layer-model/-companion/build.html
-[grouped-stacked]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.layer/-column-cartesian-layer/-merge-mode/-grouped-stacked/
-[horizontal-axis-remember-bottom]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.axis/-horizontal-axis/-companion/remember-bottom.html
+[grouped]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.layer/-column-cartesian-layer/-merge-mode/-grouped/
+[grouped-stacked-column-chart]: https://github.com/patrykandpatrick/vico/blob/stable/sample/shared/src/commonMain/kotlin/com/patrykandpatrick/vico/sample/charts/GroupedStackedColumnChart.kt
