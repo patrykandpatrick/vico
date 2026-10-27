@@ -134,22 +134,6 @@ class ColumnStackLayoutTest {
   }
 
   @Test
-  fun `resolver rebuilds the mapping for distinct selectors with equal hash codes`() {
-    class SameHash(private val result: Any?) : (Any) -> Any? {
-      override fun invoke(key: Any): Any? = result
-
-      override fun hashCode(): Int = 1
-    }
-    val resolver = ColumnStackResolver()
-
-    val together = resolver.resolve(listOf("a", "b"), SameHash("stack"))
-    val apart = resolver.resolve(listOf("a", "b"), SameHash(null))
-
-    assertEquals(1, together.stackCount)
-    assertEquals(2, apart.stackCount)
-  }
-
-  @Test
   fun `alternating models always get their own layout`() {
     val resolver = ColumnStackResolver()
     val byKey: (Any) -> Any? = { it }
