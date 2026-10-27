@@ -61,6 +61,10 @@ private val Y =
     "Food" to listOf(1, 2, 2, 2),
   )
 
+private val StackKeyProvider = ColumnCartesianLayer.StackKeyProvider { seriesKey, _, _ ->
+  if (seriesKey == "Income") seriesKey else "Expenses"
+}
+
 private val BottomAxisValueFormatter =
   object : CartesianValueFormatter {
     override fun format(
@@ -91,11 +95,7 @@ private fun ComposeGroupedStackedColumnChart(
                 rememberLineComponent(fill = Fill(color), thickness = 16.dp)
               }
             ),
-          mergeMode = {
-            ColumnCartesianLayer.MergeMode.Grouped(
-              stackKey = { seriesKey -> if (seriesKey == "Income") null else "Expenses" }
-            )
-          },
+          stackKeyProvider = StackKeyProvider,
         ),
         startAxis = VerticalAxis.rememberStart(),
         bottomAxis =

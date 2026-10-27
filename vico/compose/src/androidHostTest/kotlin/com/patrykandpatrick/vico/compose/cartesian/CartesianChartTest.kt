@@ -161,18 +161,14 @@ class CartesianChartTest {
   }
 
   @Test
-  fun `Given grouped stacked columns, when ranges are updated, then y range aggregates each group independently`() {
+  fun `Given several column stacks, when ranges are updated, then y range aggregates each stack independently`() {
     val chart =
       CartesianChart(
         ColumnCartesianLayer(
           columnProvider = ColumnCartesianLayer.ColumnProvider.series(LineComponent(Fill.Black)),
-          mergeMode = {
-            ColumnCartesianLayer.MergeMode.Grouped(
-              stackKey = { seriesKey ->
-                if (seriesKey == "incomeActual" || seriesKey == "incomeForecast") "income"
-                else "expenses"
-              }
-            )
+          stackKeyProvider = { seriesKey, _, _ ->
+            if (seriesKey == "incomeActual" || seriesKey == "incomeForecast") "income"
+            else "expenses"
           },
         )
       )

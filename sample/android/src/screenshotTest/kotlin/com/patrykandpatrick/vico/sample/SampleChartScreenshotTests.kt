@@ -28,7 +28,6 @@ import com.patrykandpatrick.vico.sample.charts.ComposeBasicPieChartPreview
 import com.patrykandpatrick.vico.sample.charts.ComposeDailyDigitalMediaUsePreview
 import com.patrykandpatrick.vico.sample.charts.ComposeElectricCarSalesPreview
 import com.patrykandpatrick.vico.sample.charts.ComposeGoldPricesPreview
-import com.patrykandpatrick.vico.sample.charts.ComposeGroupedStackedColumnChartPreview
 import com.patrykandpatrick.vico.sample.charts.ComposeRockMetalRatiosPreview
 import com.patrykandpatrick.vico.sample.charts.ComposeTemperatureAnomaliesPreview
 
@@ -107,11 +106,4 @@ internal fun RockMetalRatiosScreenshotTest() {
 @Composable
 internal fun GoldPricesScreenshotTest() {
   ComposeGoldPricesPreview()
-}
-
-@PreviewTest
-@Preview
-@Composable
-internal fun GroupedStackedColumnChartScreenshotTest() {
-  ComposeGroupedStackedColumnChartPreview()
 }

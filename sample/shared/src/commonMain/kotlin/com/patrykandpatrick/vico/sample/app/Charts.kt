@@ -25,7 +25,6 @@ object Charts {
   val all =
     default(
       { ComposeBasicColumnChart(it) },
-      { ComposeGroupedStackedColumnChart(it) },
       { ComposeBasicLineChart(it) },
       { ComposeBasicComboChart(it) },
       { ComposeBasicPieChart(it) },
@@ -40,7 +39,6 @@ object Charts {
 
   fun default(
     basicColumnChart: @Composable (Modifier) -> Unit,
-    groupedStackedColumnChart: @Composable (Modifier) -> Unit,
     basicLineChart: @Composable (Modifier) -> Unit,
     basicComboChart: @Composable (Modifier) -> Unit,
     basicPieChart: @Composable (Modifier) -> Unit,
@@ -54,7 +52,6 @@ object Charts {
   ) =
     listOf(
       Chart(Details.BasicColumnChart, basicColumnChart),
-      Chart(Details.GroupedStackedColumnChart, groupedStackedColumnChart),
       Chart(Details.BasicLineChart, basicLineChart),
       Chart(Details.BasicComboChart, basicComboChart),
       Chart(Details.BasicPieChart, basicPieChart),

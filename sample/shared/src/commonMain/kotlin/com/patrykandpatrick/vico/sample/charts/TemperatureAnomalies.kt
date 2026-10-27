@@ -95,7 +95,7 @@ private fun ComposeTemperatureAnomalies(
             remember(positiveColumn, negativeColumn) {
               getColumnProvider(positiveColumn, negativeColumn)
             },
-          columnCollectionSpacing = 4.dp,
+          groupSpacing = 4.dp,
           rangeProvider = RangeProvider,
         ),
         startAxis = VerticalAxis.rememberStart(valueFormatter = StartAxisValueFormatter),

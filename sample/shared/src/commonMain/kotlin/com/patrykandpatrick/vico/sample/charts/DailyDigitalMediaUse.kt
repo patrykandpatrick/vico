@@ -83,8 +83,8 @@ private fun ComposeDailyDigitalMediaUse(
                 rememberLineComponent(fill = Fill(color), thickness = 16.dp)
               }
             ),
-          columnCollectionSpacing = 32.dp,
-          mergeMode = { ColumnCartesianLayer.MergeMode.Stacked },
+          groupSpacing = 32.dp,
+          stackKeyProvider = ColumnCartesianLayer.StackKeyProvider.Stacked,
         ),
         startAxis =
           VerticalAxis.rememberStart(

@@ -17,139 +17,116 @@
 package com.patrykandpatrick.vico.compose.cartesian.layer
 
 import com.patrykandpatrick.vico.compose.cartesian.data.ColumnCartesianLayerModel
+import com.patrykandpatrick.vico.compose.cartesian.layer.ColumnCartesianLayer.StackKeyProvider
+import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
-import kotlin.test.assertSame
 
 class ColumnStackLayoutTest {
-  private data class StackKey(val value: String) {
-    override fun toString(): String = "same display text"
-  }
-
   @Test
-  fun `mapping uses equality and keeps null results separate`() {
+  fun `stacks are matched by equality and ordered by first series`() {
     var calls = 0
-    val keys = listOf("a1", "b1", "a2", "solo1", "solo2")
-    val layout =
-      createColumnStackLayout(keys) { key ->
-        calls++
-        when (key) {
-          "a1",
-          "a2" -> StackKey("A")
-          "b1" -> StackKey("B")
-          else -> null
-        }
+    val stackKeyProvider = StackKeyProvider { seriesKey, _, _ ->
+      calls++
+      when (seriesKey) {
+        "a1",
+        "a2" -> StackKey("A")
+        "b1" -> StackKey("B")
+        else -> seriesKey
       }
+    }
+
+    val layout = stackKeyProvider.getLayout(listOf("a1", "b1", "a2", "solo1", "solo2"))
 
     assertContentEquals(intArrayOf(0, 1, 0, 2, 3), layout.stackIndices)
-    assertContentEquals(intArrayOf(0, 1, 3, 4), layout.firstSeriesIndices)
     assertEquals(4, layout.stackCount)
-    assertEquals(0, layout.stackIndexBySeriesKey.getValue("a2"))
+    assertEquals(
+      listOf(listOf(0, 2), listOf(1), listOf(3), listOf(4)),
+      layout.seriesIndicesByStack(),
+    )
     assertEquals(5, calls)
   }
 
   @Test
-  fun `stacked range sums signs separately per stack and x`() {
+  fun `grouped and stacked give one stack per series and one shared stack`() {
+    val keys = listOf("a", "b", "c")
+
+    assertEquals(
+      listOf(listOf(0), listOf(1), listOf(2)),
+      StackKeyProvider.Grouped.getLayout(keys).seriesIndicesByStack(),
+    )
+    assertEquals(
+      listOf(listOf(0, 1, 2)),
+      StackKeyProvider.Stacked.getLayout(keys).seriesIndicesByStack(),
+    )
+  }
+
+  @Test
+  fun `the y range sums signs separately per stack and x value`() {
     val model = model(listOf(0 to 7), listOf(0 to -2), listOf(0 to 3), listOf(0 to 2))
-    val layout =
-      createColumnStackLayout(model.seriesKeys) { key -> if (key == 0 || key == 1) "A" else "B" }
+    val layout = StackKeyProvider { _, seriesIndex, _ ->
+      if (seriesIndex < 2) "A" else "B"
+    }
+      .layout(model)
 
-    val range = model.getStackedYRange(layout)
-
-    assertEquals(-2.0, range.start)
-    assertEquals(7.0, range.endInclusive)
+    assertEquals(-2.0..7.0, model.getYRange(layout))
   }
 
   @Test
-  fun `stacked range handles sparse x values`() {
-    val model = model(listOf(0 to 5, 2 to 1), listOf(1 to 3, 2 to 4))
-    val layout = createColumnStackLayout(model.seriesKeys) { "A" }
+  fun `the y range handles sparse x values`() {
+    val model = model(listOf(0 to 5, 2 to 1), listOf(1 to 3, 2 to 4), listOf(0 to 8))
+    val layout = StackKeyProvider { _, seriesIndex, _ ->
+      if (seriesIndex < 2) "A" else seriesIndex
+    }
+      .layout(model)
 
-    val range = model.getStackedYRange(layout)
-
-    assertEquals(0.0, range.start)
-    assertEquals(5.0, range.endInclusive)
+    assertEquals(0.0..8.0, model.getYRange(layout))
   }
 
   @Test
-  fun `stacked range handles all-negative stacks`() {
+  fun `single-series stacks contribute their values and multi-series stacks their totals`() {
+    val model = model(listOf(0 to 2, 1 to 3), listOf(0 to 4), listOf(0 to 5))
+    val singleSeries = model(listOf(0 to 2, 1 to 3), listOf(0 to 4))
+    val layout = StackKeyProvider { _, seriesIndex, _ ->
+      if (seriesIndex == 0) seriesIndex else "B"
+    }
+      .layout(model)
+
+    assertEquals(0.0..9.0, model.getYRange(layout))
+    assertEquals(2.0..4.0, singleSeries.getYRange(StackKeyProvider.Grouped.layout(singleSeries)))
+    assertEquals(model.minY..model.maxY, model.getYRange(StackKeyProvider.Grouped.layout(model)))
+    assertEquals(
+      model.minAggregateY..model.maxAggregateY,
+      model.getYRange(StackKeyProvider.Stacked.layout(model)),
+    )
+  }
+
+  @Test
+  fun `the y range handles all-negative stacks`() {
     val model = model(listOf(0 to -1), listOf(0 to -2), listOf(0 to -4))
-    val layout = createColumnStackLayout(model.seriesKeys) { key -> if (key == 2) null else "A" }
-
-    val range = model.getStackedYRange(layout)
-
-    assertEquals(-4.0, range.start)
-    assertEquals(0.0, range.endInclusive)
-  }
-
-  @Test
-  fun `resolver reuses the mapping for equal keys and the same selector`() {
-    var calls = 0
-    val selector: (Any) -> Any? = {
-      calls++
-      it
+    val layout = StackKeyProvider { _, seriesIndex, _ ->
+      if (seriesIndex == 2) seriesIndex else "A"
     }
-    val resolver = ColumnStackResolver()
+      .layout(model)
 
-    val first = resolver.resolve(listOf("a", "b", "c"), selector)
-    val second = resolver.resolve(listOf("a", "b", "c"), selector)
-
-    assertSame(first, second)
-    assertEquals(3, calls)
+    assertEquals(-4.0..0.0, model.getYRange(layout))
   }
 
-  @Test
-  fun `resolver rebuilds the mapping for new keys or a new selector`() {
-    var calls = 0
-    val selector: (Any) -> Any? = {
-      calls++
-      "stack"
+  private data class StackKey(val value: String) {
+    override fun toString(): String = "same display text"
+  }
+
+  private fun StackKeyProvider.getLayout(seriesKeys: List<Any>) =
+    getLayout(seriesKeys, ExtraStore.Empty)
+
+  private fun StackKeyProvider.layout(model: ColumnCartesianLayerModel) =
+    getLayout(model.seriesKeys, model.extraStore)
+
+  private fun ColumnStackLayout.seriesIndicesByStack() =
+    List(stackCount) { stackIndex ->
+      buildList { forEachSeriesIndex(stackIndex) { seriesIndex -> add(seriesIndex) } }
     }
-    val otherSelector: (Any) -> Any? = {
-      calls++
-      it
-    }
-    val resolver = ColumnStackResolver()
-
-    resolver.resolve(listOf("a", "b"), selector)
-    val reordered = resolver.resolve(listOf("b", "a"), selector)
-    val reselected = resolver.resolve(listOf("b", "a"), otherSelector)
-
-    assertEquals(6, calls)
-    assertEquals(0, reordered.stackIndexBySeriesKey.getValue("a"))
-    assertEquals(2, reselected.stackCount)
-  }
-
-  @Test
-  fun `resolver does not confuse unequal keys with identical string representations`() {
-    val resolver = ColumnStackResolver()
-    val selector: (Any) -> Any? = { it }
-
-    val first = resolver.resolve(listOf(StackKey("A"), StackKey("B")), selector)
-    val second = resolver.resolve(listOf(StackKey("B"), StackKey("A")), selector)
-
-    assertEquals(0, first.stackIndexBySeriesKey.getValue(StackKey("A")))
-    assertEquals(1, second.stackIndexBySeriesKey.getValue(StackKey("A")))
-  }
-
-  @Test
-  fun `alternating models always get their own layout`() {
-    val resolver = ColumnStackResolver()
-    val byKey: (Any) -> Any? = { it }
-    val allTogether: (Any) -> Any? = { "all" }
-    val keysA = listOf("x", "y", "z")
-    val keysB = listOf("p", "q")
-
-    repeat(3) {
-      val a = resolver.resolve(keysA, byKey)
-      val b = resolver.resolve(keysB, allTogether)
-      assertContentEquals(intArrayOf(0, 1, 2), a.stackIndices)
-      assertContentEquals(intArrayOf(0, 0), b.stackIndices)
-      assertEquals(setOf<Any>("x", "y", "z"), a.stackIndexBySeriesKey.keys)
-      assertEquals(setOf<Any>("p", "q"), b.stackIndexBySeriesKey.keys)
-    }
-  }
 
   private fun model(vararg series: List<Pair<Int, Int>>): ColumnCartesianLayerModel =
     ColumnCartesianLayerModel(
