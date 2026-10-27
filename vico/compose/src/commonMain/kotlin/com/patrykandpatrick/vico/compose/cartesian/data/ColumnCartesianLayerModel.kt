@@ -257,15 +257,10 @@ public fun CartesianChartModelProducer.Transaction.columnSeries(
   columnModel(block)
 }
 
-internal fun Iterable<ColumnCartesianLayerModel.Entry>.getAggregateYRange() = getAggregateYRange {}
-
-internal fun Iterable<ColumnCartesianLayerModel.Entry>.getAggregateYRange(
-  groupKeySelector: (Any) -> Any
-) =
-  fold(mutableMapOf<Pair<Double, Any>, Pair<Double, Double>>()) { map, entry ->
-      val key = entry.x to groupKeySelector(entry.seriesKey)
-      val (negativeY, positiveY) = map.getOrElse(key) { 0.0 to 0.0 }
-      map[key] =
+internal fun Iterable<ColumnCartesianLayerModel.Entry>.getAggregateYRange() =
+  fold(mutableMapOf<Double, Pair<Double, Double>>()) { map, entry ->
+      val (negativeY, positiveY) = map.getOrElse(entry.x) { 0.0 to 0.0 }
+      map[entry.x] =
         if (entry.y < 0f) negativeY + entry.y to positiveY else negativeY to positiveY + entry.y
       map
     }

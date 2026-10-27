@@ -167,8 +167,8 @@ class CartesianChartTest {
         ColumnCartesianLayer(
           columnProvider = ColumnCartesianLayer.ColumnProvider.series(LineComponent(Fill.Black)),
           mergeMode = {
-            ColumnCartesianLayer.MergeMode.GroupedStacked(
-              groupKeySelector = { seriesKey ->
+            ColumnCartesianLayer.MergeMode.Grouped(
+              stackKey = { seriesKey ->
                 if (seriesKey == "incomeActual" || seriesKey == "incomeForecast") "income"
                 else "expenses"
               }

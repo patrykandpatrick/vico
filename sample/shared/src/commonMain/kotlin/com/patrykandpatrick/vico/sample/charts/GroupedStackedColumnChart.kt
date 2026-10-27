@@ -92,10 +92,8 @@ private fun ComposeGroupedStackedColumnChart(
               }
             ),
           mergeMode = {
-            ColumnCartesianLayer.MergeMode.GroupedStacked(
-              groupKeySelector = { seriesKey ->
-                if (seriesKey == "Income") "Income" else "Expenses"
-              }
+            ColumnCartesianLayer.MergeMode.Grouped(
+              stackKey = { seriesKey -> if (seriesKey == "Income") null else "Expenses" }
             )
           },
         ),

@@ -21,7 +21,7 @@ import kotlin.test.assertEquals
 
 class ColumnCartesianLayerModelTest {
   @Test
-  fun `getAggregateYRange aggregates positive and negative values by x and group`() {
+  fun `getAggregateYRange aggregates positive and negative values by x`() {
     val entries =
       listOf(
         ColumnCartesianLayerModel.Entry(x = 0.0, y = 7.0, seriesKey = "income"),
@@ -30,16 +30,9 @@ class ColumnCartesianLayerModelTest {
         ColumnCartesianLayerModel.Entry(x = 0.0, y = 2.0, seriesKey = "car"),
       )
 
-    val range = entries.getAggregateYRange { seriesKey ->
-      when (seriesKey) {
-        "income" -> "income"
-        "home",
-        "car" -> "spending"
-        else -> error("Unexpected series key: $seriesKey")
-      }
-    }
+    val range = entries.getAggregateYRange()
 
     assertEquals(-2.0, range.start)
-    assertEquals(7.0, range.endInclusive)
+    assertEquals(12.0, range.endInclusive)
   }
 }
