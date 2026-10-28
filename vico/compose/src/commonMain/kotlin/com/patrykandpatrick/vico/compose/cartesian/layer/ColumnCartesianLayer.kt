@@ -28,7 +28,6 @@ import com.patrykandpatrick.vico.compose.cartesian.axis.Axis
 import com.patrykandpatrick.vico.compose.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.compose.cartesian.data.*
 import com.patrykandpatrick.vico.compose.cartesian.getVisibleXRange
-import com.patrykandpatrick.vico.compose.cartesian.layer.ColumnCartesianLayer.MergeMode
 import com.patrykandpatrick.vico.compose.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.compose.cartesian.marker.ColumnCartesianLayerMarkerTarget
 import com.patrykandpatrick.vico.compose.cartesian.marker.MutableColumnCartesianLayerMarkerTarget
@@ -45,11 +44,15 @@ import kotlin.math.abs
 import kotlin.math.min
 
 /**
- * Displays data as vertical bars.
+ * Displays data as vertical bars. The columns with matching _x_-values form a group. The series are
+ * assigned to stacks by [stackKeyProvider]. The columns in each stack are stacked, and the stacks
+ * of each group are placed side by side. Data labels show the stack totals, and markers get one
+ * target per stack.
  *
  * @property columnProvider provides the column [LineComponent]s.
- * @property columnCollectionSpacing the spacing between neighboring column collections.
- * @property mergeMode defines how columns should be drawn in column collections.
+ * @property groupSpacing the spacing between neighboring groups.
+ * @property stackKeyProvider assigns the series to stacks.
+ * @property stackSpacing the spacing between neighboring stacks in a group.
  * @property dataLabel the [TextComponent] for the data labels. Use `null` for no data labels.
  * @property dataLabelPosition the vertical position of positive-column data labels relative to the
  *   top edges of the columns. For negative columns, this is inverted and interpreted relative to
@@ -66,8 +69,9 @@ import kotlin.math.min
 public open class ColumnCartesianLayer
 protected constructor(
   protected val columnProvider: ColumnProvider,
-  protected val columnCollectionSpacing: Dp = Defaults.COLUMN_COLLECTION_SPACING.dp,
-  protected val mergeMode: (ExtraStore) -> MergeMode = { MergeMode.Grouped() },
+  protected val groupSpacing: Dp = Defaults.GROUP_SPACING.dp,
+  protected val stackKeyProvider: StackKeyProvider = StackKeyProvider.Grouped,
+  protected val stackSpacing: Dp = Defaults.STACK_SPACING.dp,
   protected val dataLabel: TextComponent? = null,
   protected val dataLabelPosition: Position.Vertical = Position.Vertical.Top,
   protected val dataLabelValueFormatter: CartesianValueFormatter =
@@ -86,6 +90,12 @@ protected constructor(
   private val _markerTargets =
     mutableMapOf<Double, MutableList<MutableColumnCartesianLayerMarkerTarget>>()
 
+  private val stackMarkerTargets = mutableMapOf<Double, MutableColumnCartesianLayerMarkerTarget>()
+
+  private var markerTargetStackIndex = -1
+
+  private var stackGeometry: ColumnStackGeometry? = null
+
   protected val stackInfo: MutableMap<Double, StackInfo> = mutableMapOf()
 
   override val markerTargets: Map<Double, List<CartesianMarker.Target>> = _markerTargets
@@ -93,8 +103,77 @@ protected constructor(
   /** Creates a [ColumnCartesianLayer]. */
   public constructor(
     columnProvider: ColumnProvider,
-    columnCollectionSpacing: Dp = Defaults.COLUMN_COLLECTION_SPACING.dp,
-    mergeMode: (ExtraStore) -> MergeMode = { MergeMode.Grouped() },
+    groupSpacing: Dp = Defaults.GROUP_SPACING.dp,
+    stackKeyProvider: StackKeyProvider = StackKeyProvider.Grouped,
+    stackSpacing: Dp = Defaults.STACK_SPACING.dp,
+    dataLabel: TextComponent? = null,
+    dataLabelPosition: Position.Vertical = Position.Vertical.Top,
+    dataLabelValueFormatter: CartesianValueFormatter = CartesianValueFormatter.decimal(),
+    dataLabelRotationDegrees: Float = 0f,
+    rangeProvider: CartesianLayerRangeProvider = CartesianLayerRangeProvider.auto(),
+    verticalAxisPosition: Axis.Position.Vertical? = null,
+    drawingModelInterpolator:
+      CartesianLayerDrawingModelInterpolator<
+        ColumnCartesianLayerDrawingModel.Entry,
+        ColumnCartesianLayerDrawingModel,
+      > =
+      CartesianLayerDrawingModelInterpolator.column(),
+  ) : this(
+    columnProvider,
+    groupSpacing,
+    stackKeyProvider,
+    stackSpacing,
+    dataLabel,
+    dataLabelPosition,
+    dataLabelValueFormatter,
+    dataLabelRotationDegrees,
+    rangeProvider,
+    verticalAxisPosition,
+    drawingModelInterpolator,
+    ExtraStore.Key(),
+  )
+
+  @Deprecated("Use the constructor with `groupSpacing`, `stackKeyProvider`, and `stackSpacing`.")
+  @Suppress("DEPRECATION")
+  protected constructor(
+    columnProvider: ColumnProvider,
+    columnCollectionSpacing: Dp = Defaults.GROUP_SPACING.dp,
+    mergeMode: (ExtraStore) -> MergeMode,
+    dataLabel: TextComponent? = null,
+    dataLabelPosition: Position.Vertical = Position.Vertical.Top,
+    dataLabelValueFormatter: CartesianValueFormatter = CartesianValueFormatter.decimal(),
+    dataLabelRotationDegrees: Float = 0f,
+    rangeProvider: CartesianLayerRangeProvider = CartesianLayerRangeProvider.auto(),
+    verticalAxisPosition: Axis.Position.Vertical? = null,
+    drawingModelInterpolator:
+      CartesianLayerDrawingModelInterpolator<
+        ColumnCartesianLayerDrawingModel.Entry,
+        ColumnCartesianLayerDrawingModel,
+      > =
+      CartesianLayerDrawingModelInterpolator.column(),
+    drawingModelKey: ExtraStore.Key<ColumnCartesianLayerDrawingModel>,
+  ) : this(
+    columnProvider,
+    columnCollectionSpacing,
+    MergeModeStackKeyProvider(mergeMode),
+    Defaults.STACK_SPACING.dp,
+    dataLabel,
+    dataLabelPosition,
+    dataLabelValueFormatter,
+    dataLabelRotationDegrees,
+    rangeProvider,
+    verticalAxisPosition,
+    drawingModelInterpolator,
+    drawingModelKey,
+  )
+
+  /** Creates a [ColumnCartesianLayer]. */
+  @Deprecated("Use the constructor with `groupSpacing`, `stackKeyProvider`, and `stackSpacing`.")
+  @Suppress("DEPRECATION")
+  public constructor(
+    columnProvider: ColumnProvider,
+    columnCollectionSpacing: Dp = Defaults.GROUP_SPACING.dp,
+    mergeMode: (ExtraStore) -> MergeMode,
     dataLabel: TextComponent? = null,
     dataLabelPosition: Position.Vertical = Position.Vertical.Top,
     dataLabelValueFormatter: CartesianValueFormatter = CartesianValueFormatter.decimal(),
@@ -121,9 +200,79 @@ protected constructor(
     ExtraStore.Key(),
   )
 
+  @Deprecated("Use the constructor with `groupSpacing`.")
+  protected constructor(
+    columnProvider: ColumnProvider,
+    columnCollectionSpacing: Dp?,
+    stackKeyProvider: StackKeyProvider = StackKeyProvider.Grouped,
+    stackSpacing: Dp = Defaults.STACK_SPACING.dp,
+    dataLabel: TextComponent? = null,
+    dataLabelPosition: Position.Vertical = Position.Vertical.Top,
+    dataLabelValueFormatter: CartesianValueFormatter = CartesianValueFormatter.decimal(),
+    dataLabelRotationDegrees: Float = 0f,
+    rangeProvider: CartesianLayerRangeProvider = CartesianLayerRangeProvider.auto(),
+    verticalAxisPosition: Axis.Position.Vertical? = null,
+    drawingModelInterpolator:
+      CartesianLayerDrawingModelInterpolator<
+        ColumnCartesianLayerDrawingModel.Entry,
+        ColumnCartesianLayerDrawingModel,
+      > =
+      CartesianLayerDrawingModelInterpolator.column(),
+    drawingModelKey: ExtraStore.Key<ColumnCartesianLayerDrawingModel>,
+  ) : this(
+    columnProvider,
+    columnCollectionSpacing ?: Defaults.GROUP_SPACING.dp,
+    stackKeyProvider,
+    stackSpacing,
+    dataLabel,
+    dataLabelPosition,
+    dataLabelValueFormatter,
+    dataLabelRotationDegrees,
+    rangeProvider,
+    verticalAxisPosition,
+    drawingModelInterpolator,
+    drawingModelKey,
+  )
+
+  /** Creates a [ColumnCartesianLayer]. */
+  @Deprecated("Use the constructor with `groupSpacing`.")
+  public constructor(
+    columnProvider: ColumnProvider,
+    columnCollectionSpacing: Dp?,
+    stackKeyProvider: StackKeyProvider = StackKeyProvider.Grouped,
+    stackSpacing: Dp = Defaults.STACK_SPACING.dp,
+    dataLabel: TextComponent? = null,
+    dataLabelPosition: Position.Vertical = Position.Vertical.Top,
+    dataLabelValueFormatter: CartesianValueFormatter = CartesianValueFormatter.decimal(),
+    dataLabelRotationDegrees: Float = 0f,
+    rangeProvider: CartesianLayerRangeProvider = CartesianLayerRangeProvider.auto(),
+    verticalAxisPosition: Axis.Position.Vertical? = null,
+    drawingModelInterpolator:
+      CartesianLayerDrawingModelInterpolator<
+        ColumnCartesianLayerDrawingModel.Entry,
+        ColumnCartesianLayerDrawingModel,
+      > =
+      CartesianLayerDrawingModelInterpolator.column(),
+  ) : this(
+    columnProvider,
+    columnCollectionSpacing ?: Defaults.GROUP_SPACING.dp,
+    stackKeyProvider,
+    stackSpacing,
+    dataLabel,
+    dataLabelPosition,
+    dataLabelValueFormatter,
+    dataLabelRotationDegrees,
+    rangeProvider,
+    verticalAxisPosition,
+    drawingModelInterpolator,
+    ExtraStore.Key(),
+  )
+
   override fun drawInternal(context: CartesianDrawingContext, model: ColumnCartesianLayerModel) {
     with(context) {
       _markerTargets.clear()
+      stackMarkerTargets.clear()
+      markerTargetStackIndex = -1
       drawChartInternal(model, ranges, extraStore.getOrNull(drawingModelKey))
       stackInfo.clear()
     }
@@ -137,106 +286,91 @@ protected constructor(
     val yRange = ranges.getYRange(verticalAxisPosition)
     val heightMultiplier = layerBounds.height / yRange.length.toFloat()
 
-    var drawingStart: Float
+    var drawingStart = 0f
     var height: Float
     var columnCenterX: Float
     var columnTop: Float
     var columnBottom: Float
     val zeroLinePosition =
       layerBounds.bottom + (yRange.minY / yRange.length).toFloat() * layerBounds.height
-    val mergeMode = mergeMode(model.extraStore)
     val visibleXRange = getVisibleXRange()
+    val geometry = getStackGeometry(model.seriesKeys, model.extraStore)
+    val layout = geometry.layout
 
     saveLayer(opacity = drawingModel?.opacity ?: 1f)
 
-    model.series.forEachIndexed { index, entryCollection ->
-      val seriesKey = model.seriesKeys[index]
-      drawingStart = getDrawingStart(index, model.series.size, model.seriesKeys, mergeMode) - scroll
+    for (stackIndex in 0..<layout.stackCount) {
+      val columnThickness = geometry.thicknesses[stackIndex]
+      val halfColumnThickness = columnThickness.pixels.half
 
-      val visibleIndices =
-        entryCollection.getSliceIndices(visibleXRange.start, visibleXRange.endInclusive)
-      if (visibleIndices.isEmpty()) return@forEachIndexed
+      layout.forEachSeriesIndex(stackIndex) { index ->
+        val entryCollection = model.series[index]
+        drawingStart = getDrawingStart(index, model.seriesKeys, model.extraStore) - scroll
 
-      entryCollection.subList(visibleIndices.first, visibleIndices.last + 1).forEach { entry ->
-        val columnInfo = drawingModel?.getOrNull(index)?.get(entry.x)
-        height =
-          (columnInfo?.height ?: (abs(entry.y) / yRange.length)).toFloat() * layerBounds.height
-        val xSpacingMultiplier = ((entry.x - ranges.minX) / ranges.xStep).toFloat()
-        val column = columnProvider.getColumnOrThrow(entry, model.extraStore)
-        columnCenterX =
-          drawingStart +
-            (layerDimensions.xSpacing * xSpacingMultiplier +
-              columnProvider
-                .getWidestSeriesColumnOrThrow(seriesKey, index, model.extraStore)
-                .thickness
-                .pixels
-                .half * zoom) * layoutDirectionMultiplier
+        val visibleIndices =
+          entryCollection.getSliceIndices(visibleXRange.start, visibleXRange.endInclusive)
+        if (visibleIndices.isEmpty()) return@forEachSeriesIndex
 
-        when (mergeMode) {
-          MergeMode.Stacked -> {
-            val stackInfo = stackInfo.getOrPut(entry.x) { StackInfo() }
-            columnBottom =
-              if (entry.y >= 0) {
-                zeroLinePosition - stackInfo.topHeight
-              } else {
-                zeroLinePosition + stackInfo.bottomHeight + height
-              }
-            columnTop = (columnBottom - height).coerceAtMost(columnBottom)
-            stackInfo.update(entry.y, height)
-          }
+        entryCollection.subList(visibleIndices.first, visibleIndices.last + 1).forEach { entry ->
+          val columnInfo = drawingModel?.getOrNull(index)?.get(entry.x)
+          height =
+            (columnInfo?.height ?: (abs(entry.y) / yRange.length)).toFloat() * layerBounds.height
+          val xSpacingMultiplier = ((entry.x - ranges.minX) / ranges.xStep).toFloat()
+          val column = columnProvider.getColumnOrThrow(entry, model.extraStore)
+          columnCenterX =
+            drawingStart +
+              (layerDimensions.xSpacing * xSpacingMultiplier + halfColumnThickness * zoom) *
+                layoutDirectionMultiplier
 
-          is MergeMode.Grouped -> {
-            columnBottom = zeroLinePosition + if (entry.y < 0f) height else 0f
-            columnTop = columnBottom - height
-          }
-        }
+          val stackInfo = stackInfo.getOrPut(entry.x) { StackInfo() }
+          columnBottom =
+            if (entry.y >= 0) {
+              zeroLinePosition - stackInfo.topHeight
+            } else {
+              zeroLinePosition + stackInfo.bottomHeight + height
+            }
+          columnTop = (columnBottom - height).coerceAtMost(columnBottom)
+          stackInfo.update(entry.y, height)
 
-        val columnSignificantY = if (entry.y < 0f) columnBottom else columnTop
+          val columnSignificantY = if (entry.y < 0f) columnBottom else columnTop
 
-        updateMarkerTargets(
-          entry = entry,
-          seriesKey = seriesKey,
-          canvasX = columnCenterX,
-          canvasY = columnSignificantY,
-          columnHeight = columnBottom - columnTop,
-          column = column,
-          mergeMode = mergeMode,
-        )
-
-        column.drawVertical(this, columnCenterX, columnTop, columnBottom, zoom)
-
-        if (mergeMode is MergeMode.Grouped) {
-          drawDataLabel(
-            modelEntriesSize = model.series.size,
-            columnThickness = column.thickness,
-            dataLabelValue = entry.y,
-            x = columnCenterX,
-            y = columnSignificantY,
-            isFirst = index == 0 && entry.x == ranges.minX,
-            isLast = index == model.series.lastIndex && entry.x == ranges.maxX,
-            mergeMode = mergeMode,
+          updateMarkerTargets(
+            entry = entry,
+            stackIndex = stackIndex,
+            canvasX = columnCenterX,
+            canvasY = columnSignificantY,
+            columnHeight = columnBottom - columnTop,
+            column = column,
           )
-        } else if (index == model.series.lastIndex) {
-          drawStackedDataLabel(
-            modelEntriesSize = model.series.size,
-            columnThickness = column.thickness,
-            stackInfo = stackInfo.getValue(entry.x),
-            x = columnCenterX,
-            zeroLinePosition = zeroLinePosition,
-            heightMultiplier = heightMultiplier,
-            isFirst = entry.x == ranges.minX,
-            isLast = entry.x == ranges.maxX,
-            mergeMode = mergeMode,
-          )
+
+          column.drawVertical(this, columnCenterX, columnTop, columnBottom, zoom)
         }
       }
+
+      // The totals are drawn after the stack’s columns so that the columns can’t paint over them.
+      stackInfo.forEach { (x, stackInfo) ->
+        drawStackedDataLabel(
+          stackCount = layout.stackCount,
+          columnThickness = columnThickness,
+          stackInfo = stackInfo,
+          x =
+            drawingStart +
+              (layerDimensions.xSpacing * ((x - ranges.minX) / ranges.xStep).toFloat() +
+                halfColumnThickness * zoom) * layoutDirectionMultiplier,
+          zeroLinePosition = zeroLinePosition,
+          heightMultiplier = heightMultiplier,
+          isFirst = stackIndex == 0 && x == ranges.minX,
+          isLast = stackIndex == layout.stackCount - 1 && x == ranges.maxX,
+        )
+      }
+      stackInfo.clear()
     }
 
     canvas.restore()
   }
 
   protected open fun CartesianDrawingContext.drawStackedDataLabel(
-    modelEntriesSize: Int,
+    stackCount: Int,
     columnThickness: Dp,
     stackInfo: StackInfo,
     x: Float,
@@ -244,55 +378,47 @@ protected constructor(
     heightMultiplier: Float,
     isFirst: Boolean,
     isLast: Boolean,
-    mergeMode: MergeMode,
   ) {
-    if (stackInfo.topY > 0f) {
+    if (stackInfo.topY > 0f || stackInfo.bottomY == 0.0) {
       drawDataLabel(
-        modelEntriesSize = modelEntriesSize,
+        stackCount = stackCount,
         columnThickness = columnThickness,
         dataLabelValue = stackInfo.topY,
         x = x,
         y = zeroLinePosition - stackInfo.topHeight,
         isFirst = isFirst,
         isLast = isLast,
-        mergeMode = mergeMode,
       )
     }
     if (stackInfo.bottomY < 0f) {
       drawDataLabel(
-        modelEntriesSize = modelEntriesSize,
+        stackCount = stackCount,
         columnThickness = columnThickness,
         dataLabelValue = stackInfo.bottomY,
         x = x,
         y = zeroLinePosition + stackInfo.bottomHeight,
         isFirst = isFirst,
         isLast = isLast,
-        mergeMode = mergeMode,
       )
     }
   }
 
   protected open fun CartesianDrawingContext.drawDataLabel(
-    modelEntriesSize: Int,
+    stackCount: Int,
     columnThickness: Dp,
     dataLabelValue: Double,
     x: Float,
     y: Float,
     isFirst: Boolean,
     isLast: Boolean,
-    mergeMode: MergeMode,
   ) {
     dataLabel?.let { textComponent ->
-      val canUseXSpacing =
-        mergeMode == MergeMode.Stacked || mergeMode is MergeMode.Grouped && modelEntriesSize == 1
       var maxWidth =
-        when {
-          canUseXSpacing -> layerDimensions.xSpacing
-          mergeMode is MergeMode.Grouped ->
-            (columnThickness.pixels +
-              min(columnCollectionSpacing.pixels, mergeMode.columnSpacing.pixels).half) * zoom
-
-          else -> error(message = "Encountered an unexpected `MergeMode`.")
+        if (stackCount == 1) {
+          layerDimensions.xSpacing
+        } else {
+          (columnThickness.pixels +
+            min(groupSpacing.pixels, getStackSpacing(model.extraStore).pixels).half) * zoom
         }
       if (isFirst) maxWidth = maxWidth.coerceAtMost(layerDimensions.startPadding.doubled)
       if (isLast) maxWidth = maxWidth.coerceAtMost(layerDimensions.endPadding.doubled)
@@ -336,13 +462,16 @@ protected constructor(
 
   protected open fun CartesianDrawingContext.updateMarkerTargets(
     entry: ColumnCartesianLayerModel.Entry,
-    seriesKey: Any,
+    stackIndex: Int,
     canvasX: Float,
     canvasY: Float,
     columnHeight: Float,
     column: LineComponent,
-    mergeMode: MergeMode,
   ) {
+    if (stackIndex != markerTargetStackIndex) {
+      stackMarkerTargets.clear()
+      markerTargetStackIndex = stackIndex
+    }
     if (canvasX <= layerBounds.left - 1 || canvasX >= layerBounds.right + 1) return
     val limitedCanvasY = canvasY.coerceIn(layerBounds.top, layerBounds.bottom)
     val markerColor =
@@ -353,18 +482,14 @@ protected constructor(
         side = if (entry.y < 0) -1 else 1,
       )
     val targetColumn = ColumnCartesianLayerMarkerTarget.Column(entry, limitedCanvasY, markerColor)
-    when (mergeMode) {
-      is MergeMode.Grouped ->
-        _markerTargets.getOrPut(entry.x) { mutableListOf() } +=
-          MutableColumnCartesianLayerMarkerTarget(entry.x, canvasX, mutableListOf(targetColumn))
-
-      MergeMode.Stacked ->
-        _markerTargets
-          .getOrPut(entry.x) {
-            mutableListOf(MutableColumnCartesianLayerMarkerTarget(entry.x, canvasX))
-          }
-          .first()
-          .columns += targetColumn
+    val target = stackMarkerTargets[entry.x]
+    if (target != null) {
+      target.columns += targetColumn
+    } else {
+      val newTarget =
+        MutableColumnCartesianLayerMarkerTarget(entry.x, canvasX, mutableListOf(targetColumn))
+      stackMarkerTargets[entry.x] = newTarget
+      _markerTargets.getOrPut(entry.x) { mutableListOf() } += newTarget
     }
   }
 
@@ -372,14 +497,12 @@ protected constructor(
     chartRanges: MutableCartesianChartRanges,
     model: ColumnCartesianLayerModel,
   ) {
-    val mergeMode = mergeMode(model.extraStore)
-    val minY = mergeMode.getMinY(model)
-    val maxY = mergeMode.getMaxY(model)
+    val yRange = model.getYRange(stackKeyProvider.getLayout(model.seriesKeys, model.extraStore))
     chartRanges.tryUpdate(
       rangeProvider.getMinX(model.minX, model.maxX, model.extraStore),
       rangeProvider.getMaxX(model.minX, model.maxX, model.extraStore),
-      rangeProvider.getMinY(minY, maxY, model.extraStore),
-      rangeProvider.getMaxY(minY, maxY, model.extraStore),
+      rangeProvider.getMinY(yRange.start, yRange.endInclusive, model.extraStore),
+      rangeProvider.getMaxY(yRange.start, yRange.endInclusive, model.extraStore),
       verticalAxisPosition,
     )
   }
@@ -390,79 +513,105 @@ protected constructor(
     model: ColumnCartesianLayerModel,
   ) {
     with(context) {
-      val columnCollectionWidth =
-        getColumnCollectionWidth(
-          if (model.series.isNotEmpty()) model.series.size else 1,
-          model.seriesKeys,
-          mergeMode(model.extraStore),
-        )
-      val xSpacing = columnCollectionWidth + columnCollectionSpacing.pixels
+      val groupWidth = getGroupWidth(model.seriesKeys, model.extraStore)
+      val xSpacing = groupWidth + groupSpacing.pixels
       dimensions.ensureValuesAtLeast(
         xSpacing = xSpacing,
-        scalableStartPadding = columnCollectionWidth.half + layerPadding.scalableStart.pixels,
-        scalableEndPadding = columnCollectionWidth.half + layerPadding.scalableEnd.pixels,
+        scalableStartPadding = groupWidth.half + layerPadding.scalableStart.pixels,
+        scalableEndPadding = groupWidth.half + layerPadding.scalableEnd.pixels,
         unscalableStartPadding = layerPadding.unscalableStart.pixels,
         unscalableEndPadding = layerPadding.unscalableEnd.pixels,
       )
     }
   }
 
-  protected open fun CartesianMeasuringContext.getColumnCollectionWidth(
-    entryCollectionSize: Int,
+  protected open fun CartesianMeasuringContext.getGroupWidth(
     seriesKeys: List<Any>,
-    mergeMode: MergeMode,
-  ): Float =
-    when (mergeMode) {
-      is MergeMode.Stacked ->
-        (0..<entryCollectionSize)
-          .maxOf { seriesIndex ->
-            columnProvider
-              .getWidestSeriesColumnOrThrow(seriesKeys[seriesIndex], seriesIndex, model.extraStore)
-              .thickness
-          }
-          .pixels
-
-      is MergeMode.Grouped ->
-        getCumulatedThickness(entryCollectionSize, seriesKeys) +
-          mergeMode.columnSpacing.pixels * (entryCollectionSize - 1)
-    }
+    extraStore: ExtraStore,
+  ): Float = getStackGeometry(seriesKeys, extraStore).width
 
   protected open fun CartesianDrawingContext.getDrawingStart(
-    entryCollectionIndex: Int,
-    entryCollectionCount: Int,
+    seriesIndex: Int,
     seriesKeys: List<Any>,
-    mergeMode: MergeMode,
+    extraStore: ExtraStore,
   ): Float {
-    val mergeModeComponent =
-      when (mergeMode) {
-        is MergeMode.Grouped ->
-          getCumulatedThickness(entryCollectionIndex, seriesKeys) +
-            mergeMode.columnSpacing.pixels * entryCollectionIndex
-
-        MergeMode.Stacked -> 0f
-      }
+    val geometry = getStackGeometry(seriesKeys, extraStore)
     return layerBounds.getStart(isLtr) +
       (layerDimensions.startPadding +
-        (mergeModeComponent -
-          getColumnCollectionWidth(entryCollectionCount, seriesKeys, mergeMode).half) * zoom) *
-        layoutDirectionMultiplier
+        (geometry.offsets[geometry.layout.stackIndices[seriesIndex]] -
+          getGroupWidth(seriesKeys, extraStore).half) * zoom) * layoutDirectionMultiplier
   }
 
-  protected open fun CartesianMeasuringContext.getCumulatedThickness(
-    count: Int,
+  private fun MeasuringContext.getStackGeometry(
     seriesKeys: List<Any>,
-  ): Float {
-    var thickness = 0.dp
-    for (seriesIndex in 0..<count) {
-      thickness +=
-        columnProvider
-          .getWidestSeriesColumnOrThrow(seriesKeys[seriesIndex], seriesIndex, model.extraStore)
-          .thickness
+    extraStore: ExtraStore,
+  ): ColumnStackGeometry {
+    stackGeometry?.let { geometry ->
+      if (
+        geometry.seriesKeys === seriesKeys &&
+          geometry.extraStore === extraStore &&
+          geometry.density == density.density
+      ) {
+        return geometry
+      }
     }
-    return thickness.pixels
+    val layout = stackKeyProvider.getLayout(seriesKeys, extraStore)
+    val thicknesses = Array(layout.stackCount) { 0.dp }
+    seriesKeys.forEachIndexed { seriesIndex, seriesKey ->
+      val thickness =
+        columnProvider.getWidestSeriesColumnOrThrow(seriesKey, seriesIndex, extraStore).thickness
+      val stackIndex = layout.stackIndices[seriesIndex]
+      if (thickness > thicknesses[stackIndex]) thicknesses[stackIndex] = thickness
+    }
+    val offsets = FloatArray(layout.stackCount)
+    val stackSpacing = getStackSpacing(extraStore).pixels
+    var width = 0f
+    thicknesses.forEachIndexed { stackIndex, thickness ->
+      if (stackIndex > 0) width += stackSpacing
+      offsets[stackIndex] = width
+      width += thickness.pixels
+    }
+    return ColumnStackGeometry(
+        seriesKeys,
+        extraStore,
+        density.density,
+        layout,
+        thicknesses,
+        offsets,
+        width,
+      )
+      .also { stackGeometry = it }
   }
 
-  /** Defines how a [ColumnCartesianLayer] should draw columns in column collections. */
+  private fun getStackSpacing(extraStore: ExtraStore): Dp =
+    (stackKeyProvider as? MergeModeStackKeyProvider)?.getStackSpacing(extraStore) ?: stackSpacing
+
+  /** Assigns the series of a [ColumnCartesianLayer] to stacks. */
+  @Immutable
+  public fun interface StackKeyProvider {
+    /**
+     * Returns the key of the stack to which the specified series belongs. Series whose stack keys
+     * are equal (as determined by `equals`) share a stack. Stacks are ordered by their first
+     * series, and each stack is as wide as its widest column. In each stack, positive and negative
+     * values accumulate separately.
+     */
+    public fun getStackKey(seriesKey: Any, seriesIndex: Int, extraStore: ExtraStore): Any
+
+    /** Houses [StackKeyProvider] instances. */
+    public companion object {
+      /**
+       * Groups columns with matching _x_-values horizontally by giving each series a stack of its
+       * own.
+       */
+      public val Grouped: StackKeyProvider = StackKeyProvider { _, seriesIndex, _ -> seriesIndex }
+
+      /** Stacks columns with matching _x_-values by placing all series in one stack. */
+      public val Stacked: StackKeyProvider = StackKeyProvider { _, _, _ -> Unit }
+    }
+  }
+
+  /** Defines how a [ColumnCartesianLayer] should draw columns in groups. */
+  @Deprecated("Use `StackKeyProvider` and `stackSpacing`.")
   @Immutable
   public sealed interface MergeMode {
     /** Returns the minimum _y_ value. */
@@ -474,8 +623,9 @@ protected constructor(
     /**
      * Groups columns with matching _x_ values horizontally, positioning them [columnSpacing] apart.
      */
-    public class Grouped(internal val columnSpacing: Dp = Defaults.GROUPED_COLUMN_SPACING.dp) :
-      MergeMode {
+    @Deprecated("Use `StackKeyProvider.Grouped`, and pass the spacing as `stackSpacing`.")
+    @Suppress("DEPRECATION")
+    public class Grouped(internal val columnSpacing: Dp = Defaults.STACK_SPACING.dp) : MergeMode {
       override fun getMinY(model: ColumnCartesianLayerModel): Double = model.minY
 
       override fun getMaxY(model: ColumnCartesianLayerModel): Double = model.maxY
@@ -487,6 +637,8 @@ protected constructor(
     }
 
     /** Stacks columns with matching _x_ values. */
+    @Deprecated("Use `StackKeyProvider.Stacked`.")
+    @Suppress("DEPRECATION")
     public data object Stacked : MergeMode {
       override fun getMinY(model: ColumnCartesianLayerModel): Double = model.minAggregateY
 
@@ -495,6 +647,16 @@ protected constructor(
 
     /** Provides access to [MergeMode] factory functions. */
     public companion object
+  }
+
+  @Suppress("DEPRECATION")
+  private data class MergeModeStackKeyProvider(private val mergeMode: (ExtraStore) -> MergeMode) :
+    StackKeyProvider {
+    override fun getStackKey(seriesKey: Any, seriesIndex: Int, extraStore: ExtraStore): Any =
+      if (mergeMode(extraStore) == MergeMode.Stacked) Unit else seriesIndex
+
+    fun getStackSpacing(extraStore: ExtraStore): Dp? =
+      (mergeMode(extraStore) as? MergeMode.Grouped)?.columnSpacing
   }
 
   override fun prepareForTransformation(
@@ -528,8 +690,9 @@ protected constructor(
   /** Creates a new [ColumnCartesianLayer] based on this one. */
   public fun copy(
     columnProvider: ColumnProvider = this.columnProvider,
-    columnCollectionSpacing: Dp = this.columnCollectionSpacing,
-    mergeMode: (ExtraStore) -> MergeMode = this.mergeMode,
+    groupSpacing: Dp = this.groupSpacing,
+    stackKeyProvider: StackKeyProvider = this.stackKeyProvider,
+    stackSpacing: Dp = this.stackSpacing,
     dataLabel: TextComponent? = this.dataLabel,
     dataLabelPosition: Position.Vertical = this.dataLabelPosition,
     dataLabelValueFormatter: CartesianValueFormatter = this.dataLabelValueFormatter,
@@ -545,8 +708,9 @@ protected constructor(
   ): ColumnCartesianLayer =
     ColumnCartesianLayer(
       columnProvider,
-      columnCollectionSpacing,
-      mergeMode,
+      groupSpacing,
+      stackKeyProvider,
+      stackSpacing,
       dataLabel,
       dataLabelPosition,
       dataLabelValueFormatter,
@@ -557,12 +721,83 @@ protected constructor(
       drawingModelKey,
     )
 
+  /** Creates a new [ColumnCartesianLayer] based on this one. */
+  @Deprecated(
+    "Use the `copy` overload with `groupSpacing`, `stackKeyProvider`, and `stackSpacing`."
+  )
+  @Suppress("DEPRECATION")
+  public fun copy(
+    columnProvider: ColumnProvider = this.columnProvider,
+    columnCollectionSpacing: Dp = this.groupSpacing,
+    mergeMode: (ExtraStore) -> MergeMode,
+    dataLabel: TextComponent? = this.dataLabel,
+    dataLabelPosition: Position.Vertical = this.dataLabelPosition,
+    dataLabelValueFormatter: CartesianValueFormatter = this.dataLabelValueFormatter,
+    dataLabelRotationDegrees: Float = this.dataLabelRotationDegrees,
+    rangeProvider: CartesianLayerRangeProvider = this.rangeProvider,
+    verticalAxisPosition: Axis.Position.Vertical? = this.verticalAxisPosition,
+    drawingModelInterpolator:
+      CartesianLayerDrawingModelInterpolator<
+        ColumnCartesianLayerDrawingModel.Entry,
+        ColumnCartesianLayerDrawingModel,
+      > =
+      this.drawingModelInterpolator,
+  ): ColumnCartesianLayer =
+    copy(
+      columnProvider,
+      columnCollectionSpacing,
+      MergeModeStackKeyProvider(mergeMode),
+      Defaults.STACK_SPACING.dp,
+      dataLabel,
+      dataLabelPosition,
+      dataLabelValueFormatter,
+      dataLabelRotationDegrees,
+      rangeProvider,
+      verticalAxisPosition,
+      drawingModelInterpolator,
+    )
+
+  /** Creates a new [ColumnCartesianLayer] based on this one. */
+  @Deprecated("Use the `copy` overload with `groupSpacing`.")
+  public fun copy(
+    columnProvider: ColumnProvider = this.columnProvider,
+    columnCollectionSpacing: Dp?,
+    stackKeyProvider: StackKeyProvider = this.stackKeyProvider,
+    stackSpacing: Dp = this.stackSpacing,
+    dataLabel: TextComponent? = this.dataLabel,
+    dataLabelPosition: Position.Vertical = this.dataLabelPosition,
+    dataLabelValueFormatter: CartesianValueFormatter = this.dataLabelValueFormatter,
+    dataLabelRotationDegrees: Float = this.dataLabelRotationDegrees,
+    rangeProvider: CartesianLayerRangeProvider = this.rangeProvider,
+    verticalAxisPosition: Axis.Position.Vertical? = this.verticalAxisPosition,
+    drawingModelInterpolator:
+      CartesianLayerDrawingModelInterpolator<
+        ColumnCartesianLayerDrawingModel.Entry,
+        ColumnCartesianLayerDrawingModel,
+      > =
+      this.drawingModelInterpolator,
+  ): ColumnCartesianLayer =
+    copy(
+      columnProvider,
+      columnCollectionSpacing ?: groupSpacing,
+      stackKeyProvider,
+      stackSpacing,
+      dataLabel,
+      dataLabelPosition,
+      dataLabelValueFormatter,
+      dataLabelRotationDegrees,
+      rangeProvider,
+      verticalAxisPosition,
+      drawingModelInterpolator,
+    )
+
   override fun equals(other: Any?): Boolean =
     this === other ||
       other is ColumnCartesianLayer &&
         columnProvider == other.columnProvider &&
-        columnCollectionSpacing == other.columnCollectionSpacing &&
-        mergeMode == other.mergeMode &&
+        groupSpacing == other.groupSpacing &&
+        stackKeyProvider == other.stackKeyProvider &&
+        stackSpacing == other.stackSpacing &&
         dataLabel == other.dataLabel &&
         dataLabelPosition == other.dataLabelPosition &&
         dataLabelValueFormatter == other.dataLabelValueFormatter &&
@@ -573,8 +808,9 @@ protected constructor(
 
   override fun hashCode(): Int {
     var result = columnProvider.hashCode()
-    result = 31 * result + columnCollectionSpacing.hashCode()
-    result = 31 * result + mergeMode.hashCode()
+    result = 31 * result + groupSpacing.hashCode()
+    result = 31 * result + stackKeyProvider.hashCode()
+    result = 31 * result + stackSpacing.hashCode()
     result = 31 * result + (dataLabel?.hashCode() ?: 0)
     result = 31 * result + dataLabelPosition.hashCode()
     result = 31 * result + dataLabelValueFormatter.hashCode()
@@ -702,8 +938,87 @@ public fun rememberColumnCartesianLayer(
         rememberLineComponent(Fill(color), Defaults.COLUMN_WIDTH.dp)
       }
     ),
-  columnCollectionSpacing: Dp = Defaults.COLUMN_COLLECTION_SPACING.dp,
-  mergeMode: (ExtraStore) -> MergeMode = { MergeMode.Grouped() },
+  groupSpacing: Dp = Defaults.GROUP_SPACING.dp,
+  stackKeyProvider: ColumnCartesianLayer.StackKeyProvider =
+    ColumnCartesianLayer.StackKeyProvider.Grouped,
+  stackSpacing: Dp = Defaults.STACK_SPACING.dp,
+  dataLabel: TextComponent? = null,
+  dataLabelPosition: Position.Vertical = Position.Vertical.Top,
+  dataLabelValueFormatter: CartesianValueFormatter = remember { CartesianValueFormatter.decimal() },
+  dataLabelRotationDegrees: Float = 0f,
+  rangeProvider: CartesianLayerRangeProvider = remember { CartesianLayerRangeProvider.auto() },
+  verticalAxisPosition: Axis.Position.Vertical? = null,
+  drawingModelInterpolator:
+    CartesianLayerDrawingModelInterpolator<
+      ColumnCartesianLayerDrawingModel.Entry,
+      ColumnCartesianLayerDrawingModel,
+    > =
+    remember {
+      CartesianLayerDrawingModelInterpolator.column()
+    },
+): ColumnCartesianLayer {
+  var columnCartesianLayerWrapper by remember { ValueWrapper<ColumnCartesianLayer?>(null) }
+  return remember(
+    columnProvider,
+    groupSpacing,
+    stackKeyProvider,
+    stackSpacing,
+    dataLabel,
+    dataLabelPosition,
+    dataLabelValueFormatter,
+    dataLabelRotationDegrees,
+    rangeProvider,
+    verticalAxisPosition,
+    drawingModelInterpolator,
+  ) {
+    val columnCartesianLayer =
+      columnCartesianLayerWrapper?.copy(
+        columnProvider,
+        groupSpacing,
+        stackKeyProvider,
+        stackSpacing,
+        dataLabel,
+        dataLabelPosition,
+        dataLabelValueFormatter,
+        dataLabelRotationDegrees,
+        rangeProvider,
+        verticalAxisPosition,
+        drawingModelInterpolator,
+      )
+        ?: ColumnCartesianLayer(
+          columnProvider,
+          groupSpacing,
+          stackKeyProvider,
+          stackSpacing,
+          dataLabel,
+          dataLabelPosition,
+          dataLabelValueFormatter,
+          dataLabelRotationDegrees,
+          rangeProvider,
+          verticalAxisPosition,
+          drawingModelInterpolator,
+        )
+    columnCartesianLayerWrapper = columnCartesianLayer
+    columnCartesianLayer
+  }
+}
+
+/** Creates and remembers a [ColumnCartesianLayer]. */
+@Deprecated(
+  "Use the `rememberColumnCartesianLayer` overload with `groupSpacing`, `stackKeyProvider`, and " +
+    "`stackSpacing`."
+)
+@Suppress("DEPRECATION")
+@Composable
+public fun rememberColumnCartesianLayer(
+  columnProvider: ColumnCartesianLayer.ColumnProvider =
+    ColumnCartesianLayer.ColumnProvider.series(
+      vicoTheme.columnCartesianLayerColors.map { color ->
+        rememberLineComponent(Fill(color), Defaults.COLUMN_WIDTH.dp)
+      }
+    ),
+  columnCollectionSpacing: Dp = Defaults.GROUP_SPACING.dp,
+  mergeMode: (ExtraStore) -> ColumnCartesianLayer.MergeMode,
   dataLabel: TextComponent? = null,
   dataLabelPosition: Position.Vertical = Position.Vertical.Top,
   dataLabelValueFormatter: CartesianValueFormatter = remember { CartesianValueFormatter.decimal() },
@@ -761,3 +1076,46 @@ public fun rememberColumnCartesianLayer(
     columnCartesianLayer
   }
 }
+
+/** Creates and remembers a [ColumnCartesianLayer]. */
+@Deprecated("Use the `rememberColumnCartesianLayer` overload with `groupSpacing`.")
+@Composable
+public fun rememberColumnCartesianLayer(
+  columnProvider: ColumnCartesianLayer.ColumnProvider =
+    ColumnCartesianLayer.ColumnProvider.series(
+      vicoTheme.columnCartesianLayerColors.map { color ->
+        rememberLineComponent(Fill(color), Defaults.COLUMN_WIDTH.dp)
+      }
+    ),
+  columnCollectionSpacing: Dp?,
+  stackKeyProvider: ColumnCartesianLayer.StackKeyProvider =
+    ColumnCartesianLayer.StackKeyProvider.Grouped,
+  stackSpacing: Dp = Defaults.STACK_SPACING.dp,
+  dataLabel: TextComponent? = null,
+  dataLabelPosition: Position.Vertical = Position.Vertical.Top,
+  dataLabelValueFormatter: CartesianValueFormatter = remember { CartesianValueFormatter.decimal() },
+  dataLabelRotationDegrees: Float = 0f,
+  rangeProvider: CartesianLayerRangeProvider = remember { CartesianLayerRangeProvider.auto() },
+  verticalAxisPosition: Axis.Position.Vertical? = null,
+  drawingModelInterpolator:
+    CartesianLayerDrawingModelInterpolator<
+      ColumnCartesianLayerDrawingModel.Entry,
+      ColumnCartesianLayerDrawingModel,
+    > =
+    remember {
+      CartesianLayerDrawingModelInterpolator.column()
+    },
+): ColumnCartesianLayer =
+  rememberColumnCartesianLayer(
+    columnProvider,
+    columnCollectionSpacing ?: Defaults.GROUP_SPACING.dp,
+    stackKeyProvider,
+    stackSpacing,
+    dataLabel,
+    dataLabelPosition,
+    dataLabelValueFormatter,
+    dataLabelRotationDegrees,
+    rangeProvider,
+    verticalAxisPosition,
+    drawingModelInterpolator,
+  )

@@ -36,8 +36,8 @@ internal object Defaults {
   const val AXIS_LINE_WIDTH: Float = 1f
   const val AXIS_TICK_LENGTH: Float = 4f
   const val COLUMN_WIDTH: Float = 16f
-  const val GROUPED_COLUMN_SPACING: Float = 8f
-  const val COLUMN_COLLECTION_SPACING: Float = 16f
+  const val STACK_SPACING: Float = 8f
+  const val GROUP_SPACING: Float = 16f
   const val CANDLE_BODY_WIDTH_DP: Float = 8f
   const val MIN_CANDLE_BODY_HEIGHT_DP: Float = 1f
   const val WICK_DEFAULT_WIDTH_DP: Float = 1f
