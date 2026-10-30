@@ -139,3 +139,27 @@ internal fun <T : CartesianLayerModel.Entry> List<T>.getSliceIndices(
   val endExclusive = (lastVisibleExclusive + visiblePadding).coerceAtMost(size)
   return if (endExclusive <= start) IntRange.EMPTY else start..<endExclusive
 }
+
+internal fun <T : CartesianLayerModel.Entry> List<T>.filterInRange(
+  x: ClosedFloatingPointRange<Double>
+): List<T> {
+  if (isEmpty() || x.start > last().x || x.endInclusive < first().x) return emptyList()
+  var fromIndex = binarySearch { it.x.compareTo(x.start) }
+  if (fromIndex < 0) {
+    fromIndex = (-fromIndex) - 1
+  } else {
+    while (fromIndex > 0 && this[fromIndex - 1].x >= x.start) {
+      fromIndex -= 1
+    }
+  }
+  var toIndex = binarySearch { it.x.compareTo(x.endInclusive) }
+  if (toIndex < 0) {
+    toIndex = (-toIndex) - 1
+  } else {
+    while (toIndex < size - 1 && this[toIndex + 1].x <= x.endInclusive) {
+      toIndex += 1
+    }
+    toIndex += 1
+  }
+  return if (fromIndex < toIndex) subList(fromIndex, toIndex) else emptyList()
+}

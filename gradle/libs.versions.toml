@@ -43,6 +43,7 @@ composeMaterialIcons = { group = "org.jetbrains.compose.material", name = "mater
 composeNavigation = { group = "org.jetbrains.androidx.navigation", name = "navigation-compose", version.ref = "composeNavigation" }
 composeRuntime = { group = "org.jetbrains.compose.runtime", name = "runtime", version.ref = "compose" }
 composeUI = { group = "org.jetbrains.compose.ui", name = "ui", version.ref = "compose" }
+composeUITest = { group = "org.jetbrains.compose.ui", name = "ui-test", version.ref = "compose" }
 composeUITooling = { group = "org.jetbrains.compose.ui", name = "ui-tooling", version.ref = "compose" }
 composeUIToolingPreview = { group = "org.jetbrains.compose.ui", name = "ui-tooling-preview", version.ref = "compose" }
 coroutinesCore = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }

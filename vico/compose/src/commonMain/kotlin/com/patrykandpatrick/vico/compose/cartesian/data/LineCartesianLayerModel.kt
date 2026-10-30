@@ -91,6 +91,12 @@ public class LineCartesianLayerModel : CartesianLayerModel {
 
   override fun getXDeltaGcd(): Double = entries.getXDeltaGcd()
 
+  internal val xValues: List<Double> by lazy {
+    val set = mutableSetOf<Double>()
+    series.forEach { s -> s.forEach { set.add(it.x) } }
+    set.sorted()
+  }
+
   override fun copy(extraStore: ExtraStore): CartesianLayerModel =
     LineCartesianLayerModel(entries, series, seriesKeys, minX, maxX, minY, maxY, extraStore)
 
