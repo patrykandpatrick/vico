@@ -95,9 +95,11 @@ internal constructor(
   private val drawingConsumer =
     object : ModelAndLayerConsumer {
       lateinit var context: CartesianDrawingContext
+      var pass: CartesianLayer.DrawingPass = CartesianLayer.DrawingPass.All
 
       override fun <T : CartesianLayerModel> invoke(model: T?, layer: CartesianLayer<T>) {
-        layer.draw(context, model ?: return)
+        layer.draw(context, model ?: return, pass)
+        if (pass == CartesianLayer.DrawingPass.Fills) return
         layer.markerTargets.forEach {
           _markerTargets.getOrPut(it.key) { mutableListOf() } += it.value
         }
@@ -381,7 +383,25 @@ internal constructor(
       axisManager.drawUnderLayers(context)
       val (layerBitmap, layerCanvas) = getBitmap(cacheKeyNamespace)
       withCanvas(layerCanvas) {
-        model.forEachWithLayer(drawingConsumer.apply { this.context = context })
+        if (axisManager.hasContentOverLayerFills()) {
+          model.forEachWithLayer(
+            drawingConsumer.apply {
+              this.context = context
+              pass = CartesianLayer.DrawingPass.Fills
+            }
+          )
+          axisManager.drawOverLayerFills(context)
+          model.forEachWithLayer(
+            drawingConsumer.apply { pass = CartesianLayer.DrawingPass.Strokes }
+          )
+        } else {
+          model.forEachWithLayer(
+            drawingConsumer.apply {
+              this.context = context
+              pass = CartesianLayer.DrawingPass.All
+            }
+          )
+        }
       }
       val sortedMarkerTargetPairs = _markerTargets.toList().sortedBy { it.first }
       _markerTargets.clear()

@@ -27,7 +27,23 @@ public abstract class BaseCartesianLayer<T : CartesianLayerModel> : CartesianLay
 
   protected abstract fun drawInternal(context: CartesianDrawingContext, model: T)
 
+  protected open fun drawInternal(
+    context: CartesianDrawingContext,
+    model: T,
+    pass: CartesianLayer.DrawingPass,
+  ) {
+    if (pass != CartesianLayer.DrawingPass.Fills) drawInternal(context, model)
+  }
+
   override fun draw(context: CartesianDrawingContext, model: T) {
+    draw(context, model, CartesianLayer.DrawingPass.All)
+  }
+
+  override fun draw(
+    context: CartesianDrawingContext,
+    model: T,
+    pass: CartesianLayer.DrawingPass,
+  ) {
     with(context) {
       margins.clear()
       updateLayerMargins(this, margins, layerDimensions, model)
@@ -36,7 +52,7 @@ public abstract class BaseCartesianLayer<T : CartesianLayerModel> : CartesianLay
       val right = layerBounds.right + margins.getRight(isLtr)
       val bottom = layerBounds.bottom + margins.bottom
       mutableDrawScope.clipRect(left, top, right, bottom) {
-        canvas.inClip(left, top, right, bottom) { drawInternal(context, model) }
+        canvas.inClip(left, top, right, bottom) { drawInternal(context, model, pass) }
       }
     }
   }
