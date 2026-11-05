@@ -71,6 +71,7 @@ protected constructor(
   tickPosition: TickPosition,
   lineDrawingOrder: LineDrawingOrder,
   public val titlePosition: TitlePosition,
+  guidelineDrawingOrder: GuidelineDrawingOrder = GuidelineDrawingOrder.UnderLayers,
 ) :
   BaseAxis<P>(
     line,
@@ -85,6 +86,7 @@ protected constructor(
     title,
     tickPosition,
     lineDrawingOrder,
+    guidelineDrawingOrder,
   ) {
   protected val Axis.Position.Horizontal.textVerticalPosition: Position.Vertical
     get() =
@@ -109,6 +111,7 @@ protected constructor(
     tickPosition: TickPosition,
     lineDrawingOrder: LineDrawingOrder,
     titlePosition: TitlePosition,
+    guidelineDrawingOrder: GuidelineDrawingOrder,
   ) : this(
     position,
     line,
@@ -125,6 +128,7 @@ protected constructor(
     tickPosition,
     lineDrawingOrder,
     titlePosition,
+    guidelineDrawingOrder,
   )
 
   override fun updateAxisDimensions(
@@ -249,7 +253,26 @@ protected constructor(
         titleComponent?.drawTitle(this, titleText, lineLeft, lineRight)
       }
 
-      drawGuidelines(context, baseCanvasX, fullXRange, labelValues, lineValues)
+      if (guidelineDrawingOrder == GuidelineDrawingOrder.UnderLayers) {
+        drawGuidelines(context, baseCanvasX, fullXRange, labelValues, lineValues)
+      }
+    }
+  }
+
+  private fun drawGuidelines(context: CartesianDrawingContext) {
+    with(context) {
+      val fullXRange = internalGetFullXRange(layerDimensions)
+      val maxLabelWidth = getMaxLabelWidth(layerDimensions, fullXRange)
+      val visibleXRange = getVisibleXRange()
+      drawGuidelines(
+        context = context,
+        baseCanvasX =
+          bounds.getStart(isLtr) - scroll +
+            layerDimensions.startPadding * layoutDirectionMultiplier,
+        fullXRange = fullXRange,
+        labelValues = itemPlacer.getLabelValues(this, visibleXRange, fullXRange, maxLabelWidth),
+        lineValues = itemPlacer.getLineValues(this, visibleXRange, fullXRange, maxLabelWidth),
+      )
     }
   }
 
@@ -558,10 +581,18 @@ protected constructor(
       else -> 0f
     } * layoutDirectionMultiplier
 
+  override fun drawOverLayerFills(
+    context: CartesianDrawingContext,
+    axisDimensions: Map<Axis.Position, AxisDimensions>,
+  ) {
+    if (guidelineDrawingOrder == GuidelineDrawingOrder.UnderLayerStrokes) drawGuidelines(context)
+  }
+
   override fun drawOverLayers(
     context: CartesianDrawingContext,
     axisDimensions: Map<Axis.Position, AxisDimensions>,
   ) {
+    if (guidelineDrawingOrder == GuidelineDrawingOrder.OverLayers) drawGuidelines(context)
     if (lineDrawingOrder == LineDrawingOrder.OverLayers) drawLineAndTicks(context, axisDimensions)
   }
 
@@ -772,6 +803,7 @@ protected constructor(
     tickPosition: TickPosition = this.tickPosition,
     lineDrawingOrder: LineDrawingOrder = this.lineDrawingOrder,
     titlePosition: TitlePosition = this.titlePosition,
+    guidelineDrawingOrder: GuidelineDrawingOrder = this.guidelineDrawingOrder,
   ): HorizontalAxis<P> =
     HorizontalAxis(
       position,
@@ -789,6 +821,7 @@ protected constructor(
       tickPosition,
       lineDrawingOrder,
       titlePosition,
+      guidelineDrawingOrder,
     )
 
   override fun equals(other: Any?): Boolean =
@@ -974,6 +1007,7 @@ protected constructor(
       tickPosition: TickPosition = TickPosition.Outside,
       lineDrawingOrder: LineDrawingOrder = LineDrawingOrder.UnderLayers,
       titlePosition: TitlePosition = TitlePosition.Side,
+      guidelineDrawingOrder: GuidelineDrawingOrder = GuidelineDrawingOrder.UnderLayers,
     ): HorizontalAxis<Axis.Position.Horizontal.Top> =
       remember(
         line,
@@ -990,6 +1024,7 @@ protected constructor(
         tickPosition,
         lineDrawingOrder,
         titlePosition,
+        guidelineDrawingOrder,
       ) {
         HorizontalAxis(
           Axis.Position.Horizontal.Top,
@@ -1007,6 +1042,7 @@ protected constructor(
           tickPosition,
           lineDrawingOrder,
           titlePosition,
+          guidelineDrawingOrder,
         )
       }
 
@@ -1027,6 +1063,7 @@ protected constructor(
       tickPosition: TickPosition = TickPosition.Outside,
       lineDrawingOrder: LineDrawingOrder = LineDrawingOrder.UnderLayers,
       titlePosition: TitlePosition = TitlePosition.Side,
+      guidelineDrawingOrder: GuidelineDrawingOrder = GuidelineDrawingOrder.UnderLayers,
     ): HorizontalAxis<Axis.Position.Horizontal.Bottom> =
       remember(
         line,
@@ -1043,6 +1080,7 @@ protected constructor(
         tickPosition,
         lineDrawingOrder,
         titlePosition,
+        guidelineDrawingOrder,
       ) {
         HorizontalAxis(
           Axis.Position.Horizontal.Bottom,
@@ -1060,6 +1098,7 @@ protected constructor(
           tickPosition,
           lineDrawingOrder,
           titlePosition,
+          guidelineDrawingOrder,
         )
       }
   }
