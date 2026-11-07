@@ -47,6 +47,8 @@ public class ColumnCartesianLayerModel : CartesianLayerModel {
 
   override val extraStore: ExtraStore
 
+  internal val xValues: List<Double>
+
   public constructor(series: List<List<Entry>>) : this(series, series.indices.toList())
 
   public constructor(
@@ -76,6 +78,7 @@ public class ColumnCartesianLayerModel : CartesianLayerModel {
     this.minAggregateY = aggregateYRange.start
     this.maxAggregateY = aggregateYRange.endInclusive
     this.extraStore = extraStore
+    xValues = this.series.getDistinctXValues()
   }
 
   private constructor(
@@ -89,6 +92,7 @@ public class ColumnCartesianLayerModel : CartesianLayerModel {
     minAggregateY: Double,
     maxAggregateY: Double,
     extraStore: ExtraStore,
+    xValues: List<Double>,
   ) {
     this.entries = entries
     this.series = series
@@ -100,15 +104,10 @@ public class ColumnCartesianLayerModel : CartesianLayerModel {
     this.minAggregateY = minAggregateY
     this.maxAggregateY = maxAggregateY
     this.extraStore = extraStore
+    this.xValues = xValues
   }
 
   override fun getXDeltaGcd(): Double = entries.getXDeltaGcd()
-
-  internal val xValues: List<Double> by lazy {
-    val set = mutableSetOf<Double>()
-    series.forEach { s -> s.forEach { set.add(it.x) } }
-    set.sorted()
-  }
 
   override fun copy(extraStore: ExtraStore): CartesianLayerModel =
     ColumnCartesianLayerModel(
@@ -122,6 +121,7 @@ public class ColumnCartesianLayerModel : CartesianLayerModel {
       minAggregateY,
       maxAggregateY,
       extraStore,
+      xValues,
     )
 
   override fun equals(other: Any?): Boolean =

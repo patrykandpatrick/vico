@@ -21,7 +21,6 @@ package com.patrykandpatrick.vico.compose.cartesian
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
@@ -33,13 +32,11 @@ import com.patrykandpatrick.vico.compose.cartesian.accessibility.CartesianChartD
 import com.patrykandpatrick.vico.compose.cartesian.accessibility.CartesianLayerAggregation
 import com.patrykandpatrick.vico.compose.cartesian.axis.Axis
 import com.patrykandpatrick.vico.compose.cartesian.axis.AxisManager
-import com.patrykandpatrick.vico.compose.cartesian.data.CandlestickCartesianLayerModel
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartRanges
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianLayerModel
-import com.patrykandpatrick.vico.compose.cartesian.data.ColumnCartesianLayerModel
-import com.patrykandpatrick.vico.compose.cartesian.data.LineCartesianLayerModel
 import com.patrykandpatrick.vico.compose.cartesian.data.MutableCartesianChartRanges
+import com.patrykandpatrick.vico.compose.cartesian.data.toDistinctList
 import com.patrykandpatrick.vico.compose.cartesian.decoration.Decoration
 import com.patrykandpatrick.vico.compose.cartesian.layer.*
 import com.patrykandpatrick.vico.compose.cartesian.marker.CartesianMarker
@@ -89,8 +86,8 @@ internal constructor(
   },
   public val markerController: CartesianMarkerController = CartesianMarkerController.showOnPress(),
   /**
-   * Provides content descriptions for screen readers. Enabled by default; set to `null` to
-   * disable. Describes the whole chart and up to one interval per 48 dp of the visible range.
+   * Provides content descriptions for screen readers. Enabled by default; set to `null` to disable.
+   * Describes the whole chart and up to one interval per 48 dp of the visible range.
    */
   public val descriptionProvider: CartesianChartDescriptionProvider? =
     CartesianChartDescriptionProvider.default(),
@@ -732,17 +729,27 @@ internal constructor(
   }
 
   internal fun getXValues(model: CartesianChartModel): List<Double> {
-    val xValues = mutableSetOf<Double>()
+    val layerXValues = mutableListOf<List<Double>>()
     val consumer =
       object : ModelAndLayerConsumer {
         override fun <T : CartesianLayerModel> invoke(model: T?, layer: CartesianLayer<T>) {
           if (model != null) {
-            xValues.addAll(layer.getXValues(model))
+            layer.getXValues(model).takeIf { it.isNotEmpty() }?.let(layerXValues::add)
           }
         }
       }
     model.forEachWithLayer(consumer)
-    return xValues.sorted()
+    return when (layerXValues.size) {
+      0 -> emptyList()
+      1 -> layerXValues.first()
+      else -> {
+        val xValues = DoubleArray(layerXValues.sumOf { it.size })
+        var index = 0
+        layerXValues.forEach { values -> values.forEach { xValues[index++] = it } }
+        xValues.sort()
+        xValues.toDistinctList()
+      }
+    }
   }
 
   /** Facilitates adding persistent [CartesianMarker]s to [CartesianChart]s. */
@@ -775,9 +782,9 @@ internal constructor(
  * @param getXStep defines the _x_-step (the difference between neighboring major _x_-values).
  *   Receives the model and the final minimum and maximum _x_-values.
  * @param markerController controls [marker] visibility.
- * @param descriptionProvider provides content descriptions for screen readers. Enabled by
- *   default; set to `null` to disable. Describes the whole chart and up to one interval per 48 dp
- *   of the visible range.
+ * @param descriptionProvider provides content descriptions for screen readers. Enabled by default;
+ *   set to `null` to disable. Describes the whole chart and up to one interval per 48 dp of the
+ *   visible range.
  * @see rememberCandlestickCartesianLayer
  * @see rememberColumnCartesianLayer
  * @see rememberLineCartesianLayer
@@ -880,9 +887,9 @@ public fun rememberCartesianChart(
  * @param persistentMarkers adds persistent [CartesianMarker]s.
  * @param getXStep defines the _x_-step (the difference between neighboring major _x_-values).
  * @param markerController controls [marker] visibility.
- * @param descriptionProvider provides content descriptions for screen readers. Enabled by
- *   default; set to `null` to disable. Describes the whole chart and up to one interval per 48 dp
- *   of the visible range.
+ * @param descriptionProvider provides content descriptions for screen readers. Enabled by default;
+ *   set to `null` to disable. Describes the whole chart and up to one interval per 48 dp of the
+ *   visible range.
  * @see rememberCandlestickCartesianLayer
  * @see rememberColumnCartesianLayer
  * @see rememberLineCartesianLayer

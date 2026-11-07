@@ -38,6 +38,7 @@ import com.patrykandpatrick.vico.compose.cartesian.VicoScrollState
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.compose.cartesian.layer.CartesianLayerDimensions
 import com.patrykandpatrick.vico.compose.common.getStart
+import kotlin.math.ceil
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
@@ -64,8 +65,7 @@ internal data class AccessibilityMapping(
   fun canvasX(x: Double, scroll: Float): Float {
     val drawingStart =
       layerBounds.getStart(isLtr) + layoutDirectionMultiplier * startPadding - scroll
-    return drawingStart +
-      layoutDirectionMultiplier * xSpacing * ((x - minX) / xStep).toFloat()
+    return drawingStart + layoutDirectionMultiplier * xSpacing * ((x - minX) / xStep).toFloat()
   }
 }
 
@@ -82,6 +82,21 @@ internal fun AccessibilityMapping(
     xStep = context.ranges.xStep,
     layoutDirectionMultiplier = context.layoutDirectionMultiplier.toFloat(),
   )
+
+/**
+ * Returns the number of consecutive _x_ values per interval, chosen so that an interval spans at
+ * least [minIntervalWidthPx] on average.
+ */
+internal fun AccessibilityMapping.getIntervalGroupSize(
+  xValues: List<Double>,
+  minIntervalWidthPx: Float,
+): Int {
+  if (xValues.size < 2) return 1
+  val averageDistancePx =
+    xSpacing * ((xValues.last() - xValues.first()) / xStep / (xValues.size - 1)).toFloat()
+  if (averageDistancePx <= 0f) return 1
+  return ceil(minIntervalWidthPx / averageDistancePx).toInt().coerceIn(1, xValues.size)
+}
 
 @Composable
 internal fun AccessibilityOverlay(
@@ -140,15 +155,15 @@ internal fun AccessibilityOverlay(
           return@derivedStateOf emptyList<ChartInterval>()
         }
 
-        val visibleCount = toIndex - fromIndex + 1
-        val maxIntervalCount = (layerBounds.width / minIntervalWidthPx).toInt().coerceAtLeast(1)
-        val intervalCount = min(visibleCount, maxIntervalCount)
-        if (intervalCount <= 0) return@derivedStateOf emptyList<ChartInterval>()
+        // Group the x values into runs of equal length, anchored at the first x value, so that each
+        // x value stays in the same interval while the chart is scrolled.
+        val groupSize = currentMapping.getIntervalGroupSize(allXValues, minIntervalWidthPx)
+        val firstGroup = fromIndex / groupSize
+        val lastGroup = toIndex / groupSize
 
-        List(intervalCount) { i ->
-          val sliceStart = fromIndex + (i * visibleCount) / intervalCount
-          val sliceEnd =
-            (fromIndex + ((i + 1) * visibleCount) / intervalCount - 1).coerceAtLeast(sliceStart)
+        List(lastGroup - firstGroup + 1) { i ->
+          val sliceStart = (firstGroup + i) * groupSize
+          val sliceEnd = min(sliceStart + groupSize, allXValues.size) - 1
           val startX = allXValues[sliceStart]
           val endX = allXValues[sliceEnd]
           val startXBound =
@@ -173,14 +188,18 @@ internal fun AccessibilityOverlay(
       }
     }
 
-  if (intervals.isEmpty()) return
+  // The measure block can run before recomposition, so it must use the intervals from which the
+  // children were composed.
+  val composedIntervals = intervals
+  if (composedIntervals.isEmpty()) return
 
   Layout(
     content = {
-      for (interval in intervals) {
+      for (interval in composedIntervals) {
         Box(
           modifier =
-            Modifier.semantics {
+            // Keep interval descriptions out of merging ancestors, such as clickable cards.
+            Modifier.semantics(mergeDescendants = true) {
               val aggregation = chart.getAggregation(model, interval.startX..interval.endX)
               val description = provider.getIntervalDescription(measuringContext.value, aggregation)
               if (description.isNotEmpty()) {
@@ -197,7 +216,7 @@ internal fun AccessibilityOverlay(
     val scroll = scrollState.value
 
     val placeableData = measurables.mapIndexed { index, measurable ->
-      val interval = intervals[index]
+      val interval = composedIntervals[index]
       val c1 = currentMapping?.canvasX(interval.startXBound, scroll) ?: 0f
       val c2 = currentMapping?.canvasX(interval.endXBound, scroll) ?: 0f
       val minX = min(c1, c2)

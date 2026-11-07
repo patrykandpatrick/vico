@@ -19,7 +19,11 @@ package com.patrykandpatrick.vico.compose.cartesian.layer
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.compose.cartesian.CartesianMeasuringContext
+import com.patrykandpatrick.vico.compose.cartesian.accessibility.CandlestickCartesianLayerAggregation
+import com.patrykandpatrick.vico.compose.cartesian.accessibility.CartesianChartDescriptionProvider
 import com.patrykandpatrick.vico.compose.cartesian.accessibility.CartesianLayerAggregation
+import com.patrykandpatrick.vico.compose.cartesian.accessibility.ColumnCartesianLayerAggregation
+import com.patrykandpatrick.vico.compose.cartesian.accessibility.LineCartesianLayerAggregation
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartRanges
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianLayerModel
 import com.patrykandpatrick.vico.compose.cartesian.data.MutableCartesianChartRanges
@@ -35,8 +39,11 @@ public interface CartesianLayer<M : CartesianLayerModel> : CartesianLayerMarginU
   public val markerTargets: Map<Double, List<CartesianMarker.Target>>
 
   /**
-   * Returns an aggregate of [model] for [x], or `null` if the layer has no data in [x] or does
-   * not support aggregation.
+   * Returns an aggregate of [model] for [x], or `null` if the layer has no data in [x] or does not
+   * support aggregation. The default [CartesianChartDescriptionProvider] describes only
+   * [LineCartesianLayerAggregation]s, [ColumnCartesianLayerAggregation]s, and
+   * [CandlestickCartesianLayerAggregation]s, so other aggregate types require a custom
+   * [CartesianChartDescriptionProvider].
    *
    * @param model the [CartesianLayerModel].
    * @param x the range of _x_ values to aggregate.
@@ -55,8 +62,9 @@ public interface CartesianLayer<M : CartesianLayerModel> : CartesianLayerMarginU
   public fun getSeriesKeys(model: M): List<Any> = emptyList()
 
   /**
-   * Returns all _x_ values present in [model]. The default implementation returns an empty list,
-   * indicating that the layer contributes no intervals to the accessibility overlay.
+   * Returns the distinct _x_ values present in [model] in ascending order. The default
+   * implementation returns an empty list, indicating that the layer contributes no intervals to the
+   * accessibility overlay.
    */
   public fun getXValues(model: M): List<Double> = emptyList()
 

@@ -45,8 +45,8 @@ public interface CartesianChartDescriptionProvider {
      * @param xValueFormatter formats x values.
      * @param yValueFormatter formats y values. It also receives derived values (such as changes,
      *   sums, and means), so a formatter that indexes labels by y.toInt() must handle values that
-     *   are not raw data values. Formatting is evaluated inside semantics blocks, running
-     *   only when an accessibility service queries the chart.
+     *   are not raw data values. Formatting is evaluated inside semantics blocks, running only when
+     *   an accessibility service queries the chart.
      * @param seriesLabel generates labels for individual series. When null or returning null, the
      *   series name is omitted for single-series charts and falls back to "Series 1", "Series 2",
      *   etc. for multi-series charts.

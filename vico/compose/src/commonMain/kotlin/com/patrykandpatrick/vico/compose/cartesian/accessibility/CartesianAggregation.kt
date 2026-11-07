@@ -38,9 +38,12 @@ public class CartesianAggregation(
   public val x: ClosedFloatingPointRange<Double>,
   public val layerAggregations: List<CartesianLayerAggregation>,
   public val seriesCount: Int,
-  public val seriesOffsets: List<Int> = emptyList(),
+  public val seriesOffsets: List<Int>,
 ) {
-  /** Returns the 1-based, chart-wide number of the series at [seriesIndex] in the layer at [layerIndex]. */
+  /**
+   * Returns the 1-based, chart-wide number of the series at [seriesIndex] in the layer at
+   * [layerIndex].
+   */
   public fun getSeriesNumber(layerIndex: Int, seriesIndex: Int): Int =
     seriesOffsets.getOrElse(layerIndex) { 0 } + seriesIndex + 1
 
@@ -72,10 +75,6 @@ public interface CartesianLayerAggregation {
 
   /** The position of the vertical axis associated with the layer, if any. */
   public val verticalAxisPosition: Axis.Position.Vertical?
-
-  /** The number of series in this aggregation. */
-  public val seriesCount: Int
-    get() = 1
 }
 
 /**
@@ -91,9 +90,6 @@ public class LineCartesianLayerAggregation(
   override val layerIndex: Int,
   override val verticalAxisPosition: Axis.Position.Vertical? = null,
 ) : CartesianLayerAggregation {
-
-  override val seriesCount: Int
-    get() = series.size
 
   /**
    * Houses aggregated data for a single series in a [LineCartesianLayer].
@@ -145,9 +141,6 @@ public class ColumnCartesianLayerAggregation(
   override val layerIndex: Int,
   override val verticalAxisPosition: Axis.Position.Vertical? = null,
 ) : CartesianLayerAggregation {
-
-  override val seriesCount: Int
-    get() = series.size
 
   /**
    * Houses aggregated data for a single series in a [ColumnCartesianLayer].
@@ -215,9 +208,6 @@ public class CandlestickCartesianLayerAggregation(
   override val layerIndex: Int,
   override val verticalAxisPosition: Axis.Position.Vertical? = null,
 ) : CartesianLayerAggregation {
-
-  override val seriesCount: Int
-    get() = 1
 
   override fun equals(other: Any?): Boolean =
     this === other ||

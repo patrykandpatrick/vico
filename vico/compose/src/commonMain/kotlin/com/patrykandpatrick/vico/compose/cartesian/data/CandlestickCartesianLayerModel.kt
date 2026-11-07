@@ -38,6 +38,8 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
 
   override val extraStore: ExtraStore
 
+  internal val xValues: List<Double>
+
   public constructor(series: List<Entry>) : this(series, 0)
 
   public constructor(series: List<Entry>, key: Any) : this(series, key, ExtraStore.Empty)
@@ -52,6 +54,7 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
     this.minY = yRange.start
     this.maxY = yRange.endInclusive
     this.extraStore = extraStore
+    xValues = listOf(this.series).getDistinctXValues()
   }
 
   private constructor(
@@ -62,6 +65,7 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
     minY: Double,
     maxY: Double,
     extraStore: ExtraStore,
+    xValues: List<Double>,
   ) {
     this.series = series
     this.key = key
@@ -70,14 +74,13 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
     this.minY = minY
     this.maxY = maxY
     this.extraStore = extraStore
+    this.xValues = xValues
   }
 
   override fun getXDeltaGcd(): Double = series.getXDeltaGcd()
 
-  internal val xValues: List<Double> by lazy { series.map { it.x }.distinct() }
-
   override fun copy(extraStore: ExtraStore): CartesianLayerModel =
-    CandlestickCartesianLayerModel(series, key, minX, maxX, minY, maxY, extraStore)
+    CandlestickCartesianLayerModel(series, key, minX, maxX, minY, maxY, extraStore, xValues)
 
   override fun equals(other: Any?): Boolean =
     this === other ||

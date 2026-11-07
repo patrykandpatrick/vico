@@ -473,11 +473,10 @@ class DefaultCartesianChartDescriptionProviderTest {
 
   @Test
   fun seriesNumberingMatchesLayerOrderWhenModelOrderDiffers() {
-    val columnModel =
-      ColumnCartesianLayerModel.build {
-        series(10, 20)
-        series(30, 40)
-      }
+    val columnModel = ColumnCartesianLayerModel.build {
+      series(10, 20)
+      series(30, 40)
+    }
     val lineModel = LineCartesianLayerModel.build { series(50, 60) }
     val model = CartesianChartModel(lineModel, columnModel)
     val chart =
@@ -545,11 +544,10 @@ class DefaultCartesianChartDescriptionProviderTest {
 
   @Test
   fun layerSwapUpdatesSeriesNumbering() {
-    val columnModel =
-      ColumnCartesianLayerModel.build {
-        series(10, 20)
-        series(30, 40)
-      }
+    val columnModel = ColumnCartesianLayerModel.build {
+      series(10, 20)
+      series(30, 40)
+    }
     val lineModel = LineCartesianLayerModel.build { series(50, 60) }
     val model = CartesianChartModel(lineModel, columnModel)
     val chart =

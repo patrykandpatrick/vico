@@ -140,6 +140,28 @@ internal fun <T : CartesianLayerModel.Entry> List<T>.getSliceIndices(
   return if (endExclusive <= start) IntRange.EMPTY else start..<endExclusive
 }
 
+/**
+ * Returns the distinct _x_ values of these series, each of which is sorted by _x_, in ascending
+ * order.
+ */
+internal fun <T : CartesianLayerModel.Entry> List<List<T>>.getDistinctXValues(): List<Double> {
+  val xValues = DoubleArray(sumOf { it.size })
+  var index = 0
+  forEach { series -> series.forEach { entry -> xValues[index++] = entry.x } }
+  if (size > 1) xValues.sort()
+  return xValues.toDistinctList()
+}
+
+/**
+ * Removes consecutive duplicates from this sorted array in place and returns the result as a list.
+ */
+internal fun DoubleArray.toDistinctList(): List<Double> {
+  if (isEmpty()) return emptyList()
+  var count = 1
+  for (index in 1..<size) if (this[index] != this[count - 1]) this[count++] = this[index]
+  return (if (count == size) this else copyOf(count)).asList()
+}
+
 internal fun <T : CartesianLayerModel.Entry> List<T>.filterInRange(
   x: ClosedFloatingPointRange<Double>
 ): List<T> {

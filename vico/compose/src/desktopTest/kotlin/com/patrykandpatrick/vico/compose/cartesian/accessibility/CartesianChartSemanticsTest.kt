@@ -16,39 +16,45 @@
 
 package com.patrykandpatrick.vico.compose.cartesian.accessibility
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.runComposeUiTest
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
+import com.patrykandpatrick.vico.compose.cartesian.CartesianDrawingContext
+import com.patrykandpatrick.vico.compose.cartesian.CartesianMeasuringContext
 import com.patrykandpatrick.vico.compose.cartesian.Scroll
 import com.patrykandpatrick.vico.compose.cartesian.VicoScrollState
 import com.patrykandpatrick.vico.compose.cartesian.VicoZoomState
 import com.patrykandpatrick.vico.compose.cartesian.Zoom
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModel
-import com.patrykandpatrick.vico.compose.cartesian.data.CartesianValueFormatter
-import com.patrykandpatrick.vico.compose.cartesian.data.LineCartesianLayerModel
-import com.patrykandpatrick.vico.compose.cartesian.layer.LineCartesianLayer
-import androidx.compose.ui.semantics.SemanticsProperties
-import com.patrykandpatrick.vico.compose.cartesian.CartesianDrawingContext
-import com.patrykandpatrick.vico.compose.cartesian.CartesianMeasuringContext
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartRanges
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianLayerModel
+import com.patrykandpatrick.vico.compose.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.compose.cartesian.data.ColumnCartesianLayerModel
+import com.patrykandpatrick.vico.compose.cartesian.data.LineCartesianLayerModel
 import com.patrykandpatrick.vico.compose.cartesian.data.MutableCartesianChartRanges
 import com.patrykandpatrick.vico.compose.cartesian.layer.CartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.layer.ColumnCartesianLayer
+import com.patrykandpatrick.vico.compose.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.layer.MutableCartesianLayerDimensions
 import com.patrykandpatrick.vico.compose.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.compose.common.Fill
@@ -83,7 +89,7 @@ class CartesianChartSemanticsTest {
 
   private fun createColumnLayer() =
     ColumnCartesianLayer(
-      columnProvider = ColumnCartesianLayer.ColumnProvider.series(LineComponent(Fill.Black)),
+      columnProvider = ColumnCartesianLayer.ColumnProvider.series(LineComponent(Fill.Black))
     )
 
   @Test
@@ -186,7 +192,7 @@ class CartesianChartSemanticsTest {
 
     waitForIdle()
 
-    onNodeWithContentDescription("X: 0. Y: 0.", substring = true).assertExists()
+    onNodeWithContentDescription("X: 0 to 1.", substring = true).assertExists()
 
     kotlinx.coroutines.runBlocking {
       scrollState.scroll(Scroll.Absolute.End)
@@ -194,7 +200,7 @@ class CartesianChartSemanticsTest {
     waitForIdle()
 
     val initialNodeExists =
-      onAllNodes(hasContentDescription("X: 0. Y: 0.", substring = true))
+      onAllNodes(hasContentDescription("X: 0 to 1.", substring = true))
         .fetchSemanticsNodes()
         .isNotEmpty()
 
@@ -202,6 +208,160 @@ class CartesianChartSemanticsTest {
       !initialNodeExists,
       "Initial point should no longer be in visible interval nodes after scrolling",
     )
+
+    val lastXRegex = Regex("""^X: (\d+ to )?50\.""")
+    val endNodeExists =
+      onAllNodes(hasContentDescription("X:", substring = true)).fetchSemanticsNodes().any { node ->
+        node.config[SemanticsProperties.ContentDescription].any(lastXRegex::containsMatchIn)
+      }
+
+    assertTrue(endNodeExists, "Last point should be in visible interval nodes after scrolling")
+  }
+
+  @Test
+  fun intervalsHaveUniformSizeAndStayFixedWhileScrolling() = runComposeUiTest {
+    val model = CartesianChartModel(LineCartesianLayerModel.build { series((0..59).toList()) })
+    val layer =
+      LineCartesianLayer(
+        lineProvider =
+          LineCartesianLayer.LineProvider.series(
+            LineCartesianLayer.Line(LineCartesianLayer.LineFill.single(Fill.Black))
+          ),
+        pointSpacing = 32.dp,
+      )
+    val chart = CartesianChart(layer, descriptionProvider = provider)
+    val scrollState = VicoScrollState(scrollEnabled = true)
+
+    setContent {
+      CartesianChartHost(
+        chart = chart,
+        model = model,
+        scrollState = scrollState,
+        modifier = Modifier.size(400.dp, 200.dp),
+      )
+    }
+
+    val xRangeRegex = Regex("""^X: (\d+)(?: to (\d+))?\.""")
+    for (scroll in listOf(0f, 37f, 500f)) {
+      kotlinx.coroutines.runBlocking { scrollState.scroll(Scroll.Absolute.pixels(scroll)) }
+      waitForIdle()
+      val xRanges =
+        onAllNodes(hasContentDescription("X:", substring = true)).fetchSemanticsNodes().map { node
+          ->
+          val match =
+            xRangeRegex.find(node.config[SemanticsProperties.ContentDescription].first())!!
+          val start = match.groupValues[1].toInt()
+          start to (match.groupValues[2].toIntOrNull() ?: start)
+        }
+      assertTrue(xRanges.isNotEmpty())
+      xRanges.forEach { (start, end) ->
+        assertEquals(0, start % 2, "Scroll $scroll: $xRanges")
+        assertEquals(start + 1, end, "Scroll $scroll: $xRanges")
+      }
+    }
+  }
+
+  @Test
+  fun intervalGroupSizeCoversMinimumWidth() {
+    fun getGroupSize(xSpacing: Float, xValues: List<Double> = (0..9).map(Int::toDouble)) =
+      AccessibilityMapping(
+          layerBounds = Rect(0f, 0f, 400f, 200f),
+          xSpacing = xSpacing,
+          startPadding = 0f,
+          minX = 0.0,
+          xStep = 1.0,
+          layoutDirectionMultiplier = 1f,
+        )
+        .getIntervalGroupSize(xValues, minIntervalWidthPx = 48f)
+
+    assertEquals(2, getGroupSize(32f))
+    assertEquals(1, getGroupSize(48f))
+    assertEquals(1, getGroupSize(130f))
+    assertEquals(5, getGroupSize(10f))
+    assertEquals(1, getGroupSize(32f, listOf(3.0)))
+    assertEquals(1, getGroupSize(16f, listOf(0.0, 4.0, 8.0)))
+  }
+
+  @Test
+  fun intervalCountChangesWhileScrollingWithoutRecomposition() = runComposeUiTest {
+    val model = CartesianChartModel(LineCartesianLayerModel.build { series((0..40).toList()) })
+    val layer =
+      LineCartesianLayer(
+        lineProvider =
+          LineCartesianLayer.LineProvider.series(
+            LineCartesianLayer.Line(LineCartesianLayer.LineFill.single(Fill.Black))
+          ),
+        pointSpacing = 130.dp,
+      )
+    val chart = CartesianChart(layer, descriptionProvider = provider)
+    val scrollState = VicoScrollState(scrollEnabled = true)
+    mainClock.autoAdvance = false
+
+    setContent {
+      CartesianChartHost(
+        chart = chart,
+        model = model,
+        scrollState = scrollState,
+        modifier = Modifier.size(400.dp, 200.dp),
+      )
+    }
+
+    mainClock.advanceTimeByFrame()
+    mainClock.advanceTimeByFrame()
+
+    // Apply each scroll step before the next frame, so that layout can run before recomposition.
+    val intervalCounts = mutableSetOf<Int>()
+    repeat(80) {
+      kotlinx.coroutines.runBlocking { scrollState.scroll(Scroll.Relative.pixels(23f)) }
+      waitForIdle()
+      mainClock.advanceTimeByFrame()
+      intervalCounts +=
+        onAllNodes(hasContentDescription("X:", substring = true)).fetchSemanticsNodes().size
+    }
+
+    assertTrue(intervalCounts.size > 1, "The interval count should change while scrolling.")
+  }
+
+  @Test
+  fun intervalNodesAreNotMergedIntoClickableAncestor() = runComposeUiTest {
+    val model = CartesianChartModel(LineCartesianLayerModel.build { series((0..29).toList()) })
+    val chart = CartesianChart(createLineLayer(), descriptionProvider = provider)
+
+    setContent {
+      Box(Modifier.testTag("card").clickable {}) {
+        CartesianChartHost(
+          chart = chart,
+          model = model,
+          modifier = Modifier.size(400.dp, 200.dp),
+        )
+      }
+    }
+
+    waitForIdle()
+
+    val cardDescriptions =
+      onNodeWithTag("card")
+        .fetchSemanticsNode()
+        .config
+        .getOrNull(SemanticsProperties.ContentDescription)
+        .orEmpty()
+    assertEquals(1, cardDescriptions.size)
+    assertTrue(cardDescriptions.single().startsWith("Line chart."))
+    assertTrue(
+      onAllNodes(hasContentDescription("X:", substring = true)).fetchSemanticsNodes().size > 1
+    )
+  }
+
+  @Test
+  fun chartXValuesCombineLayers() {
+    val chart = CartesianChart(createColumnLayer(), createLineLayer())
+    val model =
+      CartesianChartModel(
+        ColumnCartesianLayerModel.build { series(listOf(0, 1, 2), listOf(1, 1, 1)) },
+        LineCartesianLayerModel.build { series(listOf(1, 2, 3.5), listOf(1, 1, 1)) },
+      )
+
+    assertEquals(listOf(0.0, 1.0, 2.0, 3.5), chart.getXValues(model))
   }
 
   @Test
@@ -278,17 +438,20 @@ class CartesianChartSemanticsTest {
     }
     waitForIdle()
 
-    val zoomedNodes = onAllNodes(hasContentDescription("X:", substring = true)).fetchSemanticsNodes()
-    val zoomedDescriptions =
-      zoomedNodes.map { it.config[SemanticsProperties.ContentDescription].first() }
+    val zoomedNodes =
+      onAllNodes(hasContentDescription("X:", substring = true)).fetchSemanticsNodes()
+    val zoomedDescriptions = zoomedNodes.map {
+      it.config[SemanticsProperties.ContentDescription].first()
+    }
     val zoomedBounds = zoomedNodes.map { it.boundsInRoot.left to it.boundsInRoot.width }
 
     showFresh = true
     waitForIdle()
 
     val freshNodes = onAllNodes(hasContentDescription("X:", substring = true)).fetchSemanticsNodes()
-    val freshDescriptions =
-      freshNodes.map { it.config[SemanticsProperties.ContentDescription].first() }
+    val freshDescriptions = freshNodes.map {
+      it.config[SemanticsProperties.ContentDescription].first()
+    }
     val freshBounds = freshNodes.map { it.boundsInRoot.left to it.boundsInRoot.width }
 
     assertTrue(freshDescriptions.isNotEmpty())
@@ -467,17 +630,20 @@ class CartesianChartSemanticsTest {
     currentModel = model2
     waitForIdle()
 
-    val updatedNodes = onAllNodes(hasContentDescription("X:", substring = true)).fetchSemanticsNodes()
-    val updatedDescriptions =
-      updatedNodes.map { it.config[SemanticsProperties.ContentDescription].first() }
+    val updatedNodes =
+      onAllNodes(hasContentDescription("X:", substring = true)).fetchSemanticsNodes()
+    val updatedDescriptions = updatedNodes.map {
+      it.config[SemanticsProperties.ContentDescription].first()
+    }
     val updatedBounds = updatedNodes.map { it.boundsInRoot.left to it.boundsInRoot.width }
 
     showFresh = true
     waitForIdle()
 
     val freshNodes = onAllNodes(hasContentDescription("X:", substring = true)).fetchSemanticsNodes()
-    val freshDescriptions =
-      freshNodes.map { it.config[SemanticsProperties.ContentDescription].first() }
+    val freshDescriptions = freshNodes.map {
+      it.config[SemanticsProperties.ContentDescription].first()
+    }
     val freshBounds = freshNodes.map { it.boundsInRoot.left to it.boundsInRoot.width }
 
     assertTrue(freshDescriptions.isNotEmpty())
@@ -503,8 +669,7 @@ class CartesianChartSemanticsTest {
         yValueFormatter = wholeNumberFormatter,
         seriesLabel = { _, _, _ -> "Custom series" },
       )
-    var chart by
-      mutableStateOf(CartesianChart(createLineLayer(), descriptionProvider = provider))
+    var chart by mutableStateOf(CartesianChart(createLineLayer(), descriptionProvider = provider))
 
     setContent {
       CartesianChartHost(
@@ -545,11 +710,10 @@ class CartesianChartSemanticsTest {
     val chart = CartesianChart(columnLayer, lineLayer, descriptionProvider = provider)
 
     val lineModel = LineCartesianLayerModel.build { series(10, 20) }
-    val columnModel =
-      ColumnCartesianLayerModel.build {
-        series(30, 40)
-        series(50, 60)
-      }
+    val columnModel = ColumnCartesianLayerModel.build {
+      series(30, 40)
+      series(50, 60)
+    }
     val model = CartesianChartModel(listOf(lineModel, columnModel))
 
     setContent {
@@ -619,8 +783,11 @@ class CartesianChartSemanticsTest {
     override val extraStore: ExtraStore = ExtraStore.Empty,
   ) : CartesianLayerModel {
     override fun getXDeltaGcd(): Double = 1.0
+
     override fun copy(extraStore: ExtraStore): CartesianLayerModel = this
+
     override fun equals(other: Any?): Boolean = other is CustomLayerModel
+
     override fun hashCode(): Int = javaClass.hashCode()
   }
 
@@ -666,10 +833,11 @@ class CartesianChartSemanticsTest {
     ): CartesianLayerAggregation? {
       val entries =
         listOf(
-          LineCartesianLayerModel.Entry(0.0, 5.0),
-          LineCartesianLayerModel.Entry(1.0, 10.0),
-          LineCartesianLayerModel.Entry(2.0, 15.0),
-        ).filter { it.x in x }
+            LineCartesianLayerModel.Entry(0.0, 5.0),
+            LineCartesianLayerModel.Entry(1.0, 10.0),
+            LineCartesianLayerModel.Entry(2.0, 15.0),
+          )
+          .filter { it.x in x }
       if (entries.isEmpty()) return null
       val min = entries.minBy { it.y }
       val max = entries.maxBy { it.y }

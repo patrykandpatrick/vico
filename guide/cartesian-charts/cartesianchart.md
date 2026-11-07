@@ -61,10 +61,13 @@ rememberCartesianChart(
 
 To disable accessibility announcements entirely, pass `null` to `descriptionProvider`.
 
-Custom layer implementations can participate in accessibility by implementing `getXValues`, `getSeriesKeys`, and `getAggregation` on `CartesianLayer`, as well as overriding `forEachWithLayer` in a `CartesianChart` subclass to dispatch model instances to the custom layer.
+Custom layer implementations can participate in accessibility by implementing `getXValues`, `getSeriesKeys`, and `getAggregation` on `CartesianLayer`, as well as overriding `forEachWithLayer` in a `CartesianChart` subclass to dispatch model instances to the custom layer. The default provider describes only [`LineCartesianLayerAggregation`][line-cartesian-layer-aggregation], [`ColumnCartesianLayerAggregation`][column-cartesian-layer-aggregation], and [`CandlestickCartesianLayerAggregation`][candlestick-cartesian-layer-aggregation] instances, so a custom layer’s aggregates are announced only if they’re instances of these classes or if a custom provider is used.
 
 [cartesian-chart]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/-cartesian-chart/
 [cartesian-chart-description-provider]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.accessibility/-cartesian-chart-description-provider/
+[line-cartesian-layer-aggregation]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.accessibility/-line-cartesian-layer-aggregation/
+[column-cartesian-layer-aggregation]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.accessibility/-column-cartesian-layer-aggregation/
+[candlestick-cartesian-layer-aggregation]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.accessibility/-candlestick-cartesian-layer-aggregation/
 [cartesian-layer]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian.layer/-cartesian-layer/
 [remember-cartesian-chart]: https://api.vico.patrykandpatrick.com/vico/compose/com.patrykandpatrick.vico.compose.cartesian/remember-cartesian-chart.html
 [a-later-subsection]: cartesianlayer.md#cartesianlayerrangeprovider
