@@ -24,7 +24,7 @@ kotlin = "2.4.21"
 lifecycleRuntime = "2.11.0"
 material = "1.14.0"
 mavenPublish = "0.37.0"
-mockK = "1.14.11"
+mockK = "1.14.12"
 screenshot = "0.0.1-alpha17"
 uiTextAndroid = "1.12.1"
 
