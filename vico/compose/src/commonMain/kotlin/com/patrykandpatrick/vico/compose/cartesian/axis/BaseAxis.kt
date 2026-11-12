@@ -45,6 +45,7 @@ import com.patrykandpatrick.vico.compose.common.setAll
  * @property tickPosition defines the position of each tick relative to the axis line.
  * @property lineDrawingOrder whether to draw ticks and the axis line under or over the
  *   [CartesianLayer]s.
+ * @property guidelineDrawingOrder where to draw the guidelines relative to the [CartesianLayer]s.
  */
 public abstract class BaseAxis<P : Axis.Position>(
   protected val line: LineComponent?,
@@ -59,6 +60,7 @@ public abstract class BaseAxis<P : Axis.Position>(
   protected val title: (ExtraStore) -> CharSequence?,
   public val tickPosition: TickPosition,
   public val lineDrawingOrder: LineDrawingOrder,
+  public val guidelineDrawingOrder: GuidelineDrawingOrder,
 ) : Axis<P> {
   private val restrictedBounds: MutableList<Rect> = mutableListOf()
 
@@ -105,7 +107,8 @@ public abstract class BaseAxis<P : Axis.Position>(
         titleComponent == other.titleComponent &&
         title == other.title &&
         tickPosition == other.tickPosition &&
-        lineDrawingOrder == other.lineDrawingOrder
+        lineDrawingOrder == other.lineDrawingOrder &&
+        guidelineDrawingOrder == other.guidelineDrawingOrder
 
   override fun hashCode(): Int {
     var result = line.hashCode()
@@ -121,6 +124,7 @@ public abstract class BaseAxis<P : Axis.Position>(
     result = 31 * result + title.hashCode()
     result = 31 * result + tickPosition.hashCode()
     result = 31 * result + lineDrawingOrder.hashCode()
+    result = 31 * result + guidelineDrawingOrder.hashCode()
     return result
   }
 
@@ -139,6 +143,22 @@ public abstract class BaseAxis<P : Axis.Position>(
     /** Draws ticks and the axis line under the [CartesianLayer]s. */
     UnderLayers,
     /** Draws ticks and the axis line over the [CartesianLayer]s. */
+    OverLayers,
+  }
+
+  /** Defines where the guidelines are drawn relative to the [CartesianLayer]s. */
+  public enum class GuidelineDrawingOrder {
+    /** Draws the guidelines under the [CartesianLayer]s. */
+    UnderLayers,
+    /**
+     * Draws the guidelines over the [CartesianLayer]s’ area fills and under their strokes, points,
+     * and data labels. [CartesianLayer]s whose area fills can’t be drawn separately from their
+     * strokes are drawn entirely over the guidelines. For layers that can, all series’ area fills
+     * are drawn before any series’ stroke, so a series’ area fill can no longer cover a preceding
+     * series’ stroke.
+     */
+    UnderLayerStrokes,
+    /** Draws the guidelines over the [CartesianLayer]s. */
     OverLayers,
   }
 
