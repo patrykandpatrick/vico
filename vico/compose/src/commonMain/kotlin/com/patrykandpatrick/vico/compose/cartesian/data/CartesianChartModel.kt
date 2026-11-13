@@ -28,10 +28,8 @@ import com.patrykandpatrick.vico.compose.common.*
 import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 import com.patrykandpatrick.vico.compose.common.data.MutableExtraStore
 import com.patrykandpatrick.vico.compose.common.gcdWith
-import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.uuid.ExperimentalUuidApi
-import kotlin.uuid.Uuid
 import kotlinx.coroutines.*
 
 /** Stores a [CartesianChart]’s data. */
@@ -118,7 +116,6 @@ internal fun CartesianChartModelProducer.collectAsState(
   val dataState = remember(chart.id) { CartesianChartDataState() }
   val extraStore = remember(chart.id) { MutableExtraStore() }
   val isInPreview = LocalInspectionMode.current
-  val scope = rememberCoroutineScope { getCoroutineContext(isInPreview) }
   val chartState = rememberWrappedValue(chart)
   val animationSpecState = rememberUpdatedState(animationSpec)
   val initialAnimationSpecState = rememberUpdatedState(initialAnimationSpec)
@@ -133,13 +130,16 @@ internal fun CartesianChartModelProducer.collectAsState(
     }
   }
 
-  val restoredModel = remember {
-    getCachedData(::updateRanges, extraStore)?.let { (model, ranges, extraStore) ->
-      dataState.set(model, ranges, extraStore)
-      model
+  val restoredModel =
+    remember(chart.id) {
+      getCachedData(::updateRanges, extraStore)?.let { (model, ranges, extraStore) ->
+        dataState.set(model, ranges, extraStore)
+        model
+      }
     }
-  }
-  LaunchRegistration(chart.id, isInPreview) { chartID ->
+  val context = if (isInPreview) Dispatchers.Unconfined + PreviewContext else EmptyCoroutineContext
+  val scope = key(chart.id, isInPreview) { rememberCoroutineScope { context } }
+  suspend fun register() {
     var mainAnimationJob: Job? = null
     var animationFrameJob: Job? = null
     var finalAnimationFrameJob: Job? = null
@@ -164,7 +164,7 @@ internal fun CartesianChartModelProducer.collectAsState(
                 !isAnimationFrameGenerationRunning -> {
                   isAnimationFrameGenerationRunning = true
                   animationFrameJob = scope.launch {
-                    transformModel(chartID, fraction)
+                    transformModel(scope, fraction)
                     isAnimationFrameGenerationRunning = false
                   }
                 }
@@ -172,7 +172,7 @@ internal fun CartesianChartModelProducer.collectAsState(
                   finalAnimationFrameJob =
                     scope.launch(Dispatchers.Default) {
                       animationFrameJob?.cancelAndJoin()
-                      transformModel(chartID, fraction)
+                      transformModel(scope, fraction)
                       isAnimationFrameGenerationRunning = false
                     }
                 }
@@ -181,60 +181,50 @@ internal fun CartesianChartModelProducer.collectAsState(
           }
         } else {
           finalAnimationFrameJob = scope.launch {
-            transformModel(chartID, Animation.range.endInclusive)
+            transformModel(scope, Animation.range.endInclusive)
           }
         }
       }
-    scope.launch {
-      registerForUpdates(
-        key = chartID,
-        restoredModel = restoredModel,
-        cancelAnimation = {
-          mainAnimationJob?.cancelAndJoin()
-          animationFrameJob?.cancelAndJoin()
-          finalAnimationFrameJob?.cancelAndJoin()
-          isAnimationRunning = false
-          isAnimationFrameGenerationRunning = false
-        },
-        startAnimation = startAnimation,
-        prepareForTransformation = { model, extraStore, ranges ->
-          chartState.value.prepareForTransformation(model, extraStore, ranges)
-        },
-        transform = { extraStore, fraction -> chartState.value.transform(extraStore, fraction) },
-        hostExtraStore = extraStore,
-        updateRanges = ::updateRanges,
-      ) { model, ranges, extraStore ->
-        dataState.set(model, ranges, extraStore)
+    registerForUpdates(
+      key = scope,
+      restoredModel = restoredModel,
+      cancelAnimation = {
+        mainAnimationJob?.cancelAndJoin()
+        animationFrameJob?.cancelAndJoin()
+        finalAnimationFrameJob?.cancelAndJoin()
+        isAnimationRunning = false
+        isAnimationFrameGenerationRunning = false
+      },
+      startAnimation = startAnimation,
+      prepareForTransformation = { model, extraStore, ranges ->
+        chartState.value.prepareForTransformation(model, extraStore, ranges)
+      },
+      transform = { extraStore, fraction -> chartState.value.transform(extraStore, fraction) },
+      hostExtraStore = extraStore,
+      updateRanges = ::updateRanges,
+    ) { model, ranges, extraStore ->
+      dataState.set(model, ranges, extraStore)
+    }
+  }
+  val runBlocking = runBlocking
+  if (isInPreview && runBlocking != null) {
+    remember(scope) {
+      try {
+        runBlocking(context) { register() }
+      } finally {
+        // Compose also cancels this scope if the preview is abandoned before effects are applied.
+        scope.coroutineContext.job.invokeOnCompletion { unregisterFromUpdates(scope) }
       }
     }
-    return@LaunchRegistration {
-      mainAnimationJob?.cancel()
-      animationFrameJob?.cancel()
-      finalAnimationFrameJob?.cancel()
-      unregisterFromUpdates(chartID)
+  } else {
+    LaunchedEffect(scope) {
+      try {
+        withContext(context) { register() }
+        awaitCancellation()
+      } finally {
+        unregisterFromUpdates(scope)
+      }
     }
   }
   return dataState
 }
-
-@Composable
-private fun LaunchRegistration(
-  chartID: Uuid,
-  isInPreview: Boolean,
-  block: (chartID: Uuid) -> () -> Unit,
-) {
-  val runBlocking = runBlocking
-  if (isInPreview && runBlocking != null) {
-    runBlocking(getCoroutineContext(isPreview = true)) { block(chartID) }
-  } else {
-    LaunchedEffect(chartID) {
-      withContext(getCoroutineContext(isPreview = false)) {
-        val disposable = block(chartID)
-        currentCoroutineContext().job.invokeOnCompletion { disposable() }
-      }
-    }
-  }
-}
-
-private fun getCoroutineContext(isPreview: Boolean): CoroutineContext =
-  if (isPreview) Dispatchers.Unconfined + PreviewContext else EmptyCoroutineContext
