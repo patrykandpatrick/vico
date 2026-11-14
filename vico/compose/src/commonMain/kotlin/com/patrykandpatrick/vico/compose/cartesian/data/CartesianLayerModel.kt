@@ -139,3 +139,49 @@ internal fun <T : CartesianLayerModel.Entry> List<T>.getSliceIndices(
   val endExclusive = (lastVisibleExclusive + visiblePadding).coerceAtMost(size)
   return if (endExclusive <= start) IntRange.EMPTY else start..<endExclusive
 }
+
+/**
+ * Returns the distinct _x_ values of these series, each of which is sorted by _x_, in ascending
+ * order.
+ */
+internal fun <T : CartesianLayerModel.Entry> List<List<T>>.getDistinctXValues(): List<Double> {
+  val xValues = DoubleArray(sumOf { it.size })
+  var index = 0
+  forEach { series -> series.forEach { entry -> xValues[index++] = entry.x } }
+  if (size > 1) xValues.sort()
+  return xValues.toDistinctList()
+}
+
+/**
+ * Removes consecutive duplicates from this sorted array in place and returns the result as a list.
+ */
+internal fun DoubleArray.toDistinctList(): List<Double> {
+  if (isEmpty()) return emptyList()
+  var count = 1
+  for (index in 1..<size) if (this[index] != this[count - 1]) this[count++] = this[index]
+  return (if (count == size) this else copyOf(count)).asList()
+}
+
+internal fun <T : CartesianLayerModel.Entry> List<T>.filterInRange(
+  x: ClosedFloatingPointRange<Double>
+): List<T> {
+  if (isEmpty() || x.start > last().x || x.endInclusive < first().x) return emptyList()
+  var fromIndex = binarySearch { it.x.compareTo(x.start) }
+  if (fromIndex < 0) {
+    fromIndex = (-fromIndex) - 1
+  } else {
+    while (fromIndex > 0 && this[fromIndex - 1].x >= x.start) {
+      fromIndex -= 1
+    }
+  }
+  var toIndex = binarySearch { it.x.compareTo(x.endInclusive) }
+  if (toIndex < 0) {
+    toIndex = (-toIndex) - 1
+  } else {
+    while (toIndex < size - 1 && this[toIndex + 1].x <= x.endInclusive) {
+      toIndex += 1
+    }
+    toIndex += 1
+  }
+  return if (fromIndex < toIndex) subList(fromIndex, toIndex) else emptyList()
+}
