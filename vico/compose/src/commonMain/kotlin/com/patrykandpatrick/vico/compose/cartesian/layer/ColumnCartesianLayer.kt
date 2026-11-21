@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.compose.cartesian.CartesianMeasuringContext
+import com.patrykandpatrick.vico.compose.cartesian.accessibility.ColumnCartesianLayerAggregation
 import com.patrykandpatrick.vico.compose.cartesian.axis.Axis
 import com.patrykandpatrick.vico.compose.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.compose.cartesian.data.*
@@ -506,6 +507,42 @@ protected constructor(
       verticalAxisPosition,
     )
   }
+
+  override fun getAggregation(
+    model: ColumnCartesianLayerModel,
+    x: ClosedFloatingPointRange<Double>,
+    layerIndex: Int,
+  ): ColumnCartesianLayerAggregation? {
+    val seriesAggregates = mutableListOf<ColumnCartesianLayerAggregation.Series>()
+    model.series.forEachIndexed { seriesIndex, series ->
+      val inRange = series.filterInRange(x)
+      if (inRange.isNotEmpty()) {
+        val sum = inRange.sumOf { it.y }
+        seriesAggregates.add(
+          ColumnCartesianLayerAggregation.Series(
+            key = model.seriesKeys[seriesIndex],
+            index = seriesIndex,
+            min = inRange.minBy { it.y },
+            max = inRange.maxBy { it.y },
+            first = inRange.first(),
+            last = inRange.last(),
+            sum = sum,
+            mean = sum / inRange.size,
+            count = inRange.size,
+          )
+        )
+      }
+    }
+    return if (seriesAggregates.isNotEmpty()) {
+      ColumnCartesianLayerAggregation(seriesAggregates, layerIndex, verticalAxisPosition)
+    } else {
+      null
+    }
+  }
+
+  override fun getSeriesKeys(model: ColumnCartesianLayerModel): List<Any> = model.seriesKeys
+
+  override fun getXValues(model: ColumnCartesianLayerModel): List<Double> = model.xValues
 
   override fun updateDimensions(
     context: CartesianMeasuringContext,
