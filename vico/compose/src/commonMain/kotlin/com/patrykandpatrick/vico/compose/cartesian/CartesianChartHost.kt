@@ -328,7 +328,8 @@ internal fun CartesianChartHostImpl(
         if (descriptionProvider != null && model.models.isNotEmpty()) {
           val fullXRange = ranges.minX..ranges.maxX
           val summaryAggregation = chart.getAggregation(model, fullXRange)
-          val summary = descriptionProvider.getSummary(measuringContext.value, summaryAggregation)
+          val summary =
+            descriptionProvider.getChartDescription(measuringContext.value, summaryAggregation)
           if (summary.isNotEmpty()) {
             contentDescription = summary.toString()
           }

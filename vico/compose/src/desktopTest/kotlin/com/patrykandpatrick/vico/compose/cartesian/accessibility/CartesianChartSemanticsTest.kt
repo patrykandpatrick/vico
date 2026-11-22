@@ -74,7 +74,7 @@ class CartesianChartSemanticsTest {
   }
 
   private val provider =
-    CartesianChartDescriptionProvider.default(
+    CartesianDescriptionProvider.default(
       xValueFormatter = wholeNumberFormatter,
       yValueFormatter = wholeNumberFormatter,
     )
@@ -664,7 +664,7 @@ class CartesianChartSemanticsTest {
         }
       )
     val customProvider =
-      CartesianChartDescriptionProvider.default(
+      CartesianDescriptionProvider.default(
         xValueFormatter = wholeNumberFormatter,
         yValueFormatter = wholeNumberFormatter,
         seriesLabel = { _, _, _ -> "Custom series" },
@@ -822,14 +822,13 @@ class CartesianChartSemanticsTest {
 
     override suspend fun transform(extraStore: MutableExtraStore, fraction: Float) {}
 
-    override fun getSeriesKeys(model: CustomLayerModel): List<Any> = listOf("customKey")
+    override fun getSeriesCount(model: CustomLayerModel): Int = 1
 
     override fun getXValues(model: CustomLayerModel): List<Double> = listOf(0.0, 1.0, 2.0)
 
     override fun getAggregation(
       model: CustomLayerModel,
-      x: ClosedFloatingPointRange<Double>,
-      layerIndex: Int,
+      xRange: ClosedFloatingPointRange<Double>,
     ): CartesianLayerAggregation? {
       val entries =
         listOf(
@@ -837,7 +836,7 @@ class CartesianChartSemanticsTest {
             LineCartesianLayerModel.Entry(1.0, 10.0),
             LineCartesianLayerModel.Entry(2.0, 15.0),
           )
-          .filter { it.x in x }
+          .filter { it.x in xRange }
       if (entries.isEmpty()) return null
       val min = entries.minBy { it.y }
       val max = entries.maxBy { it.y }
@@ -853,9 +852,10 @@ class CartesianChartSemanticsTest {
               max = max,
               first = first,
               last = last,
+              count = entries.size,
             )
           ),
-        layerIndex = layerIndex,
+        verticalAxisPosition = null,
       )
     }
   }
@@ -863,7 +863,7 @@ class CartesianChartSemanticsTest {
   private class CustomCartesianChart(
     customLayer: CustomCartesianLayer,
     lineLayer: LineCartesianLayer,
-    descriptionProvider: CartesianChartDescriptionProvider?,
+    descriptionProvider: CartesianDescriptionProvider?,
   ) : CartesianChart(customLayer, lineLayer, descriptionProvider = descriptionProvider) {
     override fun CartesianChartModel.forEachWithLayer(consumer: ModelAndLayerConsumer) {
       val freeModels = models.toMutableList()

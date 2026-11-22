@@ -387,15 +387,13 @@ protected constructor(
 
   override fun getAggregation(
     model: ColumnCartesianLayerModel,
-    x: ClosedFloatingPointRange<Double>,
-    layerIndex: Int,
+    xRange: ClosedFloatingPointRange<Double>,
   ): ColumnCartesianLayerAggregation? {
-    val seriesAggregates = mutableListOf<ColumnCartesianLayerAggregation.Series>()
+    val seriesAggregations = mutableListOf<ColumnCartesianLayerAggregation.Series>()
     model.series.forEachIndexed { seriesIndex, series ->
-      val inRange = series.filterInRange(x)
+      val inRange = series.filterInRange(xRange)
       if (inRange.isNotEmpty()) {
-        val sum = inRange.sumOf { it.y }
-        seriesAggregates.add(
+        seriesAggregations.add(
           ColumnCartesianLayerAggregation.Series(
             key = model.seriesKeys[seriesIndex],
             index = seriesIndex,
@@ -403,21 +401,20 @@ protected constructor(
             max = inRange.maxBy { it.y },
             first = inRange.first(),
             last = inRange.last(),
-            sum = sum,
-            mean = sum / inRange.size,
+            sum = inRange.sumOf { it.y },
             count = inRange.size,
           )
         )
       }
     }
-    return if (seriesAggregates.isNotEmpty()) {
-      ColumnCartesianLayerAggregation(seriesAggregates, layerIndex, verticalAxisPosition)
+    return if (seriesAggregations.isNotEmpty()) {
+      ColumnCartesianLayerAggregation(seriesAggregations, verticalAxisPosition)
     } else {
       null
     }
   }
 
-  override fun getSeriesKeys(model: ColumnCartesianLayerModel): List<Any> = model.seriesKeys
+  override fun getSeriesCount(model: ColumnCartesianLayerModel): Int = model.series.size
 
   override fun getXValues(model: ColumnCartesianLayerModel): List<Double> = model.xValues
 

@@ -23,58 +23,58 @@ import com.patrykandpatrick.vico.compose.cartesian.data.CartesianValueFormatter
 
 /** Provides content descriptions for Cartesian charts and their intervals. */
 @Immutable
-public interface CartesianChartDescriptionProvider {
+public interface CartesianDescriptionProvider {
 
   /** Returns a content description summarizing the entire chart. */
-  public fun getSummary(
+  public fun getChartDescription(
     context: CartesianMeasuringContext,
-    summary: CartesianAggregation,
+    aggregation: CartesianChartAggregation,
   ): CharSequence
 
   /** Returns a content description for a specific visible interval. */
   public fun getIntervalDescription(
     context: CartesianMeasuringContext,
-    interval: CartesianAggregation,
+    interval: CartesianChartAggregation,
   ): CharSequence
 
-  /** Houses factory functions for [CartesianChartDescriptionProvider]. */
+  /** Houses factory functions for [CartesianDescriptionProvider]. */
   public companion object {
     /**
-     * Creates the default [CartesianChartDescriptionProvider] implementation.
+     * Creates the default [CartesianDescriptionProvider] implementation.
      *
-     * @param xValueFormatter formats x values.
-     * @param yValueFormatter formats y values. It also receives derived values (such as changes,
-     *   sums, and means), so a formatter that indexes labels by y.toInt() must handle values that
+     * @param xValueFormatter formats _x_ values.
+     * @param yValueFormatter formats _y_ values. It also receives derived values (such as changes,
+     *   sums, and means), so a formatter that indexes labels by `y.toInt()` must handle values that
      *   are not raw data values. Formatting is evaluated inside semantics blocks, running only when
      *   an accessibility service queries the chart.
-     * @param seriesLabel generates labels for individual series. When null or returning null, the
-     *   series name is omitted for single-series charts and falls back to "Series 1", "Series 2",
-     *   etc. for multi-series charts.
+     * @param seriesLabel generates labels for individual series. When `null`, the series name is
+     *   omitted for single-series charts and falls back to "Series 1", "Series 2", etc. for
+     *   multi-series charts.
      */
     public fun default(
       xValueFormatter: CartesianValueFormatter = CartesianValueFormatter.decimal(),
       yValueFormatter: CartesianValueFormatter = CartesianValueFormatter.decimal(),
       seriesLabel:
-        ((context: CartesianMeasuringContext, layerIndex: Int, seriesKey: Any) -> CharSequence?)? =
+        ((context: CartesianMeasuringContext, layerIndex: Int, seriesKey: Any) -> CharSequence)? =
         null,
-    ): CartesianChartDescriptionProvider =
-      DefaultCartesianChartDescriptionProvider(xValueFormatter, yValueFormatter, seriesLabel)
+    ): CartesianDescriptionProvider =
+      DefaultCartesianDescriptionProvider(xValueFormatter, yValueFormatter, seriesLabel)
   }
 }
 
-internal class DefaultCartesianChartDescriptionProvider(
+internal class DefaultCartesianDescriptionProvider(
   private val xValueFormatter: CartesianValueFormatter,
   private val yValueFormatter: CartesianValueFormatter,
   private val seriesLabel:
-    ((context: CartesianMeasuringContext, layerIndex: Int, seriesKey: Any) -> CharSequence?)?,
-) : CartesianChartDescriptionProvider {
+    ((context: CartesianMeasuringContext, layerIndex: Int, seriesKey: Any) -> CharSequence)?,
+) : CartesianDescriptionProvider {
 
   private fun getSeriesLabel(
     context: CartesianMeasuringContext,
     layerIndex: Int,
     seriesIndex: Int,
     seriesKey: Any,
-    aggregation: CartesianAggregation,
+    aggregation: CartesianChartAggregation,
   ): String? {
     val customLabel = seriesLabel?.invoke(context, layerIndex, seriesKey)?.toString()
     if (customLabel != null) return customLabel
@@ -83,9 +83,9 @@ internal class DefaultCartesianChartDescriptionProvider(
     return "Series $seriesNumber"
   }
 
-  private fun getChartType(summary: CartesianAggregation): String {
-    val aggregations = summary.layerAggregations
-    if (aggregations.isEmpty()) return "Cartesian chart"
+  private fun getChartType(aggregation: CartesianChartAggregation): String {
+    val aggregations = aggregation.layerAggregations.filterNotNull()
+    if (aggregations.isEmpty()) return "Chart"
     val allLine = aggregations.all { it is LineCartesianLayerAggregation }
     val allColumn = aggregations.all { it is ColumnCartesianLayerAggregation }
     val allCandle = aggregations.all { it is CandlestickCartesianLayerAggregation }
@@ -93,7 +93,7 @@ internal class DefaultCartesianChartDescriptionProvider(
       allLine -> "Line chart"
       allColumn -> "Column chart"
       allCandle -> "Candlestick chart"
-      else -> "Cartesian chart"
+      else -> "Chart"
     }
   }
 
@@ -118,7 +118,7 @@ internal class DefaultCartesianChartDescriptionProvider(
     layerIndex: Int,
     seriesIndex: Int,
     seriesKey: Any,
-    aggregation: CartesianAggregation,
+    aggregation: CartesianChartAggregation,
   ) {
     append(" ")
     val label =
@@ -179,7 +179,7 @@ internal class DefaultCartesianChartDescriptionProvider(
       val changeSign = if (change > 0) "+" else ""
       val changeStr = "$changeSign${yValueFormatter.format(context, change, verticalAxisPosition)}"
       val sum = yValueFormatter.format(context, series.sum, verticalAxisPosition)
-      val mean = yValueFormatter.format(context, series.mean, verticalAxisPosition)
+      val mean = yValueFormatter.format(context, series.sum / series.count, verticalAxisPosition)
       "Min: $minY at $minX, max: $maxY at $maxX, first: $firstY, last: $lastY (change: $changeStr), sum: $sum, mean: $mean."
     } else if (series.count == 1) {
       val y = yValueFormatter.format(context, series.first.y, verticalAxisPosition)
@@ -188,7 +188,7 @@ internal class DefaultCartesianChartDescriptionProvider(
       val minY = yValueFormatter.format(context, series.min.y, verticalAxisPosition)
       val maxY = yValueFormatter.format(context, series.max.y, verticalAxisPosition)
       val sum = yValueFormatter.format(context, series.sum, verticalAxisPosition)
-      val mean = yValueFormatter.format(context, series.mean, verticalAxisPosition)
+      val mean = yValueFormatter.format(context, series.sum / series.count, verticalAxisPosition)
       "Min: $minY, max: $maxY, sum: $sum, mean: $mean."
     }
   }
@@ -217,16 +217,16 @@ internal class DefaultCartesianChartDescriptionProvider(
 
   private fun StringBuilder.appendLayerAggregations(
     context: CartesianMeasuringContext,
-    aggregation: CartesianAggregation,
+    aggregation: CartesianChartAggregation,
     isSummary: Boolean,
   ) {
-    aggregation.layerAggregations.forEach { layerAggregation ->
+    aggregation.layerAggregations.forEachIndexed { layerIndex, layerAggregation ->
       when (layerAggregation) {
         is LineCartesianLayerAggregation -> {
           layerAggregation.series.forEach { series ->
             appendSeriesPrefix(
               context = context,
-              layerIndex = layerAggregation.layerIndex,
+              layerIndex = layerIndex,
               seriesIndex = series.index,
               seriesKey = series.key,
               aggregation = aggregation,
@@ -245,7 +245,7 @@ internal class DefaultCartesianChartDescriptionProvider(
           layerAggregation.series.forEach { series ->
             appendSeriesPrefix(
               context = context,
-              layerIndex = layerAggregation.layerIndex,
+              layerIndex = layerIndex,
               seriesIndex = series.index,
               seriesKey = series.key,
               aggregation = aggregation,
@@ -263,9 +263,9 @@ internal class DefaultCartesianChartDescriptionProvider(
         is CandlestickCartesianLayerAggregation -> {
           appendSeriesPrefix(
             context = context,
-            layerIndex = layerAggregation.layerIndex,
+            layerIndex = layerIndex,
             seriesIndex = 0,
-            seriesKey = layerAggregation.key,
+            seriesKey = layerAggregation.modelKey,
             aggregation = aggregation,
           )
           append(formatCandlestick(context, layerAggregation, isSummary = isSummary))
@@ -275,26 +275,26 @@ internal class DefaultCartesianChartDescriptionProvider(
     }
   }
 
-  override fun getSummary(
+  override fun getChartDescription(
     context: CartesianMeasuringContext,
-    summary: CartesianAggregation,
+    aggregation: CartesianChartAggregation,
   ): CharSequence = buildString {
-    append(getChartType(summary)).append(". ")
-    append(formatXRange(context, summary.x, isSummary = true))
-    appendLayerAggregations(context, summary, isSummary = true)
+    append(getChartType(aggregation)).append(". ")
+    append(formatXRange(context, aggregation.xRange, isSummary = true))
+    appendLayerAggregations(context, aggregation, isSummary = true)
   }
 
   override fun getIntervalDescription(
     context: CartesianMeasuringContext,
-    interval: CartesianAggregation,
+    interval: CartesianChartAggregation,
   ): CharSequence = buildString {
-    append(formatXRange(context, interval.x, isSummary = false))
+    append(formatXRange(context, interval.xRange, isSummary = false))
     appendLayerAggregations(context, interval, isSummary = false)
   }
 
   override fun equals(other: Any?): Boolean =
     this === other ||
-      other is DefaultCartesianChartDescriptionProvider &&
+      other is DefaultCartesianDescriptionProvider &&
         xValueFormatter == other.xValueFormatter &&
         yValueFormatter == other.yValueFormatter &&
         seriesLabel == other.seriesLabel

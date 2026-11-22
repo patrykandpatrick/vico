@@ -47,7 +47,7 @@ import kotlin.test.assertFailsWith
 import kotlin.test.assertNotEquals
 import kotlin.test.assertNull
 
-class DefaultCartesianChartDescriptionProviderTest {
+class DefaultCartesianDescriptionProviderTest {
 
   private fun createLineLayer(verticalAxisPosition: Axis.Position.Vertical? = null) =
     LineCartesianLayer(
@@ -88,7 +88,7 @@ class DefaultCartesianChartDescriptionProviderTest {
   }
 
   private val provider =
-    CartesianChartDescriptionProvider.default(
+    CartesianDescriptionProvider.default(
       xValueFormatter = wholeNumberFormatter,
       yValueFormatter = wholeNumberFormatter,
     )
@@ -126,7 +126,7 @@ class DefaultCartesianChartDescriptionProviderTest {
     val context = createContext(model)
     val aggregation = chart.getAggregation(model, 0.0..3.0)
 
-    val summary = provider.getSummary(context, aggregation).toString()
+    val summary = provider.getChartDescription(context, aggregation).toString()
 
     assertEquals(
       "Line chart. X from 0 to 3. Min: 10 at 0, max: 50 at 3, first: 10, last: 50 (change: +40).",
@@ -147,7 +147,7 @@ class DefaultCartesianChartDescriptionProviderTest {
     val context = createContext(model)
     val aggregation = chart.getAggregation(model, 0.0..1.0)
 
-    val summary = provider.getSummary(context, aggregation).toString()
+    val summary = provider.getChartDescription(context, aggregation).toString()
 
     assertEquals(
       "Line chart. X from 0 to 1. Series 1: Min: 10 at 0, max: 50 at 1, first: 10, last: 50 (change: +40). Series 2: Min: 15 at 1, max: 20 at 0, first: 20, last: 15 (change: -5).",
@@ -201,7 +201,7 @@ class DefaultCartesianChartDescriptionProviderTest {
     val context = createContext(model)
     val aggregation = chart.getAggregation(model, 0.0..2.0)
 
-    val summary = provider.getSummary(context, aggregation).toString()
+    val summary = provider.getChartDescription(context, aggregation).toString()
 
     assertEquals(
       "Column chart. X from 0 to 2. Min: 10 at 0, max: 30 at 2, first: 10, last: 30 (change: +20), sum: 60, mean: 20.",
@@ -222,7 +222,7 @@ class DefaultCartesianChartDescriptionProviderTest {
     val context = createContext(model)
     val aggregation = chart.getAggregation(model, 0.0..1.0)
 
-    val summary = provider.getSummary(context, aggregation).toString()
+    val summary = provider.getChartDescription(context, aggregation).toString()
 
     assertEquals(
       "Column chart. X from 0 to 1. Series 1: Min: 10 at 0, max: 20 at 1, first: 10, last: 20 (change: +10), sum: 30, mean: 15. Series 2: Min: 30 at 0, max: 40 at 1, first: 30, last: 40 (change: +10), sum: 70, mean: 35.",
@@ -279,7 +279,7 @@ class DefaultCartesianChartDescriptionProviderTest {
     val context = createContext(model)
     val aggregation = chart.getAggregation(model, 0.0..1.0)
 
-    val summary = provider.getSummary(context, aggregation).toString()
+    val summary = provider.getChartDescription(context, aggregation).toString()
 
     assertEquals(
       "Candlestick chart. X from 0 to 1. Open: 100, high: 120, low: 90, close: 105 (change: +5).",
@@ -308,7 +308,7 @@ class DefaultCartesianChartDescriptionProviderTest {
   }
 
   @Test
-  fun multiLayerChartProducesCartesianChartSummary() {
+  fun multiLayerChartProducesChartSummary() {
     val model =
       CartesianChartModel(
         LineCartesianLayerModel.build { series(10, 20) },
@@ -319,10 +319,10 @@ class DefaultCartesianChartDescriptionProviderTest {
     val context = createContext(model)
     val aggregation = chart.getAggregation(model, 0.0..1.0)
 
-    val summary = provider.getSummary(context, aggregation).toString()
+    val summary = provider.getChartDescription(context, aggregation).toString()
 
     assertEquals(
-      "Cartesian chart. X from 0 to 1. Series 1: Min: 10 at 0, max: 20 at 1, first: 10, last: 20 (change: +10). Series 2: Min: 30 at 0, max: 40 at 1, first: 30, last: 40 (change: +10), sum: 70, mean: 35.",
+      "Chart. X from 0 to 1. Series 1: Min: 10 at 0, max: 20 at 1, first: 10, last: 20 (change: +10). Series 2: Min: 30 at 0, max: 40 at 1, first: 30, last: 40 (change: +10), sum: 70, mean: 35.",
       summary,
     )
   }
@@ -330,7 +330,7 @@ class DefaultCartesianChartDescriptionProviderTest {
   @Test
   fun customSeriesLabelIsApplied() {
     val customProvider =
-      CartesianChartDescriptionProvider.default(
+      CartesianDescriptionProvider.default(
         xValueFormatter = wholeNumberFormatter,
         yValueFormatter = wholeNumberFormatter,
         seriesLabel = { _, layerIndex, key -> "Layer $layerIndex Data $key" },
@@ -340,7 +340,7 @@ class DefaultCartesianChartDescriptionProviderTest {
     val context = createContext(model)
     val aggregation = chart.getAggregation(model, 0.0..1.0)
 
-    val summary = customProvider.getSummary(context, aggregation).toString()
+    val summary = customProvider.getChartDescription(context, aggregation).toString()
 
     assertEquals(
       "Line chart. X from 0 to 1. Layer 0 Data 0: Min: 10 at 0, max: 20 at 1, first: 10, last: 20 (change: +10).",
@@ -358,7 +358,7 @@ class DefaultCartesianChartDescriptionProviderTest {
     val customXFormatter = CartesianValueFormatter { _, value, _ -> "Point $value" }
 
     val customProvider =
-      CartesianChartDescriptionProvider.default(
+      CartesianDescriptionProvider.default(
         xValueFormatter = customXFormatter,
         yValueFormatter = customYFormatter,
       )
@@ -369,7 +369,7 @@ class DefaultCartesianChartDescriptionProviderTest {
     val context = createContext(model)
     val aggregation = chart.getAggregation(model, 0.0..1.0)
 
-    val summary = customProvider.getSummary(context, aggregation).toString()
+    val summary = customProvider.getChartDescription(context, aggregation).toString()
 
     assertEquals(
       "Line chart. X from Point 0.0 to Point 1.0. Min: $10.0 at Point 0.0, max: $20.0 at Point 1.0, first: $10.0, last: $20.0 (change: +$10.0).",
@@ -410,23 +410,23 @@ class DefaultCartesianChartDescriptionProviderTest {
       }
 
     val model = LineCartesianLayerModel.build { series(10, 20) }
-    assertNull(unknownLayer.getAggregation(model, 0.0..1.0, 0))
+    assertNull(unknownLayer.getAggregation(model, 0.0..1.0))
   }
 
   @Test
   fun providerEqualityAndHashCodeCheck() {
     val provider1 =
-      CartesianChartDescriptionProvider.default(
+      CartesianDescriptionProvider.default(
         xValueFormatter = wholeNumberFormatter,
         yValueFormatter = wholeNumberFormatter,
       )
     val provider2 =
-      CartesianChartDescriptionProvider.default(
+      CartesianDescriptionProvider.default(
         xValueFormatter = wholeNumberFormatter,
         yValueFormatter = wholeNumberFormatter,
       )
     val provider3 =
-      CartesianChartDescriptionProvider.default(
+      CartesianDescriptionProvider.default(
         xValueFormatter = CartesianValueFormatter.decimal(decimalCount = 1),
         yValueFormatter = wholeNumberFormatter,
       )
@@ -484,10 +484,10 @@ class DefaultCartesianChartDescriptionProviderTest {
     val context = createContext(model)
     val aggregation = chart.getAggregation(model, 0.0..1.0)
 
-    val summary = provider.getSummary(context, aggregation).toString()
+    val summary = provider.getChartDescription(context, aggregation).toString()
 
     assertEquals(
-      "Cartesian chart. X from 0 to 1. Series 1: Min: 10 at 0, max: 20 at 1, first: 10, last: 20 (change: +10), sum: 30, mean: 15. Series 2: Min: 30 at 0, max: 40 at 1, first: 30, last: 40 (change: +10), sum: 70, mean: 35. Series 3: Min: 50 at 0, max: 60 at 1, first: 50, last: 60 (change: +10).",
+      "Chart. X from 0 to 1. Series 1: Min: 10 at 0, max: 20 at 1, first: 10, last: 20 (change: +10), sum: 30, mean: 15. Series 2: Min: 30 at 0, max: 40 at 1, first: 30, last: 40 (change: +10), sum: 70, mean: 35. Series 3: Min: 50 at 0, max: 60 at 1, first: 50, last: 60 (change: +10).",
       summary,
     )
   }
@@ -556,11 +556,37 @@ class DefaultCartesianChartDescriptionProviderTest {
     val context = createContext(model)
     val aggregation = swappedChart.getAggregation(model, 0.0..1.0)
 
-    val summary = provider.getSummary(context, aggregation).toString()
+    val summary = provider.getChartDescription(context, aggregation).toString()
 
     assertEquals(
-      "Cartesian chart. X from 0 to 1. Series 1: Min: 50 at 0, max: 60 at 1, first: 50, last: 60 (change: +10). Series 2: Min: 10 at 0, max: 20 at 1, first: 10, last: 20 (change: +10), sum: 30, mean: 15. Series 3: Min: 30 at 0, max: 40 at 1, first: 30, last: 40 (change: +10), sum: 70, mean: 35.",
+      "Chart. X from 0 to 1. Series 1: Min: 50 at 0, max: 60 at 1, first: 50, last: 60 (change: +10). Series 2: Min: 10 at 0, max: 20 at 1, first: 10, last: 20 (change: +10), sum: 30, mean: 15. Series 3: Min: 30 at 0, max: 40 at 1, first: 30, last: 40 (change: +10), sum: 70, mean: 35.",
       summary,
+    )
+  }
+
+  @Test
+  fun layerAggregationsPreserveNullSlotsAndLayerIndices() {
+    val customProvider =
+      CartesianDescriptionProvider.default(
+        xValueFormatter = wholeNumberFormatter,
+        yValueFormatter = wholeNumberFormatter,
+        seriesLabel = { _, layerIndex, key -> "Layer $layerIndex Series $key" },
+      )
+    val columnModel = ColumnCartesianLayerModel.build { series(listOf(0, 1), listOf(10, 20)) }
+    val lineModel = LineCartesianLayerModel.build { series(listOf(2, 3), listOf(30, 40)) }
+    val model = CartesianChartModel(columnModel, lineModel)
+    val chart =
+      CartesianChart(createColumnLayer(), createLineLayer(), descriptionProvider = customProvider)
+    val context = createContext(model)
+    val aggregation = chart.getAggregation(model, 2.0..3.0)
+
+    assertEquals(2, aggregation.layerAggregations.size)
+    assertNull(aggregation.layerAggregations[0])
+    val lineAggregation = aggregation.layerAggregations[1] as LineCartesianLayerAggregation
+    assertEquals(2, lineAggregation.series.single().count)
+    assertEquals(
+      "X: 2 to 3. Layer 1 Series 0: Min: 30, max: 40, first: 30, last: 40.",
+      customProvider.getIntervalDescription(context, aggregation).toString(),
     )
   }
 }

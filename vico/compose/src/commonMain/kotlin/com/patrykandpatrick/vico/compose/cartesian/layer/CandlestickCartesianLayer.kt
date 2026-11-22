@@ -271,19 +271,17 @@ protected constructor(
 
   override fun getAggregation(
     model: CandlestickCartesianLayerModel,
-    x: ClosedFloatingPointRange<Double>,
-    layerIndex: Int,
+    xRange: ClosedFloatingPointRange<Double>,
   ): CandlestickCartesianLayerAggregation? {
-    val inRange = model.series.filterInRange(x)
+    val inRange = model.series.filterInRange(xRange)
     return if (inRange.isNotEmpty()) {
       CandlestickCartesianLayerAggregation(
-        key = model.key,
+        modelKey = model.key,
         opening = inRange.first().opening,
         closing = inRange.last().closing,
         low = inRange.minOf { it.low },
         high = inRange.maxOf { it.high },
         count = inRange.size,
-        layerIndex = layerIndex,
         verticalAxisPosition = verticalAxisPosition,
       )
     } else {
@@ -291,7 +289,7 @@ protected constructor(
     }
   }
 
-  override fun getSeriesKeys(model: CandlestickCartesianLayerModel): List<Any> = listOf(model.key)
+  override fun getSeriesCount(model: CandlestickCartesianLayerModel): Int = 1
 
   override fun getXValues(model: CandlestickCartesianLayerModel): List<Double> = model.xValues
 

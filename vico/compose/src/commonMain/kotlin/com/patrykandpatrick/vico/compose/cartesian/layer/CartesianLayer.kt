@@ -20,7 +20,7 @@ import com.patrykandpatrick.vico.compose.cartesian.CartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.compose.cartesian.CartesianMeasuringContext
 import com.patrykandpatrick.vico.compose.cartesian.accessibility.CandlestickCartesianLayerAggregation
-import com.patrykandpatrick.vico.compose.cartesian.accessibility.CartesianChartDescriptionProvider
+import com.patrykandpatrick.vico.compose.cartesian.accessibility.CartesianDescriptionProvider
 import com.patrykandpatrick.vico.compose.cartesian.accessibility.CartesianLayerAggregation
 import com.patrykandpatrick.vico.compose.cartesian.accessibility.ColumnCartesianLayerAggregation
 import com.patrykandpatrick.vico.compose.cartesian.accessibility.LineCartesianLayerAggregation
@@ -39,27 +39,25 @@ public interface CartesianLayer<M : CartesianLayerModel> : CartesianLayerMarginU
   public val markerTargets: Map<Double, List<CartesianMarker.Target>>
 
   /**
-   * Returns an aggregate of [model] for [x], or `null` if the layer has no data in [x] or does not
-   * support aggregation. The default [CartesianChartDescriptionProvider] describes only
+   * Returns an aggregation of [model] for [xRange], or `null` if the layer has no data in [xRange]
+   * or does not support aggregation. The default [CartesianDescriptionProvider] describes only
    * [LineCartesianLayerAggregation]s, [ColumnCartesianLayerAggregation]s, and
-   * [CandlestickCartesianLayerAggregation]s, so other aggregate types require a custom
-   * [CartesianChartDescriptionProvider].
+   * [CandlestickCartesianLayerAggregation]s, so other aggregation types require a custom
+   * [CartesianDescriptionProvider].
    *
    * @param model the [CartesianLayerModel].
-   * @param x the range of _x_ values to aggregate.
-   * @param layerIndex the index of this layer in [CartesianChart.layers].
+   * @param xRange the range of _x_ values to aggregate.
    */
   public fun getAggregation(
     model: M,
-    x: ClosedFloatingPointRange<Double>,
-    layerIndex: Int,
+    xRange: ClosedFloatingPointRange<Double>,
   ): CartesianLayerAggregation? = null
 
   /**
-   * Returns the series keys for [model]. The default implementation returns an empty list,
-   * indicating that the layer contributes no series to the chart summary or interval descriptions.
+   * Returns the number of series in [model]. The default implementation returns `0`, indicating
+   * that the layer contributes no series to the chart summary or interval descriptions.
    */
-  public fun getSeriesKeys(model: M): List<Any> = emptyList()
+  public fun getSeriesCount(model: M): Int = 0
 
   /**
    * Returns the distinct _x_ values present in [model] in ascending order. The default

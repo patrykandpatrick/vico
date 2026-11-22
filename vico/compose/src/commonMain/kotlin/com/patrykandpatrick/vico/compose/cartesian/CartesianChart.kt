@@ -27,8 +27,8 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChart.PersistentMarkerScope
-import com.patrykandpatrick.vico.compose.cartesian.accessibility.CartesianAggregation
-import com.patrykandpatrick.vico.compose.cartesian.accessibility.CartesianChartDescriptionProvider
+import com.patrykandpatrick.vico.compose.cartesian.accessibility.CartesianChartAggregation
+import com.patrykandpatrick.vico.compose.cartesian.accessibility.CartesianDescriptionProvider
 import com.patrykandpatrick.vico.compose.cartesian.accessibility.CartesianLayerAggregation
 import com.patrykandpatrick.vico.compose.cartesian.axis.Axis
 import com.patrykandpatrick.vico.compose.cartesian.axis.AxisManager
@@ -89,8 +89,8 @@ internal constructor(
    * Provides content descriptions for screen readers. Enabled by default; set to `null` to disable.
    * Describes the whole chart and up to one interval per 48 dp of the visible range.
    */
-  public val descriptionProvider: CartesianChartDescriptionProvider? =
-    CartesianChartDescriptionProvider.default(),
+  public val descriptionProvider: CartesianDescriptionProvider? =
+    CartesianDescriptionProvider.default(),
   internal val id: Uuid = Uuid.random(),
   private var previousMarkerTargetHashCode: Int? = null,
   private val persistentMarkerMap: MutableMap<Double, CartesianMarker> = mutableMapOf(),
@@ -236,8 +236,8 @@ internal constructor(
       getDefaultXStep(model, minX)
     },
     markerController: CartesianMarkerController = CartesianMarkerController.showOnPress(),
-    descriptionProvider: CartesianChartDescriptionProvider? =
-      CartesianChartDescriptionProvider.default(),
+    descriptionProvider: CartesianDescriptionProvider? =
+      CartesianDescriptionProvider.default(),
   ) : this(
     layers = layers,
     startAxis = startAxis,
@@ -300,8 +300,8 @@ internal constructor(
     persistentMarkers: (PersistentMarkerScope.(ExtraStore) -> Unit)? = null,
     getXStep: ((CartesianChartModel) -> Double),
     markerController: CartesianMarkerController = CartesianMarkerController.showOnPress(),
-    descriptionProvider: CartesianChartDescriptionProvider? =
-      CartesianChartDescriptionProvider.default(),
+    descriptionProvider: CartesianDescriptionProvider? =
+      CartesianDescriptionProvider.default(),
   ) : this(
     layers = layers,
     startAxis = startAxis,
@@ -594,7 +594,7 @@ internal constructor(
     persistentMarkers: (PersistentMarkerScope.(ExtraStore) -> Unit)? = this.persistentMarkers,
     getXStep: ((CartesianChartModel, Double, Double) -> Double) = this.getXStep,
     markerController: CartesianMarkerController = CartesianMarkerController.showOnPress(),
-    descriptionProvider: CartesianChartDescriptionProvider? = this.descriptionProvider,
+    descriptionProvider: CartesianDescriptionProvider? = this.descriptionProvider,
   ): CartesianChart =
     CartesianChart(
       layers = layers,
@@ -639,7 +639,7 @@ internal constructor(
     persistentMarkers: (PersistentMarkerScope.(ExtraStore) -> Unit)? = this.persistentMarkers,
     getXStep: ((CartesianChartModel) -> Double),
     markerController: CartesianMarkerController = CartesianMarkerController.showOnPress(),
-    descriptionProvider: CartesianChartDescriptionProvider? = this.descriptionProvider,
+    descriptionProvider: CartesianDescriptionProvider? = this.descriptionProvider,
   ): CartesianChart =
     copy(
       layers = layers,
@@ -699,29 +699,29 @@ internal constructor(
     return result
   }
 
-  /** Returns aggregated data for [x]. */
+  /** Returns aggregated data for [xRange]. */
   internal fun getAggregation(
     model: CartesianChartModel,
-    x: ClosedFloatingPointRange<Double>,
-  ): CartesianAggregation {
-    val aggregations = mutableListOf<CartesianLayerAggregation>()
+    xRange: ClosedFloatingPointRange<Double>,
+  ): CartesianChartAggregation {
+    val aggregations = ArrayList<CartesianLayerAggregation?>(layers.size)
     val seriesOffsets = ArrayList<Int>(layers.size)
     var totalSeriesCount = 0
-    var layerIndex = 0
     val consumer =
       object : ModelAndLayerConsumer {
         override fun <T : CartesianLayerModel> invoke(model: T?, layer: CartesianLayer<T>) {
           seriesOffsets.add(totalSeriesCount)
           if (model != null) {
-            totalSeriesCount += layer.getSeriesKeys(model).size
-            layer.getAggregation(model, x, layerIndex)?.let { aggregations.add(it) }
+            totalSeriesCount += layer.getSeriesCount(model)
+            aggregations.add(layer.getAggregation(model, xRange))
+          } else {
+            aggregations.add(null)
           }
-          layerIndex += 1
         }
       }
     model.forEachWithLayer(consumer)
-    return CartesianAggregation(
-      x = x,
+    return CartesianChartAggregation(
+      xRange = xRange,
       layerAggregations = aggregations,
       seriesCount = totalSeriesCount,
       seriesOffsets = seriesOffsets,
@@ -807,8 +807,8 @@ public fun rememberCartesianChart(
     getDefaultXStep(model, minX)
   },
   markerController: CartesianMarkerController = CartesianMarkerController.rememberShowOnPress(),
-  descriptionProvider: CartesianChartDescriptionProvider? = remember {
-    CartesianChartDescriptionProvider.default()
+  descriptionProvider: CartesianDescriptionProvider? = remember {
+    CartesianDescriptionProvider.default()
   },
 ): CartesianChart {
   val wrapper = remember { ValueWrapper<CartesianChart?>(null) }
@@ -914,8 +914,8 @@ public fun rememberCartesianChart(
   persistentMarkers: (PersistentMarkerScope.(ExtraStore) -> Unit)? = null,
   getXStep: ((CartesianChartModel) -> Double),
   markerController: CartesianMarkerController = CartesianMarkerController.rememberShowOnPress(),
-  descriptionProvider: CartesianChartDescriptionProvider? = remember {
-    CartesianChartDescriptionProvider.default()
+  descriptionProvider: CartesianDescriptionProvider? = remember {
+    CartesianDescriptionProvider.default()
   },
 ): CartesianChart =
   rememberCartesianChart(

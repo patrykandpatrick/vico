@@ -930,14 +930,13 @@ protected constructor(
 
   override fun getAggregation(
     model: LineCartesianLayerModel,
-    x: ClosedFloatingPointRange<Double>,
-    layerIndex: Int,
+    xRange: ClosedFloatingPointRange<Double>,
   ): LineCartesianLayerAggregation? {
-    val seriesAggregates = mutableListOf<LineCartesianLayerAggregation.Series>()
+    val seriesAggregations = mutableListOf<LineCartesianLayerAggregation.Series>()
     model.series.forEachIndexed { seriesIndex, series ->
-      val inRange = series.filterInRange(x)
+      val inRange = series.filterInRange(xRange)
       if (inRange.isNotEmpty()) {
-        seriesAggregates.add(
+        seriesAggregations.add(
           LineCartesianLayerAggregation.Series(
             key = model.seriesKeys[seriesIndex],
             index = seriesIndex,
@@ -945,18 +944,19 @@ protected constructor(
             max = inRange.maxBy { it.y },
             first = inRange.first(),
             last = inRange.last(),
+            count = inRange.size,
           )
         )
       }
     }
-    return if (seriesAggregates.isNotEmpty()) {
-      LineCartesianLayerAggregation(seriesAggregates, layerIndex, verticalAxisPosition)
+    return if (seriesAggregations.isNotEmpty()) {
+      LineCartesianLayerAggregation(seriesAggregations, verticalAxisPosition)
     } else {
       null
     }
   }
 
-  override fun getSeriesKeys(model: LineCartesianLayerModel): List<Any> = model.seriesKeys
+  override fun getSeriesCount(model: LineCartesianLayerModel): Int = model.series.size
 
   override fun getXValues(model: LineCartesianLayerModel): List<Double> = model.xValues
 
