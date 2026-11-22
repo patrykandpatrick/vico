@@ -156,10 +156,14 @@ internal fun AccessibilityOverlay(
         }
 
         // Group the x values into runs of equal length, anchored at the first x value, so that each
-        // x value stays in the same interval while the chart is scrolled.
+        // x value stays in the same interval while the chart is scrolled. When scrolling is
+        // enabled, include one interval beyond each visible edge so that screen-reader focus can
+        // step onto it and trigger a scroll.
         val groupSize = currentMapping.getIntervalGroupSize(allXValues, minIntervalWidthPx)
-        val firstGroup = fromIndex / groupSize
-        val lastGroup = toIndex / groupSize
+        val maxGroup = (allXValues.size - 1) / groupSize
+        val edgeBuffer = if (scrollState.scrollEnabled) 1 else 0
+        val firstGroup = (fromIndex / groupSize - edgeBuffer).coerceAtLeast(0)
+        val lastGroup = (toIndex / groupSize + edgeBuffer).coerceAtMost(maxGroup)
 
         List(lastGroup - firstGroup + 1) { i ->
           val sliceStart = (firstGroup + i) * groupSize

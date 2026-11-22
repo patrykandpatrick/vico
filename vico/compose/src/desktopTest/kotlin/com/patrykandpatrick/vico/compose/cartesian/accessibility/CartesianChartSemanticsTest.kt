@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.ExperimentalTestApi
@@ -485,7 +486,8 @@ class CartesianChartSemanticsTest {
     val nodeCount =
       onAllNodes(hasContentDescription("X:", substring = true)).fetchSemanticsNodes().size
 
-    assertTrue(nodeCount in 1..4)
+    // Up to 4 visible intervals (200 dp / 48 dp) plus 1 edge-buffer interval beyond the end.
+    assertTrue(nodeCount in 1..5)
   }
 
   @Test
@@ -773,6 +775,169 @@ class CartesianChartSemanticsTest {
     onNodeWithContentDescription("X: 0. Series 1: Y: 5. Series 2: Y: 20.").assertExists()
     onNodeWithContentDescription("X: 1. Series 1: Y: 10. Series 2: Y: 30.").assertExists()
     onNodeWithContentDescription("X: 2. Series 1: Y: 15. Series 2: Y: 40.").assertExists()
+  }
+
+  @Test
+  fun scrollSemanticsExposeAxisRangeScrollByAndPaging() = runComposeUiTest {
+    val model = CartesianChartModel(LineCartesianLayerModel.build { series((0..50).toList()) })
+    val chart = CartesianChart(createLineLayer(), descriptionProvider = provider)
+    val scrollState = VicoScrollState(scrollEnabled = true)
+
+    setContent {
+      CartesianChartHost(
+        chart = chart,
+        model = model,
+        scrollState = scrollState,
+        modifier = Modifier.size(300.dp, 200.dp).testTag("chart"),
+      )
+    }
+
+    waitForIdle()
+
+    val startNode = onNodeWithTag("chart").fetchSemanticsNode()
+    val range = startNode.config.getOrNull(SemanticsProperties.HorizontalScrollAxisRange)
+    assertTrue(range != null && range.maxValue() > 0f)
+    assertEquals(0f, range.value(), 0.5f)
+    assertTrue(startNode.config.getOrNull(SemanticsActions.PageLeft) == null)
+    val pageRight = startNode.config.getOrNull(SemanticsActions.PageRight)
+    assertTrue(pageRight != null)
+
+    assertTrue(pageRight.action!!.invoke())
+    waitForIdle()
+    assertTrue(scrollState.value > 0f)
+
+    val midNode = onNodeWithTag("chart").fetchSemanticsNode()
+    assertTrue(midNode.config.getOrNull(SemanticsActions.PageLeft) != null)
+    assertTrue(midNode.config.getOrNull(SemanticsActions.PageRight) != null)
+
+    val beforeScrollBy = scrollState.value
+    val scrollBy = midNode.config.getOrNull(SemanticsActions.ScrollBy)
+    assertTrue(scrollBy != null)
+    assertTrue(scrollBy.action!!.invoke(50f, 0f))
+    waitForIdle()
+    assertEquals(beforeScrollBy + 50f, scrollState.value, 1f)
+
+    kotlinx.coroutines.runBlocking { scrollState.scroll(Scroll.Absolute.End) }
+    waitForIdle()
+
+    val endNode = onNodeWithTag("chart").fetchSemanticsNode()
+    assertTrue(endNode.config.getOrNull(SemanticsActions.PageLeft) != null)
+    assertTrue(endNode.config.getOrNull(SemanticsActions.PageRight) == null)
+    assertTrue(endNode.config[SemanticsActions.PageLeft].action!!.invoke())
+    waitForIdle()
+    assertTrue(scrollState.value < scrollState.maxValue)
+  }
+
+  @Test
+  fun scrollSemanticsOmittedWhenScrollDisabled() = runComposeUiTest {
+    val model = CartesianChartModel(LineCartesianLayerModel.build { series((0..50).toList()) })
+    val chart = CartesianChart(createLineLayer(), descriptionProvider = provider)
+    val scrollState = VicoScrollState(scrollEnabled = false)
+
+    setContent {
+      CartesianChartHost(
+        chart = chart,
+        model = model,
+        scrollState = scrollState,
+        modifier = Modifier.size(300.dp, 200.dp).testTag("chart"),
+      )
+    }
+
+    waitForIdle()
+
+    val node = onNodeWithTag("chart").fetchSemanticsNode()
+    assertTrue(node.config.getOrNull(SemanticsProperties.HorizontalScrollAxisRange) == null)
+    assertTrue(node.config.getOrNull(SemanticsActions.ScrollBy) == null)
+    assertTrue(node.config.getOrNull(SemanticsActions.PageLeft) == null)
+    assertTrue(node.config.getOrNull(SemanticsActions.PageRight) == null)
+  }
+
+  @Test
+  fun rtlScrollSemanticsExposeCorrectPagingAndScrollBy() = runComposeUiTest {
+    val model = CartesianChartModel(LineCartesianLayerModel.build { series((0..50).toList()) })
+    val chart = CartesianChart(createLineLayer(), descriptionProvider = provider)
+    val scrollState = VicoScrollState(scrollEnabled = true)
+
+    setContent {
+      CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+        CartesianChartHost(
+          chart = chart,
+          model = model,
+          scrollState = scrollState,
+          modifier = Modifier.size(300.dp, 200.dp).testTag("chart"),
+        )
+      }
+    }
+
+    waitForIdle()
+
+    val startNode = onNodeWithTag("chart").fetchSemanticsNode()
+    val range = startNode.config.getOrNull(SemanticsProperties.HorizontalScrollAxisRange)
+    assertTrue(range != null && range.maxValue() > 0f)
+    assertEquals(0f, range.value(), 0.5f)
+    assertTrue(startNode.config.getOrNull(SemanticsActions.PageRight) == null)
+    val pageLeft = startNode.config.getOrNull(SemanticsActions.PageLeft)
+    assertTrue(pageLeft != null)
+
+    assertTrue(pageLeft.action!!.invoke())
+    waitForIdle()
+    assertTrue(scrollState.value < 0f)
+    assertTrue(range.value() > 0f)
+
+    val midNode = onNodeWithTag("chart").fetchSemanticsNode()
+    assertTrue(midNode.config.getOrNull(SemanticsActions.PageRight) != null)
+  }
+
+  @Test
+  fun scrollableChartExposesOneBufferIntervalBeyondVisibleEdges() = runComposeUiTest {
+    val model = CartesianChartModel(LineCartesianLayerModel.build { series((0..39).toList()) })
+    val layer =
+      LineCartesianLayer(
+        lineProvider =
+          LineCartesianLayer.LineProvider.series(
+            LineCartesianLayer.Line(LineCartesianLayer.LineFill.single(Fill.Black))
+          ),
+        pointSpacing = 100.dp,
+      )
+    val chart = CartesianChart(layer, descriptionProvider = provider)
+    val scrollState = VicoScrollState(scrollEnabled = true)
+
+    setContent {
+      CartesianChartHost(
+        chart = chart,
+        model = model,
+        scrollState = scrollState,
+        modifier = Modifier.size(400.dp, 200.dp),
+      )
+    }
+
+    waitForIdle()
+
+    val xRegex = Regex("""^X: (\d+)\.""")
+    fun visibleIntervalXs(): List<Int> =
+      onAllNodes(hasContentDescription("X:", substring = true)).fetchSemanticsNodes().map { node ->
+        xRegex.find(node.config[SemanticsProperties.ContentDescription].first())!!.groupValues[1]
+          .toInt()
+      }
+
+    // At scroll = 0 with 400 dp width and 100 dp spacing, x = 0..4 are visible; x = 5 is the
+    // trailing edge buffer.
+    val atStart = visibleIntervalXs()
+    assertEquals(0, atStart.first())
+    assertTrue(atStart.last() >= 5, "Expected trailing edge-buffer interval, got $atStart")
+
+    // Scroll to the middle: expect one buffer interval before the first visible x and one after.
+    kotlinx.coroutines.runBlocking { scrollState.scroll(Scroll.Absolute.pixels(1000f)) }
+    waitForIdle()
+    val inMiddle = visibleIntervalXs()
+    assertTrue(inMiddle.first() <= 9, "Expected leading edge-buffer interval, got $inMiddle")
+    assertTrue(inMiddle.last() >= 15, "Expected trailing edge-buffer interval, got $inMiddle")
+
+    // At scroll = End, no buffer beyond the last x (39).
+    kotlinx.coroutines.runBlocking { scrollState.scroll(Scroll.Absolute.End) }
+    waitForIdle()
+    val atEnd = visibleIntervalXs()
+    assertEquals(39, atEnd.last())
   }
 
   private class CustomLayerModel(
