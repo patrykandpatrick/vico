@@ -59,9 +59,16 @@ public class ColumnCartesianLayerModel : CartesianLayerModel {
     require(seriesKeys.toSet().size == seriesKeys.size) { "Series keys must be unique." }
     this.seriesKeys = seriesKeys.toList()
     this.series = series.mapIndexed { seriesIndex, entries ->
-      entries
-        .sortedBy { entry -> entry.x }
-        .map { entry -> Entry(entry.x, entry.y, seriesKeys[seriesIndex], seriesIndex) }
+      val seriesKey = seriesKeys[seriesIndex]
+      // Entries from the builder already carry their series key and index, so they’re reused.
+      val sorted =
+        if ((1..<entries.size).all { entries[it - 1].x <= entries[it].x }) entries
+        else entries.sortedBy { it.x }
+      if (sorted.all { it.seriesKey == seriesKey && it.seriesIndex == seriesIndex }) {
+        sorted
+      } else {
+        sorted.map { entry -> Entry(entry.x, entry.y, seriesKey, seriesIndex) }
+      }
     }
     this.entries = this.series.flatten()
     val xRange = this.series.filter { it.isNotEmpty() }.rangeOfPair { it.first().x to it.last().x }
@@ -135,7 +142,8 @@ public class ColumnCartesianLayerModel : CartesianLayerModel {
      * should have the same size.
      */
     public fun series(x: Collection<Number>, y: Collection<Number>, key: Any = series.size) {
-      series.add(x.zip(y, ColumnCartesianLayerModel::Entry))
+      val seriesIndex = series.size
+      series.add(x.zip(y) { x, y -> Entry(x.toDouble(), y.toDouble(), key, seriesIndex) })
       seriesKeys.add(key)
     }
 

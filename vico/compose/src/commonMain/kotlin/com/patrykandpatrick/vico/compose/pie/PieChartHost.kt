@@ -59,6 +59,7 @@ internal class PieChartDisplay(
   val targetDrawingModel: PieChartDrawingModel,
   val startDrawingModel: PieChartDrawingModel?,
   val animation: Any?,
+  val animationSpec: AnimationSpec<Float>? = null,
 )
 
 /**
@@ -69,7 +70,7 @@ internal class PieChartDisplay(
 internal fun preparePieChartDisplay(
   chart: PieChart,
   previous: PieChartDisplay?,
-  animate: Boolean,
+  animationSpec: AnimationSpec<Float>?,
 ): PieChartDisplay? {
   if (previous?.chart === chart) return null
   if (previous != null && previous.chart.model == chart.model) {
@@ -79,16 +80,17 @@ internal fun preparePieChartDisplay(
       previous.targetDrawingModel,
       previous.startDrawingModel,
       previous.animation,
+      previous.animationSpec,
     )
   }
   val target = chart.createDrawingModel()
   // The slices on screen are restyled via the chart that knows them, so that slices that exit keep
   // their latest style.
   val start = previous?.drawingModel?.withStylesFrom(previous.chart)
-  return if (animate) {
-    PieChartDisplay(chart, target.transform(start, 0f), target, start, animation = Any())
+  return if (animationSpec != null) {
+    PieChartDisplay(chart, target.transform(start, 0f), target, start, Any(), animationSpec)
   } else {
-    PieChartDisplay(chart, target, target, start, animation = null)
+    PieChartDisplay(chart, target, target, null, animation = null)
   }
 }
 
@@ -125,68 +127,113 @@ public fun PieChartHost(
   chartAreaHeight: Dp = Defaults.PIE_CHART_AREA_HEIGHT.dp,
 ) {
   val isInPreview = LocalInspectionMode.current
+  // `true` only when the host is restored after showing data (e.g., after a configuration change).
   var hasShownData by rememberSaveable { mutableStateOf(false) }
+  // Whether the next reveal is skipped. Only the first chart after a restoration skips it.
+  val skipReveal = remember { ValueWrapper(hasShownData) }
   val displayState = remember { mutableStateOf<PieChartDisplay?>(null) }
   // What the layout depends on (the set of slices and their labels). This is published when a chart
   // is applied and when an animation ends (when exiting slices are dropped), not with every frame.
   val layoutState = remember { mutableStateOf<PieChartDisplay?>(null) }
+
+  // A reveal (from no slices) uses `initialAnimationSpec`; other updates use `animationSpec`.
+  fun getAnimationSpec(previous: PieChartDisplay?): AnimationSpec<Float>? =
+    when {
+      isInPreview -> null
+      previous == null || previous.drawingModel.slices.isEmpty() ->
+        initialAnimationSpec.takeUnless { skipReveal.value }
+      else -> animationSpec
+    }
+
   // `displayState` changes with every animation frame, so it’s read without subscribing this scope.
   val previous = Snapshot.withoutReadObservation { displayState.value }
-  val spec =
-    if (previous == null) initialAnimationSpec.takeUnless { hasShownData } else animationSpec
-  val prepared = preparePieChartDisplay(chart, previous, animate = spec != null && !isInPreview)
+  val prepared = preparePieChartDisplay(chart, previous, getAnimationSpec(previous))
   val display = prepared ?: previous!!
   SideEffect {
     if (prepared != null) {
-      displayState.value = prepared
-      layoutState.value = prepared
+      // If the display changed since this composition read it (e.g., an animation frame), the
+      // display is prepared again from what’s on screen, so no stale frame is applied.
+      val current = displayState.value
+      val applied =
+        if (current === previous) prepared
+        else preparePieChartDisplay(chart, current, getAnimationSpec(current))
+      if (applied != null) {
+        displayState.value = applied
+        layoutState.value = applied
+      }
+      skipReveal.value = false
     }
-    hasShownData = true
+    if (chart.model.entries.isNotEmpty()) hasShownData = true
   }
 
-  LaunchedEffect(display.animation) {
-    val animation = display.animation
-    if (animation == null || spec == null) return@LaunchedEffect
-    val target = display.targetDrawingModel
-    val start = display.startDrawingModel
+  // This reads the layout state, which changes on commits and animation ends, not every frame.
+  val animatedDisplay = layoutState.value?.takeIf { it.animation != null }
+  LaunchedEffect(animatedDisplay?.animation) {
+    val animatedDisplay = animatedDisplay ?: return@LaunchedEffect
+    val animation = animatedDisplay.animation
+    val spec = animatedDisplay.animationSpec ?: return@LaunchedEffect
+    val target = animatedDisplay.targetDrawingModel
+    val start = animatedDisplay.startDrawingModel
     animate(initialValue = 0f, targetValue = 1f, animationSpec = spec) { fraction, _ ->
       val current = displayState.value ?: return@animate
       if (current.animation !== animation) return@animate
-      val next =
+      displayState.value =
         PieChartDisplay(
           current.chart,
           target.transform(start, fraction),
           target,
           start,
           animation,
+          spec,
         )
-      displayState.value = next
-      if (fraction == 1f) layoutState.value = next
     }
+    // Finalize once the animation is over, whatever the last callback’s fraction was: the exited
+    // slices and the transition’s start are dropped.
+    val current = displayState.value ?: return@LaunchedEffect
+    if (current.animation !== animation) return@LaunchedEffect
+    val final = PieChartDisplay(current.chart, target, target, null, animation = null)
+    displayState.value = final
+    layoutState.value = final
   }
 
   val displayedChart = display.chart
   val measuringContext = rememberPieChartMeasuringContext(displayedChart.model)
-  val labelInsets = remember { ValueWrapper(PieInsets()) }
+  // The room for outside labels depends only on the layout state and the width. It’s computed by
+  // whichever phase needs it first (the layout phase doesn’t run when the height is fixed) and
+  // cached, so neither phase depends on a side effect of the other.
+  val labelInsetsCache = remember { ValueWrapper<Pair<Any, PieInsets>?>(null) }
+  fun getLabelInsets(layoutDisplay: PieChartDisplay, width: Float): PieInsets {
+    val context = measuringContext.value
+    val chartAreaHeightPx = with(context) { chartAreaHeight.pixels }
+    val key = Triple(layoutDisplay, width, chartAreaHeightPx)
+    labelInsetsCache.value?.let { (cachedKey, insets) -> if (cachedKey == key) return insets }
+    context.canvasWidth = width
+    val insets =
+      if (layoutDisplay.drawingModel.slices.isEmpty()) {
+        PieInsets()
+      } else {
+        layoutDisplay.chart.getLabelInsets(
+          context,
+          Rect(0f, 0f, width, chartAreaHeightPx),
+          layoutDisplay.drawingModel,
+        )
+      }
+    labelInsetsCache.value = key to insets
+    return insets
+  }
   val measureExtras =
     remember(measuringContext, chartAreaHeight) {
       { widthPx: Int ->
         // This reads the layout state, not the per-frame display, so animations don’t cause layout
         // passes. Its slices match the drawn ones throughout a transition.
-        val currentDisplay = layoutState.value
-        val context = measuringContext.value
-        val width = widthPx.toFloat()
-        val chartAreaHeightPx = with(context) { chartAreaHeight.pixels }
-        val chartAreaBounds = Rect(0f, 0f, width, chartAreaHeightPx)
-        context.canvasWidth = width
-        if (currentDisplay == null || currentDisplay.drawingModel.slices.isEmpty()) {
-          labelInsets.value = PieInsets()
+        val layoutDisplay = layoutState.value
+        if (layoutDisplay == null || layoutDisplay.drawingModel.slices.isEmpty()) {
           0f
         } else {
-          val chart = currentDisplay.chart
-          labelInsets.value =
-            chart.getLabelInsets(context, chartAreaBounds, currentDisplay.drawingModel)
-          chart.getLegendHeight(context) + labelInsets.value.top + labelInsets.value.bottom
+          val width = widthPx.toFloat()
+          val insets = getLabelInsets(layoutDisplay, width)
+          measuringContext.value.canvasWidth = width
+          layoutDisplay.chart.getLegendHeight(measuringContext.value) + insets.top + insets.bottom
         }
       }
     }
@@ -203,15 +250,16 @@ public fun PieChartHost(
       val currentDisplay = displayState.value ?: display
       val chart = currentDisplay.chart
       if (currentDisplay.drawingModel.slices.isEmpty()) return@Canvas
+      val labelInsets = getLabelInsets(layoutState.value ?: currentDisplay, size.width)
       measuringContext.value.canvasWidth = size.width
       val mutableDrawScope = MutableDrawScope(this)
       val legendHeight = chart.getLegendHeight(measuringContext.value)
       val chartBounds =
         Rect(
           left = 0f,
-          top = labelInsets.value.top,
+          top = labelInsets.top,
           right = size.width,
-          bottom = size.height - legendHeight - labelInsets.value.bottom,
+          bottom = size.height - legendHeight - labelInsets.bottom,
         )
       if (chartBounds.isEmpty) return@Canvas
       chart.bounds = chartBounds

@@ -109,6 +109,18 @@ public interface AnimatedCartesianLayer<M : CartesianLayerModel, D : Any> : Cart
 }
 
 /**
+ * Implemented by the built-in layers, which know which of their settings feed their ranges and
+ * drawing models. This lets settings-only updates skip the derivation for pure restyles.
+ */
+internal interface DerivationInputs {
+  /**
+   * Whether [other] (the predecessor of this layer) has the same model and the same settings that
+   * feed the ranges and drawing models, so that its ranges and drawing models can be reused.
+   */
+  fun hasSameDerivationInputs(other: CartesianLayer<*>): Boolean
+}
+
+/**
  * Creates and remembers a key for an [AnimatedCartesianLayer], tied to the current composition
  * slot. Pass it to the [AnimatedCartesianLayer] that’s created at this slot, so that its successors
  * are paired with it.

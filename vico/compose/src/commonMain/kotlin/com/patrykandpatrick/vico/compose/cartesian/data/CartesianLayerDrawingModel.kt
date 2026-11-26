@@ -33,6 +33,24 @@ public abstract class CartesianLayerDrawingModel<T : CartesianLayerDrawingModel.
     require(seriesKeys.toSet().size == seriesKeys.size) { "Series keys must be unique." }
   }
 
+  /**
+   * For each series, the [CartesianLayer] whose data the series came from, or `null` if unknown.
+   * Built-in layers and interpolators set and propagate this, so that a series exiting a layer is
+   * styled and laid out by the layer that had it. It’s metadata: it’s excluded from `equals`.
+   */
+  internal open val seriesSources: List<Any?>?
+    get() = null
+
+  /** Returns the [CartesianLayer] that series [index] came from, or `null` if unknown. */
+  internal fun getSeriesSource(index: Int): Any? = seriesSources?.getOrNull(index)
+
+  /**
+   * Returns a copy of this drawing model with [seriesSources] replaced. Drawing models that don’t
+   * support series sources return themselves.
+   */
+  internal open fun withSeriesSources(seriesSources: List<Any?>): CartesianLayerDrawingModel<T> =
+    this
+
   abstract override fun equals(other: Any?): Boolean
 
   abstract override fun hashCode(): Int

@@ -24,14 +24,21 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.Snapshot
 import androidx.compose.runtime.withFrameNanos
+import com.patrykandpatrick.vico.compose.cartesian.axis.Axis
+import com.patrykandpatrick.vico.compose.cartesian.data.CandlestickCartesianLayerModel
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartRanges
+import com.patrykandpatrick.vico.compose.cartesian.data.CartesianLayerDrawingModel
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianLayerDrawingModelInterpolator.Transition
+import com.patrykandpatrick.vico.compose.cartesian.data.CartesianLayerModel
+import com.patrykandpatrick.vico.compose.cartesian.data.ColumnCartesianLayerModel
+import com.patrykandpatrick.vico.compose.cartesian.data.LineCartesianLayerModel
 import com.patrykandpatrick.vico.compose.cartesian.data.MutableCartesianChartRanges
 import com.patrykandpatrick.vico.compose.cartesian.data.isSameDataAs
 import com.patrykandpatrick.vico.compose.cartesian.data.mergeKeys
 import com.patrykandpatrick.vico.compose.cartesian.data.toImmutable
 import com.patrykandpatrick.vico.compose.cartesian.layer.AnimatedCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.layer.CartesianLayer
+import com.patrykandpatrick.vico.compose.cartesian.layer.DerivationInputs
 import kotlin.coroutines.CoroutineContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -59,7 +66,15 @@ internal class CartesianChartDisplay(
   val frame: CartesianChartFrame,
   val drawList: List<CartesianLayerDrawItem>,
   val drawingModels: Map<Any, Any>,
-)
+) {
+  /** Checks that every [AnimatedCartesianLayer] in [drawList] has a drawing model. */
+  fun check() {
+    drawList.forEach { item ->
+      val layer = item.layer as? AnimatedCartesianLayer<*, *> ?: return@forEach
+      check(layer.key in drawingModels) { "No drawing model for the layer with key ${layer.key}." }
+    }
+  }
+}
 
 /**
  * What the layout depends on: a [frame], the [drawList], and drawing models whose series keys match
@@ -105,9 +120,32 @@ internal class CartesianChartPipeline(
   val frame: CartesianChartFrame?
     get() = layout?.frame
 
-  var animationSpec: AnimationSpec<Float>? = null
-  var initialAnimationSpec: AnimationSpec<Float>? = null
-  var isInPreview: Boolean = false
+  /** The host’s settings, as of the last [apply]. */
+  data class Settings(
+    val animationSpec: AnimationSpec<Float>?,
+    val initialAnimationSpec: AnimationSpec<Float>?,
+    val isInPreview: Boolean,
+  )
+
+  private var currentSettings = Settings(null, null, false)
+
+  var animationSpec: AnimationSpec<Float>?
+    get() = currentSettings.animationSpec
+    set(value) {
+      currentSettings = currentSettings.copy(animationSpec = value)
+    }
+
+  var initialAnimationSpec: AnimationSpec<Float>?
+    get() = currentSettings.initialAnimationSpec
+    set(value) {
+      currentSettings = currentSettings.copy(initialAnimationSpec = value)
+    }
+
+  var isInPreview: Boolean
+    get() = currentSettings.isInPreview
+    set(value) {
+      currentSettings = currentSettings.copy(isInPreview = value)
+    }
 
   /**
    * Whether to skip the initial animation of the first [CartesianChart] that this pipeline applies
@@ -129,26 +167,37 @@ internal class CartesianChartPipeline(
    * frame is drawn) via [apply], or `null` if [chart] is processed asynchronously or is already
    * applied. This doesn’t change the pipeline’s state, so it’s safe to call during composition.
    */
-  fun prepare(chart: CartesianChart): Commit? {
+  fun prepare(chart: CartesianChart, settings: Settings = currentSettings): Commit? {
     if (chart === lastSubmittedChart) return null
     // `display` changes with every animation frame, so it’s read without subscribing the caller.
     val display = Snapshot.withoutReadObservation { display }
     return when {
       display == null || display.drawList.isEmpty() ->
         if (chart.layers.isEmpty()) {
-          Commit(chart, null)
+          Commit(chart, display, null)
         } else {
-          Commit(chart, derive(chart, null, getAnimationSpec(display)))
+          Commit(chart, display, derive(chart, null, getAnimationSpec(display, settings)))
         }
-      hasSameData(chart, display.frame.chart) -> Commit(chart, deriveSettingsOnly(chart, display))
-      isInPreview -> Commit(chart, derive(chart, display, animationSpec = null))
-      else -> Commit(chart, null, isAsync = true)
+      hasSameData(chart, display.frame.chart) ->
+        Commit(chart, display, deriveSettingsOnly(chart, display, settings))
+      settings.isInPreview -> Commit(chart, display, derive(chart, display, animationSpec = null))
+      else -> Commit(chart, display, null, isAsync = true)
     }
   }
 
-  /** Applies [commit] (returned by [prepare]) or, if [commit] is `null`, does nothing. */
-  fun apply(commit: Commit?) {
+  /**
+   * Applies [settings] and [commit] (returned by [prepare]). If the display changed since [commit]
+   * was prepared (e.g., an asynchronous commit landed in between), [commit] is prepared again from
+   * the current display, so that no stale derivation is applied. This is to be called after
+   * composition (e.g., in a `SideEffect`), so a composition that’s never applied changes nothing.
+   */
+  fun apply(commit: Commit?, settings: Settings = currentSettings) {
+    currentSettings = settings
     if (commit == null || commit.chart === lastSubmittedChart) return
+    if (!commit.isAsync && commit.basedOn !== display) {
+      apply(prepare(commit.chart, settings), settings)
+      return
+    }
     lastSubmittedChart = commit.chart
     skipInitialAnimation = false
     val generation = ++generation
@@ -173,12 +222,15 @@ internal class CartesianChartPipeline(
    * transition from nothing (no display or an empty draw list) is a reveal, which uses
    * [initialAnimationSpec] unless [skipInitialAnimation] is `true`.
    */
-  private fun getAnimationSpec(previous: CartesianChartDisplay?): AnimationSpec<Float>? =
+  private fun getAnimationSpec(
+    previous: CartesianChartDisplay?,
+    settings: Settings = currentSettings,
+  ): AnimationSpec<Float>? =
     when {
-      isInPreview -> null
+      settings.isInPreview -> null
       previous == null || previous.drawList.isEmpty() ->
-        initialAnimationSpec.takeUnless { skipInitialAnimation }
-      else -> animationSpec
+        settings.initialAnimationSpec.takeUnless { skipInitialAnimation }
+      else -> settings.animationSpec
     }
 
   private fun emptyFrame(chart: CartesianChart, generation: Long) =
@@ -244,26 +296,19 @@ internal class CartesianChartPipeline(
           animations.remove(key)
         }
       }
-      derived.exitTransitions.forEach { (key, transition) ->
-        if (spec != null && animations[key]?.isExit != true) {
-          animations[key] = LayerAnimation(transition, spec, isExit = true)
-        }
+    }
+    // `derive` and `deriveSettingsOnly` guarantee that every exiting item in the draw list has a
+    // drawing model and an exit transition. A layer that’s already exiting keeps its timeline.
+    derived.exitTransitions.forEach { (key, transition) ->
+      if (spec != null && animations[key]?.isExit != true) {
+        animations[key] = LayerAnimation(transition, spec, isExit = true)
       }
     }
-    val drawList =
-      derived.drawList.filter { item ->
-        item.exitRanges == null || animations[item.layer.drawItemKey()]?.isExit == true
-      }
-    val exitingKeys =
-      drawList.mapNotNullTo(mutableSetOf()) { item ->
-        if (item.exitRanges != null) item.layer.drawItemKey() else null
-      }
+    val exitingKeys = derived.exitTransitions.keys
     animations.keys.retainAll { key -> key in frame.drawingModels || key in exitingKeys }
-    val drawingModels =
-      derived.startDrawingModels.filterKeys { key ->
-        key in frame.drawingModels || key in exitingKeys
-      }
-    publish(CartesianChartDisplay(frame, drawList, drawingModels), updateLayout = true)
+    val display =
+      CartesianChartDisplay(frame, derived.drawList, derived.startDrawingModels).also { it.check() }
+    publish(display, updateLayout = true)
     if (animations.isNotEmpty()) ensureAnimationLoop()
   }
 
@@ -336,19 +381,49 @@ internal class CartesianChartPipeline(
    * The affected layers animate from their drawing models on screen to the new final ones (or, if
    * animations are disabled, jump to the latter). A pure style change thus applies at once.
    */
-  private fun deriveSettingsOnly(chart: CartesianChart, previous: CartesianChartDisplay): Derived {
-    val ranges = getRanges(chart, previous)
-    val finalDrawingModels = getFinalDrawingModels(chart, ranges)
+  private fun deriveSettingsOnly(
+    chart: CartesianChart,
+    previous: CartesianChartDisplay,
+    settings: Settings,
+  ): Derived {
+    // Fast path: for each layer whose model and derivation-relevant settings are unchanged (e.g.,
+    // after a pure restyle), the previous drawing model is reused; if that holds for every layer,
+    // and the chart-level inputs are unchanged, so are the ranges.
+    val previousLayers = previous.frame.chart.layers
+    val unchangedLayers =
+      chart.layers.indices.filter { index ->
+        val layer = chart.layers[index]
+        layer is DerivationInputs && layer.hasSameDerivationInputs(previousLayers[index])
+      }
+    val ranges =
+      if (unchangedLayers.size == chart.layers.size && chart.xStep == previous.frame.chart.xStep) {
+        previous.frame.ranges
+      } else {
+        getRanges(chart, previous)
+      }
+    val reuseDrawingModels =
+      ranges === previous.frame.ranges || ranges.isSameAs(previous.frame.ranges)
+    val finalDrawingModels = buildMap {
+      chart.layers.forEachIndexed { index, layer ->
+        if (layer !is AnimatedCartesianLayer<*, *>) return@forEachIndexed
+        val previousDrawingModel =
+          previous.frame.drawingModels[layer.key].takeIf {
+            reuseDrawingModels && index in unchangedLayers
+          }
+        put(layer.key, previousDrawingModel ?: layer.createDrawingModel(ranges))
+      }
+    }
     val startDrawingModels = previous.drawingModels.toMutableMap()
     val restartedKeys = mutableSetOf<Any>()
     val transitions = mutableMapOf<Any, Transition<Any>>()
-    val spec = if (isInPreview) null else animationSpec
+    val spec = if (settings.isInPreview) null else settings.animationSpec
     val animate = spec != null
     chart.layers.forEach { layer ->
       if (layer !is AnimatedCartesianLayer<*, *>) return@forEach
       @Suppress("UNCHECKED_CAST") layer as AnimatedCartesianLayer<*, Any>
       val final = finalDrawingModels.getValue(layer.key)
-      if (previous.frame.drawingModels[layer.key] == final) return@forEach
+      val previousFinal = previous.frame.drawingModels[layer.key]
+      if (previousFinal === final || previousFinal == final) return@forEach
       restartedKeys += layer.key
       val current = previous.drawingModels[layer.key]?.takeIf { it::class == final::class }
       if (animate && current != null) {
@@ -359,14 +434,30 @@ internal class CartesianChartPipeline(
         startDrawingModels[layer.key] = final
       }
     }
+    // Running exits continue (with their own transitions) if updates are animated; otherwise,
+    // the exiting layers are dropped.
+    val exitTransitions = mutableMapOf<Any, Transition<Any>>()
+    val exitRanges = mutableMapOf<Any, CartesianChartRanges>()
+    if (animate) {
+      previous.drawList.forEach { item ->
+        val itemExitRanges = item.exitRanges ?: return@forEach
+        val key = item.layer.drawItemKey()
+        if (chart.layers.any { it.drawItemKey() == key }) return@forEach
+        val current = previous.drawingModels[key] ?: return@forEach
+        @Suppress("UNCHECKED_CAST") val layer = item.layer as AnimatedCartesianLayer<*, Any>
+        exitTransitions[key] = layer.createExitTransition(current)
+        exitRanges[key] = itemExitRanges
+      }
+    }
+    val keptKeys = finalDrawingModels.keys + exitTransitions.keys
     return Derived(
       chart = chart,
       ranges = ranges,
       finalDrawingModels = finalDrawingModels,
-      drawList = getDrawList(chart, previous, emptyMap()),
-      startDrawingModels = startDrawingModels,
+      drawList = getDrawList(chart, previous, exitRanges),
+      startDrawingModels = startDrawingModels.filterKeys { it in keptKeys },
       transitions = transitions,
-      exitTransitions = emptyMap(),
+      exitTransitions = exitTransitions,
       animationSpec = spec,
       isSettingsOnly = true,
       restartedKeys = restartedKeys,
@@ -375,8 +466,10 @@ internal class CartesianChartPipeline(
 
   private class PendingChart(val chart: CartesianChart, val generation: Long)
 
+  /** [derived] was prepared from [basedOn], the display at the time. */
   class Commit(
     val chart: CartesianChart,
+    val basedOn: CartesianChartDisplay?,
     val derived: Derived?,
     val isAsync: Boolean = false,
   )
@@ -441,6 +534,48 @@ internal class CartesianChartPipeline(
         getRanges(chart)
       }
 
+    /**
+     * Returns this display’s drawing models, with each series attributed to the latest layer that
+     * has it in its model (the layer in [CartesianChartDisplay.drawList]), so that series exiting
+     * after this update are styled as they were most recently (e.g., after a restyle).
+     */
+    fun CartesianChartDisplay.getDrawingModelsWithLatestSources(): Map<Any, Any> {
+      val layers = drawList.associate { it.layer.drawItemKey() to it.layer }
+      return drawingModels.mapValues { (key, drawingModel) ->
+        val layer = layers[key] ?: return@mapValues drawingModel
+        if (drawingModel !is CartesianLayerDrawingModel<*>) return@mapValues drawingModel
+        val layerSeriesKeys = layer.model.getSeriesKeys() ?: return@mapValues drawingModel
+        drawingModel.withSeriesSources(
+          drawingModel.seriesKeys.mapIndexed { index, seriesKey ->
+            if (seriesKey in layerSeriesKeys) layer else drawingModel.getSeriesSource(index)
+          },
+        )
+      }
+    }
+
+    private fun CartesianLayerModel.getSeriesKeys(): Collection<Any>? =
+      when (this) {
+        is LineCartesianLayerModel -> seriesKeys.toSet()
+        is ColumnCartesianLayerModel -> seriesKeys.toSet()
+        is CandlestickCartesianLayerModel -> setOf(seriesKey)
+        else -> null
+      }
+
+    /** Whether these ranges and [other] have the same values. */
+    fun CartesianChartRanges.isSameAs(other: CartesianChartRanges): Boolean {
+      if (minX != other.minX || maxX != other.maxX || xStep != other.xStep) return false
+      return listOf(null, Axis.Position.Vertical.Start, Axis.Position.Vertical.End).all { position
+        ->
+        val a = getYRangeOrNull(position)
+        val b = other.getYRangeOrNull(position)
+        a?.minY == b?.minY && a?.maxY == b?.maxY
+      }
+    }
+
+    private fun CartesianChartRanges.getYRangeOrNull(
+      position: Axis.Position.Vertical?,
+    ): CartesianChartRanges.YRange? = runCatching { getYRange(position) }.getOrNull()
+
     fun getFinalDrawingModels(chart: CartesianChart, ranges: CartesianChartRanges): Map<Any, Any> =
       buildMap {
         chart.layers.forEach { layer ->
@@ -452,10 +587,16 @@ internal class CartesianChartPipeline(
     fun CartesianLayer<*>.drawItemKey(): Any =
       if (this is AnimatedCartesianLayer<*, *>) key else this
 
+    /** Returns a transition that plays this layer’s entry backward, starting from [current]. */
+    fun AnimatedCartesianLayer<*, Any>.createExitTransition(current: Any): Transition<Any> {
+      val enter = drawingModelInterpolator.createTransition(null, current)
+      return Transition { fraction -> enter.interpolate(1 - fraction) }
+    }
+
     /**
      * Returns the draw list for [chart]: its layers, plus the layers of [previous]’s draw list that
-     * are absent from [chart] and are in [exitRanges] or are already exiting. Exiting layers keep
-     * their positions relative to their neighbors.
+     * are absent from [chart] and are in [exitRanges] (the exiting layers, which keep their
+     * positions relative to their neighbors).
      */
     fun getDrawList(
       chart: CartesianChart,
@@ -470,7 +611,6 @@ internal class CartesianChartPipeline(
           .mapNotNull { (key, item) ->
             when {
               key in newItems -> null
-              item.exitRanges != null -> key to item
               key in exitRanges ->
                 key to CartesianLayerDrawItem(item.layer, exitRanges.getValue(key))
               else -> null
@@ -501,7 +641,7 @@ internal class CartesianChartPipeline(
       val animate = animationSpec != null
       val ranges = getRanges(chart, previous)
       val finalDrawingModels = getFinalDrawingModels(chart, ranges)
-      val previousDrawingModels = previous?.drawingModels.orEmpty()
+      val previousDrawingModels = previous?.getDrawingModelsWithLatestSources().orEmpty()
       val startDrawingModels = mutableMapOf<Any, Any>()
       val transitions = mutableMapOf<Any, Transition<Any>>()
       chart.layers.forEach { layer ->
@@ -525,8 +665,7 @@ internal class CartesianChartPipeline(
           if (layer.key in finalDrawingModels) return@forEach
           @Suppress("UNCHECKED_CAST") layer as AnimatedCartesianLayer<*, Any>
           val current = previousDrawingModels[layer.key] ?: return@forEach
-          val enter = layer.drawingModelInterpolator.createTransition(null, current)
-          exitTransitions[layer.key] = Transition { fraction -> enter.interpolate(1 - fraction) }
+          exitTransitions[layer.key] = layer.createExitTransition(current)
           exitRanges[layer.key] = item.exitRanges ?: previous.frame.ranges
           startDrawingModels[layer.key] = current
         }

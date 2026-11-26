@@ -218,7 +218,7 @@ class ColumnCartesianLayerTest {
   // Hooks and caching.
 
   @Test
-  fun `the stack geometry is reused across frames and rebuilt when the density changes`() {
+  fun `the stack layout is computed once per layer`() {
     var stackKeyProviderCalls = 0
     val model =
       ColumnCartesianLayerModel(listOf(entries(0 to 1), entries(0 to 2)), listOf("a", "b"))
@@ -240,9 +240,9 @@ class ColumnCartesianLayerTest {
     }
 
     repeat(3) { draw() }
-    assertEquals(2, stackKeyProviderCalls)
     draw(density = 2f)
-    assertEquals(4, stackKeyProviderCalls)
+    // The layout was computed when the ranges were (off the main thread, for asynchronous updates).
+    assertEquals(0, stackKeyProviderCalls)
   }
 
   @Test
@@ -272,8 +272,18 @@ class ColumnCartesianLayerTest {
       ColumnCartesianLayerModel(listOf(entries(0 to 1), entries(0 to 3)), listOf("a", "c"))
     val columnsByKey =
       mapOf<Any, RecordingColumn>("a" to columns[0], "b" to columns[1], "c" to columns[2])
-    val layer = layer(model, { entry -> columnsByKey.getValue(entry.seriesKey) })
-    val exitingEntry = ColumnCartesianLayerModel.Entry(0.0, 2.0, "b", 1)
+    val provider = ColumnCartesianLayer.ColumnProvider { entry ->
+      columnsByKey.getValue(entry.seriesKey)
+    }
+    val layer = layer(model, provider)
+    // The layer that `b` came from.
+    val previousModel =
+      ColumnCartesianLayerModel(
+        listOf(entries(0 to 1), entries(0 to 2), entries(0 to 3)),
+        listOf("a", "b", "c"),
+      )
+    val previousLayer = layer(previousModel, provider)
+    val exitingEntry = previousModel.series[1][0]
     val drawingModel =
       ColumnCartesianLayerDrawingModel(
         listOf(
@@ -282,6 +292,8 @@ class ColumnCartesianLayerTest {
           mapOf(0.0 to ColumnCartesianLayerDrawingModel.Entry(0.3f, model.series[1][0])),
         ),
         listOf("a", "b", "c"),
+        1f,
+        listOf(layer, previousLayer, layer),
       )
 
     layer.draw(createContext(layer, drawingModel = drawingModel))

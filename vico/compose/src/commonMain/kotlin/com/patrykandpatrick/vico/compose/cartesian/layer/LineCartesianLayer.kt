@@ -72,6 +72,7 @@ public open class LineCartesianLayer(
   override val key: Any,
 ) :
   BaseCartesianLayer<LineCartesianLayerModel>(),
+  DerivationInputs,
   AnimatedCartesianLayer<LineCartesianLayerModel, LineCartesianLayerDrawingModel> {
   /**
    * Defines the appearance of a line in a line chart.
@@ -374,6 +375,9 @@ public open class LineCartesianLayer(
    * In a composable function, a lambda converted to [LineProvider] is memoized while the values it
    * captures are unchanged (compared via `equals` for stable types and by identity otherwise), so
    * it needs no explicit `remember`.
+   *
+   * It’s asked only about the series and entries in its layer’s model: a series that exits after a
+   * data update keeps the style it had, from the layer it came from.
    */
   public fun interface LineProvider {
     /** Returns the [Line] for the specified series. */
@@ -432,6 +436,9 @@ public open class LineCartesianLayer(
    * In a composable function, a lambda converted to [PointProvider] is memoized while the values it
    * captures are unchanged (compared via `equals` for stable types and by identity otherwise), so
    * it needs no explicit `remember`.
+   *
+   * It’s asked only about the series and entries in its layer’s model: a series that exits after a
+   * data update keeps the points it had, from the layer it came from.
    */
   @Immutable
   public fun interface PointProvider {
@@ -508,77 +515,113 @@ public open class LineCartesianLayer(
       // inter-series bleed-through.
       saveLayer(opacity = drawingModel.opacity)
 
-      val drawingModelSeriesIndices =
-        drawingModel.seriesKeys.withIndex().associate { (index, key) -> key to index }
-      mergeKeys(model.seriesKeys, drawingModel.seriesKeys).forEach { seriesKey ->
-        val pointInfoMap = drawingModelSeriesIndices[seriesKey]?.let(drawingModel::get)
-        val modelSeriesIndex = seriesIndices[seriesKey]
-        val isExiting = modelSeriesIndex == null
-        val series =
-          if (modelSeriesIndex != null) {
-            model.series[modelSeriesIndex]
-          } else {
-            pointInfoMap!!.values.map { it.entry }
-          }
-        val seriesIndex = modelSeriesIndex ?: series.firstOrNull()?.seriesIndex ?: return@forEach
-
-        linePath.rewind()
-        val line =
-          if (modelSeriesIndex != null) {
-            lines[modelSeriesIndex]
-          } else {
-            lineProvider.getLine(seriesKey, seriesIndex)
-          }
-
-        val drawingStartAlignmentCorrection =
-          layoutDirectionMultiplier * layerDimensions.startPadding
-
-        val drawingStart =
-          layerBounds.getStart(isLtr = isLtr) + drawingStartAlignmentCorrection - scroll
-
-        val points = mutableListOf<Offset>()
-        val visibleIndexRange =
-          collectPointsAndVisibleIndexRange(
-            interpolator = line.interpolator,
-            series = series,
-            drawingStart = drawingStart,
-            pointInfoMap = pointInfoMap,
-            drawFullLineLength = line.stroke is LineStroke.Dashed,
-            points = points,
+      if (drawingModel.seriesKeys == model.seriesKeys) {
+        // No series is entering or exiting.
+        model.series.forEachIndexed { index, series ->
+          drawSeries(
+            model.seriesKeys[index],
+            index,
+            series,
+            lines[index],
+            drawingModel[index],
+            false,
           )
-
-        if (points.isNotEmpty() && !visibleIndexRange.isEmpty()) {
-          connectPoints(line.interpolator, points, visibleIndexRange)
         }
-
-        line.fillColor?.let { color ->
-          line.draw(context, linePath, color, verticalAxisPosition)
-          if (!isExiting) {
-            forEachPointInBounds(series, drawingStart, pointInfoMap) { entry, x, y, _, _ ->
-              updateMarkerTargets(entry, seriesKey, x, y, color)
-            }
+      } else {
+        val drawingModelSeriesIndices =
+          drawingModel.seriesKeys.withIndex().associate { (index, key) -> key to index }
+        mergeKeys(model.seriesKeys, drawingModel.seriesKeys).forEach { seriesKey ->
+          val drawingModelIndex = drawingModelSeriesIndices[seriesKey]
+          val pointInfoMap = drawingModelIndex?.let(drawingModel::get)
+          val modelSeriesIndex = seriesIndices[seriesKey]
+          if (modelSeriesIndex != null) {
+            val series = model.series[modelSeriesIndex]
+            drawSeries(
+              seriesKey,
+              modelSeriesIndex,
+              series,
+              lines[modelSeriesIndex],
+              pointInfoMap,
+              false,
+            )
+          } else {
+            // An exiting series is drawn with the data and style of the layer it came from, so this
+            // layer’s providers aren’t asked about it.
+            val source =
+              drawingModelIndex?.let(drawingModel::getSeriesSource) as? LineCartesianLayer
+                ?: return@forEach
+            val sourceIndex = source.seriesIndices[seriesKey] ?: return@forEach
+            drawSeries(
+              seriesKey,
+              sourceIndex,
+              source.model.series[sourceIndex],
+              source.lines[sourceIndex],
+              pointInfoMap,
+              true,
+            )
           }
         }
-          ?: run {
-            val (lineBitmap, lineCanvas) = getBitmap(cacheKeyNamespace, key, seriesKey, "line")
-            val (lineFillBitmap, lineFillCanvas) =
-              getBitmap(cacheKeyNamespace, key, seriesKey, "lineFill")
-            line.draw(context, linePath, lineCanvas, lineFillCanvas, verticalAxisPosition)
-            lineCanvas.drawImage(lineFillBitmap, Offset.Zero, srcInPaint)
-            canvas.drawImage(lineBitmap, Offset.Zero, EmptyPaint)
-            if (!isExiting) {
-              forEachPointInBounds(series, drawingStart, pointInfoMap) { entry, x, y, _, _ ->
-                updateMarkerTargets(entry, seriesKey, x, y, lineFillBitmap)
-              }
-            }
-          }
-
-        drawPointsAndDataLabels(line, series, seriesKey, seriesIndex, drawingStart, pointInfoMap)
       }
 
       canvas.restore()
       if (isSweepInProgress) canvas.restore()
     }
+  }
+
+  private fun CartesianDrawingContext.drawSeries(
+    seriesKey: Any,
+    seriesIndex: Int,
+    series: List<LineCartesianLayerModel.Entry>,
+    line: Line,
+    pointInfoMap: Map<Double, LineCartesianLayerDrawingModel.Entry>?,
+    isExiting: Boolean,
+  ) {
+    val context = this
+    linePath.rewind()
+
+    val drawingStartAlignmentCorrection = layoutDirectionMultiplier * layerDimensions.startPadding
+
+    val drawingStart =
+      layerBounds.getStart(isLtr = isLtr) + drawingStartAlignmentCorrection - scroll
+
+    val points = mutableListOf<Offset>()
+    val visibleIndexRange =
+      collectPointsAndVisibleIndexRange(
+        interpolator = line.interpolator,
+        series = series,
+        drawingStart = drawingStart,
+        pointInfoMap = pointInfoMap,
+        drawFullLineLength = line.stroke is LineStroke.Dashed,
+        points = points,
+      )
+
+    if (points.isNotEmpty() && !visibleIndexRange.isEmpty()) {
+      connectPoints(line.interpolator, points, visibleIndexRange)
+    }
+
+    line.fillColor?.let { color ->
+      line.draw(context, linePath, color, verticalAxisPosition)
+      if (!isExiting) {
+        forEachPointInBounds(series, drawingStart, pointInfoMap) { entry, x, y, _, _ ->
+          updateMarkerTargets(entry, seriesKey, x, y, color)
+        }
+      }
+    }
+      ?: run {
+        val (lineBitmap, lineCanvas) = getBitmap(cacheKeyNamespace, key, seriesKey, "line")
+        val (lineFillBitmap, lineFillCanvas) =
+          getBitmap(cacheKeyNamespace, key, seriesKey, "lineFill")
+        line.draw(context, linePath, lineCanvas, lineFillCanvas, verticalAxisPosition)
+        lineCanvas.drawImage(lineFillBitmap, Offset.Zero, srcInPaint)
+        canvas.drawImage(lineBitmap, Offset.Zero, EmptyPaint)
+        if (!isExiting) {
+          forEachPointInBounds(series, drawingStart, pointInfoMap) { entry, x, y, _, _ ->
+            updateMarkerTargets(entry, seriesKey, x, y, lineFillBitmap)
+          }
+        }
+      }
+
+    drawPointsAndDataLabels(line, series, seriesKey, seriesIndex, drawingStart, pointInfoMap)
   }
 
   protected open fun CartesianDrawingContext.updateMarkerTargets(
@@ -871,6 +914,10 @@ public open class LineCartesianLayer(
     model.series.forEachIndexed { seriesIndex, series ->
       val interpolator = lines[seriesIndex].interpolator
       if (series.isEmpty()) return@forEachIndexed
+      // These don’t overshoot, so the series’ own range (covered by the model’s) is the result.
+      if (interpolator === Interpolator.Sharp || interpolator is CubicInterpolator) {
+        return@forEachIndexed
+      }
       val yRange = interpolator.getYRange(series.map { it.y })
       minY = min(minY, yRange.start)
       maxY = max(maxY, yRange.endInclusive)
@@ -929,6 +976,18 @@ public open class LineCartesianLayer(
     return result
   }
 
+  override fun hasSameDerivationInputs(other: CartesianLayer<*>): Boolean =
+    // Subclasses may derive differently, so only the exact class qualifies.
+    this::class == LineCartesianLayer::class &&
+      other::class == LineCartesianLayer::class &&
+      other is LineCartesianLayer &&
+      key == other.key &&
+      model.isSameDataAs(other.model) &&
+      rangeProvider == other.rangeProvider &&
+      verticalAxisPosition == other.verticalAxisPosition &&
+      drawingModelInterpolator == other.drawingModelInterpolator &&
+      lines.map { it.interpolator } == other.lines.map { it.interpolator }
+
   override fun createDrawingModel(ranges: CartesianChartRanges): LineCartesianLayerDrawingModel {
     val yRange = ranges.getYRange(verticalAxisPosition)
     return LineCartesianLayerDrawingModel(
@@ -942,6 +1001,9 @@ public open class LineCartesianLayer(
         }
       },
       model.seriesKeys,
+      opacity = 1f,
+      sweepFraction = 1f,
+      seriesSources = List(model.series.size) { this },
     )
   }
 

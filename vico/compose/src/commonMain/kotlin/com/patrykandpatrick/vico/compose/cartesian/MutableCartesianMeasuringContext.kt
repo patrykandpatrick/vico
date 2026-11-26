@@ -43,5 +43,6 @@ internal class MutableCartesianMeasuringContext(
 ) : MeasuringContext, CartesianMeasuringContext {
   @Suppress("UNCHECKED_CAST")
   override fun <D : Any> getDrawingModel(layer: AnimatedCartesianLayer<*, D>): D =
-    drawingModels[layer.key] as D? ?: layer.createDrawingModel(ranges)
+    drawingModels[layer.key] as D?
+      ?: error("No drawing model for the layer with key ${layer.key}. Is it part of the chart?")
 }

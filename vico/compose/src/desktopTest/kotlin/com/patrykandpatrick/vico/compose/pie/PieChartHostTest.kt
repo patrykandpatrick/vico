@@ -214,7 +214,11 @@ class PieChartHostTest {
    * Shows a pie whose slices have outside labels, with an unconstrained height. A value of 9 gets a
    * three-line label, so its slice needs the most room.
    */
-  private fun ComposeUiTest.setLabelledPie(state: LabelledPie, model: () -> PieChartModel) {
+  private fun ComposeUiTest.setLabelledPie(
+    state: LabelledPie,
+    animationSpec: androidx.compose.animation.core.AnimationSpec<Float> = spec,
+    model: () -> PieChartModel,
+  ) {
     mainClock.autoAdvance = false
     val formatter =
       com.patrykandpatrick.vico.compose.pie.data.PieValueFormatter { context, value, _ ->
@@ -236,7 +240,7 @@ class PieChartHostTest {
       PieChartHost(
         chart,
         Modifier.width(200.dp).background(Color.White).testTag(tag),
-        animationSpec = spec,
+        animationSpec = animationSpec,
         initialAnimationSpec = null,
       )
     }
@@ -292,5 +296,47 @@ class PieChartHostTest {
     // The three-line label is gone, so the room is released in one step.
     assertTrue(hostHeight() < height, "The room should be released after the exit.")
     assertTrue(radius > 0f)
+  }
+
+  @Test
+  fun `An animation is finalized even if its last frame isn’t exactly 1`() = runComposeUiTest {
+    val state = LabelledPie()
+    // An easing that never quite reaches 1.
+    val shortSpec = tween<Float>(durationMillis = 400, easing = { if (it >= 1f) 0.999f else it })
+    var model by mutableStateOf(PieChartModel.build(mapOf("a" to 1, "b" to 9)))
+    setLabelledPie(state, shortSpec) { model }
+    mainClock.advanceTimeByFrame()
+    val height = hostHeight()
+    model = PieChartModel.build(mapOf("a" to 1))
+    mainClock.advanceTimeBy(2_000)
+    // The exited slice is dropped, so its room is released.
+    assertTrue(hostHeight() < height, "The exited slice is still in the layout.")
+  }
+
+  @Test
+  fun `A pie that starts empty reveals its first data with the initial spec`() = runComposeUiTest {
+    mainClock.autoAdvance = false
+    var model by mutableStateOf(PieChartModel.build(emptyList<Number>()))
+    setContent {
+      PieChartHost(
+        rememberPieChart(
+          model,
+          PieChart.SliceProvider.series(
+            PieChart.Slice(Fill(Color.Red)),
+            PieChart.Slice(Fill(Color.Blue)),
+          ),
+        ),
+        Modifier.size(200.dp).background(Color.White).testTag(tag),
+        animationSpec = null,
+        initialAnimationSpec = spec,
+      )
+    }
+    mainClock.advanceTimeByFrame()
+    model = PieChartModel.build(1, 2)
+    mainClock.advanceTimeBy(200)
+    val during = countPixels(isColored)
+    mainClock.advanceTimeBy(1_000)
+    val after = countPixels(isColored)
+    assertTrue(during in 1..<after, "Expected a reveal animation; got $during of $after.")
   }
 }

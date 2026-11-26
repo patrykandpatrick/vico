@@ -29,12 +29,14 @@ internal object ColumnCartesianLayerDrawingModelInterpolator :
     new: ColumnCartesianLayerDrawingModel,
     seriesKeys: List<Any>,
     entries: List<Map<Double, ColumnCartesianLayerDrawingModel.Entry>>,
+    seriesSources: List<Any?>,
     fraction: Float,
   ): ColumnCartesianLayerDrawingModel =
     ColumnCartesianLayerDrawingModel(
       entries = entries,
       seriesKeys = seriesKeys,
       opacity = old?.opacity.orZero.lerp(new.opacity, fraction),
+      seriesSources = seriesSources,
     )
 
   override fun transformEntry(

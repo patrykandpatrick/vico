@@ -23,12 +23,24 @@ import com.patrykandpatrick.vico.compose.cartesian.layer.LineCartesianLayer
  * is the fraction of the layer swept in from the start edge (0 = hidden, 1 = fully visible). While
  * a series is exiting, its key is in [seriesKeys] but not in the [LineCartesianLayerModel].
  */
-public class LineCartesianLayerDrawingModel(
+public class LineCartesianLayerDrawingModel
+internal constructor(
   private val entries: List<Map<Double, Entry>>,
   seriesKeys: List<Any>,
-  public val opacity: Float = 1f,
-  public val sweepFraction: Float = 1f,
+  public val opacity: Float,
+  public val sweepFraction: Float,
+  override val seriesSources: List<Any?>?,
 ) : CartesianLayerDrawingModel<LineCartesianLayerDrawingModel.Entry>(entries, seriesKeys) {
+  /** Creates a [LineCartesianLayerDrawingModel]. */
+  public constructor(
+    entries: List<Map<Double, Entry>>,
+    seriesKeys: List<Any>,
+    opacity: Float = 1f,
+    sweepFraction: Float = 1f,
+  ) : this(entries, seriesKeys, opacity, sweepFraction, null)
+
+  override fun withSeriesSources(seriesSources: List<Any?>): LineCartesianLayerDrawingModel =
+    LineCartesianLayerDrawingModel(entries, seriesKeys, opacity, sweepFraction, seriesSources)
 
   override fun equals(other: Any?): Boolean =
     this === other ||

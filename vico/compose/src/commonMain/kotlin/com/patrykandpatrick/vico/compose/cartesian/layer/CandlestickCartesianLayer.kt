@@ -67,6 +67,7 @@ public open class CandlestickCartesianLayer(
   override val key: Any,
 ) :
   BaseCartesianLayer<CandlestickCartesianLayerModel>(),
+  DerivationInputs,
   AnimatedCartesianLayer<CandlestickCartesianLayerModel, CandlestickCartesianLayerDrawingModel> {
   /**
    * Defines a candle style.
@@ -94,9 +95,6 @@ public open class CandlestickCartesianLayer(
   /** The widest [Candle], computed once per [CandlestickCartesianLayer]. */
   private val widestCandleWidth: Dp by lazy { getWidestCandleWidth(model.series) }
 
-  /** The widest candle per exiting series, computed once per exit. Owned by the main thread. */
-  private val exitingSeriesWidths = mutableMapOf<Pair<Any, Any?>, Dp>()
-
   private fun getWidestCandleWidth(series: List<CandlestickCartesianLayerModel.Entry>): Dp =
     series.maxOfOrNull { candleProvider.getCandle(it).width } ?: 0.dp
 
@@ -107,14 +105,17 @@ public open class CandlestickCartesianLayer(
       val drawingModelSeriesIndex = drawingModel.seriesKeys.indexOf(model.seriesKey)
       drawingModel.seriesKeys.forEachIndexed { index, key ->
         if (index == drawingModelSeriesIndex) return@forEachIndexed
-        val series = drawingModel[index].values.map { it.entry }
+        // An exiting series is drawn with the data and style of the layer it came from, so this
+        // layer’s candle provider isn’t asked about it.
+        val source =
+          drawingModel.getSeriesSource(index) as? CandlestickCartesianLayer ?: return@forEachIndexed
+        if (source.model.seriesKey != key) return@forEachIndexed
         drawSeries(
-          series,
+          source.model.series,
           key,
           drawingModel[index],
-          exitingSeriesWidths.getOrPut(key to series.firstOrNull()) {
-            getWidestCandleWidth(series)
-          },
+          source.widestCandleWidth,
+          source.candleProvider,
           isExiting = true,
         )
       }
@@ -123,6 +124,7 @@ public open class CandlestickCartesianLayer(
         model.seriesKey,
         drawingModel.getOrNull(drawingModelSeriesIndex),
         widestCandleWidth,
+        candleProvider,
         isExiting = false,
       )
     }
@@ -132,6 +134,7 @@ public open class CandlestickCartesianLayer(
     key: Any,
     drawingModelSeries: Map<Double, CandlestickCartesianLayerDrawingModel.Entry>?,
     widestCandleWidth: Dp,
+    candleProvider: CandleProvider,
     isExiting: Boolean,
   ) {
     val yRange = ranges.getYRange(verticalAxisPosition)
@@ -338,6 +341,17 @@ public open class CandlestickCartesianLayer(
     return result
   }
 
+  override fun hasSameDerivationInputs(other: CartesianLayer<*>): Boolean =
+    // Subclasses may derive differently, so only the exact class qualifies.
+    this::class == CandlestickCartesianLayer::class &&
+      other::class == CandlestickCartesianLayer::class &&
+      other is CandlestickCartesianLayer &&
+      key == other.key &&
+      model.isSameDataAs(other.model) &&
+      rangeProvider == other.rangeProvider &&
+      verticalAxisPosition == other.verticalAxisPosition &&
+      drawingModelInterpolator == other.drawingModelInterpolator
+
   override fun createDrawingModel(
     ranges: CartesianChartRanges,
   ): CandlestickCartesianLayerDrawingModel {
@@ -345,6 +359,8 @@ public open class CandlestickCartesianLayer(
     return CandlestickCartesianLayerDrawingModel(
       entries = listOf(model.series.associate { it.x to it.toCandleInfo(yRange) }),
       seriesKeys = listOf(model.seriesKey),
+      opacity = 1f,
+      seriesSources = listOf(this),
     )
   }
 
@@ -358,6 +374,9 @@ public open class CandlestickCartesianLayer(
    * In a composable function, a lambda converted to [CandleProvider] is memoized while the values
    * it captures are unchanged (compared via `equals` for stable types and by identity otherwise),
    * so it needs no explicit `remember`.
+   *
+   * It’s asked only about the series and entries in its layer’s model: a series that exits after a
+   * data update keeps the style it had, from the layer it came from.
    */
   public fun interface CandleProvider {
     /** Returns the [Candle] for [entry]. */

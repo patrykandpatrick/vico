@@ -86,6 +86,7 @@ public open class ColumnCartesianLayer(
   override val key: Any,
 ) :
   BaseCartesianLayer<ColumnCartesianLayerModel>(),
+  DerivationInputs,
   AnimatedCartesianLayer<ColumnCartesianLayerModel, ColumnCartesianLayerDrawingModel> {
   private val _markerTargets =
     mutableMapOf<Double, MutableList<MutableColumnCartesianLayerMarkerTarget>>()
@@ -103,17 +104,26 @@ public open class ColumnCartesianLayer(
   /** The widest column per series, computed once per [ColumnCartesianLayer]. */
   private val seriesThicknesses: List<Dp> by lazy { model.series.map(::getMaxThickness) }
 
-  /**
-   * The widest column per exiting series, computed once per exit (exiting series keep their
-   * entries). This is draw-time state, owned by the main thread.
-   */
-  private val exitingSeriesThicknesses = mutableMapOf<Pair<Any, Any?>, Dp>()
+  /** The stack layout of [model]’s series, computed once per [ColumnCartesianLayer]. */
+  private val modelStackLayout: ColumnStackLayout by lazy {
+    stackKeyProvider.getLayout(model.seriesKeys)
+  }
 
-  private fun getExitingSeriesThickness(
-    seriesKey: Any,
-    series: List<ColumnCartesianLayerModel.Entry>,
-  ): Dp =
-    exitingSeriesThicknesses.getOrPut(seriesKey to series.firstOrNull()) { getMaxThickness(series) }
+  private val modelSeriesIndices: Map<Any, Int> by lazy {
+    model.seriesKeys.withIndex().associate { (index, key) -> key to index }
+  }
+
+  /** The [DrawnSeries] for drawing models without exiting series, computed once. */
+  private val modelDrawnSeries: DrawnSeries by lazy {
+    DrawnSeries(
+      model.seriesKeys,
+      model.series,
+      List(model.series.size) { columnProvider },
+      BooleanArray(model.series.size),
+      seriesThicknesses,
+      modelStackLayout,
+    )
+  }
 
   private fun getMaxThickness(series: List<ColumnCartesianLayerModel.Entry>): Dp {
     var thickness = 0.dp
@@ -149,6 +159,13 @@ public open class ColumnCartesianLayer(
       layerBounds.bottom + (yRange.minY / yRange.length).toFloat() * layerBounds.height
     val visibleXRange = getVisibleXRange()
     val drawnSeries = getDrawnSeries(drawingModel)
+    val columnInfoMaps: List<Map<Double, ColumnCartesianLayerDrawingModel.Entry>?> =
+      if (drawingModel.seriesKeys == drawnSeries.keys) {
+        drawingModel
+      } else {
+        val indices = drawingModel.seriesKeys.withIndex().associate { (index, key) -> key to index }
+        drawnSeries.keys.map { key -> indices[key]?.let(drawingModel::get) }
+      }
     val geometry = getStackGeometry(drawnSeries)
     val layout = geometry.layout
 
@@ -160,7 +177,7 @@ public open class ColumnCartesianLayer(
 
       layout.forEachSeriesIndex(stackIndex) { index ->
         val entryCollection = drawnSeries.series[index]
-        val columnInfoMap = drawnSeries.drawingModelSeries[index]
+        val columnInfoMap = columnInfoMaps[index]
         val isExiting = drawnSeries.isExiting[index]
         drawingStart = getDrawingStart(index, geometry) - scroll
 
@@ -173,7 +190,7 @@ public open class ColumnCartesianLayer(
           height =
             (columnInfo?.height ?: (abs(entry.y) / yRange.length)).toFloat() * layerBounds.height
           val xSpacingMultiplier = ((entry.x - ranges.minX) / ranges.xStep).toFloat()
-          val column = columnProvider.getColumn(entry)
+          val column = drawnSeries.columnProviders[index].getColumn(entry)
           columnCenterX =
             drawingStart +
               (layerDimensions.xSpacing * xSpacingMultiplier + halfColumnThickness * zoom) *
@@ -355,8 +372,7 @@ public open class ColumnCartesianLayer(
   override fun updateChartRanges(chartRanges: MutableCartesianChartRanges) {
     // Initialize the per-model cache here, which runs off the main thread for asynchronous updates.
     seriesThicknesses
-    val yRange =
-      if (model.isEmpty) 0.0..0.0 else model.getYRange(stackKeyProvider.getLayout(model.seriesKeys))
+    val yRange = if (model.isEmpty) 0.0..0.0 else model.getYRange(modelStackLayout)
     chartRanges.tryUpdate(
       rangeProvider,
       model,
@@ -400,33 +416,66 @@ public open class ColumnCartesianLayer(
    * [drawingModel], in the drawing model’s order.
    */
   private fun getDrawnSeries(drawingModel: ColumnCartesianLayerDrawingModel): DrawnSeries {
-    if (drawingModel.seriesKeys == model.seriesKeys) {
-      return DrawnSeries(
-        model.seriesKeys,
-        model.series,
-        drawingModel,
-        BooleanArray(model.series.size),
-        seriesThicknesses,
-      )
-    }
+    if (drawingModel.seriesKeys == model.seriesKeys) return modelDrawnSeries
     val drawingModelSeriesIndices =
       drawingModel.seriesKeys.withIndex().associate { (index, key) -> key to index }
-    val modelSeriesIndices = model.seriesKeys.withIndex().associate { (index, key) -> key to index }
-    val keys = mergeKeys(model.seriesKeys, drawingModel.seriesKeys)
-    val drawingModelSeries = keys.map { key ->
-      drawingModelSeriesIndices[key]?.let(drawingModel::get)
+    val keys = mutableListOf<Any>()
+    val series = mutableListOf<List<ColumnCartesianLayerModel.Entry>>()
+    val columnProviders = mutableListOf<ColumnProvider>()
+    val isExiting = mutableListOf<Boolean>()
+    val thicknesses = mutableListOf<Dp>()
+    val stackKeys = mutableListOf<Any>()
+    mergeKeys(model.seriesKeys, drawingModel.seriesKeys).forEach { key ->
+      val modelIndex = modelSeriesIndices[key]
+      if (modelIndex != null) {
+        keys += key
+        series += model.series[modelIndex]
+        columnProviders += columnProvider
+        isExiting += false
+        thicknesses += seriesThicknesses[modelIndex]
+        stackKeys += CurrentStack(modelStackLayout.stackIndices[modelIndex])
+        return@forEach
+      }
+      val source =
+        drawingModelSeriesIndices[key]?.let(drawingModel::getSeriesSource) as? ColumnCartesianLayer
+          ?: return@forEach
+      val sourceIndex = source.modelSeriesIndices[key] ?: return@forEach
+      keys += key
+      series += source.model.series[sourceIndex]
+      columnProviders += source.columnProvider
+      isExiting += true
+      thicknesses += source.seriesThicknesses[sourceIndex]
+      stackKeys += getExitingStackKey(source, sourceIndex)
     }
-    val isExiting = BooleanArray(keys.size) { keys[it] !in modelSeriesIndices }
-    val series = keys.mapIndexed { index, key ->
-      modelSeriesIndices[key]?.let(model.series::get)
-        ?: drawingModelSeries[index]!!.values.map { it.entry }
-    }
-    val thicknesses = keys.mapIndexed { index, key ->
-      modelSeriesIndices[key]?.let(seriesThicknesses::get)
-        ?: getExitingSeriesThickness(key, series[index])
-    }
-    return DrawnSeries(keys, series, drawingModelSeries, isExiting, thicknesses)
+    return DrawnSeries(
+      keys,
+      series,
+      columnProviders,
+      isExiting.toBooleanArray(),
+      thicknesses,
+      getColumnStackLayout(stackKeys),
+    )
   }
+
+  /**
+   * Returns the stack key for the exiting series at [sourceIndex] in [source]. It joins the stack
+   * of the first series that shared its stack in [source] and is still in [model]; otherwise, it
+   * keeps a stack of its own (shared with any other exiting series from that stack). Only
+   * [source]’s stack key provider is asked about it.
+   */
+  private fun getExitingStackKey(source: ColumnCartesianLayer, sourceIndex: Int): Any {
+    val sourceLayout = source.modelStackLayout
+    val sourceStackIndex = sourceLayout.stackIndices[sourceIndex]
+    sourceLayout.forEachSeriesIndex(sourceStackIndex) { mateIndex ->
+      val mateModelIndex = modelSeriesIndices[source.model.seriesKeys[mateIndex]]
+      if (mateModelIndex != null) return CurrentStack(modelStackLayout.stackIndices[mateModelIndex])
+    }
+    return ExitingStack(source, sourceStackIndex)
+  }
+
+  private data class CurrentStack(val index: Int)
+
+  private data class ExitingStack(val source: ColumnCartesianLayer, val index: Int)
 
   private fun MeasuringContext.getStackGeometry(drawnSeries: DrawnSeries): ColumnStackGeometry {
     val seriesKeys = drawnSeries.keys
@@ -435,7 +484,7 @@ public open class ColumnCartesianLayer(
         return geometry
       }
     }
-    val layout = stackKeyProvider.getLayout(seriesKeys)
+    val layout = drawnSeries.layout
     val thicknesses = Array(layout.stackCount) { 0.dp }
     drawnSeries.thicknesses.forEachIndexed { seriesIndex, thickness ->
       val stackIndex = layout.stackIndices[seriesIndex]
@@ -453,12 +502,17 @@ public open class ColumnCartesianLayer(
       .also { stackGeometry = it }
   }
 
+  /**
+   * The series to draw. Exiting series come with the providers, widths, and stacks of the layers
+   * they came from, so this layer’s providers aren’t asked about them.
+   */
   private class DrawnSeries(
     val keys: List<Any>,
     val series: List<List<ColumnCartesianLayerModel.Entry>>,
-    val drawingModelSeries: List<Map<Double, ColumnCartesianLayerDrawingModel.Entry>?>,
+    val columnProviders: List<ColumnProvider>,
     val isExiting: BooleanArray,
     val thicknesses: List<Dp>,
+    val layout: ColumnStackLayout,
   )
 
   /**
@@ -468,6 +522,9 @@ public open class ColumnCartesianLayer(
    * It may be called off the main thread. In a composable function, a lambda converted to
    * [StackKeyProvider] is memoized while the values it captures are unchanged (compared via
    * `equals` for stable types and by identity otherwise), so it needs no explicit `remember`.
+   *
+   * It’s asked only about the series and entries in its layer’s model: a series that exits after a
+   * data update keeps the stack it had, from the layer it came from.
    */
   @Immutable
   public fun interface StackKeyProvider {
@@ -535,6 +592,18 @@ public open class ColumnCartesianLayer(
     return result
   }
 
+  override fun hasSameDerivationInputs(other: CartesianLayer<*>): Boolean =
+    // Subclasses may derive differently, so only the exact class qualifies.
+    this::class == ColumnCartesianLayer::class &&
+      other::class == ColumnCartesianLayer::class &&
+      other is ColumnCartesianLayer &&
+      key == other.key &&
+      model.isSameDataAs(other.model) &&
+      rangeProvider == other.rangeProvider &&
+      verticalAxisPosition == other.verticalAxisPosition &&
+      stackKeyProvider == other.stackKeyProvider &&
+      drawingModelInterpolator == other.drawingModelInterpolator
+
   override fun createDrawingModel(ranges: CartesianChartRanges): ColumnCartesianLayerDrawingModel {
     val yRangeLength = ranges.getYRange(verticalAxisPosition).length
     return ColumnCartesianLayerDrawingModel(
@@ -548,6 +617,8 @@ public open class ColumnCartesianLayer(
         }
       },
       model.seriesKeys,
+      opacity = 1f,
+      seriesSources = List(model.series.size) { this },
     )
   }
 
@@ -584,6 +655,9 @@ public open class ColumnCartesianLayer(
    * In a composable function, a lambda converted to [ColumnProvider] is memoized while the values
    * it captures are unchanged (compared via `equals` for stable types and by identity otherwise),
    * so it needs no explicit `remember`.
+   *
+   * It’s asked only about the series and entries in its layer’s model: a series that exits after a
+   * data update keeps the style it had, from the layer it came from.
    */
   @Immutable
   public fun interface ColumnProvider {

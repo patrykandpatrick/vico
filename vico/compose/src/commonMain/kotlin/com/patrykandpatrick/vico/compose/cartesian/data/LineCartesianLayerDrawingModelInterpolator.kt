@@ -29,6 +29,7 @@ internal data class LineCartesianLayerDrawingModelInterpolator(private val sweep
     new: LineCartesianLayerDrawingModel,
     seriesKeys: List<Any>,
     entries: List<Map<Double, LineCartesianLayerDrawingModel.Entry>>,
+    seriesSources: List<Any?>,
     fraction: Float,
   ): LineCartesianLayerDrawingModel =
     LineCartesianLayerDrawingModel(
@@ -44,6 +45,7 @@ internal data class LineCartesianLayerDrawingModelInterpolator(private val sweep
           new.sweepFraction,
           fraction,
         ),
+      seriesSources = seriesSources,
     )
 
   override fun transformEntry(

@@ -148,6 +148,13 @@ internal constructor(
 
   internal var layerBounds: Rect = Rect.Zero
 
+  /**
+   * Whether this [CartesianChart] has been drawn. Until then, its [layerBounds] and marker targets
+   * aren’t known, so interactions aren’t resolved against it.
+   */
+  internal var isDrawn: Boolean = false
+    private set
+
   /** The [CartesianLayer]s of which this [CartesianChart] is composed. */
   internal val layers: List<CartesianLayer<*>> = layers.toList()
 
@@ -214,8 +221,6 @@ internal constructor(
     drawList: List<CartesianLayerDrawItem>,
   ): Float =
     with(context) {
-      _markerTargets.clear()
-      markerTargetKeys.clear()
       layerMargins.clear()
       // Exiting layers are measured too, so that the layout doesn’t change until they’re dropped.
       measuredLayers = drawList.map { it.layer }
@@ -278,6 +283,10 @@ internal constructor(
     drawList: List<CartesianLayerDrawItem> = defaultDrawList,
   ) {
     with(context) {
+      // The marker targets are rebuilt here (and only here), so measuring, which also happens in
+      // the layout phase, doesn’t clear them.
+      _markerTargets.clear()
+      markerTargetKeys.clear()
       if (fadingEdges != null) canvas.saveLayer(Rect(Offset.Zero, canvasSize), EmptyPaint)
       decorations.forEach { it.drawUnderLayers(context) }
       axisManager.drawUnderLayers(context)
@@ -318,6 +327,7 @@ internal constructor(
       legend?.draw(context)
       if (drawMarker) marker?.drawOverLayers(context, markerTargets)
     }
+    isDrawn = true
   }
 
   /**

@@ -73,7 +73,7 @@ class PieChartDisplayTest {
   @Test
   fun `The first chart is displayed immediately`() {
     val chart = chart(PieChartModel.build(1, 3))
-    val display = preparePieChartDisplay(chart, null, animate = false)!!
+    val display = preparePieChartDisplay(chart, null, animationSpec = null)!!
     assertSame(chart, display.chart)
     assertEquals(listOf(90f, 270f), display.drawingModel.slices.map { it.degrees })
   }
@@ -81,9 +81,19 @@ class PieChartDisplayTest {
   @Test
   fun `A settings-only update keeps the drawing model and the animation`() {
     val model = PieChartModel.build(1, 3)
-    val first = preparePieChartDisplay(chart(model), null, animate = true)!!
+    val first =
+      preparePieChartDisplay(
+        chart(model),
+        null,
+        animationSpec = androidx.compose.animation.core.tween(),
+      )!!
     val restyled = chart(model, spacing = 2f)
-    val display = preparePieChartDisplay(restyled, first, animate = true)!!
+    val display =
+      preparePieChartDisplay(
+        restyled,
+        first,
+        animationSpec = androidx.compose.animation.core.tween(),
+      )!!
     assertSame(restyled, display.chart)
     assertSame(first.drawingModel, display.drawingModel)
     assertSame(first.targetDrawingModel, display.targetDrawingModel)
@@ -91,8 +101,14 @@ class PieChartDisplayTest {
 
   @Test
   fun `A data update animates from the drawing model on screen`() {
-    val first = preparePieChartDisplay(chart(PieChartModel.build(1, 1)), null, animate = false)!!
-    val display = preparePieChartDisplay(chart(PieChartModel.build(1, 3)), first, animate = true)!!
+    val first =
+      preparePieChartDisplay(chart(PieChartModel.build(1, 1)), null, animationSpec = null)!!
+    val display =
+      preparePieChartDisplay(
+        chart(PieChartModel.build(1, 3)),
+        first,
+        animationSpec = androidx.compose.animation.core.tween(),
+      )!!
     assertTrue(display.animation != null)
     assertEquals(listOf(180f, 180f), display.drawingModel.slices.map { it.degrees })
     assertEquals(listOf(90f, 270f), display.targetDrawingModel.slices.map { it.degrees })
@@ -101,7 +117,7 @@ class PieChartDisplayTest {
   @Test
   fun `The same chart isn’t prepared twice`() {
     val chart = chart(PieChartModel.build(1))
-    val display = preparePieChartDisplay(chart, null, animate = false)!!
-    assertNull(preparePieChartDisplay(chart, display, animate = false))
+    val display = preparePieChartDisplay(chart, null, animationSpec = null)!!
+    assertNull(preparePieChartDisplay(chart, display, animationSpec = null))
   }
 }

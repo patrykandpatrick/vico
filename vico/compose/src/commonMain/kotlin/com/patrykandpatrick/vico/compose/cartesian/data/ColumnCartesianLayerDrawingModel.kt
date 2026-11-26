@@ -22,11 +22,22 @@ import com.patrykandpatrick.vico.compose.cartesian.layer.ColumnCartesianLayer
  * Houses drawing information for a [ColumnCartesianLayer]. [opacity] is the columns’ opacity. While
  * a series is exiting, its key is in [seriesKeys] but not in the [ColumnCartesianLayerModel].
  */
-public class ColumnCartesianLayerDrawingModel(
+public class ColumnCartesianLayerDrawingModel
+internal constructor(
   private val entries: List<Map<Double, Entry>>,
   seriesKeys: List<Any>,
-  public val opacity: Float = 1f,
+  public val opacity: Float,
+  override val seriesSources: List<Any?>?,
 ) : CartesianLayerDrawingModel<ColumnCartesianLayerDrawingModel.Entry>(entries, seriesKeys) {
+  /** Creates a [ColumnCartesianLayerDrawingModel]. */
+  public constructor(
+    entries: List<Map<Double, Entry>>,
+    seriesKeys: List<Any>,
+    opacity: Float = 1f,
+  ) : this(entries, seriesKeys, opacity, null)
+
+  override fun withSeriesSources(seriesSources: List<Any?>): ColumnCartesianLayerDrawingModel =
+    ColumnCartesianLayerDrawingModel(entries, seriesKeys, opacity, seriesSources)
 
   override fun equals(other: Any?): Boolean =
     this === other ||

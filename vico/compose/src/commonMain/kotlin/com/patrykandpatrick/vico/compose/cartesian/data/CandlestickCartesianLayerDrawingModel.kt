@@ -24,11 +24,23 @@ import com.patrykandpatrick.vico.compose.cartesian.layer.CandlestickCartesianLay
  * key changes, the previous series exits while the new one enters. [opacity] is the candles’
  * opacity.
  */
-public class CandlestickCartesianLayerDrawingModel(
+public class CandlestickCartesianLayerDrawingModel
+internal constructor(
   private val entries: List<Map<Double, Entry>>,
   seriesKeys: List<Any>,
-  public val opacity: Float = 1f,
+  public val opacity: Float,
+  override val seriesSources: List<Any?>?,
 ) : CartesianLayerDrawingModel<CandlestickCartesianLayerDrawingModel.Entry>(entries, seriesKeys) {
+  /** Creates a [CandlestickCartesianLayerDrawingModel]. */
+  public constructor(
+    entries: List<Map<Double, Entry>>,
+    seriesKeys: List<Any>,
+    opacity: Float = 1f,
+  ) : this(entries, seriesKeys, opacity, null)
+
+  override fun withSeriesSources(seriesSources: List<Any?>): CandlestickCartesianLayerDrawingModel =
+    CandlestickCartesianLayerDrawingModel(entries, seriesKeys, opacity, seriesSources)
+
   override fun equals(other: Any?): Boolean =
     this === other ||
       other is CandlestickCartesianLayerDrawingModel &&

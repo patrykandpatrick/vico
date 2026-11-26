@@ -41,11 +41,19 @@ internal abstract class BaseCartesianLayerDrawingModelInterpolator<
         SeriesTransition(oldEntries!!.mapValues { (_, entry) -> null to entry }, true)
       }
     }
+    val newIndices = new.seriesKeys.withIndex().associate { (index, key) -> key to index }
+    val oldIndices =
+      old?.seriesKeys?.withIndex()?.associate { (index, key) -> key to index }.orEmpty()
+    // Exiting series keep the layer they came from, which styles and lays them out.
+    val sources = keys.map { key ->
+      newIndices[key]?.let(new::getSeriesSource)
+        ?: oldIndices[key]?.let { old?.getSeriesSource(it) }
+    }
     return Transition { fraction ->
       if (fraction == 1f) {
         new
       } else {
-        transform(old, new, keys, series.map { it.interpolate(old, fraction) }, fraction)
+        transform(old, new, keys, series.map { it.interpolate(old, fraction) }, sources, fraction)
       }
     }
   }
@@ -64,13 +72,15 @@ internal abstract class BaseCartesianLayerDrawingModelInterpolator<
 
   /**
    * Creates an intermediate drawing model with the given series. [seriesKeys] includes the keys of
-   * any exiting series.
+   * any exiting series. [seriesSources] holds the series’ source layers (see
+   * [CartesianLayerDrawingModel.seriesSources]).
    */
   protected abstract fun transform(
     old: R?,
     new: R,
     seriesKeys: List<Any>,
     entries: List<Map<Double, T>>,
+    seriesSources: List<Any?>,
     fraction: Float,
   ): R
 

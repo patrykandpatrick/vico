@@ -27,6 +27,12 @@ import com.patrykandpatrick.vico.compose.cartesian.layer.LineCartesianLayer
  * Implementations must be pure functions of their arguments and of the values they capture, and
  * they’re called off the main thread.
  *
+ * The built-in drawing models record which layer each series came from, and the built-in
+ * interpolators carry this over to exiting series, so that those are drawn with the data and style
+ * of the layer that had them. Drawing models created via their public constructors don’t carry it,
+ * so a custom interpolator that builds new ones loses the exiting series’ drawing (they aren’t
+ * drawn rather than being styled via the new layer’s providers).
+ *
  * In a composable function, a lambda converted to [CartesianLayerDrawingModelInterpolator] is
  * memoized while the values it captures are unchanged (compared via `equals` for stable types and
  * by identity otherwise), so it needs no explicit `remember`.

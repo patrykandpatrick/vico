@@ -589,6 +589,135 @@ class CartesianChartPipelineTest {
       assertEquals(1f, columnHeight())
     }
 
+  private fun Harness.assertConsistent() {
+    display.drawList.forEach { item ->
+      assertTrue(
+        item.layerKey() in display.drawingModels,
+        "No drawing model for ${item.layerKey()}.",
+      )
+    }
+  }
+
+  @Test
+  fun `An unanimated update mid-exit drops the exiting layer`() = test {
+    submit(chart(line(1, 2, key = "a"), columns(5, 5, key = "b")))
+    frame()
+    frame(200)
+    submit(chart(line(1, 2, key = "a")))
+    settle()
+    frame()
+    frame(50)
+    assertEquals(listOf("a", "b"), display.drawList.map { it.layerKey() })
+    pipeline.animationSpec = null
+    submit(chart(line(2, 3, key = "a")))
+    settle()
+    assertEquals(listOf("a"), display.drawList.map { it.layerKey() })
+    assertConsistent()
+    frame(20)
+    assertEquals(listOf("a"), display.drawList.map { it.layerKey() })
+  }
+
+  @Test
+  fun `An unanimated settings change mid-exit drops the exiting layer`() = test {
+    val a = line(1, 2, key = "a")
+    submit(chart(a, columns(5, 5, key = "b")))
+    frame()
+    frame(200)
+    submit(chart(a))
+    settle()
+    frame()
+    frame(50)
+    pipeline.animationSpec = null
+    submit(chart(a, xStep = 0.5))
+    assertEquals(listOf("a"), display.drawList.map { it.layerKey() })
+    assertConsistent()
+  }
+
+  @Test
+  fun `An animated settings change mid-exit keeps the exit running`() = test {
+    val a = line(1, 2, key = "a")
+    submit(chart(a, columns(5, 5, key = "b")))
+    frame()
+    frame(200)
+    submit(chart(a))
+    settle()
+    frame()
+    frame(50)
+    submit(chart(a, xStep = 0.5))
+    assertEquals(listOf("a", "b"), display.drawList.map { it.layerKey() })
+    assertConsistent()
+    frame(60)
+    assertEquals(listOf("a"), display.drawList.map { it.layerKey() })
+  }
+
+  @Test
+  fun `A commit prepared from a display that has since changed is prepared again`() = test {
+    val a = columns(2, 4)
+    submit(chart(a))
+    frame()
+    frame(200)
+    // Prepared while `a` is on screen: a settings-only update relative to it.
+    val restyled = chart(ColumnCartesianLayer(a.model, otherColumnProvider, key = "columns"))
+    val staleCommit = assertNotNull(pipeline.prepare(restyled))
+    // Meanwhile, a data update lands asynchronously.
+    submit(chart(columns(4, 2)))
+    settle()
+    frame()
+    frame(50)
+    pipeline.apply(staleCommit)
+    settle()
+    frame()
+    frame(200)
+    // The latest chart wins with its own data, rather than the stale derivation leaving the
+    // animation heading for the intermediate chart’s data.
+    assertSame(restyled, display.frame.chart)
+    val drawingModel = display.drawingModels.getValue("columns") as ColumnCartesianLayerDrawingModel
+    assertEquals(0.5f, drawingModel.single().getValue(0.0).height, absoluteTolerance = 1e-3f)
+    assertEquals(1f, drawingModel.single().getValue(1.0).height, absoluteTolerance = 1e-3f)
+  }
+
+  @Test
+  fun `Preparing doesn’t change the settings, but applying does`() = test {
+    val settings = CartesianChartPipeline.Settings(null, null, isInPreview = true)
+    val commit = pipeline.prepare(chart(columns(1, 2)), settings)
+    assertTrue(pipeline.animationSpec != null)
+    assertFalse(pipeline.isInPreview)
+    pipeline.apply(commit, settings)
+    assertNull(pipeline.animationSpec)
+    assertTrue(pipeline.isInPreview)
+  }
+
+  @Test
+  fun `A pure restyle of a large chart creates no drawing models and reuses the ranges`() = test {
+    val model = ColumnCartesianLayerModel.build { repeat(5) { series(List(2_000) { it % 37 }) } }
+    submit(chart(ColumnCartesianLayer(model, columnProvider, key = "columns")))
+    frame()
+    frame(200)
+    val ranges = display.frame.ranges
+    val drawingModel = display.frame.drawingModels.getValue("columns")
+    submit(chart(ColumnCartesianLayer(model, otherColumnProvider, key = "columns")))
+    assertSame(ranges, display.frame.ranges)
+    assertSame(drawingModel, display.frame.drawingModels.getValue("columns"))
+  }
+
+  @Test
+  fun `A restyle that changes a derivation input still re-derives`() = test {
+    val model = ColumnCartesianLayerModel.build { series(2, 4) }
+    submit(chart(ColumnCartesianLayer(model, columnProvider, key = "columns")))
+    val drawingModel = display.frame.drawingModels.getValue("columns")
+    submit(
+      chart(
+        ColumnCartesianLayer(
+          model,
+          otherColumnProvider,
+          stackKeyProvider = ColumnCartesianLayer.StackKeyProvider.Stacked,
+          key = "columns",
+        ),
+      ),
+    )
+    assertTrue(drawingModel !== display.frame.drawingModels.getValue("columns"))
+  }
+
   private fun CartesianLayerDrawItem.layerKey(): Any =
     when (val layer = layer) {
       is ColumnCartesianLayer -> layer.key

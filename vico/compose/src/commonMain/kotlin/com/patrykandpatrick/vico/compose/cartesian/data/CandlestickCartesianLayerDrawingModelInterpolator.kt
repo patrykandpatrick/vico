@@ -29,12 +29,14 @@ internal object CandlestickCartesianLayerDrawingModelInterpolator :
     new: CandlestickCartesianLayerDrawingModel,
     seriesKeys: List<Any>,
     entries: List<Map<Double, CandlestickCartesianLayerDrawingModel.Entry>>,
+    seriesSources: List<Any?>,
     fraction: Float,
   ): CandlestickCartesianLayerDrawingModel =
     CandlestickCartesianLayerDrawingModel(
       entries = entries,
       seriesKeys = seriesKeys,
       opacity = old?.opacity.orZero.lerp(new.opacity, fraction),
+      seriesSources = seriesSources,
     )
 
   override fun transformEntry(

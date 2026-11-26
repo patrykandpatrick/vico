@@ -133,12 +133,17 @@ public fun CartesianChartHost(
   var lastAcceptedInteraction by
     rememberSaveable(saver = Interaction.Saver) { mutableStateOf(null) }
 
-  pipeline.animationSpec = animationSpec
-  pipeline.initialAnimationSpec = initialAnimationSpec
-  pipeline.isInPreview = LocalInspectionMode.current
-  val commit = pipeline.prepare(chart)
+  // The settings are passed to the pipeline (and applied after composition) rather than assigned
+  // here, so a composition that’s never applied changes nothing.
+  val settings =
+    CartesianChartPipeline.Settings(
+      animationSpec,
+      initialAnimationSpec,
+      LocalInspectionMode.current,
+    )
+  val commit = pipeline.prepare(chart, settings)
   SideEffect {
-    pipeline.apply(commit)
+    pipeline.apply(commit, settings)
     if (chart.layers.isNotEmpty()) hasShownData = true
   }
 
@@ -207,7 +212,13 @@ public fun CartesianChartHost(
     { interaction ->
       val frame = pipeline.frame
       val chart = frame?.chart
-      if (chart == null || chart.marker == null || pipeline.display?.drawList.isNullOrEmpty()) {
+      // An undrawn chart’s bounds and marker targets aren’t known yet.
+      if (
+        chart == null ||
+          chart.marker == null ||
+          !chart.isDrawn ||
+          pipeline.display?.drawList.isNullOrEmpty()
+      ) {
         false
       } else {
         val scroll = currentScrollState.value
@@ -246,7 +257,7 @@ public fun CartesianChartHost(
   }
 
   fun onViewportChange() {
-    val chart = pipeline.frame?.chart ?: return
+    val chart = pipeline.frame?.chart?.takeIf { it.isDrawn } ?: return
     lastAcceptedInteraction
       ?.takeIf { chart.markerController.lock == Lock.Position }
       ?.let { onInteraction(it) }

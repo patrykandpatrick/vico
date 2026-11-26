@@ -45,18 +45,21 @@ internal class ColumnStackLayout(
 
 internal fun ColumnCartesianLayer.StackKeyProvider.getLayout(
   seriesKeys: List<Any>,
-): ColumnStackLayout {
+): ColumnStackLayout =
+  getColumnStackLayout(seriesKeys.mapIndexed { index, key -> getStackKey(key, index) })
+
+/** Returns the [ColumnStackLayout] in which series share a stack if their [stackKeys] are equal. */
+internal fun getColumnStackLayout(stackKeys: List<Any>): ColumnStackLayout {
   val stackIndicesByKey = mutableMapOf<Any, Int>()
-  val stackIndices = IntArray(seriesKeys.size)
+  val stackIndices = IntArray(stackKeys.size)
   var stackCount = 0
-  seriesKeys.forEachIndexed { seriesIndex, seriesKey ->
-    stackIndices[seriesIndex] =
-      stackIndicesByKey.getOrPut(getStackKey(seriesKey, seriesIndex)) { stackCount++ }
+  stackKeys.forEachIndexed { seriesIndex, stackKey ->
+    stackIndices[seriesIndex] = stackIndicesByKey.getOrPut(stackKey) { stackCount++ }
   }
   val stackStarts = IntArray(stackCount + 1)
   stackIndices.forEach { stackIndex -> stackStarts[stackIndex + 1]++ }
   for (stackIndex in 1..stackCount) stackStarts[stackIndex] += stackStarts[stackIndex - 1]
-  val seriesIndices = IntArray(seriesKeys.size)
+  val seriesIndices = IntArray(stackKeys.size)
   val nextPositions = stackStarts.copyOf()
   stackIndices.forEachIndexed { seriesIndex, stackIndex ->
     seriesIndices[nextPositions[stackIndex]++] = seriesIndex
