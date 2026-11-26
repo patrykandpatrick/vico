@@ -17,13 +17,18 @@
 package com.patrykandpatrick.vico.compose.cartesian.data
 
 import com.patrykandpatrick.vico.compose.cartesian.layer.LineCartesianLayer
-import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 import com.patrykandpatrick.vico.compose.common.rangeOf
 import com.patrykandpatrick.vico.compose.common.rangeOfPair
 
-/** Stores a [LineCartesianLayer]’s data. */
+/**
+ * Stores a [LineCartesianLayer]’s data. Use [build] to create instances. A model without entries
+ * (e.g., from `build { }`) is valid: the [LineCartesianLayer] then draws nothing, and the chart
+ * shows an empty coordinate plane. Series may be empty, too.
+ */
 public class LineCartesianLayerModel : CartesianLayerModel {
   private val entries: List<Entry>
+
+  private val hashCode: Int
 
   /** The series (lists of [Entry] instances). */
   public val series: List<List<Entry>>
@@ -39,82 +44,42 @@ public class LineCartesianLayerModel : CartesianLayerModel {
 
   override val maxY: Double
 
-  override val extraStore: ExtraStore
-
+  /** Creates a [LineCartesianLayerModel] with the given series, using their indices as keys. */
   public constructor(series: List<List<Entry>>) : this(series, series.indices.toList())
 
-  public constructor(
-    series: List<List<Entry>>,
-    seriesKeys: List<Any>,
-  ) : this(series, seriesKeys, ExtraStore.Empty)
-
-  private constructor(series: List<List<Entry>>, seriesKeys: List<Any>, extraStore: ExtraStore) {
-    require(series.isNotEmpty()) { "At least one series should be added." }
+  /** Creates a [LineCartesianLayerModel] with the given series and series keys. */
+  public constructor(series: List<List<Entry>>, seriesKeys: List<Any>) {
     require(series.size == seriesKeys.size) { "`series` and `seriesKeys` must have the same size." }
     require(seriesKeys.toSet().size == seriesKeys.size) { "Series keys must be unique." }
     this.seriesKeys = seriesKeys.toList()
     this.series = series.mapIndexed { seriesIndex, entries ->
-      require(entries.isNotEmpty()) { "Series can’t be empty." }
       entries
         .sortedBy { entry -> entry.x }
         .map { entry -> Entry(entry.x, entry.y, seriesKeys[seriesIndex], seriesIndex) }
     }
     this.entries = this.series.flatten()
-    val xRange = this.series.rangeOfPair { it.first().x to it.last().x }
+    val xRange = this.series.filter { it.isNotEmpty() }.rangeOfPair { it.first().x to it.last().x }
     val yRange = entries.rangeOf { it.y }
     this.minX = xRange.start
     this.maxX = xRange.endInclusive
     this.minY = yRange.start
     this.maxY = yRange.endInclusive
-    this.extraStore = extraStore
+    this.hashCode = 31 * this.series.hashCode() + this.seriesKeys.hashCode()
   }
 
-  private constructor(
-    entries: List<Entry>,
-    series: List<List<Entry>>,
-    seriesKeys: List<Any>,
-    minX: Double,
-    maxX: Double,
-    minY: Double,
-    maxY: Double,
-    extraStore: ExtraStore,
-  ) {
-    this.entries = entries
-    this.series = series
-    this.seriesKeys = seriesKeys
-    this.minX = minX
-    this.maxX = maxX
-    this.minY = minY
-    this.maxY = maxY
-    this.extraStore = extraStore
-  }
+  override val isEmpty: Boolean
+    get() = entries.isEmpty()
 
   override fun getXDeltaGcd(): Double = entries.getXDeltaGcd()
-
-  override fun copy(extraStore: ExtraStore): CartesianLayerModel =
-    LineCartesianLayerModel(entries, series, seriesKeys, minX, maxX, minY, maxY, extraStore)
 
   override fun equals(other: Any?): Boolean =
     this === other ||
       other is LineCartesianLayerModel &&
+        hashCode == other.hashCode &&
         series == other.series &&
-        seriesKeys == other.seriesKeys &&
-        minX == other.minX &&
-        maxX == other.maxX &&
-        minY == other.minY &&
-        maxY == other.maxY &&
-        extraStore == other.extraStore
+        seriesKeys == other.seriesKeys
 
-  override fun hashCode(): Int {
-    var result = series.hashCode()
-    result = 31 * result + seriesKeys.hashCode()
-    result = 31 * result + minX.hashCode()
-    result = 31 * result + maxX.hashCode()
-    result = 31 * result + minY.hashCode()
-    result = 31 * result + maxY.hashCode()
-    result = 31 * result + extraStore.hashCode()
-    return result
-  }
+  override fun hashCode(): Int = hashCode
 
   override fun toString(): String =
     "LineCartesianLayerModel(series=$series, seriesKeys=$seriesKeys, minX=$minX, maxX=$maxX, minY=$minY, maxY=$maxY)"
@@ -149,22 +114,7 @@ public class LineCartesianLayerModel : CartesianLayerModel {
       "Entry(x=$x, y=$y, seriesKey=$seriesKey, seriesIndex=$seriesIndex)"
   }
 
-  /**
-   * Stores the minimum amount of data required to create a [LineCartesianLayerModel] and
-   * facilitates this creation.
-   */
-  public class Partial(private val series: List<List<Entry>>, private val seriesKeys: List<Any>) :
-    CartesianLayerModel.Partial {
-    override fun complete(extraStore: ExtraStore): CartesianLayerModel =
-      LineCartesianLayerModel(series, seriesKeys, extraStore)
-
-    override fun equals(other: Any?): Boolean =
-      this === other || other is Partial && series == other.series && seriesKeys == other.seriesKeys
-
-    override fun hashCode(): Int = 31 * series.hashCode() + seriesKeys.hashCode()
-  }
-
-  /** Facilitates the creation of [LineCartesianLayerModel]s and [Partial]s. */
+  /** Facilitates the creation of [LineCartesianLayerModel]s. */
   public class BuilderScope internal constructor() {
     internal val series = mutableListOf<List<Entry>>()
     internal val seriesKeys = mutableListOf<Any>()
@@ -199,30 +149,5 @@ public class LineCartesianLayerModel : CartesianLayerModel {
     /** Creates a [LineCartesianLayerModel]. */
     public fun build(block: BuilderScope.() -> Unit): LineCartesianLayerModel =
       BuilderScope().apply(block).let { LineCartesianLayerModel(it.series, it.seriesKeys) }
-
-    /** Creates a [Partial]. */
-    public fun partial(block: BuilderScope.() -> Unit): Partial =
-      BuilderScope().apply(block).let { Partial(it.series, it.seriesKeys) }
   }
-}
-
-/**
- * Calls [block] to create a [LineCartesianLayerModel.Partial] and adds it to the
- * [CartesianChartModelProducer.Transaction]’s [CartesianLayerModel.Partial] list.
- */
-public fun CartesianChartModelProducer.Transaction.lineModel(
-  block: LineCartesianLayerModel.BuilderScope.() -> Unit
-) {
-  add(LineCartesianLayerModel.partial(block))
-}
-
-/**
- * Calls [block] to create a [LineCartesianLayerModel.Partial] and adds it to the
- * [CartesianChartModelProducer.Transaction]’s [CartesianLayerModel.Partial] list.
- */
-@Deprecated("Use `lineModel`.", ReplaceWith("lineModel(block)"))
-public fun CartesianChartModelProducer.Transaction.lineSeries(
-  block: LineCartesianLayerModel.BuilderScope.() -> Unit
-) {
-  lineModel(block)
 }

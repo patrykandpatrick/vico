@@ -18,7 +18,14 @@ package com.patrykandpatrick.vico.compose.cartesian
 
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModel
 
-/** Defines when an automatic scroll should be performed. */
+/**
+ * Defines when an automatic scroll should be performed.
+ *
+ * Implementations must be pure functions of their arguments and of the values they capture. It’s
+ * called on the main thread. In a composable function, a lambda converted to [AutoScrollCondition]
+ * is memoized while the values it captures are unchanged (compared via `equals` for stable types
+ * and by identity otherwise), so it needs no explicit `remember`.
+ */
 public fun interface AutoScrollCondition {
   /**
    * Given a chart’s new and old models, defines whether an automatic scroll should be performed.

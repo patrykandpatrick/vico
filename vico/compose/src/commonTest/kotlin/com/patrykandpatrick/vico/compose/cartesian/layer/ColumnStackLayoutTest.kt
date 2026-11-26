@@ -18,7 +18,6 @@ package com.patrykandpatrick.vico.compose.cartesian.layer
 
 import com.patrykandpatrick.vico.compose.cartesian.data.ColumnCartesianLayerModel
 import com.patrykandpatrick.vico.compose.cartesian.layer.ColumnCartesianLayer.StackKeyProvider
-import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
@@ -27,7 +26,7 @@ class ColumnStackLayoutTest {
   @Test
   fun `stacks are matched by equality and ordered by first series`() {
     var calls = 0
-    val stackKeyProvider = StackKeyProvider { seriesKey, _, _ ->
+    val stackKeyProvider = StackKeyProvider { seriesKey, _ ->
       calls++
       when (seriesKey) {
         "a1",
@@ -65,7 +64,7 @@ class ColumnStackLayoutTest {
   @Test
   fun `the y range sums signs separately per stack and x value`() {
     val model = model(listOf(0 to 7), listOf(0 to -2), listOf(0 to 3), listOf(0 to 2))
-    val layout = StackKeyProvider { _, seriesIndex, _ ->
+    val layout = StackKeyProvider { _, seriesIndex ->
       if (seriesIndex < 2) "A" else "B"
     }
       .layout(model)
@@ -76,7 +75,7 @@ class ColumnStackLayoutTest {
   @Test
   fun `the y range handles sparse x values`() {
     val model = model(listOf(0 to 5, 2 to 1), listOf(1 to 3, 2 to 4), listOf(0 to 8))
-    val layout = StackKeyProvider { _, seriesIndex, _ ->
+    val layout = StackKeyProvider { _, seriesIndex ->
       if (seriesIndex < 2) "A" else seriesIndex
     }
       .layout(model)
@@ -88,7 +87,7 @@ class ColumnStackLayoutTest {
   fun `single-series stacks contribute their values and multi-series stacks their totals`() {
     val model = model(listOf(0 to 2, 1 to 3), listOf(0 to 4), listOf(0 to 5))
     val singleSeries = model(listOf(0 to 2, 1 to 3), listOf(0 to 4))
-    val layout = StackKeyProvider { _, seriesIndex, _ ->
+    val layout = StackKeyProvider { _, seriesIndex ->
       if (seriesIndex == 0) seriesIndex else "B"
     }
       .layout(model)
@@ -105,7 +104,7 @@ class ColumnStackLayoutTest {
   @Test
   fun `the y range handles all-negative stacks`() {
     val model = model(listOf(0 to -1), listOf(0 to -2), listOf(0 to -4))
-    val layout = StackKeyProvider { _, seriesIndex, _ ->
+    val layout = StackKeyProvider { _, seriesIndex ->
       if (seriesIndex == 2) seriesIndex else "A"
     }
       .layout(model)
@@ -117,11 +116,8 @@ class ColumnStackLayoutTest {
     override fun toString(): String = "same display text"
   }
 
-  private fun StackKeyProvider.getLayout(seriesKeys: List<Any>) =
-    getLayout(seriesKeys, ExtraStore.Empty)
-
   private fun StackKeyProvider.layout(model: ColumnCartesianLayerModel) =
-    getLayout(model.seriesKeys, model.extraStore)
+    getLayout(model.seriesKeys)
 
   private fun ColumnStackLayout.seriesIndicesByStack() =
     List(stackCount) { stackIndex ->
@@ -130,6 +126,6 @@ class ColumnStackLayoutTest {
 
   private fun model(vararg series: List<Pair<Int, Int>>): ColumnCartesianLayerModel =
     ColumnCartesianLayerModel(
-      series.map { entries -> entries.map { (x, y) -> ColumnCartesianLayerModel.Entry(x, y) } }
+      series.map { entries -> entries.map { (x, y) -> ColumnCartesianLayerModel.Entry(x, y) } },
     )
 }

@@ -31,7 +31,6 @@ import androidx.glance.LocalContext
 import androidx.glance.LocalSize
 import androidx.glance.layout.ContentScale
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChart
-import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.compose.cartesian.renderToImageBitmap
 import kotlin.math.roundToInt
 
@@ -41,8 +40,7 @@ import kotlin.math.roundToInt
  * The chart is rendered off-screen to a bitmap and displayed via Glance’s [Image]. Since Glance
  * doesn’t support Compose Canvas, this is the recommended approach for showing charts in widgets.
  *
- * @param chart the [CartesianChart].
- * @param model the [CartesianChartModel].
+ * @param chart the [CartesianChart], whose layers carry the data.
  * @param contentDescription the content description for accessibility.
  * @param modifier the [GlanceModifier] to be applied.
  * @param size the desired chart size. Defaults to the widget size provided by Glance’s [LocalSize].
@@ -51,14 +49,13 @@ import kotlin.math.roundToInt
 @Composable
 public fun CartesianChartImage(
   chart: CartesianChart,
-  model: CartesianChartModel,
   contentDescription: String?,
   modifier: GlanceModifier = GlanceModifier,
   size: DpSize = LocalSize.current,
   contentScale: ContentScale = ContentScale.Fit,
 ) {
   val context = LocalContext.current
-  val bitmap = renderCartesianChartToBitmap(context, chart, model, size)
+  val bitmap = renderCartesianChartToBitmap(context, chart, size)
   Image(
     provider = ImageProvider(bitmap),
     contentDescription = contentDescription,
@@ -70,7 +67,6 @@ public fun CartesianChartImage(
 private fun renderCartesianChartToBitmap(
   context: Context,
   chart: CartesianChart,
-  model: CartesianChartModel,
   size: DpSize,
 ): android.graphics.Bitmap {
   val resources = context.resources
@@ -85,6 +81,6 @@ private fun renderCartesianChartToBitmap(
       LayoutDirection.Ltr
     }
   return chart
-    .renderToImageBitmap(model, widthPx, heightPx, fontFamilyResolver, density, layoutDirection)
+    .renderToImageBitmap(widthPx, heightPx, fontFamilyResolver, density, layoutDirection)
     .asAndroidBitmap()
 }

@@ -17,33 +17,40 @@
 package com.patrykandpatrick.vico.compose.cartesian.data
 
 import com.patrykandpatrick.vico.compose.cartesian.layer.CartesianLayer
-import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 import com.patrykandpatrick.vico.compose.common.gcdWith
 import kotlin.math.abs
 
-/** Stores a [CartesianLayer]’s data. */
+/**
+ * Stores a [CartesianLayer]’s data. [CartesianLayerModel]s are immutable values. They can be
+ * created anywhere, including off the main thread, and are passed to [CartesianLayer]s.
+ *
+ * Chart hosts compare [CartesianLayerModel]s to determine whether a chart’s data has changed, so
+ * [equals] must be structural, and [hashCode] should be cheap (e.g., computed once and cached).
+ */
 public interface CartesianLayerModel {
-
-  /** The minimum _x_ value. */
+  /** The minimum _x_-value. */
   public val minX: Double
 
-  /** The maximum _x_ value. */
+  /** The maximum _x_-value. */
   public val maxX: Double
 
-  /** The minimum _y_ value. */
+  /** The minimum _y_-value. */
   public val minY: Double
 
-  /** The maximum _y_ value. */
+  /** The maximum _y_-value. */
   public val maxY: Double
 
-  /** Stores auxiliary data, including [CartesianLayerDrawingModel]s. */
-  public val extraStore: ExtraStore
+  /**
+   * Whether this [CartesianLayerModel] has no entries. An empty model is valid: its layer draws
+   * nothing, the extents above are all 0, and, having no extents of its own, its range provider
+   * receives the ranges established by the chart’s other layers, or zeros (see
+   * [CartesianLayerRangeProvider]).
+   */
+  public val isEmpty: Boolean
+    get() = false
 
-  /** Returns the greatest common divisor of the _x_ values’ differences. */
+  /** Returns the greatest common divisor of the _x_-values’ differences. */
   public fun getXDeltaGcd(): Double
-
-  /** Creates a copy of this [CartesianLayerModel] with the given [ExtraStore]. */
-  public fun copy(extraStore: ExtraStore): CartesianLayerModel
 
   override fun equals(other: Any?): Boolean
 
@@ -51,23 +58,21 @@ public interface CartesianLayerModel {
 
   /** Represents a single entity in a [CartesianLayerModel]. */
   public interface Entry {
-    /** The _x_ coordinate. */
+    /** The _x_-coordinate. */
     public val x: Double
 
     override fun equals(other: Any?): Boolean
 
     override fun hashCode(): Int
   }
-
-  /**
-   * Stores the minimum amount of data required to create a [CartesianLayerModel] and facilitates
-   * this creation.
-   */
-  public interface Partial {
-    /** Creates a full [CartesianLayerModel] with the given [ExtraStore] from this [Partial]. */
-    public fun complete(extraStore: ExtraStore = ExtraStore.Empty): CartesianLayerModel
-  }
 }
+
+/**
+ * Returns whether [other] holds the same data as this [CartesianLayerModel]. Identity is checked
+ * first, then the (cached) hash codes, and only then are the models compared structurally.
+ */
+internal fun CartesianLayerModel.isSameDataAs(other: CartesianLayerModel?): Boolean =
+  this === other || other != null && hashCode() == other.hashCode() && this == other
 
 internal fun List<CartesianLayerModel.Entry>.getXDeltaGcd(): Double {
   if (isEmpty()) return 1.0

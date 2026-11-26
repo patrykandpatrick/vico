@@ -16,68 +16,84 @@
 
 package com.patrykandpatrick.vico.compose.cartesian.data
 
-import kotlinx.coroutines.currentCoroutineContext
-import kotlinx.coroutines.ensureActive
+import com.patrykandpatrick.vico.compose.cartesian.data.CartesianLayerDrawingModelInterpolator.Transition
 
+/**
+ * Pairs the entries of two [CartesianLayerDrawingModel]s by series key and _x_-value and
+ * interpolates each pair via [transformEntry]. Series that are only in the old drawing model are
+ * exiting: they’re kept (at their former positions in the series order) and animated as the reverse
+ * of an entering series, and they’re absent from the final frame.
+ */
 internal abstract class BaseCartesianLayerDrawingModelInterpolator<
   T : CartesianLayerDrawingModel.Entry,
   R : CartesianLayerDrawingModel<T>,
-> : CartesianLayerDrawingModelInterpolator<T, R> {
-  private var transformationMaps = emptyList<Map<Double, TransformationEntry<T>>>()
-  protected var oldDrawingModel: R? = null
-    private set
-
-  protected var newDrawingModel: R? = null
-    private set
-
-  override fun setModels(old: R?, new: R?) {
-    oldDrawingModel = old
-    newDrawingModel = new
-    updateTransformationMaps()
+> : CartesianLayerDrawingModelInterpolator<R> {
+  override fun createTransition(old: R?, new: R): Transition<R> {
+    val oldEntriesByKey = old?.seriesKeys?.zip(old)?.toMap().orEmpty()
+    val keys = mergeKeys(old?.seriesKeys.orEmpty(), new.seriesKeys)
+    val newEntriesByKey = new.seriesKeys.zip(new).toMap()
+    val series = keys.map { key ->
+      val newEntries = newEntriesByKey[key]
+      val oldEntries = oldEntriesByKey[key]
+      if (newEntries != null) {
+        SeriesTransition(newEntries.mapValues { (x, entry) -> oldEntries?.get(x) to entry }, false)
+      } else {
+        SeriesTransition(oldEntries!!.mapValues { (_, entry) -> null to entry }, true)
+      }
+    }
+    return Transition { fraction ->
+      if (fraction == 1f) {
+        new
+      } else {
+        transform(old, new, keys, series.map { it.interpolate(old, fraction) }, fraction)
+      }
+    }
   }
 
-  override suspend fun transform(fraction: Float): R? {
-    val new = newDrawingModel ?: return null
-    val old = oldDrawingModel
-    return transform(
-      old = old,
-      new = new,
-      entries =
-        transformationMaps.mapNotNull { map ->
-          map
-            .map { (x, entry) ->
-              currentCoroutineContext().ensureActive()
-              x to transformEntry(oldModel = old, old = entry.old, new = entry.new, fraction)
-            }
-            .takeIf { entries -> entries.isNotEmpty() }
-            ?.toMap()
-        },
-      fraction = fraction,
-    )
+  private inner class SeriesTransition(
+    val pairs: Map<Double, Pair<T?, T>>,
+    val isExiting: Boolean,
+  ) {
+    fun interpolate(oldModel: R?, fraction: Float): Map<Double, T> =
+      if (isExiting) {
+        pairs.mapValues { (_, pair) -> transformEntry(oldModel, null, pair.second, 1 - fraction) }
+      } else {
+        pairs.mapValues { (_, pair) -> transformEntry(oldModel, pair.first, pair.second, fraction) }
+      }
   }
 
+  /**
+   * Creates an intermediate drawing model with the given series. [seriesKeys] includes the keys of
+   * any exiting series.
+   */
   protected abstract fun transform(
     old: R?,
     new: R,
+    seriesKeys: List<Any>,
     entries: List<Map<Double, T>>,
     fraction: Float,
   ): R
 
   protected abstract fun transformEntry(oldModel: R?, old: T?, new: T, fraction: Float): T
+}
 
-  private fun updateTransformationMaps() {
-    val oldEntriesByKey =
-      oldDrawingModel?.seriesKeys?.zip(oldDrawingModel.orEmpty())?.toMap().orEmpty()
-    transformationMaps =
-      newDrawingModel
-        ?.seriesKeys
-        ?.zip(newDrawingModel.orEmpty())
-        ?.map { (key, newEntries) ->
-          val oldEntries = oldEntriesByKey[key]
-          newEntries.mapValues { (x, entry) -> TransformationEntry(oldEntries?.get(x), entry) }
-        }
-        .orEmpty()
+/**
+ * Merges [old] and [new], keeping the order of [new] and inserting each key that’s only in [old]
+ * after its predecessor in [old] (or at the start).
+ */
+internal fun mergeKeys(old: List<Any>, new: List<Any>): List<Any> {
+  val newKeys = new.toSet()
+  if (old.all { it in newKeys }) return new
+  val result = new.toMutableList()
+  var insertionIndex = 0
+  old.forEach { key ->
+    val index = result.indexOf(key)
+    if (index != -1) {
+      insertionIndex = index + 1
+    } else {
+      result.add(insertionIndex, key)
+      insertionIndex++
+    }
   }
-
-  private class TransformationEntry<T : CartesianLayerDrawingModel.Entry>(val old: T?, val new: T)
+  return result
 }

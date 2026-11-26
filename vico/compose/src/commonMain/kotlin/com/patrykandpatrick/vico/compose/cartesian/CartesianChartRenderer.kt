@@ -24,15 +24,12 @@ import androidx.compose.ui.graphics.drawscope.CanvasDrawScope
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
-import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModel
-import com.patrykandpatrick.vico.compose.cartesian.data.MutableCartesianChartRanges
 import com.patrykandpatrick.vico.compose.cartesian.layer.MutableCartesianLayerDimensions
 import com.patrykandpatrick.vico.compose.common.MutableDrawScope
 import com.patrykandpatrick.vico.compose.common.data.CacheStore
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public fun CartesianChart.renderToImageBitmap(
-  model: CartesianChartModel,
   width: Int,
   height: Int,
   fontFamilyResolver: FontFamily.Resolver,
@@ -40,34 +37,29 @@ public fun CartesianChart.renderToImageBitmap(
   layoutDirection: LayoutDirection = LayoutDirection.Ltr,
 ): ImageBitmap {
   val imageBitmap = ImageBitmap(width, height)
+  if (layers.isEmpty()) return imageBitmap
   val canvas = Canvas(imageBitmap)
   val size = Size(width.toFloat(), height.toFloat())
-
-  val ranges = MutableCartesianChartRanges()
-  ranges.reset()
-  updateRanges(ranges, model)
-
+  val ranges = CartesianChartPipeline.getRanges(this)
   val cacheStore = CacheStore()
   val measuringContext =
     MutableCartesianMeasuringContext(
       canvasWidth = size.width,
-      canvasSize = size,
       fontFamilyResolver = fontFamilyResolver,
       density = density,
-      extraStore = model.extraStore,
       layoutDirection = layoutDirection,
-      model = model,
+      chartModel = model,
       ranges = ranges,
       scrollEnabled = false,
       zoomEnabled = false,
-      layerPadding = layerPadding(model.extraStore),
+      layerPadding = layerPadding,
       markerX = null,
       markerSeriesIndex = null,
       cacheStore = cacheStore,
+      drawingModels = CartesianChartPipeline.getFinalDrawingModels(this, ranges),
     )
 
   val layerDimensions = MutableCartesianLayerDimensions()
-  layerDimensions.clear()
   prepare(measuringContext, layerDimensions, size)
 
   if (!layerBounds.isEmpty) {
@@ -75,6 +67,7 @@ public fun CartesianChart.renderToImageBitmap(
       val drawingContext =
         CartesianDrawingContext(
           measuringContext = measuringContext,
+          canvasSize = size,
           canvas = canvas,
           layerDimensions = layerDimensions,
           layerBounds = layerBounds,

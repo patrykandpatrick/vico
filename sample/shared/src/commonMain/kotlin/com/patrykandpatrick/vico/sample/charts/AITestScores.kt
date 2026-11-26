@@ -19,7 +19,6 @@ package com.patrykandpatrick.vico.sample.charts
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -30,8 +29,7 @@ import androidx.compose.ui.unit.sp
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.compose.cartesian.axis.VerticalAxis
-import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModelProducer
-import com.patrykandpatrick.vico.compose.cartesian.data.lineModel
+import com.patrykandpatrick.vico.compose.cartesian.data.LineCartesianLayerModel
 import com.patrykandpatrick.vico.compose.cartesian.decoration.HorizontalLine
 import com.patrykandpatrick.vico.compose.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLine
@@ -46,11 +44,8 @@ import com.patrykandpatrick.vico.compose.common.component.ShapeComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
-import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 import com.patrykandpatrick.vico.compose.common.rememberVerticalLegend
 import com.patrykandpatrick.vico.compose.common.vicoTheme
-
-private val LegendLabelKey = ExtraStore.Key<Set<String>>()
 
 private val data =
   mapOf<String, Map<Int, Number>>(
@@ -69,6 +64,8 @@ private val data =
     "Programming" to mapOf(2021 to -100, 2022 to -48.04, 2023 to -12.64),
   )
 
+private val LineColors = listOf(Color(0xff916cda), Color(0xffd877d8), Color(0xfff094bb))
+
 @Composable
 private fun rememberHorizontalLine(): HorizontalLine {
   val fill = Fill(Color(0xfffdc8c4))
@@ -80,90 +77,63 @@ private fun rememberHorizontalLine(): HorizontalLine {
       background =
         rememberShapeComponent(fill, RoundedCornerShape(bottomStart = 4.dp, bottomEnd = 4.dp)),
     )
-  return remember {
-    HorizontalLine(
-      y = { 0.0 },
-      line = line,
-      labelComponent = labelComponent,
-      label = { "Human score" },
-      verticalLabelPosition = Position.Vertical.Bottom,
-    )
-  }
+  return HorizontalLine(
+    y = 0.0,
+    line = line,
+    labelComponent = labelComponent,
+    label = "Human score",
+    verticalLabelPosition = Position.Vertical.Bottom,
+  )
 }
 
 @Composable
-private fun ComposeAITestScores(
-  modelProducer: CartesianChartModelProducer,
-  modifier: Modifier = Modifier,
-) {
-  val lineColors = listOf(Color(0xff916cda), Color(0xffd877d8), Color(0xfff094bb))
+fun ComposeAITestScores(modifier: Modifier = Modifier) {
+  val model = remember {
+    // Learn more: https://patrykandpatrick.com/z5ah6v.
+    LineCartesianLayerModel.build { data.values.forEach { series(it.keys, it.values) } }
+  }
   val legendItemLabelComponent = rememberTextComponent(TextStyle(vicoTheme.textColor, 12.sp))
   CartesianChartHost(
     rememberCartesianChart(
       rememberLineCartesianLayer(
+        model,
         LineCartesianLayer.LineProvider.series(
-          lineColors.map { color ->
+          LineColors.map { color ->
             LineCartesianLayer.rememberLine(
               fill = LineCartesianLayer.LineFill.single(Fill(color)),
               areaFill = null,
               pointProvider =
                 LineCartesianLayer.PointProvider.single(
-                  LineCartesianLayer.Point(rememberShapeComponent(Fill(color), CircleShape))
+                  LineCartesianLayer.Point(rememberShapeComponent(Fill(color), CircleShape)),
                 ),
             )
-          }
-        )
+          },
+        ),
       ),
       startAxis = VerticalAxis.rememberStart(),
       bottomAxis = HorizontalAxis.rememberBottom(),
       legend =
         rememberVerticalLegend(
-          items = { extraStore ->
-            extraStore[LegendLabelKey].forEachIndexed { index, label ->
-              add(
-                LegendItem(
-                  ShapeComponent(Fill(lineColors[index]), CircleShape),
-                  legendItemLabelComponent,
-                  label,
-                )
+          items =
+            data.keys.mapIndexed { index, label ->
+              LegendItem(
+                ShapeComponent(Fill(LineColors[index]), CircleShape),
+                legendItemLabelComponent,
+                label,
               )
-            }
-          },
+            },
           padding = Insets(top = 16.dp),
         ),
       decorations = listOf(rememberHorizontalLine()),
       marker = rememberMarker(),
     ),
-    modelProducer,
     modifier,
     rememberVicoScrollState(scrollEnabled = false),
   )
 }
 
 @Composable
-fun ComposeAITestScores(modifier: Modifier = Modifier) {
-  val modelProducer = remember { CartesianChartModelProducer() }
-  LaunchedEffect(Unit) {
-    modelProducer.runTransaction {
-      // Learn more: https://patrykandpatrick.com/z5ah6v.
-      lineModel { data.forEach { (_, map) -> series(map.keys, map.values) } }
-      extras { extraStore -> extraStore[LegendLabelKey] = data.keys }
-    }
-  }
-  ComposeAITestScores(modelProducer, modifier)
-}
-
-@Composable
 @Preview
 fun ComposeAITestScoresPreview() {
-  val modelProducer = remember { CartesianChartModelProducer() }
-  // Use `runBlocking` only for previews, which don’t support asynchronous execution.
-  runBlocking?.invoke {
-    modelProducer.runTransaction {
-      // Learn more: https://patrykandpatrick.com/z5ah6v.
-      lineModel { data.forEach { (_, map) -> series(map.keys, map.values) } }
-      extras { extraStore -> extraStore[LegendLabelKey] = data.keys }
-    }
-  }
-  PreviewBox { ComposeAITestScores(modelProducer) }
+  PreviewBox { ComposeAITestScores() }
 }

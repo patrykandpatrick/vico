@@ -18,7 +18,6 @@ package com.patrykandpatrick.vico.sample.charts
 
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -31,9 +30,8 @@ import com.patrykandpatrick.vico.compose.cartesian.CartesianMeasuringContext
 import com.patrykandpatrick.vico.compose.cartesian.axis.Axis
 import com.patrykandpatrick.vico.compose.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.compose.cartesian.axis.VerticalAxis
-import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianValueFormatter
-import com.patrykandpatrick.vico.compose.cartesian.data.columnModel
+import com.patrykandpatrick.vico.compose.cartesian.data.ColumnCartesianLayerModel
 import com.patrykandpatrick.vico.compose.cartesian.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
@@ -43,11 +41,8 @@ import com.patrykandpatrick.vico.compose.common.LegendItem
 import com.patrykandpatrick.vico.compose.common.component.ShapeComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
-import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 import com.patrykandpatrick.vico.compose.common.rememberHorizontalLegend
 import com.patrykandpatrick.vico.compose.common.vicoTheme
-
-private val LegendLabelKey = ExtraStore.Key<Set<String>>()
 
 private val Months = listOf("Jan", "Feb", "Mar", "Apr")
 
@@ -61,9 +56,12 @@ private val Y =
     "Food" to listOf(1, 2, 2, 2),
   )
 
-private val StackKeyProvider = ColumnCartesianLayer.StackKeyProvider { seriesKey, _, _ ->
+private val StackKeyProvider = ColumnCartesianLayer.StackKeyProvider { seriesKey, _ ->
   if (seriesKey == "Income") seriesKey else "Expenses"
 }
+
+private val ColumnColors =
+  listOf(Color(0xff4f6bed), Color(0xfff2a65a), Color(0xffdc6b87), Color(0xff73b88d))
 
 private val BottomAxisValueFormatter =
   object : CartesianValueFormatter {
@@ -78,75 +76,51 @@ private val BottomAxisValueFormatter =
   }
 
 @Composable
-private fun ComposeGroupedStackedColumnChart(
-  modelProducer: CartesianChartModelProducer,
-  modifier: Modifier = Modifier,
-) {
-  val columnColors =
-    listOf(Color(0xff4f6bed), Color(0xfff2a65a), Color(0xffdc6b87), Color(0xff73b88d))
-  val legendItemLabelComponent = rememberTextComponent(TextStyle(vicoTheme.textColor, 12.sp))
-  CartesianChartHost(
-    chart =
-      rememberCartesianChart(
-        rememberColumnCartesianLayer(
-          columnProvider =
-            ColumnCartesianLayer.ColumnProvider.series(
-              columnColors.map { color ->
-                rememberLineComponent(fill = Fill(color), thickness = 16.dp)
-              }
-            ),
-          stackKeyProvider = StackKeyProvider,
-        ),
-        startAxis = VerticalAxis.rememberStart(),
-        bottomAxis =
-          HorizontalAxis.rememberBottom(
-            valueFormatter = BottomAxisValueFormatter,
-            titleComponent = rememberTextComponent(TextStyle(vicoTheme.textColor, 12.sp)),
-            title = { "Month" },
-          ),
-        legend =
-          rememberHorizontalLegend(
-            items = { extraStore ->
-              extraStore[LegendLabelKey].forEachIndexed { index, label ->
-                add(
-                  LegendItem(
-                    ShapeComponent(Fill(columnColors[index]), CircleShape),
-                    legendItemLabelComponent,
-                    label,
-                  )
-                )
-              }
-            },
-            padding = Insets(top = 16.dp),
-          ),
-      ),
-    modelProducer = modelProducer,
-    modifier = modifier,
-  )
-}
-
-@Composable
 fun ComposeGroupedStackedColumnChart(modifier: Modifier = Modifier) {
-  val modelProducer = remember { CartesianChartModelProducer() }
-  LaunchedEffect(Unit) {
-    modelProducer.runTransaction {
-      columnModel { Y.forEach { (key, values) -> series(x = X, y = values, key = key) } }
-      extras { it[LegendLabelKey] = Y.keys }
+  val model = remember {
+    ColumnCartesianLayerModel.build {
+      Y.forEach { (key, values) -> series(x = X, y = values, key = key) }
     }
   }
-  ComposeGroupedStackedColumnChart(modelProducer, modifier)
+  val labelComponent = rememberTextComponent(TextStyle(vicoTheme.textColor, 12.sp))
+  CartesianChartHost(
+    rememberCartesianChart(
+      rememberColumnCartesianLayer(
+        model,
+        columnProvider =
+          ColumnCartesianLayer.ColumnProvider.series(
+            ColumnColors.map { color ->
+              rememberLineComponent(fill = Fill(color), thickness = 16.dp)
+            },
+          ),
+        stackKeyProvider = StackKeyProvider,
+      ),
+      startAxis = VerticalAxis.rememberStart(),
+      bottomAxis =
+        HorizontalAxis.rememberBottom(
+          valueFormatter = BottomAxisValueFormatter,
+          titleComponent = labelComponent,
+          title = "Month",
+        ),
+      legend =
+        rememberHorizontalLegend(
+          items =
+            Y.keys.mapIndexed { index, label ->
+              LegendItem(
+                ShapeComponent(Fill(ColumnColors[index]), CircleShape),
+                labelComponent,
+                label,
+              )
+            },
+          padding = Insets(top = 16.dp),
+        ),
+    ),
+    modifier,
+  )
 }
 
 @Composable
 @Preview
 fun ComposeGroupedStackedColumnChartPreview() {
-  val modelProducer = remember { CartesianChartModelProducer() }
-  // Use `runBlocking` only for previews, which don’t support asynchronous execution.
-  runBlocking?.invoke {
-    modelProducer.runTransaction {
-      columnModel { Y.forEach { (key, values) -> series(x = X, y = values, key = key) } }
-      extras { it[LegendLabelKey] = Y.keys }
-    }
-  }
-  PreviewBox { ComposeGroupedStackedColumnChart(modelProducer) }
+  PreviewBox { ComposeGroupedStackedColumnChart() }
 }

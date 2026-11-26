@@ -21,7 +21,15 @@ import com.patrykandpatrick.vico.compose.cartesian.axis.Axis
 import com.patrykandpatrick.vico.compose.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.compose.common.format
 
-/** Formats values for display. */
+/**
+ * Formats values for display.
+ *
+ * Implementations must be pure functions of their arguments and of the values they capture; to
+ * change the formatting, pass a new [CartesianValueFormatter]. It’s called on the main thread,
+ * while measuring and drawing. In a composable function, a lambda converted to
+ * [CartesianValueFormatter] is memoized while the values it captures are unchanged (compared via
+ * `equals` for stable types and by identity otherwise), so it needs no explicit `remember`.
+ */
 public fun interface CartesianValueFormatter {
   /**
    * Formats [value]. [verticalAxisPosition] is the position of the [VerticalAxis] with which the

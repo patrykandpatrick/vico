@@ -30,7 +30,9 @@ import androidx.compose.foundation.gestures.awaitLongPressOrCancellation
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.gestures.waitForUpOrCancellation
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.AwaitPointerEventScope
@@ -60,6 +62,14 @@ internal fun Modifier.pointerInput(
   consumeMoveEvents: Boolean,
   longPressEnabled: Boolean,
 ): Modifier {
+  // The pointer-input loops are keyed only on whether the callbacks are present, and they read
+  // the latest callbacks, so that a new chart (e.g., after a data update) doesn’t interrupt a
+  // gesture.
+  val currentOnInteraction by rememberUpdatedState(onInteraction)
+  val currentOnZoom by rememberUpdatedState(onZoom)
+  val currentConsumeMoveEvents by rememberUpdatedState(consumeMoveEvents)
+  val hasOnInteraction = onInteraction != null
+  val hasOnZoom = onZoom != null
   val defaultFlingBehavior = ScrollableDefaults.flingBehavior()
   val decayAnimationSpec = rememberSplineBasedDecay<Float>()
   val flingBehavior =
@@ -77,10 +87,12 @@ internal fun Modifier.pointerInput(
       reverseDirection = true,
       flingBehavior = flingBehavior,
     )
-    .pointerInput(onZoom, onInteraction) {
+    .pointerInput(hasOnZoom, hasOnInteraction) {
       awaitPointerEventScope {
         while (true) {
           val event = awaitPointerEvent()
+          val onZoom = currentOnZoom
+          val onInteraction = currentOnInteraction
           val position = event.changes.first().position
           val pointerPosition = position.toPoint()
           val consume =
@@ -105,7 +117,7 @@ internal fun Modifier.pointerInput(
               }
               event.type == PointerEventType.Move -> {
                 onInteraction(Interaction.Move(pointerPosition))
-                consumeMoveEvents && !scrollState.scrollEnabled
+                currentConsumeMoveEvents && !scrollState.scrollEnabled
               }
               event.type == PointerEventType.Enter ->
                 onInteraction(Interaction.Enter(pointerPosition))
@@ -122,13 +134,13 @@ internal fun Modifier.pointerInput(
       }
     }
     .then(
-      if (onInteraction != null) {
-        Modifier.pointerInput(onInteraction, longPressEnabled) {
+      if (hasOnInteraction) {
+        Modifier.pointerInput(longPressEnabled) {
           detectTapGestures(
-            onTap = { onInteraction(Interaction.Tap(it.toPoint())) },
+            onTap = { currentOnInteraction?.invoke(Interaction.Tap(it.toPoint())) == true },
             onLongPress =
               if (longPressEnabled) {
-                { onInteraction(Interaction.LongPress(it.toPoint())) }
+                { currentOnInteraction?.invoke(Interaction.LongPress(it.toPoint())) == true }
               } else {
                 null
               },
@@ -136,19 +148,19 @@ internal fun Modifier.pointerInput(
         }
       } else {
         Modifier
-      }
+      },
     )
     .then(
-      if (scrollState.scrollEnabled && onZoom != null) {
-        Modifier.pointerInput(onInteraction, onZoom) {
+      if (scrollState.scrollEnabled && hasOnZoom) {
+        Modifier.pointerInput(Unit) {
           detectZoomGestures { centroid, zoom ->
-            onInteraction?.invoke(Interaction.Zoom(centroid.toPoint()))
-            onZoom(zoom, centroid)
+            currentOnInteraction?.invoke(Interaction.Zoom(centroid.toPoint()))
+            currentOnZoom?.invoke(zoom, centroid)
           }
         }
       } else {
         Modifier
-      }
+      },
     )
     .extraPointerInput(scrollState)
 }

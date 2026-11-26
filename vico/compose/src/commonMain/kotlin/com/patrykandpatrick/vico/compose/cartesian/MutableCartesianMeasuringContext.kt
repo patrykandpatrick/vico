@@ -16,25 +16,22 @@
 
 package com.patrykandpatrick.vico.compose.cartesian
 
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartRanges
+import com.patrykandpatrick.vico.compose.cartesian.layer.AnimatedCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.layer.CartesianLayerPadding
 import com.patrykandpatrick.vico.compose.common.MeasuringContext
 import com.patrykandpatrick.vico.compose.common.data.CacheStore
-import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 
 internal class MutableCartesianMeasuringContext(
   override var canvasWidth: Float,
-  @Suppress("OVERRIDE_DEPRECATION") override var canvasSize: Size,
-  override val fontFamilyResolver: FontFamily.Resolver,
+  override var fontFamilyResolver: FontFamily.Resolver,
   override var density: Density,
-  override var extraStore: ExtraStore,
-  override val layoutDirection: LayoutDirection,
-  override var model: CartesianChartModel,
+  override var layoutDirection: LayoutDirection,
+  override var chartModel: CartesianChartModel,
   override var ranges: CartesianChartRanges,
   override var scrollEnabled: Boolean,
   override var zoomEnabled: Boolean,
@@ -42,4 +39,9 @@ internal class MutableCartesianMeasuringContext(
   override var markerX: Double?,
   override var markerSeriesIndex: Int?,
   override val cacheStore: CacheStore = CacheStore(),
-) : MeasuringContext, CartesianMeasuringContext
+  var drawingModels: Map<Any, Any> = emptyMap(),
+) : MeasuringContext, CartesianMeasuringContext {
+  @Suppress("UNCHECKED_CAST")
+  override fun <D : Any> getDrawingModel(layer: AnimatedCartesianLayer<*, D>): D =
+    drawingModels[layer.key] as D? ?: layer.createDrawingModel(ranges)
+}

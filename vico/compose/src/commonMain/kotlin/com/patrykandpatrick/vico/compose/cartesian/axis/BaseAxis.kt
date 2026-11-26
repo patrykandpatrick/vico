@@ -25,7 +25,6 @@ import com.patrykandpatrick.vico.compose.cartesian.layer.CartesianLayer
 import com.patrykandpatrick.vico.compose.common.MeasuringContext
 import com.patrykandpatrick.vico.compose.common.component.LineComponent
 import com.patrykandpatrick.vico.compose.common.component.TextComponent
-import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 import com.patrykandpatrick.vico.compose.common.orZero
 import com.patrykandpatrick.vico.compose.common.setAll
 
@@ -41,7 +40,7 @@ import com.patrykandpatrick.vico.compose.common.setAll
  * @property guideline used for the guidelines.
  * @property size determines how the [BaseAxis] sizes itself.
  * @property titleComponent the title [TextComponent].
- * @property title returns the title text.
+ * @property title the title text.
  * @property tickPosition defines the position of each tick relative to the axis line.
  * @property lineDrawingOrder whether to draw ticks and the axis line under or over the
  *   [CartesianLayer]s.
@@ -56,7 +55,7 @@ public abstract class BaseAxis<P : Axis.Position>(
   protected val guideline: LineComponent?,
   protected val size: Size,
   protected val titleComponent: TextComponent?,
-  protected val title: (ExtraStore) -> CharSequence?,
+  protected val title: CharSequence?,
   public val tickPosition: TickPosition,
   public val lineDrawingOrder: LineDrawingOrder,
 ) : Axis<P> {
@@ -193,35 +192,6 @@ public abstract class BaseAxis<P : Axis.Position>(
         this === other || other is Fixed && value == other.value
 
       override fun hashCode(): Int = value.hashCode()
-    }
-
-    /**
-     * The axis will use a fraction of the available space.
-     *
-     * @property fraction the fraction of the available space that the axis should use.
-     */
-    @Deprecated(
-      "Use `Auto` (optionally with `min` and `max`), `Fixed`, or `Text`. If you used `Fraction` " +
-        "to keep the chart area’s height constant as the x-axis height changed, set the chart " +
-        "area’s size directly instead; see the `chartAreaHeight` parameter of `CartesianChartHost`."
-    )
-    public class Fraction(public val fraction: Float) : Size() {
-      init {
-        require(fraction in MIN..MAX) {
-          "Expected a value in the interval [$MIN, $MAX]. Got $fraction."
-        }
-      }
-
-      @Suppress("DEPRECATION")
-      override fun equals(other: Any?): Boolean =
-        this === other || other is Fraction && fraction == other.fraction
-
-      override fun hashCode(): Int = fraction.hashCode()
-
-      private companion object {
-        const val MIN = 0f
-        const val MAX = 0.5f
-      }
     }
 
     /**

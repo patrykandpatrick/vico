@@ -18,7 +18,6 @@ package com.patrykandpatrick.vico.sample.charts
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -28,20 +27,16 @@ import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.Scroll
 import com.patrykandpatrick.vico.compose.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.compose.cartesian.axis.VerticalAxis
-import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianLayerRangeProvider
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.compose.cartesian.data.ColumnCartesianLayerModel
-import com.patrykandpatrick.vico.compose.cartesian.data.columnModel
 import com.patrykandpatrick.vico.compose.cartesian.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.marker.DefaultCartesianMarker
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoScrollState
 import com.patrykandpatrick.vico.compose.common.Fill
-import com.patrykandpatrick.vico.compose.common.component.LineComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
-import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.max
@@ -50,31 +45,20 @@ private const val RANGE_PROVIDER_BASE = 0.1
 
 private val RangeProvider =
   object : CartesianLayerRangeProvider {
-    override fun getMinY(minY: Double, maxY: Double, extraStore: ExtraStore) =
+    override fun getMinY(minY: Double, maxY: Double) =
       -RANGE_PROVIDER_BASE * ceil(max(abs(minY), maxY) / RANGE_PROVIDER_BASE)
 
-    override fun getMaxY(minY: Double, maxY: Double, extraStore: ExtraStore) =
-      -getMinY(minY, maxY, extraStore)
+    override fun getMaxY(minY: Double, maxY: Double) = -getMinY(minY, maxY)
   }
 
 private val StartAxisValueFormatter = CartesianValueFormatter.decimal(suffix = " °C")
 
 private val MarkerValueFormatter = DefaultCartesianMarker.ValueFormatter.default(suffix = " °C")
 
-private fun getColumnProvider(positive: LineComponent, negative: LineComponent) =
-  object : ColumnCartesianLayer.ColumnProvider {
-    override fun getColumn(entry: ColumnCartesianLayerModel.Entry, extraStore: ExtraStore) =
-      if (entry.y >= 0) positive else negative
-
-    override fun getWidestSeriesColumn(seriesKey: Any, seriesIndex: Int, extraStore: ExtraStore) =
-      positive
-  }
-
 @Composable
-private fun ComposeTemperatureAnomalies(
-  modelProducer: CartesianChartModelProducer,
-  modifier: Modifier = Modifier,
-) {
+fun ComposeTemperatureAnomalies(modifier: Modifier = Modifier) {
+  // Learn more: https://patrykandpatrick.com/3aqy4o.
+  val model = remember { ColumnCartesianLayerModel.build { series(x, y) } }
   val positiveColumn =
     rememberLineComponent(
       fill = Fill(Color(0xff0ac285)),
@@ -88,50 +72,29 @@ private fun ComposeTemperatureAnomalies(
       shape = RoundedCornerShape(bottomStartPercent = 40, bottomEndPercent = 40),
     )
   CartesianChartHost(
-    chart =
-      rememberCartesianChart(
-        rememberColumnCartesianLayer(
-          columnProvider =
-            remember(positiveColumn, negativeColumn) {
-              getColumnProvider(positiveColumn, negativeColumn)
-            },
-          groupSpacing = 4.dp,
-          rangeProvider = RangeProvider,
-        ),
-        startAxis = VerticalAxis.rememberStart(valueFormatter = StartAxisValueFormatter),
-        bottomAxis = HorizontalAxis.rememberBottom(labelRotationDegrees = 45f),
-        marker = rememberMarker(MarkerValueFormatter),
+    rememberCartesianChart(
+      rememberColumnCartesianLayer(
+        model,
+        columnProvider =
+          ColumnCartesianLayer.ColumnProvider { entry ->
+            if (entry.y >= 0) positiveColumn else negativeColumn
+          },
+        groupSpacing = 4.dp,
+        rangeProvider = RangeProvider,
       ),
-    modelProducer = modelProducer,
-    modifier = modifier,
+      startAxis = VerticalAxis.rememberStart(valueFormatter = StartAxisValueFormatter),
+      bottomAxis = HorizontalAxis.rememberBottom(labelRotationDegrees = 45f),
+      marker = rememberMarker(MarkerValueFormatter),
+    ),
+    modifier,
     scrollState = rememberVicoScrollState(initialScroll = Scroll.Absolute.End),
   )
 }
 
 @Composable
-fun ComposeTemperatureAnomalies(modifier: Modifier = Modifier) {
-  val modelProducer = remember { CartesianChartModelProducer() }
-  LaunchedEffect(Unit) {
-    modelProducer.runTransaction {
-      // Learn more: https://patrykandpatrick.com/3aqy4o.
-      columnModel { series(x, y) }
-    }
-  }
-  ComposeTemperatureAnomalies(modelProducer, modifier)
-}
-
-@Composable
 @Preview
 fun ComposeTemperatureAnomaliesPreview() {
-  val modelProducer = remember { CartesianChartModelProducer() }
-  // Use `runBlocking` only for previews, which don’t support asynchronous execution.
-  runBlocking?.invoke {
-    modelProducer.runTransaction {
-      // Learn more: https://patrykandpatrick.com/3aqy4o.
-      columnModel { series(x, y) }
-    }
-  }
-  PreviewBox { ComposeTemperatureAnomalies(modelProducer) }
+  PreviewBox { ComposeTemperatureAnomalies() }
 }
 
 private val x = (1940..2024).toList()

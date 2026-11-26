@@ -17,12 +17,11 @@
 package com.patrykandpatrick.vico.compose.cartesian.data
 
 import com.patrykandpatrick.vico.compose.cartesian.layer.LineCartesianLayer
-import com.patrykandpatrick.vico.compose.common.lerp
-import com.patrykandpatrick.vico.compose.common.orZero
 
 /**
  * Houses [LineCartesianLayer] drawing information. [opacity] is the lines’ opacity. [sweepFraction]
- * is the fraction of the layer swept in from the start edge (0 = hidden, 1 = fully visible).
+ * is the fraction of the layer swept in from the start edge (0 = hidden, 1 = fully visible). While
+ * a series is exiting, its key is in [seriesKeys] but not in the [LineCartesianLayerModel].
  */
 public class LineCartesianLayerDrawingModel(
   private val entries: List<Map<Double, Entry>>,
@@ -30,29 +29,6 @@ public class LineCartesianLayerDrawingModel(
   public val opacity: Float = 1f,
   public val sweepFraction: Float = 1f,
 ) : CartesianLayerDrawingModel<LineCartesianLayerDrawingModel.Entry>(entries, seriesKeys) {
-  public constructor(
-    entries: List<Map<Double, Entry>>,
-    opacity: Float = 1f,
-    sweepFraction: Float = 1f,
-  ) : this(entries, entries.indices.toList(), opacity, sweepFraction)
-
-  @Deprecated(
-    "Layer-specific `CartesianLayerDrawingModelInterpolator` implementations now own " +
-      "interpolation policy. This hook remains for compatibility with custom interpolators."
-  )
-  override fun transform(
-    entries: List<Map<Double, Entry>>,
-    from: CartesianLayerDrawingModel<Entry>?,
-    fraction: Float,
-  ): CartesianLayerDrawingModel<Entry> {
-    val old = from as LineCartesianLayerDrawingModel?
-    return LineCartesianLayerDrawingModel(
-      entries,
-      seriesKeys,
-      old?.opacity.orZero.lerp(opacity, fraction),
-      (old?.sweepFraction ?: sweepFraction).lerp(sweepFraction, fraction),
-    )
-  }
 
   override fun equals(other: Any?): Boolean =
     this === other ||
@@ -73,23 +49,14 @@ public class LineCartesianLayerDrawingModel(
   /**
    * Houses positional information for a [LineCartesianLayer]’s point. [y] expresses the distance of
    * the point from the bottom of the [LineCartesianLayer] as a fraction of the
-   * [LineCartesianLayer]’s height.
+   * [LineCartesianLayer]’s height. [entry] is the [LineCartesianLayerModel.Entry] that’s drawn,
+   * which lets exiting series be drawn after they’ve been removed from the model.
    */
-  public class Entry(public val y: Float) : CartesianLayerDrawingModel.Entry {
-    @Deprecated(
-      "Layer-specific `CartesianLayerDrawingModelInterpolator` implementations now own " +
-        "interpolation policy. Entries should only carry drawing information."
-    )
-    override fun transform(
-      from: CartesianLayerDrawingModel.Entry?,
-      fraction: Float,
-    ): CartesianLayerDrawingModel.Entry {
-      val oldY = (from as? Entry)?.y.orZero
-      return Entry(oldY.lerp(y, fraction))
-    }
+  public class Entry(public val y: Float, public val entry: LineCartesianLayerModel.Entry) :
+    CartesianLayerDrawingModel.Entry {
+    override fun equals(other: Any?): Boolean =
+      this === other || other is Entry && y == other.y && entry == other.entry
 
-    override fun equals(other: Any?): Boolean = this === other || other is Entry && y == other.y
-
-    override fun hashCode(): Int = y.hashCode()
+    override fun hashCode(): Int = 31 * y.hashCode() + entry.hashCode()
   }
 }

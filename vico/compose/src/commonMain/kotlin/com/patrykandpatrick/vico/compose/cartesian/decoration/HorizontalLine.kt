@@ -22,17 +22,16 @@ import com.patrykandpatrick.vico.compose.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.compose.common.*
 import com.patrykandpatrick.vico.compose.common.component.LineComponent
 import com.patrykandpatrick.vico.compose.common.component.TextComponent
-import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 import com.patrykandpatrick.vico.compose.common.half
 
 /**
  * A [Decoration] that highlights a _y_ value.
  *
- * @property y returns the _y_ value.
+ * @property y the _y_ value.
  * @property line the [LineComponent] for the line.
  * @property labelComponent the label [TextComponent].
- * @property label returns the label text. By default, the _y_ value is formatted to include up to
- *   two decimal digits, rounding half away from zero.
+ * @property label the label text. By default, the _y_ value is formatted to include up to two
+ *   decimal digits, rounding half away from zero.
  * @property horizontalLabelPosition defines the horizontal position of the label.
  * @property verticalLabelPosition defines the vertical position of the label.
  * @property labelRotationDegrees the rotation of the label (in degrees).
@@ -40,10 +39,10 @@ import com.patrykandpatrick.vico.compose.common.half
  *   [HorizontalLine] should use when interpreting [y].
  */
 public class HorizontalLine(
-  private val y: (ExtraStore) -> Double,
+  private val y: Double,
   private val line: LineComponent,
   private val labelComponent: TextComponent? = null,
-  private val label: (ExtraStore) -> CharSequence = { y(it).format() },
+  private val label: CharSequence = y.format(),
   private val horizontalLabelPosition: Position.Horizontal = Position.Horizontal.Start,
   private val verticalLabelPosition: Position.Vertical = Position.Vertical.Top,
   private val labelRotationDegrees: Float = 0f,
@@ -52,8 +51,6 @@ public class HorizontalLine(
   override fun drawOverLayers(context: CartesianDrawingContext) {
     with(context) {
       val yRange = ranges.getYRange(verticalAxisPosition)
-      val y = y(model.extraStore)
-      val label = label(model.extraStore)
       val canvasY =
         layerBounds.bottom - ((y - yRange.minY) / yRange.length).toFloat() * layerBounds.height
       line.drawHorizontal(context, layerBounds.left, layerBounds.right, canvasY)

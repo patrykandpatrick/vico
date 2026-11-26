@@ -17,7 +17,6 @@
 package com.patrykandpatrick.vico.sample.charts
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
@@ -30,57 +29,42 @@ import com.patrykandpatrick.vico.compose.common.vicoTheme
 import com.patrykandpatrick.vico.compose.pie.PieChart
 import com.patrykandpatrick.vico.compose.pie.PieChartHost
 import com.patrykandpatrick.vico.compose.pie.PieSize
-import com.patrykandpatrick.vico.compose.pie.data.PieChartModelProducer
+import com.patrykandpatrick.vico.compose.pie.data.PieChartModel
 import com.patrykandpatrick.vico.compose.pie.data.PieValueFormatter
-import com.patrykandpatrick.vico.compose.pie.data.pieModel
 import com.patrykandpatrick.vico.compose.pie.rememberPieChart
 
 @Composable
-private fun ComposeBasicDonutChart(
-  modelProducer: PieChartModelProducer,
-  modifier: Modifier = Modifier,
-) {
-  PieChartHost(
-    chart =
-      rememberPieChart(
-        sliceProvider =
-          PieChart.SliceProvider.series(
-            vicoTheme.pieChartColors.map { color ->
-              PieChart.Slice(
-                fill = Fill(color),
-                label =
-                  PieChart.SliceLabel.Outside(
-                    textComponent =
-                      TextComponent(
-                        textStyle = TextStyle(vicoTheme.textColor),
-                        margins = Insets(horizontal = 4.dp),
-                      ),
-                    lineColor = vicoTheme.textColor,
-                  ),
-              )
-            }
-          ),
-        innerSize = PieSize.Inner.fixed(128.dp),
-        spacing = 8.dp,
-        valueFormatter = PieValueFormatter { _, value, _ -> "${value.toInt()}%" },
-      ),
-    modelProducer = modelProducer,
-    modifier = modifier,
-  )
-}
-
-@Composable
 fun ComposeBasicDonutChart(modifier: Modifier = Modifier) {
-  val modelProducer = remember { PieChartModelProducer() }
-  LaunchedEffect(Unit) { modelProducer.runTransaction { pieModel { series(60, 20, 20) } } }
-  ComposeBasicDonutChart(modelProducer, modifier)
+  val model = remember { PieChartModel.build(60, 20, 20) }
+  PieChartHost(
+    rememberPieChart(
+      model,
+      PieChart.SliceProvider.series(
+        vicoTheme.pieChartColors.map { color ->
+          PieChart.Slice(
+            fill = Fill(color),
+            label =
+              PieChart.SliceLabel.Outside(
+                textComponent =
+                  TextComponent(
+                    textStyle = TextStyle(vicoTheme.textColor),
+                    margins = Insets(horizontal = 4.dp),
+                  ),
+                lineColor = vicoTheme.textColor,
+              ),
+          )
+        },
+      ),
+      innerSize = PieSize.Inner.fixed(128.dp),
+      spacing = 8.dp,
+      valueFormatter = PieValueFormatter { _, value, _ -> "${value.toInt()}%" },
+    ),
+    modifier,
+  )
 }
 
 @Composable
 @Preview
 fun ComposeBasicDonutChartPreview() {
-  val modelProducer = remember { PieChartModelProducer() }
-  // Use `runBlocking` only for previews, which don’t support asynchronous execution.
-  runBlocking?.invoke { modelProducer.runTransaction { pieModel { series(60, 20, 20) } } }
-  PreviewBox { ComposeBasicDonutChart(modelProducer) }
+  PreviewBox { ComposeBasicDonutChart() }
 }

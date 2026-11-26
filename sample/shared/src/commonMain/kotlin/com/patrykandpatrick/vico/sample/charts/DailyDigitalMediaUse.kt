@@ -18,7 +18,6 @@ package com.patrykandpatrick.vico.sample.charts
 
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,9 +28,8 @@ import androidx.compose.ui.unit.sp
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.compose.cartesian.axis.VerticalAxis
-import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianValueFormatter
-import com.patrykandpatrick.vico.compose.cartesian.data.columnModel
+import com.patrykandpatrick.vico.compose.cartesian.data.ColumnCartesianLayerModel
 import com.patrykandpatrick.vico.compose.cartesian.layer.CartesianLayerPadding
 import com.patrykandpatrick.vico.compose.cartesian.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
@@ -45,17 +43,16 @@ import com.patrykandpatrick.vico.compose.common.LegendItem
 import com.patrykandpatrick.vico.compose.common.component.ShapeComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
-import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 import com.patrykandpatrick.vico.compose.common.rememberHorizontalLegend
 import com.patrykandpatrick.vico.compose.common.vicoTheme
 
-private val LegendLabelKey = ExtraStore.Key<Set<String>>()
-
 private val StartAxisValueFormatter = CartesianValueFormatter.decimal(suffix = " h")
 
-private val StartAxisItemPlacer = VerticalAxis.ItemPlacer.step({ 0.5 })
+private val StartAxisItemPlacer = VerticalAxis.ItemPlacer.step(0.5)
 
 private val MarkerValueFormatter = DefaultCartesianMarker.ValueFormatter.default(suffix = " h")
+
+private val ColumnColors = listOf(Color(0xff6438a7), Color(0xff3490de), Color(0xff73e8dc))
 
 private val x = (2008..2018).toList()
 
@@ -67,83 +64,57 @@ private val y =
   )
 
 @Composable
-private fun ComposeDailyDigitalMediaUse(
-  modelProducer: CartesianChartModelProducer,
-  modifier: Modifier = Modifier,
-) {
-  val columnColors = listOf(Color(0xff6438a7), Color(0xff3490de), Color(0xff73e8dc))
+fun ComposeDailyDigitalMediaUse(modifier: Modifier = Modifier) {
+  val model = remember {
+    // Learn more: https://patrykandpatrick.com/3aqy4o.
+    ColumnCartesianLayerModel.build { y.values.forEach { series(x, it) } }
+  }
   val legendItemLabelComponent = rememberTextComponent(TextStyle(vicoTheme.textColor, 12.sp))
   CartesianChartHost(
-    chart =
-      rememberCartesianChart(
-        rememberColumnCartesianLayer(
-          columnProvider =
-            ColumnCartesianLayer.ColumnProvider.series(
-              columnColors.map { color ->
-                rememberLineComponent(fill = Fill(color), thickness = 16.dp)
-              }
-            ),
-          groupSpacing = 32.dp,
-          stackKeyProvider = ColumnCartesianLayer.StackKeyProvider.Stacked,
-        ),
-        startAxis =
-          VerticalAxis.rememberStart(
-            valueFormatter = StartAxisValueFormatter,
-            itemPlacer = StartAxisItemPlacer,
-          ),
-        bottomAxis =
-          HorizontalAxis.rememberBottom(
-            itemPlacer = remember { HorizontalAxis.ItemPlacer.segmented() }
-          ),
-        marker = rememberMarker(MarkerValueFormatter),
-        layerPadding = { CartesianLayerPadding(scalableStart = 16.dp, scalableEnd = 16.dp) },
-        legend =
-          rememberHorizontalLegend(
-            items = { extraStore ->
-              extraStore[LegendLabelKey].forEachIndexed { index, label ->
-                add(
-                  LegendItem(
-                    ShapeComponent(Fill(columnColors[index]), CircleShape),
-                    legendItemLabelComponent,
-                    label,
-                  )
-                )
-              }
+    rememberCartesianChart(
+      rememberColumnCartesianLayer(
+        model,
+        columnProvider =
+          ColumnCartesianLayer.ColumnProvider.series(
+            ColumnColors.map { color ->
+              rememberLineComponent(fill = Fill(color), thickness = 16.dp)
             },
-            padding = Insets(top = 16.dp),
           ),
-        markerController = CartesianMarkerController.rememberToggleOnTap(),
+        groupSpacing = 32.dp,
+        stackKeyProvider = ColumnCartesianLayer.StackKeyProvider.Stacked,
       ),
-    modelProducer = modelProducer,
-    modifier = modifier,
+      startAxis =
+        VerticalAxis.rememberStart(
+          valueFormatter = StartAxisValueFormatter,
+          itemPlacer = StartAxisItemPlacer,
+        ),
+      bottomAxis =
+        HorizontalAxis.rememberBottom(
+          itemPlacer = HorizontalAxis.ItemPlacer.segmented(),
+        ),
+      marker = rememberMarker(MarkerValueFormatter),
+      layerPadding = CartesianLayerPadding(scalableStart = 16.dp, scalableEnd = 16.dp),
+      legend =
+        rememberHorizontalLegend(
+          items =
+            y.keys.mapIndexed { index, label ->
+              LegendItem(
+                ShapeComponent(Fill(ColumnColors[index]), CircleShape),
+                legendItemLabelComponent,
+                label,
+              )
+            },
+          padding = Insets(top = 16.dp),
+        ),
+      markerController = CartesianMarkerController.rememberToggleOnTap(),
+    ),
+    modifier,
     zoomState = rememberVicoZoomState(zoomEnabled = false),
   )
 }
 
 @Composable
-fun ComposeDailyDigitalMediaUse(modifier: Modifier = Modifier) {
-  val modelProducer = remember { CartesianChartModelProducer() }
-  LaunchedEffect(Unit) {
-    modelProducer.runTransaction {
-      // Learn more: https://patrykandpatrick.com/3aqy4o.
-      columnModel { y.values.forEach { series(x, it) } }
-      extras { it[LegendLabelKey] = y.keys }
-    }
-  }
-  ComposeDailyDigitalMediaUse(modelProducer, modifier)
-}
-
-@Composable
 @Preview
 fun ComposeDailyDigitalMediaUsePreview() {
-  val modelProducer = remember { CartesianChartModelProducer() }
-  // Use `runBlocking` only for previews, which don’t support asynchronous execution.
-  runBlocking?.invoke {
-    modelProducer.runTransaction {
-      // Learn more: https://patrykandpatrick.com/3aqy4o.
-      columnModel { y.values.forEach { series(x, it) } }
-      extras { it[LegendLabelKey] = y.keys }
-    }
-  }
-  PreviewBox { ComposeDailyDigitalMediaUse(modelProducer) }
+  PreviewBox { ComposeDailyDigitalMediaUse() }
 }

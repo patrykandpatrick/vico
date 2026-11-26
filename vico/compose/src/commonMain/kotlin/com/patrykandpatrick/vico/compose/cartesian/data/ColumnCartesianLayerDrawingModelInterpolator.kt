@@ -19,7 +19,7 @@ package com.patrykandpatrick.vico.compose.cartesian.data
 import com.patrykandpatrick.vico.compose.common.lerp
 import com.patrykandpatrick.vico.compose.common.orZero
 
-internal class ColumnCartesianLayerDrawingModelInterpolator :
+internal object ColumnCartesianLayerDrawingModelInterpolator :
   BaseCartesianLayerDrawingModelInterpolator<
     ColumnCartesianLayerDrawingModel.Entry,
     ColumnCartesianLayerDrawingModel,
@@ -27,12 +27,13 @@ internal class ColumnCartesianLayerDrawingModelInterpolator :
   override fun transform(
     old: ColumnCartesianLayerDrawingModel?,
     new: ColumnCartesianLayerDrawingModel,
+    seriesKeys: List<Any>,
     entries: List<Map<Double, ColumnCartesianLayerDrawingModel.Entry>>,
     fraction: Float,
   ): ColumnCartesianLayerDrawingModel =
     ColumnCartesianLayerDrawingModel(
       entries = entries,
-      seriesKeys = new.seriesKeys,
+      seriesKeys = seriesKeys,
       opacity = old?.opacity.orZero.lerp(new.opacity, fraction),
     )
 
@@ -42,5 +43,8 @@ internal class ColumnCartesianLayerDrawingModelInterpolator :
     new: ColumnCartesianLayerDrawingModel.Entry,
     fraction: Float,
   ): ColumnCartesianLayerDrawingModel.Entry =
-    ColumnCartesianLayerDrawingModel.Entry(old?.height.orZero.lerp(new.height, fraction))
+    ColumnCartesianLayerDrawingModel.Entry(
+      old?.height.orZero.lerp(new.height, fraction),
+      new.entry,
+    )
 }

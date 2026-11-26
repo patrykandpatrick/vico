@@ -17,7 +17,6 @@
 package com.patrykandpatrick.vico.sample.charts
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -26,10 +25,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.compose.cartesian.axis.VerticalAxis
-import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianLayerRangeProvider
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianValueFormatter
-import com.patrykandpatrick.vico.compose.cartesian.data.lineModel
+import com.patrykandpatrick.vico.compose.cartesian.data.LineCartesianLayerModel
 import com.patrykandpatrick.vico.compose.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLine
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
@@ -45,14 +43,14 @@ private val x = (2010..2023).toList()
 private val y = listOf<Number>(0.28, 1.4, 3.1, 5.8, 15, 22, 29, 39, 49, 56, 75, 86, 89, 93)
 
 @Composable
-private fun ComposeElectricCarSales(
-  modelProducer: CartesianChartModelProducer,
-  modifier: Modifier = Modifier,
-) {
+fun ComposeElectricCarSales(modifier: Modifier = Modifier) {
+  // Learn more: https://patrykandpatrick.com/z5ah6v.
+  val model = remember { LineCartesianLayerModel.build { series(x, y) } }
   val lineColor = Color(0xffa485e0)
   CartesianChartHost(
     rememberCartesianChart(
       rememberLineCartesianLayer(
+        model,
         lineProvider =
           LineCartesianLayer.LineProvider.series(
             LineCartesianLayer.rememberLine(
@@ -60,11 +58,11 @@ private fun ComposeElectricCarSales(
               areaFill =
                 LineCartesianLayer.AreaFill.single(
                   Fill(
-                    Brush.verticalGradient(listOf(lineColor.copy(alpha = 0.4f), Color.Transparent))
-                  )
+                    Brush.verticalGradient(listOf(lineColor.copy(alpha = 0.4f), Color.Transparent)),
+                  ),
                 ),
               interpolator = LineCartesianLayer.Interpolator.catmullRom(),
-            )
+            ),
           ),
         rangeProvider = RangeProvider,
       ),
@@ -72,34 +70,13 @@ private fun ComposeElectricCarSales(
       bottomAxis = HorizontalAxis.rememberBottom(),
       marker = rememberMarker(MarkerValueFormatter),
     ),
-    modelProducer,
     modifier,
     rememberVicoScrollState(scrollEnabled = false),
   )
 }
 
 @Composable
-fun ComposeElectricCarSales(modifier: Modifier = Modifier) {
-  val modelProducer = remember { CartesianChartModelProducer() }
-  LaunchedEffect(Unit) {
-    modelProducer.runTransaction {
-      // Learn more: https://patrykandpatrick.com/z5ah6v.
-      lineModel { series(x, y) }
-    }
-  }
-  ComposeElectricCarSales(modelProducer, modifier)
-}
-
-@Composable
 @Preview
 fun ComposeElectricCarSalesPreview() {
-  val modelProducer = remember { CartesianChartModelProducer() }
-  // Use `runBlocking` only for previews, which don’t support asynchronous execution.
-  runBlocking?.invoke {
-    modelProducer.runTransaction {
-      // Learn more: https://patrykandpatrick.com/z5ah6v.
-      lineModel { series(x, y) }
-    }
-  }
-  PreviewBox { ComposeElectricCarSales(modelProducer) }
+  PreviewBox { ComposeElectricCarSales() }
 }

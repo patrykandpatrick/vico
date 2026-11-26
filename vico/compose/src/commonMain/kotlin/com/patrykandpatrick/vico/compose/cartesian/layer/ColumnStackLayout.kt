@@ -18,7 +18,6 @@ package com.patrykandpatrick.vico.compose.cartesian.layer
 
 import androidx.compose.ui.unit.Dp
 import com.patrykandpatrick.vico.compose.cartesian.data.ColumnCartesianLayerModel
-import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 import kotlin.math.max
 import kotlin.math.min
 
@@ -46,14 +45,13 @@ internal class ColumnStackLayout(
 
 internal fun ColumnCartesianLayer.StackKeyProvider.getLayout(
   seriesKeys: List<Any>,
-  extraStore: ExtraStore,
 ): ColumnStackLayout {
   val stackIndicesByKey = mutableMapOf<Any, Int>()
   val stackIndices = IntArray(seriesKeys.size)
   var stackCount = 0
   seriesKeys.forEachIndexed { seriesIndex, seriesKey ->
     stackIndices[seriesIndex] =
-      stackIndicesByKey.getOrPut(getStackKey(seriesKey, seriesIndex, extraStore)) { stackCount++ }
+      stackIndicesByKey.getOrPut(getStackKey(seriesKey, seriesIndex)) { stackCount++ }
   }
   val stackStarts = IntArray(stackCount + 1)
   stackIndices.forEach { stackIndex -> stackStarts[stackIndex + 1]++ }
@@ -72,7 +70,7 @@ internal fun ColumnCartesianLayer.StackKeyProvider.getLayout(
  * _y_-values and the sum of its negative _y_-values.
  */
 internal fun ColumnCartesianLayerModel.getYRange(
-  layout: ColumnStackLayout
+  layout: ColumnStackLayout,
 ): ClosedFloatingPointRange<Double> {
   if (layout.stackCount == series.size) return minY..maxY
   if (layout.stackCount == 1) return minAggregateY..maxAggregateY
@@ -105,12 +103,11 @@ internal fun ColumnCartesianLayerModel.getYRange(
 
 /**
  * Holds the unzoomed horizontal geometry of a [ColumnStackLayout]: each stack is as wide as its
- * widest column, and stacks are positioned the stack spacing apart. [seriesKeys], [extraStore], and
- * [density] identify the inputs.
+ * widest column, and stacks are positioned the stack spacing apart. [seriesKeys] and [density]
+ * identify the inputs.
  */
 internal class ColumnStackGeometry(
   val seriesKeys: List<Any>,
-  val extraStore: ExtraStore,
   val density: Float,
   val layout: ColumnStackLayout,
   val thicknesses: Array<Dp>,

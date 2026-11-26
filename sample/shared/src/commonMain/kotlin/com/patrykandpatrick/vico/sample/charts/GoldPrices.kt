@@ -17,7 +17,6 @@
 package com.patrykandpatrick.vico.sample.charts
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -26,14 +25,12 @@ import com.patrykandpatrick.vico.compose.cartesian.CartesianMeasuringContext
 import com.patrykandpatrick.vico.compose.cartesian.axis.Axis
 import com.patrykandpatrick.vico.compose.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.compose.cartesian.axis.VerticalAxis
-import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModelProducer
+import com.patrykandpatrick.vico.compose.cartesian.data.CandlestickCartesianLayerModel
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianLayerRangeProvider
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianValueFormatter
-import com.patrykandpatrick.vico.compose.cartesian.data.candlestickModel
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberCandlestickCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.marker.DefaultCartesianMarker
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
-import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 import kotlin.math.ceil
 import kotlin.math.floor
 import kotlinx.datetime.LocalTime
@@ -43,17 +40,15 @@ private const val Y_STEP = 10.0
 
 private val RangeProvider =
   object : CartesianLayerRangeProvider {
-    override fun getMinY(minY: Double, maxY: Double, extraStore: ExtraStore) =
-      Y_STEP * floor(minY / Y_STEP)
+    override fun getMinY(minY: Double, maxY: Double) = Y_STEP * floor(minY / Y_STEP)
 
-    override fun getMaxY(minY: Double, maxY: Double, extraStore: ExtraStore) =
-      Y_STEP * ceil(maxY / Y_STEP)
+    override fun getMaxY(minY: Double, maxY: Double) = Y_STEP * ceil(maxY / Y_STEP)
   }
 
 private val StartAxisValueFormatter =
   CartesianValueFormatter.decimal(thousandsSeparator = ",", prefix = "$")
 
-private val StartAxisItemPlacer = VerticalAxis.ItemPlacer.step({ Y_STEP })
+private val StartAxisItemPlacer = VerticalAxis.ItemPlacer.step(Y_STEP)
 
 private val BottomAxisValueFormatter =
   object : CartesianValueFormatter {
@@ -72,13 +67,12 @@ private val BottomAxisValueFormatter =
 private val MarkerValueFormatter = DefaultCartesianMarker.ValueFormatter.default(prefix = "$")
 
 @Composable
-private fun ComposeGoldPrices(
-  modelProducer: CartesianChartModelProducer,
-  modifier: Modifier = Modifier,
-) {
+fun ComposeGoldPrices(modifier: Modifier = Modifier) {
+  // Learn more: https://patrykandpatrick.com/r8d20v.
+  val model = remember { CandlestickCartesianLayerModel.build(x, opening, closing, low, high) }
   CartesianChartHost(
     rememberCartesianChart(
-      rememberCandlestickCartesianLayer(rangeProvider = RangeProvider),
+      rememberCandlestickCartesianLayer(model, rangeProvider = RangeProvider),
       startAxis =
         VerticalAxis.rememberStart(
           valueFormatter = StartAxisValueFormatter,
@@ -88,35 +82,14 @@ private fun ComposeGoldPrices(
         HorizontalAxis.rememberBottom(guideline = null, valueFormatter = BottomAxisValueFormatter),
       marker = rememberMarker(valueFormatter = MarkerValueFormatter, showIndicator = false),
     ),
-    modelProducer,
     modifier,
   )
 }
 
 @Composable
-fun ComposeGoldPrices(modifier: Modifier = Modifier) {
-  val modelProducer = remember { CartesianChartModelProducer() }
-  LaunchedEffect(Unit) {
-    modelProducer.runTransaction {
-      // Learn more: https://patrykandpatrick.com/r8d20v.
-      candlestickModel(x, opening, closing, low, high)
-    }
-  }
-  ComposeGoldPrices(modelProducer, modifier)
-}
-
-@Composable
 @Preview
 fun ComposeGoldPricesPreview() {
-  val modelProducer = remember { CartesianChartModelProducer() }
-  // Use `runBlocking` only for previews, which don’t support asynchronous execution.
-  runBlocking?.invoke {
-    modelProducer.runTransaction {
-      // Learn more: https://patrykandpatrick.com/r8d20v.
-      candlestickModel(x, opening, closing, low, high)
-    }
-  }
-  PreviewBox { ComposeGoldPrices(modelProducer) }
+  PreviewBox { ComposeGoldPrices() }
 }
 
 private val x = (0..16).toList() + (18..23).toList()

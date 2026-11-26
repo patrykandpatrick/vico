@@ -33,7 +33,6 @@ import com.patrykandpatrick.vico.compose.common.DrawingContext
 import com.patrykandpatrick.vico.compose.common.MeasuringContext
 import com.patrykandpatrick.vico.compose.common.MutableDrawScope
 import com.patrykandpatrick.vico.compose.common.data.CacheStore
-import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 import com.patrykandpatrick.vico.compose.pie.data.PieChartModel
 
 /** A [MeasuringContext] extension with pie-chart data. */
@@ -50,10 +49,8 @@ public interface PieChartDrawingContext : DrawingContext, PieChartMeasuringConte
 
 internal class MutablePieChartMeasuringContext(
   override var canvasWidth: Float,
-  @Suppress("OVERRIDE_DEPRECATION") override var canvasSize: Size,
   override val fontFamilyResolver: FontFamily.Resolver,
   override var density: Density,
-  override var extraStore: ExtraStore,
   override val layoutDirection: LayoutDirection,
   override var model: PieChartModel,
   override val cacheStore: CacheStore,
@@ -62,35 +59,35 @@ internal class MutablePieChartMeasuringContext(
 @Composable
 internal fun rememberPieChartMeasuringContext(
   model: PieChartModel,
-  extraStore: ExtraStore,
 ): State<MutablePieChartMeasuringContext> {
   val fontFamilyResolver = LocalFontFamilyResolver.current
   val density = LocalDensity.current
   val layoutDirection = LocalLayoutDirection.current
   val cacheStore = remember { CacheStore() }
   return rememberUpdatedState(
-    remember(fontFamilyResolver, density, extraStore, layoutDirection, model, cacheStore) {
+    remember(fontFamilyResolver, density, layoutDirection, model, cacheStore) {
       MutablePieChartMeasuringContext(
         canvasWidth = 0f,
-        canvasSize = Size.Zero,
         fontFamilyResolver = fontFamilyResolver,
         density = density,
-        extraStore = extraStore,
         layoutDirection = layoutDirection,
         model = model,
         cacheStore = cacheStore,
       )
-    }
+    },
   )
 }
 
 internal fun PieChartDrawingContext(
   measuringContext: PieChartMeasuringContext,
+  canvasSize: Size,
   canvas: Canvas,
   chartBounds: Rect,
   mutableDrawScope: MutableDrawScope,
 ): PieChartDrawingContext =
   object : PieChartDrawingContext, PieChartMeasuringContext by measuringContext {
+    override val canvasSize: Size = canvasSize
+
     override var canvas: Canvas = canvas
 
     override val chartBounds: Rect = chartBounds

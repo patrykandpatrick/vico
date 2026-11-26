@@ -20,7 +20,6 @@ import com.patrykandpatrick.vico.compose.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.compose.cartesian.CartesianMeasuringContext
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartRanges
 import com.patrykandpatrick.vico.compose.cartesian.layer.CartesianLayerDimensions
-import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 import com.patrykandpatrick.vico.compose.common.half
 import com.patrykandpatrick.vico.compose.common.roundedToNearest
 import kotlin.math.ceil
@@ -77,22 +76,25 @@ internal abstract class BaseHorizontalAxisItemPlacer(private val shiftExtremeLin
   ) = context.ranges.measuredLabelValues
 }
 
-internal class AlignedHorizontalAxisItemPlacer(
-  private val spacing: (ExtraStore) -> Int,
-  private val offset: (ExtraStore) -> Int,
+internal data class AlignedHorizontalAxisItemPlacer(
+  private val spacing: Int,
+  private val offset: Int,
   private val shiftExtremeLines: Boolean,
   private val addExtremeLabelPadding: Boolean,
   private val shiftExtremeLabels: Boolean = false,
 ) : BaseHorizontalAxisItemPlacer(shiftExtremeLines) {
   override fun getShiftExtremeLabels(context: CartesianMeasuringContext) = shiftExtremeLabels
 
-  private fun CartesianMeasuringContext.getSpacingOrThrow() =
-    spacing(model.extraStore).also { require(it > 0) { "`spacing` must return a positive value." } }
+  init {
+    require(spacing > 0) { "`spacing` must be positive." }
+    require(offset >= 0) { "`offset` must be nonnegative." }
+  }
 
-  private fun CartesianMeasuringContext.getOffsetOrThrow() =
-    offset(model.extraStore).also {
-      require(it >= 0) { "`offset` must return a nonnegative value." }
-    }
+  @Suppress("UnusedReceiverParameter")
+  private fun CartesianMeasuringContext.getSpacingOrThrow() = spacing
+
+  @Suppress("UnusedReceiverParameter")
+  private fun CartesianMeasuringContext.getOffsetOrThrow() = offset
 
   override fun getFirstLabelValue(context: CartesianMeasuringContext, maxLabelWidth: Float) =
     context.run {
@@ -158,7 +160,7 @@ internal class AlignedHorizontalAxisItemPlacer(
   }
 }
 
-internal class SegmentedHorizontalAxisItemPlacer(private val shiftExtremeLines: Boolean) :
+internal data class SegmentedHorizontalAxisItemPlacer(private val shiftExtremeLines: Boolean) :
   BaseHorizontalAxisItemPlacer(shiftExtremeLines) {
   override fun getLabelValues(
     context: CartesianDrawingContext,
@@ -209,7 +211,7 @@ internal class SegmentedHorizontalAxisItemPlacer(private val shiftExtremeLines: 
   ) = if (shiftExtremeLines) tickThickness else tickThickness.half
 }
 
-internal class ExtremesHorizontalAxisItemPlacer(private val shiftExtremeLines: Boolean) :
+internal data class ExtremesHorizontalAxisItemPlacer(private val shiftExtremeLines: Boolean) :
   BaseHorizontalAxisItemPlacer(shiftExtremeLines) {
   override fun getShiftExtremeLabels(context: CartesianMeasuringContext) = true
 

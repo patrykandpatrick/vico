@@ -21,7 +21,6 @@ import androidx.compose.ui.geometry.Rect
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.compose.cartesian.CartesianMeasuringContext
-import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.compose.cartesian.layer.CartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.layer.CartesianLayerMarginUpdater
 import com.patrykandpatrick.vico.compose.cartesian.layer.MutableCartesianLayerDimensions
@@ -30,8 +29,7 @@ import com.patrykandpatrick.vico.compose.common.MeasuringContext
 
 /** Draws an axis. */
 @Immutable
-public interface Axis<P : Axis.Position> :
-  Bounded, CartesianLayerMarginUpdater<CartesianChartModel> {
+public interface Axis<P : Axis.Position> : Bounded, CartesianLayerMarginUpdater {
   /** The position of the [Axis]. */
   public val position: P
 

@@ -17,7 +17,6 @@
 package com.patrykandpatrick.vico.sample.charts
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,9 +28,8 @@ import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.compose.cartesian.axis.VerticalAxis
-import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianValueFormatter
-import com.patrykandpatrick.vico.compose.cartesian.data.columnModel
+import com.patrykandpatrick.vico.compose.cartesian.data.ColumnCartesianLayerModel
 import com.patrykandpatrick.vico.compose.cartesian.layer.CartesianLayerPadding
 import com.patrykandpatrick.vico.compose.cartesian.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
@@ -41,18 +39,11 @@ import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoScrollState
 import com.patrykandpatrick.vico.compose.common.Fill
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
-import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 
 private const val Y_DIVISOR = 1000
 
-private val BottomAxisLabelKey = ExtraStore.Key<List<String>>()
-
 private val StartAxisValueFormatter = CartesianValueFormatter { _, value, _ ->
   "${(value / Y_DIVISOR).toInt()}K"
-}
-
-private val BottomAxisValueFormatter = CartesianValueFormatter { context, x, _ ->
-  context.model.extraStore[BottomAxisLabelKey][x.toInt()]
 }
 
 private val MarkerValueFormatter = DefaultCartesianMarker.ValueFormatter { _, targets ->
@@ -75,57 +66,34 @@ private val data =
   mapOf("Ag" to 22378, "Mo" to 4478, "U" to 3624, "Sn" to 2231, "Li" to 1634, "W" to 1081)
 
 @Composable
-private fun ComposeRockMetalRatios(
-  modelProducer: CartesianChartModelProducer,
-  modifier: Modifier = Modifier,
-) {
-  CartesianChartHost(
-    chart =
-      rememberCartesianChart(
-        rememberColumnCartesianLayer(
-          ColumnCartesianLayer.ColumnProvider.series(
-            rememberLineComponent(fill = Fill(Color(0xffff5500)), thickness = 16.dp)
-          )
-        ),
-        startAxis = VerticalAxis.rememberStart(valueFormatter = StartAxisValueFormatter),
-        bottomAxis =
-          HorizontalAxis.rememberBottom(
-            itemPlacer = remember { HorizontalAxis.ItemPlacer.segmented() },
-            valueFormatter = BottomAxisValueFormatter,
-          ),
-        marker = rememberMarker(MarkerValueFormatter),
-        layerPadding = { CartesianLayerPadding(scalableStart = 8.dp, scalableEnd = 8.dp) },
-      ),
-    modelProducer = modelProducer,
-    modifier = modifier,
-    scrollState = rememberVicoScrollState(scrollEnabled = false),
-  )
-}
-
-@Composable
 fun ComposeRockMetalRatios(modifier: Modifier = Modifier) {
-  val modelProducer = remember { CartesianChartModelProducer() }
-  LaunchedEffect(Unit) {
-    modelProducer.runTransaction {
-      // Learn more: https://patrykandpatrick.com/3aqy4o.
-      columnModel { series(data.values) }
-      extras { it[BottomAxisLabelKey] = data.keys.toList() }
-    }
-  }
-  ComposeRockMetalRatios(modelProducer, modifier)
+  // Learn more: https://patrykandpatrick.com/3aqy4o.
+  val model = remember { ColumnCartesianLayerModel.build { series(data.values) } }
+  val labels = remember { data.keys.toList() }
+  CartesianChartHost(
+    rememberCartesianChart(
+      rememberColumnCartesianLayer(
+        model,
+        ColumnCartesianLayer.ColumnProvider.series(
+          rememberLineComponent(fill = Fill(Color(0xffff5500)), thickness = 16.dp),
+        ),
+      ),
+      startAxis = VerticalAxis.rememberStart(valueFormatter = StartAxisValueFormatter),
+      bottomAxis =
+        HorizontalAxis.rememberBottom(
+          itemPlacer = HorizontalAxis.ItemPlacer.segmented(),
+          valueFormatter = CartesianValueFormatter { _, x, _ -> labels[x.toInt()] },
+        ),
+      marker = rememberMarker(MarkerValueFormatter),
+      layerPadding = CartesianLayerPadding(scalableStart = 8.dp, scalableEnd = 8.dp),
+    ),
+    modifier,
+    rememberVicoScrollState(scrollEnabled = false),
+  )
 }
 
 @Composable
 @Preview
 fun ComposeRockMetalRatiosPreview() {
-  val modelProducer = remember { CartesianChartModelProducer() }
-  // Use `runBlocking` only for previews, which don’t support asynchronous execution.
-  runBlocking?.invoke {
-    modelProducer.runTransaction {
-      // Learn more: https://patrykandpatrick.com/3aqy4o.
-      columnModel { series(data.values) }
-      extras { it[BottomAxisLabelKey] = data.keys.toList() }
-    }
-  }
-  PreviewBox { ComposeRockMetalRatios(modelProducer) }
+  PreviewBox { ComposeRockMetalRatios() }
 }

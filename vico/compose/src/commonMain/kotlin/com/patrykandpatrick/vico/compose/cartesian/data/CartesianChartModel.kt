@@ -14,217 +14,53 @@
  * limitations under the License.
  */
 
-@file:OptIn(ExperimentalUuidApi::class)
-
 package com.patrykandpatrick.vico.compose.cartesian.data
 
 import androidx.compose.animation.core.AnimationSpec
-import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.tween
-import androidx.compose.runtime.*
-import androidx.compose.ui.platform.LocalInspectionMode
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChart
-import com.patrykandpatrick.vico.compose.common.*
-import com.patrykandpatrick.vico.compose.common.data.ExtraStore
-import com.patrykandpatrick.vico.compose.common.data.MutableExtraStore
+import com.patrykandpatrick.vico.compose.cartesian.layer.CartesianLayer
+import com.patrykandpatrick.vico.compose.common.Animation
 import com.patrykandpatrick.vico.compose.common.gcdWith
-import kotlin.coroutines.EmptyCoroutineContext
-import kotlin.uuid.ExperimentalUuidApi
-import kotlinx.coroutines.*
 
-/** Stores a [CartesianChart]’s data. */
-public class CartesianChartModel {
-  /** The [CartesianLayerModel]s. */
-  public val models: List<CartesianLayerModel>
+/**
+ * Aggregates the [CartesianLayerModel]s of a [CartesianChart]’s [CartesianLayer]s. This is created
+ * by the library and is read-only.
+ */
+public class CartesianChartModel internal constructor(models: List<CartesianLayerModel>) {
+  /** The [CartesianLayerModel]s, in [CartesianLayer] order. */
+  public val models: List<CartesianLayerModel> = models.toList()
 
   /**
    * Expresses the size of this [CartesianChartModel] in terms of the range of the _x_-values
    * covered.
    */
-  public val width: Double
-
-  /** Stores auxiliary data, including [CartesianLayerDrawingModel]s. */
-  public val extraStore: ExtraStore
-
-  /** Creates a [CartesianChartModel] consisting of the given [CartesianLayerModel]s. */
-  public constructor(models: List<CartesianLayerModel>) : this(models, ExtraStore.Empty)
-
-  /** Creates a [CartesianChartModel] consisting of the given [CartesianLayerModel]s. */
-  public constructor(vararg models: CartesianLayerModel) : this(models.toList())
-
-  internal constructor(
-    models: List<CartesianLayerModel>,
-    extraStore: ExtraStore,
-  ) : this(
-    models = models,
-    width = models.maxOf { it.maxX } - models.minOf { it.minX },
-    extraStore = extraStore,
-  )
-
-  internal constructor(models: List<CartesianLayerModel>, width: Double, extraStore: ExtraStore) {
-    this.models = models
-    this.width = width
-    this.extraStore = extraStore
-  }
-
-  /** Returns the greatest common divisor of the _x_-values’ differences. */
-  public fun getXDeltaGcd(): Double =
-    models.fold<CartesianLayerModel, Double?>(null) { gcd, layerModel ->
-      val layerModelGcd = layerModel.getXDeltaGcd()
-      gcd?.gcdWith(layerModelGcd) ?: layerModelGcd
-    } ?: 1.0
+  public val width: Double =
+    models
+      .filterNot { it.isEmpty }
+      .let { nonEmpty ->
+        if (nonEmpty.isEmpty()) 0.0 else nonEmpty.maxOf { it.maxX } - nonEmpty.minOf { it.minX }
+      }
 
   /**
-   * Creates a copy of this [CartesianChartModel] with the given [ExtraStore], which is also applied
-   * to the [CartesianLayerModel]s.
+   * Returns the greatest common divisor of the _x_-values’ differences, or 1 if there are no
+   * entries. Empty [CartesianLayerModel]s are ignored.
    */
-  public fun copy(extraStore: ExtraStore): CartesianChartModel =
-    CartesianChartModel(models.map { it.copy(extraStore) }, width, extraStore)
+  public fun getXDeltaGcd(): Double =
+    models
+      .filterNot { it.isEmpty }
+      .fold<CartesianLayerModel, Double?>(null) { gcd, layerModel ->
+        val layerModelGcd = layerModel.getXDeltaGcd()
+        gcd?.gcdWith(layerModelGcd) ?: layerModelGcd
+      } ?: 1.0
 
   override fun equals(other: Any?): Boolean =
-    this === other ||
-      other is CartesianChartModel && models == other.models && extraStore == other.extraStore
+    this === other || other is CartesianChartModel && models == other.models
 
-  override fun hashCode(): Int = 31 * models.hashCode() + extraStore.hashCode()
+  override fun hashCode(): Int = models.hashCode()
 
-  override fun toString(): String =
-    "CartesianChartModel(models=$models, width=$width, extraStore=$extraStore)"
-
-  /** Creates an immutable copy of this [CartesianChartModel]. */
-  public fun toImmutable(): CartesianChartModel = this
-
-  internal companion object {
-    val Empty: CartesianChartModel =
-      CartesianChartModel(models = emptyList(), width = 0.0, extraStore = ExtraStore.Empty)
-  }
+  override fun toString(): String = "CartesianChartModel(models=$models, width=$width)"
 }
 
 internal val defaultCartesianDiffAnimationSpec: AnimationSpec<Float> =
   tween(durationMillis = Animation.DIFF_DURATION)
-
-@Composable
-internal fun CartesianChartModelProducer.collectAsState(
-  chart: CartesianChart,
-  animationSpec: AnimationSpec<Float>?,
-  initialAnimationSpec: AnimationSpec<Float>?,
-  ranges: MutableCartesianChartRanges,
-): State<CartesianChartData> {
-  var previousHashCode by remember { ValueWrapper<Int?>(null) }
-  val hashCode = hashCode()
-  check(previousHashCode == null || hashCode == previousHashCode) { NEW_PRODUCER_ERROR_MESSAGE }
-  previousHashCode = hashCode
-  val dataState = remember(chart.id) { CartesianChartDataState() }
-  val extraStore = remember(chart.id) { MutableExtraStore() }
-  val isInPreview = LocalInspectionMode.current
-  val chartState = rememberWrappedValue(chart)
-  val animationSpecState = rememberUpdatedState(animationSpec)
-  val initialAnimationSpecState = rememberUpdatedState(initialAnimationSpec)
-
-  fun updateRanges(model: CartesianChartModel?): CartesianChartRanges {
-    ranges.reset()
-    return if (model != null) {
-      chartState.value.updateRanges(ranges, model)
-      ranges.toImmutable()
-    } else {
-      CartesianChartRanges.Empty
-    }
-  }
-
-  val restoredModel =
-    remember(chart.id) {
-      getCachedData(::updateRanges, extraStore)?.let { (model, ranges, extraStore) ->
-        dataState.set(model, ranges, extraStore)
-        model
-      }
-    }
-  val context = if (isInPreview) Dispatchers.Unconfined + PreviewContext else EmptyCoroutineContext
-  val scope = key(chart.id, isInPreview) { rememberCoroutineScope { context } }
-  suspend fun register() {
-    var mainAnimationJob: Job? = null
-    var animationFrameJob: Job? = null
-    var finalAnimationFrameJob: Job? = null
-    var isAnimationRunning: Boolean
-    var isAnimationFrameGenerationRunning = false
-    var isInitialAnimation = true
-    val startAnimation: (transformModel: suspend (key: Any, fraction: Float) -> Unit) -> Unit =
-      { transformModel ->
-        val isInitial = isInitialAnimation && dataState.value.model == null
-        val spec = if (isInitial) initialAnimationSpecState.value else animationSpecState.value
-        isInitialAnimation = false
-        if (spec != null && !isInPreview) {
-          isAnimationRunning = true
-          mainAnimationJob = scope.launch {
-            animate(
-              initialValue = Animation.range.start,
-              targetValue = Animation.range.endInclusive,
-              animationSpec = spec,
-            ) { fraction, _ ->
-              when {
-                !isAnimationRunning -> return@animate
-                !isAnimationFrameGenerationRunning -> {
-                  isAnimationFrameGenerationRunning = true
-                  animationFrameJob = scope.launch {
-                    transformModel(scope, fraction)
-                    isAnimationFrameGenerationRunning = false
-                  }
-                }
-                fraction == 1f -> {
-                  finalAnimationFrameJob =
-                    scope.launch(Dispatchers.Default) {
-                      animationFrameJob?.cancelAndJoin()
-                      transformModel(scope, fraction)
-                      isAnimationFrameGenerationRunning = false
-                    }
-                }
-              }
-            }
-          }
-        } else {
-          finalAnimationFrameJob = scope.launch {
-            transformModel(scope, Animation.range.endInclusive)
-          }
-        }
-      }
-    registerForUpdates(
-      key = scope,
-      restoredModel = restoredModel,
-      cancelAnimation = {
-        mainAnimationJob?.cancelAndJoin()
-        animationFrameJob?.cancelAndJoin()
-        finalAnimationFrameJob?.cancelAndJoin()
-        isAnimationRunning = false
-        isAnimationFrameGenerationRunning = false
-      },
-      startAnimation = startAnimation,
-      prepareForTransformation = { model, extraStore, ranges ->
-        chartState.value.prepareForTransformation(model, extraStore, ranges)
-      },
-      transform = { extraStore, fraction -> chartState.value.transform(extraStore, fraction) },
-      hostExtraStore = extraStore,
-      updateRanges = ::updateRanges,
-    ) { model, ranges, extraStore ->
-      dataState.set(model, ranges, extraStore)
-    }
-  }
-  val runBlocking = runBlocking
-  if (isInPreview && runBlocking != null) {
-    remember(scope) {
-      try {
-        runBlocking(context) { register() }
-      } finally {
-        // Compose also cancels this scope if the preview is abandoned before effects are applied.
-        scope.coroutineContext.job.invokeOnCompletion { unregisterFromUpdates(scope) }
-      }
-    }
-  } else {
-    LaunchedEffect(scope) {
-      try {
-        withContext(context) { register() }
-        awaitCancellation()
-      } finally {
-        unregisterFromUpdates(scope)
-      }
-    }
-  }
-  return dataState
-}

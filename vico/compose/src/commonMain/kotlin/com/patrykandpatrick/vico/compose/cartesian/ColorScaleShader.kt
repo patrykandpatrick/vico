@@ -25,7 +25,7 @@ import com.patrykandpatrick.vico.compose.cartesian.axis.Axis
 internal object ColorScaleShader {
   fun create(
     context: CartesianDrawingContext,
-    colors: Map<Number, Color>,
+    colors: Map<out Number, Color>,
     from: Offset = Offset(0f, context.layerBounds.top),
     to: Offset = Offset(0f, context.layerBounds.bottom),
     verticalAxisPosition: Axis.Position.Vertical? = null,
@@ -41,7 +41,7 @@ internal object ColorScaleShader {
     )
   }
 
-  private fun Map<Number, Color>.getSortedColors(): List<Color> =
+  private fun Map<out Number, Color>.getSortedColors(): List<Color> =
     entries.sortedByDescending { it.key.toDouble() }.map { it.value }
 
   private fun getPositions(

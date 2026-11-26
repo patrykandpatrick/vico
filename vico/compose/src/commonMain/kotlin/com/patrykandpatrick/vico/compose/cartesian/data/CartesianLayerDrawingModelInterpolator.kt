@@ -16,36 +16,41 @@
 
 package com.patrykandpatrick.vico.compose.cartesian.data
 
+import com.patrykandpatrick.vico.compose.cartesian.layer.AnimatedCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.layer.CandlestickCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.layer.LineCartesianLayer
 
-/** Interpolates two [CartesianLayerDrawingModel]s. */
-public interface CartesianLayerDrawingModelInterpolator<
-  T : CartesianLayerDrawingModel.Entry,
-  R : CartesianLayerDrawingModel<T>,
-> {
-  /** Sets the initial and target [CartesianLayerDrawingModel]s. */
-  public fun setModels(old: R?, new: R?)
-
+/**
+ * Creates [Transition]s between drawing models of type [D] for [AnimatedCartesianLayer]s. This is
+ * stateless: the chart host owns the animation and asks for one [Transition] per data update.
+ * Implementations must be pure functions of their arguments and of the values they capture, and
+ * they’re called off the main thread.
+ *
+ * In a composable function, a lambda converted to [CartesianLayerDrawingModelInterpolator] is
+ * memoized while the values it captures are unchanged (compared via `equals` for stable types and
+ * by identity otherwise), so it needs no explicit `remember`.
+ */
+public fun interface CartesianLayerDrawingModelInterpolator<D : Any> {
   /**
-   * Interpolates the two [CartesianLayerDrawingModel]s. [fraction] is the balance between the
-   * initial and target [CartesianLayerDrawingModel]s, with 0 corresponding to the initial
-   * [CartesianLayerDrawingModel], and 1 corresponding to the target [CartesianLayerDrawingModel].
+   * Returns a [Transition] from [old] to [new]. [old] is the drawing model on screen when the data
+   * update occurs—possibly an intermediate one, if an animation is in progress—or `null` if the
+   * [AnimatedCartesianLayer] is appearing (for the initial animation or because the layer was just
+   * added).
    */
-  public suspend fun transform(fraction: Float): R?
+  public fun createTransition(old: D?, new: D): Transition<D>
+
+  /** Interpolates between two drawing models. */
+  public fun interface Transition<D : Any> {
+    /**
+     * Returns the drawing model for [fraction], where 0 corresponds to the initial drawing model,
+     * and 1 corresponds to the target drawing model. This is called off the main thread.
+     */
+    public fun interpolate(fraction: Float): D
+  }
 
   /** Houses [CartesianLayerDrawingModelInterpolator] factory functions. */
   public companion object {
-    /**
-     * Creates an instance of the default [CartesianLayerDrawingModelInterpolator] implementation.
-     */
-    @Deprecated(
-      "Use the per-`CartesianLayer`-type factory functions: `line`, `column`, and `candlestick`."
-    )
-    public fun <T : CartesianLayerDrawingModel.Entry, R : CartesianLayerDrawingModel<T>> default():
-      CartesianLayerDrawingModelInterpolator<T, R> = DefaultCartesianLayerDrawingModelInterpolator()
-
     /**
      * Creates a [CartesianLayerDrawingModelInterpolator] for [LineCartesianLayer]s. If [sweep] is
      * `true`, the [LineCartesianLayer]’s first appearance is animated as a clip sweeping in from
@@ -53,24 +58,17 @@ public interface CartesianLayerDrawingModelInterpolator<
      * fade-in.
      */
     public fun line(
-      sweep: Boolean = false
-    ): CartesianLayerDrawingModelInterpolator<
-      LineCartesianLayerDrawingModel.Entry,
-      LineCartesianLayerDrawingModel,
-    > = LineCartesianLayerDrawingModelInterpolator(sweep)
+      sweep: Boolean = false,
+    ): CartesianLayerDrawingModelInterpolator<LineCartesianLayerDrawingModel> =
+      LineCartesianLayerDrawingModelInterpolator(sweep)
 
     /** Creates a [CartesianLayerDrawingModelInterpolator] for [ColumnCartesianLayer]s. */
-    public fun column():
-      CartesianLayerDrawingModelInterpolator<
-        ColumnCartesianLayerDrawingModel.Entry,
-        ColumnCartesianLayerDrawingModel,
-      > = ColumnCartesianLayerDrawingModelInterpolator()
+    public fun column(): CartesianLayerDrawingModelInterpolator<ColumnCartesianLayerDrawingModel> =
+      ColumnCartesianLayerDrawingModelInterpolator
 
     /** Creates a [CartesianLayerDrawingModelInterpolator] for [CandlestickCartesianLayer]s. */
     public fun candlestick():
-      CartesianLayerDrawingModelInterpolator<
-        CandlestickCartesianLayerDrawingModel.Entry,
-        CandlestickCartesianLayerDrawingModel,
-      > = CandlestickCartesianLayerDrawingModelInterpolator()
+      CartesianLayerDrawingModelInterpolator<CandlestickCartesianLayerDrawingModel> =
+      CandlestickCartesianLayerDrawingModelInterpolator
   }
 }

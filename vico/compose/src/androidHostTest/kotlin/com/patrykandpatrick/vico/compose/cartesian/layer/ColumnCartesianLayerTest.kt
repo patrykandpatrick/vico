@@ -24,7 +24,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.cartesian.CartesianDrawingContext
-import com.patrykandpatrick.vico.compose.cartesian.CartesianMeasuringContext
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartRanges
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianLayerRangeProvider
@@ -37,8 +36,6 @@ import com.patrykandpatrick.vico.compose.common.Defaults
 import com.patrykandpatrick.vico.compose.common.DrawingContext
 import com.patrykandpatrick.vico.compose.common.Fill
 import com.patrykandpatrick.vico.compose.common.component.LineComponent
-import com.patrykandpatrick.vico.compose.common.data.ExtraStore
-import com.patrykandpatrick.vico.compose.common.data.MutableExtraStore
 import io.mockk.every
 import io.mockk.justRun
 import io.mockk.mockk
@@ -70,12 +67,12 @@ class ColumnCartesianLayerTest {
   fun `grouped places the columns of each group side by side`() {
     for (direction in LayoutDirection.entries) {
       val columns = listOf(RecordingColumn(4.dp), RecordingColumn(8.dp), RecordingColumn(6.dp))
-      val layer = ColumnCartesianLayer(ColumnCartesianLayer.ColumnProvider.series(columns))
       val model =
         ColumnCartesianLayerModel(listOf(entries(0 to 1), entries(0 to 2), entries(0 to 3)))
-      val context = createContext(layer, model, layoutDirection = direction)
+      val layer = layer(model, ColumnCartesianLayer.ColumnProvider.series(columns))
+      val context = createContext(layer, layoutDirection = direction)
 
-      layer.draw(context, model)
+      layer.draw(context)
 
       val sign = if (direction == LayoutDirection.Ltr) 1f else -1f
       val centers = columns.map { it.centers.single() }
@@ -83,7 +80,7 @@ class ColumnCartesianLayerTest {
       assertEquals(sign * 15f, centers[2] - centers[1], "$direction")
       assertEquals(3, layer.columnTargets(0.0).size)
       val dimensions = MutableCartesianLayerDimensions()
-      layer.updateDimensions(context, dimensions, model)
+      layer.updateDimensions(context, dimensions)
       assertEquals(34f + Defaults.GROUP_SPACING, dimensions.xSpacing)
     }
   }
@@ -91,40 +88,42 @@ class ColumnCartesianLayerTest {
   @Test
   fun `stacked centers every column in one stack`() {
     val columns = listOf(RecordingColumn(4.dp), RecordingColumn(8.dp))
+    val model = ColumnCartesianLayerModel(listOf(entries(0 to 2), entries(0 to 3)))
     val layer =
-      ColumnCartesianLayer(
+      layer(
+        model,
         ColumnCartesianLayer.ColumnProvider.series(columns),
         stackKeyProvider = StackKeyProvider.Stacked,
       )
-    val model = ColumnCartesianLayerModel(listOf(entries(0 to 2), entries(0 to 3)))
-    val context = createContext(layer, model)
+    val context = createContext(layer)
 
-    layer.draw(context, model)
+    layer.draw(context)
 
     assertEquals(columns[0].centers.single(), columns[1].centers.single())
     assertEquals(columns[0].tops.single(), columns[1].bottoms.single())
     assertEquals(listOf(listOf<Any>(0, 1)), layer.columnTargets(0.0).map { it.seriesKeys() })
     val dimensions = MutableCartesianLayerDimensions()
-    layer.updateDimensions(context, dimensions, model)
+    layer.updateDimensions(context, dimensions)
     assertEquals(8f + Defaults.GROUP_SPACING, dimensions.xSpacing)
   }
 
   @Test
   fun `stacks are placed stackSpacing apart and are as wide as their widest columns`() {
     val columns = listOf(RecordingColumn(4.dp), RecordingColumn(8.dp), RecordingColumn(6.dp))
-    val layer =
-      ColumnCartesianLayer(
-        ColumnCartesianLayer.ColumnProvider.series(columns),
-        stackKeyProvider = { seriesKey, _, _ -> if (seriesKey == "c") seriesKey else "ab" },
-        stackSpacing = 10.dp,
-      )
     val model =
       ColumnCartesianLayerModel(
         listOf(entries(0 to 2), entries(0 to 3), entries(0 to -4)),
         listOf("a", "b", "c"),
       )
+    val layer =
+      layer(
+        model,
+        ColumnCartesianLayer.ColumnProvider.series(columns),
+        stackKeyProvider = { seriesKey, _ -> if (seriesKey == "c") seriesKey else "ab" },
+        stackSpacing = 10.dp,
+      )
 
-    layer.draw(createContext(layer, model), model)
+    layer.draw(createContext(layer))
 
     assertEquals(columns[0].centers.single(), columns[1].centers.single())
     assertEquals(17f, columns[2].centers.single() - columns[0].centers.single())
@@ -138,15 +137,16 @@ class ColumnCartesianLayerTest {
   @Test
   fun `positive and negative values accumulate separately around zero`() {
     val columns = listOf(RecordingColumn(4.dp), RecordingColumn(4.dp), RecordingColumn(4.dp))
+    val model =
+      ColumnCartesianLayerModel(listOf(entries(0 to 2), entries(0 to -3), entries(0 to 4)))
     val layer =
-      ColumnCartesianLayer(
+      layer(
+        model,
         ColumnCartesianLayer.ColumnProvider.series(columns),
         stackKeyProvider = StackKeyProvider.Stacked,
       )
-    val model =
-      ColumnCartesianLayerModel(listOf(entries(0 to 2), entries(0 to -3), entries(0 to 4)))
 
-    layer.draw(createContext(layer, model), model)
+    layer.draw(createContext(layer))
 
     assertEquals(columns[0].bottoms.single(), columns[1].tops.single())
     assertEquals(columns[0].tops.single(), columns[2].bottoms.single())
@@ -157,21 +157,22 @@ class ColumnCartesianLayerTest {
     for (direction in LayoutDirection.entries) {
       for ((density, zoom) in listOf(1f to 1f, 2f to 1f, 1f to 2f, 2f to 2f)) {
         val columns = listOf(RecordingColumn(4.dp), RecordingColumn(8.dp), RecordingColumn(6.dp))
-        val layer =
-          ColumnCartesianLayer(
-            ColumnCartesianLayer.ColumnProvider.series(columns),
-            stackKeyProvider = { seriesKey, _, _ -> if (seriesKey == "c") "B" else "A" },
-            stackSpacing = 10.dp,
-          )
         val model =
           ColumnCartesianLayerModel(
             listOf(entries(0 to 1), entries(0 to 2), entries(0 to 3)),
             listOf("a", "b", "c"),
           )
+        val layer =
+          layer(
+            model,
+            ColumnCartesianLayer.ColumnProvider.series(columns),
+            stackKeyProvider = { seriesKey, _ -> if (seriesKey == "c") "B" else "A" },
+            stackSpacing = 10.dp,
+          )
         val context =
-          createContext(layer, model, layoutDirection = direction, zoom = zoom, density = density)
+          createContext(layer, layoutDirection = direction, zoom = zoom, density = density)
 
-        layer.draw(context, model)
+        layer.draw(context)
 
         val sign = if (direction == LayoutDirection.Ltr) 1f else -1f
         val message = "$direction density=$density zoom=$zoom"
@@ -182,7 +183,7 @@ class ColumnCartesianLayerTest {
           message,
         )
         val dimensions = MutableCartesianLayerDimensions()
-        layer.updateDimensions(context, dimensions, model)
+        layer.updateDimensions(context, dimensions)
         assertClose(
           24f * density,
           dimensions.xSpacing - Defaults.GROUP_SPACING * density,
@@ -190,31 +191,6 @@ class ColumnCartesianLayerTest {
         )
       }
     }
-  }
-
-  @Test
-  fun `the stack provider receives the series keys, the series indices, and the extras`() {
-    val calls = mutableListOf<Pair<Any, Int>>()
-    val extrasKey = ExtraStore.Key<String>()
-    val extras = MutableExtraStore().also { it[extrasKey] = "extras" }
-    val receivedExtras = mutableSetOf<String?>()
-    val layer =
-      ColumnCartesianLayer(
-        ColumnCartesianLayer.ColumnProvider.series(RecordingColumn(4.dp)),
-        stackKeyProvider = { seriesKey, seriesIndex, extraStore ->
-          calls += seriesKey to seriesIndex
-          receivedExtras += extraStore.getOrNull(extrasKey)
-          seriesKey
-        },
-      )
-    val model =
-      ColumnCartesianLayerModel(listOf(entries(0 to 1), entries(0 to 2)), listOf("a", "b"))
-        .copy(extras) as ColumnCartesianLayerModel
-
-    layer.updateChartRanges(MutableCartesianChartRanges(), model)
-
-    assertEquals(listOf<Pair<Any, Int>>("a" to 0, "b" to 1), calls)
-    assertEquals(setOf<String?>("extras"), receivedExtras)
   }
 
   // Ranges.
@@ -239,167 +215,85 @@ class ColumnCartesianLayerTest {
     assertEquals(5.0, range.maxY)
   }
 
-  // Deprecated API.
-
-  @Test
-  @Suppress("DEPRECATION")
-  fun `merge modes map to stack providers`() {
-    val widths = listOf(4.dp, 8.dp, 6.dp)
-    val model =
-      ColumnCartesianLayerModel(
-        listOf(entries(0 to 2, 1 to -1), entries(0 to 3, 1 to 4), entries(0 to -2, 1 to 1))
-      )
-    for (direction in LayoutDirection.entries) {
-      assertEquals(
-        renderCenters(widths, model, direction) {
-          ColumnCartesianLayer(
-            it,
-            stackKeyProvider = StackKeyProvider.Grouped,
-            stackSpacing = 10.dp,
-          )
-        },
-        renderCenters(widths, model, direction) {
-          ColumnCartesianLayer(it, mergeMode = { ColumnCartesianLayer.MergeMode.Grouped(10.dp) })
-        },
-      )
-      assertEquals(
-        renderCenters(widths, model, direction) {
-          ColumnCartesianLayer(it, stackKeyProvider = StackKeyProvider.Stacked)
-        },
-        renderCenters(widths, model, direction) {
-          ColumnCartesianLayer(it, mergeMode = { ColumnCartesianLayer.MergeMode.Stacked })
-        },
-      )
-    }
-    assertEquals(
-      intrinsicYRange(StackKeyProvider.Grouped, model).let { it.minY to it.maxY },
-      intrinsicYRange(mergeMode = ColumnCartesianLayer.MergeMode.Grouped(), model = model).let {
-        it.minY to it.maxY
-      },
-    )
-    assertEquals(
-      intrinsicYRange(StackKeyProvider.Stacked, model).let { it.minY to it.maxY },
-      intrinsicYRange(mergeMode = ColumnCartesianLayer.MergeMode.Stacked, model = model).let {
-        it.minY to it.maxY
-      },
-    )
-  }
-
-  @Test
-  @Suppress("DEPRECATION")
-  fun `columnCollectionSpacing maps to groupSpacing`() {
-    val columnProvider = ColumnCartesianLayer.ColumnProvider.series(RecordingColumn(4.dp))
-    val model = ColumnCartesianLayerModel(listOf(entries(0 to 1)))
-    fun ColumnCartesianLayer.groupSpacing(): Float {
-      val dimensions = MutableCartesianLayerDimensions()
-      updateDimensions(createContext(this, model), dimensions, model)
-      return dimensions.xSpacing - 4f
-    }
-    val layer = ColumnCartesianLayer(columnProvider, columnCollectionSpacing = 10.dp)
-
-    assertEquals(10f, layer.groupSpacing())
-    assertEquals(
-      Defaults.GROUP_SPACING,
-      ColumnCartesianLayer(columnProvider, columnCollectionSpacing = null).groupSpacing(),
-    )
-    assertEquals(10f, layer.copy(columnCollectionSpacing = null).groupSpacing())
-    assertEquals(20f, layer.copy(columnCollectionSpacing = 20.dp).groupSpacing())
-  }
-
   // Hooks and caching.
 
   @Test
-  fun `a getDrawingStart override moves the drawn columns`() {
-    val columns = listOf(RecordingColumn(4.dp), RecordingColumn(8.dp), RecordingColumn(6.dp))
-    val layer =
-      object :
-        ColumnCartesianLayer(
-          ColumnProvider.series(columns),
-          stackKeyProvider = { _, seriesIndex, _ -> if (seriesIndex == 2) "B" else "A" },
-        ) {
-        override fun CartesianDrawingContext.getDrawingStart(
-          seriesIndex: Int,
-          seriesKeys: List<Any>,
-          extraStore: ExtraStore,
-        ): Float = 100f + 30f * seriesIndex
-      }
-    val model = ColumnCartesianLayerModel(listOf(entries(0 to 1), entries(0 to 2), entries(0 to 3)))
-
-    layer.draw(createContext(layer, model), model)
-
-    assertEquals(listOf(104f, 134f, 163f), columns.map { it.centers.single() })
-  }
-
-  @Test
-  fun `a getGroupWidth override affects measurement and drawing`() {
-    val stackKeyProvider = StackKeyProvider { _, seriesIndex, _ ->
-      if (seriesIndex == 2) "B" else "A"
-    }
-    val model = ColumnCartesianLayerModel(listOf(entries(0 to 1), entries(0 to 2), entries(0 to 3)))
-    val plainColumns = listOf(RecordingColumn(4.dp), RecordingColumn(8.dp), RecordingColumn(6.dp))
-    val plain =
-      ColumnCartesianLayer(
-        ColumnCartesianLayer.ColumnProvider.series(plainColumns),
-        stackKeyProvider = stackKeyProvider,
-        stackSpacing = 10.dp,
-      )
-    val overriddenColumns =
-      listOf(RecordingColumn(4.dp), RecordingColumn(8.dp), RecordingColumn(6.dp))
-    val overridden =
-      object :
-        ColumnCartesianLayer(
-          ColumnProvider.series(overriddenColumns),
-          stackKeyProvider = stackKeyProvider,
-          stackSpacing = 10.dp,
-        ) {
-        override fun CartesianMeasuringContext.getGroupWidth(
-          seriesKeys: List<Any>,
-          extraStore: ExtraStore,
-        ): Float = 100f
-      }
-    val dimensions = MutableCartesianLayerDimensions()
-
-    overridden.updateDimensions(createContext(overridden, model), dimensions, model)
-    plain.draw(createContext(plain, model), model)
-    overridden.draw(createContext(overridden, model), model)
-
-    assertEquals(100f + Defaults.GROUP_SPACING, dimensions.xSpacing)
-    assertEquals(
-      plainColumns.map { it.centers.single() - 38f },
-      overriddenColumns.map { it.centers.single() },
-    )
-  }
-
-  @Test
-  fun `the stack geometry is reused across frames and rebuilt when its inputs change`() {
+  fun `the stack geometry is reused across frames and rebuilt when the density changes`() {
     var stackKeyProviderCalls = 0
-    val provider = CountingProvider(listOf(RecordingColumn(4.dp), RecordingColumn(8.dp)))
+    val model =
+      ColumnCartesianLayerModel(listOf(entries(0 to 1), entries(0 to 2)), listOf("a", "b"))
     val layer =
-      ColumnCartesianLayer(
-        provider,
-        stackKeyProvider = { _, _, _ ->
+      layer(
+        model,
+        ColumnCartesianLayer.ColumnProvider.series(RecordingColumn(4.dp), RecordingColumn(8.dp)),
+        stackKeyProvider = { _, _ ->
           stackKeyProviderCalls++
           "stack"
         },
       )
-    val model =
-      ColumnCartesianLayerModel(listOf(entries(0 to 1), entries(0 to 2)), listOf("a", "b"))
-    val ranges = MutableCartesianChartRanges().also { layer.updateChartRanges(it, model) }
+    val ranges = MutableCartesianChartRanges().also(layer::updateChartRanges)
     stackKeyProviderCalls = 0
-    fun draw(model: ColumnCartesianLayerModel, density: Float = 1f) {
-      val context = createContext(layer, model, density = density, ranges = ranges)
-      layer.updateDimensions(context, MutableCartesianLayerDimensions(), model)
-      layer.draw(context, model)
+    fun draw(density: Float = 1f) {
+      val context = createContext(layer, density = density, ranges = ranges)
+      layer.updateDimensions(context, MutableCartesianLayerDimensions())
+      layer.draw(context)
     }
 
-    repeat(3) { draw(model) }
-    assertEquals(2, provider.widestCalls)
+    repeat(3) { draw() }
     assertEquals(2, stackKeyProviderCalls)
-    draw(model, density = 2f)
-    assertEquals(4, provider.widestCalls)
-    draw(ColumnCartesianLayerModel(listOf(entries(0 to 1), entries(0 to 2)), listOf("b", "a")))
-    assertEquals(6, provider.widestCalls)
-    assertEquals(6, stackKeyProviderCalls)
+    draw(density = 2f)
+    assertEquals(4, stackKeyProviderCalls)
+  }
+
+  @Test
+  fun `the widest column of each series is determined once per layer`() {
+    var calls = 0
+    val column = RecordingColumn(4.dp)
+    val model = ColumnCartesianLayerModel(listOf(entries(0 to 1, 1 to 2, 2 to 3)))
+    val layer =
+      layer(
+        model,
+        { _ ->
+          calls++
+          column
+        },
+      )
+    val context = createContext(layer)
+    repeat(3) { layer.updateDimensions(context, MutableCartesianLayerDimensions()) }
+    assertEquals(3, calls)
+  }
+
+  // Exit animations.
+
+  @Test
+  fun `exiting series are drawn at their former stack positions without marker targets`() {
+    val columns = listOf(RecordingColumn(4.dp), RecordingColumn(4.dp), RecordingColumn(4.dp))
+    val model =
+      ColumnCartesianLayerModel(listOf(entries(0 to 1), entries(0 to 3)), listOf("a", "c"))
+    val columnsByKey =
+      mapOf<Any, RecordingColumn>("a" to columns[0], "b" to columns[1], "c" to columns[2])
+    val layer = layer(model, { entry -> columnsByKey.getValue(entry.seriesKey) })
+    val exitingEntry = ColumnCartesianLayerModel.Entry(0.0, 2.0, "b", 1)
+    val drawingModel =
+      ColumnCartesianLayerDrawingModel(
+        listOf(
+          mapOf(0.0 to ColumnCartesianLayerDrawingModel.Entry(0.1f, model.series[0][0])),
+          mapOf(0.0 to ColumnCartesianLayerDrawingModel.Entry(0.2f, exitingEntry)),
+          mapOf(0.0 to ColumnCartesianLayerDrawingModel.Entry(0.3f, model.series[1][0])),
+        ),
+        listOf("a", "b", "c"),
+      )
+
+    layer.draw(createContext(layer, drawingModel = drawingModel))
+
+    // `b` keeps its slot between `a` and `c`.
+    assertEquals(1, columns[1].centers.size)
+    assertTrue(columns[0].centers.single() < columns[1].centers.single())
+    assertTrue(columns[1].centers.single() < columns[2].centers.single())
+    assertEquals(
+      listOf(listOf<Any>("a"), listOf<Any>("c")),
+      layer.columnTargets(0.0).map { it.seriesKeys() },
+    )
   }
 
   // Data labels.
@@ -407,15 +301,16 @@ class ColumnCartesianLayerTest {
   @Test
   fun `stack totals are drawn after the stack's columns`() {
     val events = mutableListOf<String>()
+    val model = sparseModel()
     val layer =
       RecordingLayer(
+        model,
         ColumnCartesianLayer.ColumnProvider.series(List(3) { RecordingColumn(4.dp, events) }),
         sparseStackKeyProvider,
         events,
       )
-    val model = sparseModel()
 
-    layer.draw(createContext(layer, model), model)
+    layer.draw(createContext(layer))
 
     assertEquals(
       listOf("column", "column", "column", "label", "label", "column", "column", "label", "label"),
@@ -431,15 +326,16 @@ class ColumnCartesianLayerTest {
   @Test
   fun `stack labels report the stack width, center, and range edges`() {
     val columns = listOf(RecordingColumn(4.dp), RecordingColumn(8.dp), RecordingColumn(6.dp))
+    val model = sparseModel()
     val layer =
       RecordingLayer(
+        model,
         ColumnCartesianLayer.ColumnProvider.series(columns),
         sparseStackKeyProvider,
         mutableListOf(),
       )
-    val model = sparseModel()
 
-    layer.draw(createContext(layer, model), model)
+    layer.draw(createContext(layer))
 
     val byKey = layer.labels.associateBy { it.stack to it.x }
     val a0 = byKey.getValue("A" to 0.0)
@@ -454,17 +350,18 @@ class ColumnCartesianLayerTest {
 
   @Test
   fun `labels show zero totals and keep positive and negative totals separate`() {
-    val layer =
-      DataLabelRecordingLayer(
-        ColumnCartesianLayer.ColumnProvider.series(RecordingColumn(4.dp)),
-        { seriesKey, _, _ -> if (seriesKey == 3) seriesKey else "s" },
-      )
     val model =
       ColumnCartesianLayerModel(
-        listOf(entries(0 to 2), entries(0 to -3), entries(0 to 4), entries(0 to 0))
+        listOf(entries(0 to 2), entries(0 to -3), entries(0 to 4), entries(0 to 0)),
+      )
+    val layer =
+      DataLabelRecordingLayer(
+        model,
+        ColumnCartesianLayer.ColumnProvider.series(RecordingColumn(4.dp)),
+        StackKeyProvider { seriesKey, _ -> if (seriesKey == 3) seriesKey else "s" },
       )
 
-    layer.draw(createContext(layer, model), model)
+    layer.draw(createContext(layer))
 
     assertEquals(listOf(6.0, -3.0, 0.0), layer.values)
   }
@@ -472,25 +369,25 @@ class ColumnCartesianLayerTest {
   @Test
   fun `stack labels follow animated column heights`() {
     val columns = listOf(RecordingColumn(4.dp), RecordingColumn(4.dp))
+    val model = ColumnCartesianLayerModel(listOf(entries(0 to 2), entries(0 to 3)))
     val layer =
       RecordingLayer(
+        model,
         ColumnCartesianLayer.ColumnProvider.series(columns),
         StackKeyProvider.Stacked,
         mutableListOf(),
       )
-    val model = ColumnCartesianLayerModel(listOf(entries(0 to 2), entries(0 to 3)))
-    val ranges = MutableCartesianChartRanges().also { layer.updateChartRanges(it, model) }
+    val ranges = MutableCartesianChartRanges().also { layer.updateChartRanges(it) }
     val drawingModel =
       ColumnCartesianLayerDrawingModel(
         listOf(
-          mapOf(0.0 to ColumnCartesianLayerDrawingModel.Entry(0.1f)),
-          mapOf(0.0 to ColumnCartesianLayerDrawingModel.Entry(0.2f)),
+          mapOf(0.0 to ColumnCartesianLayerDrawingModel.Entry(0.1f, model.series[0][0])),
+          mapOf(0.0 to ColumnCartesianLayerDrawingModel.Entry(0.2f, model.series[1][0])),
         ),
         model.seriesKeys,
       )
-    val extras = MutableExtraStore().also { it[layer.exposedDrawingModelKey] = drawingModel }
 
-    layer.draw(createContext(layer, model, ranges = ranges, extraStore = extras), model)
+    layer.draw(createContext(layer, ranges = ranges, drawingModel = drawingModel))
 
     val label = layer.labels.single()
     assertClose(30f, label.topHeight, "animated height")
@@ -501,14 +398,15 @@ class ColumnCartesianLayerTest {
 
   @Test
   fun `marker targets follow stack order for sparse interleaved stacks`() {
+    val model = sparseModel(withUnstackedSeries = true)
     val layer =
-      ColumnCartesianLayer(
+      layer(
+        model,
         ColumnCartesianLayer.ColumnProvider.series(RecordingColumn(4.dp)),
         stackKeyProvider = sparseStackKeyProvider,
       )
-    val model = sparseModel(withUnstackedSeries = true)
 
-    layer.draw(createContext(layer, model), model)
+    layer.draw(createContext(layer))
 
     assertEquals(
       listOf(listOf("A1", "A2"), listOf("B1"), listOf("N")),
@@ -522,14 +420,15 @@ class ColumnCartesianLayerTest {
 
   @Test
   fun `the marker hook uses the coordinates it receives and keeps repeated columns`() {
-    val layer = CustomMarkerLayer { context, model ->
-      mark(context, model.series[0][0], stackIndex = 0, canvasX = 53f)
-      mark(context, model.series[0][0], stackIndex = 0, canvasX = 60f)
-      mark(context, model.series[1][0], stackIndex = 1, canvasX = 70f)
-    }
     val model = ColumnCartesianLayerModel(listOf(entries(0 to 1), entries(0 to 2)))
+    val layer =
+      CustomMarkerLayer(model) { context, model ->
+        mark(context, model.series[0][0], stackIndex = 0, canvasX = 53f)
+        mark(context, model.series[0][0], stackIndex = 0, canvasX = 60f)
+        mark(context, model.series[1][0], stackIndex = 1, canvasX = 70f)
+      }
 
-    layer.draw(createContext(layer, model), model)
+    layer.draw(createContext(layer))
 
     val targets = layer.columnTargets(0.0)
     assertEquals(listOf(53f, 70f), targets.map { it.canvasX })
@@ -538,13 +437,14 @@ class ColumnCartesianLayerTest {
 
   @Test
   fun `an override that doesn't call the marker hook suppresses targets`() {
+    val model = ColumnCartesianLayerModel(listOf(entries(0 to 2), entries(0 to 3)))
     val layer =
       TrackingLayer(
-        ColumnCartesianLayer.ColumnProvider.series(RecordingColumn(4.dp), RecordingColumn(4.dp))
+        model,
+        ColumnCartesianLayer.ColumnProvider.series(RecordingColumn(4.dp), RecordingColumn(4.dp)),
       )
-    val model = ColumnCartesianLayerModel(listOf(entries(0 to 2), entries(0 to 3)))
 
-    layer.draw(createContext(layer, model), model)
+    layer.draw(createContext(layer))
 
     assertEquals(2, layer.markerTargetUpdates)
     assertTrue(layer.markerTargets.isEmpty())
@@ -552,30 +452,28 @@ class ColumnCartesianLayerTest {
 
   @Test
   fun `marker targets keep the horizontal cutoff and vertical clamping`() {
+    val model =
+      ColumnCartesianLayerModel(
+        listOf(entries(0 to 5), entries(0 to 2), entries(0 to 1)),
+        listOf("a", "b", "c"),
+      )
     val layer =
-      ColumnCartesianLayer(
+      layer(
+        model,
         ColumnCartesianLayer.ColumnProvider.series(
           RecordingColumn(4.dp),
           RecordingColumn(8.dp),
           RecordingColumn(6.dp),
         ),
-        stackKeyProvider = { seriesKey, _, _ -> if (seriesKey == "c") "B" else "A" },
+        stackKeyProvider = { seriesKey, _ -> if (seriesKey == "c") "B" else "A" },
         stackSpacing = 10.dp,
-      )
-    val model =
-      ColumnCartesianLayerModel(
-        listOf(entries(0 to 5), entries(0 to 2), entries(0 to 1)),
-        listOf("a", "b", "c"),
       )
     val ranges =
       MutableCartesianChartRanges().apply {
         tryUpdate(minX = 0.0, maxX = 0.0, minY = 0.0, maxY = 1.0, axisPosition = null)
       }
 
-    layer.draw(
-      createContext(layer, model, ranges = ranges, layerBounds = Rect(0f, 0f, 20f, 100f)),
-      model,
-    )
+    layer.draw(createContext(layer, ranges = ranges, layerBounds = Rect(0f, 0f, 20f, 100f)))
 
     val target = layer.columnTargets(0.0).single()
     assertEquals(listOf("a", "b"), target.seriesKeys())
@@ -584,34 +482,26 @@ class ColumnCartesianLayerTest {
 
   @Test
   fun `marker targets are rebuilt on every frame`() {
-    val stackedKey = ExtraStore.Key<Boolean>()
+    val model = sparseModel()
     val layer =
-      ColumnCartesianLayer(
+      layer(
+        model,
         ColumnCartesianLayer.ColumnProvider.series(RecordingColumn(4.dp)),
-        stackKeyProvider = { seriesKey, seriesIndex, extraStore ->
-          if (extraStore.getOrNull(stackedKey) == true) Unit
-          else sparseStackKeyProvider.getStackKey(seriesKey, seriesIndex, extraStore)
-        },
+        stackKeyProvider = sparseStackKeyProvider,
       )
-    val grouped = sparseModel()
-    val stacked =
-      grouped.copy(MutableExtraStore().also { it[stackedKey] = true }) as ColumnCartesianLayerModel
 
-    layer.draw(createContext(layer, grouped), grouped)
-    layer.draw(createContext(layer, grouped), grouped)
-    val repeated = layer.columnTargets(0.0).map { it.seriesKeys() }
-    layer.draw(createContext(layer, stacked), stacked)
-    val asStacked = layer.columnTargets(0.0).map { it.seriesKeys() }
-    layer.draw(createContext(layer, grouped), grouped)
+    layer.draw(createContext(layer))
+    layer.draw(createContext(layer))
 
-    assertEquals(listOf(listOf("A1", "A2"), listOf("B1")), repeated)
-    assertEquals(listOf(listOf("A1", "B1", "A2")), asStacked)
-    assertEquals(repeated, layer.columnTargets(0.0).map { it.seriesKeys() })
+    assertEquals(
+      listOf(listOf("A1", "A2"), listOf("B1")),
+      layer.columnTargets(0.0).map { it.seriesKeys() },
+    )
   }
 
   // Fixtures.
 
-  private val sparseStackKeyProvider = StackKeyProvider { seriesKey, _, _ ->
+  private val sparseStackKeyProvider = StackKeyProvider { seriesKey, _ ->
     when (seriesKey) {
       "A1",
       "A2" -> "A"
@@ -640,42 +530,15 @@ class ColumnCartesianLayerTest {
   ) =
     MutableCartesianChartRanges()
       .also {
-        ColumnCartesianLayer(
+        layer(
+            model,
             ColumnCartesianLayer.ColumnProvider.series(RecordingColumn(4.dp)),
             stackKeyProvider = stackKeyProvider,
             rangeProvider = CartesianLayerRangeProvider.Intrinsic,
           )
-          .updateChartRanges(it, model)
+          .updateChartRanges(it)
       }
       .getYRange(null)
-
-  @Suppress("DEPRECATION")
-  private fun intrinsicYRange(
-    mergeMode: ColumnCartesianLayer.MergeMode,
-    model: ColumnCartesianLayerModel,
-  ) =
-    MutableCartesianChartRanges()
-      .also {
-        ColumnCartesianLayer(
-            ColumnCartesianLayer.ColumnProvider.series(RecordingColumn(4.dp)),
-            mergeMode = { mergeMode },
-            rangeProvider = CartesianLayerRangeProvider.Intrinsic,
-          )
-          .updateChartRanges(it, model)
-      }
-      .getYRange(null)
-
-  private fun renderCenters(
-    widths: List<Dp>,
-    model: ColumnCartesianLayerModel,
-    direction: LayoutDirection,
-    createLayer: (ColumnCartesianLayer.ColumnProvider) -> ColumnCartesianLayer,
-  ): List<List<Float>> {
-    val columns = widths.map { RecordingColumn(it) }
-    val layer = createLayer(ColumnCartesianLayer.ColumnProvider.series(columns))
-    layer.draw(createContext(layer, model, layoutDirection = direction), model)
-    return columns.map { it.centers }
-  }
 
   private fun assertClose(expected: Float, actual: Float, message: String) {
     assertTrue(abs(expected - actual) < 0.001f, "$message: expected $expected, was $actual")
@@ -706,23 +569,6 @@ class ColumnCartesianLayerTest {
     }
   }
 
-  private class CountingProvider(val columns: List<RecordingColumn>) :
-    ColumnCartesianLayer.ColumnProvider {
-    var widestCalls = 0
-
-    override fun getColumn(entry: ColumnCartesianLayerModel.Entry, extraStore: ExtraStore) =
-      columns[entry.seriesIndex % columns.size]
-
-    override fun getWidestSeriesColumn(
-      seriesKey: Any,
-      seriesIndex: Int,
-      extraStore: ExtraStore,
-    ): LineComponent {
-      widestCalls++
-      return columns[seriesIndex % columns.size]
-    }
-  }
-
   private data class LabelCall(
     val stack: String?,
     val x: Double,
@@ -736,13 +582,12 @@ class ColumnCartesianLayerTest {
   )
 
   private class RecordingLayer(
+    model: ColumnCartesianLayerModel,
     columnProvider: ColumnProvider,
     stackKeyProvider: StackKeyProvider,
     private val events: MutableList<String>,
-  ) : ColumnCartesianLayer(columnProvider, stackKeyProvider = stackKeyProvider) {
+  ) : ColumnCartesianLayer(model, columnProvider, stackKeyProvider = stackKeyProvider, key = 0) {
     val labels = mutableListOf<LabelCall>()
-    val exposedDrawingModelKey: ExtraStore.Key<ColumnCartesianLayerDrawingModel>
-      get() = drawingModelKey
 
     override fun CartesianDrawingContext.drawStackedDataLabel(
       stackCount: Int,
@@ -782,9 +627,10 @@ class ColumnCartesianLayerTest {
   }
 
   private class DataLabelRecordingLayer(
+    model: ColumnCartesianLayerModel,
     columnProvider: ColumnProvider,
     stackKeyProvider: StackKeyProvider,
-  ) : ColumnCartesianLayer(columnProvider, stackKeyProvider = stackKeyProvider) {
+  ) : ColumnCartesianLayer(model, columnProvider, stackKeyProvider = stackKeyProvider, key = 0) {
     val values = mutableListOf<Double>()
 
     override fun CartesianDrawingContext.drawDataLabel(
@@ -801,9 +647,10 @@ class ColumnCartesianLayerTest {
   }
 
   private class CustomMarkerLayer(
+    model: ColumnCartesianLayerModel,
     private val action:
-      CustomMarkerLayer.(CartesianDrawingContext, ColumnCartesianLayerModel) -> Unit
-  ) : ColumnCartesianLayer(ColumnProvider.series(LineComponent(Fill.Black, 4.dp))) {
+      CustomMarkerLayer.(CartesianDrawingContext, ColumnCartesianLayerModel) -> Unit,
+  ) : ColumnCartesianLayer(model, ColumnProvider.series(LineComponent(Fill.Black, 4.dp)), key = 0) {
     fun mark(
       context: CartesianDrawingContext,
       entry: ColumnCartesianLayerModel.Entry,
@@ -816,16 +663,14 @@ class ColumnCartesianLayerTest {
     }
 
     override fun CartesianDrawingContext.drawChartInternal(
-      model: ColumnCartesianLayerModel,
-      ranges: CartesianChartRanges,
-      drawingModel: ColumnCartesianLayerDrawingModel?,
+      drawingModel: ColumnCartesianLayerDrawingModel,
     ) {
-      action(this, model)
+      action(this, this@CustomMarkerLayer.model)
     }
   }
 
-  private class TrackingLayer(columnProvider: ColumnProvider) :
-    ColumnCartesianLayer(columnProvider) {
+  private class TrackingLayer(model: ColumnCartesianLayerModel, columnProvider: ColumnProvider) :
+    ColumnCartesianLayer(model, columnProvider, key = 0) {
     var markerTargetUpdates = 0
 
     override fun CartesianDrawingContext.updateMarkerTargets(
@@ -840,22 +685,36 @@ class ColumnCartesianLayerTest {
     }
   }
 
+  private fun layer(
+    model: ColumnCartesianLayerModel,
+    columnProvider: ColumnCartesianLayer.ColumnProvider,
+    stackKeyProvider: StackKeyProvider = StackKeyProvider.Grouped,
+    stackSpacing: Dp = Defaults.STACK_SPACING.dp,
+    rangeProvider: CartesianLayerRangeProvider = CartesianLayerRangeProvider.auto(),
+  ) =
+    ColumnCartesianLayer(
+      model,
+      columnProvider,
+      stackKeyProvider = stackKeyProvider,
+      stackSpacing = stackSpacing,
+      rangeProvider = rangeProvider,
+      key = 0,
+    )
+
   private fun createContext(
     layer: ColumnCartesianLayer,
-    model: ColumnCartesianLayerModel,
     layoutDirection: LayoutDirection = LayoutDirection.Ltr,
     zoom: Float = 1f,
     density: Float = 1f,
     layerBounds: Rect = Rect(0f, 0f, 200f, 100f),
     dimensions: MutableCartesianLayerDimensions =
       MutableCartesianLayerDimensions(xSpacing = 100f, scalableStartPadding = 20f),
-    extraStore: ExtraStore = ExtraStore.Empty,
-    ranges: CartesianChartRanges =
-      MutableCartesianChartRanges().also { layer.updateChartRanges(it, model) },
+    drawingModel: ColumnCartesianLayerDrawingModel? = null,
+    ranges: CartesianChartRanges = MutableCartesianChartRanges().also(layer::updateChartRanges),
   ): CartesianDrawingContext {
     val scaledDimensions = dimensions.copyScaled(zoom)
     val baseContext = mockk<CartesianDrawingContext>(relaxed = true)
-    every { baseContext.model } returns CartesianChartModel(model)
+    every { baseContext.chartModel } returns CartesianChartModel(listOf(layer.model))
     every { baseContext.ranges } returns ranges
     every { baseContext.layerBounds } returns layerBounds
     every { baseContext.layerDimensions } returns scaledDimensions
@@ -863,11 +722,9 @@ class ColumnCartesianLayerTest {
     every { baseContext.zoom } returns zoom
     every { baseContext.layerPadding } returns CartesianLayerPadding()
     val ltr = layoutDirection == LayoutDirection.Ltr
-    val contextExtraStore = extraStore
     val contextDensity = Density(density)
     val contextLayoutDirection = layoutDirection
     return object : CartesianDrawingContext by baseContext {
-      override val extraStore = contextExtraStore
       override val density = contextDensity
       override val Dp.pixels: Float
         get() = value * contextDensity.density
@@ -875,6 +732,10 @@ class ColumnCartesianLayerTest {
       override val layoutDirection = contextLayoutDirection
       override val isLtr = ltr
       override val layoutDirectionMultiplier = if (ltr) 1 else -1
+
+      @Suppress("UNCHECKED_CAST")
+      override fun <D : Any> getDrawingModel(layer: AnimatedCartesianLayer<*, D>): D =
+        drawingModel as D? ?: layer.createDrawingModel(ranges)
     }
   }
 }

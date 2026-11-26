@@ -19,46 +19,43 @@ package com.patrykandpatrick.vico.compose.common
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 import kotlin.math.max
 
 /**
  * [VerticalLegend] displays legend items in a vertical list.
  *
- * @param items adds the [LegendItem]s.
+ * @param items the [LegendItem]s.
  * @param iconSize the [LegendItem.icon] size.
  * @param iconLabelSpacing the spacing between [LegendItem.icon] and [LegendItem.label].
  * @param rowSpacing the row spacing.
  * @param padding the content padding.
  */
 public open class VerticalLegend<M : MeasuringContext, D : DrawingContext>(
-  protected val items: AdditionScope<LegendItem>.(ExtraStore) -> Unit,
+  protected val items: List<LegendItem>,
   protected val iconSize: Dp = Defaults.LEGEND_ICON_SIZE.dp,
   protected val iconLabelSpacing: Dp = Defaults.LEGEND_ICON_LABEL_SPACING.dp,
   protected val rowSpacing: Dp = Defaults.LEGEND_ROW_SPACING.dp,
   protected val padding: Insets = Insets.Zero,
 ) : Legend<M, D> {
-  private val itemManager = LegendItemManager(items)
   private val heights: HashMap<LegendItem, Float> = HashMap()
 
   override var bounds: Rect = Rect.Zero
 
   override fun getHeight(context: M, maxWidth: Float): Float =
     with(context) {
-      itemManager.addItems(this)
-      if (itemManager.itemList.isEmpty()) return@with 0f
-      itemManager.itemList.fold(0f) { sum, item ->
+      if (items.isEmpty()) return@with 0f
+      items.fold(0f) { sum, item ->
         sum +
           max(iconSize.pixels, item.getLabelHeight(context, iconSize, iconLabelSpacing, maxWidth))
             .also { height -> heights[item] = height }
-      } + (padding.vertical + rowSpacing * (itemManager.itemList.size - 1)).pixels
+      } + (padding.vertical + rowSpacing * (items.size - 1)).pixels
     }
 
   override fun draw(context: D) {
     with(context) {
       var currentTop = bounds.top + padding.top.pixels
 
-      itemManager.itemList.forEach { item ->
+      items.forEach { item ->
         val height = heights.getValue(item)
         val centerY = currentTop + height.half
         var startX =

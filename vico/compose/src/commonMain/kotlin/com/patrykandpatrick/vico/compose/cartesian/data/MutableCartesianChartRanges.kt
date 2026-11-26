@@ -37,6 +37,9 @@ public class MutableCartesianChartRanges : CartesianChartRanges {
 
   override var xStep: Double = 1.0
 
+  internal val hasXRange: Boolean
+    get() = _minX != null
+
   override fun getYRange(axisPosition: Axis.Position.Vertical?): CartesianChartRanges.YRange =
     yRanges[axisPosition] ?: yRanges.getValue(null)
 
@@ -58,6 +61,14 @@ public class MutableCartesianChartRanges : CartesianChartRanges {
       yRanges[axisPosition]?.tryUpdate(minY, maxY)
         ?: run { yRanges[axisPosition] = MutableYRange(minY, maxY) }
     }
+  }
+
+  /**
+   * Extends each zero-length _y_-range upward by 1, so that no consumer divides by a zero length
+   * (e.g., for a constant series under [CartesianLayerRangeProvider.Intrinsic]).
+   */
+  internal fun ensureNonZeroYLengths() {
+    yRanges.values.forEach { range -> if (range.length == 0.0) range.maxY = range.minY + 1 }
   }
 
   /** Clears all values. */
@@ -88,6 +99,43 @@ public class MutableCartesianChartRanges : CartesianChartRanges {
 
     override fun toString(): String = "MutableYRange(minY=$minY, maxY=$maxY, length=$length)"
   }
+}
+
+/**
+ * Updates these ranges for a [CartesianLayerModel] via [rangeProvider]. For a non-empty model, the
+ * range provider receives the model’s extents ([minX], [maxX], [minY], and [maxY]). An empty model
+ * has no extents, so the range provider receives the ranges established so far by the other layers
+ * (the _x_-range and the _y_-range for [axisPosition], or else the global one), or zeros where none
+ * exist. Empty layers are processed after the non-empty ones, in layer order (see
+ * `CartesianChart.updateRanges`).
+ */
+internal fun MutableCartesianChartRanges.tryUpdate(
+  rangeProvider: CartesianLayerRangeProvider,
+  model: CartesianLayerModel,
+  minX: Double,
+  maxX: Double,
+  minY: Double,
+  maxY: Double,
+  axisPosition: Axis.Position.Vertical?,
+) {
+  var inputMinX = minX
+  var inputMaxX = maxX
+  var inputMinY = minY
+  var inputMaxY = maxY
+  if (model.isEmpty) {
+    inputMinX = if (hasXRange) this.minX else 0.0
+    inputMaxX = if (hasXRange) this.maxX else 0.0
+    val yRange = yRanges[axisPosition] ?: yRanges[null]
+    inputMinY = yRange?.minY ?: 0.0
+    inputMaxY = yRange?.maxY ?: 0.0
+  }
+  tryUpdate(
+    rangeProvider.getMinX(inputMinX, inputMaxX),
+    rangeProvider.getMaxX(inputMinX, inputMaxX),
+    rangeProvider.getMinY(inputMinY, inputMaxY),
+    rangeProvider.getMaxY(inputMinY, inputMaxY),
+    axisPosition,
+  )
 }
 
 internal fun MutableCartesianChartRanges.toImmutable(): CartesianChartRanges =
