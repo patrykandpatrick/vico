@@ -361,7 +361,7 @@ internal constructor(
   }
 
   private inline fun forEachPersistentMarker(
-    block: (CartesianMarker, List<CartesianMarker.Target>) -> Unit,
+    block: (CartesianMarker, List<CartesianMarker.Target>) -> Unit
   ) {
     persistentMarkers.forEach { (x, marker) ->
       markerTargets[x]?.also { targets -> block(marker, targets) }

@@ -41,7 +41,7 @@ internal class PieChartDrawingModel(val slices: List<SliceInfo>) {
       keys.map { key ->
         newSlices[key]?.transform(oldSlices[key], fraction)
           ?: oldSlices.getValue(key).exit(fraction)
-      },
+      }
     )
   }
 
@@ -56,7 +56,7 @@ internal class PieChartDrawingModel(val slices: List<SliceInfo>) {
           index = entry.index,
           slice = chart.sliceProvider.getSlice(entry.value, entry.index),
         )
-      },
+      }
     )
   }
 
@@ -153,5 +153,5 @@ internal fun PieChart.createDrawingModel(): PieChartDrawingModel =
         index = index,
         slice = sliceProvider.getSlice(entry, index),
       )
-    },
+    }
   )

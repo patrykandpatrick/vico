@@ -37,7 +37,7 @@ class EmptyModelTest {
     ColumnCartesianLayer.ColumnProvider.series(LineComponent(Fill(Color.Blue)))
   private val lineProvider =
     LineCartesianLayer.LineProvider.series(
-      LineCartesianLayer.Line(LineCartesianLayer.LineFill.single(Fill(Color.Red))),
+      LineCartesianLayer.Line(LineCartesianLayer.LineFill.single(Fill(Color.Red)))
     )
 
   private fun emptyLine(
@@ -69,7 +69,7 @@ class EmptyModelTest {
     assertTrue(ColumnCartesianLayerModel.build {}.isEmpty)
     assertTrue(
       CandlestickCartesianLayerModel.build(emptyList(), emptyList(), emptyList(), emptyList())
-        .isEmpty,
+        .isEmpty
     )
     val withEmptySeries = LineCartesianLayerModel.build {
       series(emptyList<Number>())
@@ -96,9 +96,9 @@ class EmptyModelTest {
       CartesianChartPipeline.getRanges(
         testCartesianChart(
           emptyLine(
-            CartesianLayerRangeProvider.fixed(minX = 0.0, maxX = 6.0, minY = 0.0, maxY = 100.0),
-          ),
-        ),
+            CartesianLayerRangeProvider.fixed(minX = 0.0, maxX = 6.0, minY = 0.0, maxY = 100.0)
+          )
+        )
       )
     assertEquals(0.0..6.0, ranges.minX..ranges.maxX)
     assertEquals(0.0, ranges.getYRange(null).minY)
@@ -111,7 +111,7 @@ class EmptyModelTest {
       val alone = CartesianChartPipeline.getRanges(testCartesianChart(columns(3, 7, 5)))
       val mixed =
         CartesianChartPipeline.getRanges(
-          testCartesianChart(emptyLine(verticalAxisPosition = axisPosition), columns(3, 7, 5)),
+          testCartesianChart(emptyLine(verticalAxisPosition = axisPosition), columns(3, 7, 5))
         )
       assertEquals(alone.minX..alone.maxX, mixed.minX..mixed.maxX)
       assertEquals(alone.xStep, mixed.xStep)
@@ -137,14 +137,14 @@ class EmptyModelTest {
             testCartesianChart(
               columns(3, 7, 5, rangeProvider = baseProvider),
               line(LineCartesianLayerModel.build {}),
-            ),
+            )
           )
         val withPoint =
           CartesianChartPipeline.getRanges(
             testCartesianChart(
               columns(3, 7, 5, rangeProvider = baseProvider),
               line(LineCartesianLayerModel.build { series(listOf(1), listOf(5)) }),
-            ),
+            )
           )
         val message = "$baseProvider, $provider"
         assertEquals(withPoint.minX..withPoint.maxX, withEmpty.minX..withEmpty.maxX, message)
@@ -190,7 +190,7 @@ class EmptyModelTest {
         testCartesianChart(
           emptyLine(CartesianLayerRangeProvider.fixed(maxY = 100.0)),
           columns(3, 7, 5),
-        ),
+        )
       )
     assertEquals(100.0, ranges.getYRange(null).maxY)
     assertEquals(0.0..2.0, ranges.minX..ranges.maxX)
@@ -242,7 +242,7 @@ class EmptyModelTest {
   fun `An empty chart whose range provider returns equal bounds yields a nonzero y-range`() {
     val ranges =
       CartesianChartPipeline.getRanges(
-        testCartesianChart(emptyLine(CartesianLayerRangeProvider.fixed(minY = 3.0, maxY = 3.0))),
+        testCartesianChart(emptyLine(CartesianLayerRangeProvider.fixed(minY = 3.0, maxY = 3.0)))
       )
     assertEquals(1.0, ranges.getYRange(null).length)
   }
@@ -255,7 +255,7 @@ class EmptyModelTest {
     val layer =
       object :
         com.patrykandpatrick.vico.compose.cartesian.layer.BaseCartesianLayer<
-          LineCartesianLayerModel,
+          LineCartesianLayerModel
         >() {
         override val model = LineCartesianLayerModel.build {}
         override val markerTargets =
@@ -273,7 +273,7 @@ class EmptyModelTest {
         ) {}
 
         override fun updateChartRanges(
-          chartRanges: com.patrykandpatrick.vico.compose.cartesian.data.MutableCartesianChartRanges,
+          chartRanges: com.patrykandpatrick.vico.compose.cartesian.data.MutableCartesianChartRanges
         ) {}
       }
     assertFailsWith<IllegalArgumentException> { testCartesianChart(layer, layer) }

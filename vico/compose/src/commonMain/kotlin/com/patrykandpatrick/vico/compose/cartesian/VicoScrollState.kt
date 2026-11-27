@@ -61,6 +61,7 @@ public class VicoScrollState {
   internal val consumedXDeltas = MutableSharedFlow<Float>(extraBufferCapacity = 1)
   internal val unconsumedXDeltas = MutableSharedFlow<Float>(extraBufferCapacity = 1)
   private var previousScrollLayout: ScrollLayout? = null
+  internal var pendingUpdates: PendingChartUpdates? = null
 
   internal val scrollableState = ScrollableState { delta ->
     val oldValue = value
@@ -210,7 +211,7 @@ public class VicoScrollState {
     if (!autoScrollCondition.shouldScroll(oldModel, model)) return
     if (scrollableState.isScrollInProgress)
       scrollableState.stopScroll(MutatePriority.PreventUserInput)
-    animateScroll(autoScroll, autoScrollAnimationSpec)
+    animateScrollImmediately(autoScroll, autoScrollAnimationSpec)
   }
 
   internal fun clearUpdated() {
@@ -219,8 +220,17 @@ public class VicoScrollState {
     bounds = null
   }
 
-  /** Triggers a scroll. */
+  /**
+   * Triggers a scroll. If the host is deriving a chart update when this is called, this first waits
+   * for that update to be displayed, so the target is computed from the updated chart.
+   */
   public suspend fun scroll(scroll: Scroll) {
+    pendingUpdates?.await()
+    scrollImmediately(scroll)
+  }
+
+  /** Triggers a scroll without waiting for a pending chart update (e.g., for gestures). */
+  internal suspend fun scrollImmediately(scroll: Scroll) {
     isScrollInProgress.first { !it }
     withUpdated { context, layerDimensions, bounds ->
       scrollableState.scrollBy(scroll.getDelta(context, layerDimensions, bounds, maxValue, value))
@@ -242,8 +252,19 @@ public class VicoScrollState {
     }
   }
 
-  /** Triggers an animated scroll. */
+  /**
+   * Triggers an animated scroll. If the host is deriving a chart update when this is called, this
+   * first waits for that update to be displayed, so the target is computed from the updated chart.
+   */
   public suspend fun animateScroll(scroll: Scroll, animationSpec: AnimationSpec<Float> = spring()) {
+    pendingUpdates?.await()
+    animateScrollImmediately(scroll, animationSpec)
+  }
+
+  private suspend fun animateScrollImmediately(
+    scroll: Scroll,
+    animationSpec: AnimationSpec<Float>,
+  ) {
     withUpdated { context, layerDimensions, bounds ->
       val delta = scroll.getDelta(context, layerDimensions, bounds, maxValue, value)
       val duration =

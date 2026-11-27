@@ -278,7 +278,7 @@ protected constructor(
                 verticalPosition = verticalPosition,
                 maxWidth = bounds.width.toInt(),
                 maxHeight = canvasSize.height.toInt(),
-              ),
+              )
             )
           ) {
             draw(
@@ -311,7 +311,7 @@ protected constructor(
                 verticalPosition = Position.Vertical.Center,
                 maxWidth = maxWidth.coerceAtLeast(1),
                 maxHeight = canvasSize.height.toInt(),
-              ),
+              )
             )
           ) {
             draw(

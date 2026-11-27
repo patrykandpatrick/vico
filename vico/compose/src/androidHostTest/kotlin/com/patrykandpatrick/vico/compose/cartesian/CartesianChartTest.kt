@@ -60,10 +60,10 @@ class CartesianChartTest {
           key = 0,
           lineProvider =
             LineCartesianLayer.LineProvider.series(
-              LineCartesianLayer.Line(LineCartesianLayer.LineFill.single(Fill.Black)),
+              LineCartesianLayer.Line(LineCartesianLayer.LineFill.single(Fill.Black))
             ),
           rangeProvider = CartesianLayerRangeProvider.fixed(minX = -0.5, maxX = 2.0),
-        ),
+        )
       )
     val ranges = MutableCartesianChartRanges()
     chart.updateRanges(ranges)
@@ -80,10 +80,10 @@ class CartesianChartTest {
           key = 0,
           lineProvider =
             LineCartesianLayer.LineProvider.series(
-              LineCartesianLayer.Line(LineCartesianLayer.LineFill.single(Fill.Black)),
+              LineCartesianLayer.Line(LineCartesianLayer.LineFill.single(Fill.Black))
             ),
           rangeProvider = CartesianLayerRangeProvider.fixed(maxX = 2.5),
-        ),
+        )
       )
     val ranges = MutableCartesianChartRanges()
     chart.updateRanges(ranges)
@@ -103,7 +103,7 @@ class CartesianChartTest {
             if (seriesKey == "incomeActual" || seriesKey == "incomeForecast") "income"
             else "expenses"
           },
-        ),
+        )
       )
     val ranges = MutableCartesianChartRanges()
     chart.updateRanges(ranges)
@@ -113,27 +113,13 @@ class CartesianChartTest {
   }
 
   private companion object {
-    val lineModel =
-      LineCartesianLayerModel(
-        listOf(
-          listOf(
-            LineCartesianLayerModel.Entry(0, 0),
-            LineCartesianLayerModel.Entry(1, 1),
-            LineCartesianLayerModel.Entry(2, 2),
-          ),
-        ),
-      )
+    val lineModel = LineCartesianLayerModel.build { series(0, 1, 2) }
 
-    val columnModel =
-      ColumnCartesianLayerModel(
-        series =
-          listOf(
-            listOf(ColumnCartesianLayerModel.Entry(x = 0.0, y = 4.0)),
-            listOf(ColumnCartesianLayerModel.Entry(x = 0.0, y = 3.0)),
-            listOf(ColumnCartesianLayerModel.Entry(x = 0.0, y = -6.0)),
-            listOf(ColumnCartesianLayerModel.Entry(x = 0.0, y = -5.0)),
-          ),
-        seriesKeys = listOf("incomeActual", "incomeForecast", "rent", "food"),
-      )
+    val columnModel = ColumnCartesianLayerModel.build {
+      series(4, key = "incomeActual")
+      series(3, key = "incomeForecast")
+      series(-6, key = "rent")
+      series(-5, key = "food")
+    }
   }
 }

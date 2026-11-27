@@ -43,14 +43,14 @@ class PieChartDisplayTest {
         listOf(
           PieChartDrawingModel.SliceInfo(90f, key = 0),
           PieChartDrawingModel.SliceInfo(270f, key = 1),
-        ),
+        )
       )
     val newModel =
       PieChartDrawingModel(
         listOf(
           PieChartDrawingModel.SliceInfo(180f, key = 0),
           PieChartDrawingModel.SliceInfo(180f, key = 1),
-        ),
+        )
       )
 
     assertEquals(
@@ -58,7 +58,7 @@ class PieChartDisplayTest {
         listOf(
           PieChartDrawingModel.SliceInfo(112.5f, key = 0),
           PieChartDrawingModel.SliceInfo(247.5f, key = 1),
-        ),
+        )
       ),
       newModel.transform(oldModel, 0.25f),
     )

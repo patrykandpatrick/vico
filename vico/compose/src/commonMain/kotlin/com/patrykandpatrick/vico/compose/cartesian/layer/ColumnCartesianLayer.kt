@@ -145,7 +145,7 @@ public open class ColumnCartesianLayer(
   }
 
   protected open fun CartesianDrawingContext.drawChartInternal(
-    drawingModel: ColumnCartesianLayerDrawingModel,
+    drawingModel: ColumnCartesianLayerDrawingModel
   ) {
     val yRange = ranges.getYRange(verticalAxisPosition)
     val heightMultiplier = layerBounds.height / yRange.length.toFloat()
@@ -704,7 +704,7 @@ public fun rememberColumnCartesianLayer(
     ColumnCartesianLayer.ColumnProvider.series(
       vicoTheme.columnCartesianLayerColors.map { color ->
         rememberLineComponent(Fill(color), Defaults.COLUMN_WIDTH.dp)
-      },
+      }
     ),
   groupSpacing: Dp = Defaults.GROUP_SPACING.dp,
   stackKeyProvider: ColumnCartesianLayer.StackKeyProvider =

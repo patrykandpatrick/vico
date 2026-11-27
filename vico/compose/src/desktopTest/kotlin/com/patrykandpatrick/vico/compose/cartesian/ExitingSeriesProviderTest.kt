@@ -63,7 +63,7 @@ class ExitingSeriesProviderTest {
     var model by mutableStateOf(first)
     setContent {
       CompositionLocalProvider(
-        LocalCartesianChartBackgroundContext provides EmptyCoroutineContext,
+        LocalCartesianChartBackgroundContext provides EmptyCoroutineContext
       ) {
         CartesianChartHost(
           rememberCartesianChart(layer(model)),

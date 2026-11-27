@@ -244,7 +244,7 @@ public fun PieChartHost(
       modifier =
         Modifier.fillMaxSize().pointerInput(rotationState) {
           detectPieRotationGestures(rotationState) { currentChart.gestureGeometry }
-        },
+        }
     ) {
       if (size.isEmpty()) return@Canvas
       val currentDisplay = displayState.value ?: display

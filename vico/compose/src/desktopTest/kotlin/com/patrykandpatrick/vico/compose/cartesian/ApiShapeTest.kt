@@ -59,7 +59,7 @@ internal fun SimpleLineChart() {
       rememberLineCartesianLayer(model),
       startAxis = VerticalAxis.rememberStart(),
       bottomAxis = HorizontalAxis.rememberBottom(),
-    ),
+    )
   )
 }
 
@@ -92,7 +92,7 @@ internal fun InsertedLayer(ui: SalesUi) {
       rememberColumnCartesianLayer(ui.sales),
       ui.target?.let { rememberLineCartesianLayer(it) },
       rememberLineCartesianLayer(ui.trend),
-    ),
+    )
   )
 }
 

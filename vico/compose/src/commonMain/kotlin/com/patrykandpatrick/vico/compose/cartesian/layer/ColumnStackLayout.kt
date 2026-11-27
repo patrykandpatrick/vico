@@ -44,7 +44,7 @@ internal class ColumnStackLayout(
 }
 
 internal fun ColumnCartesianLayer.StackKeyProvider.getLayout(
-  seriesKeys: List<Any>,
+  seriesKeys: List<Any>
 ): ColumnStackLayout =
   getColumnStackLayout(seriesKeys.mapIndexed { index, key -> getStackKey(key, index) })
 
@@ -73,7 +73,7 @@ internal fun getColumnStackLayout(stackKeys: List<Any>): ColumnStackLayout {
  * _y_-values and the sum of its negative _y_-values.
  */
 internal fun ColumnCartesianLayerModel.getYRange(
-  layout: ColumnStackLayout,
+  layout: ColumnStackLayout
 ): ClosedFloatingPointRange<Double> {
   if (layout.stackCount == series.size) return minY..maxY
   if (layout.stackCount == 1) return minAggregateY..maxAggregateY

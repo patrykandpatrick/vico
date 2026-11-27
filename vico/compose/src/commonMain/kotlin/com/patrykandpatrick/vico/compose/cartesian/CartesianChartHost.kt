@@ -276,9 +276,24 @@ public fun CartesianChartHost(
       .collect { onViewportChange() }
   }
 
-  DisposableEffect(scrollState) { onDispose { scrollState.clearUpdated() } }
+  DisposableEffect(scrollState) {
+    scrollState.pendingUpdates = pipeline.pendingUpdates
+    onDispose {
+      scrollState.clearUpdated()
+      if (scrollState.pendingUpdates === pipeline.pendingUpdates) scrollState.pendingUpdates = null
+    }
+  }
 
-  DisposableEffect(zoomState) { onDispose { zoomState.clearUpdated() } }
+  DisposableEffect(zoomState) {
+    zoomState.pendingUpdates = pipeline.pendingUpdates
+    onDispose {
+      zoomState.clearUpdated()
+      if (zoomState.pendingUpdates === pipeline.pendingUpdates) zoomState.pendingUpdates = null
+    }
+  }
+
+  // Commands waiting for an update that will never be drawn are released.
+  DisposableEffect(pipeline) { onDispose { pipeline.pendingUpdates.dispose() } }
 
   // Bind outside the draw pass, which is skipped when the chart has no area.
   DisposableEffect(zoomState, scrollState) {
@@ -309,53 +324,58 @@ public fun CartesianChartHost(
                 }
               },
             longPressEnabled = displayedChart.markerController.acceptsLongPress,
-          ),
+          )
     ) {
-      if (size.isEmpty()) return@Canvas
       val display = pipeline.display ?: return@Canvas
-      val frame = display.frame
-      val chart = frame.chart
-      if (display.drawList.isEmpty()) return@Canvas
-      measuringContext.update(frame, display.drawingModels)
-      measuringContext.canvasWidth = size.width
+      // Once this block is left, the scroll and zoom states reflect `display` as far as they can.
+      try {
+        if (size.isEmpty()) return@Canvas
+        val frame = display.frame
+        val chart = frame.chart
+        if (display.drawList.isEmpty()) return@Canvas
+        measuringContext.update(frame, display.drawingModels)
+        measuringContext.canvasWidth = size.width
 
-      layerDimensions.clear()
-      chart.prepare(measuringContext, layerDimensions, size, display.drawList)
+        layerDimensions.clear()
+        chart.prepare(measuringContext, layerDimensions, size, display.drawList)
 
-      if (chart.layerBounds.isEmpty) return@Canvas
+        if (chart.layerBounds.isEmpty) return@Canvas
 
-      zoomState.update(measuringContext, layerDimensions, chart.layerBounds)
-      scrollState.update(measuringContext, chart.layerBounds, layerDimensions)
+        zoomState.update(measuringContext, layerDimensions, chart.layerBounds)
+        scrollState.update(measuringContext, chart.layerBounds, layerDimensions)
 
-      val model = chart.model
-      val previousModel = lastHandledModel.value
-      if (model != previousModel) {
-        coroutineScope.launch(start = CoroutineStart.UNDISPATCHED) {
-          scrollState.autoScroll(model, previousModel)
+        val model = chart.model
+        val previousModel = lastHandledModel.value
+        if (model != previousModel) {
+          coroutineScope.launch(start = CoroutineStart.UNDISPATCHED) {
+            scrollState.autoScroll(model, previousModel)
+          }
+          lastHandledModel.value = model
         }
-        lastHandledModel.value = model
-      }
 
-      val drawingContext =
-        CartesianDrawingContext(
-          measuringContext,
-          size,
-          drawContext.canvas,
-          layerDimensions,
-          chart.layerBounds,
-          scrollState.value,
-          zoomState.value,
-          MutableDrawScope(this),
-        )
+        val drawingContext =
+          CartesianDrawingContext(
+            measuringContext,
+            size,
+            drawContext.canvas,
+            layerDimensions,
+            chart.layerBounds,
+            scrollState.value,
+            zoomState.value,
+            MutableDrawScope(this),
+          )
 
-      chart.draw(drawingContext, markerVisibilityTracker, display.drawList)
-      measuringContext.cacheStore.purge()
-      // A position-locked marker is re-resolved against new data only once the new chart has been
-      // drawn, as its marker targets and bounds are only known then.
-      if (model != lastReplayedModel.value) {
-        val isFirstDraw = lastReplayedModel.value == null
-        lastReplayedModel.value = model
-        if (!isFirstDraw) onViewportChange()
+        chart.draw(drawingContext, markerVisibilityTracker, display.drawList)
+        measuringContext.cacheStore.purge()
+        // A position-locked marker is re-resolved against new data only once the new chart has been
+        // drawn, as its marker targets and bounds are only known then.
+        if (model != lastReplayedModel.value) {
+          val isFirstDraw = lastReplayedModel.value == null
+          lastReplayedModel.value = model
+          if (!isFirstDraw) onViewportChange()
+        }
+      } finally {
+        pipeline.pendingUpdates.onHandled(display.frame.generation)
       }
     }
   }

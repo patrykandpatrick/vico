@@ -379,7 +379,7 @@ public open class TextComponent(
       .toFloat()
       .coerceAtLeast(
         minWidth.getValue(this, this@TextComponent, maxWidth, maxHeight, rotationDegrees) -
-          padding.horizontal.pixels,
+          padding.horizontal.pixels
       )
       .coerceAtMost(layoutResult.layoutInput.constraints.maxWidth.toFloat())
 

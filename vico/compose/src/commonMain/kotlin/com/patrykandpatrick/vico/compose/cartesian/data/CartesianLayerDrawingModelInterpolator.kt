@@ -63,7 +63,7 @@ public fun interface CartesianLayerDrawingModelInterpolator<D : Any> {
      * fade-in.
      */
     public fun line(
-      sweep: Boolean = false,
+      sweep: Boolean = false
     ): CartesianLayerDrawingModelInterpolator<LineCartesianLayerDrawingModel> =
       LineCartesianLayerDrawingModelInterpolator(sweep)
 

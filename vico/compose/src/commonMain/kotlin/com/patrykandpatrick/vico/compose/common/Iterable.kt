@@ -20,7 +20,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 internal inline fun <T> Iterable<T>.rangeOf(
-  selector: (T) -> Double,
+  selector: (T) -> Double
 ): ClosedFloatingPointRange<Double> {
   val iterator = iterator()
   if (!iterator.hasNext()) return 0.0..0.0
@@ -35,7 +35,7 @@ internal inline fun <T> Iterable<T>.rangeOf(
 }
 
 internal inline fun <T> Iterable<T>.rangeOfPair(
-  selector: (T) -> Pair<Double, Double>,
+  selector: (T) -> Pair<Double, Double>
 ): ClosedFloatingPointRange<Double> {
   val iterator = iterator()
   if (!iterator.hasNext()) return 0.0..0.0

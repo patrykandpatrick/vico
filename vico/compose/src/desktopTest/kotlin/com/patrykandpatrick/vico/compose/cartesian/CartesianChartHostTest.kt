@@ -75,7 +75,7 @@ class CartesianChartHostTest {
   ) {
     setContent {
       CompositionLocalProvider(
-        LocalCartesianChartBackgroundContext provides EmptyCoroutineContext,
+        LocalCartesianChartBackgroundContext provides EmptyCoroutineContext
       ) {
         CartesianChartHost(
           chart(),
@@ -128,7 +128,7 @@ class CartesianChartHostTest {
               LineCartesianLayer.LineFill.single(Fill(color)),
               LineCartesianLayer.LineStroke.Continuous(8.dp),
             )
-          },
+          }
         ),
       verticalAxisPosition = verticalAxisPosition,
     )
@@ -153,7 +153,7 @@ class CartesianChartHostTest {
     val withoutSecond = LineCartesianLayerModel.build { series(1, 1, 1, key = "first") }
     setChart {
       rememberCartesianChart(
-        line(if (showSecond) withSecond else withoutSecond, colors = listOf(blue, magenta)),
+        line(if (showSecond) withSecond else withoutSecond, colors = listOf(blue, magenta))
       )
     }
     assertTrue(countPixels(magenta) > 0)
@@ -213,7 +213,7 @@ class CartesianChartHostTest {
       val marker = object : CartesianMarker {}
       setContent {
         CompositionLocalProvider(
-          LocalCartesianChartBackgroundContext provides EmptyCoroutineContext,
+          LocalCartesianChartBackgroundContext provides EmptyCoroutineContext
         ) {
           val scrollState = rememberVicoScrollState()
           zoomState = rememberVicoZoomState()
@@ -267,7 +267,7 @@ class CartesianChartHostTest {
 
   @Composable
   private fun axesChart(
-    vararg layers: com.patrykandpatrick.vico.compose.cartesian.layer.CartesianLayer<*>?,
+    vararg layers: com.patrykandpatrick.vico.compose.cartesian.layer.CartesianLayer<*>?
   ) =
     rememberCartesianChart(
       *layers,
@@ -328,7 +328,7 @@ class CartesianChartHostTest {
     lateinit var zoomState: VicoZoomState
     setContent {
       CompositionLocalProvider(
-        LocalCartesianChartBackgroundContext provides EmptyCoroutineContext,
+        LocalCartesianChartBackgroundContext provides EmptyCoroutineContext
       ) {
         scrollState = rememberVicoScrollState()
         zoomState = rememberVicoZoomState()

@@ -352,7 +352,7 @@ public open class LineCartesianLayer(
        * Uses cubic Bézier curves. [curvature], which must be in ([0, 1]], defines their strength.
        */
       public fun cubic(
-        @FloatRange(from = 0.0, to = 1.0, fromInclusive = false) curvature: Float = 0.5f,
+        @FloatRange(from = 0.0, to = 1.0, fromInclusive = false) curvature: Float = 0.5f
       ): Interpolator = CubicInterpolator(curvature)
 
       /**
@@ -362,7 +362,7 @@ public open class LineCartesianLayer(
        * segments for collinear points.
        */
       public fun catmullRom(
-        @FloatRange(from = 0.0, to = 1.0, toInclusive = false) alpha: Float = 0f,
+        @FloatRange(from = 0.0, to = 1.0, toInclusive = false) alpha: Float = 0f
       ): Interpolator = CatmullRomInterpolator(alpha)
     }
   }
@@ -1037,7 +1037,7 @@ public fun rememberLineCartesianLayer(
     LineCartesianLayer.LineProvider.series(
       vicoTheme.lineCartesianLayerColors.map { color ->
         LineCartesianLayer.rememberLine(LineCartesianLayer.LineFill.single(Fill(color)))
-      },
+      }
     ),
   pointSpacing: Dp = Defaults.POINT_SPACING.dp,
   rangeProvider: CartesianLayerRangeProvider = CartesianLayerRangeProvider.auto(),

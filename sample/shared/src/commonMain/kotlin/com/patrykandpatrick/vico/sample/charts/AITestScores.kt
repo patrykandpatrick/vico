@@ -104,10 +104,10 @@ fun ComposeAITestScores(modifier: Modifier = Modifier) {
               areaFill = null,
               pointProvider =
                 LineCartesianLayer.PointProvider.single(
-                  LineCartesianLayer.Point(rememberShapeComponent(Fill(color), CircleShape)),
+                  LineCartesianLayer.Point(rememberShapeComponent(Fill(color), CircleShape))
                 ),
             )
-          },
+          }
         ),
       ),
       startAxis = VerticalAxis.rememberStart(),

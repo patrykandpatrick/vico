@@ -260,7 +260,7 @@ public open class CandlestickCartesianLayer(
               width = candle.topWick.thickness.pixels,
               height = highCanvasY - limitedBodyTopCanvasY,
             ),
-        ),
+        )
       )
   }
 
@@ -296,7 +296,7 @@ public open class CandlestickCartesianLayer(
   }
 
   private fun CandlestickCartesianLayerModel.Entry.toCandleInfo(
-    yRange: CartesianChartRanges.YRange,
+    yRange: CartesianChartRanges.YRange
   ) =
     CandlestickCartesianLayerDrawingModel.Entry(
       bodyBottomY = ((minOf(opening, closing) - yRange.minY) / yRange.length).toFloat(),
@@ -353,7 +353,7 @@ public open class CandlestickCartesianLayer(
       drawingModelInterpolator == other.drawingModelInterpolator
 
   override fun createDrawingModel(
-    ranges: CartesianChartRanges,
+    ranges: CartesianChartRanges
   ): CandlestickCartesianLayerDrawingModel {
     val yRange = ranges.getYRange(verticalAxisPosition)
     return CandlestickCartesianLayerDrawingModel(

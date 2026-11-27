@@ -124,8 +124,8 @@ class ColumnStackLayoutTest {
       buildList { forEachSeriesIndex(stackIndex) { seriesIndex -> add(seriesIndex) } }
     }
 
-  private fun model(vararg series: List<Pair<Int, Int>>): ColumnCartesianLayerModel =
-    ColumnCartesianLayerModel(
-      series.map { entries -> entries.map { (x, y) -> ColumnCartesianLayerModel.Entry(x, y) } },
-    )
+  private fun model(vararg points: List<Pair<Int, Int>>): ColumnCartesianLayerModel =
+    ColumnCartesianLayerModel.build {
+      points.forEach { entries -> series(entries.map { it.first }, entries.map { it.second }) }
+    }
 }

@@ -49,7 +49,7 @@ internal fun CartesianMeasuringContext.getMaxScrollDistance(
   ceil(
     (layoutDirectionMultiplier * (layerDimensions.getContentWidth(this) - chartWidth)).run {
       if (isLtr) coerceAtLeast(0f) else coerceAtMost(0f)
-    },
+    }
   )
 
 internal fun CartesianDrawingContext.getMaxScrollDistance() =
@@ -98,7 +98,7 @@ internal fun CartesianDrawingContext(
   }
 
 internal fun CartesianDrawingContext.withRanges(
-  ranges: CartesianChartRanges,
+  ranges: CartesianChartRanges
 ): CartesianDrawingContext {
   val original = this
   return object : CartesianDrawingContext by original {

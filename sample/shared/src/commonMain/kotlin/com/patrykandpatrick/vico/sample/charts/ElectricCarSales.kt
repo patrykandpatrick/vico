@@ -58,11 +58,11 @@ fun ComposeElectricCarSales(modifier: Modifier = Modifier) {
               areaFill =
                 LineCartesianLayer.AreaFill.single(
                   Fill(
-                    Brush.verticalGradient(listOf(lineColor.copy(alpha = 0.4f), Color.Transparent)),
-                  ),
+                    Brush.verticalGradient(listOf(lineColor.copy(alpha = 0.4f), Color.Transparent))
+                  )
                 ),
               interpolator = LineCartesianLayer.Interpolator.catmullRom(),
-            ),
+            )
           ),
         rangeProvider = RangeProvider,
       ),

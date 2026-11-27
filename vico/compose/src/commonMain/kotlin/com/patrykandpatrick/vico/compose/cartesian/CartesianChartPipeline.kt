@@ -154,6 +154,9 @@ internal class CartesianChartPipeline(
    */
   var skipInitialAnimation: Boolean = false
 
+  /** Tracks asynchronous updates for programmatic scroll and zoom commands. */
+  val pendingUpdates = PendingChartUpdates()
+
   private var lastSubmittedChart: CartesianChart? = null
   private var generation = 0L
   private val pendingCharts = Channel<PendingChart>(Channel.CONFLATED)
@@ -203,6 +206,7 @@ internal class CartesianChartPipeline(
     val generation = ++generation
     when {
       commit.isAsync -> {
+        pendingUpdates.onAsyncSubmitted(generation)
         ensureWorker()
         pendingCharts.trySend(PendingChart(commit.chart, generation))
       }
@@ -554,7 +558,7 @@ internal class CartesianChartPipeline(
         drawingModel.withSeriesSources(
           drawingModel.seriesKeys.mapIndexed { index, seriesKey ->
             if (seriesKey in layerSeriesKeys) layer else drawingModel.getSeriesSource(index)
-          },
+          }
         )
       }
     }
@@ -579,7 +583,7 @@ internal class CartesianChartPipeline(
     }
 
     private fun CartesianChartRanges.getYRangeOrNull(
-      position: Axis.Position.Vertical?,
+      position: Axis.Position.Vertical?
     ): CartesianChartRanges.YRange? = runCatching { getYRange(position) }.getOrNull()
 
     fun getFinalDrawingModels(chart: CartesianChart, ranges: CartesianChartRanges): Map<Any, Any> =

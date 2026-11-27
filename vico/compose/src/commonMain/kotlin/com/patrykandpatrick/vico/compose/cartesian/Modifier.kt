@@ -148,7 +148,7 @@ internal fun Modifier.pointerInput(
         }
       } else {
         Modifier
-      },
+      }
     )
     .then(
       if (scrollState.scrollEnabled && hasOnZoom) {
@@ -160,7 +160,7 @@ internal fun Modifier.pointerInput(
         }
       } else {
         Modifier
-      },
+      }
     )
     .extraPointerInput(scrollState)
 }

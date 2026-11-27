@@ -78,7 +78,7 @@ fun ComposeDailyDigitalMediaUse(modifier: Modifier = Modifier) {
           ColumnCartesianLayer.ColumnProvider.series(
             ColumnColors.map { color ->
               rememberLineComponent(fill = Fill(color), thickness = 16.dp)
-            },
+            }
           ),
         groupSpacing = 32.dp,
         stackKeyProvider = ColumnCartesianLayer.StackKeyProvider.Stacked,
@@ -89,9 +89,7 @@ fun ComposeDailyDigitalMediaUse(modifier: Modifier = Modifier) {
           itemPlacer = StartAxisItemPlacer,
         ),
       bottomAxis =
-        HorizontalAxis.rememberBottom(
-          itemPlacer = HorizontalAxis.ItemPlacer.segmented(),
-        ),
+        HorizontalAxis.rememberBottom(itemPlacer = HorizontalAxis.ItemPlacer.segmented()),
       marker = rememberMarker(MarkerValueFormatter),
       layerPadding = CartesianLayerPadding(scalableStart = 16.dp, scalableEnd = 16.dp),
       legend =

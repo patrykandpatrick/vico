@@ -48,10 +48,10 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
   override val maxY: Double
 
   /** Creates a [CandlestickCartesianLayerModel] with the given series and a series key of 0. */
-  public constructor(series: List<Entry>) : this(series, 0)
+  internal constructor(series: List<Entry>) : this(series, 0)
 
   /** Creates a [CandlestickCartesianLayerModel] with the given series and series key. */
-  public constructor(series: List<Entry>, seriesKey: Any) {
+  internal constructor(series: List<Entry>, seriesKey: Any) {
     this.seriesKey = seriesKey
     this.series = series.sortedBy { it.x }
     val yRange = this.series.rangeOfPair { it.low to it.high }
@@ -109,7 +109,7 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
    * @property relativeChange represents the relative price change (this [Entry]’s [closing] vs. the
    *   previous [Entry]’s [closing]).
    */
-  public open class Entry
+  public class Entry
   internal constructor(
     override val x: Double,
     public val opening: Double,
@@ -119,7 +119,7 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
     public val absoluteChange: Change,
     public val relativeChange: Change,
   ) : CartesianLayerModel.Entry {
-    public constructor(
+    internal constructor(
       x: Number,
       opening: Number,
       closing: Number,
@@ -195,7 +195,7 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
             high = high.elementAt(index),
             absoluteChange = Change.forPrices(old = openingPrice, new = closingPrice),
             relativeChange = Change.forPrices(old = previousClosingPrice ?: 0, new = closingPrice),
-          ),
+          )
         )
         previousClosingPrice = closingPrice
       }

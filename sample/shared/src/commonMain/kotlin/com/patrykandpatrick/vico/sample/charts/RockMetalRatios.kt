@@ -75,7 +75,7 @@ fun ComposeRockMetalRatios(modifier: Modifier = Modifier) {
       rememberColumnCartesianLayer(
         model,
         ColumnCartesianLayer.ColumnProvider.series(
-          rememberLineComponent(fill = Fill(Color(0xffff5500)), thickness = 16.dp),
+          rememberLineComponent(fill = Fill(Color(0xffff5500)), thickness = 16.dp)
         ),
       ),
       startAxis = VerticalAxis.rememberStart(valueFormatter = StartAxisValueFormatter),

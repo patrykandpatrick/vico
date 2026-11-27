@@ -95,7 +95,7 @@ class ValueEqualityTest {
         marker = rememberDefaultCartesianMarker(label),
         legend =
           rememberHorizontalLegend(
-            listOf(LegendItem(ShapeComponent(Fill(Color.Red)), TextComponent(), "a")),
+            listOf(LegendItem(ShapeComponent(Fill(Color.Red)), TextComponent(), "a"))
           ),
         decorations = listOf(HorizontalLine(1.0, LineComponent(Fill(Color.Red)))),
         persistentMarkers = mapOf(1 to rememberDefaultCartesianMarker(label)),
@@ -111,7 +111,7 @@ class ValueEqualityTest {
         LineCartesianLayer.LineFill.single(Fill(Color.Red)),
         pointProvider =
           LineCartesianLayer.PointProvider.single(
-            LineCartesianLayer.Point(ShapeComponent(Fill(Color.Blue))),
+            LineCartesianLayer.Point(ShapeComponent(Fill(Color.Blue)))
           ),
       )
     assertEquals(line(), line())

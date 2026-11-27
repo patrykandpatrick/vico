@@ -26,6 +26,13 @@ import kotlin.math.*
  * values they capture, and they may be called off the main thread; to change the ranges, pass a new
  * [CartesianLayerRangeProvider].
  *
+ * Define a custom implementation at the top level or [remember][androidx.compose.runtime.remember]
+ * it. Because this interface has several functions, an implementation is an object, and an object
+ * created inline in a composable function is a new instance on every recomposition—unlike a lambda
+ * converted to a single-method interface, which Compose memoizes—so the chart re-derives its data
+ * each time. For bounds that depend on data, use [fixed], whose instances are equal when their
+ * bounds are.
+ *
  * An empty [CartesianLayerModel] has no extents, so its [CartesianLayerRangeProvider] receives the
  * ranges already established by the chart’s other layers (non-empty ones first, then empty ones in
  * layer order)—the _x_-range and the _y_-range for its vertical axis—or zeros where there are none.

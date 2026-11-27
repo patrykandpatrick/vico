@@ -52,6 +52,7 @@ public class VicoZoomState {
   // The dimensions’ scale can lag behind the zoom value between draws.
   private var layerDimensionsZoom = 0f
   private val zoomMutatorMutex = MutatorMutex()
+  internal var pendingUpdates: PendingChartUpdates? = null
 
   /** The current zoom factor. */
   public var value: Float
@@ -107,8 +108,12 @@ public class VicoZoomState {
     overridden = false,
   )
 
-  /** Triggers a zoom. */
+  /**
+   * Triggers a zoom. If the host is deriving a chart update when this is called, this first waits
+   * for that update to be displayed, so the zoom factor is computed from the updated chart.
+   */
   public suspend fun zoom(zoom: Zoom) {
+    pendingUpdates?.await()
     zoomMutatorMutex.mutate {
       withUpdated { context, layerDimensions, bounds ->
         val unscaled = unscale(layerDimensions)
@@ -119,7 +124,9 @@ public class VicoZoomState {
   }
 
   /**
-   * Triggers an animated zoom.
+   * Triggers an animated zoom. If the host is deriving a chart update when this is called, this
+   * first waits for that update to be displayed, so the zoom factor is computed from the updated
+   * chart.
    *
    * @param bias the zoom anchor’s horizontal position within the [CartesianChart] bounds, from 0
    *   (the start edge) to 1 (the end edge).
@@ -129,6 +136,7 @@ public class VicoZoomState {
     animationSpec: AnimationSpec<Float> = spring(),
     bias: Float = 0.5f,
   ) {
+    pendingUpdates?.await()
     zoomMutatorMutex.mutate {
       withUpdated { context, layerDimensions, bounds ->
         val unscaled = unscale(layerDimensions)

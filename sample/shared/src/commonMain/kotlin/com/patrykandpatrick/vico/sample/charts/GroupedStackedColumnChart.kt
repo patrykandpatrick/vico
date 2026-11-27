@@ -91,7 +91,7 @@ fun ComposeGroupedStackedColumnChart(modifier: Modifier = Modifier) {
           ColumnCartesianLayer.ColumnProvider.series(
             ColumnColors.map { color ->
               rememberLineComponent(fill = Fill(color), thickness = 16.dp)
-            },
+            }
           ),
         stackKeyProvider = StackKeyProvider,
       ),

@@ -67,8 +67,7 @@ class ColumnCartesianLayerTest {
   fun `grouped places the columns of each group side by side`() {
     for (direction in LayoutDirection.entries) {
       val columns = listOf(RecordingColumn(4.dp), RecordingColumn(8.dp), RecordingColumn(6.dp))
-      val model =
-        ColumnCartesianLayerModel(listOf(entries(0 to 1), entries(0 to 2), entries(0 to 3)))
+      val model = columnModel(listOf(entries(0 to 1), entries(0 to 2), entries(0 to 3)))
       val layer = layer(model, ColumnCartesianLayer.ColumnProvider.series(columns))
       val context = createContext(layer, layoutDirection = direction)
 
@@ -88,7 +87,7 @@ class ColumnCartesianLayerTest {
   @Test
   fun `stacked centers every column in one stack`() {
     val columns = listOf(RecordingColumn(4.dp), RecordingColumn(8.dp))
-    val model = ColumnCartesianLayerModel(listOf(entries(0 to 2), entries(0 to 3)))
+    val model = columnModel(listOf(entries(0 to 2), entries(0 to 3)))
     val layer =
       layer(
         model,
@@ -111,7 +110,7 @@ class ColumnCartesianLayerTest {
   fun `stacks are placed stackSpacing apart and are as wide as their widest columns`() {
     val columns = listOf(RecordingColumn(4.dp), RecordingColumn(8.dp), RecordingColumn(6.dp))
     val model =
-      ColumnCartesianLayerModel(
+      columnModel(
         listOf(entries(0 to 2), entries(0 to 3), entries(0 to -4)),
         listOf("a", "b", "c"),
       )
@@ -137,8 +136,7 @@ class ColumnCartesianLayerTest {
   @Test
   fun `positive and negative values accumulate separately around zero`() {
     val columns = listOf(RecordingColumn(4.dp), RecordingColumn(4.dp), RecordingColumn(4.dp))
-    val model =
-      ColumnCartesianLayerModel(listOf(entries(0 to 2), entries(0 to -3), entries(0 to 4)))
+    val model = columnModel(listOf(entries(0 to 2), entries(0 to -3), entries(0 to 4)))
     val layer =
       layer(
         model,
@@ -158,7 +156,7 @@ class ColumnCartesianLayerTest {
       for ((density, zoom) in listOf(1f to 1f, 2f to 1f, 1f to 2f, 2f to 2f)) {
         val columns = listOf(RecordingColumn(4.dp), RecordingColumn(8.dp), RecordingColumn(6.dp))
         val model =
-          ColumnCartesianLayerModel(
+          columnModel(
             listOf(entries(0 to 1), entries(0 to 2), entries(0 to 3)),
             listOf("a", "b", "c"),
           )
@@ -197,7 +195,7 @@ class ColumnCartesianLayerTest {
 
   @Test
   fun `the range of single-series stacks is the model range`() {
-    val model = ColumnCartesianLayerModel(listOf(entries(0 to 2, 1 to 5), entries(0 to 3)))
+    val model = columnModel(listOf(entries(0 to 2, 1 to 5), entries(0 to 3)))
 
     val range = intrinsicYRange(StackKeyProvider.Grouped, model)
 
@@ -207,7 +205,7 @@ class ColumnCartesianLayerTest {
 
   @Test
   fun `the range of a shared stack is the aggregate model range`() {
-    val model = ColumnCartesianLayerModel(listOf(entries(0 to 2, 1 to 5), entries(0 to 3)))
+    val model = columnModel(listOf(entries(0 to 2, 1 to 5), entries(0 to 3)))
 
     val range = intrinsicYRange(StackKeyProvider.Stacked, model)
 
@@ -220,8 +218,7 @@ class ColumnCartesianLayerTest {
   @Test
   fun `the stack layout is computed once per layer`() {
     var stackKeyProviderCalls = 0
-    val model =
-      ColumnCartesianLayerModel(listOf(entries(0 to 1), entries(0 to 2)), listOf("a", "b"))
+    val model = columnModel(listOf(entries(0 to 1), entries(0 to 2)), listOf("a", "b"))
     val layer =
       layer(
         model,
@@ -249,7 +246,7 @@ class ColumnCartesianLayerTest {
   fun `the widest column of each series is determined once per layer`() {
     var calls = 0
     val column = RecordingColumn(4.dp)
-    val model = ColumnCartesianLayerModel(listOf(entries(0 to 1, 1 to 2, 2 to 3)))
+    val model = columnModel(listOf(entries(0 to 1, 1 to 2, 2 to 3)))
     val layer =
       layer(
         model,
@@ -268,8 +265,7 @@ class ColumnCartesianLayerTest {
   @Test
   fun `exiting series are drawn at their former stack positions without marker targets`() {
     val columns = listOf(RecordingColumn(4.dp), RecordingColumn(4.dp), RecordingColumn(4.dp))
-    val model =
-      ColumnCartesianLayerModel(listOf(entries(0 to 1), entries(0 to 3)), listOf("a", "c"))
+    val model = columnModel(listOf(entries(0 to 1), entries(0 to 3)), listOf("a", "c"))
     val columnsByKey =
       mapOf<Any, RecordingColumn>("a" to columns[0], "b" to columns[1], "c" to columns[2])
     val provider = ColumnCartesianLayer.ColumnProvider { entry ->
@@ -278,7 +274,7 @@ class ColumnCartesianLayerTest {
     val layer = layer(model, provider)
     // The layer that `b` came from.
     val previousModel =
-      ColumnCartesianLayerModel(
+      columnModel(
         listOf(entries(0 to 1), entries(0 to 2), entries(0 to 3)),
         listOf("a", "b", "c"),
       )
@@ -363,9 +359,7 @@ class ColumnCartesianLayerTest {
   @Test
   fun `labels show zero totals and keep positive and negative totals separate`() {
     val model =
-      ColumnCartesianLayerModel(
-        listOf(entries(0 to 2), entries(0 to -3), entries(0 to 4), entries(0 to 0)),
-      )
+      columnModel(listOf(entries(0 to 2), entries(0 to -3), entries(0 to 4), entries(0 to 0)))
     val layer =
       DataLabelRecordingLayer(
         model,
@@ -381,7 +375,7 @@ class ColumnCartesianLayerTest {
   @Test
   fun `stack labels follow animated column heights`() {
     val columns = listOf(RecordingColumn(4.dp), RecordingColumn(4.dp))
-    val model = ColumnCartesianLayerModel(listOf(entries(0 to 2), entries(0 to 3)))
+    val model = columnModel(listOf(entries(0 to 2), entries(0 to 3)))
     val layer =
       RecordingLayer(
         model,
@@ -432,7 +426,7 @@ class ColumnCartesianLayerTest {
 
   @Test
   fun `the marker hook uses the coordinates it receives and keeps repeated columns`() {
-    val model = ColumnCartesianLayerModel(listOf(entries(0 to 1), entries(0 to 2)))
+    val model = columnModel(listOf(entries(0 to 1), entries(0 to 2)))
     val layer =
       CustomMarkerLayer(model) { context, model ->
         mark(context, model.series[0][0], stackIndex = 0, canvasX = 53f)
@@ -449,7 +443,7 @@ class ColumnCartesianLayerTest {
 
   @Test
   fun `an override that doesn't call the marker hook suppresses targets`() {
-    val model = ColumnCartesianLayerModel(listOf(entries(0 to 2), entries(0 to 3)))
+    val model = columnModel(listOf(entries(0 to 2), entries(0 to 3)))
     val layer =
       TrackingLayer(
         model,
@@ -465,7 +459,7 @@ class ColumnCartesianLayerTest {
   @Test
   fun `marker targets keep the horizontal cutoff and vertical clamping`() {
     val model =
-      ColumnCartesianLayerModel(
+      columnModel(
         listOf(entries(0 to 5), entries(0 to 2), entries(0 to 1)),
         listOf("a", "b", "c"),
       )
@@ -523,17 +517,29 @@ class ColumnCartesianLayerTest {
   }
 
   private fun sparseModel(withUnstackedSeries: Boolean = false): ColumnCartesianLayerModel {
-    val series = mutableListOf(entries(0 to 2), entries(0 to 5, 1 to 7), entries(0 to 3, 1 to 11))
+    val series =
+      mutableListOf<List<Pair<Number, Number>>>(
+        entries(0 to 2),
+        entries(0 to 5, 1 to 7),
+        entries(0 to 3, 1 to 11),
+      )
     val keys = mutableListOf<Any>("A1", "B1", "A2")
     if (withUnstackedSeries) {
       series += entries(0 to 1, 1 to 1)
       keys += "N"
     }
-    return ColumnCartesianLayerModel(series, keys)
+    return columnModel(series, keys)
   }
 
-  private fun entries(vararg points: Pair<Number, Number>) = points.map { (x, y) ->
-    ColumnCartesianLayerModel.Entry(x, y)
+  private fun entries(vararg points: Pair<Number, Number>) = points.toList()
+
+  private fun columnModel(
+    points: List<List<Pair<Number, Number>>>,
+    keys: List<Any> = points.indices.toList(),
+  ) = ColumnCartesianLayerModel.build {
+    points.forEachIndexed { index, points ->
+      series(points.map { it.first }, points.map { it.second }, keys[index])
+    }
   }
 
   private fun intrinsicYRange(
@@ -675,7 +681,7 @@ class ColumnCartesianLayerTest {
     }
 
     override fun CartesianDrawingContext.drawChartInternal(
-      drawingModel: ColumnCartesianLayerDrawingModel,
+      drawingModel: ColumnCartesianLayerDrawingModel
     ) {
       action(this, this@CustomMarkerLayer.model)
     }

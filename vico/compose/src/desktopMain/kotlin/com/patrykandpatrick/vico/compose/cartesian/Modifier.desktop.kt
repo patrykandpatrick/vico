@@ -41,7 +41,9 @@ internal actual fun Modifier.extraPointerInput(scrollState: VicoScrollState): Mo
     state =
       rememberDraggableState { delta ->
         scrollJob?.cancel()
-        scrollJob = coroutineScope.launch { scrollState.scroll(Scroll.Relative.pixels(delta)) }
+        scrollJob = coroutineScope.launch {
+          scrollState.scrollImmediately(Scroll.Relative.pixels(delta))
+        }
       },
     orientation = Orientation.Horizontal,
     onDragStopped = { velocity ->
@@ -49,7 +51,7 @@ internal actual fun Modifier.extraPointerInput(scrollState: VicoScrollState): Mo
       scrollJob = coroutineScope.launch {
         if (scrollState.xSnapStep == null) {
           AnimationState(scrollState.value, velocity).animateDecay(animationSpec) {
-            launch { scrollState.scroll(Scroll.Absolute.pixels(value)) }
+            launch { scrollState.scrollImmediately(Scroll.Absolute.pixels(value)) }
           }
         } else {
           scrollState.performSnap(

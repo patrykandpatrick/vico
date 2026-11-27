@@ -53,7 +53,7 @@ fun ComposeBasicDonutChart(modifier: Modifier = Modifier) {
                 lineColor = vicoTheme.textColor,
               ),
           )
-        },
+        }
       ),
       innerSize = PieSize.Inner.fixed(128.dp),
       spacing = 8.dp,

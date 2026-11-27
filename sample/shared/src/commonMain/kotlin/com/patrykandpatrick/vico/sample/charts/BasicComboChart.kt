@@ -53,15 +53,15 @@ fun ComposeBasicComboChart(modifier: Modifier = Modifier) {
       rememberColumnCartesianLayer(
         columnModel,
         ColumnCartesianLayer.ColumnProvider.series(
-          rememberLineComponent(fill = Fill(Color(0xffffc002)), thickness = 16.dp),
+          rememberLineComponent(fill = Fill(Color(0xffffc002)), thickness = 16.dp)
         ),
       ),
       rememberLineCartesianLayer(
         lineModel,
         LineCartesianLayer.LineProvider.series(
           LineCartesianLayer.rememberLine(
-            LineCartesianLayer.LineFill.single(Fill(Color(0xffee2b2b))),
-          ),
+            LineCartesianLayer.LineFill.single(Fill(Color(0xffee2b2b)))
+          )
         ),
       ),
       startAxis = VerticalAxis.rememberStart(),

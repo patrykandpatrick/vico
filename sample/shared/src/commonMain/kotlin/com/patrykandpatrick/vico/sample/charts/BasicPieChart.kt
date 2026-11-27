@@ -43,10 +43,10 @@ fun ComposeBasicPieChart(modifier: Modifier = Modifier) {
             fill = Fill(color),
             label =
               PieChart.SliceLabel.Inside(
-                TextComponent(TextStyle(if (index == 2) Color.Black else Color.White)),
+                TextComponent(TextStyle(if (index == 2) Color.Black else Color.White))
               ),
           )
-        },
+        }
       ),
       valueFormatter = PieValueFormatter { _, value, _ -> "${value.toInt()}%" },
     ),

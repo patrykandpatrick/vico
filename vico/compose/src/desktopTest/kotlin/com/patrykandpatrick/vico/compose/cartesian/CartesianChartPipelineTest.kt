@@ -55,7 +55,7 @@ class CartesianChartPipelineTest {
     ColumnCartesianLayer.ColumnProvider.series(LineComponent(Fill(Color.Blue)))
   private val lineProvider =
     LineCartesianLayer.LineProvider.series(
-      LineCartesianLayer.Line(LineCartesianLayer.LineFill.single(Fill(Color.Green))),
+      LineCartesianLayer.Line(LineCartesianLayer.LineFill.single(Fill(Color.Green)))
     )
 
   private fun columns(
@@ -232,7 +232,7 @@ class CartesianChartPipelineTest {
           columnProvider,
           rangeProvider = CartesianLayerRangeProvider.fixed(maxY = 8.0),
           key = "columns",
-        ),
+        )
       )
     val commit = assertNotNull(pipeline.prepare(rescaled))
     assertFalse(commit.isAsync)
@@ -280,8 +280,8 @@ class CartesianChartPipelineTest {
             columnProvider,
             rangeProvider = CartesianLayerRangeProvider.fixed(maxY = 8.0),
             key = "columns",
-          ),
-        ),
+          )
+        )
       )
       val drawingModel =
         display.drawingModels.getValue("columns") as ColumnCartesianLayerDrawingModel
@@ -515,7 +515,7 @@ class CartesianChartPipelineTest {
     frame(200)
     val emptied =
       chart(
-        ColumnCartesianLayer(ColumnCartesianLayerModel.build {}, columnProvider, key = "columns"),
+        ColumnCartesianLayer(ColumnCartesianLayerModel.build {}, columnProvider, key = "columns")
       )
     assertTrue(assertNotNull(pipeline.prepare(emptied)).isAsync)
     submit(emptied)
@@ -714,8 +714,8 @@ class CartesianChartPipelineTest {
           otherColumnProvider,
           stackKeyProvider = ColumnCartesianLayer.StackKeyProvider.Stacked,
           key = "columns",
-        ),
-      ),
+        )
+      )
     )
     assertTrue(drawingModel !== display.frame.drawingModels.getValue("columns"))
   }

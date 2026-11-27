@@ -51,10 +51,10 @@ public class ColumnCartesianLayerModel : CartesianLayerModel {
   public val maxAggregateY: Double
 
   /** Creates a [ColumnCartesianLayerModel] with the given series, using their indices as keys. */
-  public constructor(series: List<List<Entry>>) : this(series, series.indices.toList())
+  internal constructor(series: List<List<Entry>>) : this(series, series.indices.toList())
 
   /** Creates a [ColumnCartesianLayerModel] with the given series and series keys. */
-  public constructor(series: List<List<Entry>>, seriesKeys: List<Any>) {
+  internal constructor(series: List<List<Entry>>, seriesKeys: List<Any>) {
     require(series.size == seriesKeys.size) { "`series` and `seriesKeys` must have the same size." }
     require(seriesKeys.toSet().size == seriesKeys.size) { "Series keys must be unique." }
     this.seriesKeys = seriesKeys.toList()
@@ -110,7 +110,7 @@ public class ColumnCartesianLayerModel : CartesianLayerModel {
     public val seriesKey: Any = 0,
     public val seriesIndex: Int = 0,
   ) : CartesianLayerModel.Entry {
-    public constructor(x: Number, y: Number) : this(x.toDouble(), y.toDouble())
+    internal constructor(x: Number, y: Number) : this(x.toDouble(), y.toDouble())
 
     override fun equals(other: Any?): Boolean =
       this === other ||

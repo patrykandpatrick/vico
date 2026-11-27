@@ -58,7 +58,7 @@ internal class MutablePieChartMeasuringContext(
 
 @Composable
 internal fun rememberPieChartMeasuringContext(
-  model: PieChartModel,
+  model: PieChartModel
 ): State<MutablePieChartMeasuringContext> {
   val fontFamilyResolver = LocalFontFamilyResolver.current
   val density = LocalDensity.current
@@ -74,7 +74,7 @@ internal fun rememberPieChartMeasuringContext(
         model = model,
         cacheStore = cacheStore,
       )
-    },
+    }
   )
 }
 

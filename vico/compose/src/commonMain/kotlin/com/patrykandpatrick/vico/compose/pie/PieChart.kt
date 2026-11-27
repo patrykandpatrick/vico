@@ -248,7 +248,7 @@ internal constructor(
               circleBounds = provisionalBounds,
               angle = currentAngle + degrees / 2f,
               label = valueFormatter.format(context, resolved.entry.value, resolved.index),
-            ),
+            )
           )
       }
       currentAngle += degrees
@@ -393,7 +393,7 @@ internal constructor(
           sweepAngle,
           outerTrim,
           innerTrim,
-        ),
+        )
       )
     }
 

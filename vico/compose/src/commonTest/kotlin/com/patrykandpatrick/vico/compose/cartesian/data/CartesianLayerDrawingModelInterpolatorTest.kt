@@ -61,7 +61,7 @@ class CartesianLayerDrawingModelInterpolatorTest {
   }
 
   @Test
-  fun `Removed series exit as the reverse of entering series, at their former positions`() {
+  fun `Removed series exit as the reverse of entering series at their former positions`() {
     val oldModel =
       ColumnCartesianLayerDrawingModel(
         entries =
@@ -204,8 +204,8 @@ class CartesianLayerDrawingModelInterpolatorTest {
                   bottomWickY = 0.1f,
                   topWickY = 0.8f,
                   entry = entry.series.single(),
-                ),
-            ),
+                )
+            )
           ),
         seriesKeys = listOf(0),
         opacity = 0.6f,

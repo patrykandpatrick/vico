@@ -227,7 +227,7 @@ class PieChartHostTest {
       }
     val label =
       PieChart.SliceLabel.Outside(
-        com.patrykandpatrick.vico.compose.common.component.TextComponent(lineCount = 3),
+        com.patrykandpatrick.vico.compose.common.component.TextComponent(lineCount = 3)
       )
     val sliceProvider =
       PieChart.SliceProvider.series(
