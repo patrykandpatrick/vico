@@ -36,6 +36,9 @@ internal constructor(
     opacity: Float = 1f,
   ) : this(entries, seriesKeys, opacity, null)
 
+  override val canCarrySeriesSources: Boolean
+    get() = true
+
   override fun withSeriesSources(seriesSources: List<Any?>): ColumnCartesianLayerDrawingModel =
     ColumnCartesianLayerDrawingModel(entries, seriesKeys, opacity, seriesSources)
 

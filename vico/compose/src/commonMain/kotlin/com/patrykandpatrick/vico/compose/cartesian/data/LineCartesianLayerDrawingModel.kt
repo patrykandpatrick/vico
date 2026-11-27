@@ -39,6 +39,9 @@ internal constructor(
     sweepFraction: Float = 1f,
   ) : this(entries, seriesKeys, opacity, sweepFraction, null)
 
+  override val canCarrySeriesSources: Boolean
+    get() = true
+
   override fun withSeriesSources(seriesSources: List<Any?>): LineCartesianLayerDrawingModel =
     LineCartesianLayerDrawingModel(entries, seriesKeys, opacity, sweepFraction, seriesSources)
 

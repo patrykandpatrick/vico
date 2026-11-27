@@ -20,6 +20,8 @@ import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.BroadcastFrameClock
 import androidx.compose.ui.graphics.Color
+import com.patrykandpatrick.vico.compose.cartesian.data.CartesianLayerDrawingModel
+import com.patrykandpatrick.vico.compose.cartesian.data.CartesianLayerDrawingModelInterpolator
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianLayerRangeProvider
 import com.patrykandpatrick.vico.compose.cartesian.data.ColumnCartesianLayerDrawingModel
 import com.patrykandpatrick.vico.compose.cartesian.data.ColumnCartesianLayerModel
@@ -716,6 +718,71 @@ class CartesianChartPipelineTest {
       ),
     )
     assertTrue(drawingModel !== display.frame.drawingModels.getValue("columns"))
+  }
+
+  @Test
+  fun `Frames from a custom interpolator get the series sources attached`() {
+    val oldLayer = line(1, 2, key = "line")
+    val newLayer =
+      LineCartesianLayer(
+        LineCartesianLayerModel.build { series(1, 2, key = 1) },
+        lineProvider,
+        key = "line",
+      )
+    val ranges = CartesianChartPipeline.getRanges(testCartesianChart(oldLayer))
+    val old = oldLayer.createDrawingModel(ranges)
+    val new = newLayer.createDrawingModel(ranges)
+    // A public-API frame with the new series and the removed one (key 0).
+    val frame = LineCartesianLayerDrawingModel(new.toList() + old.toList(), listOf<Any>(1, 0))
+    val transition =
+      with(CartesianChartPipeline) {
+        CartesianLayerDrawingModelInterpolator.Transition<Any> { frame }.withSeriesSources(old, new)
+      }
+    val attached = transition.interpolate(0.5f) as LineCartesianLayerDrawingModel
+    assertSame(newLayer, attached.getSeriesSource(0))
+    assertSame(oldLayer, attached.getSeriesSource(1))
+    assertEquals(frame, attached)
+  }
+
+  @Test
+  fun `Frames that already carry series sources are passed through`() {
+    val layer = line(1, 2, key = "line")
+    val ranges = CartesianChartPipeline.getRanges(testCartesianChart(layer))
+    val drawingModel = layer.createDrawingModel(ranges)
+    val transition =
+      with(CartesianChartPipeline) {
+        CartesianLayerDrawingModelInterpolator.Transition<Any> { drawingModel }
+          .withSeriesSources(drawingModel, drawingModel)
+      }
+    assertSame(drawingModel, transition.interpolate(0.5f))
+    // Drawing models of other types are passed through, too.
+    val custom = listOf(0.5f)
+    val customTransition =
+      with(CartesianChartPipeline) {
+        CartesianLayerDrawingModelInterpolator.Transition<Any> { custom }
+          .withSeriesSources(null, custom)
+      }
+    assertSame(custom, customTransition.interpolate(0.5f))
+    // So are user-defined subclasses of `CartesianLayerDrawingModel`.
+    class CustomEntry : CartesianLayerDrawingModel.Entry {
+      override fun equals(other: Any?) = this === other
+
+      override fun hashCode() = 0
+    }
+
+    class CustomDrawingModel(entries: List<Map<Double, CustomEntry>>, keys: List<Any>) :
+      CartesianLayerDrawingModel<CustomEntry>(entries, keys) {
+      override fun equals(other: Any?) = this === other
+
+      override fun hashCode() = 0
+    }
+    val subclassed = CustomDrawingModel(listOf(emptyMap()), listOf(0))
+    val subclassTransition =
+      with(CartesianChartPipeline) {
+        CartesianLayerDrawingModelInterpolator.Transition<Any> { subclassed }
+          .withSeriesSources(subclassed, subclassed)
+      }
+    assertSame(subclassed, subclassTransition.interpolate(0.5f))
   }
 
   private fun CartesianLayerDrawItem.layerKey(): Any =

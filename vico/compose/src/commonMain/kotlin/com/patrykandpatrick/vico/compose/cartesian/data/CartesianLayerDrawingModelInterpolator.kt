@@ -27,11 +27,10 @@ import com.patrykandpatrick.vico.compose.cartesian.layer.LineCartesianLayer
  * Implementations must be pure functions of their arguments and of the values they capture, and
  * they’re called off the main thread.
  *
- * The built-in drawing models record which layer each series came from, and the built-in
- * interpolators carry this over to exiting series, so that those are drawn with the data and style
- * of the layer that had them. Drawing models created via their public constructors don’t carry it,
- * so a custom interpolator that builds new ones loses the exiting series’ drawing (they aren’t
- * drawn rather than being styled via the new layer’s providers).
+ * To animate a series out after it’s removed from a built-in layer’s model, include it in the
+ * frames, keyed by its series key (e.g., at its former position in `seriesKeys`, with its entries
+ * shrinking). The host draws it with the data and style it had, so the new layer’s providers aren’t
+ * asked about it. A series that’s in neither drawing model isn’t drawn.
  *
  * In a composable function, a lambda converted to [CartesianLayerDrawingModelInterpolator] is
  * memoized while the values it captures are unchanged (compared via `equals` for stable types and

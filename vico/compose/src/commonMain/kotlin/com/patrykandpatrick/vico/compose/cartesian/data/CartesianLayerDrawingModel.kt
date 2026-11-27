@@ -44,6 +44,10 @@ public abstract class CartesianLayerDrawingModel<T : CartesianLayerDrawingModel.
   /** Returns the [CartesianLayer] that series [index] came from, or `null` if unknown. */
   internal fun getSeriesSource(index: Int): Any? = seriesSources?.getOrNull(index)
 
+  /** Whether this drawing model can carry [seriesSources] (true for the built-in ones). */
+  internal open val canCarrySeriesSources: Boolean
+    get() = false
+
   /**
    * Returns a copy of this drawing model with [seriesSources] replaced. Drawing models that don’t
    * support series sources return themselves.

@@ -427,7 +427,13 @@ internal class CartesianChartPipeline(
       restartedKeys += layer.key
       val current = previous.drawingModels[layer.key]?.takeIf { it::class == final::class }
       if (animate && current != null) {
-        val transition = layer.drawingModelInterpolator.createTransition(current, final)
+        val transition =
+          layer.drawingModelInterpolator
+            .createTransition(current, final)
+            .withSeriesSources(
+              current,
+              final,
+            )
         transitions[layer.key] = transition
         startDrawingModels[layer.key] = transition.interpolate(0f)
       } else {
@@ -587,9 +593,42 @@ internal class CartesianChartPipeline(
     fun CartesianLayer<*>.drawItemKey(): Any =
       if (this is AnimatedCartesianLayer<*, *>) key else this
 
+    /**
+     * Returns a transition whose frames have their series sources (see
+     * [CartesianLayerDrawingModel.seriesSources]) attached by series key: [new]’s source for a
+     * series present in [new], and otherwise [old]’s. This lets a custom interpolator, which can
+     * build frames only via the public constructors, include exiting series that are then drawn
+     * with the data and style they had. Frames that already carry sources (those of the built-in
+     * interpolators), and drawing models of other types, are passed through as they are.
+     */
+    fun Transition<Any>.withSeriesSources(old: Any?, new: Any): Transition<Any> {
+      if (new !is CartesianLayerDrawingModel<*>) return this
+      val sources = HashMap<Any, Any?>()
+      if (old is CartesianLayerDrawingModel<*>) {
+        old.seriesKeys.forEachIndexed { index, key -> sources[key] = old.getSeriesSource(index) }
+      }
+      new.seriesKeys.forEachIndexed { index, key ->
+        new.getSeriesSource(index)?.let { sources[key] = it }
+      }
+      val original = this
+      return Transition { fraction ->
+        val frame = original.interpolate(fraction)
+        if (
+          frame is CartesianLayerDrawingModel<*> &&
+            frame.canCarrySeriesSources &&
+            frame.seriesSources == null
+        ) {
+          frame.withSeriesSources(frame.seriesKeys.map(sources::get))
+        } else {
+          frame
+        }
+      }
+    }
+
     /** Returns a transition that plays this layer’s entry backward, starting from [current]. */
     fun AnimatedCartesianLayer<*, Any>.createExitTransition(current: Any): Transition<Any> {
-      val enter = drawingModelInterpolator.createTransition(null, current)
+      val enter =
+        drawingModelInterpolator.createTransition(null, current).withSeriesSources(null, current)
       return Transition { fraction -> enter.interpolate(1 - fraction) }
     }
 
@@ -653,7 +692,8 @@ internal class CartesianChartPipeline(
           return@forEach
         }
         val old = previousDrawingModels[layer.key]?.takeIf { it::class == final::class }
-        val transition = layer.drawingModelInterpolator.createTransition(old, final)
+        val transition =
+          layer.drawingModelInterpolator.createTransition(old, final).withSeriesSources(old, final)
         transitions[layer.key] = transition
         startDrawingModels[layer.key] = transition.interpolate(0f)
       }
