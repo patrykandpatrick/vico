@@ -19,6 +19,11 @@ package com.patrykandpatrick.vico.compose.cartesian.layer
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.compose.cartesian.CartesianMeasuringContext
+import com.patrykandpatrick.vico.compose.cartesian.accessibility.CandlestickCartesianLayerAggregation
+import com.patrykandpatrick.vico.compose.cartesian.accessibility.CartesianDescriptionProvider
+import com.patrykandpatrick.vico.compose.cartesian.accessibility.CartesianLayerAggregation
+import com.patrykandpatrick.vico.compose.cartesian.accessibility.ColumnCartesianLayerAggregation
+import com.patrykandpatrick.vico.compose.cartesian.accessibility.LineCartesianLayerAggregation
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartRanges
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianLayerModel
 import com.patrykandpatrick.vico.compose.cartesian.data.MutableCartesianChartRanges
@@ -32,6 +37,34 @@ import com.patrykandpatrick.vico.compose.common.data.MutableExtraStore
 public interface CartesianLayer<M : CartesianLayerModel> : CartesianLayerMarginUpdater<M> {
   /** Links _x_ values to [CartesianMarker.Target]s. */
   public val markerTargets: Map<Double, List<CartesianMarker.Target>>
+
+  /**
+   * Returns an aggregation of [model] for [xRange], or `null` if the layer has no data in [xRange]
+   * or does not support aggregation. The default [CartesianDescriptionProvider] describes only
+   * [LineCartesianLayerAggregation]s, [ColumnCartesianLayerAggregation]s, and
+   * [CandlestickCartesianLayerAggregation]s, so other aggregation types require a custom
+   * [CartesianDescriptionProvider].
+   *
+   * @param model the [CartesianLayerModel].
+   * @param xRange the range of _x_ values to aggregate.
+   */
+  public fun getAggregation(
+    model: M,
+    xRange: ClosedFloatingPointRange<Double>,
+  ): CartesianLayerAggregation? = null
+
+  /**
+   * Returns the number of series in [model]. The default implementation returns `0`, indicating
+   * that the layer contributes no series to the chart summary or interval descriptions.
+   */
+  public fun getSeriesCount(model: M): Int = 0
+
+  /**
+   * Returns the distinct _x_ values present in [model] in ascending order. The default
+   * implementation returns an empty list, indicating that the layer contributes no intervals to the
+   * accessibility overlay.
+   */
+  public fun getXValues(model: M): List<Double> = emptyList()
 
   /** Draws the [CartesianLayer]. */
   public fun draw(context: CartesianDrawingContext, model: M)

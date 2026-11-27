@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.compose.cartesian.CartesianMeasuringContext
 import com.patrykandpatrick.vico.compose.cartesian.ColorScale
+import com.patrykandpatrick.vico.compose.cartesian.accessibility.LineCartesianLayerAggregation
 import com.patrykandpatrick.vico.compose.cartesian.axis.Axis
 import com.patrykandpatrick.vico.compose.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.compose.cartesian.data.*
@@ -926,6 +927,38 @@ protected constructor(
       verticalAxisPosition,
     )
   }
+
+  override fun getAggregation(
+    model: LineCartesianLayerModel,
+    xRange: ClosedFloatingPointRange<Double>,
+  ): LineCartesianLayerAggregation? {
+    val seriesAggregations = mutableListOf<LineCartesianLayerAggregation.Series>()
+    model.series.forEachIndexed { seriesIndex, series ->
+      val inRange = series.filterInRange(xRange)
+      if (inRange.isNotEmpty()) {
+        seriesAggregations.add(
+          LineCartesianLayerAggregation.Series(
+            key = model.seriesKeys[seriesIndex],
+            index = seriesIndex,
+            min = inRange.minBy { it.y },
+            max = inRange.maxBy { it.y },
+            first = inRange.first(),
+            last = inRange.last(),
+            count = inRange.size,
+          )
+        )
+      }
+    }
+    return if (seriesAggregations.isNotEmpty()) {
+      LineCartesianLayerAggregation(seriesAggregations, verticalAxisPosition)
+    } else {
+      null
+    }
+  }
+
+  override fun getSeriesCount(model: LineCartesianLayerModel): Int = model.series.size
+
+  override fun getXValues(model: LineCartesianLayerModel): List<Double> = model.xValues
 
   override fun updateLayerMargins(
     context: CartesianMeasuringContext,

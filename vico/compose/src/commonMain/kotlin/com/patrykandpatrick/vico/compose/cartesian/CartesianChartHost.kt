@@ -23,8 +23,17 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.semantics.ScrollAxisRange
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.horizontalScrollAxisRange
+import androidx.compose.ui.semantics.pageLeft
+import androidx.compose.ui.semantics.pageRight
+import androidx.compose.ui.semantics.scrollBy
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.patrykandpatrick.vico.compose.cartesian.accessibility.AccessibilityMapping
+import com.patrykandpatrick.vico.compose.cartesian.accessibility.AccessibilityOverlay
 import com.patrykandpatrick.vico.compose.cartesian.data.*
 import com.patrykandpatrick.vico.compose.cartesian.layer.MutableCartesianLayerDimensions
 import com.patrykandpatrick.vico.compose.cartesian.marker.CartesianMarker
@@ -33,6 +42,8 @@ import com.patrykandpatrick.vico.compose.cartesian.marker.Interaction
 import com.patrykandpatrick.vico.compose.common.*
 import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.min
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.launch
@@ -233,6 +244,7 @@ internal fun CartesianChartHostImpl(
   val coroutineScope = rememberCoroutineScope()
   var lastHandledModel by remember { ValueWrapper(model) }
   val layerDimensions = remember { MutableCartesianLayerDimensions() }
+  val accessibilityMapping = remember { mutableStateOf<AccessibilityMapping?>(null) }
   val measureLayerDimensions = remember { MutableCartesianLayerDimensions() }
   val measureExtras =
     remember(chart, measuringContext, measureLayerDimensions, chartAreaHeight) {
@@ -316,7 +328,55 @@ internal fun CartesianChartHostImpl(
     onDispose { zoomState.setScrollState(null) }
   }
 
-  ChartHostBox(modifier, chartAreaHeight, measureExtras) {
+  val descriptionProvider = chart.descriptionProvider
+  ChartHostBox(
+    modifier =
+      modifier.semantics {
+        if (descriptionProvider != null && model.models.isNotEmpty()) {
+          val fullXRange = ranges.minX..ranges.maxX
+          val summaryAggregation = chart.getAggregation(model, fullXRange)
+          val summary =
+            descriptionProvider.getChartDescription(measuringContext.value, summaryAggregation)
+          if (summary.isNotEmpty()) {
+            contentDescription = summary.toString()
+          }
+          if (scrollState.scrollEnabled && scrollState.maxValue != 0f) {
+            val minScroll = min(0f, scrollState.maxValue)
+            val maxScroll = max(0f, scrollState.maxValue)
+            horizontalScrollAxisRange =
+              ScrollAxisRange(
+                value = { abs(scrollState.value) },
+                maxValue = { abs(scrollState.maxValue) },
+              )
+            scrollBy { x, _ ->
+              if (x == 0f) return@scrollBy false
+              if (x < 0f && scrollState.value <= minScroll) return@scrollBy false
+              if (x > 0f && scrollState.value >= maxScroll) return@scrollBy false
+              coroutineScope.launch { scrollState.scroll(Scroll.Relative.pixels(x)) }
+              true
+            }
+            if (scrollState.value > minScroll) {
+              pageLeft {
+                val pageWidth = accessibilityMapping.value?.layerBounds?.width ?: 0f
+                if (pageWidth <= 0f) return@pageLeft false
+                coroutineScope.launch { scrollState.scroll(Scroll.Relative.pixels(-pageWidth)) }
+                true
+              }
+            }
+            if (scrollState.value < maxScroll) {
+              pageRight {
+                val pageWidth = accessibilityMapping.value?.layerBounds?.width ?: 0f
+                if (pageWidth <= 0f) return@pageRight false
+                coroutineScope.launch { scrollState.scroll(Scroll.Relative.pixels(pageWidth)) }
+                true
+              }
+            }
+          }
+        }
+      },
+    chartAreaHeight = chartAreaHeight,
+    measureExtras = measureExtras,
+  ) {
     Canvas(
       modifier =
         Modifier.fillMaxSize()
@@ -373,6 +433,19 @@ internal fun CartesianChartHostImpl(
 
       chart.draw(drawingContext)
       measuringContext.value.cacheStore.purge()
+
+      if (chart.descriptionProvider != null) {
+        accessibilityMapping.value =
+          AccessibilityMapping(chart.layerBounds, layerDimensions, measuringContext.value)
+      }
     }
+
+    AccessibilityOverlay(
+      chart = chart,
+      model = model,
+      mapping = accessibilityMapping,
+      scrollState = scrollState,
+      measuringContext = measuringContext,
+    )
   }
 }

@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.compose.cartesian.CartesianMeasuringContext
+import com.patrykandpatrick.vico.compose.cartesian.accessibility.CandlestickCartesianLayerAggregation
 import com.patrykandpatrick.vico.compose.cartesian.axis.Axis
 import com.patrykandpatrick.vico.compose.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.compose.cartesian.data.*
@@ -267,6 +268,30 @@ protected constructor(
       verticalAxisPosition,
     )
   }
+
+  override fun getAggregation(
+    model: CandlestickCartesianLayerModel,
+    xRange: ClosedFloatingPointRange<Double>,
+  ): CandlestickCartesianLayerAggregation? {
+    val inRange = model.series.filterInRange(xRange)
+    return if (inRange.isNotEmpty()) {
+      CandlestickCartesianLayerAggregation(
+        modelKey = model.key,
+        opening = inRange.first().opening,
+        closing = inRange.last().closing,
+        low = inRange.minOf { it.low },
+        high = inRange.maxOf { it.high },
+        count = inRange.size,
+        verticalAxisPosition = verticalAxisPosition,
+      )
+    } else {
+      null
+    }
+  }
+
+  override fun getSeriesCount(model: CandlestickCartesianLayerModel): Int = 1
+
+  override fun getXValues(model: CandlestickCartesianLayerModel): List<Double> = model.xValues
 
   override fun updateDimensions(
     context: CartesianMeasuringContext,
