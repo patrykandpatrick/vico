@@ -21,7 +21,10 @@ import com.patrykandpatrick.vico.compose.cartesian.Scroll.Absolute
 import com.patrykandpatrick.vico.compose.cartesian.Scroll.Relative
 import com.patrykandpatrick.vico.compose.cartesian.layer.CartesianLayerDimensions
 
-/** Represents a [CartesianChart] scroll value or delta. */
+/**
+ * Represents a [CartesianChart] scroll value or delta. Implementations must be pure functions of
+ * their arguments and of the values they capture. They’re called on the main thread.
+ */
 public sealed interface Scroll {
   /** Represents a [CartesianChart] scroll value. */
   public fun interface Absolute : Scroll {
@@ -42,18 +45,13 @@ public sealed interface Scroll {
       public val End: Absolute = Absolute { _, _, _, maxValue -> maxValue }
 
       /** Uses a scroll value of the specified number of pixels. */
-      public fun pixels(pixels: Float): Absolute = Absolute { _, _, _, _ -> pixels }
+      public fun pixels(pixels: Float): Absolute = AbsolutePixels(pixels)
 
       /**
        * Scrolls to the specified _x_ coordinate, positioning it anywhere between the start edge
        * ([bias] = 0) and the end edge ([bias] = 1) of the [CartesianChart].
        */
-      public fun x(x: Double, bias: Float = 0f): Absolute =
-        Absolute { context, layerDimensions, bounds, _ ->
-          layerDimensions.startPadding +
-            ((x - context.ranges.minX) / context.ranges.xStep).toFloat() *
-              layerDimensions.xSpacing - bias * bounds.width
-        }
+      public fun x(x: Double, bias: Float = 0f): Absolute = AbsoluteX(x, bias)
     }
   }
 
@@ -70,14 +68,51 @@ public sealed interface Scroll {
     /** Houses [Scroll.Relative] factory functions. */
     public companion object {
       /** Scrolls by the specified number of pixels. */
-      public fun pixels(pixels: Float): Relative = Relative { _, _, _, _ -> pixels }
+      public fun pixels(pixels: Float): Relative = RelativePixels(pixels)
 
       /** Scrolls by the specified number of _x_ units. */
-      public fun x(x: Double): Relative = Relative { context, layerDimensions, _, _ ->
-        (x / context.ranges.xStep).toFloat() * layerDimensions.xSpacing
-      }
+      public fun x(x: Double): Relative = RelativeX(x)
     }
   }
+}
+
+private data class AbsolutePixels(private val pixels: Float) : Absolute {
+  override fun getValue(
+    context: CartesianMeasuringContext,
+    layerDimensions: CartesianLayerDimensions,
+    bounds: Rect,
+    maxValue: Float,
+  ) = pixels
+}
+
+private data class AbsoluteX(private val x: Double, private val bias: Float) : Absolute {
+  override fun getValue(
+    context: CartesianMeasuringContext,
+    layerDimensions: CartesianLayerDimensions,
+    bounds: Rect,
+    maxValue: Float,
+  ) =
+    layerDimensions.startPadding +
+      ((x - context.ranges.minX) / context.ranges.xStep).toFloat() * layerDimensions.xSpacing -
+      bias * bounds.width
+}
+
+private data class RelativePixels(private val pixels: Float) : Relative {
+  override fun getDelta(
+    context: CartesianMeasuringContext,
+    layerDimensions: CartesianLayerDimensions,
+    bounds: Rect,
+    maxValue: Float,
+  ) = pixels
+}
+
+private data class RelativeX(private val x: Double) : Relative {
+  override fun getDelta(
+    context: CartesianMeasuringContext,
+    layerDimensions: CartesianLayerDimensions,
+    bounds: Rect,
+    maxValue: Float,
+  ) = (x / context.ranges.xStep).toFloat() * layerDimensions.xSpacing
 }
 
 internal fun Scroll.getDelta(

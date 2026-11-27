@@ -19,7 +19,7 @@ package com.patrykandpatrick.vico.compose.cartesian.data
 import com.patrykandpatrick.vico.compose.common.lerp
 import com.patrykandpatrick.vico.compose.common.orZero
 
-internal class CandlestickCartesianLayerDrawingModelInterpolator :
+internal object CandlestickCartesianLayerDrawingModelInterpolator :
   BaseCartesianLayerDrawingModelInterpolator<
     CandlestickCartesianLayerDrawingModel.Entry,
     CandlestickCartesianLayerDrawingModel,
@@ -27,13 +27,16 @@ internal class CandlestickCartesianLayerDrawingModelInterpolator :
   override fun transform(
     old: CandlestickCartesianLayerDrawingModel?,
     new: CandlestickCartesianLayerDrawingModel,
+    seriesKeys: List<Any>,
     entries: List<Map<Double, CandlestickCartesianLayerDrawingModel.Entry>>,
+    seriesSources: List<Any?>,
     fraction: Float,
   ): CandlestickCartesianLayerDrawingModel =
     CandlestickCartesianLayerDrawingModel(
-      entries = entries.first(),
-      modelKey = new.modelKey,
+      entries = entries,
+      seriesKeys = seriesKeys,
       opacity = old?.opacity.orZero.lerp(new.opacity, fraction),
+      seriesSources = seriesSources,
     )
 
   override fun transformEntry(
@@ -47,5 +50,6 @@ internal class CandlestickCartesianLayerDrawingModelInterpolator :
       bodyTopY = old?.bodyTopY.orZero.lerp(new.bodyTopY, fraction),
       bottomWickY = old?.bottomWickY.orZero.lerp(new.bottomWickY, fraction),
       topWickY = old?.topWickY.orZero.lerp(new.topWickY, fraction),
+      entry = new.entry,
     )
 }

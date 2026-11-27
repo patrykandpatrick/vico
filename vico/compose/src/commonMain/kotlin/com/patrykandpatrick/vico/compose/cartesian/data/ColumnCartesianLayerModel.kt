@@ -17,13 +17,18 @@
 package com.patrykandpatrick.vico.compose.cartesian.data
 
 import com.patrykandpatrick.vico.compose.cartesian.layer.ColumnCartesianLayer
-import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 import com.patrykandpatrick.vico.compose.common.rangeOf
 import com.patrykandpatrick.vico.compose.common.rangeOfPair
 
-/** Stores a [ColumnCartesianLayer]’s data. */
+/**
+ * Stores a [ColumnCartesianLayer]’s data. Use [build] to create instances. A model without entries
+ * (e.g., from `build { }`) is valid: the [ColumnCartesianLayer] then draws nothing, and the chart
+ * shows an empty coordinate plane. Series may be empty, too.
+ */
 public class ColumnCartesianLayerModel : CartesianLayerModel {
   private val entries: List<Entry>
+
+  private val hashCode: Int
 
   /** The series (lists of [Entry] instances). */
   public val series: List<List<Entry>>
@@ -39,34 +44,34 @@ public class ColumnCartesianLayerModel : CartesianLayerModel {
 
   override val maxY: Double
 
-  /** The minimum sum of all _y_ values associated with a given _x_ value. */
+  /** The minimum sum of all _y_-values associated with a given _x_-value. */
   public val minAggregateY: Double
 
-  /** The maximum sum of all _y_ values associated with a given _x_ value. */
+  /** The maximum sum of all _y_-values associated with a given _x_-value. */
   public val maxAggregateY: Double
 
-  override val extraStore: ExtraStore
+  /** Creates a [ColumnCartesianLayerModel] with the given series, using their indices as keys. */
+  internal constructor(series: List<List<Entry>>) : this(series, series.indices.toList())
 
-  public constructor(series: List<List<Entry>>) : this(series, series.indices.toList())
-
-  public constructor(
-    series: List<List<Entry>>,
-    seriesKeys: List<Any>,
-  ) : this(series, seriesKeys, ExtraStore.Empty)
-
-  private constructor(series: List<List<Entry>>, seriesKeys: List<Any>, extraStore: ExtraStore) {
-    require(series.isNotEmpty()) { "At least one series should be added." }
+  /** Creates a [ColumnCartesianLayerModel] with the given series and series keys. */
+  internal constructor(series: List<List<Entry>>, seriesKeys: List<Any>) {
     require(series.size == seriesKeys.size) { "`series` and `seriesKeys` must have the same size." }
     require(seriesKeys.toSet().size == seriesKeys.size) { "Series keys must be unique." }
     this.seriesKeys = seriesKeys.toList()
     this.series = series.mapIndexed { seriesIndex, entries ->
-      require(entries.isNotEmpty()) { "Series can’t be empty." }
-      entries
-        .sortedBy { entry -> entry.x }
-        .map { entry -> Entry(entry.x, entry.y, seriesKeys[seriesIndex], seriesIndex) }
+      val seriesKey = seriesKeys[seriesIndex]
+      // Entries from the builder already carry their series key and index, so they’re reused.
+      val sorted =
+        if ((1..<entries.size).all { entries[it - 1].x <= entries[it].x }) entries
+        else entries.sortedBy { it.x }
+      if (sorted.all { it.seriesKey == seriesKey && it.seriesIndex == seriesIndex }) {
+        sorted
+      } else {
+        sorted.map { entry -> Entry(entry.x, entry.y, seriesKey, seriesIndex) }
+      }
     }
     this.entries = this.series.flatten()
-    val xRange = this.series.rangeOfPair { it.first().x to it.last().x }
+    val xRange = this.series.filter { it.isNotEmpty() }.rangeOfPair { it.first().x to it.last().x }
     val yRange = entries.rangeOf { it.y }
     val aggregateYRange = entries.getAggregateYRange()
     this.minX = xRange.start
@@ -75,74 +80,22 @@ public class ColumnCartesianLayerModel : CartesianLayerModel {
     this.maxY = yRange.endInclusive
     this.minAggregateY = aggregateYRange.start
     this.maxAggregateY = aggregateYRange.endInclusive
-    this.extraStore = extraStore
+    this.hashCode = 31 * this.series.hashCode() + this.seriesKeys.hashCode()
   }
 
-  private constructor(
-    entries: List<Entry>,
-    series: List<List<Entry>>,
-    seriesKeys: List<Any>,
-    minX: Double,
-    maxX: Double,
-    minY: Double,
-    maxY: Double,
-    minAggregateY: Double,
-    maxAggregateY: Double,
-    extraStore: ExtraStore,
-  ) {
-    this.entries = entries
-    this.series = series
-    this.seriesKeys = seriesKeys
-    this.minX = minX
-    this.maxX = maxX
-    this.minY = minY
-    this.maxY = maxY
-    this.minAggregateY = minAggregateY
-    this.maxAggregateY = maxAggregateY
-    this.extraStore = extraStore
-  }
+  override val isEmpty: Boolean
+    get() = entries.isEmpty()
 
   override fun getXDeltaGcd(): Double = entries.getXDeltaGcd()
-
-  override fun copy(extraStore: ExtraStore): CartesianLayerModel =
-    ColumnCartesianLayerModel(
-      entries,
-      series,
-      seriesKeys,
-      minX,
-      maxX,
-      minY,
-      maxY,
-      minAggregateY,
-      maxAggregateY,
-      extraStore,
-    )
 
   override fun equals(other: Any?): Boolean =
     this === other ||
       other is ColumnCartesianLayerModel &&
+        hashCode == other.hashCode &&
         series == other.series &&
-        seriesKeys == other.seriesKeys &&
-        minX == other.minX &&
-        maxX == other.maxX &&
-        minY == other.minY &&
-        maxY == other.maxY &&
-        minAggregateY == other.minAggregateY &&
-        maxAggregateY == other.maxAggregateY &&
-        extraStore == other.extraStore
+        seriesKeys == other.seriesKeys
 
-  override fun hashCode(): Int {
-    var result = series.hashCode()
-    result = 31 * result + seriesKeys.hashCode()
-    result = 31 * result + minX.hashCode()
-    result = 31 * result + maxX.hashCode()
-    result = 31 * result + minY.hashCode()
-    result = 31 * result + maxY.hashCode()
-    result = 31 * result + minAggregateY.hashCode()
-    result = 31 * result + maxAggregateY.hashCode()
-    result = 31 * result + extraStore.hashCode()
-    return result
-  }
+  override fun hashCode(): Int = hashCode
 
   override fun toString(): String =
     "ColumnCartesianLayerModel(" +
@@ -157,7 +110,7 @@ public class ColumnCartesianLayerModel : CartesianLayerModel {
     public val seriesKey: Any = 0,
     public val seriesIndex: Int = 0,
   ) : CartesianLayerModel.Entry {
-    public constructor(x: Number, y: Number) : this(x.toDouble(), y.toDouble())
+    internal constructor(x: Number, y: Number) : this(x.toDouble(), y.toDouble())
 
     override fun equals(other: Any?): Boolean =
       this === other ||
@@ -179,22 +132,7 @@ public class ColumnCartesianLayerModel : CartesianLayerModel {
       "Entry(x=$x, y=$y, seriesKey=$seriesKey, seriesIndex=$seriesIndex)"
   }
 
-  /**
-   * Stores the minimum amount of data required to create a [ColumnCartesianLayerModel] and
-   * facilitates this creation.
-   */
-  public class Partial(private val series: List<List<Entry>>, private val seriesKeys: List<Any>) :
-    CartesianLayerModel.Partial {
-    override fun complete(extraStore: ExtraStore): CartesianLayerModel =
-      ColumnCartesianLayerModel(series, seriesKeys, extraStore)
-
-    override fun equals(other: Any?): Boolean =
-      this === other || other is Partial && series == other.series && seriesKeys == other.seriesKeys
-
-    override fun hashCode(): Int = 31 * series.hashCode() + seriesKeys.hashCode()
-  }
-
-  /** Facilitates the creation of [ColumnCartesianLayerModel]s and [Partial]s. */
+  /** Facilitates the creation of [ColumnCartesianLayerModel]s. */
   public class BuilderScope internal constructor() {
     internal val series = mutableListOf<List<Entry>>()
     internal val seriesKeys = mutableListOf<Any>()
@@ -204,7 +142,8 @@ public class ColumnCartesianLayerModel : CartesianLayerModel {
      * should have the same size.
      */
     public fun series(x: Collection<Number>, y: Collection<Number>, key: Any = series.size) {
-      series.add(x.zip(y, ColumnCartesianLayerModel::Entry))
+      val seriesIndex = series.size
+      series.add(x.zip(y) { x, y -> Entry(x.toDouble(), y.toDouble(), key, seriesIndex) })
       seriesKeys.add(key)
     }
 
@@ -229,32 +168,7 @@ public class ColumnCartesianLayerModel : CartesianLayerModel {
     /** Creates a [ColumnCartesianLayerModel]. */
     public fun build(block: BuilderScope.() -> Unit): ColumnCartesianLayerModel =
       BuilderScope().apply(block).let { ColumnCartesianLayerModel(it.series, it.seriesKeys) }
-
-    /** Creates a [Partial]. */
-    public fun partial(block: BuilderScope.() -> Unit): Partial =
-      BuilderScope().apply(block).let { Partial(it.series, it.seriesKeys) }
   }
-}
-
-/**
- * Calls [block] to create a [ColumnCartesianLayerModel.Partial] and adds it to the
- * [CartesianChartModelProducer.Transaction]’s [CartesianLayerModel.Partial] list.
- */
-public fun CartesianChartModelProducer.Transaction.columnModel(
-  block: ColumnCartesianLayerModel.BuilderScope.() -> Unit
-) {
-  add(ColumnCartesianLayerModel.partial(block))
-}
-
-/**
- * Calls [block] to create a [ColumnCartesianLayerModel.Partial] and adds it to the
- * [CartesianChartModelProducer.Transaction]’s [CartesianLayerModel.Partial] list.
- */
-@Deprecated("Use `columnModel`.", ReplaceWith("columnModel(block)"))
-public fun CartesianChartModelProducer.Transaction.columnSeries(
-  block: ColumnCartesianLayerModel.BuilderScope.() -> Unit
-) {
-  columnModel(block)
 }
 
 internal fun Iterable<ColumnCartesianLayerModel.Entry>.getAggregateYRange() =

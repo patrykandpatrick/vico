@@ -27,11 +27,9 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import com.patrykandpatrick.vico.compose.common.MutableDrawScope
 import com.patrykandpatrick.vico.compose.common.data.CacheStore
-import com.patrykandpatrick.vico.compose.pie.data.PieChartModel
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public fun PieChart.renderToImageBitmap(
-  model: PieChartModel,
   width: Int,
   height: Int,
   fontFamilyResolver: FontFamily.Resolver,
@@ -45,10 +43,8 @@ public fun PieChart.renderToImageBitmap(
   val measuringContext =
     MutablePieChartMeasuringContext(
       canvasWidth = size.width,
-      canvasSize = size,
       fontFamilyResolver = fontFamilyResolver,
       density = density,
-      extraStore = model.extraStore,
       layoutDirection = layoutDirection,
       model = model,
       cacheStore = cacheStore,
@@ -58,12 +54,12 @@ public fun PieChart.renderToImageBitmap(
     val mutableDrawScope = MutableDrawScope(this)
     val legendHeight = getLegendHeight(measuringContext)
     val chartBounds = Rect(0f, 0f, size.width, size.height - legendHeight)
-    if (!chartBounds.isEmpty) {
+    if (!chartBounds.isEmpty && model.entries.isNotEmpty()) {
       bounds = chartBounds
       legend?.setBounds(0f, chartBounds.bottom, size.width, chartBounds.bottom + legendHeight)
       val drawingContext =
-        PieChartDrawingContext(measuringContext, canvas, chartBounds, mutableDrawScope)
-      draw(drawingContext, model.toDrawingModel())
+        PieChartDrawingContext(measuringContext, size, canvas, chartBounds, mutableDrawScope)
+      draw(drawingContext, createDrawingModel())
     }
   }
 

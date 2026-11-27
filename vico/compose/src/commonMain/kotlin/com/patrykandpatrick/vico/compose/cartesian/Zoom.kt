@@ -21,7 +21,14 @@ import com.patrykandpatrick.vico.compose.cartesian.layer.CartesianLayerDimension
 import kotlin.math.max
 import kotlin.math.min
 
-/** Represents a [CartesianChart]’s zoom factor. */
+/**
+ * Represents a [CartesianChart]’s zoom factor.
+ *
+ * Implementations must be pure functions of their arguments and of the values they capture. It’s
+ * called on the main thread, while drawing. In a composable function, a lambda converted to [Zoom]
+ * is memoized while the values it captures are unchanged (compared via `equals` for stable types
+ * and by identity otherwise), so it needs no explicit `remember`.
+ */
 public fun interface Zoom {
   /** Returns the zoom factor. */
   public fun getValue(
@@ -43,27 +50,49 @@ public fun interface Zoom {
     }
 
     /** Uses a zoom factor of [value]. */
-    public fun fixed(value: Float = 1f): Zoom = Zoom { _, _, _ -> value }
+    public fun fixed(value: Float = 1f): Zoom = Fixed(value)
 
     /** Ensures the specified number of _x_ units is visible. */
-    public fun x(x: Double): Zoom = Zoom { context, layerDimensions, bounds ->
-      bounds.width * (context.ranges.xStep / x).toFloat() / layerDimensions.xSpacing
-    }
+    public fun x(x: Double): Zoom = X(x)
 
     /** Uses the smaller of [a]’s zoom factor and [b]’s zoom factor. */
-    public fun min(a: Zoom, b: Zoom): Zoom = Zoom { context, layerDimensions, bounds ->
-      min(
-        a.getValue(context, layerDimensions, bounds),
-        b.getValue(context, layerDimensions, bounds),
-      )
-    }
+    public fun min(a: Zoom, b: Zoom): Zoom = Min(a, b)
 
     /** Uses the greater of [a]’s zoom factor and [b]’s zoom factor. */
-    public fun max(a: Zoom, b: Zoom): Zoom = Zoom { context, layerDimensions, bounds ->
-      max(
-        a.getValue(context, layerDimensions, bounds),
-        b.getValue(context, layerDimensions, bounds),
-      )
-    }
+    public fun max(a: Zoom, b: Zoom): Zoom = Max(a, b)
   }
+}
+
+private data class Fixed(private val value: Float) : Zoom {
+  override fun getValue(
+    context: CartesianMeasuringContext,
+    layerDimensions: CartesianLayerDimensions,
+    bounds: Rect,
+  ) = value
+}
+
+private data class X(private val x: Double) : Zoom {
+  override fun getValue(
+    context: CartesianMeasuringContext,
+    layerDimensions: CartesianLayerDimensions,
+    bounds: Rect,
+  ) = bounds.width * (context.ranges.xStep / x).toFloat() / layerDimensions.xSpacing
+}
+
+private data class Min(private val a: Zoom, private val b: Zoom) : Zoom {
+  override fun getValue(
+    context: CartesianMeasuringContext,
+    layerDimensions: CartesianLayerDimensions,
+    bounds: Rect,
+  ) =
+    min(a.getValue(context, layerDimensions, bounds), b.getValue(context, layerDimensions, bounds))
+}
+
+private data class Max(private val a: Zoom, private val b: Zoom) : Zoom {
+  override fun getValue(
+    context: CartesianMeasuringContext,
+    layerDimensions: CartesianLayerDimensions,
+    bounds: Rect,
+  ) =
+    max(a.getValue(context, layerDimensions, bounds), b.getValue(context, layerDimensions, bounds))
 }

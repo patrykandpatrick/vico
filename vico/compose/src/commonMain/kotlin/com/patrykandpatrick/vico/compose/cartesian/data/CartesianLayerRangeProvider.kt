@@ -18,32 +18,52 @@ package com.patrykandpatrick.vico.compose.cartesian.data
 
 import androidx.compose.runtime.Immutable
 import com.patrykandpatrick.vico.compose.cartesian.layer.CartesianLayer
-import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 import kotlin.math.*
 
-/** Defines a [CartesianLayer]’s _x_ and _y_ ranges. */
+/**
+ * Defines a [CartesianLayer]’s _x_ and _y_ ranges. Each function receives the intrinsic range of
+ * the [CartesianLayer]’s data. Implementations must be pure functions of their arguments and of the
+ * values they capture, and they may be called off the main thread; to change the ranges, pass a new
+ * [CartesianLayerRangeProvider].
+ *
+ * Define a custom implementation at the top level or [remember][androidx.compose.runtime.remember]
+ * it. Because this interface has several functions, an implementation is an object, and an object
+ * created inline in a composable function is a new instance on every recomposition—unlike a lambda
+ * converted to a single-method interface, which Compose memoizes—so the chart re-derives its data
+ * each time. For bounds that depend on data, use [fixed], whose instances are equal when their
+ * bounds are.
+ *
+ * An empty [CartesianLayerModel] has no extents, so its [CartesianLayerRangeProvider] receives the
+ * ranges already established by the chart’s other layers (non-empty ones first, then empty ones in
+ * layer order)—the _x_-range and the _y_-range for its vertical axis—or zeros where there are none.
+ * The ranges are thus as if the layer held a point within the existing span: [auto] next to an
+ * [auto] layer changes nothing, `fixed(maxY = 100.0)` extends the _y_-range to 100, and, in a chart
+ * whose layers are all empty, [auto] yields an _x_-range of 0 to 0 and a _y_-range of 0 to 1.
+ *
+ * The default _x_-step is the greatest common divisor of the non-empty layers’ _x_-value
+ * differences, or 1 if there are no entries.
+ */
 @Immutable
 public interface CartesianLayerRangeProvider {
   /** Returns the minimum _x_ value. */
-  public fun getMinX(minX: Double, maxX: Double, extraStore: ExtraStore): Double = minX
+  public fun getMinX(minX: Double, maxX: Double): Double = minX
 
   /** Returns the maximum _x_ value. */
-  public fun getMaxX(minX: Double, maxX: Double, extraStore: ExtraStore): Double = maxX
+  public fun getMaxX(minX: Double, maxX: Double): Double = maxX
 
   /** Returns the minimum _y_ value. */
-  public fun getMinY(minY: Double, maxY: Double, extraStore: ExtraStore): Double =
-    minY.coerceAtMost(0.0)
+  public fun getMinY(minY: Double, maxY: Double): Double = minY.coerceAtMost(0.0)
 
   /** Returns the maximum _y_ value. */
-  public fun getMaxY(minY: Double, maxY: Double, extraStore: ExtraStore): Double =
+  public fun getMaxY(minY: Double, maxY: Double): Double =
     if (minY == 0.0 && maxY == 0.0) 1.0 else maxY.coerceAtLeast(0.0)
 
   public companion object {
     private object Auto : CartesianLayerRangeProvider {
-      override fun getMinY(minY: Double, maxY: Double, extraStore: ExtraStore) =
+      override fun getMinY(minY: Double, maxY: Double) =
         if (minY == 0.0 && maxY == 0.0 || minY >= 0.0) 0.0 else minY.round(maxY)
 
-      override fun getMaxY(minY: Double, maxY: Double, extraStore: ExtraStore) =
+      override fun getMaxY(minY: Double, maxY: Double) =
         when {
           minY == 0.0 && maxY == 0.0 -> 1.0
           maxY <= 0.0 -> 0.0
@@ -63,25 +83,21 @@ public interface CartesianLayerRangeProvider {
       private val minY: Double? = null,
       private val maxY: Double? = null,
     ) : CartesianLayerRangeProvider {
-      override fun getMinX(minX: Double, maxX: Double, extraStore: ExtraStore) =
-        this.minX ?: super.getMinX(minX, maxX, extraStore)
+      override fun getMinX(minX: Double, maxX: Double) = this.minX ?: super.getMinX(minX, maxX)
 
-      override fun getMaxX(minX: Double, maxX: Double, extraStore: ExtraStore) =
-        this.maxX ?: super.getMaxX(minX, maxX, extraStore)
+      override fun getMaxX(minX: Double, maxX: Double) = this.maxX ?: super.getMaxX(minX, maxX)
 
-      override fun getMinY(minY: Double, maxY: Double, extraStore: ExtraStore) =
-        this.minY ?: super.getMinY(minY, maxY, extraStore)
+      override fun getMinY(minY: Double, maxY: Double) = this.minY ?: super.getMinY(minY, maxY)
 
-      override fun getMaxY(minY: Double, maxY: Double, extraStore: ExtraStore) =
-        this.maxY ?: super.getMaxY(minY, maxY, extraStore)
+      override fun getMaxY(minY: Double, maxY: Double) = this.maxY ?: super.getMaxY(minY, maxY)
     }
 
     /** Keeps the intrinsic ranges. */
     public val Intrinsic: CartesianLayerRangeProvider =
       object : CartesianLayerRangeProvider {
-        override fun getMinY(minY: Double, maxY: Double, extraStore: ExtraStore) = minY
+        override fun getMinY(minY: Double, maxY: Double) = minY
 
-        override fun getMaxY(minY: Double, maxY: Double, extraStore: ExtraStore) = maxY
+        override fun getMaxY(minY: Double, maxY: Double) = maxY
       }
 
     /** Uses dynamic rounding. */

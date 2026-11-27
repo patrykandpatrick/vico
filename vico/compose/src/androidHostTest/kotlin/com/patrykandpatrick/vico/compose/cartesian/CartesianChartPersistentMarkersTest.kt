@@ -16,15 +16,10 @@
 
 package com.patrykandpatrick.vico.compose.cartesian
 
-import com.patrykandpatrick.vico.compose.cartesian.CartesianChart.PersistentMarkerScope
 import com.patrykandpatrick.vico.compose.cartesian.marker.CartesianMarker
-import com.patrykandpatrick.vico.compose.common.data.ExtraStore
-import com.patrykandpatrick.vico.compose.common.data.MutableExtraStore
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.uuid.ExperimentalUuidApi
 
-@OptIn(ExperimentalUuidApi::class)
 class CartesianChartPersistentMarkersTest {
 
   private val marker =
@@ -41,23 +36,24 @@ class CartesianChartPersistentMarkersTest {
     val map = LinkedHashMap<Double, CartesianMarker>()
     repeat(100) { index -> map[index.toDouble()] = marker }
 
-    val sut = getSut { map.forEach { (x, marker) -> marker at x } }
-    sut::class
-      .java
-      .getDeclaredMethod("updatePersistentMarkers", ExtraStore::class.java)
-      .apply { isAccessible = true }
-      .invoke(sut, MutableExtraStore())
+    val sut = testCartesianChart(marker = marker, persistentMarkers = map)
 
     val sutPersistentMarkers =
-      sut::class.java.getDeclaredField("persistentMarkerMap").apply { isAccessible = true }.get(sut)
+      sut::class.java.getDeclaredField("persistentMarkers").apply { isAccessible = true }.get(sut)
         as Map<Double, CartesianMarker>
 
-    map.keys.forEachIndexed { index, key ->
-      assertEquals(key, sutPersistentMarkers.keys.elementAt(index))
-    }
+    assertEquals(map.keys.toList(), sutPersistentMarkers.keys.toList())
   }
 
-  private fun getSut(
-    persistentMarkers: (PersistentMarkerScope.(ExtraStore) -> Unit)?
-  ): CartesianChart = CartesianChart(marker = marker, persistentMarkers = persistentMarkers)
+  @Test
+  fun `Integer keys are converted to x-values`() {
+    val sut = testCartesianChart(marker = marker, persistentMarkers = mapOf(3 to marker))
+
+    @Suppress("UNCHECKED_CAST")
+    val sutPersistentMarkers =
+      sut::class.java.getDeclaredField("persistentMarkers").apply { isAccessible = true }.get(sut)
+        as Map<Double, CartesianMarker>
+
+    assertEquals(listOf(3.0), sutPersistentMarkers.keys.toList())
+  }
 }

@@ -29,7 +29,6 @@ import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.compose.cartesian.CartesianMeasuringContext
-import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianLayerModel
 import com.patrykandpatrick.vico.compose.cartesian.layer.CartesianLayerDimensions
 import com.patrykandpatrick.vico.compose.cartesian.layer.CartesianLayerMargins
@@ -235,7 +234,6 @@ public open class DefaultCartesianMarker(
     context: CartesianMeasuringContext,
     layerMargins: CartesianLayerMargins,
     layerDimensions: CartesianLayerDimensions,
-    model: CartesianChartModel,
   ) {
     with(context) {
       when (labelPosition) {
@@ -298,7 +296,15 @@ public open class DefaultCartesianMarker(
     BelowPoint,
   }
 
-  /** Formats [CartesianMarker] values for display. */
+  /**
+   * Formats [CartesianMarker] values for display.
+   *
+   * Implementations must be pure functions of their arguments and of the values they capture; to
+   * change the formatting, pass a new [ValueFormatter]. It’s called on the main thread, while
+   * drawing. In a composable function, a lambda converted to [ValueFormatter] is memoized while the
+   * values it captures are unchanged (compared via `equals` for stable types and by identity
+   * otherwise), so it needs no explicit `remember`.
+   */
   public fun interface ValueFormatter {
     /** Returns a label for the given [CartesianMarker.Target]s. */
     public fun format(

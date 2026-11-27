@@ -28,7 +28,7 @@ import com.patrykandpatrick.vico.compose.common.data.CacheStore
 /** A [MeasuringContext] extension with a [Canvas] reference. */
 public interface DrawingContext : MeasuringContext {
   /** The [Canvas] size. */
-  @Suppress("OVERRIDE_DEPRECATION") override val canvasSize: Size
+  public val canvasSize: Size
 
   /** The [Canvas]. */
   public val canvas: Canvas

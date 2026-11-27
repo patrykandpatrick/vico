@@ -19,12 +19,11 @@ package com.patrykandpatrick.vico.compose.cartesian.axis
 import com.patrykandpatrick.vico.compose.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.compose.cartesian.CartesianMeasuringContext
 import com.patrykandpatrick.vico.compose.common.Position
-import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 import com.patrykandpatrick.vico.compose.common.half
 import kotlin.math.max
 
-internal class CountVerticalAxisItemPlacer(
-  private val count: (ExtraStore) -> Int?,
+internal data class CountVerticalAxisItemPlacer(
+  private val count: Int?,
   private val shiftTopLines: Boolean,
 ) : VerticalAxis.ItemPlacer {
   override fun getShiftTopLines(context: CartesianDrawingContext) = shiftTopLines
@@ -87,10 +86,12 @@ internal class CountVerticalAxisItemPlacer(
       else -> maxLabelHeight + maxLineThickness.half
     }
 
-  private fun CartesianMeasuringContext.getCountOrThrow() =
-    count(model.extraStore)?.also {
-      require(it >= 0) { "`count` must return a nonnegative value." }
-    }
+  init {
+    require(count == null || count >= 0) { "`count` must be nonnegative." }
+  }
+
+  @Suppress("UnusedReceiverParameter")
+  private fun CartesianMeasuringContext.getCountOrThrow() = count
 
   private fun insetsRequired(context: CartesianMeasuringContext) = context.getCountOrThrow() != 0
 

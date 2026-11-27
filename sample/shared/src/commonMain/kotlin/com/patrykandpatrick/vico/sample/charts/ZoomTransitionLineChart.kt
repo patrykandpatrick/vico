@@ -35,15 +35,14 @@ import com.patrykandpatrick.vico.compose.cartesian.Scroll
 import com.patrykandpatrick.vico.compose.cartesian.Zoom
 import com.patrykandpatrick.vico.compose.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.compose.cartesian.axis.VerticalAxis
-import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianLayerRangeProvider
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianValueFormatter
-import com.patrykandpatrick.vico.compose.cartesian.data.lineModel
+import com.patrykandpatrick.vico.compose.cartesian.data.LineCartesianLayerModel
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoScrollState
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
-import com.patrykandpatrick.vico.compose.common.data.ExtraStore
+import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.log10
@@ -151,46 +150,13 @@ private val data =
 private val startDate = LocalDate(2025, 4, 1)
 private val xValues = data.indices.map { it.toDouble() }
 
-private val targetXRangeKey = ExtraStore.Key<ClosedFloatingPointRange<Double>>()
-private val targetYRangeKey = ExtraStore.Key<ClosedFloatingPointRange<Double>>()
-
-private fun niceBase(a: Double, b: Double) =
-  10.0.pow(floor(log10(max(kotlin.math.abs(a), kotlin.math.abs(b)))) - 1)
-
-// Scales Y to the visible period's data range, rounded to a nice grid step.
-private object PeriodYRangeProvider : CartesianLayerRangeProvider {
-  override fun getMinY(minY: Double, maxY: Double, extraStore: ExtraStore): Double {
-    val range = extraStore.getOrNull(targetYRangeKey) ?: return minY
-    val base = niceBase(range.start, range.endInclusive)
-    return floor(range.start / base) * base
-  }
-
-  override fun getMaxY(minY: Double, maxY: Double, extraStore: ExtraStore): Double {
-    val range = extraStore.getOrNull(targetYRangeKey) ?: return maxY
-    val base = niceBase(range.start, range.endInclusive)
-    return ceil(range.endInclusive / base) * base
-  }
+private val DateFormat = LocalDate.Format {
+  monthName(MonthNames.ENGLISH_ABBREVIATED)
+  char(' ')
+  day()
 }
 
-private val dateFormatter = CartesianValueFormatter { context, value, _ ->
-  val targetRange = context.model.extraStore.getOrNull(targetXRangeKey)
-  val isRightLabel =
-    targetRange != null && value >= targetRange.endInclusive - context.ranges.xStep * 0.5
-  val displayValue =
-    when {
-      targetRange == null -> value
-      isRightLabel -> targetRange.endInclusive
-      else -> targetRange.start
-    }
-  val date = LocalDate.fromEpochDays(startDate.toEpochDays() + displayValue.toInt())
-  date.format(
-    LocalDate.Format {
-      monthName(MonthNames.ENGLISH_ABBREVIATED)
-      char(' ')
-      day()
-    }
-  )
-}
+private fun niceBase(a: Double, b: Double) = 10.0.pow(floor(log10(max(abs(a), abs(b)))) - 1)
 
 private enum class Period(val label: String, val visibleCount: Int) {
   W1("1W", 7),
@@ -200,28 +166,24 @@ private enum class Period(val label: String, val visibleCount: Int) {
 
 @Composable
 fun ComposeZoomTransitionLineChart(modifier: Modifier = Modifier) {
-  val modelProducer = remember { CartesianChartModelProducer() }
+  val model = remember { LineCartesianLayerModel.build { series(xValues, data) } }
   var period by remember { mutableStateOf(Period.W1) }
+  val lastX = xValues.last()
+  val firstX = (lastX - period.visibleCount + 1).coerceAtLeast(xValues.first())
+  val visibleData = data.slice(firstX.toInt()..lastX.toInt())
+  val minY = visibleData.min().toDouble()
+  val maxY = visibleData.max().toDouble()
+  val base = niceBase(minY, maxY)
   val scrollState =
     rememberVicoScrollState(scrollEnabled = false, initialScroll = Scroll.Absolute.End)
-  val zoomState =
-    rememberVicoZoomState(initialZoom = remember { Zoom.x(Period.W1.visibleCount.toDouble()) })
-  val animSpec = remember { tween<Float>(durationMillis = 600) }
+  val zoomState = rememberVicoZoomState(initialZoom = Zoom.x(Period.W1.visibleCount.toDouble()))
 
   LaunchedEffect(period) {
-    val lastX = xValues.last()
-    val firstX = (lastX - period.visibleCount + 1).coerceAtLeast(xValues.first())
-    val visiblePrices = data.slice(firstX.toInt()..lastX.toInt())
-    val minY = visiblePrices.min().toDouble()
-    val maxY = visiblePrices.max().toDouble()
-    modelProducer.runTransaction {
-      lineModel { series(xValues, data) }
-      extras {
-        it[targetXRangeKey] = firstX..lastX
-        it[targetYRangeKey] = minY..maxY
-      }
-    }
-    zoomState.animateZoom(Zoom.x(period.visibleCount.toDouble()), animSpec, bias = 1f)
+    zoomState.animateZoom(
+      Zoom.x(period.visibleCount.toDouble()),
+      tween(durationMillis = 600),
+      bias = 1f,
+    )
   }
 
   Column(modifier) {
@@ -236,17 +198,30 @@ fun ComposeZoomTransitionLineChart(modifier: Modifier = Modifier) {
       }
     }
     CartesianChartHost(
-      chart =
-        rememberCartesianChart(
-          rememberLineCartesianLayer(rangeProvider = PeriodYRangeProvider),
-          startAxis = VerticalAxis.rememberStart(),
-          bottomAxis =
-            HorizontalAxis.rememberBottom(
-              valueFormatter = dateFormatter,
-              itemPlacer = remember { HorizontalAxis.ItemPlacer.extremes() },
+      rememberCartesianChart(
+        rememberLineCartesianLayer(
+          model,
+          // Scales y to the visible period’s data range, rounded to a nice grid step. When the
+          // period changes, the chart animates to the new range.
+          rangeProvider =
+            CartesianLayerRangeProvider.fixed(
+              minY = floor(minY / base) * base,
+              maxY = ceil(maxY / base) * base,
             ),
         ),
-      modelProducer = modelProducer,
+        startAxis = VerticalAxis.rememberStart(),
+        bottomAxis =
+          HorizontalAxis.rememberBottom(
+            // Labels the start and end of the visible period.
+            valueFormatter =
+              CartesianValueFormatter { context, value, _ ->
+                val isEndLabel = value >= lastX - context.ranges.xStep * 0.5
+                val x = if (isEndLabel) lastX else firstX
+                LocalDate.fromEpochDays(startDate.toEpochDays() + x.toInt()).format(DateFormat)
+              },
+            itemPlacer = HorizontalAxis.ItemPlacer.extremes(),
+          ),
+      ),
       scrollState = scrollState,
       zoomState = zoomState,
     )

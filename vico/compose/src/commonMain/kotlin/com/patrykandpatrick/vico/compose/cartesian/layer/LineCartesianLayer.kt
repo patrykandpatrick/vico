@@ -33,7 +33,6 @@ import com.patrykandpatrick.vico.compose.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.compose.cartesian.data.*
 import com.patrykandpatrick.vico.compose.cartesian.getVisibleXRange
 import com.patrykandpatrick.vico.compose.cartesian.layer.LineCartesianLayer.Line
-import com.patrykandpatrick.vico.compose.cartesian.layer.LineCartesianLayer.PointConnector
 import com.patrykandpatrick.vico.compose.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.compose.cartesian.marker.LineCartesianLayerMarkerTarget
 import com.patrykandpatrick.vico.compose.cartesian.marker.MutableLineCartesianLayerMarkerTarget
@@ -41,8 +40,6 @@ import com.patrykandpatrick.vico.compose.common.*
 import com.patrykandpatrick.vico.compose.common.component.Component
 import com.patrykandpatrick.vico.compose.common.component.TextComponent
 import com.patrykandpatrick.vico.compose.common.data.CacheStore
-import com.patrykandpatrick.vico.compose.common.data.ExtraStore
-import com.patrykandpatrick.vico.compose.common.data.MutableExtraStore
 import com.patrykandpatrick.vico.compose.common.doubled
 import com.patrykandpatrick.vico.compose.common.getRepeating
 import com.patrykandpatrick.vico.compose.common.half
@@ -52,28 +49,31 @@ import kotlin.math.*
 /**
  * Draws the content of line charts.
  *
+ * @property model the data.
  * @property lineProvider provides the [Line]s.
  * @property pointSpacing the point spacing.
  * @property rangeProvider overrides the _x_ and _y_ ranges.
  * @property verticalAxisPosition the position of the [VerticalAxis] with which the
  *   [LineCartesianLayer] should be associated. Use this for independent [CartesianLayer] scaling.
  * @property drawingModelInterpolator interpolates the [LineCartesianLayerDrawingModel]s.
+ * @property key identifies this [LineCartesianLayer] across data updates. See
+ *   [AnimatedCartesianLayer.key].
  */
 @Stable
-public open class LineCartesianLayer
-protected constructor(
+public open class LineCartesianLayer(
+  override val model: LineCartesianLayerModel,
   protected val lineProvider: LineProvider,
   protected val pointSpacing: Dp = Defaults.POINT_SPACING.dp,
   protected val rangeProvider: CartesianLayerRangeProvider = CartesianLayerRangeProvider.auto(),
   protected val verticalAxisPosition: Axis.Position.Vertical? = null,
-  protected val drawingModelInterpolator:
-    CartesianLayerDrawingModelInterpolator<
-      LineCartesianLayerDrawingModel.Entry,
-      LineCartesianLayerDrawingModel,
-    > =
+  override val drawingModelInterpolator:
+    CartesianLayerDrawingModelInterpolator<LineCartesianLayerDrawingModel> =
     CartesianLayerDrawingModelInterpolator.line(),
-  protected val drawingModelKey: ExtraStore.Key<LineCartesianLayerDrawingModel>,
-) : BaseCartesianLayer<LineCartesianLayerModel>() {
+  override val key: Any,
+) :
+  BaseCartesianLayer<LineCartesianLayerModel>(),
+  DerivationInputs,
+  AnimatedCartesianLayer<LineCartesianLayerModel, LineCartesianLayerDrawingModel> {
   /**
    * Defines the appearance of a line in a line chart.
    *
@@ -88,9 +88,9 @@ protected constructor(
    * @property dataLabelRotationDegrees the data-label rotation (in degrees).
    */
   public open class Line(
-    protected val fill: LineFill,
+    public val fill: LineFill,
     public val stroke: LineStroke = LineStroke.Continuous(),
-    protected val areaFill: AreaFill? = null,
+    public val areaFill: AreaFill? = null,
     public val pointProvider: PointProvider? = null,
     public val interpolator: Interpolator = Interpolator.Sharp,
     public val dataLabel: TextComponent? = null,
@@ -98,38 +98,40 @@ protected constructor(
     public val dataLabelValueFormatter: CartesianValueFormatter = CartesianValueFormatter.decimal(),
     public val dataLabelRotationDegrees: Float = 0f,
   ) {
-    /** Creates a [Line] with a [PointConnector]. */
-    @Suppress("DEPRECATION")
-    @Deprecated("Use the constructor with `interpolator`.")
-    public constructor(
-      fill: LineFill,
-      stroke: LineStroke = LineStroke.Continuous(),
-      areaFill: AreaFill? = null,
-      pointProvider: PointProvider? = null,
-      pointConnector: PointConnector,
-      dataLabel: TextComponent? = null,
-      dataLabelPosition: Position.Vertical = Position.Vertical.Top,
-      dataLabelValueFormatter: CartesianValueFormatter = CartesianValueFormatter.decimal(),
-      dataLabelRotationDegrees: Float = 0f,
-    ) : this(
-      fill,
-      stroke,
-      areaFill,
-      pointProvider,
-      PointConnectorAdapter(pointConnector),
-      dataLabel,
-      dataLabelPosition,
-      dataLabelValueFormatter,
-      dataLabelRotationDegrees,
-    )
-
-    /** Connects the line’s points, defining its shape. */
-    @Suppress("DEPRECATION")
-    @Deprecated("Use `interpolator`.", ReplaceWith("interpolator"))
-    public val pointConnector: PointConnector
-      get() = (interpolator as? PointConnectorAdapter)?.pointConnector ?: PointConnector.Sharp
-
     protected val linePaint: Paint = Paint().apply { style = PaintingStyle.Stroke }
+
+    /**
+     * Compares the configuration. This applies to [Line] itself; instances of subclasses compare by
+     * identity unless the subclass overrides `equals` and `hashCode`.
+     */
+    override fun equals(other: Any?): Boolean =
+      this === other ||
+        this::class == Line::class &&
+          other is Line &&
+          other::class == Line::class &&
+          fill == other.fill &&
+          stroke == other.stroke &&
+          areaFill == other.areaFill &&
+          pointProvider == other.pointProvider &&
+          interpolator == other.interpolator &&
+          dataLabel == other.dataLabel &&
+          dataLabelPosition == other.dataLabelPosition &&
+          dataLabelValueFormatter == other.dataLabelValueFormatter &&
+          dataLabelRotationDegrees == other.dataLabelRotationDegrees
+
+    override fun hashCode(): Int {
+      if (this::class != Line::class) return super.hashCode()
+      var result = fill.hashCode()
+      result = 31 * result + stroke.hashCode()
+      result = 31 * result + areaFill.hashCode()
+      result = 31 * result + pointProvider.hashCode()
+      result = 31 * result + interpolator.hashCode()
+      result = 31 * result + dataLabel.hashCode()
+      result = 31 * result + dataLabelPosition.hashCode()
+      result = 31 * result + dataLabelValueFormatter.hashCode()
+      result = 31 * result + dataLabelRotationDegrees.hashCode()
+      return result
+    }
 
     /** Draws the line. */
     public fun draw(
@@ -183,28 +185,22 @@ protected constructor(
       /** Uses a single [Fill]. */
       public fun single(fill: Fill): LineFill = SingleLineFill(fill)
 
-      /** Uses a color scale. */
+      /**
+       * Uses a color scale. [colors] maps _y_-values to [Color]s, between which the color is
+       * interpolated.
+       */
       public fun colorScale(
+        colors: Map<out Number, Color>,
         verticalAxisPosition: Axis.Position.Vertical? = null,
-        colors: ColorScaleScope.() -> Unit,
-      ): LineFill =
-        ColorScaleLineFill(
-          ColorScale(
-            colors = { extraStore -> buildColorScale(extraStore, colors) },
-            verticalAxisPosition = verticalAxisPosition,
-          )
-        )
+      ): LineFill = ColorScaleLineFill(ColorScale(colors, verticalAxisPosition))
 
       /**
        * Uses [topFill] for the portions of the line that are above the [splitY] line, and
-       * analogously for [bottomFill]. (The [splitY] line is an imaginary horizontal line whose _y_
-       * value is determined by [splitY].)
+       * analogously for [bottomFill]. (The [splitY] line is an imaginary horizontal line at the
+       * _y_-value [splitY].)
        */
-      public fun double(
-        topFill: Fill,
-        bottomFill: Fill,
-        splitY: (ExtraStore) -> Number = { 0 },
-      ): LineFill = DoubleLineFill(topFill, bottomFill, splitY)
+      public fun double(topFill: Fill, bottomFill: Fill, splitY: Number = 0): LineFill =
+        DoubleLineFill(topFill, bottomFill, splitY)
     }
   }
 
@@ -274,67 +270,26 @@ protected constructor(
     public companion object {
       /**
        * Uses [fill] for the areas bounded by the [LineCartesianLayer] line and the [splitY] line.
-       * (The [splitY] line is an imaginary horizontal line whose _y_ value is determined by
-       * [splitY].)
+       * (The [splitY] line is an imaginary horizontal line at the _y_-value [splitY].)
        */
-      public fun single(fill: Fill, splitY: (ExtraStore) -> Number = { 0 }): AreaFill =
-        SingleAreaFill(fill, splitY)
+      public fun single(fill: Fill, splitY: Number = 0): AreaFill = SingleAreaFill(fill, splitY)
 
-      /** Uses a color scale for the areas bounded by the [LineCartesianLayer] line and zero. */
+      /**
+       * Uses a color scale for the areas bounded by the [LineCartesianLayer] line and zero.
+       * [colors] maps _y_-values to [Color]s, between which the color is interpolated.
+       */
       public fun colorScale(
+        colors: Map<out Number, Color>,
         verticalAxisPosition: Axis.Position.Vertical? = null,
-        colors: ColorScaleScope.() -> Unit,
-      ): AreaFill =
-        ColorScaleAreaFill(
-          ColorScale(
-            colors = { extraStore -> buildColorScale(extraStore, colors) },
-            verticalAxisPosition = verticalAxisPosition,
-          )
-        )
+      ): AreaFill = ColorScaleAreaFill(ColorScale(colors, verticalAxisPosition))
 
       /**
        * Uses [topFill] for those areas bounded by the [LineCartesianLayer] line and the [splitY]
        * line that are above the [splitY] line, and analogously for [bottomFill]. (The [splitY] line
-       * is an imaginary horizontal line whose _y_ value is determined by [splitY].)
+       * is an imaginary horizontal line at the _y_-value [splitY].)
        */
-      public fun double(
-        topFill: Fill,
-        bottomFill: Fill,
-        splitY: (ExtraStore) -> Number = { 0 },
-      ): AreaFill = DoubleAreaFill(topFill, bottomFill, splitY)
-    }
-  }
-
-  /** Connects a [LineCartesianLayer] line’s points, defining its shape. */
-  @Suppress("DEPRECATION")
-  @Deprecated("Use `Interpolator`.")
-  public fun interface PointConnector {
-    /** Connects ([x1], [y1]) and ([x2], [y2]). */
-    public fun connect(
-      context: CartesianDrawingContext,
-      path: Path,
-      x1: Float,
-      y1: Float,
-      x2: Float,
-      y2: Float,
-    )
-
-    /** Houses [PointConnector] singletons and factory functions. */
-    public companion object {
-      /** Uses line segments. */
-      @Deprecated("Use `Interpolator.Sharp`.", ReplaceWith("Interpolator.Sharp"))
-      public val Sharp: PointConnector = PointConnector { _, path, _, _, x2, y2 ->
-        path.lineTo(x2, y2)
-      }
-
-      /**
-       * Uses cubic Bézier curves. [curvature], which must be in ([0, 1]], defines their strength.
-       */
-      @Suppress("DEPRECATION")
-      @Deprecated("Use `Interpolator.cubic`.", ReplaceWith("Interpolator.cubic()"))
-      public fun cubic(
-        @FloatRange(from = 0.0, to = 1.0, fromInclusive = false) curvature: Float = 0.5f
-      ): PointConnector = CubicPointConnector(curvature)
+      public fun double(topFill: Fill, bottomFill: Fill, splitY: Number = 0): AreaFill =
+        DoubleAreaFill(topFill, bottomFill, splitY)
     }
   }
 
@@ -412,16 +367,26 @@ protected constructor(
     }
   }
 
-  /** Provides [Line]s to [LineCartesianLayer]s. */
+  /**
+   * Provides [Line]s to [LineCartesianLayer]s. Implementations must be pure functions of their
+   * arguments and of the values they capture, as they may be called off the main thread; to change
+   * the style, pass a new [LineProvider].
+   *
+   * In a composable function, a lambda converted to [LineProvider] is memoized while the values it
+   * captures are unchanged (compared via `equals` for stable types and by identity otherwise), so
+   * it needs no explicit `remember`.
+   *
+   * It’s asked only about the series and entries in its layer’s model: a series that exits after a
+   * data update keeps the style it had, from the layer it came from.
+   */
   public fun interface LineProvider {
     /** Returns the [Line] for the specified series. */
-    public fun getLine(seriesKey: Any, seriesIndex: Int, extraStore: ExtraStore): Line
+    public fun getLine(seriesKey: Any, seriesIndex: Int): Line
 
     /** Houses [LineProvider] factory functions. */
     public companion object {
       private data class Series(private val lines: List<Line>) : LineProvider {
-        override fun getLine(seriesKey: Any, seriesIndex: Int, extraStore: ExtraStore) =
-          lines.getRepeating(seriesIndex)
+        override fun getLine(seriesKey: Any, seriesIndex: Int) = lines.getRepeating(seriesIndex)
       }
 
       /**
@@ -462,34 +427,28 @@ protected constructor(
     }
   }
 
-  /** Provides [Point]s to [LineCartesianLayer]s. */
+  /**
+   * Provides [Point]s to [LineCartesianLayer]s. Implementations must be pure functions of their
+   * arguments and of the values they capture; to change the style, pass a new [PointProvider]. The
+   * [LineCartesianLayer] determines the largest [Point] by calling [getPoint] for every entry once
+   * per [LineCartesianLayerModel], possibly off the main thread.
+   *
+   * In a composable function, a lambda converted to [PointProvider] is memoized while the values it
+   * captures are unchanged (compared via `equals` for stable types and by identity otherwise), so
+   * it needs no explicit `remember`.
+   *
+   * It’s asked only about the series and entries in its layer’s model: a series that exits after a
+   * data update keeps the points it had, from the layer it came from.
+   */
   @Immutable
-  public interface PointProvider {
-    /** Returns the [Point] for the point with the given properties. */
-    @Deprecated(
-      "Override `getPoint(entry, extraStore)`. The series key and index are available as " +
-        "`entry.seriesKey` and `entry.seriesIndex`."
-    )
-    public fun getPoint(
-      entry: LineCartesianLayerModel.Entry,
-      seriesIndex: Int,
-      extraStore: ExtraStore,
-    ): Point? = throw NotImplementedError()
-
-    /** Returns the [Point] for the point with the given properties. */
-    @Suppress("DEPRECATION")
-    public fun getPoint(entry: LineCartesianLayerModel.Entry, extraStore: ExtraStore): Point? =
-      getPoint(entry, entry.seriesIndex, extraStore)
-
-    /** Returns the largest [Point]. */
-    public fun getLargestPoint(extraStore: ExtraStore): Point?
+  public fun interface PointProvider {
+    /** Returns the [Point] for [entry], or `null` for no point. */
+    public fun getPoint(entry: LineCartesianLayerModel.Entry): Point?
 
     /** Houses a [PointProvider] factory function. */
     public companion object {
       private data class Single(private val point: Point) : PointProvider {
-        override fun getPoint(entry: LineCartesianLayerModel.Entry, extraStore: ExtraStore) = point
-
-        override fun getLargestPoint(extraStore: ExtraStore) = point
+        override fun getPoint(entry: LineCartesianLayerModel.Entry) = point
       }
 
       /** Uses [point] for each point. */
@@ -503,37 +462,35 @@ protected constructor(
 
   private val srcInPaint = Paint().apply { blendMode = BlendMode.SrcIn }
 
-  protected val cacheKeyNamespace: CacheStore.KeyNamespace = CacheStore.KeyNamespace()
-
   override val markerTargets: Map<Double, List<CartesianMarker.Target>> = _markerTargets
 
-  /** Creates a [LineCartesianLayer]. */
-  public constructor(
-    lineProvider: LineProvider,
-    pointSpacing: Dp = Defaults.POINT_SPACING.dp,
-    rangeProvider: CartesianLayerRangeProvider = CartesianLayerRangeProvider.auto(),
-    verticalAxisPosition: Axis.Position.Vertical? = null,
-    drawingModelInterpolator:
-      CartesianLayerDrawingModelInterpolator<
-        LineCartesianLayerDrawingModel.Entry,
-        LineCartesianLayerDrawingModel,
-      > =
-      CartesianLayerDrawingModelInterpolator.line(),
-  ) : this(
-    lineProvider,
-    pointSpacing,
-    rangeProvider,
-    verticalAxisPosition,
-    drawingModelInterpolator,
-    ExtraStore.Key(),
-  )
+  private val seriesIndices: Map<Any, Int> by lazy {
+    model.seriesKeys.withIndex().associate { (index, key) -> key to index }
+  }
 
-  override fun drawInternal(context: CartesianDrawingContext, model: LineCartesianLayerModel) {
+  private val lines: List<Line> by lazy {
+    model.seriesKeys.mapIndexed { index, key -> lineProvider.getLine(key, index) }
+  }
+
+  /** The size of the largest point, computed once per [LineCartesianLayer]. */
+  private val maxPointSize: Dp by lazy {
+    var maxSize = 0.dp
+    model.series.forEachIndexed { index, series ->
+      val pointProvider = lines[index].pointProvider ?: return@forEachIndexed
+      series.forEach { entry ->
+        val size = pointProvider.getPoint(entry)?.size ?: return@forEach
+        if (size > maxSize) maxSize = size
+      }
+    }
+    maxSize
+  }
+
+  override fun drawInternal(context: CartesianDrawingContext) {
     with(context) {
       resetTempData()
 
-      val drawingModel = extraStore.getOrNull(drawingModelKey)
-      val sweepFraction = drawingModel?.sweepFraction ?: 1f
+      val drawingModel = getDrawingModel(this@LineCartesianLayer)
+      val sweepFraction = drawingModel.sweepFraction
       // Evaluate this once to work around an Android 10 ART JIT bug that can make repeated float
       // comparisons disagree, unbalancing the save and restore calls. See b/553511933.
       val isSweepInProgress = sweepFraction < 1f
@@ -556,60 +513,115 @@ protected constructor(
       // allocates one offscreen buffer per frame rather than one per series. With a shared layer,
       // overlapping series also composite opaquely before the group is faded, which avoids
       // inter-series bleed-through.
-      saveLayer(opacity = drawingModel?.opacity ?: 1f)
+      saveLayer(opacity = drawingModel.opacity)
 
-      model.series.forEachIndexed { seriesIndex, series ->
-        val seriesKey = model.seriesKeys[seriesIndex]
-        val pointInfoMap = drawingModel?.getOrNull(seriesIndex)
-
-        linePath.rewind()
-        val line = lineProvider.getLineOrThrow(seriesKey, seriesIndex, model.extraStore)
-
-        val drawingStartAlignmentCorrection =
-          layoutDirectionMultiplier * layerDimensions.startPadding
-
-        val drawingStart =
-          layerBounds.getStart(isLtr = isLtr) + drawingStartAlignmentCorrection - scroll
-
-        val points = mutableListOf<Offset>()
-        val visibleIndexRange =
-          collectPointsAndVisibleIndexRange(
-            interpolator = line.interpolator,
-            series = series,
-            drawingStart = drawingStart,
-            pointInfoMap = pointInfoMap,
-            drawFullLineLength = line.stroke is LineStroke.Dashed,
-            points = points,
+      if (drawingModel.seriesKeys == model.seriesKeys) {
+        // No series is entering or exiting.
+        model.series.forEachIndexed { index, series ->
+          drawSeries(
+            model.seriesKeys[index],
+            index,
+            series,
+            lines[index],
+            drawingModel[index],
+            false,
           )
-
-        if (points.isNotEmpty() && !visibleIndexRange.isEmpty()) {
-          connectPoints(line.interpolator, points, visibleIndexRange)
         }
-
-        line.fillColor?.let { color ->
-          line.draw(context, linePath, color, verticalAxisPosition)
-          forEachPointInBounds(series, drawingStart, pointInfoMap) { entry, x, y, _, _ ->
-            updateMarkerTargets(entry, seriesKey, x, y, color)
+      } else {
+        val drawingModelSeriesIndices =
+          drawingModel.seriesKeys.withIndex().associate { (index, key) -> key to index }
+        mergeKeys(model.seriesKeys, drawingModel.seriesKeys).forEach { seriesKey ->
+          val drawingModelIndex = drawingModelSeriesIndices[seriesKey]
+          val pointInfoMap = drawingModelIndex?.let(drawingModel::get)
+          val modelSeriesIndex = seriesIndices[seriesKey]
+          if (modelSeriesIndex != null) {
+            val series = model.series[modelSeriesIndex]
+            drawSeries(
+              seriesKey,
+              modelSeriesIndex,
+              series,
+              lines[modelSeriesIndex],
+              pointInfoMap,
+              false,
+            )
+          } else {
+            // An exiting series is drawn with the data and style of the layer it came from, so this
+            // layer’s providers aren’t asked about it.
+            val source =
+              drawingModelIndex?.let(drawingModel::getSeriesSource) as? LineCartesianLayer
+                ?: return@forEach
+            val sourceIndex = source.seriesIndices[seriesKey] ?: return@forEach
+            drawSeries(
+              seriesKey,
+              sourceIndex,
+              source.model.series[sourceIndex],
+              source.lines[sourceIndex],
+              pointInfoMap,
+              true,
+            )
           }
         }
-          ?: run {
-            val (lineBitmap, lineCanvas) = getBitmap(cacheKeyNamespace, seriesIndex, "line")
-            val (lineFillBitmap, lineFillCanvas) =
-              getBitmap(cacheKeyNamespace, seriesIndex, "lineFill")
-            line.draw(context, linePath, lineCanvas, lineFillCanvas, verticalAxisPosition)
-            lineCanvas.drawImage(lineFillBitmap, Offset.Zero, srcInPaint)
-            canvas.drawImage(lineBitmap, Offset.Zero, EmptyPaint)
-            forEachPointInBounds(series, drawingStart, pointInfoMap) { entry, x, y, _, _ ->
-              updateMarkerTargets(entry, seriesKey, x, y, lineFillBitmap)
-            }
-          }
-
-        drawPointsAndDataLabels(line, series, seriesKey, seriesIndex, drawingStart, pointInfoMap)
       }
 
       canvas.restore()
       if (isSweepInProgress) canvas.restore()
     }
+  }
+
+  private fun CartesianDrawingContext.drawSeries(
+    seriesKey: Any,
+    seriesIndex: Int,
+    series: List<LineCartesianLayerModel.Entry>,
+    line: Line,
+    pointInfoMap: Map<Double, LineCartesianLayerDrawingModel.Entry>?,
+    isExiting: Boolean,
+  ) {
+    val context = this
+    linePath.rewind()
+
+    val drawingStartAlignmentCorrection = layoutDirectionMultiplier * layerDimensions.startPadding
+
+    val drawingStart =
+      layerBounds.getStart(isLtr = isLtr) + drawingStartAlignmentCorrection - scroll
+
+    val points = mutableListOf<Offset>()
+    val visibleIndexRange =
+      collectPointsAndVisibleIndexRange(
+        interpolator = line.interpolator,
+        series = series,
+        drawingStart = drawingStart,
+        pointInfoMap = pointInfoMap,
+        drawFullLineLength = line.stroke is LineStroke.Dashed,
+        points = points,
+      )
+
+    if (points.isNotEmpty() && !visibleIndexRange.isEmpty()) {
+      connectPoints(line.interpolator, points, visibleIndexRange)
+    }
+
+    line.fillColor?.let { color ->
+      line.draw(context, linePath, color, verticalAxisPosition)
+      if (!isExiting) {
+        forEachPointInBounds(series, drawingStart, pointInfoMap) { entry, x, y, _, _ ->
+          updateMarkerTargets(entry, seriesKey, x, y, color)
+        }
+      }
+    }
+      ?: run {
+        val (lineBitmap, lineCanvas) = getBitmap(cacheKeyNamespace, key, seriesKey, "line")
+        val (lineFillBitmap, lineFillCanvas) =
+          getBitmap(cacheKeyNamespace, key, seriesKey, "lineFill")
+        line.draw(context, linePath, lineCanvas, lineFillCanvas, verticalAxisPosition)
+        lineCanvas.drawImage(lineFillBitmap, Offset.Zero, srcInPaint)
+        canvas.drawImage(lineBitmap, Offset.Zero, EmptyPaint)
+        if (!isExiting) {
+          forEachPointInBounds(series, drawingStart, pointInfoMap) { entry, x, y, _, _ ->
+            updateMarkerTargets(entry, seriesKey, x, y, lineFillBitmap)
+          }
+        }
+      }
+
+    drawPointsAndDataLabels(line, series, seriesKey, seriesIndex, drawingStart, pointInfoMap)
   }
 
   protected open fun CartesianDrawingContext.updateMarkerTargets(
@@ -665,7 +677,7 @@ protected constructor(
       drawingStart = drawingStart,
       pointInfoMap = pointInfoMap,
     ) { chartEntry, x, y, previousX, nextX ->
-      val point = line.pointProvider?.getPointOrThrow(chartEntry, model.extraStore)
+      val point = line.pointProvider?.getPoint(chartEntry)
       point?.draw(this, x, y)
 
       line.dataLabel
@@ -879,20 +891,9 @@ protected constructor(
   override fun updateDimensions(
     context: CartesianMeasuringContext,
     dimensions: MutableCartesianLayerDimensions,
-    model: LineCartesianLayerModel,
   ) {
     with(context) {
-      val maxPointSize =
-        (0..<model.series.size)
-          .maxOf { seriesIndex ->
-            lineProvider
-              .getLineOrThrow(model.seriesKeys[seriesIndex], seriesIndex, model.extraStore)
-              .pointProvider
-              ?.getLargestPoint(model.extraStore)
-              ?.size
-              .orZero
-          }
-          .pixels
+      val maxPointSize = maxPointSize.pixels
       val xSpacing = maxPointSize + pointSpacing.pixels
       dimensions.ensureValuesAtLeast(
         xSpacing = xSpacing,
@@ -904,25 +905,30 @@ protected constructor(
     }
   }
 
-  override fun updateChartRanges(
-    chartRanges: MutableCartesianChartRanges,
-    model: LineCartesianLayerModel,
-  ) {
+  override fun updateChartRanges(chartRanges: MutableCartesianChartRanges) {
+    // Initialize the per-model caches here, which runs off the main thread for asynchronous
+    // updates.
+    maxPointSize
     var minY = model.minY
     var maxY = model.maxY
     model.series.forEachIndexed { seriesIndex, series ->
-      val seriesKey = model.seriesKeys[seriesIndex]
-      val interpolator =
-        lineProvider.getLineOrThrow(seriesKey, seriesIndex, model.extraStore).interpolator
+      val interpolator = lines[seriesIndex].interpolator
+      if (series.isEmpty()) return@forEachIndexed
+      // These don’t overshoot, so the series’ own range (covered by the model’s) is the result.
+      if (interpolator === Interpolator.Sharp || interpolator is CubicInterpolator) {
+        return@forEachIndexed
+      }
       val yRange = interpolator.getYRange(series.map { it.y })
-      minY = kotlin.math.min(minY, yRange.start)
-      maxY = kotlin.math.max(maxY, yRange.endInclusive)
+      minY = min(minY, yRange.start)
+      maxY = max(maxY, yRange.endInclusive)
     }
     chartRanges.tryUpdate(
-      rangeProvider.getMinX(model.minX, model.maxX, model.extraStore),
-      rangeProvider.getMaxX(model.minX, model.maxX, model.extraStore),
-      rangeProvider.getMinY(minY, maxY, model.extraStore),
-      rangeProvider.getMaxY(minY, maxY, model.extraStore),
+      rangeProvider,
+      model,
+      model.minX,
+      model.maxX,
+      minY,
+      maxY,
       verticalAxisPosition,
     )
   }
@@ -931,135 +937,102 @@ protected constructor(
     context: CartesianMeasuringContext,
     layerMargins: CartesianLayerMargins,
     layerDimensions: CartesianLayerDimensions,
-    model: LineCartesianLayerModel,
   ) {
     with(context) {
       val verticalMargin =
-        (0..<model.series.size)
-          .mapNotNull { lineProvider.getLineOrThrow(model.seriesKeys[it], it, model.extraStore) }
-          .maxOf {
-            max(
-              it.stroke.thickness.pixels,
-              it.pointProvider?.getLargestPoint(model.extraStore)?.size.orZero.pixels,
-            )
-          }
-          .half
+        max(lines.maxOfOrNull { it.stroke.thickness.pixels } ?: 0f, maxPointSize.pixels).half
       layerMargins.ensureValuesAtLeast(top = verticalMargin, bottom = verticalMargin)
     }
   }
 
-  override fun prepareForTransformation(
-    model: LineCartesianLayerModel?,
-    ranges: CartesianChartRanges,
-    extraStore: MutableExtraStore,
-  ) {
-    drawingModelInterpolator.setModels(
-      old = extraStore.getOrNull(drawingModelKey),
-      new = model?.toDrawingModel(ranges),
-    )
-  }
-
-  override suspend fun transform(extraStore: MutableExtraStore, fraction: Float) {
-    drawingModelInterpolator.transform(fraction)?.let { extraStore[drawingModelKey] = it }
-      ?: extraStore.remove(drawingModelKey)
-  }
-
-  private fun LineCartesianLayerModel.toDrawingModel(
-    ranges: CartesianChartRanges
-  ): LineCartesianLayerDrawingModel {
-    val yRange = ranges.getYRange(verticalAxisPosition)
-    return LineCartesianLayerDrawingModel(
-      series.map { series ->
-        series.associate { entry ->
-          entry.x to
-            LineCartesianLayerDrawingModel.Entry(
-              ((entry.y - yRange.minY) / yRange.length).toFloat()
-            )
-        }
-      },
-      seriesKeys,
-    )
-  }
-
-  /** Creates a new [LineCartesianLayer] based on this one. */
-  public fun copy(
-    lineProvider: LineProvider = this.lineProvider,
-    pointSpacing: Dp = this.pointSpacing,
-    rangeProvider: CartesianLayerRangeProvider = this.rangeProvider,
-    verticalAxisPosition: Axis.Position.Vertical? = this.verticalAxisPosition,
-    drawingModelInterpolator:
-      CartesianLayerDrawingModelInterpolator<
-        LineCartesianLayerDrawingModel.Entry,
-        LineCartesianLayerDrawingModel,
-      > =
-      this.drawingModelInterpolator,
-  ): LineCartesianLayer =
-    LineCartesianLayer(
-      lineProvider,
-      pointSpacing,
-      rangeProvider,
-      verticalAxisPosition,
-      drawingModelInterpolator,
-      drawingModelKey,
-    )
-
+  /**
+   * Compares the configuration and data (not the drawing caches), so that an equal
+   * [LineCartesianLayer] doesn’t cause the chart to be recreated. This applies to
+   * [LineCartesianLayer] itself; instances of subclasses compare by identity unless the subclass
+   * overrides `equals` and `hashCode` (covering the settings it adds).
+   */
   override fun equals(other: Any?): Boolean =
     this === other ||
-      other is LineCartesianLayer &&
+      this::class == LineCartesianLayer::class &&
+        other is LineCartesianLayer &&
+        other::class == LineCartesianLayer::class &&
+        model == other.model &&
         lineProvider == other.lineProvider &&
         pointSpacing == other.pointSpacing &&
         rangeProvider == other.rangeProvider &&
         verticalAxisPosition == other.verticalAxisPosition &&
-        drawingModelInterpolator == other.drawingModelInterpolator
+        drawingModelInterpolator == other.drawingModelInterpolator &&
+        key == other.key
 
   override fun hashCode(): Int {
-    var result = lineProvider.hashCode()
+    if (this::class != LineCartesianLayer::class) return super.hashCode()
+    var result = model.hashCode()
+    result = 31 * result + lineProvider.hashCode()
     result = 31 * result + pointSpacing.hashCode()
     result = 31 * result + rangeProvider.hashCode()
-    result = 31 * result + (verticalAxisPosition?.hashCode() ?: 0)
+    result = 31 * result + verticalAxisPosition.hashCode()
     result = 31 * result + drawingModelInterpolator.hashCode()
+    result = 31 * result + key.hashCode()
     return result
   }
 
-  /** Provides access to [Line] factory functions. */
-  public companion object
-}
+  override fun hasSameDerivationInputs(other: CartesianLayer<*>): Boolean =
+    // Subclasses may derive differently, so only the exact class qualifies.
+    this::class == LineCartesianLayer::class &&
+      other::class == LineCartesianLayer::class &&
+      other is LineCartesianLayer &&
+      key == other.key &&
+      model.isSameDataAs(other.model) &&
+      rangeProvider == other.rangeProvider &&
+      verticalAxisPosition == other.verticalAxisPosition &&
+      drawingModelInterpolator == other.drawingModelInterpolator &&
+      lines.map { it.interpolator } == other.lines.map { it.interpolator }
 
-private fun LineCartesianLayer.LineProvider.getLineOrThrow(
-  seriesKey: Any,
-  seriesIndex: Int,
-  extraStore: ExtraStore,
-): LineCartesianLayer.Line = getLine(seriesKey, seriesIndex, extraStore)
-
-private fun LineCartesianLayer.PointProvider.getPointOrThrow(
-  entry: LineCartesianLayerModel.Entry,
-  extraStore: ExtraStore,
-): LineCartesianLayer.Point? =
-  try {
-    getPoint(entry, extraStore)
-  } catch (e: NotImplementedError) {
-    throw IllegalStateException(
-      "`PointProvider` must implement `getPoint(entry, extraStore)` or the deprecated `getPoint(entry, seriesIndex, extraStore)`.",
-      e,
+  override fun createDrawingModel(ranges: CartesianChartRanges): LineCartesianLayerDrawingModel {
+    val yRange = ranges.getYRange(verticalAxisPosition)
+    return LineCartesianLayerDrawingModel(
+      model.series.map { series ->
+        series.associate { entry ->
+          entry.x to
+            LineCartesianLayerDrawingModel.Entry(
+              ((entry.y - yRange.minY) / yRange.length).toFloat(),
+              entry,
+            )
+        }
+      },
+      model.seriesKeys,
+      opacity = 1f,
+      sweepFraction = 1f,
+      seriesSources = List(model.series.size) { this },
     )
   }
 
+  /** Provides access to [Line] factory functions. */
+  public companion object {
+    private val cacheKeyNamespace = CacheStore.KeyNamespace()
+  }
+}
+
 internal fun CartesianDrawingContext.getCanvasSplitY(
-  splitY: (ExtraStore) -> Number,
+  splitY: Number,
   halfLineThickness: Float,
   verticalAxisPosition: Axis.Position.Vertical?,
 ): Float {
   val yRange = ranges.getYRange(verticalAxisPosition)
   val base =
     layerBounds.bottom -
-      ((splitY(model.extraStore).toDouble() - yRange.minY) / yRange.length).toFloat() *
-        layerBounds.height
+      ((splitY.toDouble() - yRange.minY) / yRange.length).toFloat() * layerBounds.height
   return ceil(base).coerceIn(layerBounds.top..layerBounds.bottom) + ceil(halfLineThickness)
 }
 
-/** Creates and remembers a [LineCartesianLayer]. */
+/**
+ * Creates and remembers a [LineCartesianLayer] that displays [model]. A new [LineCartesianLayer] is
+ * created whenever an argument changes. Its [AnimatedCartesianLayer.key] is tied to the composition
+ * slot, so data updates are animated.
+ */
 @Composable
 public fun rememberLineCartesianLayer(
+  model: LineCartesianLayerModel,
   lineProvider: LineCartesianLayer.LineProvider =
     LineCartesianLayer.LineProvider.series(
       vicoTheme.lineCartesianLayerColors.map { color ->
@@ -1067,42 +1040,29 @@ public fun rememberLineCartesianLayer(
       }
     ),
   pointSpacing: Dp = Defaults.POINT_SPACING.dp,
-  rangeProvider: CartesianLayerRangeProvider = remember { CartesianLayerRangeProvider.auto() },
+  rangeProvider: CartesianLayerRangeProvider = CartesianLayerRangeProvider.auto(),
   verticalAxisPosition: Axis.Position.Vertical? = null,
-  drawingModelInterpolator:
-    CartesianLayerDrawingModelInterpolator<
-      LineCartesianLayerDrawingModel.Entry,
-      LineCartesianLayerDrawingModel,
-    > =
-    remember {
-      CartesianLayerDrawingModelInterpolator.line()
-    },
+  drawingModelInterpolator: CartesianLayerDrawingModelInterpolator<LineCartesianLayerDrawingModel> =
+    CartesianLayerDrawingModelInterpolator.line(),
 ): LineCartesianLayer {
-  var lineCartesianLayerWrapper by remember { ValueWrapper<LineCartesianLayer?>(null) }
+  val key = rememberCartesianLayerKey()
   return remember(
+    model,
     lineProvider,
     pointSpacing,
     rangeProvider,
     verticalAxisPosition,
     drawingModelInterpolator,
   ) {
-    val lineCartesianLayer =
-      lineCartesianLayerWrapper?.copy(
-        lineProvider,
-        pointSpacing,
-        rangeProvider,
-        verticalAxisPosition,
-        drawingModelInterpolator,
-      )
-        ?: LineCartesianLayer(
-          lineProvider,
-          pointSpacing,
-          rangeProvider,
-          verticalAxisPosition,
-          drawingModelInterpolator,
-        )
-    lineCartesianLayerWrapper = lineCartesianLayer
-    lineCartesianLayer
+    LineCartesianLayer(
+      model,
+      lineProvider,
+      pointSpacing,
+      rangeProvider,
+      verticalAxisPosition,
+      drawingModelInterpolator,
+      key,
+    )
   }
 }
 
@@ -1145,33 +1105,3 @@ public fun LineCartesianLayer.Companion.rememberLine(
       dataLabelRotationDegrees,
     )
   }
-
-/** Creates and remembers a [LineCartesianLayer.Line]. */
-@Suppress("DEPRECATION")
-@Deprecated("Use the overload with `interpolator`.")
-@Composable
-public fun LineCartesianLayer.Companion.rememberLine(
-  fill: LineCartesianLayer.LineFill =
-    vicoTheme.lineCartesianLayerColors.first().let { color ->
-      remember(color) { LineCartesianLayer.LineFill.single(Fill(color)) }
-    },
-  stroke: LineCartesianLayer.LineStroke = LineCartesianLayer.LineStroke.Continuous(),
-  areaFill: LineCartesianLayer.AreaFill? = null,
-  pointProvider: LineCartesianLayer.PointProvider? = null,
-  pointConnector: PointConnector,
-  dataLabel: TextComponent? = null,
-  dataLabelPosition: Position.Vertical = Position.Vertical.Top,
-  dataLabelValueFormatter: CartesianValueFormatter = remember { CartesianValueFormatter.decimal() },
-  dataLabelRotationDegrees: Float = 0f,
-): Line =
-  rememberLine(
-    fill,
-    stroke,
-    areaFill,
-    pointProvider,
-    PointConnectorAdapter(pointConnector),
-    dataLabel,
-    dataLabelPosition,
-    dataLabelValueFormatter,
-    dataLabelRotationDegrees,
-  )

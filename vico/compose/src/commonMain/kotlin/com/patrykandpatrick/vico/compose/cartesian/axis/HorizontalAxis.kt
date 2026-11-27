@@ -24,7 +24,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.compose.cartesian.CartesianMeasuringContext
-import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartRanges
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.compose.cartesian.data.formatForAxis
@@ -37,7 +36,6 @@ import com.patrykandpatrick.vico.compose.cartesian.layer.MutableCartesianLayerDi
 import com.patrykandpatrick.vico.compose.common.*
 import com.patrykandpatrick.vico.compose.common.component.LineComponent
 import com.patrykandpatrick.vico.compose.common.component.TextComponent
-import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 import com.patrykandpatrick.vico.compose.common.doubled
 import com.patrykandpatrick.vico.compose.common.half
 import com.patrykandpatrick.vico.compose.common.isBoundOf
@@ -67,7 +65,7 @@ protected constructor(
   public val itemPlacer: ItemPlacer,
   size: Size,
   titleComponent: TextComponent?,
-  title: (ExtraStore) -> CharSequence?,
+  title: CharSequence?,
   tickPosition: TickPosition,
   lineDrawingOrder: LineDrawingOrder,
   public val titlePosition: TitlePosition,
@@ -105,7 +103,7 @@ protected constructor(
     guideline: LineComponent?,
     itemPlacer: ItemPlacer,
     titleComponent: TextComponent?,
-    title: (ExtraStore) -> CharSequence?,
+    title: CharSequence?,
     tickPosition: TickPosition,
     lineDrawingOrder: LineDrawingOrder,
     titlePosition: TitlePosition,
@@ -235,7 +233,7 @@ protected constructor(
         drawLineAndTicks(context, axisDimensions)
       }
 
-      val titleText = title(model.extraStore)
+      val titleText = title
       // `Side` titles are drawn within the clip region, preserving the pre-`titlePosition`
       // behavior. `End` titles are drawn after the clip is removed so they aren’t cut off at the
       // line range.
@@ -626,7 +624,6 @@ protected constructor(
     context: CartesianMeasuringContext,
     layerMargins: CartesianLayerMargins,
     layerDimensions: CartesianLayerDimensions,
-    model: CartesianChartModel,
   ) {
     val maxLabelWidth =
       context.getMaxLabelWidth(layerDimensions, context.internalGetFullXRange(layerDimensions))
@@ -637,7 +634,7 @@ protected constructor(
       itemPlacer.getEndLayerMargin(context, layerDimensions, context.tickThickness, maxLabelWidth)
     if (titlePosition == TitlePosition.End) {
       val titleWidth =
-        title(model.extraStore)
+        title
           ?.let { title ->
             titleComponent?.getWidth(
               context = context,
@@ -669,12 +666,11 @@ protected constructor(
           TickPosition.Cross -> this.tickLength / 2
         }
 
-      @Suppress("DEPRECATION")
       when (size) {
         is Size.Auto -> {
           val labelHeight = getMaxLabelHeight(layerDimensions, fullXRange, maxLabelWidth)
           val baseHeight = labelHeight + lineThickness + outwardTickLength
-          val titleText = title(model.extraStore)
+          val titleText = title
           when (titlePosition) {
               // The `Side` title is drawn at the plot width, so it’s measured at the same width.
               TitlePosition.Side ->
@@ -708,7 +704,6 @@ protected constructor(
             .coerceIn(size.min.pixels, size.max.pixels)
         }
         is Size.Fixed -> size.value.pixels
-        is Size.Fraction -> canvasSize.height * size.fraction
         is Size.Text ->
           label
             ?.getHeight(context = this, text = size.text, rotationDegrees = labelRotationDegrees)
@@ -768,7 +763,7 @@ protected constructor(
     itemPlacer: ItemPlacer = this.itemPlacer,
     size: Size = this.size,
     titleComponent: TextComponent? = this.titleComponent,
-    title: (ExtraStore) -> CharSequence? = this.title,
+    title: CharSequence? = this.title,
     tickPosition: TickPosition = this.tickPosition,
     lineDrawingOrder: LineDrawingOrder = this.lineDrawingOrder,
     titlePosition: TitlePosition = this.titlePosition,
@@ -917,8 +912,8 @@ protected constructor(
        * labels are anchored inward, and no extreme-label padding is added.
        */
       public fun aligned(
-        spacing: (ExtraStore) -> Int = { 1 },
-        offset: (ExtraStore) -> Int = { 0 },
+        spacing: Int = 1,
+        offset: Int = 0,
         shiftExtremeLines: Boolean = true,
         addExtremeLabelPadding: Boolean = true,
         shiftExtremeLabels: Boolean = false,
@@ -970,7 +965,7 @@ protected constructor(
       itemPlacer: ItemPlacer = remember { ItemPlacer.aligned() },
       size: Size = Size.Auto(),
       titleComponent: TextComponent? = null,
-      title: (ExtraStore) -> CharSequence? = { null },
+      title: CharSequence? = null,
       tickPosition: TickPosition = TickPosition.Outside,
       lineDrawingOrder: LineDrawingOrder = LineDrawingOrder.UnderLayers,
       titlePosition: TitlePosition = TitlePosition.Side,
@@ -1023,7 +1018,7 @@ protected constructor(
       itemPlacer: ItemPlacer = remember { ItemPlacer.aligned() },
       size: Size = Size.Auto(),
       titleComponent: TextComponent? = null,
-      title: (ExtraStore) -> CharSequence? = { null },
+      title: CharSequence? = null,
       tickPosition: TickPosition = TickPosition.Outside,
       lineDrawingOrder: LineDrawingOrder = LineDrawingOrder.UnderLayers,
       titlePosition: TitlePosition = TitlePosition.Side,

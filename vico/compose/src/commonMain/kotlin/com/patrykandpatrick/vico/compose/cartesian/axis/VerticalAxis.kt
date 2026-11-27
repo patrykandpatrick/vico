@@ -27,7 +27,6 @@ import com.patrykandpatrick.vico.compose.cartesian.axis.VerticalAxis.HorizontalL
 import com.patrykandpatrick.vico.compose.cartesian.axis.VerticalAxis.HorizontalLabelPosition.Outside
 import com.patrykandpatrick.vico.compose.cartesian.axis.VerticalAxis.ItemPlacer.Companion.count
 import com.patrykandpatrick.vico.compose.cartesian.axis.VerticalAxis.ItemPlacer.Companion.step
-import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartRanges
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.compose.cartesian.data.formatForAxis
@@ -36,7 +35,6 @@ import com.patrykandpatrick.vico.compose.common.Defaults
 import com.patrykandpatrick.vico.compose.common.Position
 import com.patrykandpatrick.vico.compose.common.component.LineComponent
 import com.patrykandpatrick.vico.compose.common.component.TextComponent
-import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 import com.patrykandpatrick.vico.compose.common.half
 import com.patrykandpatrick.vico.compose.common.orZero
 import kotlin.math.ceil
@@ -71,7 +69,7 @@ protected constructor(
   public val itemPlacer: ItemPlacer,
   size: Size,
   titleComponent: TextComponent?,
-  title: (ExtraStore) -> CharSequence?,
+  title: CharSequence?,
   tickPosition: TickPosition,
   lineDrawingOrder: LineDrawingOrder,
   public val titlePosition: TitlePosition,
@@ -118,7 +116,7 @@ protected constructor(
     guideline: LineComponent?,
     itemPlacer: ItemPlacer,
     titleComponent: TextComponent?,
-    title: (ExtraStore) -> CharSequence?,
+    title: CharSequence?,
     tickPosition: TickPosition,
     lineDrawingOrder: LineDrawingOrder,
     titlePosition: TitlePosition,
@@ -225,7 +223,7 @@ protected constructor(
         )
       }
 
-      title(model.extraStore)?.let { title -> titleComponent?.drawTitle(this, title) }
+      title?.let { title -> titleComponent?.drawTitle(this, title) }
     }
   }
 
@@ -461,14 +459,13 @@ protected constructor(
     context: CartesianMeasuringContext,
     horizontalLayerMargins: HorizontalCartesianLayerMargins,
     layerHeight: Float,
-    model: CartesianChartModel,
   ) {
     with(context) {
       // An `End` title is centered on the axis line, so its outer half must stay on-canvas. The
       // inner half overhangs the axis band, hence half the title width plus half the line
       // thickness.
       val titleInset =
-        title(model.extraStore)
+        title
           ?.takeIf { titlePosition == TitlePosition.End }
           ?.let { title ->
             titleComponent
@@ -488,13 +485,12 @@ protected constructor(
     context: CartesianMeasuringContext,
     layerMargins: CartesianLayerMargins,
     layerDimensions: CartesianLayerDimensions,
-    model: CartesianChartModel,
   ) {
     with(context) {
       val maxLabelHeight = getMaxLabelHeight().also { maxLabelHeight = it }
       val maxLineThickness = max(lineThickness, tickThickness)
       val titleHeight =
-        title(model.extraStore)
+        title
           ?.takeIf { titlePosition == TitlePosition.End }
           ?.let { title ->
             titleComponent?.getHeight(
@@ -531,11 +527,10 @@ protected constructor(
           TickPosition.Inside -> 0f
           TickPosition.Cross -> this.tickLength / 2
         }
-      @Suppress("DEPRECATION")
       when (size) {
         is Size.Auto -> {
           val titleComponentWidth =
-            title(model.extraStore)
+            title
               ?.takeIf { titlePosition == TitlePosition.Side }
               ?.let { title ->
                 titleComponent?.getWidth(
@@ -558,7 +553,6 @@ protected constructor(
           )
         }
         is Size.Fixed -> size.value.pixels
-        is Size.Fraction -> canvasWidth * size.fraction
         is Size.Text ->
           label
             ?.getWidth(context = this, text = size.text, rotationDegrees = labelRotationDegrees)
@@ -618,7 +612,7 @@ protected constructor(
     itemPlacer: ItemPlacer = this.itemPlacer,
     size: Size = this.size,
     titleComponent: TextComponent? = this.titleComponent,
-    title: (ExtraStore) -> CharSequence? = this.title,
+    title: CharSequence? = this.title,
     tickPosition: TickPosition = this.tickPosition,
     lineDrawingOrder: LineDrawingOrder = this.lineDrawingOrder,
     titlePosition: TitlePosition = this.titlePosition,
@@ -742,25 +736,24 @@ protected constructor(
     /** Houses [ItemPlacer] factory functions. */
     public companion object {
       /**
-       * Creates a step-based [ItemPlacer] implementation. [step] returns the difference between the
-       * _y_ values of neighboring labels (and their corresponding line pairs). A multiple of this
-       * may be used for overlap prevention. If `null` is returned, the step will be determined
-       * automatically. [shiftTopLines] is used as the return value of
-       * [ItemPlacer.getShiftTopLines].
+       * Creates a step-based [ItemPlacer] implementation. [step] is the difference between the _y_
+       * values of neighboring labels (and their corresponding line pairs). A multiple of this may
+       * be used for overlap prevention. If [step] is `null`, the step is determined automatically.
+       * [shiftTopLines] is used as the return value of [ItemPlacer.getShiftTopLines].
        */
       public fun step(
-        step: (ExtraStore) -> Double? = { null },
+        step: Double? = null,
         shiftTopLines: Boolean = true,
       ): ItemPlacer = StepVerticalAxisItemPlacer(step, shiftTopLines)
 
       /**
-       * Creates a count-based [ItemPlacer] implementation. [count] returns the number of labels
-       * (and their corresponding line pairs) to be displayed. This may be reduced for overlap
-       * prevention. If `null` is returned, the [VerticalAxis] will display as many items as
-       * possible. [shiftTopLines] is used as the return value of [ItemPlacer.getShiftTopLines].
+       * Creates a count-based [ItemPlacer] implementation. [count] is the number of labels (and
+       * their corresponding line pairs) to be displayed. This may be reduced for overlap
+       * prevention. If [count] is `null`, the [VerticalAxis] displays as many items as possible.
+       * [shiftTopLines] is used as the return value of [ItemPlacer.getShiftTopLines].
        */
       public fun count(
-        count: (ExtraStore) -> Int? = { null },
+        count: Int? = null,
         shiftTopLines: Boolean = true,
       ): ItemPlacer = CountVerticalAxisItemPlacer(count, shiftTopLines)
     }
@@ -783,7 +776,7 @@ protected constructor(
       itemPlacer: ItemPlacer = remember { step() },
       size: Size = Size.Auto(),
       titleComponent: TextComponent? = null,
-      title: (ExtraStore) -> CharSequence? = { null },
+      title: CharSequence? = null,
       tickPosition: TickPosition =
         if (horizontalLabelPosition == Outside) TickPosition.Outside else TickPosition.Inside,
       lineDrawingOrder: LineDrawingOrder = LineDrawingOrder.UnderLayers,
@@ -843,7 +836,7 @@ protected constructor(
       itemPlacer: ItemPlacer = remember { step() },
       size: Size = Size.Auto(),
       titleComponent: TextComponent? = null,
-      title: (ExtraStore) -> CharSequence? = { null },
+      title: CharSequence? = null,
       tickPosition: TickPosition =
         if (horizontalLabelPosition == Outside) TickPosition.Outside else TickPosition.Inside,
       lineDrawingOrder: LineDrawingOrder = LineDrawingOrder.UnderLayers,

@@ -19,13 +19,12 @@ package com.patrykandpatrick.vico.compose.common
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 import kotlin.math.max
 
 /**
  * [HorizontalLegend] displays legend items beside one another in lines.
  *
- * @property items adds the [LegendItem]s.
+ * @property items the [LegendItem]s.
  * @property iconSize the [LegendItem.icon] size.
  * @property iconLabelSpacing the spacing between [LegendItem.icon] and [LegendItem.labelComponent].
  * @property rowSpacing the row spacing.
@@ -33,29 +32,25 @@ import kotlin.math.max
  * @property padding the content padding.
  */
 public open class HorizontalLegend<M : MeasuringContext, D : DrawingContext>(
-  protected val items: AdditionScope<LegendItem>.(ExtraStore) -> Unit,
+  protected val items: List<LegendItem>,
   protected val iconSize: Dp = Defaults.LEGEND_ICON_SIZE.dp,
   protected val iconLabelSpacing: Dp = Defaults.LEGEND_ICON_LABEL_SPACING.dp,
   protected val rowSpacing: Dp = Defaults.LEGEND_ROW_SPACING.dp,
   protected val columnSpacing: Dp = Defaults.LEGEND_COLUMN_SPACING.dp,
   protected val padding: Insets = Insets.Zero,
 ) : Legend<M, D> {
-  private val itemManager = LegendItemManager(items)
   private val heights = mutableListOf<Float>()
   private val lines = mutableListOf<MutableList<LegendItem>>(mutableListOf())
   override var bounds: Rect = Rect.Zero
 
   override fun getHeight(context: M, maxWidth: Float): Float =
     with(context) {
-      itemManager.addItems(this)
-      if (itemManager.itemList.isEmpty()) return@with 0f
+      if (items.isEmpty()) return@with 0f
       lines.clear()
       lines.add(mutableListOf())
       var height =
         max(
-          itemManager.itemList
-            .first()
-            .getLabelHeight(context, iconSize, iconLabelSpacing, maxWidth),
+          items.first().getLabelHeight(context, iconSize, iconLabelSpacing, maxWidth),
           iconSize.pixels,
         )
       heights.add(height)
@@ -137,7 +132,7 @@ public open class HorizontalLegend<M : MeasuringContext, D : DrawingContext>(
       var currentLine = 0
       lines.clear()
       lines.add(mutableListOf())
-      itemManager.itemList.forEach {
+      items.forEach {
         remainWidth -=
           it.getWidth(context, iconSize, iconLabelSpacing, availableWidth) + columnSpacing.pixels
         if (remainWidth >= 0 || remainWidth == availableWidth) {

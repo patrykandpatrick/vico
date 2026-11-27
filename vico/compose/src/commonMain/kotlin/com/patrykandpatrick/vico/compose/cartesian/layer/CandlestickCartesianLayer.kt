@@ -33,14 +33,13 @@ import com.patrykandpatrick.vico.compose.cartesian.marker.CandlestickCartesianLa
 import com.patrykandpatrick.vico.compose.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.compose.common.*
 import com.patrykandpatrick.vico.compose.common.component.LineComponent
-import com.patrykandpatrick.vico.compose.common.data.ExtraStore
-import com.patrykandpatrick.vico.compose.common.data.MutableExtraStore
 import com.patrykandpatrick.vico.compose.common.half
 import kotlin.math.max
 
 /**
  * Draws the content of candlestick charts.
  *
+ * @property model the data.
  * @property candleProvider provides the [Candle]s.
  * @property minCandleBodyHeight the minimum height of the candle bodies.
  * @property candleSpacing the spacing between neighboring candles.
@@ -49,23 +48,27 @@ import kotlin.math.max
  * @property verticalAxisPosition the position of the [VerticalAxis] with which the
  *   [CandlestickCartesianLayer] should be associated. Use this for independent [CartesianLayer]
  *   scaling.
+ * @property drawingModelInterpolator interpolates the [CandlestickCartesianLayerDrawingModel]s.
+ * @property key identifies this [CandlestickCartesianLayer] across data updates. See
+ *   [AnimatedCartesianLayer.key].
  */
 @Stable
-public open class CandlestickCartesianLayer
-protected constructor(
+public open class CandlestickCartesianLayer(
+  override val model: CandlestickCartesianLayerModel,
   protected val candleProvider: CandleProvider,
-  protected val minCandleBodyHeight: Dp,
-  protected val candleSpacing: Dp,
-  protected val scaleCandleWicks: Boolean,
-  protected val rangeProvider: CartesianLayerRangeProvider,
-  protected val verticalAxisPosition: Axis.Position.Vertical?,
-  protected val drawingModelInterpolator:
-    CartesianLayerDrawingModelInterpolator<
-      CandlestickCartesianLayerDrawingModel.Entry,
-      CandlestickCartesianLayerDrawingModel,
-    >,
-  protected val drawingModelKey: ExtraStore.Key<CandlestickCartesianLayerDrawingModel>,
-) : BaseCartesianLayer<CandlestickCartesianLayerModel>() {
+  protected val minCandleBodyHeight: Dp = Defaults.MIN_CANDLE_BODY_HEIGHT_DP.dp,
+  protected val candleSpacing: Dp = Defaults.CANDLE_SPACING_DP.dp,
+  protected val scaleCandleWicks: Boolean = false,
+  protected val rangeProvider: CartesianLayerRangeProvider = CartesianLayerRangeProvider.auto(),
+  protected val verticalAxisPosition: Axis.Position.Vertical? = null,
+  override val drawingModelInterpolator:
+    CartesianLayerDrawingModelInterpolator<CandlestickCartesianLayerDrawingModel> =
+    CartesianLayerDrawingModelInterpolator.candlestick(),
+  override val key: Any,
+) :
+  BaseCartesianLayer<CandlestickCartesianLayerModel>(),
+  DerivationInputs,
+  AnimatedCartesianLayer<CandlestickCartesianLayerModel, CandlestickCartesianLayerDrawingModel> {
   /**
    * Defines a candle style.
    *
@@ -89,48 +92,53 @@ protected constructor(
 
   override val markerTargets: Map<Double, List<CartesianMarker.Target>> = _markerTargets
 
-  /** Creates a [CandlestickCartesianLayer]. */
-  public constructor(
-    candleProvider: CandleProvider,
-    minCandleBodyHeight: Dp = Defaults.MIN_CANDLE_BODY_HEIGHT_DP.dp,
-    candleSpacing: Dp = Defaults.CANDLE_SPACING_DP.dp,
-    scaleCandleWicks: Boolean = false,
-    rangeProvider: CartesianLayerRangeProvider = CartesianLayerRangeProvider.auto(),
-    verticalAxisPosition: Axis.Position.Vertical? = null,
-    drawingModelInterpolator:
-      CartesianLayerDrawingModelInterpolator<
-        CandlestickCartesianLayerDrawingModel.Entry,
-        CandlestickCartesianLayerDrawingModel,
-      > =
-      CartesianLayerDrawingModelInterpolator.candlestick(),
-  ) : this(
-    candleProvider,
-    minCandleBodyHeight,
-    candleSpacing,
-    scaleCandleWicks,
-    rangeProvider,
-    verticalAxisPosition,
-    drawingModelInterpolator,
-    ExtraStore.Key(),
-  )
+  /** The widest [Candle], computed once per [CandlestickCartesianLayer]. */
+  private val widestCandleWidth: Dp by lazy { getWidestCandleWidth(model.series) }
 
-  override fun drawInternal(
-    context: CartesianDrawingContext,
-    model: CandlestickCartesianLayerModel,
-  ): Unit =
+  private fun getWidestCandleWidth(series: List<CandlestickCartesianLayerModel.Entry>): Dp =
+    series.maxOfOrNull { candleProvider.getCandle(it).width } ?: 0.dp
+
+  override fun drawInternal(context: CartesianDrawingContext): Unit =
     with(context) {
       _markerTargets.clear()
-      drawChartInternal(model, ranges, extraStore.getOrNull(drawingModelKey))
+      val drawingModel = getDrawingModel(this@CandlestickCartesianLayer)
+      val drawingModelSeriesIndex = drawingModel.seriesKeys.indexOf(model.seriesKey)
+      drawingModel.seriesKeys.forEachIndexed { index, key ->
+        if (index == drawingModelSeriesIndex) return@forEachIndexed
+        // An exiting series is drawn with the data and style of the layer it came from, so this
+        // layer’s candle provider isn’t asked about it.
+        val source =
+          drawingModel.getSeriesSource(index) as? CandlestickCartesianLayer ?: return@forEachIndexed
+        if (source.model.seriesKey != key) return@forEachIndexed
+        drawSeries(
+          source.model.series,
+          key,
+          drawingModel[index],
+          source.widestCandleWidth,
+          source.candleProvider,
+          isExiting = true,
+        )
+      }
+      drawSeries(
+        model.series,
+        model.seriesKey,
+        drawingModel.getOrNull(drawingModelSeriesIndex),
+        widestCandleWidth,
+        candleProvider,
+        isExiting = false,
+      )
     }
 
-  private fun CartesianDrawingContext.drawChartInternal(
-    model: CandlestickCartesianLayerModel,
-    ranges: CartesianChartRanges,
-    drawingModel: CandlestickCartesianLayerDrawingModel?,
+  private fun CartesianDrawingContext.drawSeries(
+    series: List<CandlestickCartesianLayerModel.Entry>,
+    key: Any,
+    drawingModelSeries: Map<Double, CandlestickCartesianLayerDrawingModel.Entry>?,
+    widestCandleWidth: Dp,
+    candleProvider: CandleProvider,
+    isExiting: Boolean,
   ) {
     val yRange = ranges.getYRange(verticalAxisPosition)
-    val halfMaxCandleWidth =
-      candleProvider.getWidestCandleOrThrow(model.key, model.extraStore).width.pixels.half
+    val halfMaxCandleWidth = widestCandleWidth.pixels.half
 
     val drawingStart =
       layerBounds.getStart(isLtr) +
@@ -142,13 +150,12 @@ protected constructor(
     val minBodyHeight = minCandleBodyHeight.pixels
     val visibleXRange = getVisibleXRange()
 
-    val visibleIndices =
-      model.series.getSliceIndices(visibleXRange.start, visibleXRange.endInclusive)
+    val visibleIndices = series.getSliceIndices(visibleXRange.start, visibleXRange.endInclusive)
     if (visibleIndices.isEmpty()) return
 
-    model.series.subList(visibleIndices.first, visibleIndices.last + 1).forEach { entry ->
-      candle = candleProvider.getCandleOrThrow(entry, model.key, model.extraStore)
-      val candleInfo = drawingModel?.entries?.get(entry.x) ?: entry.toCandleInfo(yRange)
+    series.subList(visibleIndices.first, visibleIndices.last + 1).forEach { entry ->
+      candle = candleProvider.getCandle(entry)
+      val candleInfo = drawingModelSeries?.get(entry.x) ?: entry.toCandleInfo(yRange)
       val xSpacingMultiplier = ((entry.x - ranges.minX) / ranges.xStep).toFloat()
       bodyCenterX =
         drawingStart +
@@ -165,16 +172,18 @@ protected constructor(
         bodyTopY = bodyBottomY - minBodyHeight
       }
 
-      updateMarkerTargets(
-        entry,
-        model.key,
-        bodyCenterX,
-        bodyBottomY,
-        bodyTopY,
-        bottomWickY,
-        topWickY,
-        candle,
-      )
+      if (!isExiting) {
+        updateMarkerTargets(
+          entry,
+          key,
+          bodyCenterX,
+          bodyBottomY,
+          bodyTopY,
+          bottomWickY,
+          topWickY,
+          candle,
+        )
+      }
 
       candle.body.drawVertical(this, bodyCenterX, bodyTopY, bodyBottomY, zoom)
 
@@ -215,7 +224,7 @@ protected constructor(
           x = entry.x,
           canvasX = canvasX,
           entry = entry,
-          modelKey = key,
+          seriesKey = key,
           openingCanvasY =
             if (entry.absoluteChange == Change.Bullish) limitedBodyBottomCanvasY
             else limitedBodyTopCanvasY,
@@ -255,15 +264,16 @@ protected constructor(
       )
   }
 
-  override fun updateChartRanges(
-    chartRanges: MutableCartesianChartRanges,
-    model: CandlestickCartesianLayerModel,
-  ) {
+  override fun updateChartRanges(chartRanges: MutableCartesianChartRanges) {
+    // Initialize the per-model cache here, which runs off the main thread for asynchronous updates.
+    widestCandleWidth
     chartRanges.tryUpdate(
-      rangeProvider.getMinX(model.minX, model.maxX, model.extraStore),
-      rangeProvider.getMaxX(model.minX, model.maxX, model.extraStore),
-      rangeProvider.getMinY(model.minY, model.maxY, model.extraStore),
-      rangeProvider.getMaxY(model.minY, model.maxY, model.extraStore),
+      rangeProvider,
+      model,
+      model.minX,
+      model.maxX,
+      model.minY,
+      model.maxY,
       verticalAxisPosition,
     )
   }
@@ -271,11 +281,9 @@ protected constructor(
   override fun updateDimensions(
     context: CartesianMeasuringContext,
     dimensions: MutableCartesianLayerDimensions,
-    model: CandlestickCartesianLayerModel,
   ) {
     with(context) {
-      val candleWidth =
-        candleProvider.getWidestCandleOrThrow(model.key, model.extraStore).width.pixels
+      val candleWidth = widestCandleWidth.pixels
       val xSpacing = candleWidth + candleSpacing.pixels
       dimensions.ensureValuesAtLeast(
         xSpacing = xSpacing,
@@ -287,22 +295,6 @@ protected constructor(
     }
   }
 
-  override fun prepareForTransformation(
-    model: CandlestickCartesianLayerModel?,
-    ranges: CartesianChartRanges,
-    extraStore: MutableExtraStore,
-  ) {
-    drawingModelInterpolator.setModels(
-      old = extraStore.getOrNull(drawingModelKey),
-      new = model?.toDrawingModel(ranges),
-    )
-  }
-
-  override suspend fun transform(extraStore: MutableExtraStore, fraction: Float) {
-    drawingModelInterpolator.transform(fraction)?.let { extraStore[drawingModelKey] = it }
-      ?: extraStore.remove(drawingModelKey)
-  }
-
   private fun CandlestickCartesianLayerModel.Entry.toCandleInfo(
     yRange: CartesianChartRanges.YRange
   ) =
@@ -311,109 +303,96 @@ protected constructor(
       bodyTopY = ((max(opening, closing) - yRange.minY) / yRange.length).toFloat(),
       bottomWickY = ((low - yRange.minY) / yRange.length).toFloat(),
       topWickY = ((high - yRange.minY) / yRange.length).toFloat(),
+      entry = this,
     )
 
-  private fun CandlestickCartesianLayerModel.toDrawingModel(
-    ranges: CartesianChartRanges
-  ): CandlestickCartesianLayerDrawingModel {
-    val yRange = ranges.getYRange(verticalAxisPosition)
-    return CandlestickCartesianLayerDrawingModel(
-      entries = series.associate { it.x to it.toCandleInfo(yRange) },
-      modelKey = key,
-    )
-  }
-
-  /** Creates a new [CandlestickCartesianLayer] based on this one. */
-  public fun copy(
-    candleProvider: CandleProvider = this.candleProvider,
-    minCandleBodyHeight: Dp = this.minCandleBodyHeight,
-    candleSpacing: Dp = this.candleSpacing,
-    scaleCandleWicks: Boolean = this.scaleCandleWicks,
-    rangeProvider: CartesianLayerRangeProvider = this.rangeProvider,
-    verticalAxisPosition: Axis.Position.Vertical? = this.verticalAxisPosition,
-    drawingModelInterpolator:
-      CartesianLayerDrawingModelInterpolator<
-        CandlestickCartesianLayerDrawingModel.Entry,
-        CandlestickCartesianLayerDrawingModel,
-      > =
-      this.drawingModelInterpolator,
-  ): CandlestickCartesianLayer =
-    CandlestickCartesianLayer(
-      candleProvider,
-      minCandleBodyHeight,
-      candleSpacing,
-      scaleCandleWicks,
-      rangeProvider,
-      verticalAxisPosition,
-      drawingModelInterpolator,
-      drawingModelKey,
-    )
-
+  /**
+   * Compares the configuration and data (not the drawing caches), so that an equal
+   * [CandlestickCartesianLayer] doesn’t cause the chart to be recreated. This applies to
+   * [CandlestickCartesianLayer] itself; instances of subclasses compare by identity unless the
+   * subclass overrides `equals` and `hashCode` (covering the settings it adds).
+   */
   override fun equals(other: Any?): Boolean =
-    other is CandlestickCartesianLayer &&
-      candleProvider == other.candleProvider &&
-      minCandleBodyHeight == other.minCandleBodyHeight &&
-      candleSpacing == other.candleSpacing &&
-      scaleCandleWicks == other.scaleCandleWicks &&
-      rangeProvider == other.rangeProvider &&
-      verticalAxisPosition == other.verticalAxisPosition &&
-      drawingModelInterpolator == other.drawingModelInterpolator
+    this === other ||
+      this::class == CandlestickCartesianLayer::class &&
+        other is CandlestickCartesianLayer &&
+        other::class == CandlestickCartesianLayer::class &&
+        model == other.model &&
+        candleProvider == other.candleProvider &&
+        minCandleBodyHeight == other.minCandleBodyHeight &&
+        candleSpacing == other.candleSpacing &&
+        scaleCandleWicks == other.scaleCandleWicks &&
+        rangeProvider == other.rangeProvider &&
+        verticalAxisPosition == other.verticalAxisPosition &&
+        drawingModelInterpolator == other.drawingModelInterpolator &&
+        key == other.key
 
   override fun hashCode(): Int {
-    var result = candleProvider.hashCode()
+    if (this::class != CandlestickCartesianLayer::class) return super.hashCode()
+    var result = model.hashCode()
+    result = 31 * result + candleProvider.hashCode()
     result = 31 * result + minCandleBodyHeight.hashCode()
     result = 31 * result + candleSpacing.hashCode()
     result = 31 * result + scaleCandleWicks.hashCode()
     result = 31 * result + rangeProvider.hashCode()
-    result = 31 * result + (verticalAxisPosition?.hashCode() ?: 0)
+    result = 31 * result + verticalAxisPosition.hashCode()
     result = 31 * result + drawingModelInterpolator.hashCode()
+    result = 31 * result + key.hashCode()
     return result
   }
 
-  /** Provides [Candle]s to [CandlestickCartesianLayer]s. */
-  public interface CandleProvider {
-    /** Returns the [Candle] for the given [CandlestickCartesianLayerModel.Entry]. */
-    @Deprecated("Override `getCandle(entry, key, extraStore)`.")
-    public fun getCandle(
-      entry: CandlestickCartesianLayerModel.Entry,
-      extraStore: ExtraStore,
-    ): Candle = throw NotImplementedError()
+  override fun hasSameDerivationInputs(other: CartesianLayer<*>): Boolean =
+    // Subclasses may derive differently, so only the exact class qualifies.
+    this::class == CandlestickCartesianLayer::class &&
+      other::class == CandlestickCartesianLayer::class &&
+      other is CandlestickCartesianLayer &&
+      key == other.key &&
+      model.isSameDataAs(other.model) &&
+      rangeProvider == other.rangeProvider &&
+      verticalAxisPosition == other.verticalAxisPosition &&
+      drawingModelInterpolator == other.drawingModelInterpolator
 
-    /** Returns the [Candle] for the given [CandlestickCartesianLayerModel.Entry]. */
-    @Suppress("DEPRECATION")
-    public fun getCandle(
-      entry: CandlestickCartesianLayerModel.Entry,
-      key: Any,
-      extraStore: ExtraStore,
-    ): Candle = getCandle(entry, extraStore)
+  override fun createDrawingModel(
+    ranges: CartesianChartRanges
+  ): CandlestickCartesianLayerDrawingModel {
+    val yRange = ranges.getYRange(verticalAxisPosition)
+    return CandlestickCartesianLayerDrawingModel(
+      entries = listOf(model.series.associate { it.x to it.toCandleInfo(yRange) }),
+      seriesKeys = listOf(model.seriesKey),
+      opacity = 1f,
+      seriesSources = listOf(this),
+    )
+  }
 
-    /** Returns the widest [Candle]. */
-    @Deprecated("Override `getWidestCandle(key, extraStore)`.")
-    public fun getWidestCandle(extraStore: ExtraStore): Candle = throw NotImplementedError()
-
-    /** Returns the widest [Candle]. */
-    @Suppress("DEPRECATION")
-    public fun getWidestCandle(key: Any, extraStore: ExtraStore): Candle =
-      getWidestCandle(extraStore)
+  /**
+   * Provides [Candle]s to [CandlestickCartesianLayer]s. Implementations must be pure functions of
+   * their arguments and of the values they capture; to change the style, pass a new
+   * [CandleProvider]. The [CandlestickCartesianLayer] determines the widest [Candle] by calling
+   * [getCandle] for every entry once per [CandlestickCartesianLayerModel], possibly off the main
+   * thread.
+   *
+   * In a composable function, a lambda converted to [CandleProvider] is memoized while the values
+   * it captures are unchanged (compared via `equals` for stable types and by identity otherwise),
+   * so it needs no explicit `remember`.
+   *
+   * It’s asked only about the series and entries in its layer’s model: a series that exits after a
+   * data update keeps the style it had, from the layer it came from.
+   */
+  public fun interface CandleProvider {
+    /** Returns the [Candle] for [entry]. */
+    public fun getCandle(entry: CandlestickCartesianLayerModel.Entry): Candle
 
     /** Provides access to [CandleProvider] factory functions. */
     public companion object {
       internal data class Absolute(val bullish: Candle, val neutral: Candle, val bearish: Candle) :
         CandleProvider {
-        private val candles = listOf(bullish, neutral, bearish)
 
-        override fun getCandle(
-          entry: CandlestickCartesianLayerModel.Entry,
-          key: Any,
-          extraStore: ExtraStore,
-        ) =
+        override fun getCandle(entry: CandlestickCartesianLayerModel.Entry) =
           when (entry.absoluteChange) {
             Change.Bullish -> bullish
             Change.Neutral -> neutral
             Change.Bearish -> bearish
           }
-
-        override fun getWidestCandle(key: Any, extraStore: ExtraStore) = candles.maxBy { it.width }
       }
 
       internal data class AbsoluteRelative(
@@ -427,24 +406,8 @@ protected constructor(
         val absolutelyBearishRelativelyNeutral: Candle,
         val absolutelyBearishRelativelyBearish: Candle,
       ) : CandleProvider {
-        private val candles =
-          listOf(
-            absolutelyBullishRelativelyBullish,
-            absolutelyBullishRelativelyNeutral,
-            absolutelyBullishRelativelyBearish,
-            absolutelyNeutralRelativelyBullish,
-            absolutelyNeutralRelativelyNeutral,
-            absolutelyNeutralRelativelyBearish,
-            absolutelyBearishRelativelyBullish,
-            absolutelyBearishRelativelyNeutral,
-            absolutelyBearishRelativelyBearish,
-          )
 
-        override fun getCandle(
-          entry: CandlestickCartesianLayerModel.Entry,
-          key: Any,
-          extraStore: ExtraStore,
-        ) =
+        override fun getCandle(entry: CandlestickCartesianLayerModel.Entry) =
           when (entry.absoluteChange) {
             Change.Bullish ->
               when (entry.relativeChange) {
@@ -465,39 +428,10 @@ protected constructor(
                 Change.Bearish -> absolutelyBearishRelativelyBearish
               }
           }
-
-        override fun getWidestCandle(key: Any, extraStore: ExtraStore) = candles.maxBy { it.width }
       }
     }
   }
 }
-
-private fun CandlestickCartesianLayer.CandleProvider.getCandleOrThrow(
-  entry: CandlestickCartesianLayerModel.Entry,
-  key: Any,
-  extraStore: ExtraStore,
-): CandlestickCartesianLayer.Candle =
-  try {
-    getCandle(entry, key, extraStore)
-  } catch (e: NotImplementedError) {
-    throw IllegalStateException(
-      "`CandleProvider` must implement `getCandle(entry, key, extraStore)` or the deprecated `getCandle(entry, extraStore)`.",
-      e,
-    )
-  }
-
-private fun CandlestickCartesianLayer.CandleProvider.getWidestCandleOrThrow(
-  key: Any,
-  extraStore: ExtraStore,
-): CandlestickCartesianLayer.Candle =
-  try {
-    getWidestCandle(key, extraStore)
-  } catch (e: NotImplementedError) {
-    throw IllegalStateException(
-      "`CandleProvider` must implement `getWidestCandle(key, extraStore)` or the deprecated `getWidestCandle(extraStore)`.",
-      e,
-    )
-  }
 
 internal fun LineComponent.asWick(): LineComponent =
   copy(
@@ -507,27 +441,28 @@ internal fun LineComponent.asWick(): LineComponent =
     strokeThickness = 0.dp,
   )
 
-/** Creates and remembers a [CandlestickCartesianLayer]. */
+/**
+ * Creates and remembers a [CandlestickCartesianLayer] that displays [model]. A new
+ * [CandlestickCartesianLayer] is created whenever an argument changes. Its
+ * [AnimatedCartesianLayer.key] is tied to the composition slot, so data updates are animated.
+ */
 @Composable
 public fun rememberCandlestickCartesianLayer(
+  model: CandlestickCartesianLayerModel,
   candleProvider: CandlestickCartesianLayer.CandleProvider =
     CandlestickCartesianLayer.CandleProvider.absolute(),
   minCandleBodyHeight: Dp = Defaults.MIN_CANDLE_BODY_HEIGHT_DP.dp,
   candleSpacing: Dp = Defaults.CANDLE_SPACING_DP.dp,
   scaleCandleWicks: Boolean = false,
-  rangeProvider: CartesianLayerRangeProvider = remember { CartesianLayerRangeProvider.auto() },
+  rangeProvider: CartesianLayerRangeProvider = CartesianLayerRangeProvider.auto(),
   verticalAxisPosition: Axis.Position.Vertical? = null,
   drawingModelInterpolator:
-    CartesianLayerDrawingModelInterpolator<
-      CandlestickCartesianLayerDrawingModel.Entry,
-      CandlestickCartesianLayerDrawingModel,
-    > =
+    CartesianLayerDrawingModelInterpolator<CandlestickCartesianLayerDrawingModel> =
     CartesianLayerDrawingModelInterpolator.candlestick(),
 ): CandlestickCartesianLayer {
-  var candlestickCartesianLayerWrapper by remember {
-    ValueWrapper<CandlestickCartesianLayer?>(null)
-  }
+  val key = rememberCartesianLayerKey()
   return remember(
+    model,
     candleProvider,
     minCandleBodyHeight,
     candleSpacing,
@@ -536,26 +471,16 @@ public fun rememberCandlestickCartesianLayer(
     verticalAxisPosition,
     drawingModelInterpolator,
   ) {
-    val candlestickCartesianLayer =
-      candlestickCartesianLayerWrapper?.copy(
-        candleProvider,
-        minCandleBodyHeight,
-        candleSpacing,
-        scaleCandleWicks,
-        rangeProvider,
-        verticalAxisPosition,
-        drawingModelInterpolator,
-      )
-        ?: CandlestickCartesianLayer(
-          candleProvider,
-          minCandleBodyHeight,
-          candleSpacing,
-          scaleCandleWicks,
-          rangeProvider,
-          verticalAxisPosition,
-          drawingModelInterpolator,
-        )
-    candlestickCartesianLayerWrapper = candlestickCartesianLayer
-    candlestickCartesianLayer
+    CandlestickCartesianLayer(
+      model,
+      candleProvider,
+      minCandleBodyHeight,
+      candleSpacing,
+      scaleCandleWicks,
+      rangeProvider,
+      verticalAxisPosition,
+      drawingModelInterpolator,
+      key,
+    )
   }
 }

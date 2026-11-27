@@ -17,57 +17,36 @@
 package com.patrykandpatrick.vico.sample.charts
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.compose.cartesian.axis.VerticalAxis
-import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModelProducer
-import com.patrykandpatrick.vico.compose.cartesian.data.columnModel
+import com.patrykandpatrick.vico.compose.cartesian.data.ColumnCartesianLayerModel
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 
 @Composable
-private fun ComposeBasicColumnChart(
-  modelProducer: CartesianChartModelProducer,
-  modifier: Modifier = Modifier,
-) {
-  CartesianChartHost(
-    chart =
-      rememberCartesianChart(
-        rememberColumnCartesianLayer(),
-        startAxis = VerticalAxis.rememberStart(),
-        bottomAxis = HorizontalAxis.rememberBottom(),
-      ),
-    modelProducer = modelProducer,
-    modifier = modifier,
-  )
-}
-
-@Composable
 fun ComposeBasicColumnChart(modifier: Modifier = Modifier) {
-  val modelProducer = remember { CartesianChartModelProducer() }
-  LaunchedEffect(Unit) {
-    modelProducer.runTransaction {
-      // Learn more: https://patrykandpatrick.com/3aqy4o.
-      columnModel { series(5, 6, 5, 2, 11, 8, 5, 2, 15, 11, 8, 13, 12, 10, 2, 7) }
+  val model = remember {
+    // Learn more: https://patrykandpatrick.com/3aqy4o.
+    ColumnCartesianLayerModel.build {
+      series(5, 6, 5, 2, 11, 8, 5, 2, 15, 11, 8, 13, 12, 10, 2, 7)
     }
   }
-  ComposeBasicColumnChart(modelProducer, modifier)
+  CartesianChartHost(
+    rememberCartesianChart(
+      rememberColumnCartesianLayer(model),
+      startAxis = VerticalAxis.rememberStart(),
+      bottomAxis = HorizontalAxis.rememberBottom(),
+    ),
+    modifier,
+  )
 }
 
 @Composable
 @Preview
 fun ComposeBasicColumnChartPreview() {
-  val modelProducer = remember { CartesianChartModelProducer() }
-  // Use `runBlocking` only for previews, which don’t support asynchronous execution.
-  runBlocking?.invoke {
-    modelProducer.runTransaction {
-      // Learn more: https://patrykandpatrick.com/3aqy4o.
-      columnModel { series(5, 6, 5, 2, 11, 8, 5, 2, 15, 11, 8, 13, 12, 10, 2, 7) }
-    }
-  }
-  PreviewBox { ComposeBasicColumnChart(modelProducer) }
+  PreviewBox { ComposeBasicColumnChart() }
 }

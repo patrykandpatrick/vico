@@ -21,22 +21,26 @@ import com.patrykandpatrick.vico.compose.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianLayerModel
 import com.patrykandpatrick.vico.compose.common.inClip
 
-/** A base [CartesianLayer] implementation. */
-public abstract class BaseCartesianLayer<T : CartesianLayerModel> : CartesianLayer<T> {
+/**
+ * A base [CartesianLayer] implementation. It clips the drawing area to the [CartesianLayer] area
+ * and its margins (as defined by [updateLayerMargins]) and delegates the drawing to [drawInternal].
+ */
+public abstract class BaseCartesianLayer<M : CartesianLayerModel> : CartesianLayer<M> {
   private val margins: CartesianLayerMargins = CartesianLayerMargins()
 
-  protected abstract fun drawInternal(context: CartesianDrawingContext, model: T)
+  /** Draws the [CartesianLayer]’s content. */
+  protected abstract fun drawInternal(context: CartesianDrawingContext)
 
-  override fun draw(context: CartesianDrawingContext, model: T) {
+  override fun draw(context: CartesianDrawingContext) {
     with(context) {
       margins.clear()
-      updateLayerMargins(this, margins, layerDimensions, model)
+      updateLayerMargins(this, margins, layerDimensions)
       val left = layerBounds.left - margins.getLeft(isLtr)
       val top = layerBounds.top - margins.top
       val right = layerBounds.right + margins.getRight(isLtr)
       val bottom = layerBounds.bottom + margins.bottom
       mutableDrawScope.clipRect(left, top, right, bottom) {
-        canvas.inClip(left, top, right, bottom) { drawInternal(context, model) }
+        canvas.inClip(left, top, right, bottom) { drawInternal(context) }
       }
     }
   }

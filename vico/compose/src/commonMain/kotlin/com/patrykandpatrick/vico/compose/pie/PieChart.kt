@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:OptIn(kotlin.uuid.ExperimentalUuidApi::class)
-
 package com.patrykandpatrick.vico.compose.pie
 
 import androidx.compose.runtime.Composable
@@ -38,9 +36,7 @@ import com.patrykandpatrick.vico.compose.common.Fill
 import com.patrykandpatrick.vico.compose.common.Legend
 import com.patrykandpatrick.vico.compose.common.MeasuringContext
 import com.patrykandpatrick.vico.compose.common.Position
-import com.patrykandpatrick.vico.compose.common.ValueWrapper
 import com.patrykandpatrick.vico.compose.common.component.TextComponent
-import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 import com.patrykandpatrick.vico.compose.common.getRepeating
 import com.patrykandpatrick.vico.compose.common.half
 import com.patrykandpatrick.vico.compose.common.orZero
@@ -53,20 +49,24 @@ import kotlin.math.asin
 import kotlin.math.cos
 import kotlin.math.max
 import kotlin.math.sin
-import kotlin.uuid.Uuid
 
-/** A Compose Multiplatform pie chart. */
+/**
+ * A Compose Multiplatform pie chart, which displays a [PieChartModel]. Use [rememberPieChart] to
+ * create [PieChart]s.
+ *
+ * A [PieChart] is opaque: its configuration is set via [rememberPieChart] and read only by the
+ * library. It holds draw-time state, so display an instance in at most one host at a time.
+ */
 @Stable
 public class PieChart
 internal constructor(
-  public val sliceProvider: SliceProvider,
-  public val spacing: Dp,
-  public val outerSize: PieSize.Outer,
-  public val innerSize: PieSize.Inner,
+  internal val model: PieChartModel,
+  internal val sliceProvider: SliceProvider,
+  internal val spacing: Dp,
+  internal val outerSize: PieSize.Outer,
+  internal val innerSize: PieSize.Inner,
   internal val valueFormatter: PieValueFormatter,
   internal val legend: Legend<PieChartMeasuringContext, PieChartDrawingContext>?,
-  internal val drawingModelInterpolator: PieChartDrawingModelInterpolator,
-  internal val id: Uuid = Uuid.random(),
 ) : Bounded {
   override var bounds: Rect = Rect.Zero
 
@@ -79,22 +79,60 @@ internal constructor(
   internal fun getLegendHeight(context: PieChartMeasuringContext): Float =
     legend?.getHeight(context, context.canvasWidth).orZero
 
+  /**
+   * A slice to draw: a [PieChartDrawingModel.SliceInfo] with the entry, index, and style it
+   * represents. Current slices are styled via [sliceProvider]; exiting slices, which are no longer
+   * in the model, keep the entry and style they had.
+   */
+  private class ResolvedSlice(
+    val info: PieChartDrawingModel.SliceInfo,
+    val entry: PieChartModel.Entry,
+    val index: Int,
+    val slice: Slice,
+  )
+
+  private fun resolve(drawingModel: PieChartDrawingModel): List<ResolvedSlice> {
+    val entries = model.entries.withIndex().associateBy { it.value.key }
+    return drawingModel.slices.mapNotNull { info ->
+      val current = entries[info.key]
+      if (current != null) {
+        ResolvedSlice(
+          info,
+          current.value,
+          current.index,
+          sliceProvider.getSlice(current.value, current.index),
+        )
+      } else {
+        val entry = info.entry ?: return@mapNotNull null
+        val slice = info.slice ?: return@mapNotNull null
+        ResolvedSlice(info, entry, info.index, slice)
+      }
+    }
+  }
+
   internal fun draw(
     context: PieChartDrawingContext,
     drawingModel: PieChartDrawingModel,
     startAngle: Float = -90f,
     fitLabelsInBounds: Boolean = true,
   ) {
+    val slices = resolve(drawingModel)
     val circleBounds =
       if (fitLabelsInBounds) {
-        getCircleBounds(context, drawingModel, startAngle)
+        getCircleBounds(context, slices, startAngle)
       } else {
-        getCircleBounds(context, bounds)
+        getCircleBounds(context, bounds, slices)
       }
     val outerRadius = circleBounds.width / 2f
     val holeRadius = innerSize.getRadius(context, circleBounds.width, circleBounds.height)
     require(outerRadius > holeRadius) { "The outer size must be greater than the inner size." }
-    gestureGeometry = PieGestureGeometry(circleBounds.center, outerRadius, holeRadius)
+    // Exiting slices don’t count for rotation gestures: an empty model has no gesture geometry.
+    gestureGeometry =
+      if (model.entries.isEmpty()) {
+        PieGestureGeometry.Zero
+      } else {
+        PieGestureGeometry(circleBounds.center, outerRadius, holeRadius)
+      }
     val spacingPx = with(context) { spacing.pixels }
     val donut = holeRadius > 0f
     val outerTrim =
@@ -102,10 +140,12 @@ internal constructor(
     val innerTrim = if (donut && spacingPx > 0f) asinDegrees((spacingPx / 2f) / holeRadius) else 0f
     val spacingDegrees = if (outerRadius > 0f) spacingToDegrees(context, outerRadius) else 0f
     var currentAngle = startAngle
-    context.model.entries.forEachIndexed { index, entry ->
-      val sliceInfo = drawingModel.slices.getOrNull(index)
-      val degrees = sliceInfo?.degrees ?: (entry.value / context.model.sum * 360f)
-      val slice = sliceProvider.getSlice(entry, index, context.model.extraStore)
+    slices.forEach { resolved ->
+      val sliceInfo = resolved.info
+      val entry = resolved.entry
+      val index = resolved.index
+      val degrees = sliceInfo.degrees
+      val slice = resolved.slice
       val centerAngle = currentAngle + degrees / 2f
       val offset = slice.getOffset(context, centerAngle)
       val correctedBounds = circleBounds.translate(offset)
@@ -143,7 +183,7 @@ internal constructor(
       }
 
       if (drawn) {
-        slice.draw(context, slice.path, correctedBounds, sliceInfo?.sliceOpacity ?: 1f)
+        slice.draw(context, slice.path, correctedBounds, sliceInfo.sliceOpacity)
         slice.label?.draw(
           context = context,
           chartBounds = bounds,
@@ -153,7 +193,7 @@ internal constructor(
           sweepAngle = sweepAngle,
           label = valueFormatter.format(context, entry.value, index),
           slicePath = slice.path,
-          opacity = sliceInfo?.labelOpacity ?: 1f,
+          opacity = sliceInfo.labelOpacity,
         )
       }
       currentAngle += degrees
@@ -182,20 +222,11 @@ internal constructor(
 
   private fun getCircleBounds(
     context: PieChartDrawingContext,
-    drawingModel: PieChartDrawingModel,
+    slices: List<ResolvedSlice>,
     startAngle: Float,
   ): Rect {
     val baseRadius = outerSize.getRadius(context, bounds.width, bounds.height)
-    val entries = context.model.entries
-    val maxOffset =
-      entries.indices.maxOfOrNull { index ->
-        with(context) {
-          sliceProvider
-            .getSlice(entries[index], index, context.model.extraStore)
-            .offsetFromCenter
-            .pixels
-        }
-      } ?: 0f
+    val maxOffset = slices.maxOfOrNull { with(context) { it.slice.offsetFromCenter.pixels } } ?: 0f
     val provisionalBounds =
       Rect(
         left = bounds.center.x - baseRadius,
@@ -205,10 +236,9 @@ internal constructor(
       )
     var insets = PieInsets()
     var currentAngle = startAngle
-    entries.forEachIndexed { index, entry ->
-      val sliceInfo = drawingModel.slices.getOrNull(index)
-      val degrees = sliceInfo?.degrees ?: (entry.value / context.model.sum * 360f)
-      val sliceLabel = sliceProvider.getSlice(entry, index, context.model.extraStore).label
+    slices.forEach { resolved ->
+      val degrees = resolved.info.degrees
+      val sliceLabel = resolved.slice.label
       if (sliceLabel != null) {
         insets =
           insets.plus(
@@ -217,7 +247,7 @@ internal constructor(
               chartBounds = bounds,
               circleBounds = provisionalBounds,
               angle = currentAngle + degrees / 2f,
-              label = valueFormatter.format(context, entry.value, index),
+              label = valueFormatter.format(context, resolved.entry.value, resolved.index),
             )
           )
       }
@@ -232,15 +262,26 @@ internal constructor(
     )
   }
 
-  internal fun getLabelInsets(context: PieChartMeasuringContext, chartBounds: Rect): PieInsets {
-    val circleBounds = getCircleBounds(context, chartBounds)
+  /**
+   * Returns the room needed for outside labels: for each slice in [drawingModel] (including
+   * entering and exiting ones), its label’s worst-case vertical room (as if it sat at the very top
+   * and the very bottom), at full size. This doesn’t depend on the slices’ angles or the animation
+   * progress, so it changes only when slices are added to or dropped from the drawing model.
+   */
+  internal fun getLabelInsets(
+    context: PieChartMeasuringContext,
+    chartBounds: Rect,
+    drawingModel: PieChartDrawingModel,
+  ): PieInsets {
+    val slices = resolve(drawingModel)
+    val circleBounds = getCircleBounds(context, chartBounds, slices)
     var insets = PieInsets()
     val topAngle = -90f
     val bottomAngle = 90f
-    context.model.entries.forEachIndexed { index, entry ->
-      val slice = sliceProvider.getSlice(entry, index, context.model.extraStore)
-      val sliceLabel = slice.label as? SliceLabel.Outside ?: return@forEachIndexed
-      val label = valueFormatter.format(context, entry.value, index)
+    slices.forEach { resolved ->
+      val slice = resolved.slice
+      val sliceLabel = slice.label as? SliceLabel.Outside ?: return@forEach
+      val label = valueFormatter.format(context, resolved.entry.value, resolved.index)
       val top =
         sliceLabel.getInsets(
           context = context,
@@ -262,16 +303,12 @@ internal constructor(
     return insets
   }
 
-  private fun getCircleBounds(context: PieChartMeasuringContext, availableBounds: Rect): Rect {
-    val maxOffset =
-      context.model.entries.indices.maxOfOrNull { index ->
-        with(context) {
-          sliceProvider
-            .getSlice(context.model.entries[index], index, context.model.extraStore)
-            .offsetFromCenter
-            .pixels
-        }
-      } ?: 0f
+  private fun getCircleBounds(
+    context: PieChartMeasuringContext,
+    availableBounds: Rect,
+    slices: List<ResolvedSlice>,
+  ): Rect {
+    val maxOffset = slices.maxOfOrNull { with(context) { it.slice.offsetFromCenter.pixels } } ?: 0f
     val radius =
       max(
         0f,
@@ -367,6 +404,31 @@ internal constructor(
       offsetFromCenter: Dp = this.offsetFromCenter,
       label: SliceLabel? = this.label,
     ): Slice = Slice(fill, strokeFill, strokeThickness, offsetFromCenter, label)
+
+    /**
+     * Compares the configuration. This applies to [Slice] itself; instances of subclasses compare
+     * by identity unless the subclass overrides `equals` and `hashCode`.
+     */
+    override fun equals(other: Any?): Boolean =
+      this === other ||
+        this::class == Slice::class &&
+          other is Slice &&
+          other::class == Slice::class &&
+          fill == other.fill &&
+          strokeFill == other.strokeFill &&
+          strokeThickness == other.strokeThickness &&
+          offsetFromCenter == other.offsetFromCenter &&
+          label == other.label
+
+    override fun hashCode(): Int {
+      if (this::class != Slice::class) return super.hashCode()
+      var result = fill.hashCode()
+      result = 31 * result + strokeFill.hashCode()
+      result = 31 * result + strokeThickness.hashCode()
+      result = 31 * result + offsetFromCenter.hashCode()
+      result = 31 * result + label.hashCode()
+      return result
+    }
   }
 
   /** Defines how a pie-slice label is measured and drawn. */
@@ -395,6 +457,11 @@ internal constructor(
     /** Draws the label inside the slice. */
     @Immutable
     public class Inside(public val textComponent: TextComponent = TextComponent()) : SliceLabel() {
+      override fun equals(other: Any?): Boolean =
+        this === other || other is Inside && textComponent == other.textComponent
+
+      override fun hashCode(): Int = textComponent.hashCode()
+
       override fun getInsets(
         context: MeasuringContext,
         chartBounds: Rect,
@@ -455,6 +522,26 @@ internal constructor(
     ) : SliceLabel() {
       init {
         require(maxWidthToBoundsRatio < 1f) { "`maxWidthToBoundsRatio` must be below 1." }
+      }
+
+      override fun equals(other: Any?): Boolean =
+        this === other ||
+          other is Outside &&
+            textComponent == other.textComponent &&
+            lineColor == other.lineColor &&
+            lineWidth == other.lineWidth &&
+            angledSegmentLength == other.angledSegmentLength &&
+            horizontalSegmentLength == other.horizontalSegmentLength &&
+            maxWidthToBoundsRatio == other.maxWidthToBoundsRatio
+
+      override fun hashCode(): Int {
+        var result = textComponent.hashCode()
+        result = 31 * result + lineColor.hashCode()
+        result = 31 * result + lineWidth.hashCode()
+        result = 31 * result + angledSegmentLength.hashCode()
+        result = 31 * result + horizontalSegmentLength.hashCode()
+        result = 31 * result + maxWidthToBoundsRatio.hashCode()
+        return result
       }
 
       override fun getInsets(
@@ -549,11 +636,22 @@ internal constructor(
     }
   }
 
+  /**
+   * Provides [Slice]s to [PieChart]s. Implementations must be pure functions of their arguments and
+   * of the values they capture; to change the style, pass a new [SliceProvider].
+   *
+   * It’s called on the main thread, while measuring and drawing. In a composable function, a lambda
+   * converted to [SliceProvider] is memoized while the values it captures are unchanged (compared
+   * via `equals` for stable types and by identity otherwise), so it needs no explicit `remember`.
+   */
   @Immutable
-  /** Provides [Slice]s to [PieChart]s. */
   public fun interface SliceProvider {
-    /** Returns the [Slice] for the specified entry and slice index. */
-    public fun getSlice(entry: PieChartModel.Entry, index: Int, extraStore: ExtraStore): Slice
+    /**
+     * Returns the [Slice] for the specified entry and slice index. To style slices by identity
+     * rather than position, use [PieChartModel.Entry.key]. This is asked only about the model’s
+     * current entries: exiting slices keep the [Slice] they had.
+     */
+    public fun getSlice(entry: PieChartModel.Entry, index: Int): Slice
 
     public companion object {
       private data class Series(private val slices: List<Slice>) : SliceProvider {
@@ -561,11 +659,8 @@ internal constructor(
           require(slices.isNotEmpty()) { "At least one slice should be added." }
         }
 
-        override fun getSlice(
-          entry: PieChartModel.Entry,
-          index: Int,
-          extraStore: ExtraStore,
-        ): Slice = slices.getRepeating(index)
+        override fun getSlice(entry: PieChartModel.Entry, index: Int): Slice =
+          slices.getRepeating(index)
       }
 
       /**
@@ -582,25 +677,6 @@ internal constructor(
       public fun series(vararg slices: Slice): SliceProvider = series(slices.toList())
     }
   }
-
-  public fun copy(
-    sliceProvider: SliceProvider = this.sliceProvider,
-    spacing: Dp = this.spacing,
-    outerSize: PieSize.Outer = this.outerSize,
-    innerSize: PieSize.Inner = this.innerSize,
-    valueFormatter: PieValueFormatter = this.valueFormatter,
-    legend: Legend<PieChartMeasuringContext, PieChartDrawingContext>? = this.legend,
-  ): PieChart =
-    PieChart(
-      sliceProvider,
-      spacing,
-      outerSize,
-      innerSize,
-      valueFormatter,
-      legend,
-      drawingModelInterpolator,
-      id,
-    )
 }
 
 internal data class PieInsets(
@@ -721,47 +797,25 @@ internal fun getInsideLabelMaxWidth(
   return sweepWidth.toInt().coerceAtLeast(0)
 }
 
-/** Creates and remembers a [PieChart]. */
+/**
+ * Creates and remembers a [PieChart] that displays [model]. A new [PieChart] is created whenever an
+ * argument changes—e.g., because of a data update—and the [PieChartHost] applies it.
+ */
 @Composable
 public fun rememberPieChart(
+  model: PieChartModel,
   sliceProvider: PieChart.SliceProvider =
-    PieChart.SliceProvider.series(
-      vicoTheme.pieChartColors.map { color -> PieChart.Slice(fill = Fill(color)) }
-    ),
+    vicoTheme.pieChartColors.let { colors ->
+      remember(colors) {
+        PieChart.SliceProvider.series(colors.map { color -> PieChart.Slice(fill = Fill(color)) })
+      }
+    },
   spacing: Dp = 0.dp,
   outerSize: PieSize.Outer = PieSize.Outer.Fill,
   innerSize: PieSize.Inner = PieSize.Inner.Zero,
   valueFormatter: PieValueFormatter = PieValueFormatter.Value,
   legend: Legend<PieChartMeasuringContext, PieChartDrawingContext>? = null,
-): PieChart {
-  val wrapper = remember { ValueWrapper<PieChart?>(null) }
-  return remember(
-    sliceProvider,
-    spacing,
-    outerSize,
-    innerSize,
-    valueFormatter,
-    legend,
-  ) {
-    val pieChart =
-      wrapper.value?.copy(
-        sliceProvider = sliceProvider,
-        spacing = spacing,
-        outerSize = outerSize,
-        innerSize = innerSize,
-        valueFormatter = valueFormatter,
-        legend = legend,
-      )
-        ?: PieChart(
-          sliceProvider,
-          spacing,
-          outerSize,
-          innerSize,
-          valueFormatter,
-          legend,
-          defaultPieChartDrawingModelInterpolator(),
-        )
-    wrapper.value = pieChart
-    pieChart
+): PieChart =
+  remember(model, sliceProvider, spacing, outerSize, innerSize, valueFormatter, legend) {
+    PieChart(model, sliceProvider, spacing, outerSize, innerSize, valueFormatter, legend)
   }
-}

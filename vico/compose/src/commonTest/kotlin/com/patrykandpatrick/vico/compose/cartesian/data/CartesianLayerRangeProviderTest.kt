@@ -16,13 +16,10 @@
 
 package com.patrykandpatrick.vico.compose.cartesian.data
 
-import com.patrykandpatrick.vico.compose.common.data.MutableExtraStore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class CartesianLayerRangeProviderTest {
-
-  private val extraStore = MutableExtraStore()
 
   @Test
   fun intrinsicRangeProviderKeepsPositiveMinAndMaxY() {
@@ -31,7 +28,7 @@ class CartesianLayerRangeProviderTest {
 
     val provider = CartesianLayerRangeProvider.Intrinsic
 
-    assertEquals(minY, provider.getMinY(minY, maxY, extraStore))
-    assertEquals(maxY, provider.getMaxY(minY, maxY, extraStore))
+    assertEquals(minY, provider.getMinY(minY, maxY))
+    assertEquals(maxY, provider.getMaxY(minY, maxY))
   }
 }

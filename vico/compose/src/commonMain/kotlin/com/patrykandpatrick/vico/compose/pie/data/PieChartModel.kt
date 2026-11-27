@@ -17,90 +17,74 @@
 package com.patrykandpatrick.vico.compose.pie.data
 
 import androidx.compose.runtime.Immutable
-import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 import com.patrykandpatrick.vico.compose.pie.PieChart
 
-/** Stores a [PieChart]'s data. */
+/**
+ * Stores a [PieChart]’s data. [PieChartModel]s are immutable values and can be created anywhere,
+ * including off the main thread. Use [build] to create instances.
+ *
+ * Each [Entry] has a [key][Entry.key], which identifies its slice across data updates: a slice
+ * whose key disappears animates out, one whose key appears animates in, and the others animate to
+ * their new angles. By default, the keys are the entries’ indices, so slices are matched by
+ * position; pass a map to [build] to match them by key instead.
+ */
 @Immutable
-public class PieChartModel
-internal constructor(public val entries: List<Entry>, public val extraStore: ExtraStore) {
-  internal val id: Int = 31 * entries.hashCode() + extraStore.hashCode()
+public class PieChartModel internal constructor(entries: List<Entry>) {
+  /** The entries. */
+  public val entries: List<Entry> = entries.toList()
+
+  private val hashCode: Int = this.entries.hashCode()
 
   /** The sum of all [Entry.value]s. */
   public val sum: Float = entries.sumOf { it.value.toDouble() }.toFloat()
 
-  /** Creates an immutable copy of this [PieChartModel] with [extraStore]. */
-  public fun copy(extraStore: ExtraStore): PieChartModel = PieChartModel(entries, extraStore)
+  init {
+    val keys = HashSet<Any>()
+    this.entries.forEach { entry ->
+      require(keys.add(entry.key)) { "Pie entry keys must be unique, but `${entry.key}` repeats." }
+    }
+  }
 
   override fun equals(other: Any?): Boolean =
     this === other ||
-      other is PieChartModel && entries == other.entries && extraStore == other.extraStore
+      other is PieChartModel && hashCode == other.hashCode && entries == other.entries
 
-  override fun hashCode(): Int = id
+  override fun hashCode(): Int = hashCode
 
-  override fun toString(): String = "PieChartModel(entries=$entries, extraStore=$extraStore)"
+  override fun toString(): String = "PieChartModel(entries=$entries)"
 
-  /** Represents a single pie entry. */
+  /**
+   * Represents a single pie entry with the given [value]. [key] identifies the entry’s slice across
+   * data updates (see [PieChartModel]); by default, it’s the entry’s index.
+   */
   @Immutable
-  public class Entry(public val value: Float) {
+  public class Entry internal constructor(public val value: Float, public val key: Any) {
     init {
       require(value >= 0f) { "Pie entry values must be nonnegative." }
     }
 
     override fun equals(other: Any?): Boolean =
-      this === other || other is Entry && value == other.value
+      this === other || other is Entry && value == other.value && key == other.key
 
-    override fun hashCode(): Int = value.hashCode()
+    override fun hashCode(): Int = 31 * value.hashCode() + key.hashCode()
 
-    override fun toString(): String = "Entry(value=$value)"
-  }
-
-  /** Stores the minimum amount of data required to create a [PieChartModel]. */
-  @Immutable
-  public class Partial internal constructor(private val entries: List<Entry>) {
-    /** Creates a [PieChartModel]. */
-    public fun complete(extraStore: ExtraStore): PieChartModel = PieChartModel(entries, extraStore)
-
-    override fun equals(other: Any?): Boolean =
-      this === other || other is Partial && entries == other.entries
-
-    override fun hashCode(): Int = entries.hashCode()
-  }
-
-  /** Builds [PieChartModel.Partial] instances. */
-  public class Builder internal constructor() {
-    private var entries: List<Entry> = emptyList()
-
-    /** Sets the entries from [values]. */
-    public fun series(vararg values: Number) {
-      series(values.asList())
-    }
-
-    /** Sets the entries from [values]. */
-    public fun series(values: Iterable<Number>) {
-      entries = values.map { Entry(it.toFloat()) }
-    }
-
-    internal fun build(): Partial = Partial(entries)
+    override fun toString(): String = "Entry(value=$value, key=$key)"
   }
 
   public companion object {
-    /** Creates a [PieChartModel]. */
-    public fun build(vararg values: Number): PieChartModel =
-      PieChartModel(values.map { Entry(it.toFloat()) }, ExtraStore.Empty)
+    /** Creates a [PieChartModel] with one [Entry] per value, keyed by index. */
+    public fun build(vararg values: Number): PieChartModel = build(values.asList())
 
-    /** Creates a [Partial]. */
-    public fun partial(vararg values: Number): Partial = Partial(values.map { Entry(it.toFloat()) })
+    /** Creates a [PieChartModel] with one [Entry] per value, keyed by index. */
+    public fun build(values: Iterable<Number>): PieChartModel =
+      PieChartModel(values.mapIndexed { index, value -> Entry(value.toFloat(), index) })
+
+    /**
+     * Creates a [PieChartModel] with one [Entry] per map entry, in the map’s iteration order (e.g.,
+     * the order passed to `mapOf`). The map keys become the [Entry.key]s, so slices are matched by
+     * key across data updates.
+     */
+    public fun build(values: Map<out Any, Number>): PieChartModel =
+      PieChartModel(values.map { (key, value) -> Entry(value.toFloat(), key) })
   }
-}
-
-/** Sets pie data in a [PieChartModelProducer.Transaction]. */
-public fun PieChartModelProducer.Transaction.pieModel(block: PieChartModel.Builder.() -> Unit) {
-  set(PieChartModel.Builder().apply(block).build())
-}
-
-/** Sets pie data in a [PieChartModelProducer.Transaction]. */
-@Deprecated("Use `pieModel`.", ReplaceWith("pieModel(block)"))
-public fun PieChartModelProducer.Transaction.pieSeries(block: PieChartModel.Builder.() -> Unit) {
-  pieModel(block)
 }

@@ -405,7 +405,14 @@ public open class TextComponent(
     return result
   }
 
-  /** Defines a [TextComponent]’s minimum width. */
+  /**
+   * Defines a [TextComponent]’s minimum width.
+   *
+   * Implementations must be pure functions of their arguments and of the values they capture. It’s
+   * called on the main thread, while measuring and drawing. In a composable function, a lambda
+   * converted to [MinWidth] is memoized while the values it captures are unchanged (compared via
+   * `equals` for stable types and by identity otherwise), so it needs no explicit `remember`.
+   */
   @Immutable
   public fun interface MinWidth {
     /** Returns the minimum width. */

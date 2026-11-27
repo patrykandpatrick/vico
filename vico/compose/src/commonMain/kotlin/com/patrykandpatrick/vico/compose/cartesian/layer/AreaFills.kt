@@ -25,12 +25,10 @@ import com.patrykandpatrick.vico.compose.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.compose.cartesian.ColorScale
 import com.patrykandpatrick.vico.compose.cartesian.axis.Axis
 import com.patrykandpatrick.vico.compose.common.Fill
-import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 import com.patrykandpatrick.vico.compose.common.getEnd
 import com.patrykandpatrick.vico.compose.common.getStart
 
-internal abstract class BaseAreaFill(open val splitY: (ExtraStore) -> Number) :
-  LineCartesianLayer.AreaFill {
+internal abstract class BaseAreaFill(open val splitY: Number) : LineCartesianLayer.AreaFill {
   private val areaPath = Path()
   private val translatedPath = Path()
 
@@ -89,7 +87,7 @@ internal abstract class BaseAreaFill(open val splitY: (ExtraStore) -> Number) :
 
 internal data class SingleAreaFill(
   private val fill: Fill,
-  override val splitY: (ExtraStore) -> Number,
+  override val splitY: Number,
 ) : BaseAreaFill(splitY) {
   private val paint = Paint()
 
@@ -103,7 +101,7 @@ internal data class SingleAreaFill(
 internal data class DoubleAreaFill(
   private val topFill: Fill,
   private val bottomFill: Fill,
-  override val splitY: (ExtraStore) -> Number,
+  override val splitY: Number,
 ) : BaseAreaFill(splitY) {
   private val paint = Paint()
 
@@ -124,7 +122,7 @@ internal data class DoubleAreaFill(
   }
 }
 
-internal data class ColorScaleAreaFill(private val colorScale: ColorScale) : BaseAreaFill({ 0 }) {
+internal data class ColorScaleAreaFill(private val colorScale: ColorScale) : BaseAreaFill(0) {
   private val paint = Paint()
 
   override fun CartesianDrawingContext.drawAreas(areaPath: Path, canvasSplitY: Float) {

@@ -17,28 +17,22 @@
 package com.patrykandpatrick.vico.compose.cartesian
 
 import androidx.annotation.RestrictTo
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalFontFamilyResolver
-import androidx.compose.ui.platform.LocalLayoutDirection
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartRanges
+import com.patrykandpatrick.vico.compose.cartesian.layer.AnimatedCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.layer.CartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.layer.CartesianLayerDimensions
 import com.patrykandpatrick.vico.compose.cartesian.layer.CartesianLayerPadding
 import com.patrykandpatrick.vico.compose.common.MeasuringContext
-import com.patrykandpatrick.vico.compose.common.data.CacheStore
-import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 
 /** A [MeasuringContext] extension with [CartesianChart]-specific data. */
 public interface CartesianMeasuringContext : MeasuringContext {
-  /** Stores the [CartesianChart]’s data. */
-  public val model: CartesianChartModel
+  /**
+   * Aggregates the data of the [CartesianChart]’s [CartesianLayer]s. (A [CartesianLayer]’s own data
+   * is [CartesianLayer.model].)
+   */
+  public val chartModel: CartesianChartModel
 
   /** Stores the [CartesianChart]’s _x_ and _y_ ranges. */
   public val ranges: CartesianChartRanges
@@ -57,6 +51,13 @@ public interface CartesianMeasuringContext : MeasuringContext {
 
   public val markerSeriesIndex: Int?
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) get
+
+  /**
+   * Returns the drawing model for [layer]. While drawing, this is the current frame of the
+   * difference animation (which, while series are exiting, may include series absent from [layer]’s
+   * model). Otherwise, it’s the drawing model for [layer]’s data.
+   */
+  public fun <D : Any> getDrawingModel(layer: AnimatedCartesianLayer<*, D>): D
 }
 
 internal fun CartesianMeasuringContext.getFullXRange(layerDimensions: CartesianLayerDimensions) =
@@ -65,56 +66,6 @@ internal fun CartesianMeasuringContext.getFullXRange(layerDimensions: CartesianL
     val end = ranges.maxX + endPadding / xSpacing * ranges.xStep
     start..end
   }
-
-@Composable
-internal fun rememberCartesianMeasuringContext(
-  extraStore: ExtraStore,
-  model: CartesianChartModel,
-  ranges: CartesianChartRanges,
-  scrollEnabled: Boolean,
-  zoomEnabled: Boolean,
-  layerPadding: CartesianLayerPadding,
-  markerX: Double?,
-  markerSeriesIndex: Int?,
-): State<MutableCartesianMeasuringContext> {
-  val fontFamilyResolver = LocalFontFamilyResolver.current
-  val density = LocalDensity.current
-  val layoutDirection = LocalLayoutDirection.current
-  val cacheStore = remember { CacheStore() }
-  val cartesianMeasuringContext =
-    remember(
-      fontFamilyResolver,
-      density,
-      extraStore,
-      layoutDirection,
-      model,
-      ranges,
-      scrollEnabled,
-      zoomEnabled,
-      layerPadding,
-      markerX,
-      markerSeriesIndex,
-      cacheStore,
-    ) {
-      MutableCartesianMeasuringContext(
-        canvasWidth = 0f,
-        canvasSize = Size.Zero,
-        fontFamilyResolver = fontFamilyResolver,
-        density = density,
-        extraStore = extraStore,
-        layoutDirection = layoutDirection,
-        model = model,
-        ranges = ranges,
-        scrollEnabled = scrollEnabled,
-        zoomEnabled = zoomEnabled,
-        layerPadding = layerPadding,
-        markerX = markerX,
-        markerSeriesIndex = markerSeriesIndex,
-        cacheStore = cacheStore,
-      )
-    }
-  return rememberUpdatedState(cartesianMeasuringContext)
-}
 
 internal fun CartesianMeasuringContext.getVisibleXRange(
   layerDimensions: CartesianLayerDimensions,

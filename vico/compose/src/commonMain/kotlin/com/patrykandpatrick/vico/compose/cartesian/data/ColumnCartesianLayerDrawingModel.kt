@@ -17,32 +17,30 @@
 package com.patrykandpatrick.vico.compose.cartesian.data
 
 import com.patrykandpatrick.vico.compose.cartesian.layer.ColumnCartesianLayer
-import com.patrykandpatrick.vico.compose.common.lerp
-import com.patrykandpatrick.vico.compose.common.orZero
 
-/** Houses drawing information for a [ColumnCartesianLayer]. [opacity] is the columns’ opacity. */
-public class ColumnCartesianLayerDrawingModel(
+/**
+ * Houses drawing information for a [ColumnCartesianLayer]. [opacity] is the columns’ opacity. While
+ * a series is exiting, its key is in [seriesKeys] but not in the [ColumnCartesianLayerModel].
+ */
+public class ColumnCartesianLayerDrawingModel
+internal constructor(
   private val entries: List<Map<Double, Entry>>,
   seriesKeys: List<Any>,
-  public val opacity: Float = 1f,
+  public val opacity: Float,
+  override val seriesSources: List<Any?>?,
 ) : CartesianLayerDrawingModel<ColumnCartesianLayerDrawingModel.Entry>(entries, seriesKeys) {
+  /** Creates a [ColumnCartesianLayerDrawingModel]. */
   public constructor(
     entries: List<Map<Double, Entry>>,
+    seriesKeys: List<Any>,
     opacity: Float = 1f,
-  ) : this(entries, entries.indices.toList(), opacity)
+  ) : this(entries, seriesKeys, opacity, null)
 
-  @Deprecated(
-    "Layer-specific `CartesianLayerDrawingModelInterpolator` implementations now own " +
-      "interpolation policy. This hook remains for compatibility with custom interpolators."
-  )
-  override fun transform(
-    entries: List<Map<Double, Entry>>,
-    from: CartesianLayerDrawingModel<Entry>?,
-    fraction: Float,
-  ): CartesianLayerDrawingModel<Entry> {
-    val oldOpacity = (from as ColumnCartesianLayerDrawingModel?)?.opacity.orZero
-    return ColumnCartesianLayerDrawingModel(entries, seriesKeys, oldOpacity.lerp(opacity, fraction))
-  }
+  override val canCarrySeriesSources: Boolean
+    get() = true
+
+  override fun withSeriesSources(seriesSources: List<Any?>): ColumnCartesianLayerDrawingModel =
+    ColumnCartesianLayerDrawingModel(entries, seriesKeys, opacity, seriesSources)
 
   override fun equals(other: Any?): Boolean =
     this === other ||
@@ -60,24 +58,15 @@ public class ColumnCartesianLayerDrawingModel(
 
   /**
    * Houses positional information for a [ColumnCartesianLayer]’s column. [height] expresses the
-   * column’s height as a fraction of the [ColumnCartesianLayer]’s height.
+   * column’s height as a fraction of the [ColumnCartesianLayer]’s height. [entry] is the
+   * [ColumnCartesianLayerModel.Entry] that’s drawn, which lets exiting series be drawn after
+   * they’ve been removed from the model.
    */
-  public class Entry(public val height: Float) : CartesianLayerDrawingModel.Entry {
-    @Deprecated(
-      "Layer-specific `CartesianLayerDrawingModelInterpolator` implementations now own " +
-        "interpolation policy. Entries should only carry drawing information."
-    )
-    override fun transform(
-      from: CartesianLayerDrawingModel.Entry?,
-      fraction: Float,
-    ): CartesianLayerDrawingModel.Entry {
-      val oldHeight = (from as? Entry)?.height.orZero
-      return Entry(oldHeight.lerp(height, fraction))
-    }
-
+  public class Entry(public val height: Float, public val entry: ColumnCartesianLayerModel.Entry) :
+    CartesianLayerDrawingModel.Entry {
     override fun equals(other: Any?): Boolean =
-      this === other || other is Entry && height == other.height
+      this === other || other is Entry && height == other.height && entry == other.entry
 
-    override fun hashCode(): Int = height.hashCode()
+    override fun hashCode(): Int = 31 * height.hashCode() + entry.hashCode()
   }
 }

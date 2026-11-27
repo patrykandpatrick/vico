@@ -33,6 +33,27 @@ public open class LegendItem(
   public open val label: CharSequence,
 ) {
   /**
+   * Compares the configuration. This applies to [LegendItem] itself; instances of subclasses
+   * compare by identity unless the subclass overrides `equals` and `hashCode`.
+   */
+  override fun equals(other: Any?): Boolean =
+    this === other ||
+      this::class == LegendItem::class &&
+        other is LegendItem &&
+        other::class == LegendItem::class &&
+        icon == other.icon &&
+        labelComponent == other.labelComponent &&
+        label == other.label
+
+  override fun hashCode(): Int {
+    if (this::class != LegendItem::class) return super.hashCode()
+    var result = icon.hashCode()
+    result = 31 * result + labelComponent.hashCode()
+    result = 31 * result + label.hashCode()
+    return result
+  }
+
+  /**
    * Measures the height of the label.
    *
    * @param iconSize the [LegendItem.icon] size.

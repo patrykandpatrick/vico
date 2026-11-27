@@ -17,7 +17,10 @@
 package com.patrykandpatrick.vico.compose.cartesian
 
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Canvas
+import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartRanges
+import com.patrykandpatrick.vico.compose.cartesian.layer.AnimatedCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.layer.CartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.layer.CartesianLayerDimensions
 import com.patrykandpatrick.vico.compose.common.DrawingContext
@@ -57,15 +60,24 @@ internal fun CartesianDrawingContext.getVisibleXRange() =
 
 internal fun CartesianDrawingContext(
   measuringContext: CartesianMeasuringContext,
+  canvasSize: Size,
   canvas: Canvas,
   layerDimensions: CartesianLayerDimensions,
   layerBounds: Rect,
   scroll: Float,
   zoom: Float,
   mutableDrawScope: MutableDrawScope,
+  ranges: CartesianChartRanges = measuringContext.ranges,
 ): CartesianDrawingContext =
   object : CartesianDrawingContext, CartesianMeasuringContext by measuringContext {
+    override val canvasSize: Size = canvasSize
+
+    override val ranges: CartesianChartRanges = ranges
+
     override var canvas = canvas
+
+    override fun <D : Any> getDrawingModel(layer: AnimatedCartesianLayer<*, D>): D =
+      measuringContext.getDrawingModel(layer)
 
     override val layerBounds: Rect = layerBounds
 
@@ -84,3 +96,12 @@ internal fun CartesianDrawingContext(
       this.canvas = originalCanvas
     }
   }
+
+internal fun CartesianDrawingContext.withRanges(
+  ranges: CartesianChartRanges
+): CartesianDrawingContext {
+  val original = this
+  return object : CartesianDrawingContext by original {
+    override val ranges: CartesianChartRanges = ranges
+  }
+}

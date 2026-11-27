@@ -20,17 +20,16 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shader
 import com.patrykandpatrick.vico.compose.cartesian.axis.Axis
-import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 
-internal class ColorScale(
-  private val colors: (ExtraStore) -> Map<Number, Color>,
+internal data class ColorScale(
+  private val colors: Map<out Number, Color>,
   private val verticalAxisPosition: Axis.Position.Vertical? = null,
 ) {
 
   fun getColorScaleShader(context: CartesianDrawingContext, translationY: Float = 0f): Shader =
     ColorScaleShader.create(
       context = context,
-      colors = colors(context.extraStore),
+      colors = colors,
       from = Offset(x = 0f, y = context.layerBounds.top - translationY),
       to = Offset(x = 0f, y = context.layerBounds.bottom - translationY),
       verticalAxisPosition = verticalAxisPosition,

@@ -20,15 +20,18 @@ import com.patrykandpatrick.vico.compose.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.compose.cartesian.CartesianMeasuringContext
 import com.patrykandpatrick.vico.compose.common.Position
 import com.patrykandpatrick.vico.compose.common.data.CacheStore
-import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 import com.patrykandpatrick.vico.compose.common.getDivisors
 import com.patrykandpatrick.vico.compose.common.half
 import kotlin.math.*
 
-internal class StepVerticalAxisItemPlacer(
-  private val step: (ExtraStore) -> Double?,
+internal data class StepVerticalAxisItemPlacer(
+  private val step: Double?,
   private val shiftTopLines: Boolean,
 ) : VerticalAxis.ItemPlacer {
+  init {
+    require(step == null || step > 0) { "`step` must be positive." }
+  }
+
   override fun getShiftTopLines(context: CartesianDrawingContext) = shiftTopLines
 
   override fun getLabelValues(
@@ -87,8 +90,7 @@ internal class StepVerticalAxisItemPlacer(
       else -> maxLabelHeight + maxLineThickness.half
     }
 
-  private fun CartesianMeasuringContext.getStepOrThrow() =
-    step(model.extraStore)?.also { require(it > 0) { "`step` must return a positive value." } }
+  @Suppress("UnusedReceiverParameter") private fun CartesianMeasuringContext.getStepOrThrow() = step
 
   private fun getPartialLabelValues(
     context: CartesianMeasuringContext,

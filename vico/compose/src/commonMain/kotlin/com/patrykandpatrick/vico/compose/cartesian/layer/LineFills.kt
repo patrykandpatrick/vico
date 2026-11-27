@@ -23,7 +23,6 @@ import com.patrykandpatrick.vico.compose.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.compose.cartesian.ColorScale
 import com.patrykandpatrick.vico.compose.cartesian.axis.Axis
 import com.patrykandpatrick.vico.compose.common.Fill
-import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 
 internal data class SingleLineFill(val fill: Fill) : LineCartesianLayer.LineFill {
   private val paint = Paint().apply { color = fill.color }
@@ -45,7 +44,7 @@ internal data class SingleLineFill(val fill: Fill) : LineCartesianLayer.LineFill
 internal data class DoubleLineFill(
   val topFill: Fill,
   val bottomFill: Fill,
-  val splitY: (ExtraStore) -> Number,
+  val splitY: Number,
 ) : LineCartesianLayer.LineFill {
   private val paint = Paint()
 

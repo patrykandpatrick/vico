@@ -17,51 +17,43 @@
 package com.patrykandpatrick.vico.compose.cartesian.data
 
 import com.patrykandpatrick.vico.compose.cartesian.layer.CandlestickCartesianLayer
-import com.patrykandpatrick.vico.compose.common.lerp
-import com.patrykandpatrick.vico.compose.common.orZero
 
 /**
- * Houses drawing information for a [CandlestickCartesianLayer]. [modelKey] identifies the source
- * model, and [opacity] is the candles’ opacity.
+ * Houses drawing information for a [CandlestickCartesianLayer]. There’s one series per
+ * [CandlestickCartesianLayerModel], identified by [CandlestickCartesianLayerModel.key]; when the
+ * key changes, the previous series exits while the new one enters. [opacity] is the candles’
+ * opacity.
  */
-public class CandlestickCartesianLayerDrawingModel(
-  public val entries: Map<Double, Entry>,
-  public val modelKey: Any,
-  public val opacity: Float = 1f,
-) :
-  CartesianLayerDrawingModel<CandlestickCartesianLayerDrawingModel.Entry>(
-    listOf(entries),
-    listOf(modelKey),
-  ) {
-  public constructor(entries: Map<Double, Entry>, opacity: Float = 1f) : this(entries, 0, opacity)
-
-  @Deprecated(
-    "Layer-specific `CartesianLayerDrawingModelInterpolator` implementations now own " +
-      "interpolation policy. This hook remains for compatibility with custom interpolators."
-  )
-  override fun transform(
+public class CandlestickCartesianLayerDrawingModel
+internal constructor(
+  private val entries: List<Map<Double, Entry>>,
+  seriesKeys: List<Any>,
+  public val opacity: Float,
+  override val seriesSources: List<Any?>?,
+) : CartesianLayerDrawingModel<CandlestickCartesianLayerDrawingModel.Entry>(entries, seriesKeys) {
+  /** Creates a [CandlestickCartesianLayerDrawingModel]. */
+  public constructor(
     entries: List<Map<Double, Entry>>,
-    from: CartesianLayerDrawingModel<Entry>?,
-    fraction: Float,
-  ): CartesianLayerDrawingModel<Entry> {
-    val oldOpacity = (from as CandlestickCartesianLayerDrawingModel?)?.opacity.orZero
-    return CandlestickCartesianLayerDrawingModel(
-      entries = entries.first(),
-      modelKey = modelKey,
-      opacity = oldOpacity.lerp(opacity, fraction),
-    )
-  }
+    seriesKeys: List<Any>,
+    opacity: Float = 1f,
+  ) : this(entries, seriesKeys, opacity, null)
+
+  override val canCarrySeriesSources: Boolean
+    get() = true
+
+  override fun withSeriesSources(seriesSources: List<Any?>): CandlestickCartesianLayerDrawingModel =
+    CandlestickCartesianLayerDrawingModel(entries, seriesKeys, opacity, seriesSources)
 
   override fun equals(other: Any?): Boolean =
     this === other ||
       other is CandlestickCartesianLayerDrawingModel &&
         entries == other.entries &&
-        modelKey == other.modelKey &&
+        seriesKeys == other.seriesKeys &&
         opacity == other.opacity
 
   override fun hashCode(): Int {
     var result = entries.hashCode()
-    result = 31 * result + modelKey.hashCode()
+    result = 31 * result + seriesKeys.hashCode()
     result = 31 * result + opacity.hashCode()
     return result
   }
@@ -75,47 +67,30 @@ public class CandlestickCartesianLayerDrawingModel(
    * @property bodyTopY the position of the body’s top edge.
    * @property bottomWickY the position of the bottom wick’s bottom edge.
    * @property topWickY the position of the top wick’s top edge.
+   * @property entry the [CandlestickCartesianLayerModel.Entry] that’s drawn.
    */
   public class Entry(
     public val bodyBottomY: Float,
     public val bodyTopY: Float,
     public val bottomWickY: Float,
     public val topWickY: Float,
+    public val entry: CandlestickCartesianLayerModel.Entry,
   ) : CartesianLayerDrawingModel.Entry {
-    @Deprecated(
-      "Layer-specific `CartesianLayerDrawingModelInterpolator` implementations now own " +
-        "interpolation policy. Entries should only carry drawing information."
-    )
-    override fun transform(
-      from: CartesianLayerDrawingModel.Entry?,
-      fraction: Float,
-    ): CartesianLayerDrawingModel.Entry {
-      val old = from as? Entry
-      val oldBodyBottomY = old?.bodyBottomY.orZero
-      val oldBodyTopY = old?.bodyTopY.orZero
-      val oldBottomWickY = old?.bottomWickY.orZero
-      val oldTopWickY = old?.topWickY.orZero
-      return Entry(
-        oldBodyBottomY.lerp(bodyBottomY, fraction),
-        oldBodyTopY.lerp(bodyTopY, fraction),
-        oldBottomWickY.lerp(bottomWickY, fraction),
-        oldTopWickY.lerp(topWickY, fraction),
-      )
-    }
-
     override fun equals(other: Any?): Boolean =
       this === other ||
         other is Entry &&
           bodyBottomY == other.bodyBottomY &&
           bodyTopY == other.bodyTopY &&
           bottomWickY == other.bottomWickY &&
-          topWickY == other.topWickY
+          topWickY == other.topWickY &&
+          entry == other.entry
 
     override fun hashCode(): Int {
       var result = bodyBottomY.hashCode()
       result = 31 * result + bodyTopY.hashCode()
       result = 31 * result + bottomWickY.hashCode()
       result = 31 * result + topWickY.hashCode()
+      result = 31 * result + entry.hashCode()
       return result
     }
   }

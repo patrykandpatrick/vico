@@ -20,7 +20,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModel
 
-/** Controls [CartesianMarker] visibility. */
+/**
+ * Controls [CartesianMarker] visibility. Unlike providers and formatters, a
+ * [CartesianMarkerController] may keep interaction state (e.g., whether the chart is pressed), so
+ * create one per chart via the `remember…` factory functions. It’s called on the main thread.
+ */
 public fun interface CartesianMarkerController {
   /** Whether this [CartesianMarkerController] wants to handle long presses. */
   public val acceptsLongPress: Boolean
@@ -125,13 +129,12 @@ private class ShowOnPressMarkerController(override val consumeMoveEvents: Boolea
   override fun shouldShowMarker(interaction: Interaction, targets: List<CartesianMarker.Target>) =
     interaction !is Interaction.Release
 
-  override fun hashCode() = 31 * isPressed.hashCode() + consumeMoveEvents.hashCode()
+  // Only the configuration is compared, not the interaction state.
+  override fun hashCode() = consumeMoveEvents.hashCode()
 
   override fun equals(other: Any?) =
     other === this ||
-      other is ShowOnPressMarkerController &&
-        isPressed == other.isPressed &&
-        consumeMoveEvents == other.consumeMoveEvents
+      other is ShowOnPressMarkerController && consumeMoveEvents == other.consumeMoveEvents
 }
 
 private class ShowOnHoverMarkerController : CartesianMarkerController {
@@ -160,10 +163,10 @@ private class ShowOnHoverMarkerController : CartesianMarkerController {
     return isHovering
   }
 
-  override fun hashCode() = isHovering.hashCode()
+  // Only the configuration (none) is compared, not the interaction state.
+  override fun hashCode() = 0
 
-  override fun equals(other: Any?) =
-    other === this || other is ShowOnHoverMarkerController && isHovering == other.isHovering
+  override fun equals(other: Any?) = other === this || other is ShowOnHoverMarkerController
 }
 
 private class ToggleOnTapMarkerController : CartesianMarkerController {

@@ -22,17 +22,16 @@ import com.patrykandpatrick.vico.compose.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.compose.common.*
 import com.patrykandpatrick.vico.compose.common.component.ShapeComponent
 import com.patrykandpatrick.vico.compose.common.component.TextComponent
-import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 import com.patrykandpatrick.vico.compose.common.half
 
 /**
  * A [Decoration] that highlights a _y_ range.
  *
- * @property y returns the _y_ range.
+ * @property y the _y_ range.
  * @property box the box [ShapeComponent].
  * @property labelComponent the label [TextComponent].
- * @property label returns the label text. By default, the bounds of the _y_ range are formatted to
- *   include up to two decimal digits, rounding half away from zero.
+ * @property label the label text. By default, the bounds of the _y_ range are formatted to include
+ *   up to two decimal digits, rounding half away from zero.
  * @property horizontalLabelPosition defines the horizontal position of the label.
  * @property verticalLabelPosition defines the vertical position of the label.
  * @property labelRotationDegrees the rotation of the label (in degrees).
@@ -40,10 +39,10 @@ import com.patrykandpatrick.vico.compose.common.half
  *   should use when interpreting [y].
  */
 public class HorizontalBox(
-  private val y: (ExtraStore) -> ClosedFloatingPointRange<Double>,
+  private val y: ClosedFloatingPointRange<Double>,
   private val box: ShapeComponent,
   private val labelComponent: TextComponent? = null,
-  private val label: (ExtraStore) -> CharSequence = { getLabel(y(it)) },
+  private val label: CharSequence = getLabel(y),
   private val horizontalLabelPosition: Position.Horizontal = Position.Horizontal.Start,
   private val verticalLabelPosition: Position.Vertical = Position.Vertical.Top,
   private val labelRotationDegrees: Float = 0f,
@@ -52,8 +51,6 @@ public class HorizontalBox(
   override fun drawOverLayers(context: CartesianDrawingContext) {
     with(context) {
       val yRange = ranges.getYRange(verticalAxisPosition)
-      val y = y(model.extraStore)
-      val label = label(model.extraStore)
       val topY =
         layerBounds.bottom -
           ((y.endInclusive - yRange.minY) / yRange.length).toFloat() * layerBounds.height

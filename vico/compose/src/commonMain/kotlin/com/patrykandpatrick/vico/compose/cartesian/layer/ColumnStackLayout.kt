@@ -18,7 +18,6 @@ package com.patrykandpatrick.vico.compose.cartesian.layer
 
 import androidx.compose.ui.unit.Dp
 import com.patrykandpatrick.vico.compose.cartesian.data.ColumnCartesianLayerModel
-import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 import kotlin.math.max
 import kotlin.math.min
 
@@ -45,20 +44,22 @@ internal class ColumnStackLayout(
 }
 
 internal fun ColumnCartesianLayer.StackKeyProvider.getLayout(
-  seriesKeys: List<Any>,
-  extraStore: ExtraStore,
-): ColumnStackLayout {
+  seriesKeys: List<Any>
+): ColumnStackLayout =
+  getColumnStackLayout(seriesKeys.mapIndexed { index, key -> getStackKey(key, index) })
+
+/** Returns the [ColumnStackLayout] in which series share a stack if their [stackKeys] are equal. */
+internal fun getColumnStackLayout(stackKeys: List<Any>): ColumnStackLayout {
   val stackIndicesByKey = mutableMapOf<Any, Int>()
-  val stackIndices = IntArray(seriesKeys.size)
+  val stackIndices = IntArray(stackKeys.size)
   var stackCount = 0
-  seriesKeys.forEachIndexed { seriesIndex, seriesKey ->
-    stackIndices[seriesIndex] =
-      stackIndicesByKey.getOrPut(getStackKey(seriesKey, seriesIndex, extraStore)) { stackCount++ }
+  stackKeys.forEachIndexed { seriesIndex, stackKey ->
+    stackIndices[seriesIndex] = stackIndicesByKey.getOrPut(stackKey) { stackCount++ }
   }
   val stackStarts = IntArray(stackCount + 1)
   stackIndices.forEach { stackIndex -> stackStarts[stackIndex + 1]++ }
   for (stackIndex in 1..stackCount) stackStarts[stackIndex] += stackStarts[stackIndex - 1]
-  val seriesIndices = IntArray(seriesKeys.size)
+  val seriesIndices = IntArray(stackKeys.size)
   val nextPositions = stackStarts.copyOf()
   stackIndices.forEachIndexed { seriesIndex, stackIndex ->
     seriesIndices[nextPositions[stackIndex]++] = seriesIndex
@@ -105,12 +106,11 @@ internal fun ColumnCartesianLayerModel.getYRange(
 
 /**
  * Holds the unzoomed horizontal geometry of a [ColumnStackLayout]: each stack is as wide as its
- * widest column, and stacks are positioned the stack spacing apart. [seriesKeys], [extraStore], and
- * [density] identify the inputs.
+ * widest column, and stacks are positioned the stack spacing apart. [seriesKeys] and [density]
+ * identify the inputs.
  */
 internal class ColumnStackGeometry(
   val seriesKeys: List<Any>,
-  val extraStore: ExtraStore,
   val density: Float,
   val layout: ColumnStackLayout,
   val thicknesses: Array<Dp>,

@@ -20,12 +20,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 
 /** Creates and remembers a [VerticalLegend]. */
 @Composable
 public fun <M : MeasuringContext, D : DrawingContext> rememberVerticalLegend(
-  items: AdditionScope<LegendItem>.(ExtraStore) -> Unit,
+  items: List<LegendItem>,
   iconSize: Dp = Defaults.LEGEND_ICON_SIZE.dp,
   iconLabelSpacing: Dp = Defaults.LEGEND_ICON_LABEL_SPACING.dp,
   rowSpacing: Dp = Defaults.LEGEND_ROW_SPACING.dp,
@@ -38,7 +37,7 @@ public fun <M : MeasuringContext, D : DrawingContext> rememberVerticalLegend(
 /** Creates and remembers a [HorizontalLegend]. */
 @Composable
 public fun <M : MeasuringContext, D : DrawingContext> rememberHorizontalLegend(
-  items: AdditionScope<LegendItem>.(ExtraStore) -> Unit,
+  items: List<LegendItem>,
   iconSize: Dp = Defaults.LEGEND_ICON_SIZE.dp,
   iconLabelSpacing: Dp = Defaults.LEGEND_ICON_LABEL_SPACING.dp,
   rowSpacing: Dp = Defaults.LEGEND_ROW_SPACING.dp,

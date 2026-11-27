@@ -49,7 +49,10 @@ public interface CartesianChartRanges {
     /** The maximum _y_ value. */
     public val maxY: Double
 
-    /** The difference between [maxY] and [minY]. */
+    /**
+     * The difference between [maxY] and [minY]. In the ranges that a [CartesianChart] derives, this
+     * is never zero: a zero-length range (e.g., from a constant series) is extended upward by 1.
+     */
     public val length: Double
   }
 
