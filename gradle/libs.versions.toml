@@ -26,7 +26,7 @@ material = "1.14.0"
 mavenPublish = "0.37.0"
 mockK = "1.14.12"
 screenshot = "0.0.1-alpha17"
-uiTextAndroid = "1.12.1"
+uiTextAndroid = "1.13.0"
 
 [libraries]
 activityCompose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity" }
